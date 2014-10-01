@@ -486,6 +486,7 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
     QString notebookName = "";
 
     qint32 notebookLid = notebook;
+    qint32 account = 0;
     if (notebookLid <= 0)
         notebookLid = notebookTable.getLid(t.notebookGuid);
     if (notebookLid <=0) {
