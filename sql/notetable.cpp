@@ -485,8 +485,8 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
     LinkedNotebookTable linkedNotebookTable(db);
     QString notebookName = "";
 
-    qint32 account = 0;   // By default we search in our account.  This is used later to find tag names
     qint32 notebookLid = notebook;
+    qint32 account = 0;
     if (notebookLid <= 0)
         notebookLid = notebookTable.getLid(t.notebookGuid);
     if (notebookLid <=0) {
@@ -641,27 +641,13 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
     query.bindValue(":notebookLid", notebookLid);
 
     QString tagName;
-    QStringList sortedNames;
     QList<QString> tagNames;
     if (t.tagNames.isSet())
         tagNames = t.tagNames;
     for (int i=0; i<tagNames.size(); i++) {
-        sortedNames.append(tagNames[i].toLower());
-    }
-    sortedNames.sort();
-
-    TagTable tagTable(db);
-
-    // We search the table to get the name in the correct case.
-    // We lowercased them above to sort properly without regards
-    // to case.  Now, for the note list we need the correct case
-    for (int i=0; i<sortedNames.size(); i++) {
         if (i>0)
             tagName = tagName+", ";
-        Tag currentTag;
-        qint32 tagLid = tagTable.findByName(sortedNames[i], account);
-        tagTable.get(currentTag, tagLid);
-        tagName = tagName + currentTag.name;
+        tagName = tagName + tagNames[i];
     }
 
     query.bindValue(":tags", tagName);
