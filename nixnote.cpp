@@ -670,6 +670,7 @@ void NixNote::syncThreadStarted() {
     syncRunner.moveToThread(&syncThread);
     global.settings->beginGroup("Sync");
     bool syncOnStartup = global.settings->value("syncOnStartup", false).toBool();
+    global.showGoodSyncMessagesInTray = global.settings->value("showGoodSyncMessagesInTray", true).toBool();
     global.settings->endGroup();
     if (syncOnStartup || global.syncAndExit)
         synchronize();
@@ -1576,7 +1577,8 @@ void NixNote::notifySyncComplete() {
     if (syncRunner.error) {
         trayIcon->showMessage(tr("Sync Error"), tr("Sync completed with errors."));
     } else
-        trayIcon->showMessage(tr("Sync Complete"), tr("Sync completed successfully."));
+        if (global.showGoodSyncMessagesInTray)
+            trayIcon->showMessage(tr("Sync Complete"), tr("Sync completed successfully."));
     if (global.syncAndExit)
         this->closeNixNote();
 }
@@ -2597,6 +2599,7 @@ void NixNote::deleteCurrentNote() {
         ntable.expunge(lid);
     sql.bindValue(":lid", lid);
     sql.exec();
+    sql.finish();
     delete global.cache[lid];
     global.cache.remove(lid);
     QList<qint32> lids;

@@ -191,7 +191,7 @@ NTableView::NTableView(QWidget *parent) :
 
     contextMenu = new QMenu(this);
     QFont font;
-    font.setPointSize(8);
+    font.setPointSize(global.defaultGuiFontSize);
 
     openNoteAction = new QAction(tr("Open Note"), this);
     contextMenu->addAction(openNoteAction);
@@ -410,6 +410,7 @@ void NTableView::refreshData() {
     while(sql.next()) {
         proxy->lidMap->insert(sql.value(0).toInt(), 0);
     }
+    sql.finish();
     QLOG_DEBUG() << "Valid LIDs retrieved.  Refreshing selection";
     model()->select();
     while(model()->canFetchMore())
@@ -437,6 +438,8 @@ void NTableView::refreshSelection() {
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     QList<qint32> historyList;
     criteria->getSelectedNotes(historyList);
+    if (criteria->isFavoriteSet() && criteria->getFavorite()>0)
+        historyList.append(criteria->getFavorite());
 
     QLOG_TRACE() << "Highlighting selected rows after refresh";
     // Check the highlighted LIDs from the history selection.
@@ -541,6 +544,7 @@ void NTableView::restoreSelectedNotes() {
         sql.bindValue(":lid", lids[i]);
         sql.exec();
     }
+    sql.finish();
     //transaction.exec("commit");
     emit(notesRestored(lids));
 }
@@ -596,6 +600,7 @@ void NTableView::deleteSelectedNotes() {
         global.cache.remove(lids[i]);
     }
     //transaction.exec("commit");
+    sql.finish();
     emit(notesDeleted(lids, expunged));
 }
 

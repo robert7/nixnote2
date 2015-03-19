@@ -93,6 +93,7 @@ void Global::setup(StartupConfig startupConfig) {
     this->startupNote = startupConfig.startupNoteLid;
     startupConfig.accountId = accountId;
     accountsManager = new AccountsManager(startupConfig.accountId);
+    disableIndexing = startupConfig.disableIndexing;
 
     cryptCounter = 0;
     attachmentNameDelimeter = "------";
@@ -127,6 +128,7 @@ void Global::setup(StartupConfig startupConfig) {
     pdfPreview = settings->value("showPDFs", true).toBool();
     defaultFont = settings->value("defaultFont","").toString();
     defaultFontSize = settings->value("defaultFontSize",12).toInt();
+    defaultGuiFontSize = settings->value("defaultGuiFontSize", 12).toInt();
     settings->endGroup();
 
     if (defaultFont != "" && defaultFontSize > 0) {
@@ -139,6 +141,10 @@ void Global::setup(StartupConfig startupConfig) {
             );
     }
 
+    minIndexInterval = 5000;
+    maxIndexInterval = 120000;
+    indexResourceCountPause=2;
+    indexNoteCountPause=100;
 }
 
 

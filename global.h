@@ -108,7 +108,9 @@ public:
     string username;
     string password;
     bool connected;
+    bool disableIndexing;
     bool pdfPreview;
+    bool showGoodSyncMessagesInTray;
     QSharedMemory *sharedMemory;
     bool confirmDeletes();
     QString tagBehavior();
@@ -140,12 +142,18 @@ public:
     bool javaFound;
     QString defaultFont;
     int defaultFontSize;
+    int defaultGuiFontSize;
     bool startupNewNote;
     bool forceNoStartMimized;
     bool forceStartMinimized;
     bool startMinimized;
     bool syncAndExit;
     qint32 startupNote;
+
+    qint32 minIndexInterval;
+    qint32 maxIndexInterval;
+    qint32 indexResourceCountPause;
+    qint32 indexNoteCountPause;
 
     // Filter criteria.  Used for things like the back & forward buttons
     QList<FilterCriteria*> filterCriteria;
