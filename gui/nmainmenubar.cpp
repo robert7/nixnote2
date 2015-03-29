@@ -39,6 +39,8 @@ NMainMenuBar::NMainMenuBar(QWidget *parent) :
 {
     this->parent = (NixNote*)parent;
     font.setPointSize(global.defaultGuiFontSize);
+    font = global.getGuiFont(font);
+    setFont(font);
 
     setupFileMenu();
     setupEditMenu();
@@ -53,7 +55,7 @@ void NMainMenuBar::setupFileMenu() {
     fileMenu = this->addMenu(tr("&File"));
 
     QFont f;
-    f.setPointSize(global.defaultGuiFontSize);
+    f =  global.getGuiFont(f);
 
     printAction = new QAction(tr("Print Note"), this);
     printAction->setToolTip(tr("Print this note"));
@@ -159,6 +161,7 @@ void NMainMenuBar::addUserAccount(QAction *action) {
 
 void NMainMenuBar::setupEditMenu() {
     editMenu = this->addMenu(tr("&Edit"));
+    editMenu->setFont(font);
 
     undoAction = new QAction(tr("Undo"), this);
     setupShortcut(undoAction, QString("Edit_Undo"));

@@ -116,7 +116,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     font.setFamily("Courier");
     font.setFixedPitch(true);
     font.setPointSize(global.defaultGuiFontSize);
-    sourceEdit->setFont(font);
+    sourceEdit->setFont(global.getGuiFont(font));
     XmlHighlighter *highlighter = new XmlHighlighter(sourceEdit->document());
     highlighter = highlighter;  // Prevents the unused warning
     sourceEditorTimer = new QTimer();
@@ -246,6 +246,10 @@ void NBrowserWindow::setContent(qint32 lid) {
     // If we are already updating this note, we don't do anything
     if (lid == this->lid)
         return;
+
+    bool hasFocus = false;
+    if (this->editor->hasFocus())
+        hasFocus = true;
 
     if (this->editor->isDirty)
         this->saveNoteContent();
@@ -384,6 +388,8 @@ void NBrowserWindow::setContent(qint32 lid) {
     } /*else
         hammer->timer.start(1000);*/
 
+    if (hasFocus)
+        this->editor->setFocus();
 }
 
 

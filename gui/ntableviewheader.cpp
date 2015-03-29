@@ -166,6 +166,7 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
    connect(reminderOrderAction, SIGNAL(toggled(bool)), this, SLOT(reminderOrderChecked(bool)));
    connect(pinnedAction, SIGNAL(toggled(bool)), this, SLOT(pinnedChecked(bool)));
 
+    this->setFont(global.getGuiFont(font()));
 }
 
 

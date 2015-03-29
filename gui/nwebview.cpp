@@ -49,11 +49,13 @@ NWebView::NWebView(NBrowserWindow *parent) :
     editorPage = new NWebPage(this);
     setPage(editorPage);
     isDirty = false;
+    this->setFont(global.getGuiFont(font()));
 
     contextMenu = new QMenu(this);
     openAction = new QAction(tr("Open"), this);
     contextMenu->addAction(openAction);
     contextMenu->addSeparator();
+    contextMenu->setFont(global.getGuiFont(font()));
 
     cutAction = new QAction(tr("Cut"), this);
     this->setupShortcut(cutAction, "Edit_Cut");
@@ -83,6 +85,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addSeparator();
 
     QMenu *colorMenu = new QMenu(tr("Background Color"), this);
+    colorMenu->setFont(global.getGuiFont(font()));
     QAction *action = setupColorMenuOption(tr("White"));
     colorMenu->addAction(action);
     connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundWhite()));
@@ -167,6 +170,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addSeparator();
 
     tableMenu = new QMenu(tr("Table"), this);
+    tableMenu->setFont(global.getGuiFont(font()));
     contextMenu->addMenu(tableMenu);
     insertTableAction = new QAction(tr("Insert Table"), this);
     this->setupShortcut(insertTableAction, "Edit_Insert_Table");
@@ -193,6 +197,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addSeparator();
 
     imageMenu = new QMenu(tr("Image"), this);
+    imageMenu->setFont(global.getGuiFont(font()));
     contextMenu->addMenu(imageMenu);
     downloadImageAction()->setText(tr("Save Image"));
     imageMenu->addAction(downloadImageAction());
