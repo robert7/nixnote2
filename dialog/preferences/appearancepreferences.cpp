@@ -18,12 +18,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "appearancepreferences.h"
+#include "themepreview.h"
 #include "global.h"
 
 #include <QFontDatabase>
 #include <QWebSettings>
 #include <QtGui/QDesktopWidget>
 #include <QApplication>
+#include <QMessageBox>
 
 extern Global global;
 
@@ -53,17 +55,20 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     connect(defaultGuiFontChooser, SIGNAL(currentIndexChanged(QString)), this, SLOT(loadGuiFontSizes(QString)));
     loadFontNames(defaultGuiFontChooser, global.defaultGuiFont);
 
-    windowIconChooser = new QComboBox();
-    windowIconChooser->addItem(QIcon(":windowIcon0.png"), "", ":windowIcon0.png");
-    windowIconChooser->addItem(QIcon(":windowIcon1.png"), "", ":windowIcon1.png");
-    windowIconChooser->addItem(QIcon(":windowIcon2.png"), "", ":windowIcon2.png");
-    windowIconChooser->addItem(QIcon(":windowIcon3.png"), "", ":windowIcon3.png");
-    windowIconChooser->addItem(QIcon(":windowIcon4.png"), "", ":windowIcon4.png");
-    windowIconChooser->addItem(QIcon(":windowIcon5.png"), "", ":windowIcon5.png");
-    windowIconChooser->addItem(QIcon(":windowIcon6.png"), "", ":windowIcon6.png");
-   // windowIconChooser->setSizePolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
-    windowIconChooser->adjustSize();
-    windowIconChooser->setIconSize(QSize(80,80));
+    windowThemeChooser = new QComboBox();
+//    windowThemeChooser->addItem(QIcon(":windowIcon0.png"), "", ":windowIcon0.png");
+//    windowThemeChooser->addItem(QIcon(":windowIcon1.png"), "", ":windowIcon1.png");
+//    windowThemeChooser->addItem(QIcon(":windowIcon2.png"), "", ":windowIcon2.png");
+//    windowThemeChooser->addItem(QIcon(":windowIcon3.png"), "", ":windowIcon3.png");
+//    windowThemeChooser->addItem(QIcon(":windowIcon4.png"), "", ":windowIcon4.png");
+//    windowThemeChooser->addItem(QIcon(":windowIcon5.png"), "", ":windowIcon5.png");
+//    windowThemeChooser->addItem(QIcon(":windowIcon6.png"), "", ":windowIcon6.png");
+//   // windowIconChooser->setSizePolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+//    windowThemeChooser->adjustSize();
+//    windowThemeChooser->setIconSize(QSize(80,80));
+    windowThemeChooser->addItem(tr("System Default"));
+    windowThemeChooser->addItems(global.getThemeNames());
+
 
     defaultNotebookOnStartupLabel = new QLabel(tr("Startup Behavior"),this);
     defaultNotebookOnStartup = new QComboBox();
@@ -102,13 +107,23 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(new QLabel("Default Editor Font Size*"), row, 0);
     mainLayout->addWidget(defaultFontSizeChooser, row++, 1);
 
-    mainLayout->addWidget(new QLabel(tr("Window Icon*")), row,0);
-    mainLayout->addWidget(windowIconChooser, row++,1);
+    mainLayout->addWidget(new QLabel(tr("Theme*")), row,0);
+    mainLayout->addWidget(windowThemeChooser, row,1);
+    previewButton = new QPushButton(tr("Preview"));
+    mainLayout->addWidget(previewButton, row++, 2);
+    connect(previewButton, SIGNAL(clicked()), this, SLOT(themePreview()));
 
     mainLayout->addWidget(new QLabel(""), row++, 0);
     mainLayout->addWidget(new QLabel("* May require restart on some systems."), row++, 0);
 
     global.settings->beginGroup("Appearance");
+
+    QString theme = global.settings->value("themeName", "").toString();
+    if (theme != "") {
+        int index = windowThemeChooser->findText(theme);
+        windowThemeChooser->setCurrentIndex(index);
+    }
+
 
     showTrayIcon->setChecked(global.settings->value("showTrayIcon", false).toBool());
     showPDFs->setChecked(global.settings->value("showPDFs", true).toBool());
@@ -123,9 +138,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     int defaultNotebook = global.settings->value("startupNotebook", UseLastViewedNotebook).toInt();
     defaultNotebookOnStartup->setCurrentIndex(defaultNotebook);
     global.settings->endGroup();
-    QString windowIcon = global.getWindowIcon();
-    int index = windowIconChooser->findData(windowIcon);
-    windowIconChooser->setCurrentIndex(index);
+
     connect(showTrayIcon, SIGNAL(clicked(bool)), this, SLOT(showTrayIconChanged(bool)));
 
     if (minimizeToTray != NULL) {
@@ -138,6 +151,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
         if (!showTrayIcon->isChecked())
             closeToTray->setEnabled(false);
     }
+
     this->setFont(global.getGuiFont(font()));
 }
 
@@ -188,6 +202,15 @@ void AppearancePreferences::saveValues() {
         global.settings->setValue("defaultGuiFont", global.defaultGuiFont);
         global.settings->setValue("defaultGuiFontSize", global.defaultGuiFontSize);
 
+
+        idx = windowThemeChooser->currentIndex();
+        QString themeName = windowThemeChooser->itemText(idx);
+        if (idx == 0)
+            global.settings->remove("themeName");
+        else
+            global.settings->setValue("themeName", themeName);
+        global.loadTheme(global.resourceList,themeName);
+
         QWebSettings *settings = QWebSettings::globalSettings();
         settings->setFontFamily(QWebSettings::StandardFont, global.defaultFont);
         // QWebkit DPI is hard coded to 96. Hence, we calculate the correct
@@ -199,10 +222,10 @@ void AppearancePreferences::saveValues() {
 
 
     // See if the user has overridden the window icon
-    index = windowIconChooser->currentIndex();
-    QString userIcon = windowIconChooser->itemData(index).toString();
-    if (userIcon != global.getWindowIcon()) {
-        global.settings->setValue("windowIcon", userIcon);
+//    index = windowThemeChooser->currentIndex();
+//    QString userIcon = windowThemeChooser->itemData(index).toString();
+//    if (userIcon != global.getResourceFileName(userIcon)) {
+        //global.settings->setValue("windowIcon", userIcon);
 
         //Copy the nixnote2.desktop so we can override the app icon
         // Ideally, we could use QSettings since it is ini format, but
@@ -217,7 +240,7 @@ void AppearancePreferences::saveValues() {
             QString line = data.readLine();
             while (!line.isNull()) {
                 if (line.startsWith("Icon=")) {
-                    line = "Icon=" +global.fileManager.getProgramDirPath("")+"images/"+userIcon.mid(1);
+                    line = "Icon=" +global.getResourceFileName(global.resourceList,":windowIcon.png");
                 }
                 desktopData.append(line);
                 line = data.readLine();
@@ -236,7 +259,7 @@ void AppearancePreferences::saveValues() {
         }
         userIni.close();
 
-    }
+//    }
 
     // Setup if the user wants to start NixNote the next time they login.
     global.settings->setValue("autoStart", autoStart->isChecked());
@@ -254,7 +277,7 @@ void AppearancePreferences::saveValues() {
             QString line = data.readLine();
             while (!line.isNull()) {
                 if (line.startsWith("Icon=")) {
-                    line = "Icon=" +global.fileManager.getProgramDirPath("")+"images/"+userIcon.mid(1);
+                    line = "Icon=" +global.getResourceFileName(global.resourceList,":windowIcon.png");
                 }
                 desktopData.append(line);
                 line = data.readLine();
@@ -356,6 +379,25 @@ void AppearancePreferences::showTrayIconChanged(bool value) {
         minimizeToTray->setEnabled(false);
         closeToTray->setEnabled(false);
     }
+}
+
+
+void AppearancePreferences::themePreview() {
+    QHash<QString,QString> resourceList;
+    int idx = this->windowThemeChooser->currentIndex();
+    QString themeName = "";
+    if (idx>0)
+        themeName = windowThemeChooser->itemText(idx);
+    global.loadTheme(resourceList, themeName);
+    if (resourceList[":themePreview.png"] == "" && idx>0) {
+        QMessageBox mb;
+        mb.information(this, tr("Preview Not Found"), tr("This theme has not provided an image preview."));
+        return;
+    }
+
+    QString file = global.getResourceFileName(resourceList, ":themePreview.png");
+    ThemePreview preview(file);
+    preview.exec();
 }
 
 

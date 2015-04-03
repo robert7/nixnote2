@@ -50,7 +50,7 @@ LocationEditor::LocationEditor(QWidget *parent) :
     setAutoRaise(false);
     setMenu(actionMenu);
     this->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    this->setIcon(QIcon(":navigation.png"));
+    this->setIcon(global.getIconResource(":navigation.png"));
 
     connect(this, SIGNAL(clicked()), this, SLOT(buttonClicked()));
 
@@ -114,6 +114,17 @@ void LocationEditor::setGeography(qint32 lid, double longitude, double latitude,
     } else
         this->setText(placeName);
 }
+
+
+
+void LocationEditor::getGeography(double &longitude, double &latitude, double &altitude, QString &placeName) {
+    longitude = this->startLongitude;
+    latitude = this->startLatitude;
+    altitude = this->startAltitude;
+    placeName = text();
+}
+
+
 
 
 void LocationEditor::clearClicked() {
