@@ -146,6 +146,7 @@ public:
     QString defaultGuiFont;                               // Default GUI font name
     bool startupNewNote;                                  // Were we started with the command to begin a new note?
     bool forceNoStartMimized;                             // Force the system to not start minimized, dispite the user's settings
+    bool forceSystemTrayAvailable;                        // Override QSystemTrayIcon::isSystemTrayAvailable()
     bool forceStartMinimized;                             // Force it to start minimized, despiet the user's settings
     bool startMinimized;                                  // Do user prefernces say to start minimized?
     bool syncAndExit;                                     // Should we just start, do a sync, and then quit?
@@ -171,7 +172,7 @@ public:
     QFont getGuiFont(QFont f);                                // Get the user's desired GUI font
 
     bool nonAsciiSortBug;                                     // Workaround for non-ASCII characters in tag name sorting
-
+    bool autoHideEditorToolbar;                               // Should the editor bar be hidden when focus is lost?
     ReminderManager *reminderManager;                         // Used to alert the user when a reminder time has expired
 
 

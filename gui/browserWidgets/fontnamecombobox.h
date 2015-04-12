@@ -17,22 +17,31 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-#ifndef ATTACHMENTICONBUILDER_H
-#define ATTACHMENTICONBUILDER_H
+#ifndef FONTCOMBOBOX_H
+#define FONTCOMBOBOX_H
 
-#include <QObject>
+#include <QComboBox>
 
-class AttachmentIconBuilder : public QObject
+class FontNameComboBox : public QComboBox
 {
     Q_OBJECT
+private:
+    bool expanded;
 public:
-    explicit AttachmentIconBuilder(QObject *parent = 0);
-    QString buildIcon(qint32 lid, QString fileName);
-    
+    explicit FontNameComboBox(QWidget *parent = 0);
+    bool isExpanded();
+protected:
+//    void focusInEvent(QFocusEvent *event);
+//    void focusOutEvent(QFocusEvent *event);
+
 signals:
-    
+
+
 public slots:
-    
+    void showPopup();
+    void hidePopup();
+
+
 };
 
-#endif // ATTACHMENTICONBUILDER_H
+#endif // FONTCOMBOBOX_H

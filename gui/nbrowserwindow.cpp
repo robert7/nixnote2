@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/remindersetdialog.h"
 #include "utilities/spellchecker.h"
 #include "dialog/spellcheckdialog.h"
+#include "utilities/pixelconverter.h"
 
 
 #include <QVBoxLayout>
@@ -93,14 +94,15 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     line1Layout->addWidget(&expandButton);
 
 
-    // Add the third layout display (which actually appears on line 2)
-    layout->addLayout(&line3Layout);
-    line3Layout.addWidget(&dateEditor);
-
-    // Add the second layout display (which actually appears on line 3)
+    // Add the second layout display
     layout->addLayout(&line2Layout);
     line2Layout.addWidget(&urlEditor,1);
     line2Layout.addWidget(&tagEditor, 3);
+
+    // Add the third layout display
+    layout->addLayout(&line3Layout);
+    line3Layout.addWidget(&dateEditor);
+
 
     editor = new NWebView(this);
     editor->setTitleEditor(&noteTitle);
@@ -184,6 +186,10 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     global.settings->endGroup();
     this->expandButton.setState(expandButton);
 //    changeExpandState(expandButton);
+
+    connect(&focusTimer, SIGNAL(timeout()), this, SLOT(focusCheck()));
+    focusTimer.setInterval(100);
+    focusTimer.start();
 }
 
 
@@ -963,10 +969,13 @@ void NBrowserWindow::fontSizeSelected(int index) {
     if (text.trimmed() == "")
         return;
 
-    QString newText = "<span style=\"font-size:" +QString::number(size) +"pt;\">"+text+"</span>";
+    int idx = buttonBar->fontNames->currentIndex();
+    QString font = buttonBar->fontNames->itemText(idx);
+
+    QString newText = "<span style=\"font-size:" +QString::number(size) +"pt; font-family:"+font+";\">"+text+"</span>";
     QString script = QString("document.execCommand('insertHtml', false, '"+newText+"');");
-    QLOG_DEBUG() << script;
     editor->page()->mainFrame()->evaluateJavaScript(script);
+
     editor->setFocus();
     microFocusChanged();
 }
@@ -2709,7 +2718,16 @@ void NBrowserWindow::noteContentEdited() {
 
 
 void NBrowserWindow::changeDisplayFontSize(QString size) {
+    bool convert =true;
+    if (size.endsWith("px", Qt::CaseInsensitive))
+        convert = true;
     size.chop(2);  // Remove px from the end
+    int converted = size.toInt();
+    if (convert) {
+        PixelConverter c;
+        converted = c.getPoints(converted);
+        size = QString::number(converted);
+    }
     int idx = buttonBar->fontSizes->findData(size, Qt::UserRole);
     if (idx > 0) {
         buttonBar->fontSizes->blockSignals(true);
@@ -2719,6 +2737,9 @@ void NBrowserWindow::changeDisplayFontSize(QString size) {
 }
 
 
+
+// This function is called when the cursor position within the document changes.  It should
+// change the combo box to the current font name.
 void NBrowserWindow::changeDisplayFontName(QString name) {
     if (name.startsWith("'")) {
             name = name.mid(1);
@@ -2729,4 +2750,27 @@ void NBrowserWindow::changeDisplayFontName(QString name) {
     if (idx >=0)
         buttonBar->fontNames->setCurrentIndex(idx);
     buttonBar->fontNames->blockSignals(false);
+}
+
+
+
+void NBrowserWindow::focusCheck() {
+    bool buttonBarVisible = false;
+    if (editor->hasFocus())
+        buttonBarVisible = true;
+    if (editor->contextMenu->hasFocus())
+        buttonBarVisible = true;
+    if (buttonBar->hasFocus())
+        buttonBarVisible = true;
+    if (buttonBar->fontNames->isExpanded())
+        buttonBarVisible = true;
+    if (buttonBar->fontNames->lineEdit()->hasFocus())
+        buttonBarVisible = true;
+    if (buttonBar->fontSizes->lineEdit()->hasFocus())
+        buttonBarVisible = true;
+    if (buttonBar->fontSizes->isExpanded())
+        buttonBarVisible = true;
+    if (!global.autoHideEditorToolbar)
+        buttonBarVisible = true;
+    buttonBar->setVisible(buttonBarVisible);
 }

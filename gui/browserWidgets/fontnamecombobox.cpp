@@ -17,22 +17,57 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-#ifndef ATTACHMENTICONBUILDER_H
-#define ATTACHMENTICONBUILDER_H
+#include "fontnamecombobox.h"
+#include <QLineEdit>
 
-#include <QObject>
+#include "global.h"
 
-class AttachmentIconBuilder : public QObject
+
+
+extern Global global;
+
+
+
+FontNameComboBox::FontNameComboBox(QWidget *parent) :
+    QComboBox(parent)
 {
-    Q_OBJECT
-public:
-    explicit AttachmentIconBuilder(QObject *parent = 0);
-    QString buildIcon(qint32 lid, QString fileName);
-    
-signals:
-    
-public slots:
-    
-};
+    expanded = false;
+    setEditable(true);
+    QLineEdit *e;
+    e = lineEdit();
+    e->setReadOnly(true);
 
-#endif // ATTACHMENTICONBUILDER_H
+}
+
+
+
+void FontNameComboBox::showPopup() {
+    expanded = true;
+    QComboBox::showPopup();
+}
+
+
+
+void FontNameComboBox::hidePopup() {
+    QComboBox::hidePopup();
+    expanded = false;
+}
+
+bool FontNameComboBox::isExpanded() {
+    return expanded;
+}
+
+
+
+
+//void FontNameComboBox::focusInEvent(QFocusEvent *event) {
+//    //expanded = true;
+//    QComboBox::focusInEvent(event);
+//    QLOG_DEBUG() << "focusin";
+//}
+
+//void FontNameComboBox::focusOutEvent(QFocusEvent *event) {
+//    //expanded = false;
+//    QComboBox::focusOutEvent(event);
+//    QLOG_DEBUG() << "focusout";
+//}
