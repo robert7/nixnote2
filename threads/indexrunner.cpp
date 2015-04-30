@@ -85,8 +85,8 @@ void IndexRunner::index() {
 
     QList<qint32> lids;
 
-    NoteTable noteTable(&db->conn);
-    ResourceTable resourceTable(&db->conn);
+    NoteTable noteTable(db);
+    ResourceTable resourceTable(db);
     bool endMsgNeeded = false;
 
     int countPause = global.indexNoteCountPause;
@@ -290,7 +290,7 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
         indexTimer->start();
         return;
     }
-    ResourceTable rtable(&db->conn);
+    ResourceTable rtable(db);
     qint32 reslid = rtable.getLid(r.guid);
     if (lid <= 0) {
         indexTimer->start();
@@ -300,7 +300,7 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
 
     QString text = "";
     Poppler::Document *doc = Poppler::Document::load(file);
-    if (doc == NULL) {
+    if (doc == NULL || doc->isEncrypted() || doc->isLocked()) {
         indexTimer->start();
         return;
     }
@@ -323,8 +323,7 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
 
 
 
-// Index any PDFs that are attached.  Basically it turns the PDF into text and adds it the same
-// way as a note's body
+// Index any files that are attached.
 void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
     if (!officeFound)
         return;
@@ -333,7 +332,7 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
         indexTimer->start();
         return;
     }
-    ResourceTable rtable(&db->conn);
+    ResourceTable rtable(db);
     qint32 reslid = rtable.getLid(r.guid);
     if (lid <= 0) {
         indexTimer->start();
@@ -399,7 +398,7 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
     if (txtFile.open(QIODevice::ReadOnly)) {
         QString text;
         text = txtFile.readAll();
-        NSqlQuery sql(db->conn);
+        NSqlQuery sql(db);
         sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
         sql.bindValue(":lid", lid);
         sql.bindValue(":weight", 100);
@@ -417,7 +416,8 @@ void IndexRunner::flushCache() {
     if (indexHash->size() <= 0)
         return;
     QDateTime start = QDateTime::currentDateTimeUtc();
-    NSqlQuery sql(db->conn);
+    NSqlQuery sql(db);
+    db->lockForWrite();
     sql.exec("begin");
     QHash<qint32, IndexRecord*>::iterator i;
 
@@ -455,6 +455,7 @@ void IndexRunner::flushCache() {
     sql.exec("commit");
 
     sql.finish();
+    db->unlock();
     QDateTime finish = QDateTime::currentDateTimeUtc();
 
     QLOG_DEBUG() << "Index Cache Flush Complete: " <<

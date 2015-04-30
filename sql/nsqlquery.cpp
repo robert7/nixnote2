@@ -24,19 +24,44 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "global.h"
 
+#include <execinfo.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 extern Global global;
 
 
 // Constructor
-NSqlQuery::NSqlQuery(QSqlDatabase db) :
-    QSqlQuery(db)
+NSqlQuery::NSqlQuery(DatabaseConnection *db) :
+    QSqlQuery(db->conn)
 {
+    this->db = db;
 }
 
 
 // Destructor
 NSqlQuery::~NSqlQuery() {
     this->finish();
+    if (db->dbLocked) {
+        QLOG_TRACE() << "*** Warning: NSqlQuery Terminating with lock active";
+
+        global.settings->beginGroup("Debugging");
+        int level = global.settings->value("messageLevel", -1).toInt();
+        global.settings->endGroup();
+
+        // Setup the QLOG functions for debugging & messages
+        if (level == QsLogging::TraceLevel) {
+            void *array[30];
+            size_t size;
+
+            size = backtrace(array, 30);
+            if (size > 2)
+                // print out all the frames to stderr
+                backtrace_symbols_fd(array, 2, 2);
+            QLOG_TRACE() << "  ***  ";
+        }
+    }
 }
 
 

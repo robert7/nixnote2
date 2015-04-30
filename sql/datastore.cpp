@@ -36,28 +36,32 @@ extern Global global;
 #define ORIGINAL_GID 3;
 #define UPDATE_SEQUENCE_NUMBER 4;
 
-DataStore::DataStore(QSqlDatabase *db)
+DataStore::DataStore(DatabaseConnection *db)
 {
   this->db = db;
-
+  db->lockForRead();
   // Check if the table exists.  If not, create it.
-    NSqlQuery sql(*this->db);
+    NSqlQuery sql(db);
   sql.exec("Select * from sqlite_master where type='table' and name='DataStore';");
-  if (!sql.next())
+  if (!sql.next()) {
+      db->unlock();
       this->createTable();
+  }
   this->setTable("DataStore");
   this->select();
   this->setEditStrategy(QSqlTableModel::OnFieldChange);
   sql.finish();
+  db->unlock();
 }
 
 
 //* Create the NoteTable table.
 void DataStore::createTable() {
+    db->lockForWrite();
     QLOG_TRACE() << "Entering DataStore::createTable()";
 
     QLOG_DEBUG() << "Creating table DataStore";
-    NSqlQuery sql(*db);
+    NSqlQuery sql(db);
     QString command("Create table DataStore (" +
                   QString("lid integer,") +
                   QString("key integer,") +
@@ -88,6 +92,7 @@ void DataStore::createTable() {
         QLOG_ERROR() << "Creation of SearchIndex table failed: " << sql.lastError();
     }
     sql.finish();
+    db->unlock();
     Notebook notebook;
     NotebookTable table(db);
     notebook.name = "My Notebook";

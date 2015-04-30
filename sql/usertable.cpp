@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "usertable.h"
 #include "nsqlquery.h"
+#include "sql/databaseconnection.h"
 
 #define USER_EVERNOTE_ACCOUNT 1   // Unique Evernote account number
 #define USER_EMAIL 2                         // User email registered with Evernote
@@ -62,14 +63,18 @@ extern Global global;
 
 
 // Default constructor
-UserTable::UserTable(QSqlDatabase *db)
+UserTable::UserTable(DatabaseConnection *db)
 {
     this->db = db;
     // Check if the table exists.  If not, create it.
-    NSqlQuery sql(*this->db);
+    NSqlQuery sql(db);
+    db->lockForRead();
     sql.exec("Select * from sqlite_master where type='table' and name='UserTable';");
-    if (!sql.next())
+    if (!sql.next()) {
+        db->unlock();
         this->createTable();
+    } else
+        db->unlock();
 }
 
 
@@ -78,7 +83,8 @@ void UserTable::createTable() {
     QLOG_TRACE() << "Entering UserTable::userTable()";
 
     QLOG_DEBUG() << "Creating table UserTable";
-    NSqlQuery sql(*db);
+    NSqlQuery sql(db);
+    db->lockForWrite();
     QString command("Create table UserTable (" +
                   QString("key integer primary key,") +
                   QString("data blob default null collate nocase") +
@@ -86,13 +92,15 @@ void UserTable::createTable() {
     if (!sql.exec(command)) {
         QLOG_ERROR() << "Creation of UserTable table failed: " << sql.lastError();
     }
+    db->unlock();
 }
 
 
 
 // Update the database's user record
 void UserTable::updateUser(User &user) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("delete from UserTable where key != :last_date and key != :last_number;");
     query.bindValue(":key1", USER_SYNC_LAST_DATE);
     query.bindValue(":key2", USER_SYNC_LAST_NUMBER);
@@ -316,13 +324,15 @@ void UserTable::updateUser(User &user) {
         }
     }
     query.finish();
+    db->unlock();
 }
 
 
 
 // Update the database's user record
 void UserTable::updateSyncState(SyncState s) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("Delete from UserTable where key=:key1 or key=:key2 or key=:key3;");
     query.bindValue(":key1", USER_SYNC_UPLOADED);
     query.bindValue(":key2", USER_SYNC_LAST_DATE);
@@ -352,22 +362,26 @@ void UserTable::updateSyncState(SyncState s) {
          QLOG_ERROR() << "Error updating USER_SYNC_LAST_NUMBER : " << query.lastError();
      }
      query.finish();
+     db->unlock();
 }
 
 
 // Get the last date we synchronized
 qlonglong UserTable::getLastSyncDate() {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select data from UserTable where key=:key");
+    db->lockForRead();
     query.bindValue(":key", USER_SYNC_LAST_DATE);
     query.exec();
 
     if (query.next()) {
         qlonglong value = query.value(0).toLongLong();
         query.finish();
+        db->unlock();
         return value;
     }
     query.finish();
+    db->unlock();
     return 0;
 }
 
@@ -375,7 +389,8 @@ qlonglong UserTable::getLastSyncDate() {
 // Get the last sequence number
 qint32 UserTable::getLastSyncNumber() {
     qint32 value = 0;
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select data from UserTable where key=:key");
     query.bindValue(":key", USER_SYNC_LAST_NUMBER);
     query.exec();
@@ -383,16 +398,19 @@ qint32 UserTable::getLastSyncNumber() {
     if (query.next()) {
         value = query.value(0).toInt();
         query.finish();
+        db->unlock();
         return value;
     }
     query.finish();
+    db->unlock();
     return value;
 }
 
 
 // update the last date we synchronized
 void UserTable::updateLastSyncDate(long date) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("delete from UserTable where key=:key");
     query.bindValue(":key", USER_SYNC_LAST_DATE);
     query.exec();
@@ -401,12 +419,14 @@ void UserTable::updateLastSyncDate(long date) {
     query.bindValue(":data", qlonglong(date));
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
 // update the last sequence number
 void UserTable::updateLastSyncNumber(qint32 value) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("delete from UserTable where key=:key");
     query.bindValue(":key", USER_SYNC_LAST_NUMBER);
     query.exec();
@@ -415,12 +435,14 @@ void UserTable::updateLastSyncNumber(qint32 value) {
     query.bindValue(":data", value);
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
 // Fetch the user record fro the DB
 void UserTable::getUser(User &user) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
+    db->lockForRead();
     query.exec("Select key, data from UserTable;");
     Accounting accounting;
     while (query.next()) {
@@ -479,6 +501,7 @@ void UserTable::getUser(User &user) {
         }
     }
     query.finish();
+    db->unlock();
 }
 
 
@@ -486,12 +509,14 @@ void UserTable::getUser(User &user) {
 // Get the amount of data the user has uploaded
 qlonglong UserTable::getUploadAmt() {
     qint32 retval = 0;
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select data from usertable where key=:key");
     query.bindValue(":key", USER_SYNC_UPLOADED);
     query.exec();
     if (query.next())
        retval = query.value(0).toLongLong();
     query.finish();
+    db->unlock();
     return retval;
 }
