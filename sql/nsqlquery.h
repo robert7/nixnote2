@@ -39,6 +39,8 @@ class NSqlQuery : public QSqlQuery
 {
 private:
     DatabaseConnection *db;
+    void stackDump();
+    int DEBUG_TRIGGER;
 public:
     explicit NSqlQuery(DatabaseConnection *db);   // Constructor
     ~NSqlQuery();                          // Destructor

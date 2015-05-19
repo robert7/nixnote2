@@ -607,46 +607,6 @@ void NixNote::setupGui() {
                 criteriaFound = true;
                 criteria->setTags(items);
             }
-            QString expandedTags = global.settings->value("expandedTags", "").toString();
-            if (expandedTags != "") {
-                QStringList tags = expandedTags.split(" ");
-                for (int i=0; i<tags.size(); i++) {
-                    NTagViewItem *item;
-                    item = tagTreeView->dataStore[tags[i].toInt()];
-                    if (item != NULL)
-                        item->setExpanded(true);
-                }
-            }
-            QString expandedNotebooks = global.settings->value("expandedStacks", "").toString();
-            if (expandedNotebooks != "") {
-                QStringList books = expandedNotebooks.split(" ");
-                for (int i=0; i<books.size(); i++) {
-                    NNotebookViewItem *item;
-                    item = notebookTreeView->dataStore[books[i].toInt()];
-                    if (item != NULL && item->stack != "" && item->parent() != NULL)
-                        item->parent()->setExpanded(true);
-                }
-            }
-
-            searchTreeView->root->setExpanded(true);
-            QString collapsedTrees = global.settings->value("collapsedTrees", "").toString();
-            if (collapsedTrees != "") {
-                QStringList trees = collapsedTrees.split(" ");
-                for (int i=0; i<trees.size(); i++) {
-                    QString item = trees[i].toLower();
-                    if (item=="favorites")
-                        this->favoritesTreeView->root->setExpanded(false);
-                    if (item=="notebooks")
-                        this->notebookTreeView->root->setExpanded(false);
-                    if (item=="tags")
-                        this->tagTreeView->root->setExpanded(false);
-                    if (item=="attributes")
-                        this->attributeTree->root->setExpanded(false);
-                    if (item=="savedsearches")
-                        this->searchTreeView->root->setExpanded(false);
-                }
-            }
-
 
             global.settings->endGroup();
         }
@@ -700,6 +660,53 @@ void NixNote::setupGui() {
             this->setWindowState(Qt::WindowMinimized);
     }
 
+    // Restore expanded tags & stacks
+    global.settings->beginGroup("SaveState");
+    QString expandedTags = global.settings->value("expandedTags", "").toString();\
+    QLOG_DEBUG() << "Expanded Tags: " << expandedTags;
+    if (expandedTags != "") {
+        QStringList tags = expandedTags.split(" ");
+        for (int i=0; i<tags.size(); i++) {
+            NTagViewItem *item;
+            item = tagTreeView->dataStore[tags[i].toInt()];
+            if (item != NULL)
+                item->setExpanded(true);
+        }
+    }
+    QString expandedNotebooks = global.settings->value("expandedStacks", "").toString();
+    QLOG_DEBUG() << "Expanded Stacks: " << expandedNotebooks;
+    if (expandedNotebooks != "") {
+        QStringList books = expandedNotebooks.split(" ");
+        for (int i=0; i<books.size(); i++) {
+            NNotebookViewItem *item;
+            item = notebookTreeView->dataStore[books[i].toInt()];
+            if (item != NULL && item->stack != "" && item->parent() != NULL) {
+                item->parent()->setExpanded(true);
+                QLOG_DEBUG() << "Parent of " << books[i] << " expanded.";
+            }
+        }
+    }
+
+    searchTreeView->root->setExpanded(true);
+    QString collapsedTrees = global.settings->value("collapsedTrees", "").toString();
+    QLOG_DEBUG() << "collapsedTrees: " << collapsedTrees;
+    if (collapsedTrees != "") {
+        QStringList trees = collapsedTrees.split(" ");
+        for (int i=0; i<trees.size(); i++) {
+            QString item = trees[i].toLower();
+            if (item=="favorites")
+                this->favoritesTreeView->root->setExpanded(false);
+            if (item=="notebooks")
+                this->notebookTreeView->root->setExpanded(false);
+            if (item=="tags")
+                this->tagTreeView->root->setExpanded(false);
+            if (item=="attributes")
+                this->attributeTree->root->setExpanded(false);
+            if (item=="savedsearches")
+                this->searchTreeView->root->setExpanded(false);
+        }
+    }
+    global.settings->endGroup();
 }
 
 
@@ -962,11 +969,11 @@ void NixNote::closeNixNote() {
 //* Close the program
 //*****************************************************************************
 void NixNote::closeEvent(QCloseEvent *event) {
-    if (closeToTray && !closeFlag) {
-        event->ignore();
-        hide();
-        return;
-    }
+//    if (closeToTray && !closeFlag) {
+//        event->ignore();
+//        hide();
+//        return;
+//    }
 
     saveContents();
 
@@ -2299,12 +2306,9 @@ void NixNote::toggleVisible() {
             setHidden(false);
             this->showNormal();
             this->setFocus();
-            unhidingWindow=true;
             return;
         } else {
             showMinimized();
-            this->setHidden(false);
-            unhidingWindow=false;
             this->setHidden(true);
             return;
         }
@@ -2312,10 +2316,8 @@ void NixNote::toggleVisible() {
         if (isMinimized()) {
             this->showNormal();
             this->setFocus();
-            unhidingWindow = true;
             return;
         } else {
-            this->unhidingWindow = true;
             this->showMinimized();
             return;
         }
@@ -2334,9 +2336,9 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
     int newQuickNote = 2;
     int screenCapture = 3;
 
-    if (reason == QSystemTrayIcon::DoubleClick) {
+    if (reason == QSystemTrayIcon::MiddleClick) {
         global.settings->beginGroup("Appearance");
-        int value = global.settings->value("trayDoubleClickAction", 0).toInt();
+        int value = global.settings->value("trayMiddleClickAction", 0).toInt();
         global.settings->endGroup();
         if (value == showHide)
             toggleVisible();
@@ -2375,14 +2377,33 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 //* Useful when hiding & restoring from the tray.
 //*******************************************************
 void NixNote::changeEvent(QEvent *e) {
-    if (e->type() == QEvent::WindowStateChange && e->type()) {
-        if (isMinimized() && minimizeToTray && !unhidingWindow) {
-            e->accept();
-            unhidingWindow = false;
-            QTimer::singleShot(10, this, SLOT(hide()));
-            return;
+    return QMainWindow::changeEvent(e);
+//    if (e->type() == QEvent::WindowStateChange && e->type()) {
+//        if (isMinimized() && minimizeToTray && !unhidingWindow) {
+//            e->accept();
+//            unhidingWindow = false;
+//            QTimer::singleShot(10, this, SLOT(hide()));
+//            return;
+//        }
+//    }
+}
+
+bool NixNote::event(QEvent *event) {
+    if (event->type() == QEvent::WindowStateChange && isMinimized()) {
+        if (minimizeToTray) {
+            hide();
+            return false;
         }
     }
+    if (event->type() == QEvent::Close) {
+        if (global.closeToTray() && isVisible())  {
+            QLOG_DEBUG() << "overriding close event";
+            this->toggleVisible();
+            event->ignore();
+            return false;
+        }
+    }
+    return QMainWindow::event(event);
 }
 
 
