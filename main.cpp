@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
             printf("  --help or -?                  Show this message\n");
             printf("  --accountId=<id>              Start with specified user account\n");
             printf("  --dontStartMinimized          Override option to start minimized\n");
-            printf("  --disablIndexng               Override option to start minimized\n");
+            printf("  --disablIndexing              Disable all indexing\n");
             printf("  --openNote=<lid>              Open a specific note on startup\n");
             printf("  --forceSystemTrayAvailable    Force the program to accept that\n");
             printf("                                the desktop supports tray icons.\n");
@@ -148,6 +148,8 @@ int main(int argc, char *argv[])
 
 
     // Show Qt version.  This is useful for debugging
+    QLOG_DEBUG() << "Program Home: " << global.fileManager.getProgramDirPath("");
+    QLOG_INFO() << "Built on " << __DATE__ << " at " << __TIME__;
     QLOG_INFO() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
     //QLOG_INFO() << "Thrift version: " << PACKAGE_VERSION;
 

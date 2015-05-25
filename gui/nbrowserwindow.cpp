@@ -610,6 +610,18 @@ void NBrowserWindow::saveNoteContent() {
         ResourceTable resTable(global.db);
         resTable.getResourceList(oldLids, lid);
 
+        QLOG_DEBUG() << "Valid Resource  LIDS:";
+        for (int i=0; i<validLids.size(); i++) {
+            QLOG_DEBUG() << " * " << i << " : " << validLids[i];
+        }
+
+
+        QLOG_DEBUG() << "Old Resource  LIDS:";
+        for (int i=0; i<oldLids.size(); i++) {
+            QLOG_DEBUG() << " * " << i << " : " << oldLids[i];
+        }
+
+
         for (int i=0; i<oldLids.size(); i++) {
             if (!validLids.contains(oldLids[i])) {
                 QLOG_DEBUG() << "Expunging old lid " << oldLids[i];
@@ -2745,10 +2757,14 @@ void NBrowserWindow::changeDisplayFontSize(QString size) {
 // This function is called when the cursor position within the document changes.  It should
 // change the combo box to the current font name.
 void NBrowserWindow::changeDisplayFontName(QString name) {
+    QLOG_DEBUG() << "Font Name:" << name;
     if (name.startsWith("'")) {
             name = name.mid(1);
-            name.chop(1);
+            int idx = name.indexOf("'");
+            if (idx > 0)
+                name = name.mid(0,idx);
     }
+    name = name.toLower();
     buttonBar->fontNames->blockSignals(true);
     int idx = buttonBar->fontNames->findData(name, Qt::UserRole);
     if (idx >=0)
