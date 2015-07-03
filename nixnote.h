@@ -164,6 +164,15 @@ private:
     QSplashScreen *splashScreen;
     RemoteQuery *remoteQuery;
 
+    QShortcut *focusSearchShortcut;
+    QShortcut *focusTitleShortcut;
+    QShortcut *focusTagShortcut;
+    QShortcut *focusNoteShortcut;
+    QShortcut *focusUrlShortcut;
+    QShortcut *focusAuthorShortcut;
+    QShortcut *copyNoteUrlShortcut;
+    void setupShortcut(QShortcut *shortcut, QString keySequence);
+
 public:
     NixNote(QWidget *parent = 0);  // Constructor
     ~NixNote();   //Destructor
@@ -200,6 +209,7 @@ public slots:
     void newNote();
     void noteButtonClicked();
     void newExternalNote();
+    void disableEditing();
     void setSyncTimer();
     void notesDeleted(QList<qint32> lid);
     void openTrunk();

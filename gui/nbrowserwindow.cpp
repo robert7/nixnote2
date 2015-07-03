@@ -143,6 +143,9 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     insertDatetimeShortcut = new QShortcut(this);
     setupShortcut(insertDatetimeShortcut, "Insert_DateTime");
     connect(insertDatetimeShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
+    copyNoteUrlShortcut = new QShortcut(this);
+    setupShortcut(copyNoteUrlShortcut, "Edit_Copy_Note_Url");
+    connect(copyNoteUrlShortcut, SIGNAL(activated()), this, SLOT(copyNoteUrl()));
 
 
     // Setup the signals
@@ -179,6 +182,61 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     hammer = new Thumbnailer(global.db);
     lid = -1;
     thumbnailer = NULL;
+
+
+    //Setup shortcuts for context menu
+    removeFormattingShortcut = new QShortcut(this);
+    this->setupShortcut(removeFormattingShortcut, "Edit_Remove_Formatting");
+    connect(removeFormattingShortcut, SIGNAL(activated()), this, SLOT(removeFormatButtonPressed()));
+    removeFormattingShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    insertHtmlEntitiesShortcut = new QShortcut(this);
+    this->setupShortcut(insertHtmlEntitiesShortcut, QString("Edit_Insert_Html_Entities"));
+    connect(insertHtmlEntitiesShortcut, SIGNAL(activated()),this, SLOT(insertHtmlEntities()));
+    insertHtmlEntitiesShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    insertHtmlEntitiesShortcut = new QShortcut(this);
+    this->setupShortcut(insertHtmlEntitiesShortcut, QString("Edit_Insert_Html_Entities"));
+    connect(insertHtmlEntitiesShortcut, SIGNAL(activated()),this, SLOT(insertHtmlEntities()));
+    insertHtmlEntitiesShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    encryptTextShortcut = new QShortcut(this);
+    this->setupShortcut(encryptTextShortcut, QString("Edit_Encrypt_Text"));
+    connect(encryptTextShortcut, SIGNAL(activated()),this, SLOT(encryptButtonPressed()));
+    encryptTextShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    insertHyperlinkShortcut = new QShortcut(this);
+    this->setupShortcut(insertHyperlinkShortcut, QString("Edit_Insert_Hyperlink"));
+    connect(insertHyperlinkShortcut, SIGNAL(activated()),this, SLOT(insertLinkButtonPressed()));
+    insertHyperlinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    insertQuicklinkShortcut = new QShortcut(this);
+    this->setupShortcut(insertQuicklinkShortcut, QString("Edit_Insert_QuickLink"));
+    connect(insertQuicklinkShortcut, SIGNAL(activated()),this, SLOT(insertQuickLinkButtonPressed()));
+    insertQuicklinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    removeHyperlinkShortcut = new QShortcut(this);
+    this->setupShortcut(removeHyperlinkShortcut, QString("Edit_Remove_Hyperlink"));
+    connect(removeHyperlinkShortcut, SIGNAL(activated()),this, SLOT(removeLinkButtonPressed()));
+    removeHyperlinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    attachFileShortcut = new QShortcut(this);
+    this->setupShortcut(attachFileShortcut, QString("Edit_Attach_File"));
+    connect(attachFileShortcut, SIGNAL(activated()),this, SLOT(attachFile()));
+    attachFileShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    attachFileShortcut = new QShortcut(this);
+    this->setupShortcut(attachFileShortcut, QString("Edit_Attach_File"));
+    connect(attachFileShortcut, SIGNAL(activated()),this, SLOT(attachFile()));
+    attachFileShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    insertLatexShortcut = new QShortcut(this);
+    this->setupShortcut(insertLatexShortcut, QString("Edit_Insert_Latex"));
+    connect(insertLatexShortcut, SIGNAL(activated()),this, SLOT(insertLatexButtonPressed()));
+    insertLatexShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+
+
 
     // Restore the expand/collapse state
     global.settings->beginGroup("SaveState");
@@ -243,6 +301,7 @@ void NBrowserWindow::setupShortcut(QShortcut *action, QString text) {
 
 // Load the note content into the window
 void NBrowserWindow::setContent(qint32 lid) {
+    QLOG_DEBUG() << "Setting note contents to " << lid;
 
     //hammer->timer.stop();
     // First, make sure we have a valid lid
@@ -255,6 +314,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     }
 
     // If we are already updating this note, we don't do anything
+    QLOG_DEBUG() << "this.lid:" << this->lid << " " << lid;
     if (lid == this->lid)
         return;
 
@@ -262,6 +322,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     if (this->editor->hasFocus())
         hasFocus = true;
 
+    QLOG_DEBUG() << "editor is dirty";
     if (this->editor->isDirty)
         this->saveNoteContent();
 
@@ -272,6 +333,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     NoteTable noteTable(global.db);
     Note n;
 
+    QLOG_DEBUG() << "Getting note";
     bool rc = noteTable.get(n, this->lid, false, false);
     if (!rc)
         return;
@@ -287,22 +349,27 @@ void NBrowserWindow::setContent(qint32 lid) {
         global.cache.remove(lid);
 
     if (!global.cache.contains(lid)) {
+        QLOG_DEBUG() << "Note not in cache";
         NoteFormatter formatter;
         if (criteria->isSearchStringSet())
             formatter.setHighlightText(criteria->getSearchString());
         formatter.setNote(n, global.pdfPreview);
         formatter.setHighlight();
+        QLOG_DEBUG() << "rebuilding note HTML";
         content = formatter.rebuildNoteHTML();
         if (!criteria->isSearchStringSet()) {
+            QLOG_DEBUG() << "criteria search string set";
             NoteCache *newCache = new NoteCache();
             newCache->isReadOnly = formatter.readOnly;
             newCache->isInkNote = formatter.inkNote;
             newCache->noteContent = content;
+            QLOG_DEBUG() << "adding to cache";
             global.cache.insert(lid, newCache);
         }
         readOnly = formatter.readOnly;
         inkNote = formatter.inkNote;
     } else {
+        QLOG_DEBUG() << "Fetching from cache";
         NoteCache *c = global.cache[lid];
         content = c->noteContent;
         readOnly = c->isReadOnly;
@@ -311,12 +378,14 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     setReadOnly(readOnly);
 
+    QLOG_DEBUG() << "Setting up note title";
     noteTitle.setTitle(lid, n.title, n.title);
     dateEditor.setNote(lid, n);
     //QLOG_DEBUG() << content;
     //editor->setContent(content,  "application/xhtml+xml");
     QWebSettings::setMaximumPagesInCache(0);
     QWebSettings::setObjectCacheCapacities(0, 0, 0);
+    QLOG_DEBUG() << "Setting editor contents";
     editor->setContent(content);
     // is this an ink note?
     if (inkNote)
@@ -324,6 +393,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     // Setup the alarm
     NoteAttributes attributes;
+    QLOG_DEBUG() << "Setting attributes";
     if (n.attributes.isSet())
         attributes = n.attributes;
     if (attributes.reminderTime.isSet()) {
@@ -358,6 +428,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
 
     // Set the tag names
+    QLOG_DEBUG() << "Setting tags";
     tagEditor.clear();
     QStringList names;
     QList<QString> tagNames;
@@ -376,15 +447,22 @@ void NBrowserWindow::setContent(qint32 lid) {
     else
         tagEditor.setAccount(0);
 
+    QLOG_DEBUG() << "Setting notebook";
     this->lid = lid;
     notebookMenu.setCurrentNotebook(lid, n);
+    QLOG_DEBUG() << "Setting URL";
+    urlEditor.setUrl(lid, "");
     NoteAttributes na;
-    if (n.attributes.isSet())
+    QLOG_DEBUG() << "Setting note attributes";
+    if (n.attributes.isSet()) {
         na = n.attributes;
-    if (na.sourceURL.isSet())
-        urlEditor.setUrl(lid, na.sourceURL);
-    else
-        urlEditor.setUrl(lid, "");
+        if (na.sourceURL.isSet()) {
+            QLOG_DEBUG() << "Setting sourceUrl";
+            urlEditor.setUrl(lid, na.sourceURL);
+        }
+    }
+
+    QLOG_DEBUG() << "Calling set source";
     setSource();
 
     if (criteria->isSearchStringSet()) {
@@ -394,6 +472,7 @@ void NBrowserWindow::setContent(qint32 lid) {
         }
     }
 
+    QLOG_DEBUG() << "Checking thumbanail";
     if (hammer->idle && noteTable.isThumbnailNeeded(this->lid)) {
         hammer->render(this->lid);
     } /*else
@@ -401,11 +480,13 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     if (hasFocus)
         this->editor->setFocus();
+    QLOG_DEBUG() << "Exiting setContent";
 }
 
 
 void NBrowserWindow::setReadOnly(bool readOnly) {
-    if (readOnly) {
+    isReadOnly = readOnly;
+    if (readOnly || global.disableEditing) {
         noteTitle.setFocusPolicy(Qt::NoFocus);
         tagEditor.setEnabled(false);
         buttonBar->setVisible(false);
@@ -1171,7 +1252,7 @@ void NBrowserWindow::insertQuickLinkButtonPressed() {
         QString href = "evernote:///view/" + QString::number(user.id) + QString("/") +
                user.shardId +QString("/") +
                 n.guid +QString("/") +
-                n.guid;
+                n.guid + QString("/");
 
         QString url = QString("<a href=\"") +href
                 +QString("\" title=\"") +text
@@ -1600,6 +1681,7 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
      }
      if (url.toString().startsWith("evernote:/view/", Qt::CaseInsensitive) ||
              url.toString().startsWith("evernote:///view/", Qt::CaseInsensitive)) {
+
          QStringList tokens;
          if (url.toString().startsWith("evernote:/view/", Qt::CaseInsensitive))
             tokens = url.toString().replace("evernote:/view/", "").split("/", QString::SkipEmptyParts);
@@ -1614,16 +1696,25 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
          if (newlid <= 0)
              return;
 
+         bool newExternalWindow = false;
+         bool newTab = false;
+         if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
+            if (global.getMiddleClickAction() == MOUSE_MIDDLE_CLICK_NEW_WINDOW)
+                newExternalWindow = true;
+            else
+                newTab = true;
+         } else {
+             // Setup a new filter
+             FilterCriteria *criteria = new FilterCriteria();
+             global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+             criteria->unsetSelectedNotes();
+             criteria->unsetLid();
+             criteria->setLid(newlid);
+             global.appendFilter(criteria);
+             global.filterPosition++;
+         }
+         emit(evernoteLinkClicked(newlid, newTab, newExternalWindow));
 
-         // Setup a new filter
-         FilterCriteria *criteria = new FilterCriteria();
-         global.filterCriteria[global.filterPosition]->duplicate(*criteria);
-         criteria->unsetSelectedNotes();
-         criteria->unsetLid();
-         criteria->setLid(newlid);
-         global.appendFilter(criteria);
-         global.filterPosition++;
-         emit(evernoteLinkClicked(newlid, false));
          return;
      }
      if (url.toString().startsWith("nnres:", Qt::CaseInsensitive)) {
@@ -2709,12 +2800,18 @@ void NBrowserWindow::hideHtmlEntities() {
 
 
 void NBrowserWindow::handleUrls(const QMimeData *mime) {
-
     QList<QUrl> urlList = mime->urls();
     for (int i=0; i<urlList.size(); i++) {
         QString file  = urlList[i].toString();
-        if (file.toLower().startsWith("file://"))
+        if (file.toLower().startsWith("file://")) {
             attachFileSelected(file.mid(7));
+            return;
+        }
+
+        editor->setFocus();
+        global.clipboard->clear();
+        global.clipboard->setText(file, QClipboard::Clipboard);
+        this->editor->triggerPageAction(QWebPage::Paste);
     }
 }
 
@@ -2757,7 +2854,7 @@ void NBrowserWindow::changeDisplayFontSize(QString size) {
 // This function is called when the cursor position within the document changes.  It should
 // change the combo box to the current font name.
 void NBrowserWindow::changeDisplayFontName(QString name) {
-    QLOG_DEBUG() << "Font Name:" << name;
+    //QLOG_DEBUG() << "Font Name:" << name;
     if (name.startsWith("'")) {
             name = name.mid(1);
             int idx = name.indexOf("'");
@@ -2796,4 +2893,50 @@ void NBrowserWindow::focusCheck() {
     if (!editor->page()->isContentEditable())
         buttonBarVisible = false;
     buttonBar->setVisible(buttonBarVisible);
+}
+
+
+
+void NBrowserWindow::authorFocusShortcut() {
+    if (!this->dateEditor.authorEditor.isVisible()) {
+        this->changeExpandState(EXPANDBUTTON_3);
+        this->expandButton.setState(EXPANDBUTTON_3);
+    }
+    dateEditor.authorEditor.setFocus();
+}
+
+void NBrowserWindow::urlFocusShortcut() {
+    if (!this->urlEditor.isVisible()) {
+        this->changeExpandState(EXPANDBUTTON_2);
+        this->expandButton.setState(EXPANDBUTTON_2);
+    }
+    this->urlEditor.setFocus();
+}
+
+
+
+
+void NBrowserWindow::copyNoteUrl() {
+    Note n;
+    NoteTable ntable(global.db);
+    ntable.get(n,this->lid,false,false);
+    UserTable utable(global.db);
+    User user;
+    utable.getUser(user);
+
+    QString href = "evernote:///view/" + QString::number(user.id) + QString("/") +
+           user.shardId +QString("/") +
+            n.guid +QString("/") +
+            n.guid + QString("/");
+    global.clipboard->setText(href, QClipboard::Clipboard);
+}
+
+
+
+void NBrowserWindow::newTagFocusShortcut() {
+    if (!this->tagEditor.newTag.isVisible()) {
+        this->changeExpandState(EXPANDBUTTON_2);
+        this->expandButton.setState(EXPANDBUTTON_2);
+    }
+    tagEditor.newTag.setFocus();
 }

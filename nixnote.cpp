@@ -350,6 +350,7 @@ void NixNote::setupGui() {
     connect(notebookTreeView, SIGNAL(notebookRenamed(qint32,QString,QString)), favoritesTreeView, SLOT(itemRenamed(qint32, QString, QString)));
     connect(notebookTreeView, SIGNAL(stackDeleted(QString)), favoritesTreeView, SLOT(stackExpunged(QString)));
     connect(notebookTreeView, SIGNAL(stackRenamed(QString,QString)), favoritesTreeView, SLOT(stackRenamed(QString, QString)));
+    connect(tabWindow, SIGNAL(updateNoteTitle(QString,qint32,QString)), favoritesTreeView, SLOT(updateShortcutName(QString,qint32,QString)));
 
     QLOG_TRACE() << "Setting up left panel";
     leftPanel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -479,10 +480,8 @@ void NixNote::setupGui() {
 
     // Setup the tray icon
     closeFlag = false;
-    global.settings->beginGroup("SaveState");
-    minimizeToTray = global.settings->value("minimizeToTray", false).toBool();
-    closeToTray = global.settings->value("closeToTray", false).toBool();
-    global.settings->endGroup();
+    minimizeToTray = global.minimizeToTray();
+    closeToTray = global.closeToTray();
     trayIcon = new QSystemTrayIcon(global.getIconResource(":trayIcon"), this);
     trayIconContextMenu = new TrayMenu(this);
     trayIconContextMenu->addAction(newNoteButton);
@@ -662,8 +661,7 @@ void NixNote::setupGui() {
 
     // Restore expanded tags & stacks
     global.settings->beginGroup("SaveState");
-    QString expandedTags = global.settings->value("expandedTags", "").toString();\
-    QLOG_DEBUG() << "Expanded Tags: " << expandedTags;
+    QString expandedTags = global.settings->value("expandedTags", "").toString();
     if (expandedTags != "") {
         QStringList tags = expandedTags.split(" ");
         for (int i=0; i<tags.size(); i++) {
@@ -674,7 +672,6 @@ void NixNote::setupGui() {
         }
     }
     QString expandedNotebooks = global.settings->value("expandedStacks", "").toString();
-    QLOG_DEBUG() << "Expanded Stacks: " << expandedNotebooks;
     if (expandedNotebooks != "") {
         QStringList books = expandedNotebooks.split(" ");
         for (int i=0; i<books.size(); i++) {
@@ -689,7 +686,6 @@ void NixNote::setupGui() {
 
     searchTreeView->root->setExpanded(true);
     QString collapsedTrees = global.settings->value("collapsedTrees", "").toString();
-    QLOG_DEBUG() << "collapsedTrees: " << collapsedTrees;
     if (collapsedTrees != "") {
         QStringList trees = collapsedTrees.split(" ");
         for (int i=0; i<trees.size(); i++) {
@@ -707,6 +703,44 @@ void NixNote::setupGui() {
         }
     }
     global.settings->endGroup();
+
+
+    // Setup application-wide shortcuts
+    focusSearchShortcut = new QShortcut(this);
+    focusSearchShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(focusSearchShortcut, "Focus_Search");
+    connect(focusSearchShortcut, SIGNAL(activated()), searchText, SLOT(setFocus()));
+
+    focusTitleShortcut = new QShortcut(this);
+    focusTitleShortcut->setContext(Qt::WidgetShortcut);
+    this->setupShortcut(focusTitleShortcut, "Focus_Title");
+    connect(focusTitleShortcut, SIGNAL(activated()), &tabWindow->currentBrowser()->noteTitle, SLOT(setFocus()));
+
+    focusNoteShortcut = new QShortcut(this);
+    focusNoteShortcut->setContext(Qt::WidgetShortcut);
+    this->setupShortcut(focusNoteShortcut, "Focus_Note");
+    connect(focusNoteShortcut, SIGNAL(activated()), tabWindow->currentBrowser()->editor, SLOT(setFocus()));
+
+    copyNoteUrlShortcut = new QShortcut(this);
+    copyNoteUrlShortcut->setContext(Qt::WidgetShortcut);
+    this->setupShortcut(copyNoteUrlShortcut, "Edit_Copy_Note_Url");
+    connect(copyNoteUrlShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(copyNoteUrl()));
+
+    focusTagShortcut = new QShortcut(this);
+    focusTagShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(focusTagShortcut, "Focus_Tag");
+    connect(focusTagShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(newTagFocusShortcut()));
+
+    focusUrlShortcut = new QShortcut(this);
+    focusUrlShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(focusUrlShortcut, "Focus_Url");
+    connect(focusUrlShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(urlFocusShortcut()));
+
+    focusAuthorShortcut = new QShortcut(this);
+    focusAuthorShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(focusAuthorShortcut, "Focus_Author");
+    connect(focusAuthorShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(authorFocusShortcut()));
+
 }
 
 
@@ -2147,6 +2181,22 @@ void NixNote::findReplaceInNotePressed() {
 
 
 
+//**************************************************
+//* Temporarily disable all note editing
+//**************************************************
+void NixNote::disableEditing() {
+   global.disableEditing = !global.disableEditing;
+   for (int i=0; i<tabWindow->browserList->size(); i++) {
+        NBrowserWindow *browser = tabWindow->browserList->at(i);
+        browser->setReadOnly(global.disableEditing && browser->isReadOnly);
+   }
+   for (int i=0; i<tabWindow->externalList->size(); i++) {
+        NBrowserWindow *browser = tabWindow->externalList->at(i)->browser;
+        browser->setReadOnly(global.disableEditing && browser->isReadOnly);
+   }
+}
+
+
 
 //*************************************************
 //* Replace All button pressed.
@@ -2390,12 +2440,14 @@ void NixNote::changeEvent(QEvent *e) {
 }
 
 bool NixNote::event(QEvent *event) {
+
     if (event->type() == QEvent::WindowStateChange && isMinimized()) {
         if (minimizeToTray) {
             hide();
             return false;
         }
     }
+
     if (event->type() == QEvent::Close) {
         if (global.closeToTray() && isVisible())  {
             QLOG_DEBUG() << "overriding close event";
@@ -3212,3 +3264,11 @@ void NixNote::checkLeftPanelSeparators() {
 }
 
 
+
+// Load any shortcut keys
+void NixNote::setupShortcut(QShortcut *action, QString text) {
+    if (!global.shortcutKeys->containsAction(&text))
+        return;
+    QKeySequence key(global.shortcutKeys->getShortcut(&text));
+    action->setKey(key);
+}

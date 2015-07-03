@@ -31,8 +31,6 @@ class NMainMenuBar : public QMenuBar
     Q_OBJECT
 private:
     NixNote *parent;
-    QFont font;
-
 
     void setupFileMenu();
     void setupEditMenu();
@@ -69,6 +67,7 @@ public:
     QAction *importNoteAction;
     QAction *accountDialogAction;
     QAction *pauseIndexingAction;
+    QAction *disableEditingAction;
     QAction *userMaintenanceAction;
     QAction *aboutAction;
 

@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <QNetworkProxy>
 
 
 #include "application.h"
@@ -100,7 +101,8 @@ int main(int argc, char *argv[])
             printf("  --help or -?                  Show this message\n");
             printf("  --accountId=<id>              Start with specified user account\n");
             printf("  --dontStartMinimized          Override option to start minimized\n");
-            printf("  --disablIndexing              Disable all indexing\n");
+            printf("  --disableEditing              Disable note editing\n");
+            printf("  --disableIndexing             Disable all indexing\n");
             printf("  --openNote=<lid>              Open a specific note on startup\n");
             printf("  --forceSystemTrayAvailable    Force the program to accept that\n");
             printf("                                the desktop supports tray icons.\n");
@@ -116,6 +118,9 @@ int main(int argc, char *argv[])
         if (parm.startsWith("--openNote=", Qt::CaseSensitive)) {
             parm = parm.mid(11);
             startupConfig.startupNoteLid = parm.toInt();
+        }
+        if (parm == "--disableEditing") {
+            startupConfig.disableEditing = true;
         }
         if (parm == "--dontStartMinimized") {
             startupConfig.forceNoStartMinimized = true;
@@ -224,6 +229,27 @@ int main(int argc, char *argv[])
         w->hide();
     if (global.startMinimized)
         w->showMinimized();
+
+    // Setup the proxy
+    QNetworkProxy proxy;
+    proxy.setType(QNetworkProxy::HttpProxy);
+    if (global.isProxyEnabled()) {
+        QString host = global.getProxyHost();
+        int port = global.getProxyPort();
+        QString user = global.getProxyUserid();
+        QString password = global.getProxyPassword();
+
+        if (host.trimmed() != "")
+            proxy.setHostName(host.trimmed());
+        if (port > 0)
+            proxy.setPort(port);
+        if (user.trimmed() != "")
+            proxy.setUser(user.trimmed());
+        if (password.trimmed() != "")
+            proxy.setPassword(password.trimmed());
+
+        QNetworkProxy::setApplicationProxy(proxy);
+    }
 
     int rc = a->exec();
     QLOG_DEBUG() << "Unlocking memory";

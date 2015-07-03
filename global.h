@@ -77,6 +77,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #define NOTE_TABLE_COLUMN_COUNT 26
 
+
+#define MOUSE_MIDDLE_CLICK_NEW_TAB 0
+#define MOUSE_MIDDLE_CLICK_NEW_WINDOW 1
+
 using namespace std;
 
 
@@ -106,6 +110,7 @@ public:
         ListViewWide = 1,
         listViewNarrow = 2
     };
+
     ListViewSetup listView;    // Current desired note list value
 
     int argc;                  // Initial argument count from the program start
@@ -187,6 +192,23 @@ public:
     bool autoHideEditorToolbar;                               // Should the editor bar be hidden when focus is lost?
     ReminderManager *reminderManager;                         // Used to alert the user when a reminder time has expired
 
+    // These functions deal with proxy settings
+    void setProxyHost(QString proxy);
+    void setProxyPort(int port);
+    void setProxyPassword(QString password);
+    void setProxyUserid(QString userid);
+    QString getProxyHost();
+    int getProxyPort();
+    QString getProxyPassword();
+    QString getProxyUserid();
+    bool isProxyEnabled();
+    void setProxyEnabled(bool value);
+
+    // Middle click settings
+    int getMiddleClickAction();
+    void setMiddleClickAction(int value);
+
+    bool disableEditing;                                    // Disable all editing of notes
 
     // These functions deal with the icon themes
     QHash<QString,QString> resourceList;                      // Hashmap of icons used in the current theme

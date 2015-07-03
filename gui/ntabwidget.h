@@ -69,6 +69,7 @@ signals:
     void noteUpdated(qint32);
     void tagCreated(qint32);
     void updateNoteList(qint32, int, QVariant); // A note was edited so we update the note list
+    void updateNoteTitle(QString uuid, qint32 lid, QString content);
 
 public slots:
     void closeTab(int index);
@@ -77,7 +78,7 @@ public slots:
     void tagCreationSignaled(qint32 lid);
     void noteSyncSignaled(qint32 lid);
     void noteUpdateSignaled(qint32);
-    void evernoteLinkClicked(qint32 openLid, bool newWindow);
+    void evernoteLinkClicked(qint32 openLid, bool newTab, bool newWindow);
 
     void saveAllNotes();
     void undoButtonPressed();

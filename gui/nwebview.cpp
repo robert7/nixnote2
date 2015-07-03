@@ -82,6 +82,11 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addAction(removeFormattingAction);
     connect(removeFormattingAction, SIGNAL(triggered()), parent, SLOT(removeFormatButtonPressed()));
 
+    copyNoteUrlAction = new QAction(tr("Copy Note URL"), this);
+    this->setupShortcut(copyNoteUrlAction, "Edit_Copy_Note_Url");
+    contextMenu->addAction(copyNoteUrlAction);
+    connect(copyNoteUrlAction, SIGNAL(triggered()), parent, SLOT(copyNoteUrl()));
+
     contextMenu->addSeparator();
 
     QMenu *colorMenu = new QMenu(tr("Background Color"), this);
@@ -139,22 +144,22 @@ NWebView::NWebView(NBrowserWindow *parent) :
 
     encryptAction = new QAction(tr("Encrypted Selected Text"), this);
     contextMenu->addAction(encryptAction);
-    this->setupShortcut(encryptAction, "Edit_EncryptText");
+    this->setupShortcut(encryptAction, "Edit_Encrypt_Text");
     connect(encryptAction, SIGNAL(triggered()), parent, SLOT(encryptButtonPressed()));
 
     insertLinkAction = new QAction(tr("Insert Hyperlink"), this);
     contextMenu->addAction(insertLinkAction);
-    this->setupShortcut(insertLinkAction, "Edit_InsertHyperlink");
+    this->setupShortcut(insertLinkAction, "Edit_Insert_Hyperlink");
     connect(insertLinkAction, SIGNAL(triggered()),parent, SLOT(insertLinkButtonPressed()));    
 
     insertQuickLinkAction = new QAction(tr("Quick Link"), this);
     contextMenu->addAction(insertQuickLinkAction);
-    this->setupShortcut(insertQuickLinkAction, "Edit_InsertQuickLink");
+    this->setupShortcut(insertQuickLinkAction, "Edit_Insert_QuickLink");
     connect(insertQuickLinkAction, SIGNAL(triggered()),parent, SLOT(insertQuickLinkButtonPressed()));
 
     removeLinkAction = new QAction(tr("Remove Hyperlink"), this);
     contextMenu->addAction(removeLinkAction);
-    this->setupShortcut(removeLinkAction, "Edit_RemoveHyperlink");
+    this->setupShortcut(removeLinkAction, "Edit_Remove_Hyperlink");
     connect(removeLinkAction, SIGNAL(triggered()),parent, SLOT(removeLinkButtonPressed()));
 
     attachFileAction = new QAction(tr("Attach File"), this);
@@ -364,8 +369,12 @@ bool NWebView::event(QEvent *event)
             return true;
         }
     }
+    if (event->type() == QEvent::MouseButtonDblClick) {
+        QLOG_DEBUG() << "DOUBLE CLICK!!!";
+    }
     return QWebView::event(event);
 }
+
 
 
 void NWebView::keyPressEvent(QKeyEvent *e) {
@@ -381,6 +390,7 @@ void NWebView::keyPressEvent(QKeyEvent *e) {
     }
     QWebView::keyPressEvent(e);
 }
+
 
 
 

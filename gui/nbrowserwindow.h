@@ -90,6 +90,17 @@ private:
     Thumbnailer *thumbnailer;
     QTimer focusTimer;
 
+    // Shortcuts for context menu
+    QShortcut *attachFileShortcut;
+    QShortcut *removeFormattingShortcut;
+    QShortcut *insertQuicklinkShortcut;
+    QShortcut *insertHtmlEntitiesShortcut;
+    QShortcut *insertHyperlinkShortcut;
+    QShortcut *encryptTextShortcut;
+    QShortcut *removeHyperlinkShortcut;
+    QShortcut *insertLatexShortcut;
+    QShortcut *copyNoteUrlShortcut;
+
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
     QString uuid;
@@ -108,6 +119,7 @@ public:
     //LocationEditor locationEditor;
     void setReadOnly(bool readOnly);
     NMainMenuBar *mainMenuBarHook;
+    bool isReadOnly;
 
     EditorButtonBar *buttonBar;
     QShortcut *focusNoteShortcut;
@@ -138,7 +150,7 @@ public:
 signals:
     void noteUpdated(qint32);
     qint32 tagAdded(qint32);
-    void evernoteLinkClicked(qint32 lid, bool newWindow);
+    void evernoteLinkClicked(qint32 lid, bool newTab, bool newWindow);
     void updateNoteList(qint32 lid, int column, QVariant data);
     void noteContentEditedSignal(QString uuid, qint32 lid, QString content);
     void noteTitleEditedSignal(QString uuid, qint32 lid, QString content);
@@ -240,6 +252,10 @@ public slots:
     void printNodeName(QString node);
     void sendDateCreatedUpdateSignal();
     void sendDateSubjectUpdateSignal();
+    void newTagFocusShortcut();
+    void authorFocusShortcut();
+    void urlFocusShortcut();
+    void copyNoteUrl();
 
 private slots:
     void sendTitleUpdateSignal();
