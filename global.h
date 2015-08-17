@@ -123,12 +123,14 @@ public:
     string username;                       // This is probably obsolete
     string password;                       // This is probably obsolete
     bool connected;                        // Are we currently connected to Evernote?
-    bool disableIndexing;                  // Stop indexing
+    bool enableIndexing;                   // background indexing
     bool pdfPreview;                       // Should we view PDFs inline?
     bool showGoodSyncMessagesInTray;       // Should we show good sync messages in the tray, or just errors?
     QSharedMemory *sharedMemory;           // Shared memory key.  Useful to prevent multiple instances and for cross memory communication
     bool confirmDeletes();                 // Should we confirm deletes?
     QString tagBehavior();                 // Should inactive tags be shown?
+    bool newNoteFocusToTitle();            // Should we focus on the note title when a new note has been created?
+    void setNewNoteFocusToTitle(bool focus); // Set if we should focus on the title when a new note is created
     QString server;                        // Evernote server to sync with
     QSettings *settings;                   // Pointer to the nixnote config file.  There is a different one for each account.
     QSettings *globalSettings;             // Pointer to all the config file that is common to all accounts.

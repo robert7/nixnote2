@@ -192,6 +192,7 @@ NTableView::NTableView(QWidget *parent) :
 
     contextMenu = new QMenu(this);
     this->setFont(global.getGuiFont(font()));
+    contextMenu->setFont(global.getGuiFont(font()));
 
     openNoteAction = new QAction(tr("Open Note"), this);
     contextMenu->addAction(openNoteAction);
@@ -255,6 +256,7 @@ NTableView::NTableView(QWidget *parent) :
 
     contextMenu->addSeparator();
     colorMenu = new QMenu(tr("Title Color"));
+    colorMenu->setFont(global.getGuiFont(font()));
     contextMenu->addMenu(colorMenu);
 
     noteTitleColorWhiteAction = new QAction(tr("White"), colorMenu);
@@ -1007,7 +1009,8 @@ void NTableView::setColumnsVisible() {
 
     value = global.settings->value("reminderOrder", false).toBool();
     tableViewHeader->reminderOrderAction->setChecked(!value);
-    setColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION, value);
+    //setColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION, value);
+    setColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION, true);  // Column hidden because it isn't really needed
 
     value = global.settings->value("isPinned", false).toBool();
     tableViewHeader->pinnedAction->setChecked(!value);

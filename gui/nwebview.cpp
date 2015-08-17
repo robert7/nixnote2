@@ -244,6 +244,10 @@ NWebView::NWebView(NBrowserWindow *parent) :
         qss = global.fileManager.getQssDirPath("");
     this->settings()->setUserStyleSheetUrl(QUrl("file://"+qss+"editor.css"));
 
+    this->pasteSequence = QKeySequence(this->pasteAction->shortcut()).toString().toLower();
+    if (pasteSequence.trimmed() == "")
+        pasteSequence = "ctrl+v";
+
 }
 
 
@@ -388,6 +392,17 @@ void NWebView::keyPressEvent(QKeyEvent *e) {
             scrollValue = -1*scrollValue;
         page()->mainFrame()->scroll(0,scrollValue);
     }
+
+    // Hard override of paste because I can't seem to get it any other way.
+//    if (e->key() == Qt::Key_V && e->modifiers().testFlag(Qt::ControlModifier)) {
+    QKeySequence ks(e->modifiers()|e->key());
+    if (ks.toString().toLower() == pasteSequence) {
+        parent->pasteButtonPressed();
+        e->accept();
+        return;
+    }
+
+
     QWebView::keyPressEvent(e);
 }
 

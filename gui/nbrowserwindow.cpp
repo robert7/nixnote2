@@ -188,52 +188,47 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     removeFormattingShortcut = new QShortcut(this);
     this->setupShortcut(removeFormattingShortcut, "Edit_Remove_Formatting");
     connect(removeFormattingShortcut, SIGNAL(activated()), this, SLOT(removeFormatButtonPressed()));
-    removeFormattingShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    //removeFormattingShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     insertHtmlEntitiesShortcut = new QShortcut(this);
     this->setupShortcut(insertHtmlEntitiesShortcut, QString("Edit_Insert_Html_Entities"));
     connect(insertHtmlEntitiesShortcut, SIGNAL(activated()),this, SLOT(insertHtmlEntities()));
-    insertHtmlEntitiesShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    //insertHtmlEntitiesShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     insertHtmlEntitiesShortcut = new QShortcut(this);
     this->setupShortcut(insertHtmlEntitiesShortcut, QString("Edit_Insert_Html_Entities"));
     connect(insertHtmlEntitiesShortcut, SIGNAL(activated()),this, SLOT(insertHtmlEntities()));
-    insertHtmlEntitiesShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    //insertHtmlEntitiesShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     encryptTextShortcut = new QShortcut(this);
     this->setupShortcut(encryptTextShortcut, QString("Edit_Encrypt_Text"));
     connect(encryptTextShortcut, SIGNAL(activated()),this, SLOT(encryptButtonPressed()));
-    encryptTextShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    //encryptTextShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     insertHyperlinkShortcut = new QShortcut(this);
     this->setupShortcut(insertHyperlinkShortcut, QString("Edit_Insert_Hyperlink"));
     connect(insertHyperlinkShortcut, SIGNAL(activated()),this, SLOT(insertLinkButtonPressed()));
-    insertHyperlinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    //insertHyperlinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     insertQuicklinkShortcut = new QShortcut(this);
     this->setupShortcut(insertQuicklinkShortcut, QString("Edit_Insert_QuickLink"));
     connect(insertQuicklinkShortcut, SIGNAL(activated()),this, SLOT(insertQuickLinkButtonPressed()));
-    insertQuicklinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    //insertQuicklinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     removeHyperlinkShortcut = new QShortcut(this);
     this->setupShortcut(removeHyperlinkShortcut, QString("Edit_Remove_Hyperlink"));
     connect(removeHyperlinkShortcut, SIGNAL(activated()),this, SLOT(removeLinkButtonPressed()));
-    removeHyperlinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    //removeHyperlinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     attachFileShortcut = new QShortcut(this);
     this->setupShortcut(attachFileShortcut, QString("Edit_Attach_File"));
     connect(attachFileShortcut, SIGNAL(activated()),this, SLOT(attachFile()));
-    attachFileShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-
-    attachFileShortcut = new QShortcut(this);
-    this->setupShortcut(attachFileShortcut, QString("Edit_Attach_File"));
-    connect(attachFileShortcut, SIGNAL(activated()),this, SLOT(attachFile()));
-    attachFileShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    //attachFileShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     insertLatexShortcut = new QShortcut(this);
     this->setupShortcut(insertLatexShortcut, QString("Edit_Insert_Latex"));
     connect(insertLatexShortcut, SIGNAL(activated()),this, SLOT(insertLatexButtonPressed()));
-    insertLatexShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    //insertLatexShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
 
 
@@ -258,33 +253,132 @@ void NBrowserWindow::setupToolBar() {
 
     // Toolbar action
     connect(buttonBar->undoButtonAction, SIGNAL(triggered()), this, SLOT(undoButtonPressed()));
+    QShortcut *undoButtonShortcut = new QShortcut(this);
+    undoButtonShortcut->setKey(buttonBar->undoButtonAction->shortcut());
+    connect(undoButtonShortcut, SIGNAL(activated()), this, SLOT(undoButtonPressed()));
+
     connect(buttonBar->redoButtonAction, SIGNAL(triggered()), this, SLOT(redoButtonPressed()));
+    QShortcut *redoButtonShortcut = new QShortcut(this);
+    redoButtonShortcut->setKey(buttonBar->redoButtonAction->shortcut());
+    connect(redoButtonShortcut, SIGNAL(activated()), this, SLOT(redoButtonPressed()));
+
     connect(buttonBar->cutButtonAction, SIGNAL(triggered()), this, SLOT(cutButtonPressed()));
+    QShortcut *cutButtonShortcut = new QShortcut(this);
+    cutButtonShortcut->setKey(buttonBar->cutButtonAction->shortcut());
+    connect(cutButtonShortcut, SIGNAL(activated()), this, SLOT(cutButtonPressed()));
+
     connect(buttonBar->copyButtonAction, SIGNAL(triggered()), this, SLOT(copyButtonPressed()));
+    QShortcut *copyButtonShortcut = new QShortcut(this);
+    copyButtonShortcut->setKey(buttonBar->copyButtonAction->shortcut());
+    connect(copyButtonShortcut, SIGNAL(activated()), this, SLOT(copyButtonPressed()));
+
     connect(buttonBar->pasteButtonAction, SIGNAL(triggered()), this, SLOT(pasteButtonPressed()));
+    QShortcut *pasteButtonShortcut = new QShortcut(this);
+    pasteButtonShortcut->setKey(buttonBar->pasteButtonAction->shortcut());
+    connect(pasteButtonShortcut, SIGNAL(activated()), this, SLOT(pasteButtonPressed()));
+
     connect(buttonBar->removeFormatButtonAction, SIGNAL(triggered()), this, SLOT(removeFormatButtonPressed()));
+    QShortcut *removeFormatButtonShortcut = new QShortcut(this);
+    removeFormatButtonShortcut->setKey(buttonBar->removeFormatButtonAction->shortcut());
+    connect(removeFormatButtonShortcut, SIGNAL(activated()), this, SLOT(removeFormatButtonPressed()));
+
     connect(buttonBar->boldButtonWidget, SIGNAL(clicked()), this, SLOT(boldButtonPressed()));
+    QShortcut *buttonBarShortcut = new QShortcut(this);
+    buttonBarShortcut->setKey(buttonBar->boldButtonWidget->shortcut());
+    connect(buttonBarShortcut, SIGNAL(activated()), this, SLOT(boldButtonPressed()));
+
     connect(buttonBar->italicButtonWidget, SIGNAL(clicked()), this, SLOT(italicsButtonPressed()));
+    QShortcut *italicsButtonShortcut = new QShortcut(this);
+    italicsButtonShortcut->setKey(buttonBar->italicButtonWidget->shortcut());
+    connect(italicsButtonShortcut, SIGNAL(activated()), this, SLOT(italicsButtonPressed()));
+
     connect(buttonBar->underlineButtonWidget, SIGNAL(clicked()), this, SLOT(underlineButtonPressed()));
+    QShortcut *underlineButtonShortcut = new QShortcut(this);
+    underlineButtonShortcut->setKey(buttonBar->underlineButtonWidget->shortcut());
+    connect(underlineButtonShortcut, SIGNAL(activated()), this, SLOT(underlineButtonPressed()));
+
     connect(buttonBar->leftJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignLeftButtonPressed()));
+    QShortcut *leftJustifyButtonShortcut = new QShortcut(this);
+    leftJustifyButtonShortcut->setKey(buttonBar->leftJustifyButtonAction->shortcut());
+    connect(leftJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignLeftButtonPressed()));
+
     connect(buttonBar->rightJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignRightButtonPressed()));
+    QShortcut *rightJustifyButtonShortcut = new QShortcut(this);
+    rightJustifyButtonShortcut->setKey(buttonBar->rightJustifyButtonAction->shortcut());
+    connect(rightJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignRightButtonPressed()));
+
     connect(buttonBar->centerJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignCenterButtonPressed()));
+    QShortcut *centerJustifyButtonShortcut = new QShortcut(this);
+    centerJustifyButtonShortcut->setKey(buttonBar->centerJustifyButtonAction->shortcut());
+    connect(centerJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignCenterButtonPressed()));
+
     connect(buttonBar->strikethroughButtonAction, SIGNAL(triggered()), this, SLOT(strikethroughButtonPressed()));
+    QShortcut *strikethroughButtonShortcut = new QShortcut(this);
+    strikethroughButtonShortcut->setKey(buttonBar->strikethroughButtonAction->shortcut());
+    connect(strikethroughButtonShortcut, SIGNAL(activated()), this, SLOT(strikethroughButtonPressed()));
+
     connect(buttonBar->hlineButtonAction, SIGNAL(triggered()), this, SLOT(horizontalLineButtonPressed()));
+    QShortcut *hlineButtonActionShortcut = new QShortcut(this);
+    hlineButtonActionShortcut->setKey(buttonBar->hlineButtonAction->shortcut());
+    connect(hlineButtonActionShortcut, SIGNAL(activated()), this, SLOT(horizontalLineButtonPressed()));
+
     connect(buttonBar->shiftRightButtonAction, SIGNAL(triggered()), this, SLOT(shiftRightButtonPressed()));
+    QShortcut *shiftRightButtonShortcut = new QShortcut(this);
+    shiftRightButtonShortcut->setKey(buttonBar->shiftRightButtonAction->shortcut());
+    connect(shiftRightButtonShortcut, SIGNAL(activated()), this, SLOT(shiftRightButtonPressed()));
+
     connect(buttonBar->shiftLeftButtonAction, SIGNAL(triggered()), this, SLOT(shiftLeftButtonPressed()));
+    QShortcut *shiftLeftButtonShortcut = new QShortcut(this);
+    shiftLeftButtonShortcut->setKey(buttonBar->shiftLeftButtonAction->shortcut());
+    connect(shiftLeftButtonShortcut, SIGNAL(activated()), this, SLOT(shiftLeftButtonPressed()));
+
     connect(buttonBar->bulletListButtonAction, SIGNAL(triggered()), this, SLOT(bulletListButtonPressed()));
+    QShortcut *bulletListButtonShortcut = new QShortcut(this);
+    bulletListButtonShortcut->setKey(buttonBar->bulletListButtonAction->shortcut());
+    connect(bulletListButtonShortcut, SIGNAL(activated()), this, SLOT(bulletListButtonPressed()));
+
     connect(buttonBar->numberListButtonAction, SIGNAL(triggered()), this, SLOT(numberListButtonPressed()));
+    QShortcut *numberListButtonShortcut = new QShortcut(this);
+    numberListButtonShortcut->setKey(buttonBar->numberListButtonAction->shortcut());
+    connect(numberListButtonShortcut, SIGNAL(activated()), this, SLOT(numberListButtonPressed()));
+
     connect(buttonBar->todoButtonAction, SIGNAL(triggered()), this, SLOT(todoButtonPressed()));
+    QShortcut *todoButtonShortcut = new QShortcut(this);
+    todoButtonShortcut->setKey(buttonBar->todoButtonAction->shortcut());
+    connect(todoButtonShortcut, SIGNAL(activated()), this, SLOT(todoButtonPressed()));
+
     connect(buttonBar->spellCheckButtonAction, SIGNAL(triggered()), this, SLOT(spellCheckPressed()));
+    QShortcut *spellCheckButtonShortcut = new QShortcut(this);
+    spellCheckButtonShortcut->setKey(buttonBar->spellCheckButtonAction->shortcut());
+    connect(spellCheckButtonShortcut, SIGNAL(activated()), this, SLOT(spellCheckPressed()));
+
     connect(buttonBar->fontSizes, SIGNAL(currentIndexChanged(int)), this, SLOT(fontSizeSelected(int)));
+
     connect(buttonBar->fontNames, SIGNAL(currentIndexChanged(int)), this, SLOT(fontNameSelected(int)));
+
     connect(buttonBar->fontColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontColorClicked()));
+    QShortcut *fontColorButtonShortcut = new QShortcut(this);
+    fontColorButtonShortcut->setKey(buttonBar->fontColorButtonWidget->shortcut());
+    connect(fontColorButtonShortcut, SIGNAL(activated()), this, SLOT(fontColorClicked()));
+
     connect(buttonBar->fontColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontColorClicked()));
+
     connect(buttonBar->highlightColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontHighlightClicked()));
+    QShortcut *fontHighlightColorShortcut = new QShortcut(this);
+    fontHighlightColorShortcut->setKey(buttonBar->highlightColorButtonWidget->shortcut());
+    connect(fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
+
     connect(buttonBar->highlightColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHighlightClicked()));
+
     connect(buttonBar->insertTableButtonAction, SIGNAL(triggered()), this, SLOT(insertTableButtonPressed()));
+    QShortcut *insertTableShortcut = new QShortcut(this);
+    insertTableShortcut->setKey(buttonBar->insertTableButtonAction->shortcut());
+    connect(insertTableShortcut, SIGNAL(activated()), this, SLOT(insertTableButtonPressed()));
+
     connect(buttonBar->htmlEntitiesButtonAction, SIGNAL(triggered()), this, SLOT(insertHtmlEntities()));
+    QShortcut *htmlEntitiesButtonShortcut = new QShortcut(this);
+    htmlEntitiesButtonShortcut->setKey(buttonBar->htmlEntitiesButtonAction->shortcut());
+    connect(htmlEntitiesButtonShortcut, SIGNAL(activated()), this, SLOT(insertHtmlEntities()));
 }
 
 
@@ -770,6 +864,21 @@ void NBrowserWindow::copyButtonPressed() {
 }
 
 
+// Build URL from pasted text
+QString NBrowserWindow::buildPasteUrl(QString url) {
+    if (url.toLower().startsWith("http://") ||
+        url.toLower().startsWith("https://") ||
+        url.toLower().startsWith("mailto://") ||
+        url.toLower().startsWith("ftp://")) {
+        QString newUrl = QString("<a href=\"") +global.clipboard->text()
+                +QString("\" title=\"") +url
+                +QString("\" >") +url +QString("</a>");
+        return newUrl;
+    }
+    return url;
+}
+
+
 // The paste button was pressed
 void NBrowserWindow::pasteButtonPressed() {
     if (forceTextPaste) {
@@ -787,16 +896,30 @@ void NBrowserWindow::pasteButtonPressed() {
         return;
     }
 
+    QLOG_DEBUG() << "Have URL?: " << mime->hasUrls();
+
     if (mime->hasUrls()) {
         QList<QUrl> urls = mime->urls();
         for (int i=0; i<urls.size(); i++) {
+            QLOG_DEBUG() << urls[i].toString();
             if (urls[i].toString().startsWith("file://")) {
                 QString fileName = urls[i].toString().mid(7);
                 attachFileSelected(fileName);
 //                addAttachment(fileName);
                 this->editor->triggerPageAction(QWebPage::InsertParagraphSeparator);
             }
+
+            // If inserting a URL
+            if (urls[i].toString().toLower().startsWith("https://") ||
+                    urls[i].toString().toLower().startsWith("http://") ||
+                    urls[i].toString().toLower().startsWith("ftp://") || \
+                    urls[i].toString().toLower().startsWith("mailto::")) {
+                QString url = this->buildPasteUrl(urls[i].toString());
+                QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+                editor->page()->mainFrame()->evaluateJavaScript(script);
+            }
         }
+
         this->editor->setFocus();
         microFocusChanged();
         return;
@@ -807,6 +930,18 @@ void NBrowserWindow::pasteButtonPressed() {
 
     if (mime->hasText()) {
         QString urltext = mime->text();
+
+        if (urltext.toLower().startsWith("https://") ||
+            urltext.toLower().startsWith("http://") ||
+            urltext.toLower().startsWith("ftp://") || \
+            urltext.toLower().startsWith("mailto::")) {
+            QString url = this->buildPasteUrl(urltext);
+            QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+            editor->page()->mainFrame()->evaluateJavaScript(script);
+            return;
+        }
+
+
         if (urltext.toLower().mid(0,17) == "evernote:///view/") {
             urltext = urltext.mid(17);
             int pos = urltext.indexOf("/");
@@ -2193,20 +2328,24 @@ void NBrowserWindow::printReady(bool ok) {
 
     QPrinter *printer;
 
-    if (fastPrint) {
-        global.settings->beginGroup("Printer");
-        QPrinter::Orientation orientation = static_cast<QPrinter::Orientation>(global.settings->value("orientation").toUInt());
-        QString name = global.settings->value("printerName", "").toString();
-        QPrinter::OutputFormat format = static_cast<QPrinter::OutputFormat>(global.settings->value("outputFormat", 0).toUInt());
-        QPrinter::PaperSize pageSize  = static_cast<QPrinter::PageSize>(global.settings->value("pageSize", 2).toUInt());
-        QString fileName = global.settings->value("outputFileName", "").toString();
-        global.settings->endGroup();
+    global.settings->beginGroup("Printer");
+    QPrinter::Orientation orientation = static_cast<QPrinter::Orientation>(global.settings->value("orientation").toUInt());
+    QString name = global.settings->value("printerName", "").toString();
+    QPrinter::OutputFormat format = static_cast<QPrinter::OutputFormat>(global.settings->value("outputFormat", 0).toUInt());
+    QPrinter::PaperSize pageSize  = static_cast<QPrinter::PageSize>(global.settings->value("pageSize", 2).toUInt());
+    QPrinter::ColorMode colorMode  = static_cast<QPrinter::ColorMode>(global.settings->value("colorMode", 1).toUInt());
+    QString fileName = global.settings->value("outputFileName", "").toString();
+    global.settings->endGroup();
 
-        bool error = false;
-        printer = new QPrinter();
-        printer->setPageSize(pageSize);
-        printer->setOutputFormat(format);
-        printer->setOrientation(orientation);
+    bool error = false;
+    printer = new QPrinter();
+    printer->setPageSize(pageSize);
+    printer->setOutputFormat(format);
+    printer->setOrientation(orientation);
+    printer->setColorMode(colorMode);
+
+
+    if (fastPrint) {
         if (format == QPrinter::PdfFormat) {
             if (fileName == "")
                 error = true;
@@ -2225,7 +2364,12 @@ void NBrowserWindow::printReady(bool ok) {
     }
 
     if (!fastPrint) {
-        QPrintDialog dialog;
+        if (format == QPrinter::PdfFormat && fileName.trimmed() != "")
+            printer->setOutputFileName(fileName);
+        if (name.trimmed() != "")
+            printer->setPrinterName(name);
+
+        QPrintDialog dialog(printer);
         if (dialog.exec() ==  QDialog::Accepted) {
             printer = dialog.printer();
             printPage->print(printer);
@@ -2235,6 +2379,7 @@ void NBrowserWindow::printReady(bool ok) {
             global.settings->setValue("outputFormat", printer->outputFormat());
             global.settings->setValue("outputFileName", printer->outputFileName());
             global.settings->setValue("pageSize", printer->pageSize());
+            global.settings->setValue("colorMode", printer->colorMode());
             global.settings->endGroup();
         }
     } else

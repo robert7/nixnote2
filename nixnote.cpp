@@ -1811,8 +1811,32 @@ void NixNote::newNote() {
         n.notebookGuid = notebookTable.getDefaultNotebookGuid();
     } else {
         NNotebookViewItem *item = (NNotebookViewItem*)notebookTreeView->selectedItems().at(0);
+        qint32 lid = item->lid;
+
+        // If we have a stack, we find the first notebook (in alphabetical order) for the new note.
+        if (lid == 0) {
+            QString stackName = notebookTreeView->selectedItems().at(0)->data(0, Qt::DisplayRole).toString();
+            QList<qint32> notebooks;
+            notebookTable.getStack(notebooks, stackName);
+            QString priorName;
+            Notebook book;
+            if (notebooks.size() > 0) {
+                for (int i=0; i<notebooks.size(); i++) {
+                    qint32 priorLid = notebooks[i];
+                    notebookTable.get(book, priorLid);
+                    QString currentName = "";
+                    if (book.name.isSet())
+                        currentName = book.name;
+                    if (currentName.toUpper() < priorName.toUpper() || priorName == "") {
+                        lid = notebooks[i];
+                    }
+                    priorLid = notebooks[i];
+                    priorName = currentName;
+                }
+            }
+        }
         QString notebookGuid;
-        notebookTable.getGuid(notebookGuid, item->lid);
+        notebookTable.getGuid(notebookGuid, lid);
         n.notebookGuid = notebookGuid;
     }
     NoteTable table(global.db);
@@ -1825,7 +1849,11 @@ void NixNote::newNote() {
     global.filterPosition++;
     openNote(false);
     updateSelectionCriteria();
-    tabWindow->currentBrowser()->editor->setFocus();
+
+    if (global.newNoteFocusToTitle())
+        tabWindow->currentBrowser()->noteTitle.setFocus();
+    else
+        tabWindow->currentBrowser()->editor->setFocus();
 }
 
 
@@ -1855,14 +1883,44 @@ void NixNote::newExternalNote() {
         n.notebookGuid = notebookTable.getDefaultNotebookGuid();
     } else {
         NNotebookViewItem *item = (NNotebookViewItem*)notebookTreeView->selectedItems().at(0);
+        qint32 lid = item->lid;
+
+        // If we have a stack, we find the first notebook (in alphabetical order) for the new note.
+        if (lid == 0) {
+            QString stackName = notebookTreeView->selectedItems().at(0)->data(0, Qt::DisplayRole).toString();
+            QList<qint32> notebooks;
+            notebookTable.getStack(notebooks, stackName);
+            QString priorName;
+            Notebook book;
+            if (notebooks.size() > 0) {
+                for (int i=0; i<notebooks.size(); i++) {
+                    qint32 priorLid = notebooks[i];
+                    notebookTable.get(book, priorLid);
+                    QString currentName = "";
+                    if (book.name.isSet())
+                        currentName = book.name;
+                    if (currentName.toUpper() < priorName.toUpper() || priorName == "") {
+                        lid = notebooks[i];
+                    }
+                    priorLid = notebooks[i];
+                    priorName = currentName;
+                }
+            }
+        }
         QString notebookGuid;
-        notebookTable.getGuid(notebookGuid, item->lid);
+        notebookTable.getGuid(notebookGuid, lid);
         n.notebookGuid = notebookGuid;
     }
     NoteTable table(global.db);
     qint32 lid = table.add(0,n,true);
     tabWindow->openNote(lid, NTabWidget::ExternalWindow);
     updateSelectionCriteria();
+
+
+    if (global.newNoteFocusToTitle())
+        tabWindow->externalList->at(lid)->browser->noteTitle.setFocus();
+    else
+        tabWindow->externalList->at(lid)->browser->noteTitle.setFocus();
 
 }
 
@@ -2859,8 +2917,32 @@ void NixNote::newWebcamNote() {
         newNote.notebookGuid = notebookTable.getDefaultNotebookGuid();
     } else {
         NNotebookViewItem *item = (NNotebookViewItem*)notebookTreeView->selectedItems().at(0);
+        qint32 lid = item->lid;
+
+        // If we have a stack, we find the first notebook (in alphabetical order) for the new note.
+        if (lid == 0) {
+            QString stackName = notebookTreeView->selectedItems().at(0)->data(0, Qt::DisplayRole).toString();
+            QList<qint32> notebooks;
+            notebookTable.getStack(notebooks, stackName);
+            QString priorName;
+            Notebook book;
+            if (notebooks.size() > 0) {
+                for (int i=0; i<notebooks.size(); i++) {
+                    qint32 priorLid = notebooks[i];
+                    notebookTable.get(book, priorLid);
+                    QString currentName = "";
+                    if (book.name.isSet())
+                        currentName = book.name;
+                    if (currentName.toUpper() < priorName.toUpper() || priorName == "") {
+                        lid = notebooks[i];
+                    }
+                    priorLid = notebooks[i];
+                    priorName = currentName;
+                }
+            }
+        }
         QString notebookGuid;
-        notebookTable.getGuid(notebookGuid, item->lid);
+        notebookTable.getGuid(notebookGuid, lid);
         newNote.notebookGuid = notebookGuid;
     }
 
@@ -2913,7 +2995,12 @@ void NixNote::newWebcamNote() {
     global.filterPosition++;
     openNote(false);
     updateSelectionCriteria();
-    tabWindow->currentBrowser()->editor->setFocus();
+
+    if (global.newNoteFocusToTitle())
+        tabWindow->currentBrowser()->noteTitle.setFocus();
+    else
+        tabWindow->currentBrowser()->editor->setFocus();
+
     return;
 }
 
