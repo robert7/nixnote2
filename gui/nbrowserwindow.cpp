@@ -298,19 +298,8 @@ void NBrowserWindow::setupToolBar() {
     connect(underlineButtonShortcut, SIGNAL(activated()), this, SLOT(underlineButtonPressed()));
 
     connect(buttonBar->leftJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignLeftButtonPressed()));
-    QShortcut *leftJustifyButtonShortcut = new QShortcut(this);
-    leftJustifyButtonShortcut->setKey(buttonBar->leftJustifyButtonAction->shortcut());
-    connect(leftJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignLeftButtonPressed()));
-
     connect(buttonBar->rightJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignRightButtonPressed()));
-    QShortcut *rightJustifyButtonShortcut = new QShortcut(this);
-    rightJustifyButtonShortcut->setKey(buttonBar->rightJustifyButtonAction->shortcut());
-    connect(rightJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignRightButtonPressed()));
-
     connect(buttonBar->centerJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignCenterButtonPressed()));
-    QShortcut *centerJustifyButtonShortcut = new QShortcut(this);
-    centerJustifyButtonShortcut->setKey(buttonBar->centerJustifyButtonAction->shortcut());
-    connect(centerJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignCenterButtonPressed()));
 
     connect(buttonBar->strikethroughButtonAction, SIGNAL(triggered()), this, SLOT(strikethroughButtonPressed()));
     QShortcut *strikethroughButtonShortcut = new QShortcut(this);
@@ -364,9 +353,11 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->fontColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontColorClicked()));
 
     connect(buttonBar->highlightColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontHighlightClicked()));
-    QShortcut *fontHighlightColorShortcut = new QShortcut(this);
-    fontHighlightColorShortcut->setKey(buttonBar->highlightColorButtonWidget->shortcut());
-    connect(fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
+    //QShortcut *fontHighlightColorShortcut = new QShortcut(this);
+    //fontHighlightColorShortcut->setKey(buttonBar->highlightColorButtonWidget->shortcut());
+    //fontHighlightColorShortcut->setKey(QKeySequence("Ctrl+B"));
+    //connect(fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
+    connect(buttonBar->highlightColorAction, SIGNAL(triggered()), this, SLOT(fontHighlightClicked()));
 
     connect(buttonBar->highlightColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHighlightClicked()));
 
@@ -379,6 +370,12 @@ void NBrowserWindow::setupToolBar() {
     QShortcut *htmlEntitiesButtonShortcut = new QShortcut(this);
     htmlEntitiesButtonShortcut->setKey(buttonBar->htmlEntitiesButtonAction->shortcut());
     connect(htmlEntitiesButtonShortcut, SIGNAL(activated()), this, SLOT(insertHtmlEntities()));
+
+    connect(buttonBar->insertDatetimeButtonAction, SIGNAL(triggered()), this, SLOT(insertDatetime()));
+    connect(buttonBar->insertDatetimeButtonWidget,SIGNAL(clicked()), this, SLOT(insertDatetime()));
+    QShortcut *insertDatetimeShortcut = new QShortcut(this);
+    insertDatetimeShortcut->setKey(buttonBar->insertDatetimeButtonAction->shortcut());
+    connect(insertDatetimeShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
 }
 
 
@@ -1276,11 +1273,20 @@ void NBrowserWindow::fontColorClicked() {
 
 
 void NBrowserWindow::insertLinkButtonPressed() {
-    QString text = editor->selectedText();
-    if (text.trimmed() == "" && currentHyperlink.trimmed() == "")
+    QString text = editor->selectedText().trimmed();
+    if (text == "" && currentHyperlink == "")
         return;
 
     InsertLinkDialog dialog(insertHyperlink);
+
+    // If we have a link already highlighted, set it to the dialog.
+    if (text.startsWith("http://", Qt::CaseInsensitive) ||
+            text.startsWith("https://", Qt::CaseInsensitive) ||
+            text.startsWith("ftp://", Qt::CaseInsensitive) ||
+            text.startsWith("mailto:", Qt::CaseInsensitive)) {
+        dialog.setUrl(text);
+    }
+
     if (currentHyperlink != NULL && currentHyperlink != "") {
         dialog.setUrl(currentHyperlink);
     }
@@ -2376,7 +2382,11 @@ void NBrowserWindow::printReady(bool ok) {
         }
         if (error) {
             fastPrint = false;
+
+            // Re-initialize printer object so we don't have any bugus
+            // values from settings.
             delete printer;
+            printer = new QPrinter();
         }
     }
 

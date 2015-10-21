@@ -48,6 +48,7 @@ public:
     QAction *italicVisible;
     QAction *underlineVisible;
     QAction *strikethroughVisible;
+    QAction *insertDatetimeVisible;
     QAction *leftJustifyVisible;
     QAction *centerJustifyVisible;
     QAction *rightJustifyVisible;
@@ -73,6 +74,7 @@ public:
     QAction *italicButtonAction;
     QAction *underlineButtonAction;
     QAction *strikethroughButtonAction;
+    QAction *insertDatetimeButtonAction;
     QAction *leftJustifyButtonAction;
     QAction *centerJustifyButtonAction;
     QAction *rightJustifyButtonAction;
@@ -97,11 +99,11 @@ public:
     QToolButton *boldButtonWidget;
     QToolButton *italicButtonWidget;
     QToolButton *underlineButtonWidget;
+    QToolButton *insertDatetimeButtonWidget;
     QToolButton *fontColorButtonWidget;
     ColorMenu *fontColorMenuWidget;
     QToolButton *highlightColorButtonWidget;
     ColorMenu *highlightColorMenuWidget;
-
     void setupShortcut(QToolButton *action, QString text);
     void setupShortcut(QAction *action, QString text);
 
@@ -124,6 +126,7 @@ public slots:
     void toggleItalicButtonVisible();
     void toggleUnderlineButtonVisible();
     void toggleStrikethroughButtonVisible();
+    void toggleInsertDatetimeVisible();
     void toggleLeftJustifyButtonVisible();
     void toggleCenterJustifyButtonVisible();
     void toggleRightJustifyButtonVisible();
