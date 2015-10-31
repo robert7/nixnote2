@@ -56,6 +56,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/browserWidgets/editorbuttonbar.h"
 #include "gui/browserWidgets/reminderbutton.h"
 #include "html/thumbnailer.h"
+#include "email/mimemessage.h"
 
 class ToolbarWidgetAction;
 
@@ -128,8 +129,8 @@ public:
     QShortcut *focusNoteShortcut;
     QShortcut *focusTitleShortcut;
     QShortcut *insertDatetimeShortcut;
-    QWebView *printPage;
-    QWebView *printPreviewPage;
+    QTextEdit *printPage;
+    QTextEdit *printPreviewPage;
     bool fastPrint;
 
     //QShortcut *leftJustifyButtonShortcut;
@@ -169,6 +170,7 @@ signals:
     void noteLocationEditedSignal(QString uuid, qint32 lid, double longitude, double latitude, double altitude, QString name);
     void noteAlarmEditedSignal(QString uuid, qint32 lid, bool strikeout, QString text);
     void showHtmlEntities();
+    void setMessage(QString msg);
 
 public slots:
     void changeExpandState(int value);
@@ -190,6 +192,8 @@ public slots:
     void cutButtonPressed();
     void copyButtonPressed();
     void printPreviewReady(QPrinter *printer);
+    void emailNote();
+    void prepareEmailMessage(MimeMessage *message, QString note);
     void pasteButtonPressed();
     void pasteWithoutFormatButtonPressed();
     void boldButtonPressed();
@@ -276,7 +280,6 @@ private slots:
     void sendTagUpdateSignal();
     void sendUrlUpdateSignal();
     void newTagAdded(qint32);
-    void printReady(bool ok);
     void focusCheck();
 
 };

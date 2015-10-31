@@ -27,6 +27,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/usertable.h"
 #include "sql/resourcetable.h"
 #include "sql/linkednotebooktable.h"
+#include "email/smtpclient.h"
+#include "email/mimehtml.h"
+#include "email/mimemessage.h"
+#include "email/mimeinlinefile.h"
 #include "global.h"
 #include "gui/browserWidgets/colormenu.h"
 #include "gui/plugins/pluginfactory.h"
@@ -36,6 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/insertlatexdialog.h"
 #include "dialog/endecryptdialog.h"
 #include "dialog/encryptdialog.h"
+#include "dialog/emaildialog.h"
 #include "sql/configstore.h"
 #include "utilities/encrypt.h"
 #include "utilities/mimereference.h"
@@ -178,11 +183,11 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     buttonBar->setupVisibleButtons();
 
-    printPage = new QWebView();
+    printPage = new QTextEdit();
     printPage->setVisible(false);
-    connect(printPage, SIGNAL(loadFinished(bool)), this, SLOT(printReady(bool)));
+    //connect(printPage, SIGNAL(loadFinished(bool)), this, SLOT(printReady(bool)));
 
-    printPreviewPage = new QWebView();
+    printPreviewPage = new QTextEdit();
     printPreviewPage->setVisible(false);
 
     hammer = new Thumbnailer(global.db);
@@ -2303,6 +2308,214 @@ qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data
 
 
 
+
+// Prepare the email for sending.  This function scans through
+// the email for images & attachments.  The resulting
+// MimeMessage has all of the email contents.
+void NBrowserWindow::prepareEmailMessage(MimeMessage *message, QString note) {
+    MimeHtml *text = new MimeHtml();
+
+    // Prepare the massage the same as if we were printing it.
+    QString contents = this->stripContentsForPrint();
+    QString textContents = editor->page()->currentFrame()->toPlainText();
+    QStringList images;
+    QStringList attachments;
+
+    // Now, go thgough & reformat all the img tags.
+    int cidCount=0;
+    int pos = contents.indexOf("src=\"file:");
+    while (pos>=0) {
+        QString localFile = contents.mid(pos+13);
+        int endPos = localFile.indexOf("\"");
+        localFile = localFile.mid(0,endPos);
+        images.append(localFile);
+        endPos = pos+endPos;
+        QString part1 = contents.mid(0,pos);
+        QString part2 = contents.mid(endPos+14);
+        cidCount++;
+        contents = part1 + "src='cid:file" +QString::number(cidCount) +"'" + part2;
+
+        pos = contents.indexOf("src=\"file:", pos+5);
+    }
+
+    // next, look for all the attachments
+    pos = contents.indexOf("href=\"nnres:");
+    while (pos>=0) {
+        QString localFile = contents.mid(pos+12);
+        int endPos = localFile.indexOf("\"");
+        localFile = localFile.mid(0,endPos);
+        attachments.append(localFile);
+        cidCount++;
+        pos = contents.indexOf("href=\"nnres:", pos+5);
+    }
+
+    // If the user adds a note, then prepend it to the beginning.
+    if (note.trimmed() != "") {
+        int pos = contents.indexOf("<body");
+        int endPos = contents.indexOf(">", pos);
+        contents.insert(endPos+1,  Qt::escape(note)+"<p><p><hr><p>");
+    }
+    text->setHtml(contents);
+    message->addPart(text);
+
+
+    // Add all the images
+    for (int i=0; i<images.size(); i++) {
+        MimeReference mimeRef;
+        QString localFile = images[i];
+        QString mime = mimeRef.getMimeFromFileName(localFile);
+        MimeInlineFile *file = new MimeInlineFile(new QFile(localFile));
+        QString lidFile = localFile.mid(localFile.lastIndexOf(QDir::separator())+1);
+        qint32 lid = lidFile.mid(0,lidFile.lastIndexOf(".")).toInt();
+        ResourceTable rtable(global.db);
+        Resource r;
+        ResourceAttributes ra;
+        if (rtable.get(r, lid, false) && r.attributes.isSet()) {
+            ra = r.attributes;
+            if (ra.fileName.isSet())
+                file->setContentName(ra.fileName);
+        }
+        file->setContentId("file"+QString::number(i+1));
+        file->setContentType(mime);
+        message->addPart(file);
+    }
+
+    // Add all the attachments
+    for (int i=0; i<attachments.size(); i++) {
+        MimeReference mimeRef;
+        QString localFile = attachments[i];
+        QString mime = mimeRef.getMimeFromFileName(localFile);
+        MimeInlineFile *file = new MimeInlineFile(new QFile(localFile));
+        QString lidFile = localFile.mid(localFile.lastIndexOf(QDir::separator())+1);
+        qint32 lid = lidFile.mid(0,lidFile.lastIndexOf(".")).toInt();
+        ResourceTable rtable(global.db);
+        Resource r;
+        ResourceAttributes ra;
+        if (rtable.get(r, lid, false) && r.attributes.isSet()) {
+            ra = r.attributes;
+            if (ra.fileName.isSet())
+                file->setContentName(ra.fileName);
+        }
+        file->setContentType(mime);
+        message->addPart(file);
+    }
+
+    return;
+
+}
+
+
+
+
+
+// Email current note.
+void NBrowserWindow::emailNote() {
+    global.settings->beginGroup("Email");
+    QString server = global.settings->value("smtpServer", "").toString();
+    int port = global.settings->value("smtpPort", 25).toInt();
+    QString smtpConnectionType = global.settings->value("smtpConnectionType", "TcpConnection").toString();
+    QString userid = global.settings->value("userid", "").toString();
+    QString password = global.settings->value("password", "").toString();
+    QString senderEmail = global.settings->value("senderEmail", "").toString();
+    QString senderName = global.settings->value("senderName", "").toString();
+    global.settings->endGroup();
+
+    if (senderEmail.trimmed() == "" || server.trimmed() == "") {
+        QMessageBox::critical(this, tr("Setup Error"),
+             tr("SMTP Server has not been setup.\n\nPlease specify server settings\nin the Preferences menu."), QMessageBox::Ok);
+        return;
+    }
+
+    emit(setMessage("Sending Email. Please be patient."));
+    EmailDialog emailDialog;
+    emailDialog.subject->setText(noteTitle.text());
+    emailDialog.exec();
+    if (emailDialog.cancelPressed)
+        return;
+
+    QStringList toAddresses = emailDialog.getToAddresses();
+    QStringList ccAddresses = emailDialog.getCcAddresses();
+    QStringList bccAddresses = emailDialog.getBccAddresses();
+
+    if (senderName.trimmed() == "")
+        senderName = senderEmail;
+
+    SmtpClient::ConnectionType type = SmtpClient::TcpConnection;
+    if (smtpConnectionType == "SslConnection")
+        type = SmtpClient::SslConnection;
+    if (smtpConnectionType == "TlsConnection")
+        type = SmtpClient::TlsConnection;
+
+    SmtpClient smtp(server, port, type);
+    smtp.setResponseTimeout(-1);
+
+    // We need to set the username (your email address) and password
+    // for smtp authentification.
+    smtp.setUser(userid);
+    smtp.setPassword(password);
+
+    // Now we create a MimeMessage object. This is the email.
+    MimeMessage message;
+
+    EmailAddress sender(senderEmail, senderName);
+    message.setSender(&sender);
+
+    for (int i=0; i<toAddresses.size(); i++) {
+        EmailAddress *to = new EmailAddress(toAddresses[i], toAddresses[i]);
+        message.addRecipient(to);
+    }
+
+    for (int i=0; i<ccAddresses.size(); i++) {
+        EmailAddress *cc = new EmailAddress(ccAddresses[i], ccAddresses[i]);
+        message.addRecipient(cc);
+    }
+
+
+    if (emailDialog.ccSelf->isChecked()) {
+        EmailAddress *cc = new EmailAddress(senderEmail, senderName);
+        message.addRecipient(cc);
+    }
+
+    for (int i=0; i<bccAddresses.size(); i++) {
+        EmailAddress *bcc = new EmailAddress(bccAddresses[i], bccAddresses[i]);
+        message.addRecipient(bcc);
+    }
+
+    // Set the subject
+    message.setSubject(emailDialog.subject->text().trimmed());
+
+    // Build the note content
+    prepareEmailMessage(&message, emailDialog.note->toPlainText());
+
+    // Send the actual message.
+    if (!smtp.connectToHost()) {
+        QLOG_ERROR()<< "Failed to connect to host!";
+        QMessageBox::critical(this, tr("Connection Error"), tr("Unable to connect to host."), QMessageBox::Ok);
+        return;
+    }
+
+    if (!smtp.login()) {
+        QLOG_ERROR() << "Failed to login!";
+        QMessageBox::critical(this, tr("Login Error"), tr("Unable to login."), QMessageBox::Ok);
+        return;
+    }
+
+    if (!smtp.sendMail(message)) {
+        QMessageBox::critical(this, tr("Send Error"), tr("Unable to send email."), QMessageBox::Ok);
+        QLOG_ERROR() << "Failed to send mail!";
+        return;
+    }
+
+    smtp.quit();
+    emit(setMessage("Message Sent"));
+//    QMessageBox::information(this, tr("Message Sent"), tr("Message sent."), QMessageBox::Ok);
+}
+
+
+
+
+
+// Strip the contents from the current webview in preparation for printing.
 QString NBrowserWindow::stripContentsForPrint() {
     // Start removing object tags
     QString contents = this->editor->selectedHtml().trimmed();
@@ -2319,9 +2532,7 @@ QString NBrowserWindow::stripContentsForPrint() {
 
         pos = contents.indexOf("<object", endPos);
     }
-//    contents = contents.replace("</head>", "<style>@media print {* { background: #666; color: #555; } html { font: 100%*4.5 georgia, serif; }</style></head>");
-//    contents = contents.replace("</head>", "<style>@media print {a @bottom-right { content: counter(page) \" of \" counter(pages); } }</style></head>");
-    return contents;
+    return contents.replace("src=\"file:////", "src=\"/");
 }
 
 
@@ -2334,7 +2545,6 @@ void NBrowserWindow::printPreviewNote() {
     // Load the print page.  When it is ready the printReady() slot will
     // do the actual print
     printPreviewPage->setHtml(contents.toUtf8());
-    //printPreviewPage->setContent(contents.toUtf8());
     QPrinter printer(QPrinter::HighResolution);
     QPrintPreviewDialog preview(&printer, this);
     preview.setWindowFlags(Qt::Window);
@@ -2358,18 +2568,8 @@ void NBrowserWindow::printNote() {
 
     // Load the print page.  When it is ready the printReady() slot will
     // do the actual print
+    printPage->setDocumentTitle(editor->title());
     printPage->setHtml(contents.toUtf8());
-}
-
-
-void NBrowserWindow::printReady(bool ok) {
-    if (!ok) {
-        QMessageBox msgBox;
-        msgBox.setText(tr("Error loading document for printing.\nPrinting aborted."));
-        msgBox.setWindowTitle(tr("Print Error"));
-        msgBox.exec();
-        return;
-    }
 
     QPrinter *printer;
 
@@ -2432,12 +2632,33 @@ void NBrowserWindow::printReady(bool ok) {
             printPage->print(printer);
         }
     } else {
-        printPage->print(printer);
-//        QPainter p;
-//        p.begin(printer);
-//        printPage->resize(printer->paperRect().size());
-//        printPage->render(&p);
-//        p.end();
+            printPage->print(printer);
+//        QTextDocument td;
+//        td.setHtml(printPage->toHtml());
+//        td.setPageSize(printer->pageRect().size());
+//            QRect innerRect = printer->pageRect();
+//            innerRect.setTop(innerRect.top() + 20);
+//            innerRect.setBottom(innerRect.bottom() - 30);
+//            QRect contentRect = QRect(QPoint(0,0), td.size().toSize());
+//            QRect currentRect = QRect(QPoint(0,0), innerRect.size());
+//            QPainter painter(printer);
+//            int count = 0;
+//            painter.save();
+//            painter.translate(0, 30);
+//            while (currentRect.intersects(contentRect) && count < td.pageCount()) {
+//                td.drawContents(&painter, currentRect);
+//                count++;
+//                currentRect.translate(0, currentRect.height());
+//                painter.restore();
+//                painter.drawText(10, 10, editor->title());
+//                painter.drawText(10, printer->pageRect().bottom() - 10, QString("Page %1 of %2").arg(count).arg(td.pageCount()));
+//                painter.save();
+//                painter.translate(0, -currentRect.height() * count + 30);
+//                if (currentRect.intersects(contentRect) && count < td.pageCount())
+//                    printer->newPage();
+//            }
+//            painter.restore();
+//            painter.end();
     }
 
     this->fastPrint = false;
