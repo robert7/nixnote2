@@ -1,4 +1,4 @@
-﻿/*********************************************************************************
+/*********************************************************************************
 NixNote - An open-source client for the Evernote service.
 Copyright (C) 2013 Randy Baumgarte
 
@@ -100,8 +100,9 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     }
     global.settings->endGroup();
 
-
+#if QT_VERSION < 0x050000
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+#endif
     this->setDebugLevel();
 
     QTranslator *nixnoteTranslator = new QTranslator();
@@ -160,8 +161,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 
     // Setup reminders
     global.reminderManager = new ReminderManager();
-    global.reminderManager = new ReminderManager();
-    global.reminderManager->trayIcon = trayIcon;
+    connect(global.reminderManager, SIGNAL(showMessage(QString,QString,int)), this, SLOT(showMessage(QString,QString,int)));
     global.reminderManager->reloadTimers();
 
     global.settings->beginGroup("Appearance");
@@ -211,7 +211,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(importManager, SIGNAL(fileImported()), this, SLOT(updateSelectionCriteria()));
     importManager->setup();
     this->updateSelectionCriteria(true);  // This is only needed in case we imported something at statup.
-
 
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
@@ -1553,19 +1552,21 @@ void NixNote::databaseBackup(bool backup) {
         }
     }
 
-    QFileDialog fd;
+    QString caption, directory;
+    if (backup)
+        caption = tr("Backup Database");
+    else
+        caption = tr("Export Notes");
+    if (saveLastPath == "")
+        directory = QDir::homePath();
+    else
+        directory = saveLastPath;
+
+    QFileDialog fd(0, caption, directory, tr("NixNote Export (*.nnex);;All Files (*.*)"));
     fd.setFileMode(QFileDialog::AnyFile);
     fd.setConfirmOverwrite(true);
-    if (backup)
-        fd.setWindowTitle(tr("Backup Database"));
-    else
-        fd.setWindowTitle(tr("Export Notes"));
-    fd.setFilter(tr("NixNote Export (*.nnex);;All Files (*.*)"));
     fd.setAcceptMode(QFileDialog::AcceptSave);
-    if (saveLastPath == "")
-        fd.setDirectory(QDir::homePath());
-    else
-        fd.setDirectory(saveLastPath);
+
     if (fd.exec() == 0 || fd.selectedFiles().size() == 0) {
         QLOG_DEBUG() << "Database restore canceled in file dialog.";
         return;
@@ -1576,7 +1577,7 @@ void NixNote::databaseBackup(bool backup) {
     fileNames = fd.selectedFiles();
     saveLastPath = fileNames[0];
     int pos = saveLastPath.lastIndexOf("/");
-    if (pos > 0)
+    if (pos != -1)
         saveLastPath.truncate(pos);
 
     if (backup)
@@ -1643,24 +1644,26 @@ void NixNote::databaseRestore(bool fullRestore) {
         }
     }
 
-    QFileDialog fd;
-    fd.setFileMode(QFileDialog::ExistingFile);
-    fd.setConfirmOverwrite(true);
-    if (fullRestore)
-        fd.setWindowTitle(tr("Restore Database"));
-    else
-        fd.setWindowTitle(tr("Import Notes"));
+    QString caption, directory, filter;
 
     if (fullRestore) {
-        fd.setFilter(tr("NixNote Export (*.nnex);;All Files (*.*)"));
+        caption = tr("Restore Database");
+        filter = tr("NixNote Export (*.nnex);;All Files (*.*)");
     } else {
-        fd.setFilter(tr("NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)"));
+        caption = tr("Import Notes");
+        filter = tr("NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)");
     }
-    fd.setAcceptMode(QFileDialog::AcceptOpen);
+
     if (saveLastPath == "")
-        fd.setDirectory(QDir::homePath());
+        directory = QDir::homePath();
     else
-        fd.setDirectory(saveLastPath);
+        directory = saveLastPath;
+
+    QFileDialog fd(0, caption, directory, filter);
+    fd.setFileMode(QFileDialog::ExistingFile);
+    fd.setConfirmOverwrite(true);
+    fd.setAcceptMode(QFileDialog::AcceptOpen);
+
     if (fd.exec() == 0 || fd.selectedFiles().size() == 0) {
         QLOG_DEBUG() << "Database restore canceled in file dialog.";
         return;
@@ -1671,7 +1674,7 @@ void NixNote::databaseRestore(bool fullRestore) {
     fileNames = fd.selectedFiles();
     saveLastPath = fileNames[0];
     int pos = saveLastPath.lastIndexOf("/");
-    if (pos > 0)
+    if (pos != -1)
         saveLastPath.truncate(pos);
 
     if (fullRestore)
@@ -1744,15 +1747,30 @@ void NixNote::notifySyncComplete() {
     if (!show)
         return;
     if (syncRunner.error) {
-        trayIcon->showMessage(tr("Sync Error"), tr("Sync completed with errors."));
+        showMessage(tr("Sync Error"), tr("Sync completed with errors."));
     } else
         if (global.showGoodSyncMessagesInTray)
-            trayIcon->showMessage(tr("Sync Complete"), tr("Sync completed successfully."));
+            showMessage(tr("Sync Complete"), tr("Sync completed successfully."));
     if (global.syncAndExit)
         this->closeNixNote();
 }
 
 
+
+void NixNote::showMessage(QString title, QString msg, int timeout) {
+    if (global.systemNotifier() == "notify-send") {
+        QProcess notifyProcess;
+        QStringList arguments;
+        arguments  << title << msg << "-t" << QString::number(timeout);
+        notifyProcess.start(QString("notify-send"), arguments, QIODevice::ReadWrite|QIODevice::Unbuffered);
+        notifyProcess.waitForFinished();
+        QLOG_DEBUG() << "notify-send completed: " << notifyProcess.waitForFinished()
+                     << " Return Code: " << notifyProcess.state();
+        return;
+    }
+    trayIcon->showMessage(title, msg);
+
+}
 
 
 //*******************************************************
@@ -1815,7 +1833,7 @@ void NixNote::newNote() {
     NotebookTable notebookTable(global.db);
     n.content = newNoteBody;
     n.title = tr("Untitled note");
-    QString uuid = QUuid::createUuid();
+    QString uuid = QUuid::createUuid().toString();
     uuid = uuid.mid(1);
     uuid.chop(1);
     n.guid = uuid;
@@ -1888,7 +1906,7 @@ void NixNote::newExternalNote() {
     NotebookTable notebookTable(global.db);
     n.content = newNoteBody;
     n.title = "Untitled note";
-    QString uuid = QUuid::createUuid();
+    QString uuid = QUuid::createUuid().toString();
     uuid = uuid.mid(1);
     uuid.chop(1);
     n.guid = uuid;
@@ -2785,7 +2803,7 @@ void NixNote::resourceExternallyUpdated(QString resourceFile) {
     QString dba = global.fileManager.getDbaDirPath();
     shortName.replace(dba, "");
     int pos = shortName.indexOf(".");
-    if (pos > 0)
+    if (pos != -1)
         shortName = shortName.mid(0,pos);
     qint32 lid = shortName.toInt();
     QFile file(resourceFile);

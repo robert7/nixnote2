@@ -44,6 +44,7 @@ private:
     QComboBox *traySingleClickAction;
     QComboBox *trayMiddleClickAction;
     QComboBox *mouseMiddleClickAction;
+    QComboBox *systemNotifier;
     QLabel *defaultNotebookOnStartupLabel;
     QPushButton *previewButton;
     bool webSettingsChanged;
@@ -63,6 +64,7 @@ public:
     QCheckBox *minimizeToTray;
     QCheckBox *confirmDeletes;
     QCheckBox *closeToTray;
+    QCheckBox *forceWebFonts;
     QCheckBox *dynamicTotals;
     QCheckBox *disableEditingOnStartup;
     QCheckBox *newNoteFocusOnTitle;

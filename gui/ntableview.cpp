@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "numberdelegate.h"
 #include <QApplication>
 #include <QMouseEvent>
+#include <QDrag>
 #include <QShortcut>
 #include <sql/resourcetable.h>
 #include "sql/nsqlquery.h"
@@ -55,7 +56,11 @@ NTableView::NTableView(QWidget *parent) :
 
     tableViewHeader = new NTableViewHeader(Qt::Horizontal, this);
     this->setHorizontalHeader(tableViewHeader);
+#if QT_VERSION < 0x050000
     this->horizontalHeader()->setMovable(true);
+#else
+    this->horizontalHeader()->setSectionsMovable(true);
+#endif
 
     QLOG_TRACE() << "Setting up edit triggers";
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -417,6 +422,16 @@ void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
 // Update the list of notes.
 void NTableView::refreshData() {
     QLOG_TRACE() << "Getting valid lids in filter";
+
+    // Save the current selection in case we need it later
+    priorSelectedLids.clear();
+    getSelectedLids(priorSelectedLids);
+    priorLidOrder.clear();
+    for (int i=0; i<proxy->rowCount(); i++) {
+        QModelIndex idx = proxy->index(i, NOTE_TABLE_LID_POSITION);
+        priorLidOrder.append(idx.data().toInt());
+    }
+
     NSqlQuery sql(global.db);
     sql.exec("select lid from filter");
     proxy->lidMap->clear();
@@ -482,7 +497,8 @@ void NTableView::refreshSelection() {
     QLOG_TRACE() << "Selecting one item if nothing else is selected";
     QModelIndexList l = selectedIndexes();
     if (l.size() == 0) {
-        qint32 rowLid = selectAnyNoteFromList();
+        qint32 rowLid;
+        rowLid = selectAnyNoteFromList();
         criteria->setLid(rowLid);
     }
 
@@ -670,7 +686,57 @@ bool NTableView::isLidSelected(qint32 lid) {
 // Pick a note, any note, to open.  This is normally done to force any note to be opened if nothing is currently
 // selected.
 qint32 NTableView::selectAnyNoteFromList() {
-    QModelIndexList l = selectedIndexes();
+
+    bool found = false;
+    if (priorSelectedLids.size() > 0) {
+        int lidPosition = -1;
+        for (int i=0; i<priorLidOrder.size() && !found; i++) {
+            qint32 lid = priorLidOrder[i];
+            if (lid == priorSelectedLids[0]) {
+                found = true;
+                lidPosition = i;
+            }
+        }
+
+        // If we found the lid we are looking for, then start looking lower in the list for
+        // the next valid one
+        for (int i=lidPosition; i<priorLidOrder.size() && found; i++) {
+            if (proxy->lidMap->contains(priorLidOrder[i])) {
+                for (int j=0; j<proxy->rowCount(); j++) {
+                    QModelIndex idx = proxy->index(j,NOTE_TABLE_LID_POSITION);
+                    qint32 rowLid = idx.data().toInt();
+                    if (rowLid == priorLidOrder[i]) {
+                        QLOG_DEBUG() << ""  << "Selecting row " << j << "lid: " << rowLid;
+                        selectRow(j);
+                        this->blockSignals(true);
+                        emit openNote(false);
+                        this->blockSignals(false);
+                        return rowLid;
+                    }
+                }
+            }
+        }
+
+        // We didn't find one lower in the list, so start looking up.
+        for (int i=lidPosition; i>=0 && found; i--) {
+            if (proxy->lidMap->contains(priorLidOrder[i])) {
+                for (int j=0; j<proxy->rowCount(); j++) {
+                    QModelIndex idx = proxy->index(j,NOTE_TABLE_LID_POSITION);
+                    qint32 rowLid = idx.data().toInt();
+                    if (rowLid == priorLidOrder[i]) {
+                        QLOG_DEBUG() << ""  << "Selecting row " << j << "lid: " << rowLid;
+                        selectRow(j);
+                        this->blockSignals(true);
+                        emit openNote(false);
+                        this->blockSignals(false);
+                        return rowLid;
+                    }
+                }
+            }
+        }
+    }
+
+    // if nearestLid = 0, then we just pick the next valid lid (depending on sort order).
     int rowCount = proxy->rowCount(QModelIndex());
     Qt::SortOrder so = this->tableViewHeader->sortIndicatorOrder();
 
@@ -703,7 +769,6 @@ qint32 NTableView::selectAnyNoteFromList() {
             }
         }
     }
-
     return -1;
 }
 

@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <limits.h>
 #include <unistd.h>
 #include <QWebSettings>
-#include <QtGui/QDesktopWidget>
+#include <QDesktopWidget>
 #include <QApplication>
 
 // The following include is needed for demangling names on a backtrace
@@ -140,6 +140,7 @@ void Global::setup(StartupConfig startupConfig) {
     defaultFontSize = settings->value("defaultFontSize",0).toInt();
     defaultGuiFontSize = settings->value("defaultGuiFontSize", 0).toInt();
     defaultGuiFont = settings->value("defaultGuiFont","").toString();
+    forceWebFonts = settings->value("forceWebFonts", false).toBool();
     disableEditing = false;
     if (settings->value("disableEditingOnStartup",false).toBool() || startupConfig.disableEditing)
         disableEditing = true;
@@ -784,6 +785,18 @@ void Global::setDatabaseVersion(int value) {
     return;
 }
 
+
+// What is doing the system notification?
+QString Global::systemNotifier() {
+    settings->beginGroup("Appearance");
+    QString value = settings->value("systemNotifier", "qt").toString();
+    settings->endGroup();
+    return value;
+}
+
+
+
+
 void Global::stackDump(int max) {
     void *array[30];
     size_t size;
@@ -853,7 +866,6 @@ void Global::stackDump(int max) {
     free(messages);
     QLOG_ERROR() << "**** Stack dump complete *****";
 }
-
 
 
 

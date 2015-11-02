@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QHeaderView>
 #include <QMouseEvent>
+#include <QDrag>
 #include <QByteArray>
 #include <QtSql>
 #include "sql/linkednotebooktable.h"
@@ -220,8 +221,8 @@ void NTagView::mousePressEvent(QMouseEvent *event)
 {
     QModelIndex item = indexAt(event->pos());
     bool selected = selectionModel()->isSelected(indexAt(event->pos()));
-    if (!(event->buttons() & Qt::LeftButton))
-            return;
+//    if (!(event->buttons() & Qt::LeftButton))
+//            return;
     QTreeView::mousePressEvent(event);
     if (selected && (event->buttons() & Qt::LeftButton))
         selectionModel()->select(item, QItemSelectionModel::Deselect);
