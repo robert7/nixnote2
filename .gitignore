@@ -30,11 +30,17 @@ qrc_*.*
 # autosave files
 *.autosave
 
+# Vim backup files
+*~
+
 # the main program itself
 nixnote
 nixnote2
 
-#user files
+# Makefiles
+Makefile*
+
+# user files
 *.pro.*
 
 #compiled translations
