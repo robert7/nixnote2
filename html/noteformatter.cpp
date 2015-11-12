@@ -25,11 +25,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/linkednotebooktable.h"
 #include "global.h"
 #include "filters/filtercriteria.h"
+#include "filters/filterengine.h"
 #include "utilities/mimereference.h"
 
 #include <QFileSystemModel>
 #include <QFileIconProvider>
+#if QT_VERSION < 0x050000
 #include <poppler-qt4.h>
+#else
+#include <poppler-qt5.h>
+#endif
 #include <QIcon>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -59,7 +64,7 @@ void NoteFormatter::setNote(Note n, bool pdfPreview) {
     this->pdfPreview = pdfPreview;
     this->note = n;
     content = "";
-    this->enableHighlight = true;
+    //this->enableHighlight = true;
     readOnly = false;
     inkNote = false;
     NoteAttributes attributes;
@@ -68,8 +73,10 @@ void NoteFormatter::setNote(Note n, bool pdfPreview) {
     QString contentClass;
     if (attributes.contentClass.isSet())
         contentClass = attributes.contentClass;
-    if (contentClass != "")
+    if (contentClass != "") {
+        QLOG_DEBUG() << "Content class not empty.  Setting read-only.";
         readOnly = true;
+    }
 }
 
 
@@ -83,13 +90,13 @@ QString NoteFormatter::getPage() {
 
 /* If we have search criteria, then we highlight the text matching
   those results in the note. */
-void NoteFormatter::setHighlight() {
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
-    if (criteria->isSearchStringSet())
-        enableHighlight = true;
-    else
-        enableHighlight = false;
-}
+//void NoteFormatter::setHighlight() {
+//    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+//    if (criteria->isSearchStringSet())
+//        enableHighlight = true;
+//    else
+//        enableHighlight = false;
+//}
 
 /* If we are here because we are viewing note history, then we
   set the flag here.  Note history is almost the same as a regular
@@ -141,11 +148,15 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     if (!formatError && !readOnly) {
         NotebookTable ntable(global.db);
         qint32 notebookLid = ntable.getLid(note.notebookGuid);
-        if (ntable.isReadOnly(notebookLid))
+        if (ntable.isReadOnly(notebookLid)) {
+            QLOG_DEBUG() << "Notebook is read-only.  Marking note read-only.";
             readOnly = true;
+        }
     }
-    if (note.active.isSet() && !note.active)
+    if (note.active.isSet() && !note.active) {
+        QLOG_DEBUG() << "Note is inactive.  Setting to read-only.";
         readOnly = true;
+    }
     QLOG_TRACE() << "Done rebuiling HTML";
     return content;
 }
@@ -161,14 +172,14 @@ QString NoteFormatter::preHtmlFormat(QString note) {
     QString content = note.replace("<br></br>", "<br/>");
 
     pos = content.indexOf("<en-media");
-    while (pos > 0) {
+    while (pos != -1) {
         int endPos = content.indexOf(">", pos);
         int tagEndPos = content.indexOf("/>", pos);
 
         // Check the next /> end tag.  If it is before the end
         // of the current tag or if it doesn't exist then we
         // need to fix the end of the img
-        if (tagEndPos <= 0 || tagEndPos < endPos) {
+        if (tagEndPos == -1 || tagEndPos < endPos) {
             content = content.mid(0, endPos) + QByteArray("></en-media>") +content.mid(endPos+1);
         }
         pos = content.indexOf("<en-media", pos+1);
@@ -264,10 +275,13 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     enCryptLen = anchors.count();
     for (qint32 i=0; i<anchors.count(); i++) {
         QWebElement element = anchors.at(i);
-        if (!element.attribute("href").toLower().startsWith("latex://"))
+        if (!element.attribute("href").toLower().startsWith("http://latex.codecogs.com/gif.latex?")) {
             element.setAttribute("title", element.attribute("href"));
-        else {
-            element.setAttribute("title", element.attribute("title").toLower().replace("http://latex.codecogs.com/gif.latex?",""));
+        } else {
+            QString formula = element.attribute("href").toLower().replace("http://latex.codecogs.com/gif.latex?","");
+            element.setAttribute("title", formula);
+            QString resLid = element.firstChild().attribute("lid","");
+            element.setAttribute("href", "latex:///"+resLid);
         }
     }
 
@@ -412,8 +426,9 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
                 QWebElement newText = enMedia.lastChild();
                 enMedia.setAttribute("en-tag", "en-latex");
                 newText.setAttribute("onMouseOver", "style.cursor='pointer'");
+                sourceUrl.replace("http://latex.codecogs.com/gif.latex?","");
                 newText.setAttribute("title", sourceUrl);
-                newText.setAttribute("href", "latex://"+QString::number(resLid));
+                newText.setAttribute("href", "latex:///"+QString::number(resLid));
             }
             enMedia.setAttribute("onContextMenu", "window.browserWindow.imageContextMenu('"
                                  +QString::number(resLid) +"', '"
@@ -425,6 +440,7 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
         }
     } else {
         resourceError = true;
+        QLOG_DEBUG() << "Resource error.  Setting note to read-only.";
         readOnly = true;
     }
 
@@ -443,6 +459,7 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
 // Modify the en-media tag into an attachment
 void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, QString appl) {
     if (appl.toLower() == "vnd.evernote.ink") {
+            QLOG_DEBUG() << "Note is ink-note.  Setting to read-only.";
             inkNote = true;
             readOnly = true;
             buildInkNote(enmedia, hash);
@@ -546,7 +563,14 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
 // Build an icon for any attachments
 QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
 
+    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     // First get the icon for this type of file
+    resourceHighlight = false;
+    if (criteria->isSearchStringSet() && criteria->getSearchString() != "") {
+        FilterEngine engine;
+        resourceHighlight = engine.resourceContains(lid, criteria->getSearchString(), NULL);
+    }
+
     QString fileName = global.fileManager.getDbaDirPath(QString::number(lid) +appl);
     QIcon icon;
     QFileInfo info(fileName);
@@ -580,7 +604,10 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     QPoint textPoint(40,15);
     QPoint sizePoint(40,29);
     QPixmap pixmap(width,37);
-    pixmap.fill();
+    if (resourceHighlight) {
+        pixmap.fill(Qt::yellow);
+    } else
+        pixmap.fill();
 
     p.begin(&pixmap);
     p.setFont(font);
@@ -599,6 +626,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
         size = size/1024;
         unit= QString("MB");
     }
+
     p.drawText(sizePoint, QString::number(size).trimmed() +" " +unit);
     p.drawRect(0,0,width-1,37-1);   // Draw a rectangle around the image.
     p.end();

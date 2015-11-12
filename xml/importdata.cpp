@@ -377,6 +377,8 @@ void ImportData::processResource(Resource &resource) {
 //            if (name == "dirty")
 //                isDirty = booleanValue();
             if (name == "data") {
+                Data data;
+                resource.data = data;
                 processData("Data", resource.data);
             }
             if (name == "alternatedata") {

@@ -87,7 +87,11 @@ OAuthWindow::OAuthWindow(QMainWindow *parent) :
 
     // Turn on TLS (sometimes it isn't on by default)
     QSslConfiguration config = QSslConfiguration::defaultConfiguration();
+#if QT_VERSION < 0x050000
     config.setProtocol(QSsl::TlsV1);
+#else
+    config.setProtocol(QSsl::TlsV1_0);
+#endif
     config.setProtocol(QSsl::SslV3);
     QSslConfiguration::setDefaultConfiguration(config);
 
@@ -208,10 +212,10 @@ void OAuthWindow::userLoginReply(QNetworkReply *reply) {
 //    QLOG_DEBUG() << "Reply:" << reply->url().toString();
 
     int pos = reply->url().toString().indexOf(searchReq);
-    if (pos>0) {
+    if (pos != -1) {
         QString token = reply->url().toString();
         token = token.mid(pos+searchReq.length());
-        if (token.indexOf("auth_verifier") <= 0) {
+        if (not token.contains("auth_verifier")) {
             errorMessage = tr("Error receiving authorization");
             error = true;
             return;
@@ -227,9 +231,3 @@ void OAuthWindow::userLoginReply(QNetworkReply *reply) {
         }
     }
 }
-
-
-
-
-
-

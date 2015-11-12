@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef NIXNOTE_H
 #define NIXNOTE_H
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QSplitter>
@@ -69,6 +69,9 @@ class SyncRunner;
 class IndexRunner;
 class CounterRunner;
 class NTabWidget;
+class Thumbnailer;
+class NTableView;
+class SyncRunner;
 
 // Define the actual class
 class NixNote : public QMainWindow
@@ -94,7 +97,6 @@ private:
     QLabel *leftSeparator5;
     NTrashTree *trashTree;
     NTagView *tagTreeView;
-    NTabWidget *tabWindow;
     QSplitter *mainSplitter;
     QSplitter *leftPanelSplitter;
     WidgetPanel *leftPanel;
@@ -128,6 +130,7 @@ private:
     QAction *newExternalNoteButton;
     QAction *trunkButton;
     QAction *usageButton;
+    QAction *emailButton;
     QAction *toolsAccountAction;
 
     QAction *showAction;
@@ -187,7 +190,7 @@ public:
     bool event(QEvent *event);
     LineEdit *searchText;
     void setDebugLevel();
-
+    NTabWidget *tabWindow;
 
 
 public slots:
@@ -240,7 +243,9 @@ public slots:
     void checkReadOnlyNotebook();
     void heartbeatTimerTriggered();
     void notesRestored(QList<qint32>);
+    void emailNote();
     void printNote();
+    void printPreviewNote();
     void fastPrintNote();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
     void toggleVisible();
@@ -273,6 +278,7 @@ public slots:
     void openMessageLog();
     void showDesktopUrl(const QUrl &url);
     void reloadIcons();
+    void showMessage(QString title, QString msg, int timeout=10000);
 
 signals:
     void syncRequested();

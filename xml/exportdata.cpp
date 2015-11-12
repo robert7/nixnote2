@@ -86,6 +86,8 @@ void ExportData::backupData(QString filename) {
         writeNotebooks();
         writeTags();
         writeSavedSearches();
+        writeLinkedNotebooks();
+        writeSharedNotebooks();
     }
     writeNotes();
     writer->writeEndElement();
@@ -433,39 +435,44 @@ void ExportData::writeSharedNotebooks() {
         progress->setValue(i+1);
         QCoreApplication::processEvents();
         SharedNotebook s;
-        table.get(s,lids[i]);
-        writer->writeStartElement("SharedNotebook");
-        if (s.allowPreview.isSet())
-            createNode("AllowPreview", s.allowPreview);
-        if (s.email.isSet())
-            createNode("Email", s.email);
-        if (s.id.isSet())
-            createNode("Id", QString::number(s.id));
-        if (s.notebookGuid.isSet())
-            createNode("NotebookGuid", s.notebookGuid);
-        if (s.notebookModifiable.isSet())
-            createNode("NotebookModifiable", s.notebookModifiable);
-        if (s.privilege.isSet())
-            createNode("Privilege", s.privilege);
-        if (s.recipientSettings.isSet()) {
-            writer->writeStartElement("RecipientSettings");
-            if (s.recipientSettings.value().reminderNotifyEmail.isSet())
-                createNode("ReminderNotifyEmail", s.recipientSettings.value().reminderNotifyEmail);
-            if (s.recipientSettings.value().reminderNotifyInApp.isSet())
-                createNode("ReminderNotifyInApp", s.recipientSettings.value().reminderNotifyInApp);
+        QStringList users;
+        table.getShareUsers(users, lids[i]);
+        for (int j=0; j<users.size(); j++) {
+
+            table.get(s,lids[i], users[j]);
+            writer->writeStartElement("SharedNotebook");
+            if (s.allowPreview.isSet())
+                createNode("AllowPreview", s.allowPreview);
+            if (s.email.isSet())
+                createNode("Email", s.email);
+            if (s.id.isSet())
+                createNode("Id", QString::number(s.id));
+            if (s.notebookGuid.isSet())
+                createNode("NotebookGuid", s.notebookGuid);
+            if (s.notebookModifiable.isSet())
+                createNode("NotebookModifiable", s.notebookModifiable);
+            if (s.privilege.isSet())
+                createNode("Privilege", s.privilege);
+            if (s.recipientSettings.isSet()) {
+                writer->writeStartElement("RecipientSettings");
+                if (s.recipientSettings.value().reminderNotifyEmail.isSet())
+                    createNode("ReminderNotifyEmail", s.recipientSettings.value().reminderNotifyEmail);
+                if (s.recipientSettings.value().reminderNotifyInApp.isSet())
+                    createNode("ReminderNotifyInApp", s.recipientSettings.value().reminderNotifyInApp);
+                writer->writeEndElement();
+            }
+            if (s.username.isSet())
+                createNode("Username", s.username);
+            if (s.userId.isSet())
+                createNode("UserId", s.userId);
+            if (s.requireLogin.isSet())
+                createNode("RequireLogin", s.requireLogin);
+            if (s.serviceCreated.isSet())
+                createTimestampNode("ServiceCreated", s.serviceCreated);
+            if (s.serviceUpdated.isSet())
+                createTimestampNode("ServiceUpdated", s.serviceUpdated);
             writer->writeEndElement();
         }
-        if (s.username.isSet())
-            createNode("Username", s.username);
-        if (s.username.isSet())
-            createNode("UserId", s.userId);
-        if (s.requireLogin.isSet())
-            createNode("RequireLogin", s.requireLogin);
-        if (s.serviceCreated.isSet())
-            createTimestampNode("ServiceCreated", s.serviceCreated);
-        if (s.serviceUpdated.isSet())
-            createTimestampNode("ServiceUpdated", s.serviceUpdated);
-        writer->writeEndElement();
     }
 
 }
@@ -631,19 +638,6 @@ void ExportData::createNode(QString nodeName, QString value) {
 
 
 
-
-
-
-void ExportData::createNode(QString nodeName, bool value) {
-    if (value)
-        writer->writeTextElement(nodeName, "true");
-    else
-        writer->writeTextElement(nodeName, "false");
-    return;
-}
-
-
-
 void ExportData::createNode(QString nodeName, QByteArray value) {
     writer->writeTextElement(nodeName, value.toHex());
     return;
@@ -651,7 +645,7 @@ void ExportData::createNode(QString nodeName, QByteArray value) {
 
 
 
-void ExportData::createNode(QString nodeName, QBool value) {
+void ExportData::createNode(QString nodeName, bool value) {
     if (value)
         writer->writeTextElement(nodeName, "true");
     else

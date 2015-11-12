@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NOTEFORMATTER_H
 
 #include <QtWebKit>
+#include <QWebPage>
+#include <QWebFrame>
 #include <QObject>
 #include <QTemporaryFile>
 #include <QThread>
@@ -57,19 +59,20 @@ private:
     QString preHtmlFormat(QString content);
     QHash<QString, qint32> hashMap;
     QHash<qint32, Resource> resourceMap;
+    bool resourceHighlight;
 
 public:
     bool resourceError;
     bool readOnly;
     bool inkNote;
     bool thumbnail;
-    bool enableHighlight;
+    //bool enableHighlight;
 
     explicit NoteFormatter(QObject *parent = 0);
     void setNote(Note n, bool pdfPreview);
     QEventLoop eventLoop;
     QString getPage();
-    void setHighlight();
+    //void setHighlight();
     void setNoteHistory(bool value);
     QByteArray rebuildNoteHTML();
     bool  buildInkNote(QWebElement &docElem, QString &hash);

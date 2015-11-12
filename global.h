@@ -168,6 +168,7 @@ public:
     bool forceStartMinimized;                             // Force it to start minimized, despiet the user's settings
     bool startMinimized;                                  // Do user prefernces say to start minimized?
     bool syncAndExit;                                     // Should we just start, do a sync, and then quit?
+    bool forceWebFonts;
     qint32 startupNote;                                   // Initial note to startup with.
 
     qint32 minIndexInterval;                              // Minimum interval to check for any unindexed notes.
@@ -181,7 +182,7 @@ public:
 
     QReadWriteLock  *dbLock;                               // Database read/write lock mutex
 
-    QHash<int, NoteCache*> cache;                         // Note cache  used to keep from needing to re-format the same note for a display
+    QHash<qint32, NoteCache*> cache;                         // Note cache  used to keep from needing to re-format the same note for a display
 
     void setup(StartupConfig config);                         // Setup the global variables
     QString getProgramDirPath();                              // Get the path the program is executing from
@@ -190,7 +191,8 @@ public:
     void appendFilter(FilterCriteria *criteria);
     void setupDateTimeFormat();                               // Setup the user's desired date & time format
     QFont getGuiFont(QFont f);                                // Get the user's desired GUI font
-
+    int getDatabaseVersion();                                 // What DB version are we using?
+    void setDatabaseVersion(int value);                       // Save the current database version
     bool nonAsciiSortBug;                                     // Workaround for non-ASCII characters in tag name sorting
     bool autoHideEditorToolbar;                               // Should the editor bar be hidden when focus is lost?
     ReminderManager *reminderManager;                         // Used to alert the user when a reminder time has expired
@@ -206,6 +208,7 @@ public:
     QString getProxyUserid();
     bool isProxyEnabled();
     void setProxyEnabled(bool value);
+    QString systemNotifier();
 
     // Middle click settings
     int getMiddleClickAction();

@@ -4,7 +4,22 @@
 #
 #-------------------------------------------------
 
-QT       += core gui webkit sql network xml
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus
+    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+    INCLUDEPATH += /usr/include/poppler/qt5
+    LIBS +=    -lopencv_core -lopencv_highgui -lopencv_imgproc \
+               -lhunspell -lcurl \
+               -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
+}
+
+equals(QT_MAJOR_VERSION, 4) {
+    QT       += core gui webkit sql network xml
+    INCLUDEPATH += /usr/include/poppler/qt4
+    LIBS +=    -lopencv_core -lopencv_highgui -lopencv_imgproc \
+               -lhunspell -lcurl \
+               -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
+}
 
 TARGET = nixnote2
 TEMPLATE = app
@@ -172,6 +187,8 @@ SOURCES += main.cpp\
     qevercloud/http.cpp \
     qevercloud/services_nongenerated.cpp \
     qevercloud/oauth.cpp \
+    qevercloud/AsyncResult.cpp \
+    qevercloud/EventLoopFinisher.cpp \
     qevercloud/generated/constants.cpp \
     qevercloud/generated/services.cpp \
     qevercloud/generated/types.cpp \
@@ -185,7 +202,24 @@ SOURCES += main.cpp\
     gui/browserWidgets/fontnamecombobox.cpp \
     gui/browserWidgets/fontsizecombobox.cpp \
     utilities/pixelconverter.cpp \
-    utilities/noteindexer.cpp
+    utilities/noteindexer.cpp \
+    xml/batchimport.cpp \
+    sql/databaseupgrade.cpp \
+    email/emailaddress.cpp \
+    email/mimeattachment.cpp \
+    email/mimecontentformatter.cpp \
+    email/mimefile.cpp \
+    email/mimehtml.cpp \
+    email/mimeinlinefile.cpp \
+    email/mimemessage.cpp \
+    email/mimemultipart.cpp \
+    email/mimepart.cpp \
+    email/mimetext.cpp \
+    email/quotedprintable.cpp \
+    email/smtpclient.cpp \
+    dialog/preferences/emailpreferences.cpp \
+    dialog/emaildialog.cpp \
+    settings/colorsettings.cpp
 
 
 
@@ -325,13 +359,19 @@ HEADERS  += nixnote.h \
     qevercloud/http.h \
     qevercloud/impl.h \
     qevercloud/oauth.h \
-#    qevercloud/pubilc.h \
+    qevercloud/public.h \
     qevercloud/thrift.h \
     qevercloud/thumbnail.h \
+    qevercloud/AsyncResult.h \
+    qevercloud/EventLoopFinisher.h \
+    qevercloud/EverCloudException.h \
+    qevercloud/Optional.h \
+    qevercloud/qt4helpers.h \
     qevercloud/generated/constants.h \
     qevercloud/generated/services.h \
     qevercloud/generated/types.h \
-#    qevercoud/generated/types_impl.h \
+    qevercloud/generated/types_impl.h \
+    qevercloud/generated/EDAMErrorCode.h \
     qevercloud/include/QEverCloud.h \
     qevercloud/include/QEverCloudOAuth.h \
     gui/traymenu.h \
@@ -344,21 +384,27 @@ HEADERS  += nixnote.h \
     gui/browserWidgets/fontnamecombobox.h \
     gui/browserWidgets/fontsizecombobox.h \
     utilities/pixelconverter.h \
-    utilities/noteindexer.h
+    utilities/noteindexer.h \
+    xml/batchimport.h \
+    sql/databaseupgrade.h \
+    email/emailaddress.h \
+    email/mimeattachment.h \
+    email/mimecontentformatter.h \
+    email/mimefile.h \
+    email/mimehtml.h \
+    email/mimeinlinefile.h \
+    email/mimemessage.h \
+    email/mimemultipart.h \
+    email/mimepart.h \
+    email/mimetext.h \
+    email/quotedprintable.h \
+    email/smtpclient.h \
+    email/smtpexports.h \
+    dialog/preferences/emailpreferences.h \
+    dialog/emaildialog.h \
+    settings/colorsettings.h
 
 
-#INCLUDEPATH += /usr/local/include/thrift \
-#            /usr/include/thrift \
-INCLUDEPATH += /usr/include/poppler/qt4
 
-#LIBS +=    -Wl,-L./lib -lthrift \
-#LIBS +=    -lthrift \
-LIBS +=    -lopencv_core -lopencv_highgui -lopencv_imgproc \
-           -lhunspell -lcurl \
-           -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
-#           -Wl,-rpath=/usr/lib/nixnote2
-
-#QMAKE_CXXFLAGS += `dpkg-buildflags --get CFLAGS`
 QMAKE_CXXFLAGS +=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security
-#QMAKE_LFLAGS += `dpkg-buildflags --get LDFLAGS`
 QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro

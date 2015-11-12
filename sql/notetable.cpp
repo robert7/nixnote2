@@ -150,7 +150,6 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     ResourceTable resTable(db);
     ConfigStore cs(db);
     NSqlQuery query(db);
-    qint32 position;
     qint32 lid = l;
     qint32 notebookLid = account;
 
@@ -185,7 +184,11 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         query.bindValue(":key", NOTE_CONTENT);
         QByteArray b;
         QString content = t.content;
+#if QT_VERSION < 0x050000
         b.append(content.toAscii());
+#else
+        b.append(content);
+#endif
         query.bindValue(":data", b);
         query.exec();
     }
@@ -435,24 +438,22 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     else
         content = "";
 
-    position = content.indexOf("<en-crypt");
-    if (position > 0) {
+    if (content.contains("<en-crypt")) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_HAS_ENCRYPT);
         query.bindValue(":data", true);
         query.exec();
     }
-    position = content.indexOf("<en-todo");
-    if (position > 0) {
-        position = content.indexOf("<en-todo checked=\"true\"");
-        if (position > 0) {
+
+    if (content.contains("<en-todo")) {
+        if (content.contains("<en-todo checked=\"true\"")) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_HAS_TODO_COMPLETED);
             query.bindValue(":data", true);
             query.exec();
         }
-        position = qMax(content.indexOf("<en-todo checked=\"false\""), content.indexOf("<en-todo>"));
-        if (position > 0) {
+        if (content.contains("<en-todo checked=\"false\"") ||
+	    content.contains("<en-todo>")) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_HAS_TODO_UNCOMPLETED);
             query.bindValue(":data", true);
@@ -635,13 +636,13 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
     QString content;
     if (t.content.isSet())
         content = t.content;
-    if (content.indexOf("<en-crypt") > 0)
+    if (content.contains("<en-crypt"))
         hasEncryption = true;
     else
         hasEncryption = false;
     query.bindValue(":hasEncryption", hasEncryption);
     bool hasTodo;
-    if (content.indexOf("<en-todo") > 0)
+    if (content.contains("<en-todo"))
         hasTodo = true;
     else
         hasTodo = false;
@@ -1104,7 +1105,7 @@ qint32 NoteTable::getIndexNeeded(QList<qint32> &lids) {
     lids.clear();
     qlonglong delayTime = QDateTime::currentDateTime().currentMSecsSinceEpoch()-300000;
     db->lockForRead();
-    query.prepare("Select lid, data from DataStore where key=:key and lid in (select lid from datastore where key=:key2 and data='true')");
+    query.prepare("Select lid, data from DataStore where key=:key and lid in (select lid from datastore where key=:key2 and data=1)");
     query.bindValue(":key", NOTE_UPDATED_DATE);
     query.bindValue(":key2", NOTE_INDEX_NEEDED);
     query.exec();
@@ -1170,7 +1171,7 @@ void NoteTable::updateUrl(qint32 noteLid, QString url, bool setAsDirty=false) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", noteLid);
         query.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_URL);
-        query.bindValue(":url", url);
+        query.bindValue(":data", url);
         query.exec();
     }
 
@@ -1236,7 +1237,7 @@ void NoteTable::updateAuthor(qint32 noteLid, QString author, bool setAsDirty=fal
     }
 
     query.prepare("Update NoteTable set Author=:author where lid=:lid");
-    query.bindValue(":url", author);
+    query.bindValue(":author", author);
     query.bindValue(":lid", noteLid);
     query.exec();
     query.finish();
@@ -1604,7 +1605,7 @@ qint32 NoteTable::getAllDeleted(QList<qint32> &lids) {
     db->lockForRead();
     lids.clear();
     NSqlQuery query(db);
-    query.prepare("select lid from DataStore where key=:key and data='false'");
+    query.prepare("select lid from DataStore where key=:key and data=0");
     query.bindValue(":key", NOTE_ACTIVE);
     query.exec();
 
@@ -1698,7 +1699,7 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     query.bindValue(":key", NOTE_CONTENT_LENGTH);
     query.exec();
 
-    query.prepare("update datastore set data='true' where lid=:lid and key=:key");
+    query.prepare("update datastore set data=1 where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
@@ -1736,7 +1737,7 @@ qint32 NoteTable::getCount() {
     qint32 retval = 0;
     NSqlQuery query(db);
     db->lockForRead();
-    query.prepare("Select count(lid) from DataStore where key=:key and lid not in (select lid from datastore where key=:key2 and data = 'true')");
+    query.prepare("Select count(lid) from DataStore where key=:key and lid not in (select lid from datastore where key=:key2 and data = 1)");
     query.bindValue(":key", NOTE_GUID);
     query.bindValue(":key2", NOTE_EXPUNGED_FROM_TRASH);
     query.exec();
@@ -1754,7 +1755,7 @@ qint32 NoteTable::getUnindexedCount() {
     qint32 retval = 0;
     NSqlQuery query(db);
     db->lockForRead();
-    query.prepare("Select count(lid) from DataStore where key=:key and data='true' and lid not in (select lid from datastore where key=:key2 and data = 'true')");
+    query.prepare("Select count(lid) from DataStore where key=:key and data=1 and lid not in (select lid from datastore where key=:key2 and data = 1)");
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.bindValue(":key2", NOTE_EXPUNGED_FROM_TRASH);
     query.exec();
@@ -1866,7 +1867,7 @@ qint32 NoteTable::getAllDirty(QList<qint32> &lids) {
     NSqlQuery query(db);
     db->lockForRead();
     lids.clear();
-    query.prepare("Select lid from DataStore where key=:key and data = 'true'");
+    query.prepare("Select lid from DataStore where key=:key and data = 1");
     query.bindValue(":key", NOTE_ISDIRTY);
     query.exec();
     while(query.next()) {
@@ -1884,7 +1885,7 @@ qint32 NoteTable::getAllDirty(QList<qint32> &lids, qint32 linkedNotebookLid) {
     NSqlQuery query(db);
     lids.clear();
     db->lockForRead();
-    query.prepare("Select lid from DataStore where key=:key and data = 'true' and lid in (select lid from datastore where key=:notebookKey and data=:notebookLid)");
+    query.prepare("Select lid from DataStore where key=:key and data = 1 and lid in (select lid from datastore where key=:notebookKey and data=:notebookLid)");
     query.bindValue(":key", NOTE_ISDIRTY);
     query.bindValue(":notebookKey", NOTE_NOTEBOOK_LID);
     query.bindValue(":notebookLid", linkedNotebookLid);
@@ -1954,10 +1955,10 @@ void NoteTable::updateEnmediaHash(qint32 lid, QByteArray oldHash, QByteArray new
         int endPos;
         int hashPos = -1;
         QString hashString = "hash=\"" +oldHash.toHex() +"\"";
-        while (pos>0) {
+        while (pos != -1) {
             endPos = content.indexOf(">", pos);  // Find the matching end of the tag
             hashPos = content.indexOf(hashString, pos);
-            if (hashPos < endPos && hashPos > 0) {  // If we found the hash, begin the update
+            if (hashPos < endPos && hashPos != -1) {  // If we found the hash, begin the update
                 QString startString = content.mid(0, hashPos);
                 QString endString = content.mid(hashPos+hashString.length());
                 QString newContent = startString + "hash=\"" +newHash.toHex() +"\"" +endString;
@@ -1993,7 +1994,7 @@ void NoteTable::reindexAllNotes() {
     query.bindValue(":indexKey", NOTE_INDEX_NEEDED);
     query.exec();
 
-    query.prepare("insert into datastore (lid, key, data) select lid, :indexKey, 'true' from datastore where key=:key;");
+    query.prepare("insert into datastore (lid, key, data) select lid, :indexKey, 1 from datastore where key=:key;");
     query.bindValue(":indexKey", NOTE_INDEX_NEEDED);
     query.bindValue(":key", NOTE_GUID);
     query.exec();
@@ -2129,7 +2130,7 @@ qint32 NoteTable::getNextThumbnailNeeded() {
     qint32 retval = -1;
     NSqlQuery query(db);
     db->lockForRead();
-    query.prepare("select lid from datastore where data='true' and key=:key limit 1;");
+    query.prepare("select lid from datastore where data=1 and key=:key limit 1;");
     query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
     query.exec();
     if (query.next()) {
@@ -2146,7 +2147,7 @@ qint32 NoteTable::getThumbnailsNeededCount() {
     qint32 retval = 0;
     NSqlQuery query(db);
     db->lockForRead();
-    query.prepare("select count(lid)from datastore where data='true' and key=:key;");
+    query.prepare("select count(lid)from datastore where data=1 and key=:key;");
     query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
     query.exec();
     if (query.next()) {
@@ -2270,7 +2271,7 @@ void NoteTable::pinNote(qint32 lid, bool value) {
     query.exec();
 
     if (!value) {
-        query.prepare("Update NoteTable set isPinned='false' where lid=:lid");
+        query.prepare("Update NoteTable set isPinned=0 where lid=:lid");
         query.bindValue(":lid", lid);
         query.exec();
         QLOG_DEBUG() << query.lastError();
@@ -2278,12 +2279,12 @@ void NoteTable::pinNote(qint32 lid, bool value) {
         return;
     }
 
-    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, 'true')");
+    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, 1)");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_ISPINNED);
     query.exec();
 
-    query.prepare("Update NoteTable set isPinned='true' where lid=:lid");
+    query.prepare("Update NoteTable set isPinned=1 where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
     query.lastError();
@@ -2312,7 +2313,7 @@ void NoteTable::getAllPinned(QList< QPair< qint32, QString > > &lids) {
     NSqlQuery query(db);
     lids.clear();
     db->lockForRead();
-    query.prepare("Select lid, data from DataStore where key=:titlekey and lid in (select lid from datastore where key=:key and data='true') order by data");
+    query.prepare("Select lid, data from DataStore where key=:titlekey and lid in (select lid from datastore where key=:key and data=1) order by data");
     query.bindValue(":titlekey", NOTE_TITLE);
     query.bindValue(":key", NOTE_ISPINNED);
     query.exec();

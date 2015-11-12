@@ -23,16 +23,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QHeaderView>
 #include <QMouseEvent>
+#include <QDrag>
 #include <QtSql>
 #include <QPainter>
 #include <QMessageBox>
 #include <QTextDocument>
 #include <QFontMetrics>
-
-#include <QWindowsStyle>
-#include <QMotifStyle>
-#include <QPlastiqueStyle>
-#include <QCleanlooksStyle>
 
 #include "sql/notebooktable.h"
 #include "sql/linkednotebooktable.h"
@@ -219,7 +215,7 @@ void NNotebookView::mousePressEvent(QMouseEvent *event)
     QModelIndex item = indexAt(event->pos());
     bool selected = selectionModel()->isSelected(indexAt(event->pos()));
     QTreeView::mousePressEvent(event);
-    if (selected)
+    if (selected && (event->buttons() & Qt::LeftButton))
         selectionModel()->select(item, QItemSelectionModel::Deselect);
 
     for (int i=0; i<this->selectedItems() .size(); i++) {

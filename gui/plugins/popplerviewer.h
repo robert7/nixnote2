@@ -28,7 +28,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLabel>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#if QT_VERSION < 0x050000
 #include <poppler-qt4.h>
+#else
+#include <poppler-qt5.h>
+#endif
 
 #include "gui/plugins/popplergraphicsview.h"
 
@@ -53,6 +57,10 @@ private:
     QPushButton *pageRight;
     qint32 lid;
     QString printImageFile;
+    QStringList searchHits;
+    void findNextPage(QStringList searchHits, QList<QRectF> *searchLocations);
+    QPixmap highlightImage();
+
 
 public:
     Poppler::Document *doc;

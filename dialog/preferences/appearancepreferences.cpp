@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QFontDatabase>
 #include <QWebSettings>
-#include <QtGui/QDesktopWidget>
+#include <QDesktopWidget>
 #include <QApplication>
 #include <QMessageBox>
 
@@ -48,6 +48,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     autoHideEditorButtonbar->setChecked(global.autoHideEditorToolbar);
     disableEditingOnStartup = new QCheckBox(tr("Disable note editing on statup"), this);
     newNoteFocusOnTitle = new QCheckBox(tr("Focus on Note Title on New Note"), this);
+    forceWebFonts = new QCheckBox(tr("Limit Editor to Web Fonts*"), this);
+    forceWebFonts->setChecked(global.forceWebFonts);
 
     traySingleClickAction = new QComboBox();
     traySingleClickAction->addItem(tr("Show/Hide NixNote"), 0);
@@ -76,6 +78,10 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     defaultGuiFontChooser = new QComboBox();
     connect(defaultGuiFontChooser, SIGNAL(currentIndexChanged(QString)), this, SLOT(loadGuiFontSizes(QString)));
     loadFontNames(defaultGuiFontChooser, global.defaultGuiFont);
+
+    systemNotifier = new QComboBox();
+    systemNotifier->addItem(tr("Qt Default"), "qt");
+    systemNotifier->addItem(tr("notify-send"), "notify-send");
 
     windowThemeChooser = new QComboBox();
     windowThemeChooser->addItem(tr("System Default"));
@@ -109,10 +115,14 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(autoStart, row++, 1);
     mainLayout->addWidget(disableEditingOnStartup, row, 0);
     mainLayout->addWidget(newNoteFocusOnTitle, row++, 1);
-    mainLayout->addWidget(confirmDeletes, row++, 0);
+    mainLayout->addWidget(confirmDeletes, row, 0);
+    mainLayout->addWidget(forceWebFonts, row++, 1);
 
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
+
+    mainLayout->addWidget(new QLabel(tr("Notification Service")), row, 0);
+    mainLayout->addWidget(systemNotifier, row++, 1);
 
     mainLayout->addWidget(new QLabel(tr("Middle Click Open Behavior")), row,0);
     mainLayout->addWidget(mouseMiddleClickAction, row++, 1);
@@ -178,14 +188,31 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     newNoteFocusOnTitle->setChecked(global.newNoteFocusToTitle());
 
     this->setFont(global.getGuiFont(font()));
+
+    // Check if Tidy is installed
+    QProcess notifyProcess;
+    notifyProcess.start("notify-send -?");
+    notifyProcess.waitForFinished();
+    QLOG_DEBUG() << notifyProcess.exitCode();
+    if (notifyProcess.exitCode()) {
+        systemNotifier->setEnabled(false);
+    } else {
+        QString notifier = global.systemNotifier();
+        int idx = systemNotifier->findData(notifier, Qt::UserRole);
+        systemNotifier->setCurrentIndex(idx);
+    }
 }
 
 
 void AppearancePreferences::saveValues() {
+    int index = systemNotifier->currentIndex();
+    QString sysnotifier = systemNotifier->itemData(index, Qt::UserRole).toString();
+
     global.setNewNoteFocusToTitle(newNoteFocusOnTitle->isChecked());
     global.setDeleteConfirmation(this->confirmDeletes->isChecked());
     global.settings->beginGroup("Appearance");
     global.settings->setValue("disableEditingOnStartup", disableEditingOnStartup->isChecked());
+    global.settings->setValue("forceWebFonts", forceWebFonts->isChecked());
     global.settings->setValue("showTrayIcon", showTrayIcon->isChecked());
     global.settings->setValue("showPDFs", showPDFs->isChecked());
     global.autoHideEditorToolbar = this->autoHideEditorButtonbar->isChecked();
@@ -193,6 +220,7 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("mouseMiddleClickOpen", mouseMiddleClickAction->currentIndex());
     global.settings->setValue("traySingleClickAction", traySingleClickAction->currentIndex());
     global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentIndex());
+    global.settings->setValue("systemNotifier", sysnotifier);
     global.settings->remove("trayDoubleClickAction");
     global.pdfPreview = showPDFs->isChecked();
     if (minimizeToTray!= NULL)
@@ -213,7 +241,7 @@ void AppearancePreferences::saveValues() {
         global.settings->setValue("countBehavior", 2);
         global.countBehavior = Global::CountNone;
     }
-    int index = defaultNotebookOnStartup->currentIndex();
+    index = defaultNotebookOnStartup->currentIndex();
     int value = defaultNotebookOnStartup->itemData(index).toInt();
     global.settings->setValue("startupNotebook", value);
 

@@ -26,7 +26,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/resourcetable.h"
 #include <QTextDocument>
 #include <QtXml>
+#if QT_VERSION < 0x050000
 #include <poppler-qt4.h>
+#else
+#include <poppler-qt5.h>
+#endif
 
 extern Global global;
 using namespace Poppler;
@@ -57,14 +61,14 @@ void NoteIndexer::indexNote(qint32 lid) {
     content.remove(startPos,endPos-startPos);
 
     // Remove encrypted text
-    while (content.indexOf("<en-crypt") > 0) {
+    while (content.contains("<en-crypt")) {
         startPos = content.indexOf("<en-crypt");
         endPos = content.indexOf("</en-crypt>") + 11;
         content = content.mid(0,startPos)+content.mid(endPos);
     }
 
     // Remove any XML tags
-    while (content.indexOf(QChar('<'))>=0) {
+    while (content.contains(QChar('<'))) {
         startPos = content.indexOf(QChar('<'));
         endPos = content.indexOf(QChar('>'),startPos)+1;
         content.remove(startPos,endPos-startPos);
@@ -211,4 +215,3 @@ void NoteIndexer::indexPdf(qint32 reslid) {
     sql.bindValue(":content", text);
     sql.exec();
 }
-

@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/linkednotebooktable.h"
 #include "sql/sharednotebooktable.h"
 #include <QMessageBox>
+#include <QDrag>
 
 extern Global global;
 
@@ -371,11 +372,11 @@ void FavoritesView::dropEvent(QDropEvent *event) {
     if (data->hasFormat("application/x-nixnote-notebook")) {
         QString d = data->data("application/x-nixnote-notebook");
         int pos = d.indexOf("/");
-        if (pos <=0) return;
+        if (pos == -1) return;
         int type = d.mid(0,pos).toInt();
         d = d.mid(pos+1);
         pos = d.indexOf("/");
-        if (pos <=0) return;
+        if (pos == -1) return;
         lid= d.mid(0,pos).toInt();
         QString stack = d.mid(pos+1);
         FavoritesRecord::FavoritesRecordType rectype = FavoritesRecord::LocalNotebook;

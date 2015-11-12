@@ -46,6 +46,11 @@ Makefile*
 #compiled translations
 translations/*.qm
 
+#Makefiles
+Makefile
+Makefile.Debug
+Makefile.Release
+
 #KDE workfile
 .directory
 /.project

@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/encrypt.h"
 
 #include <QFileIconProvider>
+#include <QWebPage>
+#include <QWebFrame>
 #include <QIcon>
 #include <QMessageBox>
 
@@ -62,14 +64,14 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 
     // Strip off HTML header
     index = content.indexOf("<body");
-    index = content.indexOf(">", index)+1;
+//    index = content.indexOf(">", index)+1;
     content.remove(0,index);
     index = content.indexOf("</body");
     content.truncate(index);
     b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>\n");
     b.append("<html><head><title></title></head>");
-    b.append("<body style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
+    //b.append("<body style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
     b.append(content);
     b.append("</body></html>");
     content.clear();
@@ -89,13 +91,13 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     QString errors(tidyProcess.readAllStandardError());
     QStringList errorList = errors.split("\n");
     for (int e=0; e<errorList.size(); e++) {
-        if (errorList[e].indexOf("<img> proprietary attribute \"type\"") < 0 &&
-                errorList[e].indexOf("<img> proprietary attribute \"oncontextmenu\"") < 0 &&
-                errorList[e].indexOf("<img> proprietary attribute \"hash\"") < 0 &&
-                errorList[e].indexOf("<img> proprietary attribute \"en-tag\"") < 0 &&
-                errorList[e].indexOf("<img> proprietary attribute \"lid\"") < 0 &&
-                errorList[e].indexOf("<img> proprietary attribute \"oncontextmenu\"") < 0 &&
-                errorList[e].indexOf("<img> lacks \"alt\" attribute") < 0
+        if (not errorList[e].contains("<img> proprietary attribute \"type\"") &&
+            not errorList[e].contains("<img> proprietary attribute \"oncontextmenu\"") &&
+            not errorList[e].contains("<img> proprietary attribute \"hash\"") &&
+            not errorList[e].contains("<img> proprietary attribute \"en-tag\"") &&
+            not errorList[e].contains("<img> proprietary attribute \"lid\"") &&
+            not errorList[e].contains("<img> proprietary attribute \"oncontextmenu\"") &&
+            not errorList[e].contains("<img> lacks \"alt\" attribute")
             ) {
             QLOG_DEBUG() << errorList[e];
         }
@@ -143,6 +145,8 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
                 fixObjectNode(element);
             } else if (element.tagName().toLower() == "img") {
                 fixImgNode(element);
+            } else if (element.tagName().toLower() == "span"){
+                fixSpanNode(element);
             } else if (!isElementValid(element.tagName()))
                 element.removeFromDocument();
         }
@@ -152,18 +156,18 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 
     // Strip off HTML header
     index = content.indexOf("<body");
-    index = content.indexOf(">", index)+1;
+    //index = content.indexOf(">", index)+1;
     content.remove(0,index);
     index = content.indexOf("</body");
     content.truncate(index);
     b.clear();
     b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>");
-    b.append("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
+    //b.append("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
     b.append(content);
     b.append("</en-note>");
     content.clear();
-    content = b;
+    content = b.replace("<body ", "<en-note ");
 
     postXmlFix();
     return content;
@@ -176,12 +180,11 @@ QStringList EnmlFormatter::findAllTags(QWebElement &element) {
     QStringList tags;
     QString body = element.toOuterXml();
     body = body.replace("</","<").replace("/>"," ").replace(">", " ");
-    int i = body.indexOf("<body")+1
-            ;
-    // Look throug and get a list of all possible tags
+    int i = body.indexOf("<body") + 1;
+    // Look through and get a list of all possible tags
     i = body.indexOf("<", i);
 
-    while (i>0) {
+    while (i != -1) {
         int eot = body.indexOf(" ",i);
         QString tag = body.mid(i+1, eot-i-1);
         if (!tags.contains(tag) && tag != "body")
@@ -207,6 +210,10 @@ void EnmlFormatter::processTodo(QWebElement &node) {
 }
 
 
+
+void EnmlFormatter::fixSpanNode(QWebElement &e) {
+    e.removeAttribute("id");
+}
 
 
 
@@ -303,11 +310,11 @@ void EnmlFormatter::fixLinkNode(QWebElement e) {
         e.setOuterXml(newXml);
     }
     QString latex = e.attribute("href", "");
-    if (latex.toLower().startsWith("latex://")) {
+    if (latex.toLower().startsWith("latex:///")) {
         removeInvalidAttributes(e);
-        e.removeAttribute("title");
-        e.removeAttribute("href");
-        e.setOuterXml(e.toInnerXml());
+        QString formula = e.attribute("title");
+        e.setAttribute("href", QString("http://latex.codecogs.com/gif.latex?%1").arg(formula));
+        //e.setOuterXml(e.toInnerXml());
     }
     removeInvalidAttributes(e);
 }
@@ -438,17 +445,17 @@ void EnmlFormatter::postXmlFix() {
     // Fix the <br> tags
     content = content.replace("<br clear=\"none\">", "<br/>");
     pos = content.indexOf("<br");
-    if (pos > 0) {
+    if (pos != -1) {
         QLOG_DEBUG() << "<br found.  Beginning fix";
     }
-    while (pos > 0) {
+    while (pos != -1) {
         int endPos = content.indexOf(">", pos);
         int tagEndPos = content.indexOf("/>", pos);
 
         // Check the next /> end tag.  If it is beyond the end
         // of the current tag or if it doesn't exist then we
         // need to fix the end of the img
-        if (tagEndPos <= 0 || tagEndPos > endPos) {
+        if (tagEndPos == -1 || tagEndPos > endPos) {
             content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
         }
          pos = content.indexOf("<br", pos+1);
@@ -458,17 +465,17 @@ void EnmlFormatter::postXmlFix() {
     // Fix the <en-todo> tags
     content = content.replace("</en-todo>", "");
     pos = content.indexOf("<en-todo");
-    if (pos > 0) {
+    if (pos != -1) {
         QLOG_DEBUG() << "<en-todo found.  Beginning fix";
     }
-    while (pos > 0) {
+    while (pos != -1) {
         int endPos = content.indexOf(">", pos);
         int tagEndPos = content.indexOf("/>", pos);
 
         // Check the next /> end tag.  If it is beyond the end
         // of the current tag or if it doesn't exist then we
         // need to fix the end of the img
-        if (tagEndPos <= 0 || tagEndPos > endPos) {
+        if (tagEndPos == -1 || tagEndPos > endPos) {
             content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
         }
          pos = content.indexOf("<en-todo", pos+1);
@@ -477,17 +484,17 @@ void EnmlFormatter::postXmlFix() {
     // Fix any <img> tags
     content = content.replace("</en-media>", "");
     pos = content.indexOf("<en-media");
-    if (pos > 0) {
+    if (pos != -1) {
         QLOG_DEBUG() << "<en-media found.  Beginning fix";
     }
-    while (pos > 0) {
+    while (pos != -1) {
         int endPos = content.indexOf(">", pos);
         int tagEndPos = content.indexOf("/>", pos);
 
         // Check the next /> end tag.  If it is beyond the end
         // of the current tag or if it doesn't exist then we
         // need to fix the end of the img
-        if (tagEndPos <= 0 || tagEndPos > endPos) {
+        if (tagEndPos == -1 || tagEndPos > endPos) {
             content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
         }
         pos = content.indexOf("<en-media", pos+1);
@@ -499,7 +506,7 @@ void EnmlFormatter::postXmlFix() {
 QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
     int endPos, startPos, endData,slotStart, slotEnd;
     QByteArray eTag = "<table class=\"en-crypt-temp\"";
-    for (int i=newContent.indexOf(eTag); i>0; i = newContent.indexOf(eTag,i+1)) {
+    for (int i=newContent.indexOf(eTag); i != -1; i = newContent.indexOf(eTag,i+1)) {
         slotStart = newContent.indexOf("slot", i+1)+6;
         slotEnd = newContent.indexOf("\"",slotStart+1);
         QString slot = newContent.mid(slotStart, slotEnd-slotStart);
