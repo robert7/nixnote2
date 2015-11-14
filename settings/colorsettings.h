@@ -1,6 +1,6 @@
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
-Copyright (C) 2013 Randy Baumgarte
+Copyright (C) 2015 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -19,33 +19,28 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 
-#ifndef SEARCHPREFERENCES_H
-#define SEARCHPREFERENCES_H
+#ifndef COLORSETTINGS_H
+#define COLORSETTINGS_H
 
-#include <QWidget>
-#include <QSpinBox>
-#include <QCheckBox>
+#include <QObject>
+#include <QHash>
+#include <QSettings>
 
-class SearchPreferences : public QWidget
+class ColorSettings : public QObject
 {
     Q_OBJECT
 private:
-    QSpinBox *weight;
-    QCheckBox *syncAttachments;  // Disabled for performance reasons
-    QCheckBox *clearSearchOnNotebook;   // Clear search text when notebook changes?
-    QCheckBox *clearNotebookOnSearch;   // Clear notebook on search text changes
-    QCheckBox *clearTagsOnSearch;      // Clear tag selection on search text changes
-    QCheckBox *tagSelectionOr;          // "OR" tag selections.
+    void loadFile(QSettings &settings);
 
 public:
-    explicit SearchPreferences(QWidget *parent = 0);
-    QString getMinimumSearchWeight();
-    void saveValues();
-    
+    explicit ColorSettings(QObject *parent = 0);
+    QHash<QString, QString> colors;
+    QList < QPair<QString,QString> > colorList();
+
 signals:
-    
+
 public slots:
-    
+
 };
 
-#endif // SEARCHPREFERENCES_H
+#endif // COLORSETTINGS_H

@@ -110,18 +110,43 @@ void NoteIndexer::addTextIndex(int lid, QString content) {
 
 
 
-void NoteIndexer::indexResource(qint32 lid) {
+void NoteIndexer::indexResource(qint32 lid, DatabaseConnection *db) {
+    // Since this can be called from multiple threads, we need to know which DB connection we are using.
+
+    QLOG_DEBUG() << "Fetching resource for index using " << db->getConnectionName();
     Resource r;
-    NSqlQuery sql(global.db);
-    ResourceTable resourceTable(global.db);
+    ResourceTable resourceTable(db);
+    resourceTable.get(r, lid, false);
+
+    NSqlQuery sql(db);
 
     // Delete the old index
+    QLOG_DEBUG() << "Deleting old resource from index";
     sql.prepare("Delete from SearchIndex where lid=:lid");
     sql.bindValue(":lid", lid);
     sql.exec();
 
+    QLOG_DEBUG() << "Adding attributes to index.";
+    if (r.attributes.isSet()) {
+        ResourceAttributes a = r.attributes;
+        if (a.fileName.isSet()) {
+            sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, :source, :content)");
+            sql.bindValue(":lid", lid);
+            sql.bindValue(":weight", 100);
+            sql.bindValue(":source", "recognition");
+            sql.bindValue(":content", QString(a.fileName));
+            sql.exec();
+        }
+        if (a.sourceURL.isSet()) {
+            sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, :source, :content)");
+            sql.bindValue(":lid", lid);
+            sql.bindValue(":weight", 100);
+            sql.bindValue(":source", "recognition");
+            sql.bindValue(":content", QString(a.sourceURL));
+            sql.exec();
+        }
+    }
 
-    resourceTable.get(r, lid, false);
     indexRecognition(lid, r);
     QString mime = "";
     if (r.mime.isSet())
@@ -133,6 +158,7 @@ void NoteIndexer::indexResource(qint32 lid) {
 //            indexAttachment(noteLid, r);
 //   }
 
+    QLOG_DEBUG() << "Resetting index needed.";
     sql.prepare("delete from DataStore where lid=:lid and key=:key");
     sql.bindValue(":lid", lid);
     sql.bindValue(":key", RESOURCE_INDEX_NEEDED);

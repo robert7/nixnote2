@@ -70,6 +70,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/accountmaintenancedialog.h"
 #include "communication/communicationmanager.h"
 #include "utilities/encrypt.h"
+#include <boost/shared_ptr.hpp>
+
 
 
 #include "gui/nmainmenubar.h"
@@ -82,6 +84,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "qevercloud/include/QEverCloudOAuth.h"
 
 using namespace qevercloud;
+using namespace boost;
 
 extern Global global;
 class SyncRunner;
@@ -1435,6 +1438,22 @@ void NixNote::openExternalNote(qint32 lid) {
 //*****************************************************
 void NixNote::updateSelectionCriteria(bool afterSync) {
     QLOG_DEBUG() << "starting NixNote.updateSelectionCriteria()";
+
+    // Invalidate the cache
+    QDir dir(global.fileManager.getTmpDirPath());
+    QFileInfoList files = dir.entryInfoList();
+
+    for (int i=0; i<files.size(); i++) {
+        if (files[i].fileName().endsWith("_icon.png")) {
+            QFile file(files[i].absoluteFilePath());
+            file.remove();
+        }
+    }
+    QList<qint32> keys = global.cache.keys();
+    for (int i=0; i<keys.size(); i++) {
+        global.cache.remove(keys[i]);
+    }
+
 
     FilterEngine filterEngine;
     filterEngine.filter();

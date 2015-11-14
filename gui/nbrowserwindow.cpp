@@ -431,7 +431,7 @@ void NBrowserWindow::setContent(qint32 lid) {
         if (criteria->isSearchStringSet())
             formatter.setHighlightText(criteria->getSearchString());
         formatter.setNote(n, global.pdfPreview);
-        formatter.setHighlight();
+        //formatter.setHighlight();
         QLOG_DEBUG() << "rebuilding note HTML";
         content = formatter.rebuildNoteHTML();
         if (!criteria->isSearchStringSet()) {
@@ -796,7 +796,7 @@ void NBrowserWindow::saveNoteContent() {
             b.append(contents);
             cache->noteContent = b;
             global.cache.remove(lid);
-            global.cache.insert(lid, cache);
+//            global.cache.insert(lid, cache);
         }
         QLOG_DEBUG() << "Leaving saveNoteContent()";
         // Make sure the thumnailer is done
@@ -1174,8 +1174,19 @@ void NBrowserWindow::todoButtonPressed() {
             "<input TYPE=\"CHECKBOX\" " +
             QString("onMouseOver=\"style.cursor=\\'hand\\'\" ") +
             QString("onClick=\"if(!checked) removeAttribute(\\'checked\\'); else setAttribute(\\'checked\\', \\'checked\\'); editorWindow.editAlert();\" />");
-    editor->page()->mainFrame()->evaluateJavaScript(
-            script_start + todo + script_end);
+
+    QString selectedText = editor->selectedText().trimmed();
+    QRegExp regex("\\r?\\n");
+    QStringList items = selectedText.split(regex);
+    if (items.size() == 0)
+        items.append(" ");
+    QString newLineChar = "<div><br><div>";
+    for (int i=0; i<items.size(); i++) {
+        if (i == items.size()-1)
+            newLineChar = "";
+           editor->page()->mainFrame()->evaluateJavaScript(
+                script_start +todo +items[i] +newLineChar + script_end);
+    }
     editor->setFocus();
     microFocusChanged();
 }
@@ -1189,14 +1200,39 @@ void NBrowserWindow::fontSizeSelected(int index) {
     if (size <= 0)
         return;
 
-    QString text = editor->selectedText();
+    QString text = editor->selectedHtml();
     if (text.trimmed() == "")
         return;
 
+    // Go througth the selected HTML and strip out all of the existing font-sizes.
+    // This allows for the font size to be changed multiple times.  Without this the inner most font
+    // size would always win.
+    for (int i=text.indexOf("<"); i>=0; i=text.indexOf("<",i+1)) {
+        QString text1="";
+        QString text2="";
+        text1 = text.mid(0,i);
+        QString interior = text.mid(i);
+        if (!interior.startsWith("</")) {
+            int endPos = text.indexOf(">",i);
+            if (endPos>0) {
+                interior = text.mid(i,endPos-i);
+                text2 = text.mid(endPos);
+            }
+            // Now that we have a substring, look for the font-size
+            if (interior.contains("font-size:")) {
+                interior = interior.mid(0,interior.indexOf("font-size:"))+
+                        //QString::number(size)+
+                        interior.mid(interior.indexOf("pt;")+3);
+                text = text1+interior+text2;
+            }
+        }
+    }
+
+    // Start building a new font span.
     int idx = buttonBar->fontNames->currentIndex();
     QString font = buttonBar->fontNames->itemText(idx);
 
-    QString newText = "<span style=\"font-size:" +QString::number(size) +"pt; font-family:"+font+";\">"+text+"</span>";
+    QString newText = "<span style=\"font-size: " +QString::number(size) +"pt; font-family:"+font+";\">"+text+"</span>";
     QString script = QString("document.execCommand('insertHtml', false, '"+newText+"');");
     editor->page()->mainFrame()->evaluateJavaScript(script);
 
@@ -1207,7 +1243,7 @@ void NBrowserWindow::fontSizeSelected(int index) {
 
 
 void NBrowserWindow::insertHtml(QString html) {
-    QString script = QString("document.execCommand('insertHtml', false, '"+html+"');");
+    QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(html);
     editor->page()->mainFrame()->evaluateJavaScript(script);
     microFocusChanged();
 }
@@ -1638,6 +1674,9 @@ void NBrowserWindow::attachFile() {
      editor->rotateImageRightAction->setEnabled(false);
      editor->rotateImageLeftAction->setEnabled(false);
 
+//     QLOG_DEBUG() << editor->page()->inputMethodQuery(Qt::ImCursorPosition).toInt();
+//     QLOG_DEBUG() << editor->page()->inputMethodQuery(Qt::ImSurroundingText).toString();
+
      insertHyperlink = true;
      currentHyperlink ="";
      insideList = false;
@@ -1659,7 +1698,7 @@ void NBrowserWindow::attachFile() {
         +QString("   var selObj = window.getSelection();")
         +QString("   var selRange = selObj.getRangeAt(0);")
         +QString("   var workingNode = window.getSelection().anchorNode.parentNode;")
-        //+QString("    window.browserWindow.printNodeName(workingNode.firstChild.nodeValue);")
+        //+QString("    window.browserWindow.printNodeName(workingNode.nodeName);")
         +QString("   while(workingNode != null) { ")
         //+QString("      window.browserWindow.printNodeName(workingNode.nodeName);")
         +QString("      if (workingNode.nodeName=='TABLE') {")
@@ -1819,6 +1858,9 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
          +QString("}")
          +QString("changeBackground('" +value+"');");
      editor->page()->mainFrame()->evaluateJavaScript(js);
+     NoteTable noteTable(global.db);
+     noteTable.setDirty(this->lid, true);
+     this->editor->isDirty = true;
      editor->setFocus();
      microFocusChanged();
  }
@@ -1896,6 +1938,7 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
 void NBrowserWindow::showSource(bool value) {
      setSource();
      sourceEdit->setVisible(value);
+     sourceEditorTimer->setInterval(1000);
      if (!value)
          sourceEditorTimer->stop();
      else
@@ -3228,10 +3271,17 @@ void NBrowserWindow::hideHtmlEntities() {
 
 void NBrowserWindow::handleUrls(const QMimeData *mime) {
     QList<QUrl> urlList = mime->urls();
+    bool ctrlModifier = QApplication::keyboardModifiers() & Qt::ControlModifier;
     for (int i=0; i<urlList.size(); i++) {
         QString file  = urlList[i].toString();
-        if (file.toLower().startsWith("file://")) {
+        if (file.toLower().startsWith("file://") && !ctrlModifier) {
             attachFileSelected(file.mid(7));
+            return;
+        }
+        if (file.toLower().startsWith("file://") && ctrlModifier) {
+            QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(file).arg(file).arg(file);
+            QLOG_DEBUG() << url;
+            insertHtml(url);
             return;
         }
 

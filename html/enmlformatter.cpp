@@ -64,14 +64,14 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 
     // Strip off HTML header
     index = content.indexOf("<body");
-    index = content.indexOf(">", index)+1;
+//    index = content.indexOf(">", index)+1;
     content.remove(0,index);
     index = content.indexOf("</body");
     content.truncate(index);
     b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>\n");
     b.append("<html><head><title></title></head>");
-    b.append("<body style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
+    //b.append("<body style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
     b.append(content);
     b.append("</body></html>");
     content.clear();
@@ -156,18 +156,18 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 
     // Strip off HTML header
     index = content.indexOf("<body");
-    index = content.indexOf(">", index)+1;
+    //index = content.indexOf(">", index)+1;
     content.remove(0,index);
     index = content.indexOf("</body");
     content.truncate(index);
     b.clear();
     b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>");
-    b.append("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
+    //b.append("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
     b.append(content);
     b.append("</en-note>");
     content.clear();
-    content = b;
+    content = b.replace("<body", "<en-note");
 
     postXmlFix();
     return content;
@@ -312,9 +312,9 @@ void EnmlFormatter::fixLinkNode(QWebElement e) {
     QString latex = e.attribute("href", "");
     if (latex.toLower().startsWith("latex:///")) {
         removeInvalidAttributes(e);
-        e.removeAttribute("title");
-        e.removeAttribute("href");
-        e.setOuterXml(e.toInnerXml());
+        QString formula = e.attribute("title");
+        e.setAttribute("href", QString("http://latex.codecogs.com/gif.latex?%1").arg(formula));
+        //e.setOuterXml(e.toInnerXml());
     }
     removeInvalidAttributes(e);
 }
