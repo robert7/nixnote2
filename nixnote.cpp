@@ -70,6 +70,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/accountmaintenancedialog.h"
 #include "communication/communicationmanager.h"
 #include "utilities/encrypt.h"
+#include <boost/shared_ptr.hpp>
+
 
 
 #include "gui/nmainmenubar.h"
@@ -82,6 +84,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "qevercloud/include/QEverCloudOAuth.h"
 
 using namespace qevercloud;
+using namespace boost;
 
 extern Global global;
 class SyncRunner;
@@ -103,7 +106,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 #if QT_VERSION < 0x050000
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 #endif
-    this->setDebugLevel();
+    global.setDebugLevel();
 
     QTranslator *nixnoteTranslator = new QTranslator();
     QLOG_DEBUG() << "Looking for transaltions: " << global.fileManager.getTranslateFilePath("nixnote2_" + QLocale::system().name() + ".qm");
@@ -142,7 +145,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     QLOG_TRACE() << "Setting up GUI";
     global.filterPosition = 0;
     this->setupGui();
-    this->openNote(false);
 
     QLOG_TRACE() << "Connecting signals";
     connect(favoritesTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
@@ -197,6 +199,8 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
         this->showMinimized();
         this->newExternalNote();
     }
+
+    //this->openNote(false);
 
     // Init OAuth winwod
     //oauthWindow = NULL;
@@ -468,6 +472,9 @@ void NixNote::setupGui() {
             if (i>0)
                 filter = new FilterCriteria();
             int lid = lidList[i].toInt();
+            QList<qint32> selectedLids;
+            selectedLids.append(lid);
+            filter->setSelectedNotes(selectedLids);
             filter->setLid(lid);
             if (i>0)
                 global.filterCriteria.append(filter);
@@ -1895,11 +1902,13 @@ void NixNote::newNote() {
 
     FilterCriteria *criteria = new FilterCriteria();
     global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    criteria->unsetTags();
+    criteria->unsetSearchString();
     criteria->setLid(lid);
     global.filterCriteria.append(criteria);
     global.filterPosition++;
-    openNote(false);
     updateSelectionCriteria();
+    openNote(false);
 
     if (global.newNoteFocusToTitle()) {
         tabWindow->currentBrowser()->noteTitle.setFocus();
@@ -2630,38 +2639,10 @@ void NixNote::openPreferences() {
         }
         indexRunner.officeFound = global.synchronizeAttachments();
     }
-    setDebugLevel();
+    global.setDebugLevel();
 }
 
 
-
-//************************************************
-//* Set the user debug level.
-//************************************************
-void NixNote::setDebugLevel() {
-    global.settings->beginGroup("Debugging");
-    int level = global.settings->value("messageLevel", -1).toInt();
-    global.settings->endGroup();
-
-    // Setup the QLOG functions for debugging & messages
-    QsLogging::Logger& logger = QsLogging::Logger::instance();
-    if (level == QsLogging::TraceLevel)
-        logger.setLoggingLevel(QsLogging::TraceLevel);
-    else if (level == QsLogging::DebugLevel)
-        logger.setLoggingLevel(QsLogging::DebugLevel);
-    else if (level == QsLogging::InfoLevel || level == -1)
-        logger.setLoggingLevel(QsLogging::InfoLevel);
-    else if (level == QsLogging::WarnLevel)
-        logger.setLoggingLevel(QsLogging::WarnLevel);
-    else if (level == QsLogging::ErrorLevel)
-        logger.setLoggingLevel(QsLogging::ErrorLevel);
-    else if (level == QsLogging::FatalLevel)
-        logger.setLoggingLevel(QsLogging::FatalLevel);
-    else {
-        logger.setLoggingLevel(QsLogging::InfoLevel);
-        QLOG_WARN() << "Invalid message logging level " << level;
-    }
-}
 
 
 

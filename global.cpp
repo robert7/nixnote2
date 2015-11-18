@@ -86,13 +86,14 @@ void Global::setup(StartupConfig startupConfig) {
 
     QString key = "1b73cc55-9a2f-441b-877a-ca1d0131cd2"+
             QString::number(accountId);
-    QLOG_DEBUG() << "Shared memory key: " << key;
     sharedMemory = new QSharedMemory(key);
 
 
     settingsFile = fileManager.getHomeDirPath("") + "nixnote-"+QString::number(accountId)+".conf";
 
     settings = new QSettings(settingsFile, QSettings::IniFormat);
+
+    setDebugLevel();
 
     this->forceNoStartMimized = startupConfig.forceNoStartMinimized;
     this->forceSystemTrayAvailable = startupConfig.forceSystemTrayAvailable;
@@ -332,6 +333,60 @@ int Global::getColumnPosition(QString col) {
 int Global::getMinimumRecognitionWeight() {
     settings->beginGroup("Search");
     int value = settings->value("minimumRecognitionWeight", 20).toInt();
+    settings->endGroup();
+    return value;
+}
+
+void Global::setClearNotebookOnSearch(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("clearNotebookOnSearch",value);
+    settings->endGroup();
+}
+
+
+void Global::setClearTagsOnSearch(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("clearTagsOnSearch",value);
+    settings->endGroup();
+}
+
+void Global::setClearSearchOnNotebook(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("clearSearchOnNotebook",value);
+    settings->endGroup();
+}
+
+void Global::setTagSelectionOr(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("tagSelectionOr",value);
+    settings->endGroup();
+}
+
+bool Global::getClearNotebookOnSearch() {
+    settings->beginGroup("Search");
+    bool value = settings->value("clearNotebookOnSearch",false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+bool Global::getClearSearchOnNotebook() {
+    settings->beginGroup("Search");
+    bool value = settings->value("clearSearchOnNotebook",false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+
+bool Global::getClearTagsOnSearch() {
+    settings->beginGroup("Search");
+    bool value = settings->value("clearTagsOnSearch",false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+bool Global::getTagSelectionOr() {
+    settings->beginGroup("Search");
+    bool value = settings->value("tagSelectionOr",false).toBool();
     settings->endGroup();
     return value;
 }
@@ -867,6 +922,35 @@ void Global::stackDump(int max) {
     QLOG_ERROR() << "**** Stack dump complete *****";
 }
 
+
+
+//************************************************
+//* Set the user debug level.
+//************************************************
+void Global::setDebugLevel() {
+    settings->beginGroup("Debugging");
+    int level = settings->value("messageLevel", -1).toInt();
+    settings->endGroup();
+
+    // Setup the QLOG functions for debugging & messages
+    QsLogging::Logger& logger = QsLogging::Logger::instance();
+    if (level == QsLogging::TraceLevel)
+        logger.setLoggingLevel(QsLogging::TraceLevel);
+    else if (level == QsLogging::DebugLevel)
+        logger.setLoggingLevel(QsLogging::DebugLevel);
+    else if (level == QsLogging::InfoLevel || level == -1)
+        logger.setLoggingLevel(QsLogging::InfoLevel);
+    else if (level == QsLogging::WarnLevel)
+        logger.setLoggingLevel(QsLogging::WarnLevel);
+    else if (level == QsLogging::ErrorLevel)
+        logger.setLoggingLevel(QsLogging::ErrorLevel);
+    else if (level == QsLogging::FatalLevel)
+        logger.setLoggingLevel(QsLogging::FatalLevel);
+    else {
+        logger.setLoggingLevel(QsLogging::InfoLevel);
+        QLOG_WARN() << "Invalid message logging level " << level;
+    }
+}
 
 
 

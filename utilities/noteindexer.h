@@ -39,8 +39,10 @@ using namespace std;
 
 class NoteIndexer
 {
+private:
+    DatabaseConnection *db;
 public:
-    NoteIndexer();
+    NoteIndexer(DatabaseConnection *db);
     void indexNote(qint32 lid);
     void addTextIndex(qint32 lid, QString content);
     void indexResource(qint32 lid);

@@ -695,7 +695,7 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
     query.finish();
     db->unlock();
 
-    NoteIndexer indexer;
+    NoteIndexer indexer(db);
     indexer.indexResource(lid);
     return lid;
 }
@@ -799,7 +799,7 @@ void ResourceTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     }
     query.finish();
 
-    NoteIndexer indexer;
+    NoteIndexer indexer(db);
     indexer.indexResource(lid);
 
     db->unlock();
