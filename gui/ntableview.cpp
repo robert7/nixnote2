@@ -490,18 +490,16 @@ void NTableView::refreshSelection() {
             }
         }
     } else {
-        if (proxy->lidMap->contains(criteria->getLid())) {
-            for (int j=0; j<proxy->rowCount(); j++) {
-                QModelIndex idx = proxy->index(j,NOTE_TABLE_LID_POSITION);
-                qint32 rowLid = idx.data().toInt();
-                if (rowLid == criteria->getLid()) {
-                     selectRow(j);
-                }
-            }
-        }
+//        if (proxy->lidMap->contains(criteria->getLid())) {
+//            for (int j=0; j<proxy->rowCount(); j++) {
+//                QModelIndex idx = proxy->index(j,NOTE_TABLE_LID_POSITION);
+//                qint32 rowLid = idx.data().toInt();
+//                if (rowLid == criteria->getLid()) {
+//                     selectRow(j);
+//                }
+//            }
+//        }
     }
-
-    setSelectionMode(mode);
 
     if (criteria->isLidSet() && proxy->lidMap->contains(criteria->getLid())) {
         int rowLocation = proxy->lidMap->value(criteria->getLid());
@@ -512,6 +510,8 @@ void NTableView::refreshSelection() {
             selectRow(proxyIndex.row());
         }
     }
+
+    setSelectionMode(mode);
 
     // Make sure at least one thing is selected
     QLOG_TRACE() << "Selecting one item if nothing else is selected";
@@ -527,16 +527,15 @@ void NTableView::refreshSelection() {
 
     // Save the list of selected notes
     QList<qint32> selectedNotes;
-    l = selectedIndexes();
-    for(int i=0; i<l.size(); i++) {
-        QModelIndex idx = l[i];
-        if (idx.column() == NOTE_TABLE_LID_POSITION) {
-            qint32 rowLid = idx.data().toInt();
-            selectedNotes.append(rowLid);
-        }
-    }
+//    l = selectedIndexes();
+//    for(int i=0; i<l.size(); i++) {
+//        QModelIndex idx = l[i];
+//        qint32 lid = idx.sibling(idx.row(),NOTE_TABLE_LID_POSITION).data().toInt();
+//        if (!selectedNotes.contains(lid))
+//            selectedNotes.append(lid);
+//    }
+    this->getSelectedLids(selectedNotes);
     global.filterCriteria[global.filterPosition]->setSelectedNotes(selectedNotes);
-
 
     QLOG_TRACE() << "refleshSelection() complete";
     this->blockSignals(false);
