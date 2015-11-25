@@ -46,10 +46,12 @@ sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 rm -rf ${RPM_BUILD_ROOT}
 rm -rf ${RPM_BUILD_DIR}/nixnote2
 
+%define debug_package %{nil}
 
 %prep
 %setup -n nixnote2
 
+%define debug_package %{nil}
 
 %build
 
@@ -79,7 +81,6 @@ fi
 %attr(755,root,root) /usr/share/man/man1/nixnote2.1.gz
 
 %changelog
-* Sat Mar 15 2014 Randy Baumgarte <randy@fbn.cx> - 2.0-alpha5
-- Spec file created for Fedora rpm builds
+* Sun Nov 22 2015 Randy Baumgarte <randy@fbn.cx> - __VERSION__
 - See changelog.txt for all changes
 
