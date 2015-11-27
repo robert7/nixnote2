@@ -36,9 +36,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "reminders/remindermanager.h"
 #include "sql/databaseconnection.h"
 #include "threads/indexrunner.h"
+#include "utilities/crossmemorymapper.h"
 
 #include <string>
-#include <QSharedMemory>
 #include <QSqlDatabase>
 #include <QReadWriteLock>
 
@@ -126,8 +126,9 @@ public:
     bool enableIndexing;                   // background indexing
     bool pdfPreview;                       // Should we view PDFs inline?
     bool showGoodSyncMessagesInTray;       // Should we show good sync messages in the tray, or just errors?
-    QSharedMemory *sharedMemory;           // Shared memory key.  Useful to prevent multiple instances and for cross memory communication
+    CrossMemoryMapper *sharedMemory;       // Shared memory key.  Useful to prevent multiple instances and for cross memory communication
     bool confirmDeletes();                 // Should we confirm deletes?
+    bool purgeTemporaryFilesOnShutdown;    // Should we purge temporary files on shutdown?
     void setDeleteConfirmation(bool value);  // Set delete confirmation
     QString tagBehavior();                 // Should inactive tags be shown?
     bool newNoteFocusToTitle();            // Should we focus on the note title when a new note has been created?
@@ -144,6 +145,8 @@ public:
     bool minimizeToTray();                 // Minimize it to tray rather than the task list.  We really just hide it.
     void setMinimizeToTray(bool value);    // Set if we should minimize it to the tray
     void setCloseToTray(bool value);       // Set if we should close it to the tray
+    bool showNoteListGrid();               // Should we whow the table grid?
+    bool alternateNoteListColors();        // Should we alternate the table colors?
     void setColumnPosition(QString col, int position);    // Save the order of a  note list's column.
     void setColumnWidth(QString col, int width);          // Save the width of a note list column
     int getColumnPosition(QString col);                   // Get the desired position of a note column
