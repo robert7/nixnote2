@@ -42,6 +42,8 @@ StartupConfig::StartupConfig()
     newNote = NULL;
     queryNotes = NULL;
     purgeTemporaryFiles=true;
+    delNote = NULL;
+    email = NULL;
 }
 
 
@@ -88,9 +90,7 @@ void StartupConfig::printHelp() {
                    +QString("                %v                     Show the time the reminder was completed.\n")
                    +QString("                <padding>              Pad the field to this number of spaces on the display.\n")
                    +QString("                <:>                    Truncate the field if longer than the padding.\n")
-                   +QString("  addNote <options>                    Add a new note via the command line.  If NixNote is\n")
-                   +QString("                                       not running, the note will be imported the next time the GUI\n")
-                   +QString("                                       is started.\n")
+                   +QString("  addNote <options>                    Add a new note via the command line.\n")
                    +QString("     addNote options:\n")
                    +QString("          --title=\"<title>\"            Title of the new note.\n")
                    +QString("          --notebook=\"<notebook>\"      Notebook for the new note.\n")
@@ -100,6 +100,21 @@ void StartupConfig::printHelp() {
                    +QString("          --updated=\"<date_updated>\"   Date created\n")
                    +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
                    +QString("                                       is read from stdin.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
+                   +QString("  deleteNote <options>                 Move a note to the trash via the command line.\n")
+                   +QString("     deleteNote options:\n")
+                   +QString("          --id=\"<note_id>\"             ID of the note to delete.\n")
+                   +QString("          --noVerify                   Do not prompt for verification.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
+                   +QString("  emailNote <options>                  Move a note to the trash via the command line.\n")
+                   +QString("     emailNote options:\n")
+                   +QString("          --id=\"<note_id>\"             ID of the note to email.\n")
+                   +QString("          --subject=\"<subject>\"        Additional comments.\n")
+                   +QString("          --to=\"<address list>\"        List of recipients for the email.\n")
+                   +QString("          --cc=\"<address list>\"        List of recipients to carbon copy.\n")
+                   +QString("          --bcc=\"<address list>\"       List of recipients to blind carbon copy.\n")
+                   +QString("          --note=\"<note>.\"             Additional comments.\n")
+                   +QString("          --ccSelf                     Send a copy to yourself.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
                    +QString("  Examples:\n\n")
                    +QString("     To Start NixNote, do a sync, and then exit.\n")
@@ -132,10 +147,20 @@ int StartupConfig::init(int argc, char *argv[]) {
             if (newNote == NULL)
                 newNote = new AddNote();
         }
+        if (parm.startsWith("emailNote")) {
+            command->setBit(STARTUP_EMAILNOTE,true);
+            if (email == NULL)
+                email = new EmailNote();
+        }
         if (parm.startsWith("query")) {
             command->setBit(STARTUP_QUERY);
-            if (newNote == NULL)
+            if (queryNotes == NULL)
                 queryNotes = new CmdLineQuery();
+        }
+        if (parm.startsWith("deleteNote")) {
+            command->setBit(STARTUP_DELETENOTE);
+            if (delNote == NULL)
+                delNote = new DeleteNote();
         }
         if (parm.startsWith("sync")) {
             command->setBit(STARTUP_SYNC,true);
@@ -149,7 +174,7 @@ int StartupConfig::init(int argc, char *argv[]) {
         if (command->at(STARTUP_ADDNOTE)) {
             if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
                 parm = parm.mid(12);
-                newNote->account = parm.toInt();
+                accountId = parm.toInt();
             }
             if (parm.startsWith("--title=", Qt::CaseSensitive)) {
                 parm = parm.mid(8);
@@ -179,7 +204,7 @@ int StartupConfig::init(int argc, char *argv[]) {
         if (command->at(STARTUP_QUERY)) {
             if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
                 parm = parm.mid(12);
-                queryNotes->account = parm.toInt();
+                this->accountId=parm.toInt();
             }
             if (parm.startsWith("--search=", Qt::CaseSensitive)) {
                 parm = parm.mid(9);
@@ -234,6 +259,52 @@ int StartupConfig::init(int argc, char *argv[]) {
                 forceSystemTrayAvailable = true;
             }
         }
+        if (command->at(STARTUP_DELETENOTE)) {
+            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
+                parm = parm.mid(12);
+                accountId = parm.toInt();
+            }
+            if (parm == "--noVerify") {
+                delNote->verifyDelete = false;
+            }
+            if (parm.startsWith("--id=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                delNote->lid = parm.toInt();
+            }
+        }
+        if (command->at(STARTUP_EMAILNOTE)) {
+            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
+                parm = parm.mid(12);
+                accountId = parm.toInt();
+            }
+            if (parm == "--ccSelf") {
+                email->ccSelf = true;
+            }
+            if (parm.startsWith("--to=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                email->to = parm;
+            }
+            if (parm.startsWith("--cc=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                email->cc = parm;
+            }
+            if (parm.startsWith("--bcc=", Qt::CaseSensitive)) {
+                parm = parm.mid(6);
+                email->bcc = parm;
+            }
+            if (parm.startsWith("--note=", Qt::CaseSensitive)) {
+                parm = parm.mid(7);
+                email->note = parm;
+            }
+            if (parm.startsWith("--subject=", Qt::CaseSensitive)) {
+                parm = parm.mid(10);
+                email->subject = parm;
+            }
+            if (parm.startsWith("--id=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                email->lid = parm.toInt();
+            }
+        }
     }
 
     if (command->count(true) == 0)
@@ -269,4 +340,13 @@ bool StartupConfig::show() {
 
 bool StartupConfig::shutdown() {
     return command->at(STARTUP_SHUTDOWN);
+}
+
+bool StartupConfig::deleteNote() {
+    return command->at(STARTUP_DELETENOTE);
+}
+
+
+bool StartupConfig::emailNote() {
+    return command->at(STARTUP_EMAILNOTE);
 }

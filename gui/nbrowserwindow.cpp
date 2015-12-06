@@ -547,6 +547,8 @@ void NBrowserWindow::setContent(qint32 lid) {
     } /*else
         hammer->timer.start(1000);*/
 
+    this->setEditorStyle();
+
     if (hasFocus)
         this->editor->setFocus();
     QLOG_DEBUG() << "Exiting setContent";
@@ -1313,14 +1315,12 @@ void NBrowserWindow::insertLinkButtonPressed() {
 
     // Take care of inserting new links
     if (insertHyperlink) {
-        QString selectedText = editor->selectedText();
+        QString selectedText = editor->selectedText().replace("'","\\'");
         if (dialog.getUrl().trimmed() == "")
             return;
-        QString dUrl = dialog.getUrl().trimmed().replace("'", "\\'");
-        QString url = QString("<a href=\"") +dUrl
-                +QString("\" title=\"") +dUrl
-                +QString("\" >") +selectedText +QString("</a>");
-        QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+        QString durl = dialog.getUrl().trimmed().replace("'","\\'");
+        QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(durl,durl,selectedText);
+        QString script = QString("document.execCommand('insertHtml', false, '%1')").arg(url);
         editor->page()->mainFrame()->evaluateJavaScript(script);
         return;
     }
@@ -1915,16 +1915,24 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
              QMessageBox::information(this, tr("Unable Open"), QString(tr("This is an ink note.\nInk notes are not supported since Evernote has not\n published any specifications on them\nand I'm too lazy to figure them out by myself.")));
              return;
          }
-         QString fullName = url.toString().mid(6);
+         QString fullName = url.toString().mid(6).replace(global.fileManager.getDbaDirPath(),"");
          int index = fullName.lastIndexOf(".");
          QString guid = "";
-         QString type = "";
          if (index != -1) {
-             type = fullName.mid(index);
-             guid = fullName.mid(0,index).replace(global.fileManager.getDbaDirPath(),"");
+             guid = fullName.mid(0,index);
          } else
+             guid = fullName;
+         QDirIterator dirIt(global.fileManager.getDbaDirPath());
+         QString fileUrl = "";
+         while (dirIt.hasNext()) {
+             if (QFileInfo(dirIt.filePath()).isFile() && QFileInfo(dirIt.filePath()).baseName() == guid) {
+                 fileUrl = dirIt.fileName();
+             }
+             dirIt.next();
+         }
+         if (fileUrl == "")
              return;
-         QString fileUrl = global.fileManager.getDbaDirPath()+guid +type;
+         fileUrl = global.fileManager.getDbaDirPath()+fileUrl;
          global.resourceWatcher.addPath(fileUrl);
          QDesktopServices::openUrl(fileUrl);
          return;
@@ -2475,7 +2483,7 @@ void NBrowserWindow::emailNote() {
     emailDialog.exec();
     if (emailDialog.cancelPressed)
         return;
-    emit(setMessage("Sending Email. Please be patient."));
+    emit(setMessage(tr("Sending Email. Please be patient.")));
 
     QStringList toAddresses = emailDialog.getToAddresses();
     QStringList ccAddresses = emailDialog.getCcAddresses();
@@ -3429,4 +3437,21 @@ void NBrowserWindow::superscriptButtonPressed() {
 // User pressed the subscript editor button
 void NBrowserWindow::subscriptButtonPressed() {
     editor->page()->mainFrame()->evaluateJavaScript("document.execCommand('subscript');");
+}
+
+// Set the editor background & font color
+void NBrowserWindow::setEditorStyle() {
+    QString html = editor->page()->mainFrame()->toHtml();
+    int start = 0;
+    start = html.indexOf("<body");
+    html = html.mid(start);
+    int end = html.length();
+    end = html.indexOf(">");
+    html = html.mid(0,end);
+    bool hasBackground = html.contains("background-color:", Qt::CaseInsensitive);
+    bool hasDefaultBackground = html.contains("background-color: "+global.getEditorBackgroundColor(), Qt::CaseInsensitive);
+    if (hasBackground && !hasDefaultBackground)
+        editor->page()->mainFrame()->evaluateJavaScript(global.getEditorStyle(true));
+    else
+        editor->page()->mainFrame()->evaluateJavaScript(global.getEditorStyle(false));
 }

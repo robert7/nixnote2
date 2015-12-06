@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/tagtable.h"
 #include "sql/notetable.h"
 #include "utilities/nuuid.h"
+#include "email/smtpclient.h"
 
 extern Global global;
 
@@ -82,10 +83,68 @@ int CmdLineTool::run(StartupConfig config) {
     if (config.query()) {
         return queryNotes(config);
     }
+    if (config.deleteNote()) {
+        return deleteNote(config);
+    }
+    if (config.emailNote()) {
+        return emailNote(config);
+    }
     return 0;
 }
 
 
+
+
+int CmdLineTool::emailNote(StartupConfig config) {
+    // Look to see if another NixNote is running.  If so, then we
+    // expect a response if the note was delete.  Otherwise, we
+    // do it ourself.
+    bool useCrossMemory = true;
+    global.sharedMemory->unlock();
+    global.sharedMemory->detach();
+    if (!global.sharedMemory->attach()) {
+        useCrossMemory = false;
+    }
+    if (useCrossMemory) {
+        global.sharedMemory->write("EMAIL_NOTE:" + config.email->wrap());
+    } else {
+        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        return config.email->sendEmail();
+    }
+    return 0;
+}
+
+
+
+int CmdLineTool::deleteNote(StartupConfig config) {
+    bool useCrossMemory = true;
+
+    if (config.delNote->verifyDelete) {
+        std::string verify;
+        std::cout << QString(tr("Type DELETE to very: ")).toStdString();
+        std::cin >> verify;
+        QString qVerify = QString::fromStdString(verify);
+        if (qVerify.toLower() != "delete")
+            return 16;
+    }
+
+    // Look to see if another NixNote is running.  If so, then we
+    // expect a response if the note was delete.  Otherwise, we
+    // do it ourself.
+    global.sharedMemory->unlock();
+    global.sharedMemory->detach();
+    if (!global.sharedMemory->attach()) {
+        useCrossMemory = false;
+    }
+    if (useCrossMemory) {
+        global.sharedMemory->write("DELETE_NOTE:" + QString::number(config.delNote->lid));
+    } else {
+        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        NoteTable noteTable(global.db);
+        noteTable.deleteNote(config.delNote->lid,true);
+    }
+    return 0;
+}
 
 
 

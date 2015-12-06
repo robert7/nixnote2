@@ -35,7 +35,6 @@ extern Global global;
 CmdLineQuery::CmdLineQuery(QObject *parent) :
     QObject(parent)
 {
-    account = -1;
     stdout=true;
     printHeaders=true;
 }
@@ -48,7 +47,7 @@ void CmdLineQuery::write(QList<qint32> lids, QString filename) {
     QString delimiter = "|";
     if (this->delimiter != "")
         delimiter = this->delimiter;
-    QFile *outputFile;
+    QFile *outputFile = NULL;
     if (filename != "") {
         outputFile = new QFile(filename);
         stdout=false;

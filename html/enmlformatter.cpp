@@ -60,11 +60,31 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     QByteArray b;
     qint32 index;
 
+    // Remove invalid stuff
     content.replace("</input>","");
+    content = this->removeInvalidUnicode(content);
 
-    // Strip off HTML header
+    // Strip off HTML header & remove the background & default font color
+    // if they match the theme default.
     index = content.indexOf("<body");
-//    index = content.indexOf(">", index)+1;
+    QLOG_DEBUG() << content;
+    QString header = content.mid(index);
+    QByteArray c1 = content.mid(0,index);
+    index = header.indexOf(">");
+    header = header.mid(0,index);
+    QByteArray c2 = content.mid(content.indexOf(">",index));
+    QString newHeader = header;
+    QString bgColor = "background-color: "+global.getEditorBackgroundColor()+";";
+    QString fgColor = "color: "+global.getEditorFontColor()+";";
+    newHeader = newHeader.replace(bgColor, "");
+    newHeader = newHeader.replace(fgColor,"");
+    content = c1;
+    content.append(newHeader).append(c2);
+    QLOG_DEBUG() << content;
+
+
+    // Start transforming the header
+    index = content.indexOf("<body");
     content.remove(0,index);
     index = content.indexOf("</body");
     content.truncate(index);
@@ -537,4 +557,13 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
         newContent.append(end);
     }
     return newContent;
+}
+
+
+
+// Remove any invalid unicode characters to allow it to sync properly.
+QByteArray EnmlFormatter::removeInvalidUnicode(QByteArray content) {
+    QString c(content);
+    c = c.remove(QChar( 0x1b ), Qt::CaseInsensitive);
+    return c.toUtf8();
 }

@@ -138,7 +138,7 @@ void Global::setup(StartupConfig startupConfig) {
         countBehavior = CountAll;
     if (countbehavior==2)
         countBehavior = CountNone;
-    pdfPreview = settings->value("showPDFs", true).toBool();
+    pdfPreview = settings->value("showPDFs", false).toBool();
     defaultFont = settings->value("defaultFont","").toString();
     defaultFontSize = settings->value("defaultFontSize",0).toInt();
     defaultGuiFontSize = settings->value("defaultGuiFontSize", 0).toInt();
@@ -161,7 +161,7 @@ void Global::setup(StartupConfig startupConfig) {
 
     settings->beginGroup("Appearance");
     QString theme = settings->value("themeName", "").toString();
-    loadTheme(resourceList,theme);
+    loadTheme(resourceList,colorList,theme);
     autoHideEditorToolbar = settings->value("autoHideEditorToolbar", true).toBool();
     settings->endGroup();
 
@@ -593,6 +593,33 @@ QIcon Global::getIconResource(QHash<QString,QString> &resourceList, QString key)
 }
 
 
+QString Global::getEditorStyle(bool colorOnly) {
+    QString returnValue = "";
+    if (!colorOnly) {
+        returnValue = "document.body.style.background='"+this->getEditorBackgroundColor()+"'; ";
+    }
+    returnValue = returnValue+"document.body.style.color='"+this->getEditorFontColor()+"';";
+
+    return "function setColor() { "+returnValue +" }; setColor();";
+}
+
+
+
+QString Global::getEditorFontColor() {
+    if (colorList.contains("editorFontColor"))
+        return colorList["editorFontColor"].trimmed();
+    else
+        return "black";
+}
+
+
+QString Global::getEditorBackgroundColor() {
+    if (colorList.contains("editorBackgroundColor"))
+        return colorList["editorBackgroundColor"].trimmed();
+    else
+        return "white";
+}
+
 
 // Get a QIcon in an icon theme
 QIcon Global::getIconResource(QString key) {
@@ -618,28 +645,29 @@ QPixmap Global::getPixmapResource(QHash<QString,QString> &resourceList, QString 
 
 
 // Load a theme into a resourceList.
-void Global::loadTheme(QHash<QString, QString> &resourceList, QString theme) {
+void Global::loadTheme(QHash<QString, QString> &resourceList, QHash<QString,QString> &colorList, QString theme) {
     resourceList.clear();
+    colorList.clear();
     if (theme.trimmed() == "")
         return;
     QFile systemTheme(fileManager.getProgramDirPath("theme.ini"));
-    this->loadThemeFile(resourceList,systemTheme, theme);
+    this->loadThemeFile(resourceList,colorList, systemTheme, theme);
 
     QFile userTheme(fileManager.getHomeDirPath("theme.ini"));
-    this->loadThemeFile(resourceList, userTheme, theme);
+    this->loadThemeFile(resourceList, colorList, userTheme, theme);
 }
 
 
 
 // Load a theme from a given file
 void Global::loadThemeFile(QFile &file, QString themeName) {
-    this->loadThemeFile(resourceList, file, themeName);
+    this->loadThemeFile(resourceList, colorList, file, themeName);
 }
 
 
 
 // Load a theme from a given file
-void Global::loadThemeFile(QHash<QString,QString> &resourceList, QFile &file, QString themeName) {
+void Global::loadThemeFile(QHash<QString,QString> &resourceList, QHash<QString,QString> &colorList, QFile &file, QString themeName) {
     if (!file.exists())
         return;
     if(!file.open(QIODevice::ReadOnly))
@@ -664,6 +692,9 @@ void Global::loadThemeFile(QHash<QString,QString> &resourceList, QFile &file, QS
                     if (f.exists()) {
                         resourceList.remove(":"+key);
                         resourceList.insert(":"+key,value);
+                    } else {
+                        colorList.remove("key");
+                        colorList.insert(key,value);
                     }
                 }
             }
@@ -839,6 +870,15 @@ void Global::setNewNoteFocusToTitle(bool focus) {
     settings->endGroup();
 }
 
+
+
+
+bool Global::disableImageHighlight() {
+    settings->beginGroup("Debugging");
+    bool value = settings->value("disableImageHighlight", false).toBool();
+    settings->endGroup();
+    return value;
+}
 
 
 // What version of the database are we using?

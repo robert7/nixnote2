@@ -35,6 +35,8 @@ public:
     int run(StartupConfig config);
     int addNote(StartupConfig config);
     int queryNotes(StartupConfig config);
+    int deleteNote(StartupConfig config);
+    int emailNote(StartupConfig config);
 
 signals:
 

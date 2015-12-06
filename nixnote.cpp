@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/logviewer.h"
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"
+#include "dialog/faderdialog.h"
 
 #include <QThread>
 #include <QLabel>
@@ -215,7 +216,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(importManager, SIGNAL(fileImported()), this, SLOT(updateSelectionCriteria()));
     importManager->setup();
     this->updateSelectionCriteria(true);  // This is only needed in case we imported something at statup.
-
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
 
@@ -999,6 +999,8 @@ void NixNote::setupTabWindow() {
     connect(noteTableView, SIGNAL(openNoteExternalWindow(qint32)), this, SLOT(openExternalNote(qint32)));
     connect(menuBar->viewSourceAction, SIGNAL(triggered()), tabWindow, SLOT(toggleSource()));
     connect(menuBar->viewHistoryAction, SIGNAL(triggered()), this, SLOT(viewNoteHistory()));
+    connect(menuBar->viewPresentationModeAction, SIGNAL(triggered()), this, SLOT(presentationModeOn()));
+    connect(tabWindow, SIGNAL(escapeKeyPressed()), this, SLOT(presentationModeOff()));
 
     connect(menuBar->undoAction, SIGNAL(triggered()), tabWindow, SLOT(undoButtonPressed()));
     connect(menuBar->redoAction, SIGNAL(triggered()), tabWindow, SLOT(redoButtonPressed()));
@@ -1455,6 +1457,8 @@ void NixNote::openExternalNote(qint32 lid) {
 //*****************************************************
 void NixNote::updateSelectionCriteria(bool afterSync) {
     QLOG_DEBUG() << "starting NixNote.updateSelectionCriteria()";
+
+    tabWindow->currentBrowser()->saveNoteContent();
 
     // Invalidate the cache
     QDir dir(global.fileManager.getTmpDirPath());
@@ -2451,6 +2455,18 @@ void NixNote::heartbeatTimerTriggered() {
         engine.filter(filter, &lids);
         query.write(lids, tmpFile);
     }
+    if (data.startsWith("DELETE_NOTE:")) {
+        qint32 lid = data.mid(12).toInt();
+        NoteTable noteTable(global.db);
+        noteTable.deleteNote(lid, true);
+        updateSelectionCriteria();
+    }
+    if (data.startsWith("EMAIL_NOTE:")) {
+        QString xml = data.mid(11);
+        EmailNote email;
+        email.unwrap(xml);
+        email.sendEmail();
+    }
     //free(buffer); // Fixes memory leak
 }
 
@@ -2518,6 +2534,7 @@ void NixNote::toggleVisible() {
         if (isMinimized()) {
             setHidden(false);
             this->showNormal();
+	    this->activateWindow();
             this->setFocus();
             return;
         } else {
@@ -3262,7 +3279,7 @@ void NixNote::reloadIcons() {
         else
             global.settings->remove("themeName");
         global.settings->endGroup();
-        global.loadTheme(global.resourceList,newThemeName);
+        global.loadTheme(global.resourceList,global.colorList,newThemeName);
     }
 
     setWindowIcon(QIcon(global.getIconResource(":windowIcon")));
@@ -3287,6 +3304,8 @@ void NixNote::reloadIcons() {
     searchText->reloadIcons();
     favoritesTreeView->reloadIcons();
     tabWindow->reloadIcons();
+
+    tabWindow->changeEditorStyle();
 
     QString themeInformation = global.getResourceFileName(global.resourceList, ":themeInformation");
     menuBar->themeInformationAction->setVisible(true);
@@ -3448,3 +3467,36 @@ void NixNote::toolbarVisibilityChanged() {
     menuBar->viewToolbar->setChecked(toolBar->isVisible());
     menuBar->viewToolbar->blockSignals(false);
 }
+
+
+//Turn on presentation mode
+void NixNote::presentationModeOn() {
+    this->leftScroll->hide();
+//    this->toggleLeftPanel();
+//    this->toggleLeftPanel();
+    this->menuBar->setVisible(false);
+    this->topRightWidget->setVisible(false);
+    this->toolBar->setVisible(false);
+    this->statusBar()->setVisible(false);
+    this->showFullScreen();
+
+    FaderDialog *d = new FaderDialog();
+    d->setText(tr("Press ESC to exit."));
+    d->show();
+}
+
+//Turn off presentation mode
+void NixNote::presentationModeOff() {
+    if (!this->isFullScreen())
+        return;
+    if (menuBar->viewLeftPanel->isChecked())
+        leftScroll->show();
+    if (menuBar->viewNoteList->isChecked())
+        topRightWidget->show();
+    if (menuBar->viewStatusbar->isChecked())
+        statusBar()->show();
+    menuBar->show();
+    toolBar->show();
+    this->showMaximized();
+}
+

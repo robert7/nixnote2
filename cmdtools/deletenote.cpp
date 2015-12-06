@@ -1,7 +1,6 @@
-#ifndef DEBUGPREFERENCES_H
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
-Copyright (C) 2013 Randy Baumgarte
+Copyright (C) 2015 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -18,37 +17,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-#define DEBUGPREFERENCES_H
 
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QComboBox>
-#include <QLabel>
-#include <QCheckBox>
 
-class DebugPreferences : public QWidget
+#include "deletenote.h"
+
+DeleteNote::DeleteNote(QObject *parent) :
+    QObject(parent)
 {
-    Q_OBJECT
-private:
-    QGridLayout *mainLayout;
-    QComboBox *debugLevel;
-    QCheckBox *disableUploads;
-    QCheckBox *showLidColumn;
-    QCheckBox *nonAsciiSortBug;
-    QCheckBox *disableImageHighlight;
-    QLabel *debugLevelLabel;
-    int getMessageLevel();
-
-public:
-    explicit DebugPreferences(QWidget *parent = 0);
-    ~DebugPreferences();
-    QString getDebugLevel();
-    void saveValues();
-    
-signals:
-    
-public slots:
-    
-};
-
-#endif // DEBUGPREFERENCES_H
+    verifyDelete=true;
+}

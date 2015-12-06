@@ -223,6 +223,7 @@ public:
     bool getClearTagsOnSearch();
     bool getTagSelectionOr();
     void setDebugLevel();
+    bool disableImageHighlight();
 
 
     // Middle click settings
@@ -233,13 +234,17 @@ public:
 
     // These functions deal with the icon themes
     QHash<QString,QString> resourceList;                      // Hashmap of icons used in the current theme
+    QHash<QString,QString> colorList;                         // List of colors used in the current theme
+    QString getEditorStyle(bool colorOnly);                // Get note editor style overrides
+    QString getEditorFontColor();                           // Get the editor font color from the theme
+    QString getEditorBackgroundColor();                     // Get the editor background color from the theme
     QPixmap getPixmapResource(QHash<QString, QString> &resourceList, QString key);   // Get a pixmap from the user's (or default) theme
     QPixmap getPixmapResource(QString key);                   // Get a pixmap from the user's (or default) theme
     QIcon getIconResource(QHash<QString, QString> &resourceList, QString key);       // Get an icon from the user's (or default) theme
     QIcon getIconResource(QString key);                       // Get an icon from the user's (or default) theme
-    void loadTheme(QHash<QString, QString> &resourceList, QString themeName);   // Load an icon theme into the resourceList
+    void loadTheme(QHash<QString, QString> &resourceList, QHash<QString, QString> &colorList, QString themeName);   // Load an icon theme into the resourceList
     void loadThemeFile(QFile &file, QString themeName);       // Load a given theme's values from a a file.
-    void loadThemeFile(QHash<QString, QString> &resourceList, QFile &file, QString themeName);    // Load a given theme's values from a file
+    void loadThemeFile(QHash<QString, QString> &resourceList, QHash<QString, QString> &colorList, QFile &file, QString themeName);    // Load a given theme's values from a file
     QStringList getThemeNames();                               // Get a list of all available theme names
     QString getResourceFileName(QHash<QString, QString> &resourceList, QString key);    // Get the actual file path for a given icon theme
     QString getResourcefileName(QString key);                  // Get the actual file path for a given icon theme

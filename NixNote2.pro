@@ -225,7 +225,10 @@ SOURCES += main.cpp\
     cmdtools/addnote.cpp \
     utilities/crossmemorymapper.cpp \
     cmdtools/cmdlinequery.cpp \
-    utilities/nuuid.cpp
+    utilities/nuuid.cpp \
+    cmdtools/deletenote.cpp \
+    cmdtools/emailnote.cpp \
+    dialog/faderdialog.cpp
 
 
 
@@ -414,7 +417,10 @@ HEADERS  += nixnote.h \
     cmdtools/addnote.h \
     utilities/crossmemorymapper.h \
     cmdtools/cmdlinequery.h \
-    utilities/nuuid.h
+    utilities/nuuid.h \
+    cmdtools/deletenote.h \
+    cmdtools/emailnote.h \
+    dialog/faderdialog.h
 
 
 

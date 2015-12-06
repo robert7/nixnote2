@@ -1,7 +1,6 @@
-#ifndef DEBUGPREFERENCES_H
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
-Copyright (C) 2013 Randy Baumgarte
+Copyright (C) 2015 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -18,37 +17,43 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-#define DEBUGPREFERENCES_H
 
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QComboBox>
-#include <QLabel>
-#include <QCheckBox>
+#ifndef EMAILNOTE_H
+#define EMAILNOTE_H
 
-class DebugPreferences : public QWidget
+#include <QObject>
+#include "email/smtpclient.h"
+#include "email/mimemessage.h"
+
+class EmailNote : public QObject
 {
     Q_OBJECT
 private:
-    QGridLayout *mainLayout;
-    QComboBox *debugLevel;
-    QCheckBox *disableUploads;
-    QCheckBox *showLidColumn;
-    QCheckBox *nonAsciiSortBug;
-    QCheckBox *disableImageHighlight;
-    QLabel *debugLevelLabel;
-    int getMessageLevel();
 
 public:
-    explicit DebugPreferences(QWidget *parent = 0);
-    ~DebugPreferences();
-    QString getDebugLevel();
-    void saveValues();
-    
+    explicit EmailNote(QObject *parent = 0);
+    QString to;
+    QString cc;
+    QString bcc;
+    QString comments;
+    QString subject;
+    QString note;
+    bool ccSelf;
+    int lastError;
+    qint32 lid;
+    QString errorMessage;
+    QString contents;
+    void unwrap(QString data);
+    QString wrap();
+    QStringList tokenizeString(QString value);
+    void prepareEmailMessage(MimeMessage *message, QString note, QString body);
+    QString stripContentsForPrint(QString contents);
+    int sendEmail();
+
 signals:
-    
+
 public slots:
-    
+
 };
 
-#endif // DEBUGPREFERENCES_H
+#endif // EMAILNOTE_H
