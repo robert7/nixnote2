@@ -109,7 +109,10 @@ int main(int argc, char *argv[])
         int retval = cmdline.run(startupConfig);
         if (global.sharedMemory->isAttached())
             global.sharedMemory->detach();
-        return retval;
+        if (!startupConfig.gui())
+            return retval;
+        if (!startupConfig.syncAndExit)
+            global.syncAndExit=true;
     }
 
     QString logPath = global.fileManager.getLogsDirPath("")+"messages.log";

@@ -19,31 +19,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 
-#ifndef ADDNOTE_H
-#define ADDNOTE_H
+#ifndef EXTRACTNOTETEXT_H
+#define EXTRACTNOTETEXT_H
 
 #include <QObject>
-#include <QStringList>
 
-#include "qevercloud/include/QEverCloud.h"
-using namespace qevercloud;
-
-class AddNote : public QObject
+class ExtractNoteText : public QObject
 {
     Q_OBJECT
 public:
-    explicit AddNote(QObject *parent = 0);
-    QString title;
-    QString created;
-    QString updated;
-    QString content;
-    QString notebook;
-    QStringList tags;
-    QStringList attachments;
-    QString attachmentDelimiter;
-    qint32 createResource(Resource &r, int sequence, QByteArray data,  QString mime, bool attachment, QString filename, qint32 noteLid);
-
-    void write(QString uuid);
+    explicit ExtractNoteText(QObject *parent = 0);
+    qint32 lid;
+    QString text;
+    QString wrap();
+    int lastError;
+    QString errorMessage;
+    QString returnUuid;
+    void unwrap(QString data);
+    QString stripTags(QString content);
 
 signals:
 
@@ -51,4 +44,4 @@ public slots:
 
 };
 
-#endif // ADDNOTE_H
+#endif // EXTRACTNOTETEXT_H

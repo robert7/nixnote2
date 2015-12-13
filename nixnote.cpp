@@ -2467,6 +2467,23 @@ void NixNote::heartbeatTimerTriggered() {
         email.unwrap(xml);
         email.sendEmail();
     }
+    if (data.startsWith("READ_NOTE:")) {
+        QString xml = data.mid(10);
+        ExtractNoteText data;
+        data.unwrap(xml);
+        NoteTable ntable(global.db);
+        Note n;
+        if (ntable.get(n, data.lid,false,false))
+            data.text = data.stripTags(n.content);
+        else
+            data.text=tr("Note not found.");
+        QString reply = data.wrap();
+        CrossMemoryMapper responseMapper(data.returnUuid);
+        if (!responseMapper.attach())
+            return;
+        responseMapper.write(reply);
+        responseMapper.detach();
+    }
     //free(buffer); // Fixes memory leak
 }
 
@@ -3479,6 +3496,8 @@ void NixNote::presentationModeOn() {
     this->toolBar->setVisible(false);
     this->statusBar()->setVisible(false);
     this->showFullScreen();
+    global.isFullscreen=true;
+    tabWindow->currentBrowser()->buttonBar->hide();
 
     FaderDialog *d = new FaderDialog();
     d->setText(tr("Press ESC to exit."));
@@ -3497,6 +3516,9 @@ void NixNote::presentationModeOff() {
         statusBar()->show();
     menuBar->show();
     toolBar->show();
+    global.isFullscreen=false;
+    if (!global.autoHideEditorToolbar)
+        tabWindow->currentBrowser()->buttonBar->show();
     this->showMaximized();
 }
 

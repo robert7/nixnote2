@@ -546,87 +546,87 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
         title = t.title;
     query.bindValue(":title", title);
 
-    if (t.attributes.isSet()) {
-        NoteAttributes na = t.attributes;
-        if (na.author.isSet()) {
-            QString author = na.author;
-            query.bindValue(":author",author);
-        } else {
-            query.bindValue(":author", "");
-        }
-        if (na.subjectDate.isSet()) {
-            double sd = na.subjectDate;
-            query.bindValue(":dateSubject", sd);
-        } else {
-            query.bindValue(":dateSubject", 0);
-        }
-        if (na.source.isSet()) {
-            QString source = na.source;
-            query.bindValue(":source", source);
-        } else {
-            query.bindValue(":source", "");
-        }
-        if (na.sourceURL.isSet()) {
-            QString url = na.sourceURL;
-            query.bindValue(":sourceUrl", url);
-        } else {
-            query.bindValue(":sourceUrl", "");
-        }
-        if (na.sourceApplication.isSet()) {
-            QString sa = na.sourceApplication;
-            query.bindValue(":sourceApplication", sa);
-        } else {
-            query.bindValue(":sourceApplication", "");
-        }
-        if (na.latitude.isSet()) {
-            double lat = na.latitude;
-            query.bindValue(":latitude", lat);
-        } else {
-            query.bindValue(":latitude", 0);
-        }
-        if (na.longitude.isSet()) {
-            double lon = na.longitude;
-            query.bindValue(":longitude",lon);
-        } else {
-            query.bindValue(":longitude", 0);
-        }
-        if (na.altitude.isSet()) {
-            double alt = na.altitude;
-            query.bindValue(":altitude", alt);
-        } else {
-            query.bindValue(":altitude", 0);
-        }
-        if (na.reminderOrder.isSet()) {
-            qint64 order = na.reminderOrder;
-            query.bindValue(":reminderOrder", order);
-        } else {
-            query.bindValue(":reminderOrder", 0);
-        }
-        if (na.reminderTime.isSet()) {
-            qlonglong rt = na.reminderTime;
-            query.bindValue(":reminderTime", rt);
-        } else {
-            query.bindValue(":reminderTime", 0);
-        }
-        if (na.reminderDoneTime.isSet()) {
-            qlonglong rt = na.reminderDoneTime;
-            query.bindValue(":reminderDoneTime", rt);
-        } else {
-            query.bindValue(":reminderDoneTime", 0);
-        }
+    NoteAttributes na;
+    if (t.attributes.isSet())
+        na = t.attributes;
+    if (na.author.isSet()) {
+        QString author = na.author;
+        query.bindValue(":author",author);
+    } else {
+        query.bindValue(":author", "");
+    }
+    if (na.subjectDate.isSet()) {
+        double sd = na.subjectDate;
+        query.bindValue(":dateSubject", sd);
+    } else {
+        query.bindValue(":dateSubject", 0);
+    }
+    if (na.source.isSet()) {
+        QString source = na.source;
+        query.bindValue(":source", source);
+    } else {
+        query.bindValue(":source", "");
+    }
+    if (na.sourceURL.isSet()) {
+        QString url = na.sourceURL;
+        query.bindValue(":sourceUrl", url);
+    } else {
+        query.bindValue(":sourceUrl", "");
+    }
+    if (na.sourceApplication.isSet()) {
+        QString sa = na.sourceApplication;
+        query.bindValue(":sourceApplication", sa);
+    } else {
+        query.bindValue(":sourceApplication", "");
+    }
+    if (na.latitude.isSet()) {
+        double lat = na.latitude;
+        query.bindValue(":latitude", lat);
+    } else {
+        query.bindValue(":latitude", 0);
+    }
+    if (na.longitude.isSet()) {
+        double lon = na.longitude;
+        query.bindValue(":longitude",lon);
+    } else {
+        query.bindValue(":longitude", 0);
+    }
+    if (na.altitude.isSet()) {
+        double alt = na.altitude;
+        query.bindValue(":altitude", alt);
+    } else {
+        query.bindValue(":altitude", 0);
+    }
+    if (na.reminderOrder.isSet()) {
+        qint64 order = na.reminderOrder;
+        query.bindValue(":reminderOrder", order);
+    } else {
+        query.bindValue(":reminderOrder", 0);
+    }
+    if (na.reminderTime.isSet()) {
+        qlonglong rt = na.reminderTime;
+        query.bindValue(":reminderTime", rt);
+    } else {
+        query.bindValue(":reminderTime", 0);
+    }
+    if (na.reminderDoneTime.isSet()) {
+        qlonglong rt = na.reminderDoneTime;
+        query.bindValue(":reminderDoneTime", rt);
+    } else {
+        query.bindValue(":reminderDoneTime", 0);
     }
 
     qlonglong created = 0;
-    qlonglong updated = 0;
-    qlonglong deleted = 0;
     if (t.created.isSet())
         created = t.created;
     query.bindValue(":dateCreated", created);
 
+    qlonglong updated = created;
     if (t.updated.isSet())
         updated = t.updated;
     query.bindValue(":dateUpdated", updated);
 
+    qlonglong deleted = 0;
     if (t.deleted.isSet())
         deleted = t.deleted;
     query.bindValue(":dateDeleted", deleted);
@@ -709,6 +709,7 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
 
     if (!query.exec()) {
         QLOG_ERROR() << "Error inserting into NoteTable: " << query.lastError();
+        QLOG_ERROR() << "Error inserting into NoteTable: " << query.lastQuery();
         query.finish();
         db->unlock();
         return false;
@@ -1655,8 +1656,85 @@ void NoteTable::expunge(QString guid) {
 
 
 
+// Add to the deletion queue
+void NoteTable::addToDeleteQueue(qint32 lid, Note n) {
+    get(n,lid,true,true);
+    NSqlQuery query(db);
+    db->lockForWrite();
+
+    query.prepare("insert into datastore (lid,key,data) values (:lid, :key, :data)");
+
+    QString guid = n.guid;
+    QString notebookGuid = n.notebookGuid;
+
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_DELETE_PENDING_GUID);
+    query.bindValue(":data" , guid);
+    query.exec();
+
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_DELETE_PENDING_NOTEBOOK);
+    query.bindValue(":data" , notebookGuid);
+    query.exec();
+
+    db->unlock();
+}
 
 
+
+// Get every pending delete
+void NoteTable::getAllDeleteQueue(QStringList &guids, QString notebookGuid) {
+    NSqlQuery query(db);
+
+    guids.clear();
+    db->lockForRead();
+    if (notebookGuid == "") {
+        query.prepare("Select data from datastore where key=:key");
+        query.bindValue(":key", NOTE_DELETE_PENDING_GUID);
+    } else {
+        query.prepare("Select data from datastore where key=:key and data=:notebookGuid");
+        query.bindValue(":key", NOTE_DELETE_PENDING_GUID);
+        query.bindValue(":data", notebookGuid);
+    }
+    query.exec();
+    while(query.next()) {
+        guids.append(query.value(0).toString());
+    }
+    db->unlock();
+}
+
+
+
+// Expunge from the deletion queue
+void NoteTable::expungeFromDeleteQueue(qint32 lid) {
+    NSqlQuery query(db);
+
+    db->lockForWrite();
+    query.prepare("delete from datastore where lid=:lid");
+    query.bindValue(":lid", lid);
+    query.exec();
+    db->unlock();
+}
+
+
+// Expunge from the deletion queue
+void NoteTable::expungeFromDeleteQueue(QString guid) {
+    NSqlQuery query(db);
+    db->lockForRead();
+    query.prepare("Select lid from datastore where key=:key and data=:data");
+    query.bindValue(":key", NOTE_DELETE_PENDING_GUID);
+    query.bindValue(":data", guid);
+    query.exec();
+    db->unlock();
+    while(query.next()) {
+        expungeFromDeleteQueue(query.value(0).toInt());
+    }
+}
+
+
+
+
+// Find all notes belonging to a particular notebook.
 qint32 NoteTable::findNotesByNotebook(QList<qint32> &notes, QString guid) {
     NSqlQuery query(db);
     qint32 notebookLid;
@@ -1664,7 +1742,6 @@ qint32 NoteTable::findNotesByNotebook(QList<qint32> &notes, QString guid) {
     notebookLid = notebookTable.getLid(guid);
     db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data=:notebookLid");
-    query.bindValue(":key", NOTE_NOTEBOOK_LID);
     query.bindValue(":notebookLid", notebookLid);
     query.exec();
     while (query.next()) {
@@ -1750,8 +1827,6 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
         query2.exec();
     }
 
-    db->unlock();
-
     query.prepare("update datastore set data=1 where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
@@ -1760,6 +1835,15 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     NoteIndexer indexer(db);
     indexer.indexNote(lid);
 
+    qlonglong totalsize = this->getSize(lid);
+    NSqlQuery query3(db);
+    query3.prepare("Update notetable set size=:size where lid=:lid");
+    query3.bindValue(":size", totalsize);
+    query3.bindValue(":lid", lid);
+    query3.exec();
+    QLOG_DEBUG() << query3.lastError();
+
+    db->unlock();
     setDirty(lid, isDirty);
 }
 
@@ -2444,4 +2528,27 @@ void NoteTable::setTitleColor(qint32 lid, QString color) {
     query.exec();
     query.finish();
     db->unlock();
+}
+
+
+qlonglong NoteTable::getSize(qint32 lid) {
+    NSqlQuery query(db);
+    db->lockForRead();
+    query.prepare("select data from datastore where key=:key and lid=:lid");
+    query.bindValue(":key", NOTE_CONTENT_LENGTH);
+    query.bindValue(":lid", lid);
+    query.exec();
+    qlonglong returnValue = 0;
+    if (query.next()) {
+        returnValue = query.value(0).toLongLong();
+    }
+    query.prepare("Select sum(data) from DataStore where key=:key and lid in (select lid from datastore where key=:key2 and data=:lid)");
+    query.bindValue(":key", RESOURCE_DATA_SIZE);
+    query.bindValue(":key2", RESOURCE_NOTE_LID);
+    query.bindValue(":data", lid);
+    query.exec();
+    while (query.next()) {
+        returnValue = returnValue+query.value(0).toLongLong();
+    }
+    return returnValue;
 }
