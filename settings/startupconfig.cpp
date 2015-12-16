@@ -45,6 +45,9 @@ StartupConfig::StartupConfig()
     delNote = NULL;
     email = NULL;
     extractText = NULL;
+    exportNotes = NULL;
+    importNotes = NULL;
+    alter = NULL;
 }
 
 
@@ -106,6 +109,14 @@ void StartupConfig::printHelp() {
                    +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
                    +QString("                                       is read from stdin.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
+                   +QString("  alterNote <options>                  Change a notes't notebook or tags.\n")
+                   +QString("     alterNote options:\n")
+                   +QString("          --id=\"<note_ids>\"            Space separated list of note IDs to extract.\n")
+                   +QString("          --search=\"search string\"     Alter notes matching search string.\n")
+                   +QString("          --notebook=\"<notebook>\"      Move matching notes to this notebook.\n")
+                   +QString("          --addTag=\"<tag_name>\"        Add this tag to matching notes.\n")
+                   +QString("          --delTag=\"<tag_name>\"        Remove this tag from matching notes.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
                    +QString("  readNote <options>                   Read the text contents of a note.\n")
                    +QString("          --id=\"<note_id>\"             ID of the note to read.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
@@ -121,8 +132,24 @@ void StartupConfig::printHelp() {
                    +QString("          --to=\"<address list>\"        List of recipients for the email.\n")
                    +QString("          --cc=\"<address list>\"        List of recipients to carbon copy.\n")
                    +QString("          --bcc=\"<address list>\"       List of recipients to blind carbon copy.\n")
-                   +QString("          --note=\"<note>.\"             Additional comments.\n")
+                   +QString("          --note=\"<note>\"              Additional comments.\n")
                    +QString("          --ccSelf                     Send a copy to yourself.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
+                   +QString("  backup <options>                     Backup the NixNote database.\n")
+                   +QString("     backup options:\n")
+                   +QString("          --output=<filename>          Output filename.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
+                   +QString("  export <options>                     Export notes from NixNote.\n")
+                   +QString("     export options:\n")
+                   +QString("          --id=\"<note_ids>\"            Space separated list of note IDs to extract.\n")
+                   +QString("          --search=\"search string\"     Export notes matching search string.\n")
+                   +QString("          --output=\"filename\"        Output file name.\n")
+                   +QString("          --deleteAfterExtract         Delete notes after the extract completes.\n")
+                   +QString("          --noVerifyDelete             Don't verify deletions.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
+                   +QString("  import <options>                     Import notes from a NixNote extract (.nnex).\n")
+                   +QString("     import options:\n")
+                   +QString("          --input=\"filename\"         Input file name.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
                    +QString("  Examples:\n\n")
                    +QString("     To Start NixNote, do a sync, and then exit.\n")
@@ -131,8 +158,12 @@ void StartupConfig::printHelp() {
                    +QString("     nixnote2 --accountId=2\n\n")
                    +QString("     To add a note to the notebook \"My Notebook\"\n")
                    +QString("     nixnote2 addNote --notebook=\"My Stuff\" --title=\"My New Note\" --tag=\"Tag1\" --tag=\"Tag2\" --noteText=\"My Note Text\"\n\n")
+                   +QString("     To add a tag to notes in the notebook \"Stuff\".\n")
+                   +QString("     nixnote2 alterNote --search=\"notebook:Stuff\" --addTag=\"NewTag\"\n\n")
                    +QString("     Query notes for the search text. Results show the ID, note title (padded to 10 characters but truncated longer) and the notebook\n")
-                   +QString("     nixnote2 query --search=\"Famous Authors\" --delimiter=\" * \" --display=\"\%i%t10:%n\"\n")
+                   +QString("     nixnote2 query --search=\"Famous Authors\" --delimiter=\" * \" --display=\"\%i%t10:%n\"\n\n")
+                   +QString("     To extract all notes in the \"Notes\" notebook.\n")
+                   +QString("     nixnote2 export --search=\"notebook:notes\" --output=/home/joe/exports.nnex\n\n")
                    +QString("\n\n")
                    );
 
@@ -150,6 +181,10 @@ int StartupConfig::init(int argc, char *argv[]) {
             printHelp();
             return 1;
         }
+        if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
+            parm = parm.mid(12);
+            accountId = parm.toInt();
+        }
         if (parm.startsWith("addNote")) {
             command->setBit(STARTUP_ADDNOTE,true);
             if (newNote == NULL)
@@ -159,6 +194,23 @@ int StartupConfig::init(int argc, char *argv[]) {
             command->setBit(STARTUP_EMAILNOTE,true);
             if (email == NULL)
                 email = new EmailNote();
+        }
+        if (parm.startsWith("export")) {
+            command->setBit(STARTUP_EXPORT,true);
+            if (exportNotes == NULL)
+                exportNotes = new ExtractNotes();
+            exportNotes->backup=false;
+        }
+        if (parm.startsWith("import")) {
+            command->setBit(STARTUP_IMPORT,true);
+            if (importNotes == NULL)
+                importNotes = new ImportNotes();
+        }
+        if (parm.startsWith("backup")) {
+            command->setBit(STARTUP_BACKUP,true);
+            if (exportNotes == NULL)
+                exportNotes = new ExtractNotes();
+            exportNotes->backup=true;
         }
         if (parm.startsWith("query")) {
             command->setBit(STARTUP_QUERY);
@@ -184,11 +236,12 @@ int StartupConfig::init(int argc, char *argv[]) {
         if (parm.startsWith("shutdown")) {
             command->setBit(STARTUP_SHUTDOWN,true);
         }
+        if (parm.startsWith("alterNote")) {
+            command->setBit(STARTUP_ALTERNOTE,true);
+            if (alter == NULL)
+                alter = new AlterNote();
+        }
         if (command->at(STARTUP_ADDNOTE)) {
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                accountId = parm.toInt();
-            }
             if (parm.startsWith("--title=", Qt::CaseSensitive)) {
                 parm = parm.mid(8);
                 newNote->title = parm;
@@ -219,10 +272,6 @@ int StartupConfig::init(int argc, char *argv[]) {
             }
         }
         if (command->at(STARTUP_QUERY)) {
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                this->accountId=parm.toInt();
-            }
             if (parm.startsWith("--search=", Qt::CaseSensitive)) {
                 parm = parm.mid(9);
                 queryNotes->query = parm;
@@ -246,10 +295,6 @@ int StartupConfig::init(int argc, char *argv[]) {
         }
         if (command->at(STARTUP_GUI) || command->count(true) == 0) {
             command->setBit(STARTUP_GUI,true);
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                accountId = parm.toInt();
-            }
             if (parm.startsWith("--openNote=", Qt::CaseSensitive)) {
                 parm = parm.mid(11);
                 startupNoteLid = parm.toInt();
@@ -277,10 +322,6 @@ int StartupConfig::init(int argc, char *argv[]) {
             }
         }
         if (command->at(STARTUP_DELETENOTE)) {
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                accountId = parm.toInt();
-            }
             if (parm == "--noVerify") {
                 delNote->verifyDelete = false;
             }
@@ -289,21 +330,77 @@ int StartupConfig::init(int argc, char *argv[]) {
                 delNote->lid = parm.toInt();
             }
         }
-        if (command->at(STARTUP_READNOTE)) {
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                accountId = parm.toInt();
+        if (command->at(STARTUP_EXPORT)) {
+            if (parm.startsWith("--id=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                QRegExp regExp("[ ,;]");
+                QStringList tokens = parm.split(regExp);
+                for (int i=0; i<tokens.size(); i++) {
+                    if (tokens[i].trimmed() != "")
+                        exportNotes->lids.append(tokens[i].toInt());
+                }
             }
+            if (parm.startsWith("--deleteAfterExport", Qt::CaseSensitive)) {
+                exportNotes->deleteAfterExtract=true;
+            }
+            if (parm.startsWith("--noVerifyDelete", Qt::CaseSensitive)) {
+                exportNotes->verifyDelete=false;
+            }
+            if (parm.startsWith("--search=", Qt::CaseSensitive)) {
+                parm = parm.mid(9);
+                exportNotes->query = parm;
+            }
+            if (parm.startsWith("--output=", Qt::CaseSensitive)) {
+                parm = parm.mid(9);
+                exportNotes->outputFile = parm;
+            }
+        }
+        if (command->at(STARTUP_IMPORT)) {
+            if (parm.startsWith("--input=", Qt::CaseSensitive)) {
+                parm = parm.mid(8);
+                importNotes->inputFile = parm;
+            }
+        }
+        if (command->at(STARTUP_BACKUP)) {
+            if (parm.startsWith("--output=", Qt::CaseSensitive)) {
+                parm = parm.mid(9);
+                exportNotes->outputFile = parm;
+            }
+        }
+        if (command->at(STARTUP_READNOTE)) {
             if (parm.startsWith("--id=", Qt::CaseSensitive)) {
                 parm = parm.mid(5);
                 extractText->lid = parm.toInt();
             }
         }
-        if (command->at(STARTUP_EMAILNOTE)) {
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                accountId = parm.toInt();
+        if (command->at(STARTUP_ALTERNOTE)) {
+            if (parm.startsWith("--id=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                QRegExp regExp("[ ,;]");
+                QStringList tokens = parm.split(regExp);
+                for (int i=0; i<tokens.size(); i++) {
+                    if (tokens[i].trimmed() != "")
+                        alter->lids.append(tokens[i].toInt());
+                }
             }
+            if (parm.startsWith("--search=", Qt::CaseSensitive)) {
+                parm = parm.mid(9);
+                alter->query = parm;
+            }
+            if (parm.startsWith("--notebook=", Qt::CaseSensitive)) {
+                parm = parm.mid(11);
+                alter->notebook = parm;
+            }
+            if (parm.startsWith("--addTag=", Qt::CaseSensitive)) {
+                parm = parm.mid(9);
+                alter->addTagNames.append(parm);
+            }
+            if (parm.startsWith("--delTag=", Qt::CaseSensitive)) {
+                parm = parm.mid(9);
+                alter->delTagNames.append(parm);
+            }
+        }
+        if (command->at(STARTUP_EMAILNOTE)) {
             if (parm == "--ccSelf") {
                 email->ccSelf = true;
             }
@@ -385,4 +482,22 @@ bool StartupConfig::readNote() {
 
 bool StartupConfig::emailNote() {
     return command->at(STARTUP_EMAILNOTE);
+}
+
+
+bool StartupConfig::exports() {
+    return command->at(STARTUP_EXPORT);
+}
+
+bool StartupConfig::import() {
+    return command->at(STARTUP_IMPORT);
+}
+
+bool StartupConfig::backup() {
+    return command->at(STARTUP_BACKUP);
+}
+
+
+bool StartupConfig::alterNote() {
+    return command->at(STARTUP_ALTERNOTE);
 }

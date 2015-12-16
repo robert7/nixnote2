@@ -601,7 +601,7 @@ bool EnmlFormatter::isElementValid(QWebElement e) {
     if (element == "en-todo") return true;
     if (element == "en-note") return true;
     if (element == "font")  {
-        checkAttributes(e,coreattrs+i18n);
+        checkAttributes(e,coreattrs+i18n+font);
         return true;
     }
     if (element == "h1")  {
@@ -773,6 +773,7 @@ void EnmlFormatter::removeInvalidAttributes(QWebElement &node) {
 void EnmlFormatter::fixDivNode(QWebElement &node) {
     // Remove any invalid attributes
     node.removeAttribute("class");
+    checkAttributes(node, attrs+textAlign);
 }
 
 
@@ -780,6 +781,7 @@ void EnmlFormatter::fixDivNode(QWebElement &node) {
 void EnmlFormatter::fixPreNode(QWebElement &node) {
     // Remove any invalid attributes
     node.removeAttribute("wrap");
+    checkAttributes(node, attrs+pre);
 }
 
 
@@ -900,6 +902,8 @@ QByteArray EnmlFormatter::removeInvalidUnicode(QByteArray content) {
 
 
 
+// Look through all attributes of the node.  If it isn't in the list of
+// valid attributes, we remove it.
 void EnmlFormatter::checkAttributes(QWebElement &e, QStringList valid) {
     if (!global.strictDTD)
         return;

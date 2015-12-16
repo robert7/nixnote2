@@ -42,7 +42,7 @@ CmdLineTool::CmdLineTool(QObject *parent) :
 {
 }
 
-
+// Run the command line request.
 int CmdLineTool::run(StartupConfig &config) {
 #if QT_VERSION < 0x050000
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
@@ -99,12 +99,22 @@ int CmdLineTool::run(StartupConfig &config) {
     if (config.readNote()) {
         return readNote(config);
     }
+    if (config.exports() || config.backup()) {
+        return exportNotes(config);
+    }
+    if (config.import()) {
+        return importNotes(config);
+    }
+    if (config.alterNote()) {
+        return alterNote(config);
+    }
+
     return 0;
 }
 
 
 
-
+// Email a note via the command line.
 int CmdLineTool::emailNote(StartupConfig config) {
     // Look to see if another NixNote is running.  If so, then we
     // expect a response if the note was delete.  Otherwise, we
@@ -125,7 +135,7 @@ int CmdLineTool::emailNote(StartupConfig config) {
 }
 
 
-
+// Delete a note via the command line
 int CmdLineTool::deleteNote(StartupConfig config) {
     bool useCrossMemory = true;
 
@@ -157,7 +167,7 @@ int CmdLineTool::deleteNote(StartupConfig config) {
 }
 
 
-
+// Query notes via the command line
 int CmdLineTool::queryNotes(StartupConfig config) {
     bool expectResponse = true;
 
@@ -213,7 +223,9 @@ int CmdLineTool::queryNotes(StartupConfig config) {
 }
 
 
-
+// Add a note via the command line.  if Nixnote is runnning,
+// the new note is copied into the dbi directory and
+// auto-imported.  If it is not running it is created directly.
 int CmdLineTool::addNote(StartupConfig config) {
 
 #ifdef Q_OS_WIN32
@@ -420,7 +432,8 @@ int CmdLineTool::addNote(StartupConfig config) {
 
 
 
-
+// Read a note via the command line and extract the text
+// contents.
 int CmdLineTool::readNote(StartupConfig config) {
     bool useCrossMemory = true;
 
@@ -470,3 +483,51 @@ int CmdLineTool::readNote(StartupConfig config) {
     return 0;
 }
 
+
+
+// Export notes or do a backup via the command line
+int CmdLineTool::exportNotes(StartupConfig config) {
+    if (global.sharedMemory->attach()) {
+        std::cout << tr("This cannot be done with NixNote running.").toStdString() << endl;
+        return 16;
+    }
+    global.db = new DatabaseConnection("nixnote");  // Startup the database
+    if (config.exportNotes->backup)
+        config.exportNotes->backupDB();
+    else
+        config.exportNotes->extract();
+    return 0;
+}
+
+
+
+// Import notes from a nnex file.
+int CmdLineTool::importNotes(StartupConfig config) {
+    if (global.sharedMemory->attach()) {
+        std::cout << tr("This cannot be done with NixNote running.").toStdString() << endl;
+        return 16;
+    }
+    global.db = new DatabaseConnection("nixnote");  // Startup the database
+    config.importNotes->import();
+    return 0;
+}
+
+
+// Alter a note's notebook or add/remove tags for a note.
+int CmdLineTool::alterNote(StartupConfig config) {
+    // Look to see if another NixNote is running.  If so, then we
+    // expect a response, otherwise we do it ourself.
+    bool useCrossMemory = true;
+    global.sharedMemory->unlock();
+    global.sharedMemory->detach();
+    if (!global.sharedMemory->attach()) {
+        useCrossMemory = false;
+    }
+    if (useCrossMemory) {
+        global.sharedMemory->write("ALTER_NOTE:" + config.alter->wrap());
+    } else {
+        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        return config.alter->alterNote();
+    }
+    return 0;
+}

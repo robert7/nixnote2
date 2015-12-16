@@ -73,6 +73,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/encrypt.h"
 #include <boost/shared_ptr.hpp>
 #include "cmdtools/cmdlinequery.h"
+#include "cmdtools/alternote.h"
 
 
 #include "gui/nmainmenubar.h"
@@ -772,17 +773,20 @@ void NixNote::setupGui() {
     this->setupShortcut(prevTabShortcut, "Prev_Tab");
     connect(prevTabShortcut, SIGNAL(activated()), tabWindow, SLOT(prevTab()));
 
+    closeTabShortcut = new QShortcut(this);
+    closeTabShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(closeTabShortcut, "Close_Tab");
+    connect(closeTabShortcut, SIGNAL(activated()), tabWindow, SLOT(closeTab()));
+
     downNoteShortcut = new QShortcut(this);
     downNoteShortcut->setContext(Qt::WidgetWithChildrenShortcut);
     this->setupShortcut(downNoteShortcut, "Down_Note");
     connect(downNoteShortcut, SIGNAL(activated()), noteTableView, SLOT(downNote()));
-    QLOG_DEBUG() << downNoteShortcut->key();
 
     upNoteShortcut = new QShortcut(this);
     upNoteShortcut->setContext(Qt::WidgetWithChildrenShortcut);
     this->setupShortcut(upNoteShortcut, "Up_Note");
     connect(upNoteShortcut, SIGNAL(activated()), noteTableView, SLOT(upNote()));
-    QLOG_DEBUG() << upNoteShortcut->key();
 }
 
 
@@ -1925,6 +1929,13 @@ void NixNote::newNote() {
         notebookTable.getGuid(notebookGuid, lid);
         n.notebookGuid = notebookGuid;
     }
+    if (global.full_username != "") {
+        NoteAttributes na;
+        if (n.attributes.isSet())
+            na = n.attributes;
+        na.author = global.full_username;
+        n.attributes = na;
+    }
     NoteTable table(global.db);
     qint32 lid = table.add(0,n,true);
 
@@ -2477,6 +2488,13 @@ void NixNote::heartbeatTimerTriggered() {
         EmailNote email;
         email.unwrap(xml);
         email.sendEmail();
+    }
+    if (data.startsWith("ALTER_NOTE:")) {
+        QString xml = data.mid(11);
+        AlterNote alter;
+        alter.unwrap(xml);
+        alter.alterNote();
+        updateSelectionCriteria();
     }
     if (data.startsWith("READ_NOTE:")) {
         QString xml = data.mid(10);
