@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "sql/usertable.h"
 
 //******************************************
 //* Global settings used by the program
@@ -176,8 +177,9 @@ void Global::setup(StartupConfig startupConfig) {
     indexPDFLocally=getIndexPDFLocally();
     strictDTD = getStrictDTD();
 
-    // Get username
-    full_username = getUsername();
+    // reset username
+    full_username = "";
+
 }
 
 
@@ -616,6 +618,13 @@ void Global::setupDateTimeFormat() {
 QString Global::getUsername() {
     if (!autosetUsername())
         return "";
+
+    // First, see if the Evernote user record is available
+    UserTable userTable(db);
+    User user;
+    userTable.getUser(user);
+    if (user.name.isSet())
+        return user.name;
 
     register struct passwd *pw;
     register uid_t uid;
