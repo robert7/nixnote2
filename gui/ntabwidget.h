@@ -65,6 +65,7 @@ public:
         ExternalWindow = 2
     };
     void reloadIcons();
+    void changeEditorStyle();
 
 
 signals:
@@ -73,16 +74,18 @@ signals:
     void tagCreated(qint32);
     void updateNoteList(qint32, int, QVariant); // A note was edited so we update the note list
     void updateNoteTitle(QString uuid, qint32 lid, QString content);
+    void escapeKeyPressed();
 
 public slots:
     void closeTab(int index);
+    void closeTab();
     void moveTab(int to, int from);
     void openNote(qint32 lid, OpenNoteMode mode);
     void tagCreationSignaled(qint32 lid);
     void noteSyncSignaled(qint32 lid);
     void noteUpdateSignaled(qint32);
     void evernoteLinkClicked(qint32 openLid, bool newTab, bool newWindow);
-
+    void escapeKeyListener();
     void saveAllNotes();
     void undoButtonPressed();
     void redoButtonPressed();
@@ -108,6 +111,8 @@ public slots:
     void showHtmlEntities();
     void htmlEntitiesClicked(QString entity);
 
+    void nextTab();
+    void prevTab();
 };
 
 #endif // NTABWIDGET_H

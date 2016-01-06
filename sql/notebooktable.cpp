@@ -637,9 +637,10 @@ void NotebookTable::deleteNotebook(qint32 lid) {
     NoteTable noteTable(db);
     QString guid;
     getGuid(guid, lid);
+    qint32 defaultNotebookLid = getDefaultNotebookLid();
     noteTable.findNotesByNotebook(notes, guid);
     for (qint32 i=0; i<notes.size(); i++) {
-        noteTable.updateNotebook(notes[i], lid, true);
+        noteTable.updateNotebook(notes[i], defaultNotebookLid, true);
         noteTable.deleteNote(notes[i], true);
     }
 
@@ -928,8 +929,6 @@ bool NotebookTable::isReadOnly(qint32 notebookLid) {
     LinkedNotebook linkedNotebook;
     QString linkedusername = "";
     found = ltable.get(linkedNotebook, notebookLid);
-    QLOG_DEBUG() << "Linked Notebook Found: " << found;
-    QLOG_DEBUG() << "Linked Notebook URI set: " << linkedNotebook.uri.isSet();
 
     if (found && linkedNotebook.uri.isSet()) {
         if (linkedNotebook.username.isSet())

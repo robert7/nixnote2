@@ -45,6 +45,7 @@ private:
     QComboBox *trayMiddleClickAction;
     QComboBox *mouseMiddleClickAction;
     QComboBox *systemNotifier;
+    QCheckBox *autosetUserid;
     QLabel *defaultNotebookOnStartupLabel;
     QPushButton *previewButton;
     bool webSettingsChanged;
@@ -68,6 +69,8 @@ public:
     QCheckBox *dynamicTotals;
     QCheckBox *disableEditingOnStartup;
     QCheckBox *newNoteFocusOnTitle;
+    QCheckBox *showNoteListGrid;
+    QCheckBox *alternateNoteListColors;
 
     enum DefaultNotebook {
         UseLastViewedNotebook = 0,

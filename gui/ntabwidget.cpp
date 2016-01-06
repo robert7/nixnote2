@@ -102,11 +102,53 @@ void NTabWidget::closeTab(int index) {
 
 
 
+void NTabWidget::closeTab() {
+    if (browserList->size() <=1)
+        return;
+
+    closeTab(tabBar->currentIndex());
+}
+
+
+
 void NTabWidget::moveTab(int from, int to) {
     stack.removeWidget(browserList->at(from));
     stack.insertWidget(to, browserList->at(from));
     browserList->move(from, to);
 
+}
+
+
+
+// Show the next tab in the list
+void NTabWidget::nextTab() {
+    if (browserList->size() <= 1)
+        return;
+
+    int i = tabBar->currentIndex()+1;
+    if (i>=stack.count())
+        i=0;
+    tabBar->setCurrentIndex(i);
+    tabBar->raise();
+    stack.setCurrentIndex(i);
+    stack.raise();
+    return;
+}
+
+
+// Show the previous tab in the list
+void NTabWidget::prevTab() {
+    if (browserList->size() <= 1)
+        return;
+
+    int i = tabBar->currentIndex()-1;
+    if (i<0)
+        i=stack.count()-1;
+    tabBar->setCurrentIndex(i);
+    tabBar->raise();
+    stack.setCurrentIndex(i);
+    stack.raise();
+    return;
 }
 
 
@@ -294,6 +336,8 @@ void NTabWidget::setupConnections(NBrowserWindow *newBrowser) {
     connect(newBrowser, SIGNAL(noteNotebookEditedSignal(QString,qint32,qint32,QString)), this,  SLOT(noteNotebookEdited(QString,qint32,qint32,QString)));
     connect(newBrowser, SIGNAL(noteDateEditedSignal(QString,qint32,int,QDateTime)), this,  SLOT(noteDateEdited(QString,qint32,int,QDateTime)));
     connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32,bool,bool)), this, SLOT(evernoteLinkClicked(qint32, bool,bool)));
+
+    connect(newBrowser->editor, SIGNAL(escapeKeyPressed()), this, SLOT(escapeKeyListener()));
 }
 
 
@@ -710,4 +754,19 @@ void NTabWidget::reloadIcons() {
         this->externalList->at(i)->browser->tagEditor.reloadIcons();
         this->externalList->at(i)->browser->notebookMenu.reloadIcons();
     }
+}
+
+
+void NTabWidget::changeEditorStyle() {
+    for (int i=0; i<browserList->size(); i++) {
+        browserList->at(i)->setEditorStyle();
+    }
+    for (int i=0; i<externalList->size(); i++) {
+        externalList->at(i)->browser->setEditorStyle();
+    }
+}
+
+
+void NTabWidget::escapeKeyListener() {
+    emit escapeKeyPressed();
 }

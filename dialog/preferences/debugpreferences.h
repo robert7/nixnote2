@@ -35,6 +35,8 @@ private:
     QCheckBox *disableUploads;
     QCheckBox *showLidColumn;
     QCheckBox *nonAsciiSortBug;
+    QCheckBox *disableImageHighlight;
+    QCheckBox *strictDTD;
     QLabel *debugLevelLabel;
     int getMessageLevel();
 

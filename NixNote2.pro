@@ -220,7 +220,19 @@ SOURCES += main.cpp\
     dialog/preferences/emailpreferences.cpp \
     dialog/emaildialog.cpp \
     settings/colorsettings.cpp \
-    utilities/debugtool.cpp
+    utilities/debugtool.cpp \
+    cmdtools/cmdlinetool.cpp \
+    cmdtools/addnote.cpp \
+    utilities/crossmemorymapper.cpp \
+    cmdtools/cmdlinequery.cpp \
+    utilities/nuuid.cpp \
+    cmdtools/deletenote.cpp \
+    cmdtools/emailnote.cpp \
+    dialog/faderdialog.cpp \
+    cmdtools/extractnotetext.cpp \
+    cmdtools/extractnotes.cpp \
+    cmdtools/alternote.cpp \
+    cmdtools/importnotes.cpp
 
 
 
@@ -404,7 +416,19 @@ HEADERS  += nixnote.h \
     dialog/preferences/emailpreferences.h \
     dialog/emaildialog.h \
     settings/colorsettings.h \
-    utilities/debugtool.h
+    utilities/debugtool.h \
+    cmdtools/cmdlinetool.h \
+    cmdtools/addnote.h \
+    utilities/crossmemorymapper.h \
+    cmdtools/cmdlinequery.h \
+    utilities/nuuid.h \
+    cmdtools/deletenote.h \
+    cmdtools/emailnote.h \
+    dialog/faderdialog.h \
+    cmdtools/extractnotetext.h \
+    cmdtools/extractnotes.h \
+    cmdtools/alternote.h \
+    cmdtools/importnotes.h
 
 
 

@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notetable.h"
 #include "dialog/notebookproperties.h"
 #include "gui/nnotebookviewdelegate.h"
+#include "gui/widgetpanel.h"
 #include "sql/nsqlquery.h"
 
 #define NAME_POSITION 0
@@ -343,7 +344,7 @@ void NNotebookView::rebuildTree() {
     QHashIterator<qint32, NNotebookViewItem *> h(dataStore);
     while (h.hasNext()) {
         h.next();
-        if (h.value()->parent() != NULL && !h.value()->isHidden())
+        if (h.value() != NULL && h.value()->parent() != NULL && !h.value()->isHidden())
             h.value()->parent()->setHidden(false);
     }
 
@@ -955,9 +956,9 @@ bool NNotebookView::dropMimeData(QTreeWidgetItem *parent, int index, const QMime
                     if (currentNotebook != bookLid) {
                         noteTable.updateNotebook(noteLid, bookLid, true);
                         emit(updateNoteList(noteLid, NOTE_TABLE_NOTEBOOK_POSITION, notebook.name.value()));
-                        qint64 dt = QDateTime::currentMSecsSinceEpoch();
-                        noteTable.updateDate(noteLid,  dt, NOTE_UPDATED_DATE, true);
-                        emit(updateNoteList(noteLid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
+//                        qint64 dt = QDateTime::currentMSecsSinceEpoch();
+//                        noteTable.updateDate(noteLid,  dt, NOTE_UPDATED_DATE, true);
+//                        emit(updateNoteList(noteLid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
                     }
                 }
             }
@@ -985,12 +986,23 @@ void NNotebookView::dragEnterEvent(QDragEnterEvent *event) {
         event->accept();
         return;
     }
+    if (event->mimeData()->hasFormat("application/x-nixnote-notebook")) {
+        event->accept();
+        return;
+    }
+    if (event->mimeData()->hasFormat("application/x-nixnote-tag")) {
+        event->accept();
+        return;
+    }
     event->ignore();
 }
 
 
 // Accept the drag move event if possible
 void NNotebookView::dragMoveEvent(QDragMoveEvent *event) {
+    WidgetPanel *parent = (WidgetPanel*)parentWidget();
+    parent->dragMoveHandler(event);
+
     if (event->mimeData()->hasFormat("application/x-nixnote-note")) {
         if (event->answerRect().intersects(childrenRect()))
             event->acceptProposedAction();
@@ -1001,18 +1013,6 @@ void NNotebookView::dragMoveEvent(QDragMoveEvent *event) {
 
 QSize NNotebookView::sizeHint() {
     return QTreeView::sizeHint();
-//    QSize sz = QTreeView::sizeHint();
-//    int width=0;
-//    for (int i=0; i<columnCount(); ++i) {
-//        width += 2 + columnWidth(i);
-//    }
-//    // Calculate the spacing at the end to leave for totals
-//    QFontMetrics fm(this->font());
-//    QString numString = QString("(")+QString::number(maxCount) +QString(")");
-//    int numWidth = fm.width(numString);
-
-//    sz.setWidth(width+numWidth+14);  // Add some extra at the end for totals
-//    return sz;
 }
 
 

@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtSql>
 #include "sql/linkednotebooktable.h"
 #include "sql/notebooktable.h"
+#include "gui/widgetpanel.h"
 #include "sql/notetable.h"
 #include <QMessageBox>
 #include <QPainter>
@@ -108,10 +109,6 @@ NTagView::NTagView(QWidget *parent) :
 
     mergeAction = context.addAction(tr("Merge"));
 
-//    renameShortcut = new QShortcut(this);
-//    renameShortcut->setKey(QKeySequence(Qt::Key_F2));
-//    renameShortcut->setContext(Qt::WidgetShortcut);
-
     context.addSeparator();
     hideUnassignedAction = context.addAction(tr("Hide Unassigned"));
     hideUnassignedAction->setCheckable(true);
@@ -128,7 +125,6 @@ NTagView::NTagView(QWidget *parent) :
     connect(mergeAction, SIGNAL(triggered()), this, SLOT(mergeRequested()));
     connect(addShortcut, SIGNAL(activated()), this, SLOT(addRequested()));
     connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteRequested()));
-    //connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
 
     this->setItemDelegate(new NTagViewDelegate());
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
@@ -185,8 +181,6 @@ void NTagView::calculateHeight()
 
     if(h != 0)
     {
-//        h += header()->sizeHint().height();
-
         setMinimumHeight(h);
         setMaximumHeight(h);
     }
@@ -221,8 +215,6 @@ void NTagView::mousePressEvent(QMouseEvent *event)
 {
     QModelIndex item = indexAt(event->pos());
     bool selected = selectionModel()->isSelected(indexAt(event->pos()));
-//    if (!(event->buttons() & Qt::LeftButton))
-//            return;
     QTreeView::mousePressEvent(event);
     if (selected && (event->buttons() & Qt::LeftButton))
         selectionModel()->select(item, QItemSelectionModel::Deselect);
@@ -469,6 +461,11 @@ void NTagView::addNewTag(qint32 lid) {
 
 // Accept the drag move event if possible
 void NTagView::dragMoveEvent(QDragMoveEvent *event) {
+    WidgetPanel *parent = (WidgetPanel*)parentWidget();
+    parent->dragMoveHandler(event);
+
+    QWidget::dragMoveEvent(event);
+
     if (event->mimeData()->hasFormat("application/x-nixnote-note")) {
         if (event->answerRect().intersects(childrenRect()))
             event->acceptProposedAction();
@@ -488,6 +485,9 @@ void NTagView::dragEnterEvent(QDragEnterEvent *event) {
             event->ignore();
             return;
         }
+        WidgetPanel *parent = (WidgetPanel*)parentWidget();
+        parent->dragEnterHandler(event);
+
         event->accept();
         return;
     }
@@ -517,9 +517,9 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
                         noteTable.addTag(noteLid, tagLid, true);
                         QString tagString = noteTable.getNoteListTags(noteLid);
                         emit(updateNoteList(noteLid, NOTE_TABLE_TAGS_POSITION, tagString));
-                        qint64 dt = QDateTime::currentMSecsSinceEpoch();
-                        noteTable.updateDate(noteLid,  dt, NOTE_UPDATED_DATE, true);
-                        emit(updateNoteList(noteLid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
+//                        qint64 dt = QDateTime::currentMSecsSinceEpoch();
+//                        noteTable.updateDate(noteLid,  dt, NOTE_UPDATED_DATE, true);
+//                        emit(updateNoteList(noteLid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
                     }
                 }
             }
@@ -721,9 +721,9 @@ void NTagView::mergeRequested() {
                 ntable.addTag(notes[i], lid, true);
                 QString tagString = ntable.getNoteListTags(notes[i]);
                 emit(updateNoteList(notes[i], NOTE_TABLE_TAGS_POSITION, tagString));
-                qint64 dt = QDateTime::currentMSecsSinceEpoch();
-                ntable.updateDate(notes[i],  dt, NOTE_UPDATED_DATE, true);
-                emit(updateNoteList(notes[i], NOTE_TABLE_DATE_UPDATED_POSITION, dt));
+//                qint64 dt = QDateTime::currentMSecsSinceEpoch();
+//                ntable.updateDate(notes[i],  dt, NOTE_UPDATED_DATE, true);
+//                emit(updateNoteList(notes[i], NOTE_TABLE_DATE_UPDATED_POSITION, dt));
             }
         }
     }

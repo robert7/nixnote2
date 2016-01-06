@@ -29,7 +29,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // The following include is needed for demangling names on a backtrace
 #include <cxxabi.h>
 #include <execinfo.h>
+#include <pwd.h>
+#include <stdio.h>
+#include <stdlib.h>
 
+#include "sql/usertable.h"
 
 //******************************************
 //* Global settings used by the program
@@ -86,7 +90,7 @@ void Global::setup(StartupConfig startupConfig) {
 
     QString key = "1b73cc55-9a2f-441b-877a-ca1d0131cd2"+
             QString::number(accountId);
-    sharedMemory = new QSharedMemory(key);
+    sharedMemory = new CrossMemoryMapper(key);
 
 
     settingsFile = fileManager.getHomeDirPath("") + "nixnote-"+QString::number(accountId)+".conf";
@@ -104,6 +108,8 @@ void Global::setup(StartupConfig startupConfig) {
     startupConfig.accountId = accountId;
     accountsManager = new AccountsManager(startupConfig.accountId);
     enableIndexing = startupConfig.enableIndexing;
+
+    this->purgeTemporaryFilesOnShutdown=true;
 
     cryptCounter = 0;
     attachmentNameDelimeter = "------";
@@ -136,7 +142,7 @@ void Global::setup(StartupConfig startupConfig) {
         countBehavior = CountAll;
     if (countbehavior==2)
         countBehavior = CountNone;
-    pdfPreview = settings->value("showPDFs", true).toBool();
+    pdfPreview = settings->value("showPDFs", false).toBool();
     defaultFont = settings->value("defaultFont","").toString();
     defaultFontSize = settings->value("defaultFontSize",0).toInt();
     defaultGuiFontSize = settings->value("defaultGuiFontSize", 0).toInt();
@@ -159,7 +165,7 @@ void Global::setup(StartupConfig startupConfig) {
 
     settings->beginGroup("Appearance");
     QString theme = settings->value("themeName", "").toString();
-    loadTheme(resourceList,theme);
+    loadTheme(resourceList,colorList,theme);
     autoHideEditorToolbar = settings->value("autoHideEditorToolbar", true).toBool();
     settings->endGroup();
 
@@ -167,6 +173,13 @@ void Global::setup(StartupConfig startupConfig) {
     maxIndexInterval = 120000;
     indexResourceCountPause=2;
     indexNoteCountPause=100;
+    isFullscreen=false;
+    indexPDFLocally=getIndexPDFLocally();
+    strictDTD = getStrictDTD();
+
+    // reset username
+    full_username = "";
+
 }
 
 
@@ -275,7 +288,23 @@ void Global::setCloseToTray(bool value) {
     settings->endGroup();
 }
 
+// Should we whow the note list grid?
+bool Global::showNoteListGrid() {
+    bool showNoteListGrid;
+    settings->beginGroup("Appearance");
+    showNoteListGrid = settings->value("showNoteListGrid", false).toBool();
+    settings->endGroup();
+    return showNoteListGrid;
+}
 
+// Should we alternate the note list colors?
+bool Global::alternateNoteListColors() {
+    bool alternateNoteListColors;
+    settings->beginGroup("Appearance");
+    alternateNoteListColors = settings->value("alternateNoteListColors", true).toBool();
+    settings->endGroup();
+    return alternateNoteListColors;
+}
 
 // Save the position of a column in the note list.
 void Global::setColumnPosition(QString col, int position) {
@@ -388,6 +417,43 @@ bool Global::getTagSelectionOr() {
     settings->beginGroup("Search");
     bool value = settings->value("tagSelectionOr",false).toBool();
     settings->endGroup();
+    return value;
+}
+
+
+
+
+void Global::setIndexPDFLocally(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("indexPDFLocally",value);
+    settings->endGroup();
+    indexPDFLocally=value;
+}
+
+
+bool Global::getIndexPDFLocally() {
+    settings->beginGroup("Search");
+    bool value = settings->value("indexPDFLocally",true).toBool();
+    settings->endGroup();
+    indexPDFLocally = value;
+    return value;
+}
+
+
+
+void Global::setStrictDTD(bool value) {
+    settings->beginGroup("Debugging");
+    settings->setValue("strictDTD",value);
+    settings->endGroup();
+    strictDTD=value;
+}
+
+
+bool Global::getStrictDTD() {
+    settings->beginGroup("Debugging");
+    bool value = settings->value("strictDTD",true).toBool();
+    settings->endGroup();
+    strictDTD = value;
     return value;
 }
 
@@ -548,6 +614,54 @@ void Global::setupDateTimeFormat() {
 }
 
 
+// Get the username from the system
+QString Global::getUsername() {
+    if (!autosetUsername())
+        return "";
+
+    // First, see if the Evernote user record is available
+    UserTable userTable(db);
+    User user;
+    userTable.getUser(user);
+    if (user.name.isSet())
+        return user.name;
+
+    register struct passwd *pw;
+    register uid_t uid;
+    QString username="";
+
+    uid = geteuid();
+    pw = getpwuid(uid);
+    if (pw) {
+        username = pw->pw_gecos;
+        username.remove(QChar(','));
+        if (username != "")
+            return username.trimmed();
+        username = pw->pw_name;
+        return username.trimmed();
+    }
+    return "";
+}
+
+
+// Determine if we should automatically set the username on new notes
+bool Global::autosetUsername() {
+    settings->beginGroup("Appearance");
+    bool value = settings->value("autosetUsername", true).toBool();
+    settings->endGroup();
+    return value;
+}
+
+
+// Set the preference of auto-setting the username
+void Global::setAutosetUsername(bool value) {
+    settings->beginGroup("Appearance");
+    settings->setValue("autosetUsername", value);
+    settings->endGroup();
+}
+
+
+
 
 // Utility function for case insensitive sorting
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
@@ -575,6 +689,47 @@ QIcon Global::getIconResource(QHash<QString,QString> &resourceList, QString key)
 }
 
 
+QString Global::getEditorStyle(bool colorOnly) {
+    QString returnValue = "";
+    if (!colorOnly) {
+        returnValue = "document.body.style.background='"+this->getEditorBackgroundColor()+"'; ";
+    }
+    returnValue = returnValue+"document.body.style.color='"+this->getEditorFontColor()+"';";
+
+    return "function setColor() { "+returnValue +" }; setColor();";
+}
+
+
+
+QString Global::getEditorFontColor() {
+    if (colorList.contains("editorFontColor"))
+        return colorList["editorFontColor"].trimmed();
+    else
+        return "black";
+}
+
+
+QString Global::getEditorBackgroundColor() {
+    if (colorList.contains("editorBackgroundColor"))
+        return colorList["editorBackgroundColor"].trimmed();
+    else
+        return "white";
+}
+
+
+QString Global::getEditorCss() {
+    QString css=fileManager.getQssDirPath("")+"editor.css";
+    if (colorList.contains("editorCss")) {
+        css = fileManager.getQssDirPathUser("")+colorList["editorCss"].trimmed();
+        if (QFile(css).exists())
+            return css;
+        css = fileManager.getQssDirPath("")+colorList["editorCss"].trimmed();
+        if (QFile(css).exists())
+            return css;
+    }
+    return css;
+}
+
 
 // Get a QIcon in an icon theme
 QIcon Global::getIconResource(QString key) {
@@ -600,28 +755,29 @@ QPixmap Global::getPixmapResource(QHash<QString,QString> &resourceList, QString 
 
 
 // Load a theme into a resourceList.
-void Global::loadTheme(QHash<QString, QString> &resourceList, QString theme) {
+void Global::loadTheme(QHash<QString, QString> &resourceList, QHash<QString,QString> &colorList, QString theme) {
     resourceList.clear();
+    colorList.clear();
     if (theme.trimmed() == "")
         return;
     QFile systemTheme(fileManager.getProgramDirPath("theme.ini"));
-    this->loadThemeFile(resourceList,systemTheme, theme);
+    this->loadThemeFile(resourceList,colorList, systemTheme, theme);
 
     QFile userTheme(fileManager.getHomeDirPath("theme.ini"));
-    this->loadThemeFile(resourceList, userTheme, theme);
+    this->loadThemeFile(resourceList, colorList, userTheme, theme);
 }
 
 
 
 // Load a theme from a given file
 void Global::loadThemeFile(QFile &file, QString themeName) {
-    this->loadThemeFile(resourceList, file, themeName);
+    this->loadThemeFile(resourceList, colorList, file, themeName);
 }
 
 
 
 // Load a theme from a given file
-void Global::loadThemeFile(QHash<QString,QString> &resourceList, QFile &file, QString themeName) {
+void Global::loadThemeFile(QHash<QString,QString> &resourceList, QHash<QString,QString> &colorList, QFile &file, QString themeName) {
     if (!file.exists())
         return;
     if(!file.open(QIODevice::ReadOnly))
@@ -646,6 +802,9 @@ void Global::loadThemeFile(QHash<QString,QString> &resourceList, QFile &file, QS
                     if (f.exists()) {
                         resourceList.remove(":"+key);
                         resourceList.insert(":"+key,value);
+                    } else {
+                        colorList.remove("key");
+                        colorList.insert(key,value);
                     }
                 }
             }
@@ -695,7 +854,6 @@ void Global::getThemeNamesFromFile(QFile &file, QStringList &values) {
 
     file.close();
 }
-
 
 
 // Get the full path of a resource in a theme file
@@ -821,6 +979,15 @@ void Global::setNewNoteFocusToTitle(bool focus) {
     settings->endGroup();
 }
 
+
+
+
+bool Global::disableImageHighlight() {
+    settings->beginGroup("Debugging");
+    bool value = settings->value("disableImageHighlight", false).toBool();
+    settings->endGroup();
+    return value;
+}
 
 
 // What version of the database are we using?
@@ -951,10 +1118,6 @@ void Global::setDebugLevel() {
         QLOG_WARN() << "Invalid message logging level " << level;
     }
 }
-
-
-
-
 
 
 

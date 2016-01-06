@@ -36,9 +36,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "reminders/remindermanager.h"
 #include "sql/databaseconnection.h"
 #include "threads/indexrunner.h"
+#include "utilities/crossmemorymapper.h"
 
 #include <string>
-#include <QSharedMemory>
 #include <QSqlDatabase>
 #include <QReadWriteLock>
 
@@ -126,8 +126,9 @@ public:
     bool enableIndexing;                   // background indexing
     bool pdfPreview;                       // Should we view PDFs inline?
     bool showGoodSyncMessagesInTray;       // Should we show good sync messages in the tray, or just errors?
-    QSharedMemory *sharedMemory;           // Shared memory key.  Useful to prevent multiple instances and for cross memory communication
+    CrossMemoryMapper *sharedMemory;       // Shared memory key.  Useful to prevent multiple instances and for cross memory communication
     bool confirmDeletes();                 // Should we confirm deletes?
+    bool purgeTemporaryFilesOnShutdown;    // Should we purge temporary files on shutdown?
     void setDeleteConfirmation(bool value);  // Set delete confirmation
     QString tagBehavior();                 // Should inactive tags be shown?
     bool newNoteFocusToTitle();            // Should we focus on the note title when a new note has been created?
@@ -144,6 +145,8 @@ public:
     bool minimizeToTray();                 // Minimize it to tray rather than the task list.  We really just hide it.
     void setMinimizeToTray(bool value);    // Set if we should minimize it to the tray
     void setCloseToTray(bool value);       // Set if we should close it to the tray
+    bool showNoteListGrid();               // Should we whow the table grid?
+    bool alternateNoteListColors();        // Should we alternate the table colors?
     void setColumnPosition(QString col, int position);    // Save the order of a  note list's column.
     void setColumnWidth(QString col, int width);          // Save the width of a note list column
     int getColumnPosition(QString col);                   // Get the desired position of a note column
@@ -185,6 +188,10 @@ public:
     QHash<qint32, NoteCache*> cache;                         // Note cache  used to keep from needing to re-format the same note for a display
 
     void setup(StartupConfig config);                         // Setup the global variables
+    QString full_username;                                    // current username
+    bool autosetUsername();                                   // Should the username be set automatically?
+    void setAutosetUsername(bool value);
+    QString getUsername();                                    // pull username from the system.
     QString getProgramDirPath();                              // Get the path the program is executing from
     QList< QPair<QString, QString> > passwordRemember;        // Cache of passwords
     QHash< QString, QPair <QString, QString> > passwordSafe;  // Saved passwords
@@ -220,6 +227,7 @@ public:
     bool getClearTagsOnSearch();
     bool getTagSelectionOr();
     void setDebugLevel();
+    bool disableImageHighlight();
 
 
     // Middle click settings
@@ -227,16 +235,27 @@ public:
     void setMiddleClickAction(int value);
 
     bool disableEditing;                                    // Disable all editing of notes
-
+    bool isFullscreen;                                      // Are we in fullscreen mode?
     // These functions deal with the icon themes
     QHash<QString,QString> resourceList;                      // Hashmap of icons used in the current theme
+    QHash<QString,QString> colorList;                         // List of colors used in the current theme
+    bool indexPDFLocally;                                   // Should we index PDFs locally?
+    bool getIndexPDFLocally();                              // Should we index PDFs locally (read from settings)
+    void setIndexPDFLocally(bool value);                    // save local index of PDFs option
+    bool strictDTD;                                        // Should we do strict enml checking?
+    bool getStrictDTD();                                   // Should we do strict enml checking? (read from settings)
+    void setStrictDTD(bool value);                         // save strict enml checking
+    QString getEditorStyle(bool colorOnly);                // Get note editor style overrides
+    QString getEditorFontColor();                           // Get the editor font color from the theme
+    QString getEditorBackgroundColor();                     // Get the editor background color from the theme
+    QString getEditorCss();
     QPixmap getPixmapResource(QHash<QString, QString> &resourceList, QString key);   // Get a pixmap from the user's (or default) theme
     QPixmap getPixmapResource(QString key);                   // Get a pixmap from the user's (or default) theme
     QIcon getIconResource(QHash<QString, QString> &resourceList, QString key);       // Get an icon from the user's (or default) theme
     QIcon getIconResource(QString key);                       // Get an icon from the user's (or default) theme
-    void loadTheme(QHash<QString, QString> &resourceList, QString themeName);   // Load an icon theme into the resourceList
+    void loadTheme(QHash<QString, QString> &resourceList, QHash<QString, QString> &colorList, QString themeName);   // Load an icon theme into the resourceList
     void loadThemeFile(QFile &file, QString themeName);       // Load a given theme's values from a a file.
-    void loadThemeFile(QHash<QString, QString> &resourceList, QFile &file, QString themeName);    // Load a given theme's values from a file
+    void loadThemeFile(QHash<QString, QString> &resourceList, QHash<QString, QString> &colorList, QFile &file, QString themeName);    // Load a given theme's values from a file
     QStringList getThemeNames();                               // Get a list of all available theme names
     QString getResourceFileName(QHash<QString, QString> &resourceList, QString key);    // Get the actual file path for a given icon theme
     QString getResourcefileName(QString key);                  // Get the actual file path for a given icon theme

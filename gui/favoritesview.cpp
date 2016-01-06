@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include "gui/favoritesviewdelegate.h"
 #include "gui/favoritesviewitem.h"
+#include "gui/widgetpanel.h"
 #include "sql/favoritesrecord.h"
 #include "sql/favoritestable.h"
 #include "sql/tagtable.h"
@@ -96,6 +97,7 @@ FavoritesView::FavoritesView(QWidget *parent) :
     connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(calculateHeight()));
     connect(this, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(calculateHeight()));
     connect(this, SIGNAL(itemSelectionChanged()), this, SLOT(buildSelection()));
+    connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteRequested()));
 
     root->setExpanded(true);
     resetSize();
@@ -110,7 +112,7 @@ void FavoritesView::mousePressEvent(QMouseEvent *event)
     QModelIndex item = indexAt(event->pos());
     bool selected = selectionModel()->isSelected(indexAt(event->pos()));
     QTreeView::mousePressEvent(event);
-    if (selected)
+    if (selected && (event->buttons() & Qt::LeftButton))
         selectionModel()->select(item, QItemSelectionModel::Deselect);
 
     for (int i=0; i<this->selectedItems() .size(); i++) {
@@ -345,18 +347,18 @@ void FavoritesView::dropEvent(QDropEvent *event) {
     if (data->hasFormat("application/x-nixnote-tag")) {
         QByteArray d = data->data("application/x-nixnote-tag");
         lid = d.trimmed().toInt();
-        dropRecord(lid, FavoritesRecord::Tag, row);
+        addRecord(lid, FavoritesRecord::Tag, row);
     }
 
     if (data->hasFormat("application/x-nixnote-note")) {
         QByteArray d = data->data("application/x-nixnote-note");
         lid = d.trimmed().toInt();
-        dropRecord(lid, FavoritesRecord::Note, row);
+        addRecord(lid, FavoritesRecord::Note, row);
     }
     if (data->hasFormat("application/x-nixnote-search")) {
         QByteArray d = data->data("application/x-nixnote-search");
         lid = d.trimmed().toInt();
-        dropRecord(lid, FavoritesRecord::Search, row);
+        addRecord(lid, FavoritesRecord::Search, row);
     }
     if (data->hasFormat("application/x-nixnote-favorite")) {
         QByteArray d = data->data("application/x-nixnote-favorite");
@@ -404,7 +406,7 @@ void FavoritesView::dropEvent(QDropEvent *event) {
             break;
         }
         if (lid > 0)
-            dropRecord(lid, rectype, row);
+            addRecord(lid, rectype, row);
         else {
             FavoritesTable table(global.db);
             FavoritesRecord record;
@@ -451,13 +453,15 @@ void FavoritesView::dropEvent(QDropEvent *event) {
 
 
 
-void FavoritesView::dropRecord(qint32 lid, FavoritesRecord::FavoritesRecordType t, int row) {
+void FavoritesView::addRecord(qint32 lid, FavoritesRecord::FavoritesRecordType t, int row) {
     FavoritesTable table(global.db);
     FavoritesRecord record;
     record.type = t;
     record.target= lid;
     record.lid = 0;
-    record.order = row;\
+    if (row < 0)
+        row = root->childCount();
+    record.order = row;
     record.parent = 0;
     table.insert(record);
 }
@@ -540,6 +544,9 @@ void FavoritesView::dragMoveEvent(QDragMoveEvent *event) {
             event->acceptProposedAction();
         return;
     }
+
+    WidgetPanel *parent = (WidgetPanel*)parentWidget();
+    parent->dragMoveHandler(event);
 }
 
 
@@ -555,7 +562,7 @@ void FavoritesView::deleteRequested() {
     if (global.confirmDeletes()) {
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Question);
-        msgBox.setText(tr("Are you sure you want to remove this favorite?"));
+        msgBox.setText(tr("Are you sure you want to remove this shortcut?"));
         msgBox.setWindowTitle(tr("Verify Delete"));
         msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         msgBox.setDefaultButton(QMessageBox::No);

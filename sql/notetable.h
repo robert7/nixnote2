@@ -78,6 +78,9 @@ using namespace qevercloud;
 #define NOTE_ATTRIBUTE_REMINDER_TIME           5033
 #define NOTE_ATTRIBUTE_REMINDER_DONE_TIME      5034
 
+#define NOTE_DELETE_PENDING_GUID               5500
+#define NOTE_DELETE_PENDING_NOTEBOOK           5501
+
 #define NOTE_TITLE_COLOR                       5995
 #define NOTE_ISPINNED                          5996
 #define NOTE_THUMBNAIL_NEEDED                  5997
@@ -160,7 +163,7 @@ public:
     bool updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 account);  // Update the user viewing list
     bool updateNotebookName(qint32 lid, QString name);                   // Update a notebook's name in the user listing
     void updateNotebook(qint32 noteLid, qint32 notebookLid);             // Set the current note's notebook
-    void setDirty(qint32 lid, bool dirty);                               // Set if a note needs a sync
+    void setDirty(qint32 lid, bool dirty, bool setDateUpdated=true);     // Set if a note needs a sync
     void updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDirty=false);    // Update the notebook for a note
     void updateUrl(qint32 lid, QString text, bool dirty);                // Update a URL for a note
     void updateTitle(qint32 noteLid, QString title, bool setAsDirty);    // Update a title for a note
@@ -184,6 +187,11 @@ public:
     void setIndexNeeded(qint32 lid, bool indexNeeded);                   // flag if a note needs reindexing
     void updateNoteListTags(qint32 noteLid, QString tags);               // Update the tag names in the note list
     void updateNoteListNotebooks(QString guid, QString name);            // Update the notebook name in the note list
+    void addToDeleteQueue(qint32 lid, Note n);   // Add to the notes that need to be deleted from Evernote
+    void getAllDeleteQueue(QStringList &guids, QString notebookGuid="");   // Get the list of notes we need to let Evernote to delete
+    void expungeFromDeleteQueue(qint32 lid);                              // Expunge from the delete pending queue
+    void expungeFromDeleteQueue(QString guid);                            // Expunge from the delete pending queue
+    qlonglong getSize(qint32 lid);                                          // get the total size of the note
 };
 
 

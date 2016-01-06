@@ -174,6 +174,11 @@ private:
     QShortcut *focusUrlShortcut;
     QShortcut *focusAuthorShortcut;
     QShortcut *copyNoteUrlShortcut;
+    QShortcut *nextTabShortcut;
+    QShortcut *prevTabShortcut;
+    QShortcut *closeTabShortcut;
+    QShortcut *downNoteShortcut;
+    QShortcut *upNoteShortcut;
     void setupShortcut(QShortcut *shortcut, QString keySequence);
 
 public:
@@ -278,6 +283,9 @@ public slots:
     void showDesktopUrl(const QUrl &url);
     void reloadIcons();
     void showMessage(QString title, QString msg, int timeout=10000);
+    void toolbarVisibilityChanged();
+    void presentationModeOn();
+    void presentationModeOff();
 
 signals:
     void syncRequested();

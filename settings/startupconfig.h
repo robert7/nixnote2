@@ -24,16 +24,45 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QHash>
 #include <QIcon>
 #include <QPixmap>
+#include <QBitArray>
+
+#include "cmdtools/addnote.h"
+#include "cmdtools/cmdlinequery.h"
+#include "cmdtools/deletenote.h"
+#include "cmdtools/emailnote.h"
+#include "cmdtools/extractnotetext.h"
+#include "cmdtools/extractnotes.h"
+#include "cmdtools/alternote.h"
+#include "cmdtools/importnotes.h"
+
+#define STARTUP_GUI 0
+#define STARTUP_SYNC 1
+#define STARTUP_SHUTDOWN 2
+#define STARTUP_SHOW 3
+#define STARTUP_ADDNOTE 4
+#define STARTUP_QUERY 5
+#define STARTUP_DELETENOTE 6
+#define STARTUP_EMAILNOTE 7
+#define STARTUP_ALTERNOTE 8
+#define STARTUP_EXPORT 9
+#define STARTUP_IMPORT 10
+#define STARTUP_BACKUP 11
+#define STARTUP_READNOTE 12
+#define STARTUP_OPTION_COUNT 13
 
 class StartupConfig
 {
 private:
     void loadTheme(QString theme);
+private:
+    QBitArray *command;
+
 public:
     StartupConfig();
     QString name;
     QString homeDirPath;
     QString programDirPath;
+    QString queryString;
     bool forceNoStartMinimized;
     bool startupNewNote;
     bool syncAndExit;
@@ -43,6 +72,32 @@ public:
     bool enableIndexing;
     bool forceSystemTrayAvailable;
     bool disableEditing;
+    bool purgeTemporaryFiles;
+    AddNote *newNote;
+    DeleteNote *delNote;
+    EmailNote *email;
+    CmdLineQuery *queryNotes;
+    ExtractNoteText *extractText;
+    ExtractNotes *exportNotes;
+    ImportNotes *importNotes;
+    AlterNote *alter;
+    bool gui();
+    bool sync();
+    bool addNote();
+    bool show();
+    bool shutdown();
+    bool query();
+    bool deleteNote();
+    bool emailNote();
+    bool readNote();
+    bool exports();
+    bool backup();
+    bool alterNote();
+    bool import();
+    void setSyncAndExit();
+
+    int init(int argc, char *argv[]);
+    void printHelp();
 };
 
 #endif // STARTUPCONFIG_H
