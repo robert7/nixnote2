@@ -2138,8 +2138,9 @@ void NBrowserWindow::editLatex(QString guid) {
     //latexProcess.start(formula, QIODevice::ReadWrite|QIODevice::Unbuffered);
     latexProcess.start("mimetex", args, QIODevice::ReadWrite|QIODevice::Unbuffered);
 
-    QLOG_DEBUG() << "Starting mimetex " << latexProcess.waitForStarted();
-    QLOG_DEBUG() << "Stopping mimetex " << latexProcess.waitForFinished() << " Return Code: " << latexProcess.state();
+    latexProcess.waitForStarted();
+    latexProcess.waitForFinished();
+    QLOG_DEBUG() << " LaTeX Return Code: " << latexProcess.state();
     QLOG_DEBUG() << "mimetex Errors:" << latexProcess.readAllStandardError();
     QLOG_DEBUG() << "mimetex Output:" << latexProcess.readAllStandardOutput();
 
@@ -3380,6 +3381,32 @@ void NBrowserWindow::focusCheck() {
     if (!editor->page()->isContentEditable())
         buttonBarVisible = false;
     buttonBar->setVisible(buttonBarVisible);
+}
+
+
+
+
+void NBrowserWindow::notebookFocusShortcut() {
+    this->notebookMenu.setFocus();
+    this->notebookMenu.click();
+}
+
+
+
+void NBrowserWindow::fontFocusShortcut() {
+    if (this->buttonBar->fontNames->isVisible()) {
+        this->buttonBar->fontNames->setFocus();
+        this->buttonBar->fontNames->showPopup();
+    }
+}
+
+
+
+void NBrowserWindow::fontSizeFocusShortcut() {
+    if (this->buttonBar->fontSizes->isVisible()) {
+        this->buttonBar->fontSizes->setFocus();
+        this->buttonBar->fontSizes->showPopup();
+    }
 }
 
 

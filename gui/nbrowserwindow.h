@@ -270,6 +270,9 @@ public slots:
     void sendDateSubjectUpdateSignal();
     void newTagFocusShortcut();
     void authorFocusShortcut();
+    void notebookFocusShortcut();
+    void fontFocusShortcut();
+    void fontSizeFocusShortcut();
     void urlFocusShortcut();
     void copyNoteUrl();
 

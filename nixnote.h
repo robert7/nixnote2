@@ -168,6 +168,9 @@ private:
     RemoteQuery *remoteQuery;
 
     QShortcut *focusSearchShortcut;
+    QShortcut *focusNotebookShortcut;
+    QShortcut *focusFontShortcut;
+    QShortcut *focusFontSizeShortcut;
     QShortcut *focusTitleShortcut;
     QShortcut *focusTagShortcut;
     QShortcut *focusNoteShortcut;
