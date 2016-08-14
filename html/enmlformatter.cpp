@@ -368,6 +368,7 @@ void EnmlFormatter::processTodo(QWebElement &node) {
 
 void EnmlFormatter::fixSpanNode(QWebElement &e) {
     e.removeAttribute("id");
+    e.removeAttribute("class");
 }
 
 
@@ -458,6 +459,7 @@ void EnmlFormatter::fixLinkNode(QWebElement e) {
         e.removeAttribute("style");
         e.removeAttribute("href");
         e.removeAttribute("title");
+        e.removeAttribute("data-saferedirecturl");
         removeInvalidAttributes(e);
         e.removeAllChildren();
         QString newXml = e.toOuterXml();
@@ -911,7 +913,7 @@ void EnmlFormatter::checkAttributes(QWebElement &e, QStringList valid) {
     QStringList attrs = e.attributeNames();
     for (int i=0; i<attrs.size(); i++) {
         if (!valid.contains(attrs[i])) {
-            QLOG_DEBUG() << "Removing invalid attibute: " << attrs[i];
+            QLOG_DEBUG() << "Removing invalid attribute: " << attrs[i];
             e.removeAttribute(attrs[i]);
         }
     }

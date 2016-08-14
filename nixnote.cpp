@@ -137,7 +137,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 
     db = new DatabaseConnection("nixnote");  // Startup the database
 
-
     // Setup the sync thread
     QLOG_TRACE() << "Setting up counter thread";
     connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
@@ -162,7 +161,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(&global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
 
     hammer = new Thumbnailer(global.db);
-    hammer->startTimer(2,120);
+    hammer->startTimer();
     finalSync = false;
 
 
@@ -1070,9 +1069,22 @@ void NixNote::setupTabWindow() {
 //*****************************************************************************
 void NixNote::closeNixNote() {
     closeFlag = true;
+    closeToTray = false;
     close();
 }
 
+
+//*****************************************************************************
+//* Close nixnote via the shortcut. If we have it set to close to the tray,
+//* we just hide things.
+//*****************************************************************************
+void NixNote::closeShortcut() {
+    if (closeToTray && isVisible())
+        toggleVisible();
+    else
+        closeNixNote();
+
+}
 
 
 //*****************************************************************************
@@ -2614,8 +2626,8 @@ void NixNote::fastPrintNote() {
 //* the tray.
 //************************************************************
 void NixNote::toggleVisible() {
-    if (minimizeToTray) {
-        if (isMinimized()) {
+    if (minimizeToTray || closeToTray) {
+        if (isMinimized() || !isVisible()) {
             setHidden(false);
             this->showNormal();
 	    this->activateWindow();
@@ -2712,7 +2724,7 @@ bool NixNote::event(QEvent *event) {
     }
 
     if (event->type() == QEvent::Close) {
-        if (global.closeToTray() && isVisible())  {
+        if (closeToTray && isVisible())  {
             QLOG_DEBUG() << "overriding close event";
             this->toggleVisible();
             event->ignore();
@@ -3601,7 +3613,7 @@ void NixNote::loadPlugins() {
     webcamPluginAvailable = false;
 
     // Start loading plugins
-    QDir pluginsDir(qApp->applicationDirPath());
+    QDir pluginsDir(global.fileManager.getProgramDirPath(""));
     pluginsDir.cd("plugins");
     QStringList filter;
     filter.append("libwebcamplugin.so");

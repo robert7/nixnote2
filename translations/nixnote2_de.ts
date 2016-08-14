@@ -817,7 +817,7 @@ some window managers)</source>
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="40"/>
-        <source>Disable Tag Sorting (usefull for non-ASCII sort bug).</source>
+        <source>Disable Tag Sorting (useful for non-ASCII sort bug).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

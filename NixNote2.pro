@@ -8,15 +8,13 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
     INCLUDEPATH += /usr/include/poppler/qt5
-    LIBS +=    -lopencv_core -lopencv_highgui -lopencv_imgproc \
-               -lhunspell -lcurl \
+    LIBS +=    -lhunspell -lcurl \
                -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
 }
 
 equals(QT_MAJOR_VERSION, 4) {
     QT       += core gui webkit sql network xml
     INCLUDEPATH += /usr/include/poppler/qt4
-#    LIBS +=    -lopencv_core -lopencv_highgui -lopencv_imgproc \
     LIBS +=    -lhunspell -lcurl \
                -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
 }
@@ -232,7 +230,8 @@ SOURCES += main.cpp\
     cmdtools/extractnotetext.cpp \
     cmdtools/extractnotes.cpp \
     cmdtools/alternote.cpp \
-    cmdtools/importnotes.cpp
+    cmdtools/importnotes.cpp \
+    dialog/preferences/thumbnailpreferences.cpp
 
 
 
@@ -429,9 +428,33 @@ HEADERS  += nixnote.h \
     cmdtools/extractnotes.h \
     cmdtools/alternote.h \
     cmdtools/importnotes.h \
-    plugins/webcaminterface.h
+    plugins/webcaminterface.h \
+    dialog/preferences/thumbnailpreferences.h
 
 
 
 QMAKE_CXXFLAGS +=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security
 QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
+
+binary.path = /usr/bin/
+binary.files = nixnote2
+
+desktop.path = /usr/share/applications/
+desktop.files = nixnote2.desktop
+
+images.path = /usr/share/nixnote2/images
+images.files = images/*
+
+java.path = /usr/share/nixnote2/java
+java.files = java/*
+
+translations.path = /usr/share/nixnote2/translations
+translations.files = translations/*
+
+qss.path = /usr/share/nixnote2/qss
+qss.files = qss/*
+
+help.path = /usr/share/nixnote2/help
+help.files = help/*
+
+INSTALLS = binary desktop images java translations qss help
