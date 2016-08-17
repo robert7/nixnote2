@@ -1,0 +1,5 @@
+nixnote2 (2.0~beta9+ds-1) unstable; urgency=medium
+
+  * Initial release (Closes: #609849)
+
+ -- Boyuan Yang <073plan@gmail.com>  Sun, 14 Aug 2016 19:11:44 +0800

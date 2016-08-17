@@ -1,0 +1,2 @@
+version=4
+opts="dversionmangle=s/(\+\d*)?\+ds\d*$//,pgpmode=none,repack,repacksuffix=+ds,uversionmangle=s/-beta/~beta/" https://github.com/baumgarr/nixnote2/tags /.*/.*/.*/v?(.+)\.tar\.gz debian uupdate
