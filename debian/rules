@@ -17,7 +17,7 @@ CLASSPATH=.
 %:
 	dh $@ --with javahelper
 
-# update transltion files before build
+# update translation files before build
 override_dh_auto_build:
 	lrelease NixNote2.pro
 	dh_auto_build
