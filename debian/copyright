@@ -23,6 +23,11 @@ License: public-domain
  to have a license, contact me, and I'll make a special release to you
  under whatever reasonable license you desire: MIT, BSD, GPL, whatever.
 
+Files: man/*
+Copyright: 2014-2016 Randy Baumgarte <randy@fbn.cx>
+           2015 Vincent Cheng <Vincentc1208@gmail.com>
+License: GPL-2
+
 Files: logger/*
 Copyright: 2010, Razvan Petru
 License: BSD-3-clause
