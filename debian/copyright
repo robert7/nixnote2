@@ -6,12 +6,12 @@ Files-Excluded: java/crypto.jar package_scripts/*
 
 Files: *
 Copyright: 2006-2016 Randy Baumgarte <randy@fbn.cx>
-License: GPL-2
+License: GPL-2+
 
 Files: debian/*
 Copyright: 2006-2016 Randy Baumgarte <randy@fbn.cx>
            2016 Boyuan Yang <073plan@gmail.com>
-License: GPL-2
+License: GPL-2+
 
 Files: java/src/cx/fbn/encrypt/Base64.java
 Copyright: Robert Harder <rharder@usa.net>
@@ -23,10 +23,14 @@ License: public-domain
  to have a license, contact me, and I'll make a special release to you
  under whatever reasonable license you desire: MIT, BSD, GPL, whatever.
 
+Files: java/src/cx/fbn/encrypt/Encrypt.java
+Copyright: 2014 Randy Baumgarte <randy@fbn.cx>
+License: GPL-2
+
 Files: man/*
 Copyright: 2014-2016 Randy Baumgarte <randy@fbn.cx>
            2015 Vincent Cheng <Vincentc1208@gmail.com>
-License: GPL-2
+License: GPL-2+
 
 Files: logger/*
 Copyright: 2010, Razvan Petru
@@ -57,7 +61,7 @@ License: GPL-2+
 
 Files: gui/lineedit.h gui/lineedit.cpp
 Copyright: 2007, Trolltech ASA <info@trolltech.com>
-License: public-domain
+License: custom1
  Use, modification and distribution is allowed without limitation,
  warranty, liability or support of any kind.
 

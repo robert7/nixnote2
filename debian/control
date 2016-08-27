@@ -5,7 +5,7 @@ Maintainer: Boyuan Yang <073plan@gmail.com>
 Build-Depends:
  debhelper (>= 9),
  default-jdk,
- javahelper (>=0.25),
+ javahelper,
  libavcodec-dev,
  libavformat-dev,
  libboost-dev,
