@@ -6,7 +6,7 @@ Files-Excluded: java/crypto.jar package_scripts/*
 
 Files: *
 Copyright: 2006-2016 Randy Baumgarte <randy@fbn.cx>
-License: GPL-2+
+License: GPL-2
 
 Files: debian/*
 Copyright: 2006-2016 Randy Baumgarte <randy@fbn.cx>
@@ -31,6 +31,13 @@ Files: man/*
 Copyright: 2014-2016 Randy Baumgarte <randy@fbn.cx>
            2015 Vincent Cheng <Vincentc1208@gmail.com>
 License: GPL-2+
+
+Files: dialog/faderdialog.h dialog/faderdialog.cpp
+Copyright: d_stranz
+License: public-domain
+ Unless stated otherwise by the author all code published on this site
+ is public domain and can be used by anyone for anything without any
+ affiliation to the original author.
 
 Files: logger/*
 Copyright: 2010, Razvan Petru
