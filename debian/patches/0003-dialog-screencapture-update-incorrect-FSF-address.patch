@@ -1,0 +1,35 @@
+From: Boyuan Yang <073plan@gmail.com>
+Date: Sat, 27 Aug 2016 17:06:41 +0800
+Subject: dialog/screencapture: update incorrect FSF address.
+
+---
+ dialog/screencapture.cpp | 2 +-
+ dialog/screencapture.h   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/dialog/screencapture.cpp b/dialog/screencapture.cpp
+index 4b5cee1..c3100af 100644
+--- a/dialog/screencapture.cpp
++++ b/dialog/screencapture.cpp
+@@ -15,7 +15,7 @@
+  *   You should have received a copy of the GNU General Public License     *
+  *   along with this program; if not, write to the                         *
+  *   Free Software Foundation, Inc.,                                       *
+- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
++ *   51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.              *
+  ***************************************************************************/
+ 
+ 
+diff --git a/dialog/screencapture.h b/dialog/screencapture.h
+index abdc023..3ee7e23 100644
+--- a/dialog/screencapture.h
++++ b/dialog/screencapture.h
+@@ -15,7 +15,7 @@
+  *   You should have received a copy of the GNU General Public License     *
+  *   along with this program; if not, write to the                         *
+  *   Free Software Foundation, Inc.,                                       *
+- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
++ *   51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.              *
+  ***************************************************************************/
+ 
+ 
