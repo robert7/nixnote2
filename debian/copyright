@@ -2,7 +2,7 @@ Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: nixnote2
 Upstream-Contact: Randy Baumgarte <randy@fbn.cx>
 Source: http://github.com/baumgarr/Nixnote2/
-Files-Excluded: java/crypto.jar package_scripts/*
+Files-Excluded: java/crypto.jar package_scripts/* install_plugin.sh uninstall.sh images/purple-theme/*
 
 Files: *
 Copyright: 2006-2016 Randy Baumgarte <randy@fbn.cx>
