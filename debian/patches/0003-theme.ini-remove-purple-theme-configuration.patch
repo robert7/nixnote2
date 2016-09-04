@@ -1,0 +1,76 @@
+From: Boyuan Yang <073plan@gmail.com>
+Date: Mon, 5 Sep 2016 00:10:08 +0800
+Subject: theme.ini: remove purple theme configuration.
+
+Due to the uncertain copyright status of purple theme, the related
+files and information are removed. Patching the theme.ini to remove
+the purple theme selection.
+---
+ theme.ini | 54 ------------------------------------------------------
+ 1 file changed, 54 deletions(-)
+
+diff --git a/theme.ini b/theme.ini
+index e444203..a424c1b 100644
+--- a/theme.ini
++++ b/theme.ini
+@@ -4,60 +4,6 @@ windowIcon = /usr/share/nixnote2/images/classic-theme/windowIcon.png
+ stackIcon =/usr/share/nixnote2/images/classic-theme/stack-green.png 
+ notebookSmallIcon = /usr/share/nixnote2/images/classic-theme/notebook-green.png 
+ 
+-[Ubuntu Purple - 1]
+-themeInformation=/usr/share/nixnote2/images/purple-theme/purpleThemeInfo.html
+-synchronizeIcon = /usr/share/nixnote2/images/purple-theme/synchronize.png 
+-homeIcon = /usr/share/nixnote2/images/purple-theme/home.png 
+-notebookSmallIcon = /usr/share/nixnote2/images/purple-theme/notebook.png 
+-leftArrowIcon=/usr/share/nixnote2/images/purple-theme/left_arrow.png 
+-rightAccowIcon=/usr/share/nixnote2/images/purple-theme/right_arrow.png 
+-stackIcon =/usr/share/nixnote2/images/purple-theme/stack-purple.png 
+-windowIcon=/usr/share/nixnote2/images/purple-theme/windowIcon1.png
+-
+-
+-[Ubuntu Purple - 2]
+-themeInformation=/usr/share/nixnote2/images/purple-theme/purpleThemeInfo.html
+-homeIcon = /usr/share/nixnote2/images/purple-theme/home.png
+-notebookSmallIcon = /usr/share/nixnote2/images/purple-theme/notebook.png
+-leftArrowIcon=/usr/share/nixnote2/images/purple-theme/left_arrow.png
+-rightArrowIcon=/usr/share/nixnote2/images/purple-theme/right_arrow.png
+-stackIcon =/usr/share/nixnote2/images/purple-theme/stack-purple.png
+-windowIcon=/usr/share/nixnote2/images/purple-theme/windowIcon2.png
+-
+-
+-[Ubuntu Purple - 3]
+-themeInformation=/usr/share/nixnote2/images/purple-theme/purpleThemeInfo.html
+-synchronizeIcon = /usr/share/nixnote2/images/purple-theme/synchronize.png
+-homeIcon = /usr/share/nixnote2/images/purple-theme/home.png
+-notebookSmallIcon = /usr/share/nixnote2/images/purple-theme/notebook.png
+-leftArrowIcon=/usr/share/nixnote2/images/purple-theme/left_arrow.png
+-rightArrowIcon=/usr/share/nixnote2/images/purple-theme/right_arrow.png
+-stackIcon =/usr/share/nixnote2/images/purple-theme/stack-purple.png
+-windowIcon=/usr/share/nixnote2/images/purple-theme/windowIcon3.png
+- 
+-
+-[Ubuntu Purple - 4]
+-themeInformation=/usr/share/nixnote2/images/purple-theme/purpleThemeInfo.html
+-synchronizeIcon = /usr/share/nixnote2/images/purple-theme/synchronize.png
+-homeIcon = /usr/share/nixnote2/images/purple-theme/home.png
+-notebookSmallIcon = /usr/share/nixnote2/images/purple-theme/notebook.png
+-leftArrowIcon=/usr/share/nixnote2/images/purple-theme/left_arrow.png
+-rightArrowIcon=/usr/share/nixnote2/images/purple-theme/right_arrow.png
+-stackIcon =/usr/share/nixnote2/images/purple-theme/stack-purple.png
+-windowIcon=/usr/share/nixnote2/images/purple-theme/windowIcon4.png
+-
+-
+-[Ubuntu Purple - 5]
+-themeInformation=/usr/share/nixnote2/images/purple-theme/purpleThemeInfo.html
+-synchronizeIcon = /usr/share/nixnote2/images/purple-theme/synchronize.png
+-homeIcon = /usr/share/nixnote2/images/purple-theme/home.png
+-notebookIcon = /usr/share/nixnote2/images/purple-theme/notebook.png
+-leftArrowIcon=/usr/share/nixnote2/images/purple-theme/left_arrow.png
+-rightArrowIcon=/usr/share/nixnote2/images/purple-theme/right_arrow.png
+-stackIcon =/usr/share/nixnote2/images/purple-theme/stack-purple.png
+-windowIcon=/usr/share/nixnote2/images/purple-theme/windowIcon5.png
+-
+-
+ 
+ [Dark Editor]
+ editorFontColor=white
