@@ -1,4 +1,4 @@
-nixnote2 (2.0~beta9+ds-1) unstable; urgency=medium
+nixnote2 (2.0~beta9+dfsg-1) unstable; urgency=medium
 
   * Initial release (Closes: #609849)
 

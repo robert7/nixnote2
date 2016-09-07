@@ -15,7 +15,7 @@ CLASSPATH=.
 
 # main packaging script based on dh7 syntax
 %:
-	dh $@ --with javahelper
+	dh $@ --with javahelper --parallel
 
 # update translation files before build
 override_dh_auto_build:

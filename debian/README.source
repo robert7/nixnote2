@@ -1,0 +1,12 @@
+NixNote2 sources for Debian
+---------------------------
+
+The bundled qevercloud library is removed in Debian. This library is
+packaged separately.
+
+The purple-theme files in images/purple-theme/* are removed due to unclear
+copyright status. Upstream did not give a clear statement about its license,
+only the name of the author is provided. As a result, the purple theme
+will not be available. Please use the default theme.
+
+ -- Boyuan Yang <073plan@gmail.com>  Wed, 07 Sep 2016 15:38:32 +0800

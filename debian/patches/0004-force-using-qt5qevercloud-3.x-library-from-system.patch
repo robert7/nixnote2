@@ -10,7 +10,7 @@ Ever since QEverCloud 3.x, the headers for Qt4/Qt5 has been
 separated. We are building against Qt5, so replacing all
 header #include lines with the qt5 version.
 ---
- NixNote2.pro                            | 29 -----------------------------
+ NixNote2.pro                            | 33 ++-------------------------------
  cmdtools/addnote.h                      |  2 +-
  communication/communicationmanager.h    |  4 ++--
  dialog/notehistoryselect.h              |  2 +-
@@ -32,12 +32,29 @@ header #include lines with the qt5 version.
  utilities/debugtool.h                   |  2 +-
  utilities/noteindexer.h                 |  2 +-
  xml/exportdata.h                        |  2 +-
- 22 files changed, 22 insertions(+), 51 deletions(-)
+ 22 files changed, 24 insertions(+), 53 deletions(-)
 
 diff --git a/NixNote2.pro b/NixNote2.pro
-index 4a8d32f..1452558 100644
+index 4a8d32f..0aae083 100644
 --- a/NixNote2.pro
 +++ b/NixNote2.pro
+@@ -9,14 +9,14 @@ greaterThan(QT_MAJOR_VERSION, 4) {
+     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+     INCLUDEPATH += /usr/include/poppler/qt5
+     LIBS +=    -lhunspell -lcurl \
+-               -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
++               -lpthread -L/usr/lib -lpoppler-qt5 -lqt5qevercloud -g -rdynamic
+ }
+ 
+ equals(QT_MAJOR_VERSION, 4) {
+     QT       += core gui webkit sql network xml
+     INCLUDEPATH += /usr/include/poppler/qt4
+     LIBS +=    -lhunspell -lcurl \
+-               -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
++               -lpthread -L/usr/lib -lpoppler-qt4 -lqt4qevercloud -g -rdynamic
+ }
+ 
+ TARGET = nixnote2
 @@ -181,15 +181,6 @@ SOURCES += main.cpp\
      xml/exportdata.cpp \
      dialog/logviewer.cpp \
