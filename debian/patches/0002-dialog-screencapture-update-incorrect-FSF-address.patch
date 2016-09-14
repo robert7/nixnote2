@@ -1,6 +1,7 @@
 From: Boyuan Yang <073plan@gmail.com>
 Date: Sat, 27 Aug 2016 17:06:41 +0800
 Subject: dialog/screencapture: update incorrect FSF address.
+Forwarded: https://github.com/baumgarr/nixnote2/pull/200
 
 ---
  dialog/screencapture.cpp | 2 +-

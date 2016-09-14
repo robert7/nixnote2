@@ -1,6 +1,7 @@
 From: Boyuan Yang <073plan@gmail.com>
 Date: Wed, 7 Sep 2016 11:09:43 +0800
 Subject: force using qt5qevercloud 3.x library from system.
+Forwarded: https://github.com/baumgarr/nixnote2/issues/187
 
 To remove the bundled libqevercloud, we need to modify the
 buildsystem and the source code to use the library provided
