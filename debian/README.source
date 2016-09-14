@@ -9,4 +9,10 @@ copyright status. Upstream did not give a clear statement about its license,
 only the name of the author is provided. As a result, the purple theme
 will not be available. Please use the default theme.
 
- -- Boyuan Yang <073plan@gmail.com>  Wed, 07 Sep 2016 15:38:32 +0800
+Upstream code contains some legacy instructions, including the attempt of
+calling components of old OpenOffice(in spellchecker.cpp) and behaviors
+that do not follow RFC 6068, etc. Those code are examined and considered
+harmless. However, please do not hesitate to file a bug report if you find
+any related bug or negative effect.
+
+ -- Boyuan Yang <073plan@gmail.com>  Wed, 15 Sep 2016 15:38:32 +0800
