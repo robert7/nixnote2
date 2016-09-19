@@ -1,7 +1,6 @@
 From: Boyuan Yang <073plan@gmail.com>
 Date: Wed, 7 Sep 2016 11:09:43 +0800
 Subject: force using qt5qevercloud 3.x library from system.
-Forwarded: https://github.com/baumgarr/nixnote2/issues/187
 
 To remove the bundled libqevercloud, we need to modify the
 buildsystem and the source code to use the library provided
@@ -11,7 +10,7 @@ Ever since QEverCloud 3.x, the headers for Qt4/Qt5 has been
 separated. We are building against Qt5, so replacing all
 header #include lines with the qt5 version.
 ---
- NixNote2.pro                            | 33 ++-------------------------------
+ NixNote2.pro                            | 35 +++------------------------------
  cmdtools/addnote.h                      |  2 +-
  communication/communicationmanager.h    |  4 ++--
  dialog/notehistoryselect.h              |  2 +-
@@ -33,17 +32,19 @@ header #include lines with the qt5 version.
  utilities/debugtool.h                   |  2 +-
  utilities/noteindexer.h                 |  2 +-
  xml/exportdata.h                        |  2 +-
- 22 files changed, 24 insertions(+), 53 deletions(-)
+ 22 files changed, 25 insertions(+), 54 deletions(-)
 
 diff --git a/NixNote2.pro b/NixNote2.pro
-index 4a8d32f..0aae083 100644
+index b1934c6..ee0e2d1 100644
 --- a/NixNote2.pro
 +++ b/NixNote2.pro
-@@ -9,14 +9,14 @@ greaterThan(QT_MAJOR_VERSION, 4) {
+@@ -8,15 +8,15 @@ greaterThan(QT_MAJOR_VERSION, 4) {
+     QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus
      DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
      INCLUDEPATH += /usr/include/poppler/qt5
-     LIBS +=   -lhunspell -lcurl \
+-    LIBS +=    -lhunspell -lcurl \
 -               -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
++    LIBS +=    -lcurl \
 +               -lpthread -L/usr/lib -lpoppler-qt5 -lqt5qevercloud -g -rdynamic
  }
  
@@ -56,7 +57,7 @@ index 4a8d32f..0aae083 100644
  }
  
  TARGET = nixnote2
-@@ -181,15 +181,6 @@ SOURCES += main.cpp\
+@@ -178,15 +178,6 @@ SOURCES += main.cpp\
      xml/exportdata.cpp \
      dialog/logviewer.cpp \
      dialog/htmlentitiesdialog.cpp \
@@ -72,7 +73,7 @@ index 4a8d32f..0aae083 100644
      gui/traymenu.cpp \
      gui/favoritesview.cpp \
      gui/favoritesviewdelegate.cpp \
-@@ -366,26 +357,6 @@ HEADERS  += nixnote.h \
+@@ -360,26 +351,6 @@ HEADERS  += nixnote.h \
      xml/exportdata.h \
      dialog/logviewer.h \
      dialog/htmlentitiesdialog.h \
@@ -213,7 +214,7 @@ index e4b6ab1..7b2eed8 100644
  #include <QtWebKit>
  #include <QLineEdit>
 diff --git a/gui/nbrowserwindow.h b/gui/nbrowserwindow.h
-index 7892df0..2302449 100644
+index 5475305..2414b24 100644
 --- a/gui/nbrowserwindow.h
 +++ b/gui/nbrowserwindow.h
 @@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -265,7 +266,7 @@ index f4be709..81d13bc 100644
  
  
 diff --git a/nixnote.cpp b/nixnote.cpp
-index 92c7d63..8d7e63c 100644
+index bd89e64..998709f 100644
 --- a/nixnote.cpp
 +++ b/nixnote.cpp
 @@ -82,7 +82,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
