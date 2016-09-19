@@ -46,7 +46,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/mimereference.h"
 #include "html/attachmenticonbuilder.h"
 #include "dialog/remindersetdialog.h"
-#include "utilities/spellchecker.h"
 #include "dialog/spellcheckdialog.h"
 #include "utilities/pixelconverter.h"
 
@@ -1102,7 +1101,7 @@ void NBrowserWindow::alignCenterButtonPressed() {
 
 
 
-// The left allign button was pressed
+// The left align button was pressed
 void NBrowserWindow::alignLeftButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('JustifyLeft', false, '');");
@@ -1112,7 +1111,7 @@ void NBrowserWindow::alignLeftButtonPressed() {
 
 
 
-// The allign right button was pressed
+// The align right button was pressed
 void NBrowserWindow::alignRightButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('JustifyRight', false, '');");
@@ -1851,7 +1850,7 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
 
 
 
-// Set the backgroud color of a note
+// Set the background color of a note
  void NBrowserWindow::setBackgroundColor(QString value) {
      QString js = QString("function changeBackground(color) {")
          +QString("document.body.style.background = color;")
@@ -2503,7 +2502,7 @@ void NBrowserWindow::emailNote() {
     smtp.setResponseTimeout(-1);
 
     // We need to set the username (your email address) and password
-    // for smtp authentification.
+    // for smtp authentication.
     smtp.setUser(userid);
     smtp.setPassword(password);
 
@@ -3227,14 +3226,17 @@ void NBrowserWindow::spellCheckPressed() {
     QStringList words = page->mainFrame()->toPlainText().split(" ");
     QStringList ignoreWords;
     QStringList rwords;
-    SpellChecker checker;
-    checker.setup();
+    //SpellChecker checker;
     bool finished = false;
 
+    if (!hunspellInterface) {
+        this->loadPlugins();
+    }
     for (int i=0; i<words.size() && !finished; i++) {
         QString currentWord = words[i];
         page->findText(currentWord);
-        if (!checker.spellCheck(currentWord, rwords) && !ignoreWords.contains(currentWord)) {
+        rwords.clear();
+        if (!hunspellInterface->spellCheck(currentWord, rwords) && !ignoreWords.contains(currentWord)) {
             SpellCheckDialog dialog(currentWord, rwords, this);
             dialog.move(0,0);
             dialog.exec();
@@ -3248,7 +3250,7 @@ void NBrowserWindow::spellCheckPressed() {
                 pasteButtonPressed();
             }
             if (dialog.addToDictionaryPressed) {
-                checker.addWord(currentWord);
+                hunspellInterface->addWord(global.fileManager.getSpellDirPathUser() +"user.lst", currentWord);
             }
         }
     }
@@ -3474,4 +3476,30 @@ void NBrowserWindow::setEditorStyle() {
     QString qss = global.getEditorCss();
     editor->settings()->setUserStyleSheetUrl(QUrl("file://"+qss));
     return;
+}
+
+
+void NBrowserWindow::loadPlugins() {
+    hunspellPluginAvailable = false;
+
+    // Start loading plugins
+    QDir pluginsDir(global.fileManager.getProgramDirPath(""));
+    pluginsDir.cd("plugins");
+    QStringList filter;
+    filter.append("libhunspellplugin.so");
+    foreach (QString fileName, pluginsDir.entryList(filter)) {
+        QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+        QObject *plugin = pluginLoader.instance();
+        if (fileName == "libhunspellplugin.so") {
+            if (plugin) {
+                hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
+                if (hunspellInterface) {
+                    hunspellPluginAvailable = true;
+                    hunspellInterface->initialize(global.fileManager.getProgramDirPath(""), global.fileManager.getSpellDirPathUser());
+                }
+            } else {
+                QLOG_ERROR() << pluginLoader.errorString();
+            }
+        }
+    }
 }
