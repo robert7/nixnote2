@@ -42,7 +42,7 @@ index 4a8d32f..0aae083 100644
 @@ -9,14 +9,14 @@ greaterThan(QT_MAJOR_VERSION, 4) {
      DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
      INCLUDEPATH += /usr/include/poppler/qt5
-     LIBS +=    -lhunspell -lcurl \
+     LIBS +=   -lhunspell -lcurl \
 -               -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
 +               -lpthread -L/usr/lib -lpoppler-qt5 -lqt5qevercloud -g -rdynamic
  }
@@ -50,7 +50,7 @@ index 4a8d32f..0aae083 100644
  equals(QT_MAJOR_VERSION, 4) {
      QT       += core gui webkit sql network xml
      INCLUDEPATH += /usr/include/poppler/qt4
-     LIBS +=    -lhunspell -lcurl \
+     LIBS +=    -lcurl \
 -               -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
 +               -lpthread -L/usr/lib -lpoppler-qt4 -lqt4qevercloud -g -rdynamic
  }
