@@ -11,13 +11,14 @@ Build-Depends:
  libboost-dev,
  libcurl4-openssl-dev | libcurl-dev | libcurl4-nss-dev | libcurl4-gnutls-dev,
  libhunspell-dev,
- libpoppler-qt5-dev,
- libqt5webkit5-dev,
+ libpoppler-qt4-dev,
+ libqtwebkit-dev,
  libswscale-dev,
- qt5-qmake,
- qt5qevercloud-dev,
- qtbase5-dev,
- qttools5-dev-tools,
+ qt4-qmake,
+ qt4qevercloud-dev,
+ libqt4-dev,
+ libqt4-dev-bin,
+ qt4-dev-tools,
 Standards-Version: 3.9.8
 Homepage: http://nevernote.sourceforge.net
 Vcs-Git: https://github.com/hosiet/nixnote2.git

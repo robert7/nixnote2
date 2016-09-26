@@ -5,7 +5,7 @@
 
 # see FEATURE AREAS in dpkg-buildflags(1)
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
-export QT_SELECT = 5
+export QT_SELECT = 4
 
 _DEBIAN_VERSION=$(shell dpkg-parsechangelog | grep '^Version: .*' | grep -o ' .*' | grep -o '[0-9].*')
 _VERSION=$(shell echo $(_DEBIAN_VERSION) | cut -d- -f 1)
@@ -15,7 +15,7 @@ CLASSPATH=.
 
 # main packaging script based on dh7 syntax
 %:
-	dh $@ --with javahelper --parallel
+	dh $@ --with javahelper
 
 # update translation files before build
 override_dh_auto_build:
