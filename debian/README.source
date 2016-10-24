@@ -10,9 +10,11 @@ only the name of the author is provided. As a result, the purple theme
 will not be available. Please use the default theme.
 
 Upstream code contains some legacy instructions, including the attempt of
-calling components of old OpenOffice(in spellchecker.cpp) and behaviors
-that do not follow RFC 6068, etc. Those code are examined and considered
-harmless. However, please do not hesitate to file a bug report if you find
+calling components of old OpenOffice (in spellchecker.cpp) that date back
+from 2005 to 2008. Those old OpenOffice.org installations should not exist
+now and those code will never have a chance to be executed. As a result,
+we consider these legacy codes harmless and left them as-is.
+However, please do not hesitate to file a bug report if you find
 any related bug or negative effect.
 
- -- Boyuan Yang <073plan@gmail.com>  Wed, 15 Sep 2016 15:38:32 +0800
+ -- Boyuan Yang <073plan@gmail.com>  Wed, 24 Oct 2016 23:28:32 +0800
