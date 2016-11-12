@@ -13,7 +13,7 @@ Copyright: 2006-2016 Randy Baumgarte <randy@fbn.cx>
            2016 Boyuan Yang <073plan@gmail.com>
 License: GPL-2+
 
-Files: application.h application.cpp global.cpp global.h main.cpp nixnote.cpp nixnote.h communication/* dialog/* cmdtools/* filters/* gui/* html/* models/* oauth/* reminders/* settings/* sql/* threads/* utilities/* watcher/* webcam/* xml/* plugins/webcaminterface.h plugins/webcamplugin.cpp plugins/webcamplugin.h
+Files: application.h application.cpp global.cpp global.h main.cpp nixnote.cpp nixnote.h communication/* dialog/* cmdtools/* filters/* gui/* html/* models/* oauth/* reminders/* settings/* sql/* threads/* utilities/* watcher/* webcam/* xml/* plugins/webcam/webcaminterface.h plugins/webcam/webcamplugin.* plugins/hunspell/hunspellinterface.h plugins/hunspell/hunspellplugin.*
 Copyright: 2013-2016 Randy Baumgarte <randy@fbn.cx>
 License: GPL-2+
 
