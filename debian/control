@@ -21,8 +21,8 @@ Build-Depends:
  qt4-dev-tools,
 Standards-Version: 3.9.8
 Homepage: http://nevernote.sourceforge.net
-Vcs-Git: https://github.com/hosiet/nixnote2.git
-Vcs-Browser: https://github.com/hosiet/nixnote2
+Vcs-Git: https://anonscm.debian.org/git/collab-maint/nixnote2.git
+Vcs-Browser: https://anonscm.debian.org/git/collab-maint/nixnote2.git
 
 Package: nixnote2
 Architecture: any
@@ -41,4 +41,5 @@ Description: Open Source Evernote client
  will allow synchronization and editing of notes from your local
  system.
  .
- It was once known as nevernote.
+ Once known as "NeverNote", this software was rewritten in C++/Qt and
+ provide a native user experience.
