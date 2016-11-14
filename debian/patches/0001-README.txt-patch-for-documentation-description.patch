@@ -1,6 +1,7 @@
 From: Boyuan Yang <073plan@gmail.com>
 Date: Wed, 31 Aug 2016 14:45:32 +0800
 Subject: README.txt: patch for documentation description.
+Forwarded: not-needed
 
 Upstream README.txt fails to describe the correct status of
 documentation delivered by Debian package. This patch gives

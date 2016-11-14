@@ -1,6 +1,7 @@
 From: Boyuan Yang <073plan@gmail.com>
 Date: Mon, 5 Sep 2016 00:10:08 +0800
 Subject: theme.ini: remove purple theme configuration.
+Forwarded: https://github.com/baumgarr/nixnote2/issues/201
 
 Due to the uncertain copyright status of purple theme, the related
 files and information are removed. Patching the theme.ini to remove
