@@ -43,6 +43,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
     this->setupSyncPanel();
     this->setupSearchPanel();
     this->setupEmailPanel();
+    this->setupThumbnailPanel();
     this->setupDebugPanel();
 
     cancelButton = new QPushButton(tr("Cancel"), this);
@@ -64,6 +65,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
     buttonLayout->setStretch(3,100);
 
     mainLayout->addLayout(buttonLayout);
+    this->resize(this->size().width()*1.2, this->size().height()*1.2);
 
     connect(appearancePanel->showTrayIcon, SIGNAL(clicked(bool)),
             syncPanel->enableSyncNotifications, SLOT(setEnabled(bool)));
@@ -114,6 +116,11 @@ void PreferencesDialog::setupEmailPanel() {
     tabs->addTab(emailPanel, tr("Email"));
 }
 
+void PreferencesDialog::setupThumbnailPanel() {
+    thumbnailPanel = new ThumbnailPreferences(this);
+    tabs->addTab(thumbnailPanel, tr("Thumbnail"));
+}
+
 
 void PreferencesDialog::setupDebugPanel() {
     debugPanel = new DebugPreferences(this);
@@ -134,6 +141,7 @@ void PreferencesDialog::okButtonClicked() {
     syncPanel->saveValues();
     emailPanel->saveValues();
     searchPanel->saveValues();
+    thumbnailPanel->saveValues();
     this->close();
 }
 

@@ -35,6 +35,7 @@ public:
     int run(StartupConfig &config);
     int readNote(StartupConfig config);
     int addNote(StartupConfig config);
+    int appendNote(StartupConfig config);
     int queryNotes(StartupConfig config);
     int deleteNote(StartupConfig config);
     int emailNote(StartupConfig config);
@@ -43,6 +44,7 @@ public:
     int importNotes(StartupConfig config);
     int openNotebook(StartupConfig config);
     int closeNotebook(StartupConfig config);
+    int sync(StartupConfig config);
 
 signals:
 

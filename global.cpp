@@ -75,7 +75,8 @@ Global::~Global() {
 
 
 //Initial global settings setup
-void Global::setup(StartupConfig startupConfig) {
+void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
+    this->guiAvailable = guiAvailable;
     fileManager.setup(startupConfig.homeDirPath, startupConfig.programDirPath, startupConfig.accountId);
     shortcutKeys = new ShortcutKeys();
     QString settingsFile = fileManager.getHomeDirPath("") + "nixnote.conf";
@@ -102,7 +103,7 @@ void Global::setup(StartupConfig startupConfig) {
     this->forceNoStartMimized = startupConfig.forceNoStartMinimized;
     this->forceSystemTrayAvailable = startupConfig.forceSystemTrayAvailable;
     this->startupNewNote = startupConfig.startupNewNote;
-    this->syncAndExit = startupConfig.syncAndExit;
+    //this->syncAndExit = startupConfig.syncAndExit;
     this->forceStartMinimized = startupConfig.forceStartMinimized;
     this->startupNote = startupConfig.startupNoteLid;
     startupConfig.accountId = accountId;
@@ -153,7 +154,7 @@ void Global::setup(StartupConfig startupConfig) {
         disableEditing = true;
     settings->endGroup();
 
-    if (defaultFont != "" && defaultFontSize > 0) {
+    if (defaultFont != "" && defaultFontSize > 0 && this->guiAvailable) {
         QWebSettings *settings = QWebSettings::globalSettings();
         settings->setFontFamily(QWebSettings::StandardFont, defaultFont);
         // QWebkit DPI is hard coded to 96. Hence, we calculate the correct
@@ -161,6 +162,10 @@ void Global::setup(StartupConfig startupConfig) {
         settings->setFontSize(QWebSettings::DefaultFontSize,
             defaultFontSize * (QApplication::desktop()->logicalDpiX() / 96.0)
             );
+    }
+    if (defaultFont != "" && defaultFontSize <= 0 && this->guiAvailable) {
+        QWebSettings *settings = QWebSettings::globalSettings();
+        settings->setFontFamily(QWebSettings::StandardFont, defaultFont);
     }
 
     settings->beginGroup("Appearance");
@@ -177,6 +182,14 @@ void Global::setup(StartupConfig startupConfig) {
     indexPDFLocally=getIndexPDFLocally();
     forceSearchLowerCase=getForceSearchLowerCase();
     strictDTD = getStrictDTD();
+
+
+    settings->beginGroup("Thumbnail");
+    minimumThumbnailInterval = settings->value("minTime", 5).toInt();
+    maximumThumbnailInterval = settings->value("maxTime", 60).toInt();
+    batchThumbnailCount = settings->value("count", 1).toInt();
+    disableThumbnails = settings->value("disabled", false).toBool();
+    settings->endGroup();
 
     // reset username
     full_username = "";

@@ -151,7 +151,7 @@ void NMainMenuBar::setupFileMenu() {
 
     exitAction = new QAction(tr("E&xit"), this);
     exitAction->setToolTip(tr("Close the program"));
-    connect(exitAction, SIGNAL(triggered()), parent, SLOT(closeNixNote()));
+    connect(exitAction, SIGNAL(triggered()), parent, SLOT(closeShortcut()));
     exitAction->setShortcut(QKeySequence::Close);
     exitAction->setIcon(QIcon::fromTheme("exit"));
     setupShortcut(exitAction, QString("File_Exit"));
@@ -402,12 +402,14 @@ void NMainMenuBar::setupNoteMenu() {
     noteMenu->addAction(deleteNoteAction);
     connect(deleteNoteAction, SIGNAL(triggered()), parent, SLOT(deleteCurrentNote()));
 
-    noteMenu->addSeparator();
 
-    spellCheckAction = new QAction(tr("&Spell Check"), noteMenu);
-    // setupShortcut(spellCheckAction, QString("Tools_Spell_Check"));  This shortcut is done by the editor button bar
-    noteMenu->addAction(spellCheckAction);
-    connect(spellCheckAction, SIGNAL(triggered()), parent, SLOT(spellCheckCurrentNote()));
+    if (parent->hunspellPluginAvailable) {
+        noteMenu->addSeparator();
+        spellCheckAction = new QAction(tr("&Spell Check"), noteMenu);
+        // setupShortcut(spellCheckAction, QString("Tools_Spell_Check"));  This shortcut is done by the editor button bar
+        noteMenu->addAction(spellCheckAction);
+        connect(spellCheckAction, SIGNAL(triggered()), parent, SLOT(spellCheckCurrentNote()));
+    }
 
 
     noteMenu->addSeparator();

@@ -50,7 +50,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define STARTUP_READNOTE 12
 #define STARTUP_CLOSENOTEBOOK 13
 #define STARTUP_OPENNOTEBOOK 14
-#define STARTUP_OPTION_COUNT 15
+#define STARTUP_APPENDNOTE 15
+#define STARTUP_SQLEXEC 16
+#define STARTUP_OPTION_COUNT 17
 
 class StartupConfig
 {
@@ -67,7 +69,7 @@ public:
     QString queryString;
     bool forceNoStartMinimized;
     bool startupNewNote;
-    bool syncAndExit;
+    bool sqlExec;
     int accountId;
     qint32 startupNoteLid;
     bool forceStartMinimized;
@@ -86,6 +88,7 @@ public:
     bool gui();
     bool sync();
     bool addNote();
+    bool appendNote();
     bool show();
     bool shutdown();
     bool query();
@@ -98,10 +101,10 @@ public:
     bool openNotebook();
     bool closeNotebook();
     bool import();
-    void setSyncAndExit();
+    QString sqlString;
     QStringList notebookList;
 
-    int init(int argc, char *argv[]);
+    int init(int argc, char *argv[], bool &guiAvailable);
     void printHelp();
 };
 

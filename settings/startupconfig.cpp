@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDir>
 #include <QString>
 #include <iostream>
+#include "threads/syncrunner.h"
+
+#include <QProcessEnvironment>
 
 //extern Global global;
 
@@ -29,8 +32,9 @@ StartupConfig::StartupConfig()
 {
     homeDirPath = QDir().homePath() + QString("/.nixnote/");
     this->forceNoStartMinimized = false;
-    this->syncAndExit = false;
     this->startupNewNote = false;
+    this->sqlExec = false;
+    this->sqlString = "";
     this->forceStartMinimized = false;
     this->enableIndexing = false;
     this->startupNoteLid = 0;
@@ -109,6 +113,16 @@ void StartupConfig::printHelp() {
                    +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
                    +QString("                                       is read from stdin.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
+                   +QString("  appendNote <options>                 Append to an existing note.\n")
+                   +QString("     appendNote options:\n")
+                   +QString("          --id=\"<title>\"               ID of note to append.\n")
+                   +QString("          --attachment=\"<file_path>\"   File to attach to the note.\n")
+                   +QString("                                       For multiple files, use multiple --attachment statements.\n")
+                   +QString("          --delimiter=\"<delmiiter>\"    Character string identifying attachment points.\n")
+                   +QString("                                       Defaults to %%.\n")
+                   +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
+                   +QString("                                       is read from stdin.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
                    +QString("  alterNote <options>                  Change a notes't notebook or tags.\n")
                    +QString("     alterNote options:\n")
                    +QString("          --id=\"<note_ids>\"            Space separated list of note IDs to extract.\n")
@@ -168,6 +182,8 @@ void StartupConfig::printHelp() {
                    +QString("     nixnote2 --closeNotebook notebook=\"My Notebook\"\n\n")
                    +QString("     To add a note to the notebook \"My Notebook\"\n")
                    +QString("     nixnote2 addNote --notebook=\"My Stuff\" --title=\"My New Note\" --tag=\"Tag1\" --tag=\"Tag2\" --noteText=\"My Note Text\"\n\n")
+                   +QString("     To append to an existing note.\n")
+                   +QString("     nixnote2 appendNote --id=3 --noteText=\"My Note Text\"\n\n")
                    +QString("     To add a tag to notes in the notebook \"Stuff\".\n")
                    +QString("     nixnote2 alterNote --search=\"notebook:Stuff\" --addTag=\"NewTag\"\n\n")
                    +QString("     Query notes for the search text. Results show the ID, note title (padded to 10 characters but truncated longer) and the notebook\n")
@@ -183,7 +199,19 @@ void StartupConfig::printHelp() {
 
 
 
-int StartupConfig::init(int argc, char *argv[]) {
+int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
+
+    guiAvailable = true;
+
+    // Check if we have a GUI available. This is ugly, but it works.
+    // We check for a DISPLAY value, if one is found then we assume
+    // that the GUI is available. We can override this with the --forceNoGui
+    // as any parameter.
+
+    QString display = QProcessEnvironment::systemEnvironment().value("DISPLAY", "");
+    if (display.trimmed() == "")
+        guiAvailable = false;
+
 
     for (int i=1; i<argc; i++) {
         QString parm(argv[i]);
@@ -199,46 +227,61 @@ int StartupConfig::init(int argc, char *argv[]) {
             command->setBit(STARTUP_ADDNOTE,true);
             if (newNote == NULL)
                 newNote = new AddNote();
+            guiAvailable = false;
+        }
+        if (parm.startsWith("appendNote")) {
+            command->setBit(STARTUP_APPENDNOTE,true);
+            if (newNote == NULL)
+                newNote = new AddNote();
+            guiAvailable = false;
         }
         if (parm.startsWith("emailNote")) {
             command->setBit(STARTUP_EMAILNOTE,true);
             if (email == NULL)
                 email = new EmailNote();
+            guiAvailable = false;
         }
         if (parm.startsWith("export")) {
             command->setBit(STARTUP_EXPORT,true);
             if (exportNotes == NULL)
                 exportNotes = new ExtractNotes();
+            guiAvailable = false;
             exportNotes->backup=false;
         }
         if (parm.startsWith("import")) {
             command->setBit(STARTUP_IMPORT,true);
             if (importNotes == NULL)
                 importNotes = new ImportNotes();
+            guiAvailable = false;
         }
         if (parm.startsWith("backup")) {
             command->setBit(STARTUP_BACKUP,true);
             if (exportNotes == NULL)
                 exportNotes = new ExtractNotes();
             exportNotes->backup=true;
+            guiAvailable = false;
         }
         if (parm.startsWith("query")) {
             command->setBit(STARTUP_QUERY);
             if (queryNotes == NULL)
                 queryNotes = new CmdLineQuery();
+            guiAvailable = false;
         }
         if (parm.startsWith("readNote")) {
             command->setBit(STARTUP_READNOTE);
             if (extractText == NULL)
                 extractText = new ExtractNoteText();
+            guiAvailable = false;
         }
         if (parm.startsWith("deleteNote")) {
             command->setBit(STARTUP_DELETENOTE);
             if (delNote == NULL)
                 delNote = new DeleteNote();
+            guiAvailable = false;
         }
         if (parm.startsWith("sync")) {
             command->setBit(STARTUP_SYNC,true);
+            guiAvailable = false;
         }
         if (parm.startsWith("show_window")) {
             command->setBit(STARTUP_SHOW,true);
@@ -259,6 +302,20 @@ int StartupConfig::init(int argc, char *argv[]) {
             command->setBit(STARTUP_CLOSENOTEBOOK);
             notebookList.clear();
         }
+        if (parm.startsWith("sqlExec", Qt::CaseSensitive)) {
+            command->setBit(STARTUP_SQLEXEC);
+            guiAvailable = false;
+        }
+
+        // This should be last because it is the default
+        if (parm.startsWith("start")) {
+            command->setBit(STARTUP_GUI,true);
+            guiAvailable = true;
+        }
+
+
+
+
         if (command->at(STARTUP_ADDNOTE)) {
             if (parm.startsWith("--title=", Qt::CaseSensitive)) {
                 parm = parm.mid(8);
@@ -289,6 +346,16 @@ int StartupConfig::init(int argc, char *argv[]) {
                 newNote->content = parm;
             }
         }
+        if (command->at(STARTUP_APPENDNOTE)) {
+            if (parm.startsWith("--id=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                newNote->lid = parm.toInt();
+            }
+            if (parm.startsWith("--noteText=", Qt::CaseSensitive)) {
+                parm = parm.mid(11);
+                newNote->content = parm;
+            }
+        }
         if (command->at(STARTUP_QUERY)) {
             if (parm.startsWith("--search=", Qt::CaseSensitive)) {
                 parm = parm.mid(9);
@@ -305,11 +372,6 @@ int StartupConfig::init(int argc, char *argv[]) {
             if (parm.startsWith("--noHeaders", Qt::CaseSensitive)) {
                 queryNotes->printHeaders=false;
             }
-        }
-
-        // This should be last because it is the default
-        if (parm.startsWith("start")) {
-            command->setBit(STARTUP_GUI,true);
         }
         if (command->at(STARTUP_GUI) || command->count(true) == 0) {
             command->setBit(STARTUP_GUI,true);
@@ -330,7 +392,8 @@ int StartupConfig::init(int argc, char *argv[]) {
                 startupNewNote = true;
             }
             if (parm == "--syncAndExit") {
-                syncAndExit = true;
+                command->clear();
+                command->setBit(STARTUP_SYNC, true);
             }
             if (parm == "--enableIndexing") {
                 enableIndexing = true;
@@ -459,7 +522,17 @@ int StartupConfig::init(int argc, char *argv[]) {
                 notebookList.append(parm);
             }
         }
+        if (command->at(STARTUP_SQLEXEC)) {
+            this->sqlExec=true;
+            if (parm.startsWith("--query", Qt::CaseSensitive)) {
+                parm = parm.mid(8);
+            }
+            if (!parm.startsWith("sqlExec", Qt::CaseInsensitive)) {
+                sqlString = sqlString + " " + parm;
+            }
+        }
     }
+
 
     if (command->count(true) == 0)
         command->setBit(STARTUP_GUI,true);
@@ -468,13 +541,23 @@ int StartupConfig::init(int argc, char *argv[]) {
         std::cout << "\nInvalid options specified.  Only one command may be specified at a time.\n";
         return 16;
     }
-    return 0;
-}
 
-void StartupConfig::setSyncAndExit() {
-    syncAndExit=true;
-    //command->clear();
-    command->setBit(STARTUP_GUI,true);
+    // Check for GUI overrides
+    for (int i=0; i<argc; i++) {
+        QString value = QString(argv[i]);
+        if (value == "--forceNoGui") {
+            guiAvailable = false;
+            command->clearBit(STARTUP_GUI);
+            i = argc;
+        }
+        if (value == "--forceGui") {
+            guiAvailable = true;
+            command->setBit(STARTUP_GUI);
+            i = argc;
+        }
+    }
+
+    return 0;
 }
 
 bool StartupConfig::query() {
@@ -482,7 +565,7 @@ bool StartupConfig::query() {
 }
 
 bool StartupConfig::gui() {
-    return command->at(STARTUP_GUI);
+     return command->at(STARTUP_GUI);
 }
 
 bool StartupConfig::sync() {
@@ -491,6 +574,10 @@ bool StartupConfig::sync() {
 
 bool StartupConfig::addNote() {
     return command->at(STARTUP_ADDNOTE);
+}
+
+bool StartupConfig::appendNote() {
+    return command->at(STARTUP_APPENDNOTE);
 }
 
 bool StartupConfig::show() {

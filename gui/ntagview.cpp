@@ -209,7 +209,7 @@ int NTagView::calculateHeightRec(QTreeWidgetItem * item)
 
 
 
-// This alows for the tree item to be toggled.  If the prior item is selected again
+// This allows for the tree item to be toggled.  If the prior item is selected again
 // it is deselected.  If it is the root item, we don't permit the selection.
 void NTagView::mousePressEvent(QMouseEvent *event)
 {
@@ -920,18 +920,7 @@ NTagViewItem* NTagView::getItem(qint32 lid) {
 
 
 QSize NTagView::sizeHint() {
-    return QTreeView::sizeHint();
-//    QSize sz = QTreeView::sizeHint();
-//    int width=0;
-//    for (int i=0; i<columnCount(); ++i) {
-//        width += 2 + columnWidth(i);
-//    }
-//    // Calculate the spacing at the end to leave for totals
-//    QFontMetrics fm(this->font());
-//    QString numString = QString("(")+QString::number(maxCount) +QString(")");
-//    int numWidth = fm.width(numString);
-//    sz.setWidth(width+numWidth+14);  // Add some extra at the end for totals
-//    return sz;
+    return parentWidget()->size();
 }
 
 

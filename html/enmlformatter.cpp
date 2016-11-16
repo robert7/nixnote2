@@ -274,40 +274,42 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.append("</html>");
     content = fixEncryptionTags(content);
 
-    QWebPage page;
-    QEventLoop loop;
-    page.mainFrame()->setContent(content);
-    QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
-    loop.exit();
+    if (global.guiAvailable) {
+        QWebPage page;
+        QEventLoop loop;
+        page.mainFrame()->setContent(content);
+        QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
+        loop.exit();
 
-    QWebElement element = page.mainFrame()->documentElement();
-    QStringList tags = findAllTags(element);
+        QWebElement element = page.mainFrame()->documentElement();
+        QStringList tags = findAllTags(element);
 
-    for (int i=0; i<tags.size(); i++) {
-        QString tag = tags[i];
-        QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
-        foreach (QWebElement element, anchors) {
-            //QLOG_DEBUG() << "Processing tag name: " << element.tagName();
-            if (element.tagName().toLower() == "input") {
-                processTodo(element);
-            } else if (element.tagName().toLower() == "a") {
-                fixLinkNode(element);
-            } else if (element.tagName().toLower() == "object") {
-                fixObjectNode(element);
-            } else if (element.tagName().toLower() == "img") {
-                fixImgNode(element);
-            } else if (element.tagName().toLower() == "span"){
-                fixSpanNode(element);
-            } else if (element.tagName().toLower() == "div") {
-                fixDivNode(element);
-            } else if (element.tagName().toLower() == "pre") {
-                fixPreNode(element);
-            } else if (!isElementValid(element))
-                element.removeFromDocument();
+        for (int i=0; i<tags.size(); i++) {
+            QString tag = tags[i];
+            QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
+            foreach (QWebElement element, anchors) {
+                //QLOG_DEBUG() << "Processing tag name: " << element.tagName();
+                if (element.tagName().toLower() == "input") {
+                    processTodo(element);
+                } else if (element.tagName().toLower() == "a") {
+                    fixLinkNode(element);
+                } else if (element.tagName().toLower() == "object") {
+                    fixObjectNode(element);
+                } else if (element.tagName().toLower() == "img") {
+                    fixImgNode(element);
+                } else if (element.tagName().toLower() == "span"){
+                    fixSpanNode(element);
+                } else if (element.tagName().toLower() == "div") {
+                    fixDivNode(element);
+                } else if (element.tagName().toLower() == "pre") {
+                    fixPreNode(element);
+                } else if (!isElementValid(element))
+                    element.removeFromDocument();
+            }
         }
+        content.clear();
+        content.append(element.toOuterXml());
     }
-    content.clear();
-    content.append(element.toOuterXml());
 
     // Strip off HTML header
     index = content.indexOf("<body");
@@ -368,6 +370,7 @@ void EnmlFormatter::processTodo(QWebElement &node) {
 
 void EnmlFormatter::fixSpanNode(QWebElement &e) {
     e.removeAttribute("id");
+    e.removeAttribute("class");
 }
 
 
@@ -458,6 +461,7 @@ void EnmlFormatter::fixLinkNode(QWebElement e) {
         e.removeAttribute("style");
         e.removeAttribute("href");
         e.removeAttribute("title");
+        e.removeAttribute("data-saferedirecturl");
         removeInvalidAttributes(e);
         e.removeAllChildren();
         QString newXml = e.toOuterXml();
@@ -911,7 +915,7 @@ void EnmlFormatter::checkAttributes(QWebElement &e, QStringList valid) {
     QStringList attrs = e.attributeNames();
     for (int i=0; i<attrs.size(); i++) {
         if (!valid.contains(attrs[i])) {
-            QLOG_DEBUG() << "Removing invalid attibute: " << attrs[i];
+            QLOG_DEBUG() << "Removing invalid attribute: " << attrs[i];
             e.removeAttribute(attrs[i]);
         }
     }

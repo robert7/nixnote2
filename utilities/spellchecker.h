@@ -38,9 +38,9 @@ private:
 
 public:
     explicit SpellChecker(QObject *parent = 0);
-    void setup();
+    void setup(QString programDictionary, QString customDictionary);
     bool spellCheck(QString word, QStringList &suggestions);
-    void addWord(QString word);
+    void addWord(QString dictionary, QString word);
     
 signals:
     
