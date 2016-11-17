@@ -15,7 +15,8 @@ cp $package_dir/nixnote2.desktop /usr/share/applications/nixnote2.desktop
 
 # Shared files
 mkdir -p /usr/share/nixnote2
-cp -r $package_dir/certs /usr/share/nixnote2/
+#cp -r $package_dir/certs /usr/share/nixnote2/
+# $package_dir/certs directory not found
 cp -r $package_dir/help /usr/share/nixnote2/
 cp -r $package_dir/images /usr/share/nixnote2/
 cp -r $package_dir/java /usr/share/nixnote2/
