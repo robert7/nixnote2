@@ -11,14 +11,13 @@ Build-Depends:
  libboost-dev,
  libcurl4-openssl-dev | libcurl-dev | libcurl4-nss-dev | libcurl4-gnutls-dev,
  libhunspell-dev,
- libpoppler-qt4-dev,
- libqt4-dev,
- libqt4-dev-bin,
- libqtwebkit-dev,
+ libpoppler-qt5-dev,
+ libqt5webkit5-dev,
  libswscale-dev,
- qt4-dev-tools,
- qt4-qmake,
- qt4qevercloud-dev,
+ qt5-qmake,
+ qt5qevercloud-dev,
+ qtbase5-dev,
+ qttools5-dev-tools,
 Standards-Version: 3.9.8
 Homepage: http://nevernote.sourceforge.net
 Vcs-Git: https://anonscm.debian.org/git/collab-maint/nixnote2.git
@@ -27,7 +26,6 @@ Vcs-Browser: https://anonscm.debian.org/git/collab-maint/nixnote2.git
 Package: nixnote2
 Architecture: any
 Depends:
- libqt4-sql-sqlite,
  tidy,
  ${java:Depends},
  ${misc:Depends},
