@@ -5,6 +5,7 @@
 
 # see FEATURE AREAS in dpkg-buildflags(1)
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 export QT_SELECT = 5
 
 _DEBIAN_VERSION=$(shell dpkg-parsechangelog | grep '^Version: .*' | grep -o ' .*' | grep -o '[0-9].*')
