@@ -402,12 +402,18 @@ void NMainMenuBar::setupNoteMenu() {
     noteMenu->addAction(deleteNoteAction);
     connect(deleteNoteAction, SIGNAL(triggered()), parent, SLOT(deleteCurrentNote()));
 
-    noteMenu->addSeparator();
+    reindexNoteAction = new QAction(tr("Reindex Note"), noteMenu);
+    setupShortcut(reindexNoteAction, QString("File_Note_Reindex"));
+    noteMenu->addAction(reindexNoteAction);
+    connect(reindexNoteAction, SIGNAL(triggered()), parent, SLOT(reindexCurrentNote()));
 
-    spellCheckAction = new QAction(tr("&Spell Check"), noteMenu);
-    // setupShortcut(spellCheckAction, QString("Tools_Spell_Check"));  This shortcut is done by the editor button bar
-    noteMenu->addAction(spellCheckAction);
-    connect(spellCheckAction, SIGNAL(triggered()), parent, SLOT(spellCheckCurrentNote()));
+    if (parent->hunspellPluginAvailable) {
+        noteMenu->addSeparator();
+        spellCheckAction = new QAction(tr("&Spell Check"), noteMenu);
+        // setupShortcut(spellCheckAction, QString("Tools_Spell_Check"));  This shortcut is done by the editor button bar
+        noteMenu->addAction(spellCheckAction);
+        connect(spellCheckAction, SIGNAL(triggered()), parent, SLOT(spellCheckCurrentNote()));
+    }
 
 
     noteMenu->addSeparator();
@@ -522,11 +528,20 @@ void NMainMenuBar::setupHelpMenu() {
     if (themeName == "")
         themeInformationAction->setVisible(true);
 
+    openShortcutsDialogAction = new QAction(tr("Shortcuts"), this);
+    openShortcutsDialogAction->setToolTip(tr("View currentt shortcuts"));
+    connect(openShortcutsDialogAction, SIGNAL(triggered(bool)), parent, SLOT(openShortcutsDialog()));
+    helpMenu->addAction(openShortcutsDialogAction);
 
     openMessageLogAction = new QAction(tr("Message &Log"), this);
     openMessageLogAction->setToolTip(tr("View current program messages"));
     connect(openMessageLogAction, SIGNAL(triggered()), parent, SLOT(openMessageLog()));
     helpMenu->addAction(openMessageLogAction);
+
+    openGithubAction = new QAction(tr("Github Page"), this);
+    openGithubAction->setToolTip(tr("Goto the NixNote2 Github project page."));
+    connect(openGithubAction, SIGNAL(triggered(bool)), parent, SLOT(openGithub()));
+    helpMenu->addAction(openGithubAction);
 
     helpMenu->addSeparator();
 
@@ -560,6 +575,11 @@ void NMainMenuBar::setupHelpMenu() {
     aboutAction->setToolTip(tr("About"));
     connect(aboutAction, SIGNAL(triggered()), parent, SLOT(openAbout()));
     helpMenu->addAction(aboutAction);
+
+    aboutQtAction = new QAction(tr("About &Qt"), this);
+    aboutQtAction->setToolTip(tr("About"));
+    connect(aboutQtAction, SIGNAL(triggered()), parent, SLOT(openQtAbout()));
+    helpMenu->addAction(aboutQtAction);
 }
 
 void NMainMenuBar::setupShortcut(QAction *action, QString text) {

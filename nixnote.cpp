@@ -29,7 +29,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"
 #include "dialog/faderdialog.h"
+#include "dialog/shortcutdialog.h"
+#include "utilities/noteindexer.h"
 
+#include <QApplication>
 #include <QThread>
 #include <QLabel>
 #include <QMessageBox>
@@ -98,7 +101,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
     splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImoge"));
     global.settings->beginGroup("Appearance");
-    if(global.settings->value("showSplashScreen", false).toBool() && !global.syncAndExit) {
+    if(global.settings->value("showSplashScreen", false).toBool()) {
         splashScreen->show();
         QTimer::singleShot(2500, splashScreen, SLOT(close()));
     }
@@ -567,6 +570,7 @@ void NixNote::setupGui() {
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), noteTableView, SLOT(refreshData()));
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countNotebooks()));
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countTags()));
+    connect(tabWindow, SIGNAL(noteTagsUpdated(QString, qint32, QStringList)), noteTableView, SLOT(noteTagsUpdated(QString, qint32, QStringList)));
     connect(tabWindow, SIGNAL(updateNoteList(qint32, int, QVariant)), noteTableView, SLOT(refreshCell(qint32, int, QVariant)));
     connect(noteTableView, SIGNAL(refreshNoteContent(qint32)), tabWindow, SLOT(refreshNoteContent(qint32)));
     connect(noteTableView, SIGNAL(saveAllNotes()), tabWindow, SLOT(saveAllNotes()));
@@ -812,7 +816,26 @@ void NixNote::setupGui() {
         this->menuBar->newWebcamNoteAction->setVisible(false);
         this->menuBar->newWebcamNoteAction->setEnabled(false);
     }
+
+    // startup the index timer (if needed)
+    if (global.enableIndexing) {
+        indexTimer.setInterval(global.minimumThumbnailInterval);
+        connect(&indexTimer, SIGNAL(timeout()), &indexRunner, SLOT(index()));
+        connect(&indexRunner, SIGNAL(indexDone(bool)), this, SLOT(indexFinished(bool)));
+        indexTimer.start();
+    }
 }
+
+
+void NixNote::indexFinished(bool finished) {
+    indexTimer.stop();
+    if (!finished)
+        indexTimer.setInterval(global.minIndexInterval);
+    else
+        indexTimer.setInterval(global.maxIndexInterval);
+    indexTimer.start();
+}
+
 
 
 
@@ -837,7 +860,7 @@ void NixNote::syncThreadStarted() {
     bool syncOnStartup = global.settings->value("syncOnStartup", false).toBool();
     global.showGoodSyncMessagesInTray = global.settings->value("showGoodSyncMessagesInTray", true).toBool();
     global.settings->endGroup();
-    if (syncOnStartup || global.syncAndExit)
+    if (syncOnStartup)
         synchronize();
 }
 
@@ -1849,8 +1872,6 @@ void NixNote::notifySyncComplete() {
     } else
         if (global.showGoodSyncMessagesInTray)
             showMessage(tr("Sync Complete"), tr("Sync completed successfully."));
-    if (global.syncAndExit)
-        this->closeNixNote();
 }
 
 
@@ -2082,18 +2103,15 @@ void NixNote::newExternalNote() {
 }
 
 
-
 // Slot for when notes have been deleted from the notes list.
-void NixNote::notesDeleted(QList<qint32> lids) {
-    lids=lids;
+void NixNote::notesDeleted(QList<qint32>) {
     updateSelectionCriteria();
 }
 
 
 
 // Slot for when notes have been deleted from the notes list.
-void NixNote::notesRestored(QList<qint32> lids) {
-    lids=lids;
+void NixNote::notesRestored(QList<qint32>) {
     updateSelectionCriteria();
 }
 
@@ -2134,6 +2152,33 @@ void NixNote::openAbout() {
     about.exec();
 }
 
+
+
+//*******************************
+//* Open About Qt dialog box.
+//*******************************
+void NixNote::openQtAbout() {
+    QApplication::aboutQt();
+}
+
+
+//*******************************
+//* Open the NixNote GitHub page.
+//*******************************
+void NixNote::openGithub() {
+    QString server = "http://www.github.com/baumgarr/nixnote2";
+    QDesktopServices::openUrl(QUrl(server));
+}
+
+
+//*********************************
+//* Open Shortcut Keys Dialog
+//*********************************
+void NixNote::openShortcutsDialog() {
+    ShortcutDialog *dialog = new ShortcutDialog();
+    dialog->exec();
+    delete dialog;
+}
 
 
 //**********************************************
@@ -2226,6 +2271,16 @@ void NixNote::toggleStatusbar() {
 void NixNote::viewNoteHistory() {
     this->saveContents();
     statusBar()->clearMessage();
+
+    qint32 lid = this->tabWindow->currentBrowser()->lid;
+    NoteTable ntable(global.db);
+    Note n;
+    ntable.get(n,lid,false,false);
+    if (n.updateSequenceNum.isSet() && n.updateSequenceNum == 0) {
+        QMessageBox::information(0,tr("Unsynchronized Note"), tr("This note has never been synchronized with Evernote"));
+        return;
+    }
+
     if (!global.accountsManager->oauthTokenFound()) {
         QString consumerKey = "baumgarr-3523";
         QString consumerSecret = "8d5ee175f8a5d3ec";
@@ -2248,61 +2303,73 @@ void NixNote::viewNoteHistory() {
     UserTable userTable(global.db);
     User user;
     userTable.getUser(user);
-    if (user.privilege == PrivilegeLevel::NORMAL) {
-        QMessageBox mbox;
-        mbox.setText(tr("This feature is only available to premium users."));
-        mbox.setWindowTitle(tr("Premium Feature"));
-        mbox.exec();
-        return;
-    }
+    bool normalUser = false;
+    if (user.privilege == PrivilegeLevel::NORMAL)
+        normalUser = true;
+
     NoteHistorySelect dialog;
+    QString guid = ntable.getGuid(tabWindow->currentBrowser()->lid);
+    QList<NoteVersionId> versions;
+
     CommunicationManager comm(global.db);
     if (comm.enConnect()) {
         QList<NoteVersionId> versions;
         NoteTable ntable(global.db);
         QString guid = ntable.getGuid(tabWindow->currentBrowser()->lid);
-        comm.listNoteVersions(versions, guid);
-        if (versions.size() > 0) {
-            dialog.loadData(versions);
-            dialog.exec();
-            if (!dialog.importPressed)
-                return;
-            Note note;
-            if (!comm.getNoteVersion(note, guid, dialog.usn)) {
-                QMessageBox mbox;
-                mbox.setText(tr("Error retrieving note."));
-                mbox.setWindowTitle(tr("Error retrieving note"));
-                mbox.exec();
-                return;
-            }
-            note.updateSequenceNum = 0;
-            note.active = true;
-            QUuid uuid;
-            QString newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
-            note.guid = newGuid;
-            QList<Resource> resources;
-            if (note.resources.isSet())
-                resources = note.resources;
-            for (int i=0;i<resources.size(); i++) {
-                Resource r = resources[i];
-                r.updateSequenceNum = 0;
-                newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
-                r.guid = newGuid;
-                resources[i] = r;
-            }
-            note.resources = resources;
-            ntable.add(0,note,true);
-            updateSelectionCriteria();
-            setMessage(tr("Note restored"));
-
-        } else {
-            QMessageBox mbox;
-            mbox.setText(tr("No versions of this note can be found."));
-            mbox.setWindowTitle(tr("Note Not Found"));
-            mbox.exec();
-            return;
-        }
+        if (!normalUser)
+            comm.listNoteVersions(versions, guid);
     }
+    dialog.loadData(versions);
+    dialog.exec();
+    if (!dialog.importPressed)
+        return;
+    Note note;
+    if (dialog.usn > 0 && !comm.getNoteVersion(note, guid, dialog.usn)) {
+        QMessageBox mbox;
+        mbox.setText(tr("Error retrieving note."));
+        mbox.setWindowTitle(tr("Error retrieving note"));
+        mbox.exec();
+        return;
+    }
+    if (dialog.usn <= 0 && !comm.getNote(note, guid,true,true,true)) {
+        QMessageBox mbox;
+        mbox.setText(tr("Error retrieving note."));
+        mbox.setWindowTitle(tr("Error retrieving note"));
+        mbox.exec();
+        return;
+    }
+    if (!dialog.replaceCurrentNote()) {
+        note.updateSequenceNum = 0;
+        note.active = true;
+        QUuid uuid;
+        QString newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
+        note.guid = newGuid;
+        QList<Resource> resources;
+        if (note.resources.isSet())
+            resources = note.resources;
+        for (int i=0;i<resources.size(); i++) {
+            Resource r = resources[i];
+            r.updateSequenceNum = 0;
+            newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
+            r.guid = newGuid;
+            resources[i] = r;
+        }
+        note.resources = resources;
+        qint32 newLid = ntable.add(0,note,true);
+        tabWindow->currentBrowser()->setContent(newLid);
+        QMessageBox::information(0,tr("Note Restored"), tr("A new copy has been restored."));
+    } else {
+        ntable.expunge(lid);
+        bool dirty = true;
+        if (dialog.usn <=0)
+            dirty=false;
+        ntable.add(lid,note,dirty);
+        tabWindow->currentBrowser()->setContent(0);
+        tabWindow->currentBrowser()->setContent(lid);
+        QMessageBox::information(0,tr("Note Restored"), tr("Note successfully restored."));
+    }
+    updateSelectionCriteria();
+    setMessage(tr("Note restored"));
 }
 
 
@@ -2563,6 +2630,65 @@ void NixNote::heartbeatTimerTriggered() {
         responseMapper.write(reply);
         responseMapper.detach();
     }
+    if (data.startsWith("SIGNAL_GUI:")) {
+        QString cmd = data.mid(12);
+        QLOG_DEBUG() << "COMMAND REQUESTED: " << cmd;
+        if (cmd.startsWith("SYNCHRONIZE")) {
+            this->synchronize();
+        }
+        if (cmd.startsWith("SCREENSHOT")) {
+            this->screenCapture();
+        }
+        if (cmd.startsWith("SHUTDOWN")) {
+            this->close();
+        }
+        if (cmd.startsWith("NEW_NOTE")) {
+            this->newNote();
+            this->setHidden(false);
+            this->show();
+        }
+        if (cmd.startsWith("NEW_EXTERNAL_NOTE")) {
+            this->newExternalNote();
+            this->setHidden(false);
+            this->show();
+        }
+        if (cmd.startsWith("OPEN_EXTERNAL_NOTE")) {
+            cmd = cmd.mid(18);
+            qint32 lid = cmd.toInt();
+            this->openExternalNote(lid);
+            return;
+        }
+        if (cmd.startsWith("OPEN_NOTE")) {
+            bool newTab = false;
+
+            if (cmd.startsWith("OPEN_NOTE_NEW_TAB")) {
+                newTab = true;
+                cmd = cmd.mid(18);
+            } else {
+                cmd = cmd.mid(10);
+            }
+            qint32 lid = cmd.toInt();
+            QList<qint32> lids;
+            lids.append(lid);
+
+            // First, find out if we're already viewing history.  If we are we
+            // chop off the end of the history & start a new one
+            if (global.filterPosition+1 < global.filterCriteria.size()) {
+                while (global.filterPosition+1 < global.filterCriteria.size())
+                    delete global.filterCriteria.takeAt(global.filterCriteria.size()-1);
+            }
+
+            FilterCriteria *newFilter = new FilterCriteria();
+            global.filterCriteria.at(global.filterPosition)->duplicate(*newFilter);
+
+            newFilter->setSelectedNotes(lids);
+            newFilter->setLid(lid);
+            global.filterCriteria.push_back(newFilter);
+            global.filterPosition++;
+            this->openNote(newTab);
+        }
+    }
+
     //free(buffer); // Fixes memory leak
 }
 
@@ -3054,6 +3180,12 @@ void NixNote::openCloseNotebooks() {
 
 // Capture an image from the webcam and create a new note
 void NixNote::newWebcamNote() {
+    if (!webcamPluginAvailable) {
+        QMessageBox::critical(this, tr("Plugin Error"), tr("Webcam plugin not found or could not be loaded"));
+        return;
+    }
+    webcamInterface->initialize();
+
     if (noteButton->property("currentNoteButton") != NewWebcamNote) {
         noteButton->setText(newWebcamNoteButton->text());
         noteButton->setIcon(newWebcamNoteButton->icon());
@@ -3199,6 +3331,22 @@ void NixNote::newWebcamNote() {
 }
 
 
+
+// Reindex the current note
+void NixNote::reindexCurrentNote() {
+    tabWindow->currentBrowser()->saveNoteContent();
+
+    NoteIndexer indexer(global.db);
+    indexer.indexNote(tabWindow->currentBrowser()->lid);
+
+    ResourceTable rtable(global.db);
+    QList<qint32> rlids;
+    rtable.getResourceList(rlids, tabWindow->currentBrowser()->lid);
+    for (int i=0; i<rlids.size(); i++) {
+        indexer.indexResource(rlids[i]);
+    }
+    QMessageBox::information(0,tr("Note Reindexed"),"Reindex Complete");
+}
 
 
 // Delete the note we are currently viewing
@@ -3617,14 +3765,33 @@ void NixNote::loadPlugins() {
     pluginsDir.cd("plugins");
     QStringList filter;
     filter.append("libwebcamplugin.so");
+    filter.append("libhunspellplugin.so");
     foreach (QString fileName, pluginsDir.entryList(filter)) {
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
         QObject *plugin = pluginLoader.instance();
-        if (plugin && fileName == "libwebcamplugin.so") {
-            webcamInterface = qobject_cast<WebCamInterface *>(plugin);
-            if (webcamInterface) {
-                webcamPluginAvailable = true;
-                webcamInterface->initialize();
+        if (fileName == "libwebcamplugin.so") {
+            if (plugin) {
+                webcamInterface = qobject_cast<WebCamInterface *>(plugin);
+                if (webcamInterface) {
+                    webcamPluginAvailable = true;
+                }
+            } else {
+                QLOG_ERROR() << tr("Error loading Webcam plugin: ") << pluginLoader.errorString();
+            }
+        }
+
+        // The Hunspell plugin isn't actually used here. We just use this as a
+        // check to be sure that the menu should be available.
+        if (fileName == "libhunspellplugin.so") {
+            if (plugin) {
+                HunspellInterface *hunspellInterface;
+                hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
+                if (hunspellInterface) {
+                    hunspellPluginAvailable = true;
+                }
+                delete hunspellInterface;
+            } else {
+                QLOG_ERROR() << tr("Error loading Hunspell plugin: ") << pluginLoader.errorString();
             }
         }
     }

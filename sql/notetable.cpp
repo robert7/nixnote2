@@ -819,6 +819,10 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadBinary) 
             break;
         case (NOTE_CONTENT):
             note.content = query.value(1).toByteArray().data();
+
+            // Sometimes Evernote doesn't send the XML tag with UTF8 encoding. Ths forces it.
+            if (global.forceUTF8 && !note.content->startsWith("<?xml"))
+                note.content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + note.content;
             break;
         case (NOTE_CONTENT_HASH):
             note.contentHash = query.value(1).toByteArray();
@@ -1084,6 +1088,7 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
+    QLOG_DEBUG() << query.lastError();
 
     // We don't really need to do anything after deleting the flag
     if (!indexNeeded)
@@ -1344,13 +1349,13 @@ void NoteTable::addTag(qint32 lid, qint32 tag, bool isDirty = false) {
     query.bindValue(":tag:", tag);
     query.exec();
 
-    query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :tag)");
+    query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     query.bindValue(":lid", lid);
     query.bindValue(":key",NOTE_TAG_LID);
-    query.bindValue(":tag:", tag);
+    query.bindValue(":data", tag);
     query.exec();
     query.finish();
-    db->lockForWrite();
+    db->unlock();
 
     if (isDirty) {
         setDirty(lid, isDirty,false);

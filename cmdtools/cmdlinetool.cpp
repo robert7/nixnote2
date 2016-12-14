@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/nuuid.h"
 #include "email/smtpclient.h"
 #include "utilities/mimereference.h"
+#include "threads/syncrunner.h"
 
 
 extern Global global;
@@ -56,8 +57,7 @@ int CmdLineTool::run(StartupConfig &config) {
     if (config.sync()) {
         // If the shared memory segment doesn't exist, we just do a sync & exit
         if (!global.sharedMemory->attach()) {
-            config.setSyncAndExit();
-            return 16;
+            return this->sync(config);
         }
         global.sharedMemory->write(QString("SNCHRONIZE"));
         global.sharedMemory->detach();
@@ -117,6 +117,9 @@ int CmdLineTool::run(StartupConfig &config) {
     }
     if (config.closeNotebook()) {
         return closeNotebook(config);
+    }
+    if (config.signalOtherGui()) {
+        return signalGui(config);
     }
     return 0;
 }
@@ -377,7 +380,7 @@ int CmdLineTool::addNote(StartupConfig config) {
         // Do the dates
         if (config.newNote->created != "") {
             QString dateString = config.newNote->created;
-            QDateTime date = QDateTime::fromString(dateString, "yyyy-MM-ddTHH:mm:ss.zzzZ");
+            QDateTime date = QDateTime::fromString(dateString.trimmed(), "yyyy-MM-ddTHH:mm:ss.zzzZ");
             newNote.created = date.toMSecsSinceEpoch();
         }
         if (config.newNote->updated != "") {
@@ -385,6 +388,18 @@ int CmdLineTool::addNote(StartupConfig config) {
             QDateTime date = QDateTime::fromString(dateString, "yyyy-MM-ddTHH:mm:ss.zzzZ");
             newNote.updated = date.toMSecsSinceEpoch();
         }
+        if (config.newNote->reminder != "") {
+            QString dateString = config.newNote->reminder;
+            QDateTime date = QDateTime::fromString(dateString, "yyyy-MM-ddTHH:mm:ss.zzzZ");
+            if (date > QDateTime::currentDateTime()) {
+                if (!newNote.attributes.isSet()) {
+                    NoteAttributes na;
+                    newNote.attributes = na;
+                }
+                newNote.attributes->reminderTime = date.toMSecsSinceEpoch();
+            }
+        }
+
 
         NoteTable noteTable(global.db);
         qint32 newLid = noteTable.addStub(newNote.guid);
@@ -731,5 +746,66 @@ int CmdLineTool::closeNotebook(StartupConfig config) {
             std::cout << tr("Notebook not found: ").toStdString() << config.notebookList[i].toStdString() << endl;
         }
     }
+    return 0;
+}
+
+
+#include "models/notemodel.h"
+#include "sql/nsqlquery.h"
+
+// Do a sync
+int CmdLineTool::sync(StartupConfig config) {
+    if (!global.accountsManager->oauthTokenFound()) {
+        std::cout << tr("OAuth token not found.").toStdString() << endl;
+        return 16;
+    }
+
+    global.db = new DatabaseConnection("nixnote");  // Startup the database
+
+    // Check if the table exists.  If not, create it.
+    NSqlQuery sql(global.db);
+    sql.exec("Select *  from sqlite_master where type='table' and name='NoteTable';");
+    if (!sql.next()) {
+        NoteModel model(this);
+        model.createTable();
+    }
+    sql.finish();
+
+    SyncRunner runner;
+    runner.synchronize();
+    if (runner.error) {
+        std::cout << tr("Error synchronizing with Evernote.").toStdString() << std::endl;
+        return 16;
+    }
+    std::cout << tr("Sync completed.").toStdString() << std::endl;
+    return 0;
+}
+
+
+
+
+int CmdLineTool::signalGui(StartupConfig config) {
+
+    // Make sure another one is actually running. If not, we exit out.
+    if (!global.sharedMemory->attach()) {
+        return 16;
+    }
+    if (config.signalGui->takeScreenshot)
+        global.sharedMemory->write(QString("SIGNAL_GUI: SCREENSHOT"));
+    if (config.signalGui->shutdown)
+        global.sharedMemory->write(QString("SIGNAL_GUI: SHUTDOWN"));
+    if (config.signalGui->newNote)
+        global.sharedMemory->write(QString("SIGNAL_GUI: NEW_NOTE"));
+    if (config.signalGui->newExternalNote)
+        global.sharedMemory->write(QString("SIGNAL_GUI: NEW_EXTERNAL_NOTE"));
+    if (config.signalGui->openNote)
+        global.sharedMemory->write("SIGNAL_GUI: OPEN_NOTE " + QVariant(config.signalGui->lid).toString());
+    if (config.signalGui->openExternalNote)
+        global.sharedMemory->write("SIGNAL_GUI: OPEN_EXTERNAL_NOTE " + QVariant(config.signalGui->lid).toString());
+    if (config.signalGui->openNoteNewTab)
+        global.sharedMemory->write("SIGNAL_GUI: OPEN_NOTE_NEW_TAB " + QVariant(config.signalGui->lid).toString());
+    if (config.signalGui->synchronize)
+        global.sharedMemory->write(QString("SIGNAL_GUI: SYNCHRONIZE"));
+
     return 0;
 }

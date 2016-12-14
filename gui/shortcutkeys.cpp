@@ -31,6 +31,7 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     File_Note_Reindex = new QString();			// Reindex the current note
     File_Note_Modify_Tags = new QString();		// Change current note tags
     File_Note_Delete = new QString("Ctrl+Shift+D");	// Delete a note
+    File_Note_Reindex = new QString("");        // Reindex the current note
     File_Note_Restore = new QString();			// Undelete a note
     File_Note_Duplicate = new QString();			// Duplicate a note
     File_Notebook_Add = new QString();			// Add a notebook
@@ -141,6 +142,7 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     loadkey(QString("File_Exit"), File_Exit);
 
     loadkey(QString("File_Note_Delete"), File_Note_Delete);
+    loadkey(QString("File_Note_Reindex"), File_Note_Reindex);
 
     loadkey(QString("Edit_Find_In_Note"), Edit_Find_In_Note);
     loadkey(QString("Edit_Undo"), Edit_Undo);
@@ -200,7 +202,9 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
 
     QString userFileName = global.fileManager.getHomeDirPath("") + QString("shortcuts.txt");
     QString systemFileName = global.fileManager.getProgramDirPath("") + QString("shortcuts.txt");
+    QLOG_DEBUG() << "Loading system shortcuts from " << systemFileName;
     loadCustomKeys(systemFileName);
+    QLOG_DEBUG() << "Loadng user shortcuts from " << userFileName;
     loadCustomKeys(userFileName);
 
 }
@@ -230,6 +234,8 @@ void ShortcutKeys::loadCustomKeys(QString fileName) {
                 loadkey(keyvalue[0], &keyvalue[1]);
         }
         file.close();
+    } else {
+        QLOG_DEBUG() << "Unable to open file for reading or file does not exist.";
     }
 }
 

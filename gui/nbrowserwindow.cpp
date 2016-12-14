@@ -46,11 +46,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/mimereference.h"
 #include "html/attachmenticonbuilder.h"
 #include "dialog/remindersetdialog.h"
-#include "utilities/spellchecker.h"
 #include "dialog/spellcheckdialog.h"
 #include "utilities/pixelconverter.h"
 
 
+#include <QPlainTextEdit>
 #include <QVBoxLayout>
 #include <QAction>
 #include <QMenu>
@@ -69,6 +69,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPaintEngine>
 #include <iostream>
 #include <istream>
+#include <qcalendarwidget.h>
+#include <qplaintextedit.h>
 
 extern Global global;
 
@@ -127,8 +129,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     global.getGuiFont(font);
 //    font.setPointSize(global.defaultGuiFontSize);
     sourceEdit->setFont(global.getGuiFont(font));
-    XmlHighlighter *highlighter = new XmlHighlighter(sourceEdit->document());
-    highlighter = highlighter;  // Prevents the unused warning
+    //XmlHighlighter *highlighter = new XmlHighlighter(sourceEdit->document());
     sourceEditorTimer = new QTimer();
     connect(sourceEditorTimer, SIGNAL(timeout()), this, SLOT(setSource()));
 
@@ -249,6 +250,8 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     connect(&focusTimer, SIGNAL(timeout()), this, SLOT(focusCheck()));
     focusTimer.setInterval(100);
     focusTimer.start();
+
+    hunspellInterface = NULL;
 }
 
 
@@ -861,6 +864,7 @@ QString NBrowserWindow::buildPasteUrl(QString url) {
     if (url.toLower().startsWith("http://") ||
         url.toLower().startsWith("https://") ||
         url.toLower().startsWith("mailto://") ||
+        url.toLower().startsWith("mailto:") ||
         url.toLower().startsWith("ftp://")) {
         QString newUrl = QString("<a href=\"") +global.clipboard->text()
                 +QString("\" title=\"") +url
@@ -897,17 +901,16 @@ void NBrowserWindow::pasteButtonPressed() {
             if (urls[i].toString().startsWith("file://")) {
                 QString fileName = urls[i].toString().mid(7);
                 attachFileSelected(fileName);
-//                addAttachment(fileName);
                 this->editor->triggerPageAction(QWebPage::InsertParagraphSeparator);
             }
 
             // If inserting a URL
             if (urls[i].toString().toLower().startsWith("https://") ||
                     urls[i].toString().toLower().startsWith("http://") ||
-                    urls[i].toString().toLower().startsWith("ftp://") || \
-                    urls[i].toString().toLower().startsWith("mailto::")) {
+                    urls[i].toString().toLower().startsWith("ftp://") ||
+                    urls[i].toString().toLower().startsWith("mailto:")) {
                 QString url = this->buildPasteUrl(urls[i].toString());
-                QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+                QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
                 editor->page()->mainFrame()->evaluateJavaScript(script);
             }
         }
@@ -916,19 +919,20 @@ void NBrowserWindow::pasteButtonPressed() {
         microFocusChanged();
         return;
     }
-    //QLOG_DEBUG() << "HTML:" << mime->hasHtml() << " " << mime->html();
-    //QLOG_DEBUG() << "Color:" << mime->hasColor();
-    //QLOG_DEBUG() << "Url:" << mime->hasUrls();
+    QLOG_DEBUG() << "Has HTML:" << mime->hasHtml() << " " << mime->html();
+    QLOG_DEBUG() << "Has Color:" << mime->hasColor();
+    QLOG_DEBUG() << "Has Url:" << mime->hasUrls();
 
     if (mime->hasText()) {
         QString urltext = mime->text();
+        QLOG_DEBUG() << "Url:" << urltext;
 
         if (urltext.toLower().startsWith("https://") ||
             urltext.toLower().startsWith("http://") ||
             urltext.toLower().startsWith("ftp://") || \
-            urltext.toLower().startsWith("mailto::")) {
+            urltext.toLower().startsWith("mailto:")) {
             QString url = this->buildPasteUrl(urltext);
-            QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+            QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
             editor->page()->mainFrame()->evaluateJavaScript(script);
             return;
         }
@@ -937,20 +941,16 @@ void NBrowserWindow::pasteButtonPressed() {
         if (urltext.toLower().mid(0,17) == "evernote:///view/") {
             urltext = urltext.mid(17);
             int pos = urltext.indexOf("/");
-            QString userid = urltext.mid(0,pos-1);
             urltext = urltext.mid(pos+1);
             pos = urltext.indexOf("/");
-            QString shard = urltext.mid(0,pos);
             urltext = urltext.mid(pos+1);
             pos = urltext.indexOf("/");
-            QString uid = urltext.mid(0,pos);
             urltext = urltext.mid(pos+1);
             pos = urltext.indexOf("/");
             QString guid = urltext.mid(0,pos);
             urltext = urltext.mid(pos);
             pos = urltext.indexOf("/");
             QString locguid = urltext.mid(pos);
-            QString linkedNotebookGuid = urltext.mid(pos);
 
             Note n;
             bool goodrc = false;
@@ -962,12 +962,13 @@ void NBrowserWindow::pasteButtonPressed() {
             // If we have a good return, then we can paste the link, otherwise we fall out
             // to a normal paste.
             if (goodrc) {
-                QString url = QString("<a href=\"") +global.clipboard->text()
-                        +QString("\" title=\"") +n.title
-                        +QString("\" >") +n.title +QString("</a>");
-                QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+                QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(global.clipboard->text(), n.title, n.title);
+                QLOG_DEBUG() << "HTML to insert:" << url;
+                QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
                 editor->page()->mainFrame()->evaluateJavaScript(script);
                 return;
+            } else {
+                QLOG_ERROR() << "Error retrieving note";
             }
         }
     }
@@ -1102,7 +1103,7 @@ void NBrowserWindow::alignCenterButtonPressed() {
 
 
 
-// The left allign button was pressed
+// The left align button was pressed
 void NBrowserWindow::alignLeftButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('JustifyLeft', false, '');");
@@ -1112,7 +1113,7 @@ void NBrowserWindow::alignLeftButtonPressed() {
 
 
 
-// The allign right button was pressed
+// The align right button was pressed
 void NBrowserWindow::alignRightButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('JustifyRight', false, '');");
@@ -1851,7 +1852,7 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
 
 
 
-// Set the backgroud color of a note
+// Set the background color of a note
  void NBrowserWindow::setBackgroundColor(QString value) {
      QString js = QString("function changeBackground(color) {")
          +QString("document.body.style.background = color;")
@@ -2503,7 +2504,7 @@ void NBrowserWindow::emailNote() {
     smtp.setResponseTimeout(-1);
 
     // We need to set the username (your email address) and password
-    // for smtp authentification.
+    // for smtp authentication.
     smtp.setUser(userid);
     smtp.setPassword(password);
 
@@ -2538,7 +2539,8 @@ void NBrowserWindow::emailNote() {
     message.setSubject(emailDialog.subject->text().trimmed());
 
     // Build the note content
-    prepareEmailMessage(&message, emailDialog.note->toPlainText());
+    QString text =  emailDialog.note->toPlainText();
+    prepareEmailMessage(&message, text);
 
     // Send the actual message.
     if (!smtp.connectToHost()) {
@@ -3214,6 +3216,18 @@ void NBrowserWindow::sendUrlUpdateSignal() {
 
 
 void NBrowserWindow::spellCheckPressed() {
+    // Check if we have a plugin for Hunspell loaded. This could have been done at startup, but if this is
+    // an external window we could need to load it again.
+    if (!hunspellInterface) {
+        this->loadPlugins();
+    }
+
+    // If we STILL don't have a plugin then it can't be loaded. Quit out
+    if (!hunspellPluginAvailable) {
+        QMessageBox::critical(this, tr("Plugin Error"), tr("Hunspell plugin not found or could not be loaded."), QMessageBox::Ok);
+        return;
+    }
+
     QWebPage *page = editor->page();
     page->action(QWebPage::MoveToStartOfDocument);
     page->mainFrame()->setFocus();
@@ -3227,14 +3241,14 @@ void NBrowserWindow::spellCheckPressed() {
     QStringList words = page->mainFrame()->toPlainText().split(" ");
     QStringList ignoreWords;
     QStringList rwords;
-    SpellChecker checker;
-    checker.setup();
+    //SpellChecker checker;
     bool finished = false;
 
     for (int i=0; i<words.size() && !finished; i++) {
         QString currentWord = words[i];
         page->findText(currentWord);
-        if (!checker.spellCheck(currentWord, rwords) && !ignoreWords.contains(currentWord)) {
+        rwords.clear();
+        if (!hunspellInterface->spellCheck(currentWord, rwords) && !ignoreWords.contains(currentWord)) {
             SpellCheckDialog dialog(currentWord, rwords, this);
             dialog.move(0,0);
             dialog.exec();
@@ -3248,7 +3262,7 @@ void NBrowserWindow::spellCheckPressed() {
                 pasteButtonPressed();
             }
             if (dialog.addToDictionaryPressed) {
-                checker.addWord(currentWord);
+                hunspellInterface->addWord(global.fileManager.getSpellDirPathUser() +"user.lst", currentWord);
             }
         }
     }
@@ -3258,8 +3272,6 @@ void NBrowserWindow::spellCheckPressed() {
     editor->keyPressEvent(&key2);
 
     QMessageBox::information(this, tr("Spell Check Complete"), tr("Spell Check Complete."), QMessageBox::Ok);
-
-
 }
 
 
@@ -3286,19 +3298,20 @@ void NBrowserWindow::handleUrls(const QMimeData *mime) {
         QString file  = urlList[i].toString();
         if (file.toLower().startsWith("file://") && !ctrlModifier) {
             attachFileSelected(file.mid(7));
-            return;
-        }
-        if (file.toLower().startsWith("file://") && ctrlModifier) {
+            if (i<urlList.size()-1)
+                insertHtml("<div><br/></div>");
+        } else if (file.toLower().startsWith("file://") && ctrlModifier) {
             QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(file).arg(file).arg(file);
             QLOG_DEBUG() << url;
             insertHtml(url);
-            return;
+            if (i<urlList.size()-1)
+                insertHtml("<div><br/></div>");
+        } else {
+            editor->setFocus();
+            global.clipboard->clear();
+            global.clipboard->setText(file, QClipboard::Clipboard);
+            this->editor->triggerPageAction(QWebPage::Paste);
         }
-
-        editor->setFocus();
-        global.clipboard->clear();
-        global.clipboard->setText(file, QClipboard::Clipboard);
-        this->editor->triggerPageAction(QWebPage::Paste);
     }
 }
 
@@ -3474,4 +3487,30 @@ void NBrowserWindow::setEditorStyle() {
     QString qss = global.getEditorCss();
     editor->settings()->setUserStyleSheetUrl(QUrl("file://"+qss));
     return;
+}
+
+
+void NBrowserWindow::loadPlugins() {
+    hunspellPluginAvailable = false;
+
+    // Start loading plugins
+    QDir pluginsDir(global.fileManager.getProgramDirPath(""));
+    pluginsDir.cd("plugins");
+    QStringList filter;
+    filter.append("libhunspellplugin.so");
+    foreach (QString fileName, pluginsDir.entryList(filter)) {
+        QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+        QObject *plugin = pluginLoader.instance();
+        if (fileName == "libhunspellplugin.so") {
+            if (plugin) {
+                hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
+                if (hunspellInterface) {
+                    hunspellPluginAvailable = true;
+                    hunspellInterface->initialize(global.fileManager.getProgramDirPath(""), global.fileManager.getSpellDirPathUser());
+                }
+            } else {
+                QLOG_ERROR() << pluginLoader.errorString();
+            }
+        }
+    }
 }

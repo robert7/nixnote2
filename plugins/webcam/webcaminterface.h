@@ -18,55 +18,28 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-#include "webcamplugin.h"
-#include <QDebug>
+// This class is used as a virtual .
 
 
+#ifndef WEBCAMINTERFACE_H
+#define WEBCAMINTERFACE_H
 
-// Default constructor
-WebCamPlugin::WebCamPlugin()
+#include <QtPlugin>
+#include <QImage>
+
+class WebCamInterface
 {
-    initialized=false;
-}
+public:
+    virtual ~WebCamInterface() {}
 
+    virtual void initialize() = 0;
+    virtual bool getImage(QImage &image) = 0;
+    virtual bool isWebcamReady() = 0;
+    virtual void exec() = 0;
+    virtual bool okPressed() = 0;
+    virtual void pictureRefresh() = 0;
+};
 
+Q_DECLARE_INTERFACE(WebCamInterface, "org.nixnote.NixNote2.WebCamInterface/2.0")
 
-// Update the picture displayed.
-void WebCamPlugin::pictureRefresh() {
-    if (isWebcamReady())
-        dialog->pictureRefresh();
-}
-
-
-
-// Check if the webcam is ready for use
-bool WebCamPlugin::isWebcamReady() {
-    return dialog->webcamReady;
-}
-
-
-
-// Initialize for use. I don't do it in the constructor because I don't 
-// want to take the time unless the user REALLY wants to use the webcam.
-// It also solves the problem of users 
-void WebCamPlugin::initialize()  {
-    if (!initialized)
-        dialog = new WebcamCaptureDialog();
-    return;
-}
-
-
-bool WebCamPlugin::okPressed()  {
-    return dialog->okPressed;
-}
-
-void WebCamPlugin::exec() {
-    dialog->exec();
-}
-
-
-bool WebCamPlugin::getImage(QImage &image) {
-    return dialog->webcamImage->getImage(image);
-}
-
-Q_EXPORT_PLUGIN2(webcamplugin, WebCamPlugin)
+#endif // WEBCAMINTERFACE_H

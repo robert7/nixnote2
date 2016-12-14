@@ -53,7 +53,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //#include "oauth/oauthwindow.h"
 #include "html/thumbnailer.h"
 #include "reminders/remindermanager.h"
-#include "plugins/webcaminterface.h"
+#include "plugins/webcam/webcaminterface.h"
+#include "plugins/hunspell/hunspellinterface.h"
 
 //****************************************
 //* This is the main NixNote class that
@@ -114,6 +115,7 @@ private:
     FileWatcherManager *importManager;
 //    OAuthWindow *oauthWindow;
     Thumbnailer *hammer;
+    QTimer indexTimer;
 
     // Tool & menu bar
     NMainMenuBar *menuBar;
@@ -185,7 +187,6 @@ private:
     QShortcut *upNoteShortcut;
     void setupShortcut(QShortcut *shortcut, QString keySequence);
 
-
     // Plugins
     void loadPlugins();
     bool webcamPluginAvailable;
@@ -205,7 +206,7 @@ public:
     bool event(QEvent *event);
     LineEdit *searchText;
     NTabWidget *tabWindow;
-
+    bool hunspellPluginAvailable;
 
 public slots:
     void closeNixNote();
@@ -230,11 +231,14 @@ public slots:
     void disableEditing();
     void setSyncTimer();
     void notesDeleted(QList<qint32> lid);
+    void reindexCurrentNote();
     void openTrunk();
     void openAccount();
     void openDatabaseStatus();
     void openAbout();
+    void openShortcutsDialog();
     void openImportFolders();
+    void openQtAbout();
     void setMessage(QString msg, int timeout=15000);
     void toggleLeftPanel();
     void toggleFavoritesTree();
@@ -290,6 +294,7 @@ public slots:
     void openExternalNote(qint32 lid);
     void pauseIndexing(bool value=true);
     void openEvernoteSupport();
+    void openGithub();
     void openMessageLog();
     void showDesktopUrl(const QUrl &url);
     void reloadIcons();
@@ -297,6 +302,7 @@ public slots:
     void toolbarVisibilityChanged();
     void presentationModeOn();
     void presentationModeOff();
+    void indexFinished(bool finished);
 
 signals:
     void syncRequested();

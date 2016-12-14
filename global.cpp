@@ -47,6 +47,8 @@ Global::Global()
     filterCriteria.push_back(criteria);
     filterPosition = 0;
 
+    this->argv = NULL;
+    this->argc = 0;
     criteria->resetNotebook = true;
     criteria->resetTags = true;
     criteria->resetSavedSearch = true;
@@ -55,27 +57,73 @@ Global::Global()
     criteria->resetDeletedOnly = true;
     criteria->setDeletedOnly(false);
     criteria->resetLid = true;
+    this->accountsManager = NULL;
     criteria->resetSearchString = true;
+    this->application = NULL;
+    this->autoHideEditorToolbar  = false;
+    this->showGoodSyncMessagesInTray = false;
+    this->batchThumbnailCount = 4;
     username = "";
+    this->clipboard = NULL;
+    this->defaultFontSize = 8;
+    this->countBehavior =  Global::CountAll;
     password = "";
     javaFound = false;
+    reminderManager = NULL;
+    settings = NULL;
+    startupNewNote = false;
+    this->sharedMemory = NULL;
+    this->forceSystemTrayAvailable = false;
+    this->guiAvailable = true;
+    strictDTD = true;
+    forceUTF8 = false;
+    startupNote = 0;
+    db = NULL;
+    this->forceWebFonts = false;
+    this->indexPDFLocally = true;
+    this->indexRunner = NULL;
+    this->isFullscreen = false;
+    this->indexNoteCountPause = -1;
+    this->maxIndexInterval = 500;
+    this->forceNoStartMimized = false;
+    this->forceSearchLowerCase = false;
+    this->forceStartMinimized = false;
+    this->globalSettings = NULL;
+    this->disableUploads = false;
+    this->enableIndexing = true;
+    this->disableThumbnails = false;
+    this->defaultGuiFont = "";
+    this->defaultGuiFontSize = 8;
+    this->minIndexInterval = 500;
+    this->minimumThumbnailInterval = 500;
+    this->purgeTemporaryFilesOnShutdown = true;
+    this->indexResourceCountPause = 500;
+    this->maximumThumbnailInterval = 500;
+    this->disableEditing = false;
+    this->nonAsciiSortBug = false;
+    this->startMinimized = false;
+    this->pdfPreview = true;
+    this->shortcutKeys = NULL;
+    this->cryptCounter = 0;
+    this->connected = false;
 }
 
 
 // Destructor
-Global::~Global() {
-    FilterCriteria *criteria;
-    for (int i=0; i<filterCriteria.size(); i++) {
-        criteria = filterCriteria[i];
-        if (criteria != NULL)
-            delete criteria;
-    }
-}
+//Global::~Global() {
+//    FilterCriteria *criteria;
+//    for (int i=0; i<filterCriteria.size(); i++) {
+//        criteria = filterCriteria[i];
+//        if (criteria != NULL)
+//            delete criteria;
+//    }
+//}
 
 
 
 //Initial global settings setup
-void Global::setup(StartupConfig startupConfig) {
+void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
+    this->guiAvailable = guiAvailable;
     fileManager.setup(startupConfig.homeDirPath, startupConfig.programDirPath, startupConfig.accountId);
     shortcutKeys = new ShortcutKeys();
     QString settingsFile = fileManager.getHomeDirPath("") + "nixnote.conf";
@@ -102,7 +150,7 @@ void Global::setup(StartupConfig startupConfig) {
     this->forceNoStartMimized = startupConfig.forceNoStartMinimized;
     this->forceSystemTrayAvailable = startupConfig.forceSystemTrayAvailable;
     this->startupNewNote = startupConfig.startupNewNote;
-    this->syncAndExit = startupConfig.syncAndExit;
+    //this->syncAndExit = startupConfig.syncAndExit;
     this->forceStartMinimized = startupConfig.forceStartMinimized;
     this->startupNote = startupConfig.startupNoteLid;
     startupConfig.accountId = accountId;
@@ -153,7 +201,7 @@ void Global::setup(StartupConfig startupConfig) {
         disableEditing = true;
     settings->endGroup();
 
-    if (defaultFont != "" && defaultFontSize > 0) {
+    if (defaultFont != "" && defaultFontSize > 0 && this->guiAvailable) {
         QWebSettings *settings = QWebSettings::globalSettings();
         settings->setFontFamily(QWebSettings::StandardFont, defaultFont);
         // QWebkit DPI is hard coded to 96. Hence, we calculate the correct
@@ -162,7 +210,7 @@ void Global::setup(StartupConfig startupConfig) {
             defaultFontSize * (QApplication::desktop()->logicalDpiX() / 96.0)
             );
     }
-    if (defaultFont != "" && defaultFontSize <= 0) {
+    if (defaultFont != "" && defaultFontSize <= 0 && this->guiAvailable) {
         QWebSettings *settings = QWebSettings::globalSettings();
         settings->setFontFamily(QWebSettings::StandardFont, defaultFont);
     }
@@ -181,6 +229,7 @@ void Global::setup(StartupConfig startupConfig) {
     indexPDFLocally=getIndexPDFLocally();
     forceSearchLowerCase=getForceSearchLowerCase();
     strictDTD = getStrictDTD();
+    forceUTF8 = getForceUTF8();
 
 
     settings->beginGroup("Thumbnail");
@@ -467,7 +516,7 @@ bool Global::getForceSearchLowerCase() {
     settings->beginGroup("Search");
     bool value = settings->value("forceLowerCase",false).toBool();
     settings->endGroup();
-    indexPDFLocally = value;
+    forceSearchLowerCase = value;
     return value;
 }
 
@@ -489,6 +538,26 @@ bool Global::getStrictDTD() {
     settings->endGroup();
     strictDTD = value;
     return value;
+}
+
+
+
+
+bool Global::getForceUTF8() {
+    settings->beginGroup("Debugging");
+    bool value = settings->value("forceUTF8",false).toBool();
+    settings->endGroup();
+    forceUTF8 = value;
+    return value;
+}
+
+
+
+void Global::setForceUTF8(bool value) {
+    settings->beginGroup("Debugging");
+    settings->setValue("forceUTF8",value);
+    settings->endGroup();
+    forceUTF8=value;
 }
 
 
@@ -982,6 +1051,20 @@ bool Global::isProxyEnabled() {
     return value;
 }
 
+// Set the Sock5 proxy
+void Global::setSocks5Enabled(bool value) {
+    settings->beginGroup("Proxy");
+    settings->setValue("enabled", value);
+    settings->endGroup();
+}
+
+// Get the Socks5 proxy
+bool Global::isSocks5Enabled() {
+    settings->beginGroup("Proxy");
+    bool value = settings->value("enabled", false).toBool();
+    settings->endGroup();
+    return value;
+}
 
 
 // Mouse middle click actions
@@ -1156,3 +1239,21 @@ void Global::setDebugLevel() {
 
 
 Global global;
+
+
+
+// Should we preview fonts in the editor window?
+bool Global::previewFontsInDialog() {
+    settings->beginGroup("Appearance");
+    bool value = settings->value("previewFonts", false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+
+// Set the previewing of fonts in the editor window.
+void Global::setPreviewFontsInDialog(bool value) {
+    settings->beginGroup("Appearance");
+    settings->setValue("previewFonts", value);
+    settings->endGroup();
+}

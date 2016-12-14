@@ -94,7 +94,7 @@ class Global
 {
 public:
     Global();           // Generic constructor
-    ~Global();          // destructor
+    //~Global();          // destructor
 
     // Possible ways tags & notebook counts may be displayed to the user
     enum CountBehavior {
@@ -117,7 +117,7 @@ public:
     char** argv;               // List of arguments from the program start
     FileManager fileManager;   // Manage file paths
     AccountsManager *accountsManager;      // Manage user account
-    Application *application;              // pointer to this current application
+    QCoreApplication *application;              // pointer to this current application
     unsigned int cryptCounter;             // Count of crytpographic entries.  This is incremented each time we encrypt some text.
     QString attachmentNameDelimeter;       // Delimeter between attachment ID & name
     string username;                       // This is probably obsolete
@@ -147,6 +147,8 @@ public:
     void setCloseToTray(bool value);       // Set if we should close it to the tray
     bool showNoteListGrid();               // Should we whow the table grid?
     bool alternateNoteListColors();        // Should we alternate the table colors?
+    bool getForceUTF8();                    // force UTF8 encoding if not given by Evernote
+    void setForceUTF8(bool value);         // force UTF8 encoding if not given by Evernote
     void setColumnPosition(QString col, int position);    // Save the order of a  note list's column.
     void setColumnWidth(QString col, int width);          // Save the width of a note list column
     int getColumnPosition(QString col);                   // Get the desired position of a note column
@@ -161,16 +163,16 @@ public:
     QString timeFormat;                                   // Desired display time format
     DatabaseConnection *db;                               // "default" DB connection for the main thread.
     bool javaFound;                                       // Have we found Java?
+    bool forceUTF8;                                       // force UTF8 encoding
     QString defaultFont;                                  // Default editor font name
     int defaultFontSize;                                  // Default editor font size
     int defaultGuiFontSize;                               // Default GUI font size
     QString defaultGuiFont;                               // Default GUI font name
     bool startupNewNote;                                  // Were we started with the command to begin a new note?
-    bool forceNoStartMimized;                             // Force the system to not start minimized, dispite the user's settings
+    bool forceNoStartMimized;                             // Force the system to not start minimized, despite the user's settings
     bool forceSystemTrayAvailable;                        // Override QSystemTrayIcon::isSystemTrayAvailable()
     bool forceStartMinimized;                             // Force it to start minimized, despiet the user's settings
     bool startMinimized;                                  // Do user prefernces say to start minimized?
-    bool syncAndExit;                                     // Should we just start, do a sync, and then quit?
     bool forceWebFonts;
     qint32 startupNote;                                   // Initial note to startup with.
 
@@ -187,7 +189,8 @@ public:
 
     QHash<qint32, NoteCache*> cache;                         // Note cache  used to keep from needing to re-format the same note for a display
 
-    void setup(StartupConfig config);                         // Setup the global variables
+    void setup(StartupConfig config, bool guiAvailable);                         // Setup the global variables
+    bool guiAvailable;                                        // Is there a GUI available?
     QString full_username;                                    // current username
     bool autosetUsername();                                   // Should the username be set automatically?
     void setAutosetUsername(bool value);
@@ -214,8 +217,12 @@ public:
     QString getProxyPassword();
     QString getProxyUserid();
     bool isProxyEnabled();
+    bool isSocks5Enabled();
     void setProxyEnabled(bool value);
+    void setSocks5Enabled(bool value);
     QString systemNotifier();
+    bool previewFontsInDialog();
+    void setPreviewFontsInDialog(bool value);
 
     // Search Behavior
     void setClearNotebookOnSearch(bool value);
@@ -262,7 +269,7 @@ public:
     QString getResourcefileName(QString key);                  // Get the actual file path for a given icon theme
     void getThemeNamesFromFile(QFile &file, QStringList &values);  // Get all themes available in a given file
     void stackDump(int max=0);                                 // Utility to dump the running stack
-    bool getForceSearchLowerCase();                            // Get value to force seach db in lower case from settings
+    bool getForceSearchLowerCase();                            // Get value to force search db in lower case from settings
     void setForceSearchLowerCase(bool value);                  // save forceSearchLowerCase
     IndexRunner *indexRunner;                                    // Pointer to index thread
 

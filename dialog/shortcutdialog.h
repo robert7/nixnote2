@@ -17,31 +17,22 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+#ifndef SHORTCUTDIALOG_H
+#define SHORTCUTDIALOG_H
 
-// This overrides the virtual plugin WebCamInterface.
+#include <QTableWidget>
+#include <QPushButton>
+#include <QDialog>
 
-#ifndef WEBCAMPLUGIN_H
-#define WEBCAMPLUGIN_H
-#include "webcaminterface.h"
-#include "../dialog/webcamcapturedialog.h"
 
-class WebCamPlugin : public QObject, WebCamInterface
+
+class ShortcutDialog : public QDialog
 {
-    Q_OBJECT
-    Q_INTERFACES(WebCamInterface)
-
 private:
-    WebcamCaptureDialog *dialog;
-    bool initialized;
-
+    QPushButton *okButton;
+    QTableWidget *tableWidget;
 public:
-    WebCamPlugin();
-    void initialize();
-    bool getImage(QImage &image);
-    bool isWebcamReady();
-    void exec();
-    bool okPressed();
-    void pictureRefresh();
+    ShortcutDialog();
 };
 
-#endif // WEBCAMPLUGIN_H
+#endif // SHORTCUTDIALOG_H

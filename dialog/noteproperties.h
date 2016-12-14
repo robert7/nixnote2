@@ -18,28 +18,22 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-// This class is used as a virtual .
 
+#ifndef NOTEPROPERTIES_H
+#define NOTEPROPERTIES_H
 
-#ifndef WEBCAMINTERFACE_H
-#define WEBCAMINTERFACE_H
+#include <QDialog>
+#include <QTableWidget>
+#include <QPushButton>
 
-#include <QtPlugin>
-#include <QImage>
-
-class WebCamInterface
+class NoteProperties : public QDialog
 {
+private:
 public:
-    virtual ~WebCamInterface() {}
+    NoteProperties();
+    QPushButton *okButton;
+    QTableWidget* tableWidget;
 
-    virtual void initialize() = 0;
-    virtual bool getImage(QImage &image) = 0;
-    virtual bool isWebcamReady() = 0;
-    virtual void exec() = 0;
-    virtual bool okPressed() = 0;
-    virtual void pictureRefresh() = 0;
 };
 
-Q_DECLARE_INTERFACE(WebCamInterface, "org.nixnote.NixNote2.WebCamInterface/1.0")
-
-#endif // WEBCAMINTERFACE_H
+#endif // NOTEPROPERTIES_H

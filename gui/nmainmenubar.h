@@ -72,6 +72,7 @@ public:
     QAction *disableEditingAction;
     QAction *userMaintenanceAction;
     QAction *aboutAction;
+    QAction *aboutQtAction;
 
     QAction *undoAction;
     QAction *redoAction;
@@ -110,6 +111,7 @@ public:
 
     QAction *deleteNoteAction;
     QAction *newNoteAction;
+    QAction *reindexNoteAction;
     QAction *newWebcamNoteAction;
     QAction *duplicateNoteAction;
     QAction *pinNoteAction;
@@ -122,6 +124,8 @@ public:
     QAction *openUserForumAction;
     QAction *openEvernoteAccountPageAction;
     QAction *themeInformationAction;
+    QAction *openShortcutsDialogAction;
+    QAction *openGithubAction;
 
     explicit NMainMenuBar(QWidget *parent = 0);
 

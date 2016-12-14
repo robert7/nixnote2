@@ -8,14 +8,14 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
     INCLUDEPATH += /usr/include/poppler/qt5
-    LIBS +=    -lhunspell -lcurl \
+    LIBS +=    -lcurl \
                -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
 }
 
 equals(QT_MAJOR_VERSION, 4) {
     QT       += core gui webkit sql network xml
     INCLUDEPATH += /usr/include/poppler/qt4
-    LIBS +=    -lhunspell -lcurl \
+    LIBS +=    -lcurl \
                -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
 }
 
@@ -170,9 +170,6 @@ SOURCES += main.cpp\
     reminders/remindermanager.cpp \
     dialog/notehistoryselect.cpp \
     dialog/closenotebookdialog.cpp \
-#    webcam/cvimagewidget.cpp \
-#    dialog/webcamcapturedialog.cpp \
-    utilities/spellchecker.cpp \
     dialog/spellcheckdialog.cpp \
     gui/externalbrowse.cpp \
     sql/nsqlquery.cpp \
@@ -231,7 +228,10 @@ SOURCES += main.cpp\
     cmdtools/extractnotes.cpp \
     cmdtools/alternote.cpp \
     cmdtools/importnotes.cpp \
-    dialog/preferences/thumbnailpreferences.cpp
+    dialog/preferences/thumbnailpreferences.cpp \
+    dialog/noteproperties.cpp \
+    dialog/shortcutdialog.cpp \
+    cmdtools/signalgui.cpp
 
 
 
@@ -355,9 +355,6 @@ HEADERS  += nixnote.h \
     reminders/remindermanager.h \
     dialog/notehistoryselect.h \
     dialog/closenotebookdialog.h \
-#    webcam/cvimagewidget.h \
-#    dialog/webcamcapturedialog.h \
-    utilities/spellchecker.h \
     dialog/spellcheckdialog.h \
     gui/externalbrowse.h \
     sql/nsqlquery.h \
@@ -428,8 +425,12 @@ HEADERS  += nixnote.h \
     cmdtools/extractnotes.h \
     cmdtools/alternote.h \
     cmdtools/importnotes.h \
-    plugins/webcaminterface.h \
-    dialog/preferences/thumbnailpreferences.h
+    plugins/webcam/webcaminterface.h \
+    plugins/hunspell/hunspellinterface.h \
+    dialog/preferences/thumbnailpreferences.h \
+    dialog/noteproperties.h \
+    dialog/shortcutdialog.h \
+    cmdtools/signalgui.h
 
 
 
