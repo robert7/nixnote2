@@ -49,7 +49,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/spellcheckdialog.h"
 #include "utilities/pixelconverter.h"
 
-
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
 #include <QAction>
@@ -122,7 +121,8 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     sourceEdit = new QTextEdit(this);
     sourceEdit->setVisible(false);
     sourceEdit->setTabChangesFocus(true);
-    //sourceEdit->setLineWrapMode(QTextEdit::LineWrapMode);
+
+
     QFont font;
     font.setFamily("Courier");
     font.setFixedPitch(true);
@@ -140,6 +140,19 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     layout->addWidget(editorSplitter);
     setLayout(layout);
     layout->setMargin(0);
+
+    findReplace = new FindReplace();
+    layout->addWidget(findReplace);
+    findReplace->setVisible(false);
+
+    connect(findReplace->nextButton, SIGNAL(clicked()), this, SLOT(findNextInNote()));
+    connect(findReplace->findLine, SIGNAL(returnPressed()), this, SLOT(findNextInNote()));
+    connect(findReplace->prevButton, SIGNAL(clicked()), this, SLOT(findPrevInNote()));
+    connect(findReplace->replaceButton, SIGNAL(clicked()), this, SLOT(findReplaceInNotePressed()));
+    connect(findReplace->replaceAllButton, SIGNAL(clicked()), this, SLOT(findReplaceAllInNotePressed()));
+    connect(findReplace->closeButton, SIGNAL(clicked()), this, SLOT(findReplaceWindowHidden()));
+
+
 
     // Setup shortcuts
     focusNoteShortcut = new QShortcut(this);
@@ -866,7 +879,7 @@ QString NBrowserWindow::buildPasteUrl(QString url) {
         url.toLower().startsWith("mailto://") ||
         url.toLower().startsWith("mailto:") ||
         url.toLower().startsWith("ftp://")) {
-        QString newUrl = QString("<a href=\"") +global.clipboard->text()
+        QString newUrl = QString("<a href=\"") +QApplication::clipboard()->text()
                 +QString("\" title=\"") +url
                 +QString("\" >") +url +QString("</a>");
         return newUrl;
@@ -882,8 +895,7 @@ void NBrowserWindow::pasteButtonPressed() {
         return;
     }
 
-    QClipboard *clipboard = global.clipboard;
-    const QMimeData *mime = clipboard->mimeData();
+    const QMimeData *mime = QApplication::clipboard()->mimeData();
 
     if (mime->hasImage()) {
         editor->setFocus();
@@ -962,7 +974,7 @@ void NBrowserWindow::pasteButtonPressed() {
             // If we have a good return, then we can paste the link, otherwise we fall out
             // to a normal paste.
             if (goodrc) {
-                QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(global.clipboard->text(), n.title, n.title);
+                QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(QApplication::clipboard()->text(), n.title, n.title);
                 QLOG_DEBUG() << "HTML to insert:" << url;
                 QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
                 editor->page()->mainFrame()->evaluateJavaScript(script);
@@ -993,12 +1005,12 @@ void NBrowserWindow::selectAllButtonPressed() {
 
 // The paste without mime format was pressed
 void NBrowserWindow::pasteWithoutFormatButtonPressed() {
-    const QMimeData *mime = global.clipboard->mimeData();
+    const QMimeData *mime = QApplication::clipboard()->mimeData();
     if (!mime->hasText())
         return;
     QString text = mime->text();
-    global.clipboard->clear();
-    global.clipboard->setText(text, QClipboard::Clipboard);
+    QApplication::clipboard()->clear();
+    QApplication::clipboard()->setText(text, QClipboard::Clipboard);
     this->editor->triggerPageAction(QWebPage::Paste);
 
     // This is done because pasting into an encryption block
@@ -3257,8 +3269,7 @@ void NBrowserWindow::spellCheckPressed() {
             if (dialog.ignoreAllPressed)
                 ignoreWords.append(currentWord);
             if (dialog.replacePressed)  {
-                QClipboard *clipboard = global.clipboard;
-                clipboard->setText(dialog.replacement);
+                QApplication::clipboard()->setText(dialog.replacement);
                 pasteButtonPressed();
             }
             if (dialog.addToDictionaryPressed) {
@@ -3308,8 +3319,8 @@ void NBrowserWindow::handleUrls(const QMimeData *mime) {
                 insertHtml("<div><br/></div>");
         } else {
             editor->setFocus();
-            global.clipboard->clear();
-            global.clipboard->setText(file, QClipboard::Clipboard);
+            QApplication::clipboard()->clear();
+            QApplication::clipboard()->setText(file, QClipboard::Clipboard);
             this->editor->triggerPageAction(QWebPage::Paste);
         }
     }
@@ -3456,7 +3467,7 @@ void NBrowserWindow::copyNoteUrl() {
            user.shardId +QString("/") +
             n.guid +QString("/") +
             n.guid + QString("/");
-    global.clipboard->setText(href, QClipboard::Clipboard);
+    QApplication::clipboard()->setText(href, QClipboard::Clipboard);
 }
 
 
@@ -3514,3 +3525,143 @@ void NBrowserWindow::loadPlugins() {
         }
     }
 }
+
+
+// Find shortcut activated
+void NBrowserWindow::findShortcut() {
+    if (!findReplace->isVisible()) {
+        findReplace->showFind();
+    } else {
+        if (findReplace->findLine->hasFocus())
+            findReplace->hide();
+        else {
+            findReplace->showFind();
+            findReplace->findLine->setFocus();
+            findReplace->findLine->selectAll();
+        }
+    }
+
+}
+
+
+//*******************************************
+//* Search for the next occurrence of text
+//* in a note.
+//*******************************************
+void NBrowserWindow::findNextShortcut() {
+    findReplace->showFind();
+    QString find = findReplace->findLine->text();
+    if (find != "")
+        editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+}
+
+
+
+//*******************************************
+//* Search for the previous occurrence of
+//* text in a note.
+//*******************************************
+void NBrowserWindow::findPrevShortcut() {
+    findReplace->showFind();
+    QString find = findReplace->findLine->text();
+    if (find != "")
+        editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindBackward | QWebPage::FindWrapsAroundDocument);
+}
+
+
+
+// Find shortcut activated
+void NBrowserWindow::findReplaceShortcut() {
+    this->findReplace->showFindReplace();
+}
+
+
+
+//***************************************
+//* Find/replace button pressed, so we
+//* need to highlight all the occurrences
+//* in a note.
+//***************************************
+void NBrowserWindow::findReplaceInNotePressed() {
+    QString find = findReplace->findLine->text();
+    QString replace = findReplace->replaceLine->text();
+    if (find == "")
+        return;
+    bool found = false;
+    found = editor->page()->findText(find,
+        findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+    if (!found)
+        return;
+
+    QApplication::clipboard()->setText(replace);
+    editor->pasteAction->trigger();
+}
+
+
+
+
+//*************************************************
+//* Replace All button pressed.
+//*************************************************
+void NBrowserWindow::findReplaceAllInNotePressed() {
+    QString find = findReplace->findLine->text();
+    QString replace = findReplace->replaceLine->text();
+    if (find == "")
+        return;
+    bool found = false;
+    while (true) {
+        found = editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+        if (!found)
+            return;
+        QApplication::clipboard()->setText(replace);
+        editor->pasteAction->trigger();
+    }
+}
+
+
+
+
+//*******************************************
+//* Search for the next occurrence of text
+//* in a note.
+//*******************************************
+void NBrowserWindow::findNextInNote() {
+    findReplace->showFind();
+    QString find = findReplace->findLine->text();
+    if (find != "")
+        editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+}
+
+
+
+//*******************************************
+//* Search for the previous occurrence of
+//* text in a note.
+//*******************************************
+void NBrowserWindow::findPrevInNote() {
+    findReplace->showFind();
+    QString find = findReplace->findLine->text();
+    if (find != "")
+        editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindBackward | QWebPage::FindWrapsAroundDocument);
+
+}
+
+
+
+
+//*******************************************
+//* This just does a null find to reset the
+//* text in a note so nothing is highlighted.
+//* This is triggered when the find dialog
+//* box is hidden.
+//*******************************************
+void NBrowserWindow::findReplaceWindowHidden() {
+   editor->page()->findText("");
+}
+
+

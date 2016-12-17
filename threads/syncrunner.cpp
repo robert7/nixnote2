@@ -41,6 +41,7 @@ SyncRunner::SyncRunner()
 {
     init = false;
     finalSync = false;
+    apiRateLimitExceeded=false;
 }
 
 SyncRunner::~SyncRunner() {
@@ -54,6 +55,7 @@ void SyncRunner::synchronize() {
         init = true;
         consumerKey = "";
         secret = "";
+        apiRateLimitExceeded=false;
 
         // Setup the user agent
         userAgent = "NixNote2/Linux";
@@ -1005,7 +1007,7 @@ qint32 SyncRunner::uploadTags() {
 
 
 
-// Upload any saved searchs
+// Upload any notebooks
 qint32 SyncRunner::uploadNotebooks() {
     qint32 usn;
     qint32 maxUsn = 0;
@@ -1015,32 +1017,37 @@ qint32 SyncRunner::uploadNotebooks() {
     table.getAllDirty(lids);
     for (int i=0; i<lids.size(); i++) {
         Notebook notebook;
-        table.get(notebook, lids[i]);
-        if (!table.isDeleted(lids[i])) {
-            qint32 oldUsn = notebook.updateSequenceNum;
-            usn = comm->uploadNotebook(notebook);
-            if (usn == 0) {
-                this->communicationErrorHandler();
-                error = true;
-                return maxUsn;
-            }
-            if (usn > maxUsn) {
-                maxUsn = usn;
-                if (oldUsn == 0)
-                    table.updateGuid(lids[i], notebook.guid);
-                table.setUpdateSequenceNumber(lids[i], usn);
+        if (table.isLocal(lids[i]))
+        {
+            table.get(notebook, lids[i]);
+            if (!table.isDeleted(lids[i])) {
+                qint32 oldUsn = notebook.updateSequenceNum;
+                usn = comm->uploadNotebook(notebook);
+                if (usn == 0) {
+                    this->communicationErrorHandler();
+                    error = true;
+                    return maxUsn;
+                }
+                if (usn > maxUsn) {
+                    maxUsn = usn;
+                    if (oldUsn == 0)
+                        table.updateGuid(lids[i], notebook.guid);
+                    table.setUpdateSequenceNumber(lids[i], usn);
+                } else {
+                    error = true;
+                }
             } else {
-                error = true;
+                QString guid;
+                table.getGuid(guid, lids[i]);
+                table.expunge(lids[i]);
+                if (notebook.updateSequenceNum > 0) {
+                    usn = comm->expungeNotebook(guid);
+                    if (usn>maxUsn)
+                        maxUsn = usn;
+                }
             }
         } else {
-            QString guid;
-            table.getGuid(guid, lids[i]);
-            table.expunge(lids[i]);
-            if (notebook.updateSequenceNum > 0) {
-                usn = comm->expungeNotebook(guid);
-                if (usn>maxUsn)
-                    maxUsn = usn;
-            }
+            table.setDirty(lids[i],false);
         }
     }
     return maxUsn;
@@ -1142,6 +1149,10 @@ qint32 SyncRunner::uploadPersonalNotes() {
         usn = comm->uploadNote(note);
         if (usn == 0) {
             this->communicationErrorHandler();
+            if (note.title.isSet())
+                QLOG_ERROR() << tr("Error uploading note:") +note.title;
+            else
+                QLOG_ERROR() << tr("Error uploading note with a missing title!");
             error = true;
             //return maxUsn;
         }
@@ -1207,6 +1218,7 @@ void SyncRunner::communicationErrorHandler() {
         else
             emitMsg = "API rate limit exceeded.  Please try again in one hour.";
         emit(setMessage(emitMsg, 0));
+        apiRateLimitExceeded = true;
         return;
     }
 
