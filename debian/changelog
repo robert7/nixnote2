@@ -1,0 +1,12 @@
+nixnote2 (2.0~beta11+dfsg-2) UNRELEASED; urgency=medium
+
+  * New upstream snapshot.
+  * Switch back to Qt5 as upstream recommends.
+
+ -- Boyuan Yang <073plan@gmail.com>  Fri, 25 Nov 2016 14:30:50 +0800
+
+nixnote2 (2.0~beta10+dfsg-1) unstable; urgency=medium
+
+  * Initial release (Closes: #609849)
+
+ -- Boyuan Yang <073plan@gmail.com>  Mon, 14 Nov 2016 16:37:20 +0800
