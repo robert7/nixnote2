@@ -1,9 +1,15 @@
-nixnote2 (2.0~beta11+dfsg-2) UNRELEASED; urgency=medium
+nixnote2 (2.0~beta11-1) unstable; urgency=medium
 
-  * New upstream snapshot.
-  * Switch back to Qt5 as upstream recommends.
+  * New upstream release.
+  * Switch back to build with Qt5 as upstream recommends.
+    - Refresh patch about qevercloud library.
+  * No longer mark as +dfsg, all files are dfsg compatible.
+    - Drop patch 0001 for README.txt, upstream has refreshed it.
+    - Drop patch 0003 for purple-theme, licensed under GPL-2+.
+    - Update watch file.
+    - Update README.source.
 
- -- Boyuan Yang <073plan@gmail.com>  Fri, 25 Nov 2016 14:30:50 +0800
+ -- Boyuan Yang <073plan@gmail.com>  Fri, 30 Dec 2016 18:48:29 +0800
 
 nixnote2 (2.0~beta10+dfsg-1) unstable; urgency=medium
 

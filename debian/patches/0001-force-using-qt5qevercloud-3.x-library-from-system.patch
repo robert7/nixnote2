@@ -1,5 +1,5 @@
 From: Boyuan Yang <073plan@gmail.com>
-Date: Wed, 7 Sep 2016 11:09:43 +0800
+Date: Sat, 31 Dec 2016 14:25:52 +0800
 Subject: force using qt5qevercloud 3.x library from system.
 Forwarded: https://github.com/baumgarr/nixnote2/issues/187
 
@@ -9,9 +9,9 @@ from the system.
 
 Ever since QEverCloud 3.x, the headers for Qt4/Qt5 has been
 separated. We are building against Qt5, so replacing all
-header #include lines with the qt4 version.
+header #include lines with the qt5 version.
 ---
- NixNote2.pro                            | 35 +++------------------------------
+ NixNote2.pro                            | 31 ++-----------------------------
  cmdtools/addnote.h                      |  2 +-
  communication/communicationmanager.h    |  4 ++--
  dialog/notehistoryselect.h              |  2 +-
@@ -33,32 +33,29 @@ header #include lines with the qt4 version.
  utilities/debugtool.h                   |  2 +-
  utilities/noteindexer.h                 |  2 +-
  xml/exportdata.h                        |  2 +-
- 22 files changed, 25 insertions(+), 54 deletions(-)
+ 22 files changed, 24 insertions(+), 51 deletions(-)
 
 diff --git a/NixNote2.pro b/NixNote2.pro
-index b1934c6..0b906fc 100644
+index 34f8c36..5b2582a 100644
 --- a/NixNote2.pro
 +++ b/NixNote2.pro
-@@ -8,15 +8,15 @@ greaterThan(QT_MAJOR_VERSION, 4) {
-     QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus
-     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-     INCLUDEPATH += /usr/include/poppler/qt5
--    LIBS +=    -lhunspell -lcurl \
--               -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
-+    LIBS +=    -lcurl \
-+               -lpthread -L/usr/lib -lpoppler-qt5 -lqt5qevercloud -g -rdynamic
- }
- 
- equals(QT_MAJOR_VERSION, 4) {
+@@ -11,6 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
+     win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
+     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
+     unix:LIBS +=    -lcurl \
++               -lqt5qevercloud \
+                -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
+     win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
+     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
+@@ -21,6 +22,7 @@ equals(QT_MAJOR_VERSION, 4) {
      QT       += core gui webkit sql network xml
      INCLUDEPATH += /usr/include/poppler/qt4
      LIBS +=    -lcurl \
--               -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
-+               -lpthread -L/usr/lib -lpoppler-qt4 -lqt5qevercloud -g -rdynamic
++               -lqt4qevercloud \
+                -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
  }
  
- TARGET = nixnote2
-@@ -178,15 +178,6 @@ SOURCES += main.cpp\
+@@ -183,15 +185,6 @@ SOURCES += main.cpp\
      xml/exportdata.cpp \
      dialog/logviewer.cpp \
      dialog/htmlentitiesdialog.cpp \
@@ -74,7 +71,7 @@ index b1934c6..0b906fc 100644
      gui/traymenu.cpp \
      gui/favoritesview.cpp \
      gui/favoritesviewdelegate.cpp \
-@@ -360,26 +351,6 @@ HEADERS  += nixnote.h \
+@@ -368,26 +361,6 @@ HEADERS  += nixnote.h \
      xml/exportdata.h \
      dialog/logviewer.h \
      dialog/htmlentitiesdialog.h \
@@ -102,7 +99,7 @@ index b1934c6..0b906fc 100644
      gui/favoritesview.h \
      gui/favoritesviewdelegate.h \
 diff --git a/cmdtools/addnote.h b/cmdtools/addnote.h
-index f2ccd67..335c3dd 100644
+index 79c9231..5695fda 100644
 --- a/cmdtools/addnote.h
 +++ b/cmdtools/addnote.h
 @@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -115,7 +112,7 @@ index f2ccd67..335c3dd 100644
  
  class AddNote : public QObject
 diff --git a/communication/communicationmanager.h b/communication/communicationmanager.h
-index 47d7d8e..0ab713b 100644
+index 8f81420..f66d170 100644
 --- a/communication/communicationmanager.h
 +++ b/communication/communicationmanager.h
 @@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -127,7 +124,7 @@ index 47d7d8e..0ab713b 100644
  
  #include "global.h"
  
-@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  #include <QNetworkAccessManager>
  #include <QSqlDatabase>
  
@@ -137,12 +134,12 @@ index 47d7d8e..0ab713b 100644
  
  typedef unsigned int SOCKET;
 diff --git a/dialog/notehistoryselect.h b/dialog/notehistoryselect.h
-index 49d3343..58082fa 100644
+index 7c5e0b6..4d1c46e 100644
 --- a/dialog/notehistoryselect.h
 +++ b/dialog/notehistoryselect.h
-@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- #include <QFormLayout>
+@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  #include <QListWidget>
+ #include <QCheckBox>
  
 -#include "qevercloud/include/QEverCloud.h"
 +#include <qt5qevercloud/QEverCloud.h>
@@ -215,7 +212,7 @@ index e4b6ab1..7b2eed8 100644
  #include <QtWebKit>
  #include <QLineEdit>
 diff --git a/gui/nbrowserwindow.h b/gui/nbrowserwindow.h
-index 5475305..2414b24 100644
+index be93849..f7d242e 100644
 --- a/gui/nbrowserwindow.h
 +++ b/gui/nbrowserwindow.h
 @@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -267,10 +264,10 @@ index f4be709..81d13bc 100644
  
  
 diff --git a/nixnote.cpp b/nixnote.cpp
-index 4bf6ec1..2cbee3e 100644
+index cf6455d..e6b2efc 100644
 --- a/nixnote.cpp
 +++ b/nixnote.cpp
-@@ -83,7 +83,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+@@ -90,7 +90,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  #include "xml/exportdata.h"
  #include "dialog/aboutdialog.h"
  
@@ -278,7 +275,7 @@ index 4bf6ec1..2cbee3e 100644
 +#include <qt5qevercloud/QEverCloudOAuth.h>
  
  using namespace qevercloud;
- using namespace boost;
+ 
 diff --git a/sql/datastore.h b/sql/datastore.h
 index 5e2aef4..b3c1694 100644
 --- a/sql/datastore.h
@@ -319,7 +316,7 @@ index 92e7f00..c472095 100644
  
  using namespace qevercloud;
 diff --git a/threads/indexrunner.h b/threads/indexrunner.h
-index 5cf31f1..db343e1 100644
+index d647a13..a1bb844 100644
 --- a/threads/indexrunner.h
 +++ b/threads/indexrunner.h
 @@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -332,7 +329,7 @@ index 5cf31f1..db343e1 100644
  
  using namespace std;
 diff --git a/threads/syncrunner.h b/threads/syncrunner.h
-index 9ee38d6..1dd7133 100644
+index b650a8b..4adfa27 100644
 --- a/threads/syncrunner.h
 +++ b/threads/syncrunner.h
 @@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -371,10 +368,10 @@ index f06484c..04e46fe 100644
  
  using namespace std;
 diff --git a/xml/exportdata.h b/xml/exportdata.h
-index 635b7d6..629cabb 100644
+index f4c0ab5..ecc7bd8 100644
 --- a/xml/exportdata.h
 +++ b/xml/exportdata.h
-@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+@@ -36,7 +36,7 @@ typedef qint64 int64_t;
  
  using namespace std;
  

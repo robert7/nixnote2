@@ -6,4 +6,3 @@ qss usr/share/nixnote2
 shortcuts.txt usr/share/nixnote2
 theme.ini usr/share/nixnote2
 translations/*.qm usr/share/nixnote2/translations
-plugins/*.so usr/lib/nixnote2/
