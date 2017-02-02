@@ -30,7 +30,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <iostream>
 #include <QMessageBox>
 #include <QSharedMemory>
+
+// Windows Check
+#ifndef _WIN32
 #include <execinfo.h>
+#endif
+
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,6 +55,9 @@ extern Global global;
 //*********************************************************************
 //* Segmentation fault.  This is triggered to print a stack trace.
 //*********************************************************************
+// Windows Check
+#ifndef _WIN32
+
 void fault_handler(int sig) {
   void *array[30];
   size_t size;
@@ -63,6 +71,8 @@ void fault_handler(int sig) {
   exit(1);
 }
 
+#endif // End Windows check
+
 
 
 
@@ -74,7 +84,11 @@ int main(int argc, char *argv[])
 {
 
     bool guiAvailable = true;
+
+// Windows Check
+#ifndef _WIN32
     signal(SIGSEGV, fault_handler);   // install our handler
+#endif
 
     // Begin setting up the environment
     StartupConfig startupConfig;
@@ -85,8 +99,10 @@ int main(int argc, char *argv[])
     if (retval != 0)
         return retval;
 
+
+
     // Setup the application. If we have a GUI, then we use Application.
-    // If we don't, then we just use a derivitive of QCoreApplication
+    // If we don't, then we just use a derivative of QCoreApplication
     QCoreApplication *a = NULL;
     if (guiAvailable) {
         Application *app = new Application(argc, argv);
@@ -142,7 +158,8 @@ int main(int argc, char *argv[])
         if (global.sharedMemory->isAttached())
             global.sharedMemory->detach();
         QLOG_DEBUG() << "Exiting: RC=" << retval;
-        delete a;
+        if (a!=NULL)
+            delete a;
         exit(retval);
     }
 
@@ -172,15 +189,20 @@ int main(int argc, char *argv[])
             if (startupConfig.startupNewNote) {
                 global.sharedMemory->attach();
                 global.sharedMemory->write(QString("NEW_NOTE"));
-//                global.sharedMemory->detach();
+                global.sharedMemory->detach();
+                if (a!=NULL)
+                    delete a;
                 exit(0);  // Exit this one
             }
             if (startupConfig.startupNoteLid > 0) {
                 global.sharedMemory->attach();
                 global.sharedMemory->write("OPEN_NOTE"+QString::number(startupConfig.startupNoteLid) + " ");
-//               global.sharedMemory->detach();
+                global.sharedMemory->detach();
+                if (a!=NULL)
+                    delete a;
                 exit(0);  // Exit this one
             }
+
             // If we've gotten this far, we need to either stop this instance or stop the other
             QLOG_DEBUG() << "Multiple instance found";
             global.settings->beginGroup("Debugging");
@@ -190,7 +212,9 @@ int main(int argc, char *argv[])
             if (startup == "SHOW_OTHER") {
                 global.sharedMemory->write(QString("SHOW_WINDOW"));
                 global.sharedMemory->detach();
-                exit(0);  // Exit this one
+                if (a!=NULL)
+                    delete a;
+                 return 0;  // Exit this one
             }
             if (startup == "STOP_OTHER") {
                 global.sharedMemory->write(QString("IMMEDIATE_SHUTDOWN"));
@@ -203,9 +227,6 @@ int main(int argc, char *argv[])
         global.sharedMemory->clearMemory();
     }
 
-
-    // Save the clipboard
-    global.clipboard = QApplication::clipboard();
 
     QLOG_DEBUG() << "Setting up NN";
     NixNote *w = new NixNote();
@@ -222,7 +243,10 @@ int main(int argc, char *argv[])
 
     // Setup the proxy
     QNetworkProxy proxy;
-    proxy.setType(QNetworkProxy::HttpProxy);
+    if (global.isSocks5Enabled())
+	proxy.setType(QNetworkProxy::Socks5Proxy);
+    else
+    	proxy.setType(QNetworkProxy::HttpProxy);
     if (global.isProxyEnabled()) {
         QString host = global.getProxyHost();
         int port = global.getProxyPort();

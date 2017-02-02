@@ -36,8 +36,11 @@ private:
     QCheckBox *syncOnStartup;
     QCheckBox *syncAutomatically;
     QCheckBox *syncOnShutdown;
+    QCheckBox *apiRateRestart;
+    QCheckBox *popupOnSyncError;
 
     QCheckBox *enableProxy;
+    QCheckBox *enableSocks5;
     QLineEdit *userId;
     QLineEdit *password;
     QLineEdit *port;

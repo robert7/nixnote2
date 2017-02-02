@@ -27,11 +27,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QApplication>
 
 // The following include is needed for demangling names on a backtrace
+// Windows Check
+#ifndef _WIN32
 #include <cxxabi.h>
 #include <execinfo.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#endif  // End Windows Check
 
 #include "sql/usertable.h"
 
@@ -47,6 +50,8 @@ Global::Global()
     filterCriteria.push_back(criteria);
     filterPosition = 0;
 
+    this->argv = NULL;
+    this->argc = 0;
     criteria->resetNotebook = true;
     criteria->resetTags = true;
     criteria->resetSavedSearch = true;
@@ -55,22 +60,66 @@ Global::Global()
     criteria->resetDeletedOnly = true;
     criteria->setDeletedOnly(false);
     criteria->resetLid = true;
+    this->accountsManager = NULL;
     criteria->resetSearchString = true;
+    this->application = NULL;
+    this->autoHideEditorToolbar  = false;
+    this->showGoodSyncMessagesInTray = false;
+    this->batchThumbnailCount = 4;
     username = "";
+    this->defaultFontSize = 8;
+    this->countBehavior =  Global::CountAll;
     password = "";
     javaFound = false;
+    reminderManager = NULL;
+    settings = NULL;
+    startupNewNote = false;
+    this->sharedMemory = NULL;
+    this->forceSystemTrayAvailable = false;
+    this->guiAvailable = true;
+    strictDTD = true;
+    forceUTF8 = false;
+    startupNote = 0;
+    db = NULL;
+    this->forceWebFonts = false;
+    this->indexPDFLocally = true;
+    this->indexRunner = NULL;
+    this->isFullscreen = false;
+    this->indexNoteCountPause = -1;
+    this->maxIndexInterval = 500;
+    this->forceNoStartMimized = false;
+    this->forceSearchLowerCase = false;
+    this->forceStartMinimized = false;
+    this->globalSettings = NULL;
+    this->disableUploads = false;
+    this->enableIndexing = true;
+    this->disableThumbnails = false;
+    this->defaultGuiFont = "";
+    this->defaultGuiFontSize = 8;
+    this->minIndexInterval = 500;
+    this->minimumThumbnailInterval = 500;
+    this->purgeTemporaryFilesOnShutdown = true;
+    this->indexResourceCountPause = 500;
+    this->maximumThumbnailInterval = 500;
+    this->disableEditing = false;
+    this->nonAsciiSortBug = false;
+    this->startMinimized = false;
+    this->pdfPreview = true;
+    this->shortcutKeys = NULL;
+    this->cryptCounter = 0;
+    this->connected = false;
 }
 
 
 // Destructor
-Global::~Global() {
-    FilterCriteria *criteria;
-    for (int i=0; i<filterCriteria.size(); i++) {
-        criteria = filterCriteria[i];
-        if (criteria != NULL)
-            delete criteria;
-    }
-}
+//Global::~Global() {
+//    FilterCriteria *criteria;
+//    for (int i=0; i<filterCriteria.size(); i++) {
+//        criteria = filterCriteria[i];
+//        if (criteria != NULL)
+//            delete criteria;
+//    }
+//}
 
 
 
@@ -182,6 +231,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     indexPDFLocally=getIndexPDFLocally();
     forceSearchLowerCase=getForceSearchLowerCase();
     strictDTD = getStrictDTD();
+    forceUTF8 = getForceUTF8();
 
 
     settings->beginGroup("Thumbnail");
@@ -468,7 +518,7 @@ bool Global::getForceSearchLowerCase() {
     settings->beginGroup("Search");
     bool value = settings->value("forceLowerCase",false).toBool();
     settings->endGroup();
-    indexPDFLocally = value;
+    forceSearchLowerCase = value;
     return value;
 }
 
@@ -490,6 +540,26 @@ bool Global::getStrictDTD() {
     settings->endGroup();
     strictDTD = value;
     return value;
+}
+
+
+
+
+bool Global::getForceUTF8() {
+    settings->beginGroup("Debugging");
+    bool value = settings->value("forceUTF8",false).toBool();
+    settings->endGroup();
+    forceUTF8 = value;
+    return value;
+}
+
+
+
+void Global::setForceUTF8(bool value) {
+    settings->beginGroup("Debugging");
+    settings->setValue("forceUTF8",value);
+    settings->endGroup();
+    forceUTF8=value;
 }
 
 
@@ -651,6 +721,7 @@ void Global::setupDateTimeFormat() {
 
 // Get the username from the system
 QString Global::getUsername() {
+
     if (!autosetUsername())
         return "";
 
@@ -660,7 +731,8 @@ QString Global::getUsername() {
     userTable.getUser(user);
     if (user.name.isSet())
         return user.name;
-
+// Windows Check
+#ifndef _WIN32
     register struct passwd *pw;
     register uid_t uid;
     QString username="";
@@ -675,6 +747,10 @@ QString Global::getUsername() {
         username = pw->pw_name;
         return username.trimmed();
     }
+#else
+    return qgetenv("USERNAME");
+#endif // End Windows Check
+
     return "";
 }
 
@@ -983,6 +1059,20 @@ bool Global::isProxyEnabled() {
     return value;
 }
 
+// Set the Sock5 proxy
+void Global::setSocks5Enabled(bool value) {
+    settings->beginGroup("Proxy");
+    settings->setValue("enabled", value);
+    settings->endGroup();
+}
+
+// Get the Socks5 proxy
+bool Global::isSocks5Enabled() {
+    settings->beginGroup("Proxy");
+    bool value = settings->value("enabled", false).toBool();
+    settings->endGroup();
+    return value;
+}
 
 
 // Mouse middle click actions
@@ -1055,6 +1145,9 @@ QString Global::systemNotifier() {
 
 
 void Global::stackDump(int max) {
+// Windows Check
+#ifndef _WIN32
+
     void *array[30];
     size_t size;
     QLOG_ERROR() << "***** Dumping stack *****";
@@ -1122,6 +1215,8 @@ void Global::stackDump(int max) {
 
     free(messages);
     QLOG_ERROR() << "**** Stack dump complete *****";
+
+#endif // End windows check
 }
 
 
@@ -1157,3 +1252,37 @@ void Global::setDebugLevel() {
 
 
 Global global;
+
+
+
+// Should we preview fonts in the editor window?
+bool Global::previewFontsInDialog() {
+    settings->beginGroup("Appearance");
+    bool value = settings->value("previewFonts", false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+
+// Set the previewing of fonts in the editor window.
+void Global::setPreviewFontsInDialog(bool value) {
+    settings->beginGroup("Appearance");
+    settings->setValue("previewFonts", value);
+    settings->endGroup();
+}
+
+
+
+
+// Should we show a popup on sync errors?
+void Global::setPopupOnSyncError(bool value) {
+    global.settings->beginGroup("Sync");
+    global.settings->setValue("popupOnSyncError", value);
+    global.settings->endGroup();
+}
+bool Global::popupOnSyncError() {
+    global.settings->beginGroup("Sync");
+    bool value = global.settings->value("popupOnSyncError", true).toBool();
+    global.settings->endGroup();
+    return value;
+}

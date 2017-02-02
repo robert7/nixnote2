@@ -22,7 +22,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "oauth/oauthtokenizer.h"
 #include "global.h"
 
+// Windows Check
+#ifndef _WIN32
 #include <execinfo.h>
+#endif  // end windows check
+
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -36,6 +40,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+
+// Windows Check
+#ifndef _WIN32
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -43,6 +50,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <curl/curl.h>
 #include <curl/easy.h>
+#endif // End windows check
+
 #include "utilities/debugtool.h"
 
 extern Global global;
@@ -853,6 +862,34 @@ bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, 
 
 
 
+// Get a prior version of a notebook
+bool CommunicationManager::getNote(Note &note, QString guid, bool withResource, bool withResourceRecognition, bool withResourceAlternateData) {
+    try {
+        note = noteStore->getNote(guid,true,withResource,withResourceRecognition,withResourceAlternateData,authToken);
+        return true;
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
+        return false;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.message = errorWhat(e.what());
+        error.type = CommunicationError::EDAMUserException;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+}
 
 
 
@@ -969,6 +1006,8 @@ size_t curlWriter(void *ptr, size_t size, size_t nmemb, FILE *stream) {
 
 // Download an ink note image
 void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QString shard, QString authToken) {
+// Windows Check
+#ifndef _WIN32
     UserTable userTable(db);
     QImage *newImage = NULL;
     User u;
@@ -1041,6 +1080,7 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
         newPair->second = newImage;
         inkNoteList->append(newPair);
     }
+#endif // End windows check
 }
 
 
@@ -1136,12 +1176,15 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
     void *array[30];
     size_t size;
 
+// Windows Check
+#ifndef _WIN32
     // get void*'s for all entries on the stack
     size = backtrace(array, 30);
 
     // print out all the frames to stderr
     fprintf(stderr, "EDAM System Exception backtrace");
     backtrace_symbols_fd(array, size, 2);
+#endif // End windows check
 
     if (e.message.isSet()) {
         QLOG_ERROR() << "EDAMSystemException:" << e.message << endl;
@@ -1174,12 +1217,15 @@ void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) 
     void *array[30];
     size_t size;
 
+// Windows Check
+#ifndef _WIN32
     // get void*'s for all entries on the stack
     size = backtrace(array, 30);
 
     // print out all the frames to stderr
     fprintf(stderr, "EDAM Not Found Exception backtrace");
     backtrace_symbols_fd(array, size, 2);
+#endif
 
     QLOG_ERROR() << "EDAMNotFoundException:" << endl;
 

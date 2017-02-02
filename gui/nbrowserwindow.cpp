@@ -49,7 +49,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/spellcheckdialog.h"
 #include "utilities/pixelconverter.h"
 
-
+#include <QPlainTextEdit>
 #include <QVBoxLayout>
 #include <QAction>
 #include <QMenu>
@@ -68,6 +68,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPaintEngine>
 #include <iostream>
 #include <istream>
+#include <qcalendarwidget.h>
+#include <qplaintextedit.h>
 
 extern Global global;
 
@@ -119,15 +121,13 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     sourceEdit = new QTextEdit(this);
     sourceEdit->setVisible(false);
     sourceEdit->setTabChangesFocus(true);
-    //sourceEdit->setLineWrapMode(QTextEdit::LineWrapMode);
+
+
     QFont font;
     font.setFamily("Courier");
     font.setFixedPitch(true);
     global.getGuiFont(font);
-//    font.setPointSize(global.defaultGuiFontSize);
     sourceEdit->setFont(global.getGuiFont(font));
-    XmlHighlighter *highlighter = new XmlHighlighter(sourceEdit->document());
-    highlighter = highlighter;  // Prevents the unused warning
     sourceEditorTimer = new QTimer();
     connect(sourceEditorTimer, SIGNAL(timeout()), this, SLOT(setSource()));
 
@@ -138,6 +138,18 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     layout->addWidget(editorSplitter);
     setLayout(layout);
     layout->setMargin(0);
+
+    findReplace = new FindReplace();
+    layout->addWidget(findReplace);
+    findReplace->setVisible(false);
+
+    connect(findReplace->nextButton, SIGNAL(clicked()), this, SLOT(findNextInNote()));
+    connect(findReplace->findLine, SIGNAL(returnPressed()), this, SLOT(findNextInNote()));
+    connect(findReplace->prevButton, SIGNAL(clicked()), this, SLOT(findPrevInNote()));
+    connect(findReplace->replaceButton, SIGNAL(clicked()), this, SLOT(findReplaceInNotePressed()));
+    connect(findReplace->replaceAllButton, SIGNAL(clicked()), this, SLOT(findReplaceAllInNotePressed()));
+    connect(findReplace->closeButton, SIGNAL(clicked()), this, SLOT(findReplaceWindowHidden()));
+
 
     // Setup shortcuts
     focusNoteShortcut = new QShortcut(this);
@@ -233,9 +245,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     insertLatexShortcut = new QShortcut(this);
     this->setupShortcut(insertLatexShortcut, QString("Edit_Insert_Latex"));
     connect(insertLatexShortcut, SIGNAL(activated()),this, SLOT(insertLatexButtonPressed()));
-    //insertLatexShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-
-
 
 
     // Restore the expand/collapse state
@@ -243,11 +252,12 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     int expandButton = global.settings->value("ExpandButton", EXPANDBUTTON_1).toInt();
     global.settings->endGroup();
     this->expandButton.setState(expandButton);
-//    changeExpandState(expandButton);
 
     connect(&focusTimer, SIGNAL(timeout()), this, SLOT(focusCheck()));
     focusTimer.setInterval(100);
     focusTimer.start();
+
+    hunspellInterface = NULL;
 }
 
 
@@ -478,7 +488,6 @@ void NBrowserWindow::setContent(qint32 lid) {
         alarmText.setVisible(true);
         QDateTime atime;
         atime.setMSecsSinceEpoch(t);
-        //alarmText.setText(atime.toString(Qt::SystemLocaleShortDate));
         if (atime.date() == QDate::currentDate())
             alarmText.setText(tr("Today"));
         else if (atime.date() == QDate::currentDate().addDays(+1))
@@ -543,9 +552,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     QLOG_DEBUG() << "Checking thumbanail";
     if (hammer->idle && noteTable.isThumbnailNeeded(this->lid)) {
         hammer->render(this->lid);
-    } /*else
-        hammer->timer.start(1000);*/
-
+    }
     this->setEditorStyle();
 
     if (hasFocus)
@@ -573,8 +580,6 @@ void NBrowserWindow::setReadOnly(bool readOnly) {
     noteTitle.setFocusPolicy(Qt::StrongFocus);
     tagEditor.setEnabled(true);
     tagEditor.setFocusPolicy(Qt::StrongFocus);
-    //authorEditor.setFocusPolicy(Qt::StrongFocus);
-    //locationEditor.setFocusPolicy(Qt::StrongFocus);
     urlEditor.setFocusPolicy(Qt::StrongFocus);
     notebookMenu.setEnabled(true);
     dateEditor.setEnabled(true);
@@ -722,25 +727,12 @@ void NBrowserWindow::noteContentUpdated() {
         emit(noteUpdated(this->lid));
         emit(updateNoteList(this->lid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
     }
-//    if (sourceEdit->isVisible()) {
-//        sourceEditorTimer->stop();
-//        sourceEditorTimer->setInterval(500);
-//        sourceEditorTimer->setSingleShot(false);
-//        sourceEditorTimer->start();
-//    }
 }
 
 
 // Save the note's content
 void NBrowserWindow::saveNoteContent() {
-    //*** NOTE ***
-    // Focus changing is disabled to try and fix the changing position
-    // when syncing.
-    // Do a little bit of focus changing to make sure things are saved properly
-//    this->editor->setFocus();
     microFocusChanged();
-//    this->editor->titleEditor->setFocus();
-
 
     if (this->editor->isDirty) {
         //QString contents = editor->editorPage->mainFrame()->toHtml();
@@ -860,8 +852,9 @@ QString NBrowserWindow::buildPasteUrl(QString url) {
     if (url.toLower().startsWith("http://") ||
         url.toLower().startsWith("https://") ||
         url.toLower().startsWith("mailto://") ||
+        url.toLower().startsWith("mailto:") ||
         url.toLower().startsWith("ftp://")) {
-        QString newUrl = QString("<a href=\"") +global.clipboard->text()
+        QString newUrl = QString("<a href=\"") +QApplication::clipboard()->text()
                 +QString("\" title=\"") +url
                 +QString("\" >") +url +QString("</a>");
         return newUrl;
@@ -877,8 +870,7 @@ void NBrowserWindow::pasteButtonPressed() {
         return;
     }
 
-    QClipboard *clipboard = global.clipboard;
-    const QMimeData *mime = clipboard->mimeData();
+    const QMimeData *mime = QApplication::clipboard()->mimeData();
 
     if (mime->hasImage()) {
         editor->setFocus();
@@ -894,19 +886,23 @@ void NBrowserWindow::pasteButtonPressed() {
         for (int i=0; i<urls.size(); i++) {
             QLOG_DEBUG() << urls[i].toString();
             if (urls[i].toString().startsWith("file://")) {
+// Windows Check
+#ifndef _WIN32
                 QString fileName = urls[i].toString().mid(7);
+#else
+                QString fileName = urls[i].toString().mid(8);
+#endif  // End windows check
                 attachFileSelected(fileName);
-//                addAttachment(fileName);
                 this->editor->triggerPageAction(QWebPage::InsertParagraphSeparator);
             }
 
             // If inserting a URL
             if (urls[i].toString().toLower().startsWith("https://") ||
                     urls[i].toString().toLower().startsWith("http://") ||
-                    urls[i].toString().toLower().startsWith("ftp://") || \
-                    urls[i].toString().toLower().startsWith("mailto::")) {
+                    urls[i].toString().toLower().startsWith("ftp://") ||
+                    urls[i].toString().toLower().startsWith("mailto:")) {
                 QString url = this->buildPasteUrl(urls[i].toString());
-                QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+                QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
                 editor->page()->mainFrame()->evaluateJavaScript(script);
             }
         }
@@ -915,19 +911,20 @@ void NBrowserWindow::pasteButtonPressed() {
         microFocusChanged();
         return;
     }
-    //QLOG_DEBUG() << "HTML:" << mime->hasHtml() << " " << mime->html();
-    //QLOG_DEBUG() << "Color:" << mime->hasColor();
-    //QLOG_DEBUG() << "Url:" << mime->hasUrls();
+    QLOG_DEBUG() << "Has HTML:" << mime->hasHtml() << " " << mime->html();
+    QLOG_DEBUG() << "Has Color:" << mime->hasColor();
+    QLOG_DEBUG() << "Has Url:" << mime->hasUrls();
 
     if (mime->hasText()) {
         QString urltext = mime->text();
+        QLOG_DEBUG() << "Url:" << urltext;
 
         if (urltext.toLower().startsWith("https://") ||
             urltext.toLower().startsWith("http://") ||
             urltext.toLower().startsWith("ftp://") || \
-            urltext.toLower().startsWith("mailto::")) {
+            urltext.toLower().startsWith("mailto:")) {
             QString url = this->buildPasteUrl(urltext);
-            QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+            QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
             editor->page()->mainFrame()->evaluateJavaScript(script);
             return;
         }
@@ -936,20 +933,16 @@ void NBrowserWindow::pasteButtonPressed() {
         if (urltext.toLower().mid(0,17) == "evernote:///view/") {
             urltext = urltext.mid(17);
             int pos = urltext.indexOf("/");
-            QString userid = urltext.mid(0,pos-1);
             urltext = urltext.mid(pos+1);
             pos = urltext.indexOf("/");
-            QString shard = urltext.mid(0,pos);
             urltext = urltext.mid(pos+1);
             pos = urltext.indexOf("/");
-            QString uid = urltext.mid(0,pos);
             urltext = urltext.mid(pos+1);
             pos = urltext.indexOf("/");
             QString guid = urltext.mid(0,pos);
             urltext = urltext.mid(pos);
             pos = urltext.indexOf("/");
             QString locguid = urltext.mid(pos);
-            QString linkedNotebookGuid = urltext.mid(pos);
 
             Note n;
             bool goodrc = false;
@@ -961,12 +954,13 @@ void NBrowserWindow::pasteButtonPressed() {
             // If we have a good return, then we can paste the link, otherwise we fall out
             // to a normal paste.
             if (goodrc) {
-                QString url = QString("<a href=\"") +global.clipboard->text()
-                        +QString("\" title=\"") +n.title
-                        +QString("\" >") +n.title +QString("</a>");
-                QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+                QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(QApplication::clipboard()->text(), n.title, n.title);
+                QLOG_DEBUG() << "HTML to insert:" << url;
+                QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
                 editor->page()->mainFrame()->evaluateJavaScript(script);
                 return;
+            } else {
+                QLOG_ERROR() << "Error retrieving note";
             }
         }
     }
@@ -991,12 +985,12 @@ void NBrowserWindow::selectAllButtonPressed() {
 
 // The paste without mime format was pressed
 void NBrowserWindow::pasteWithoutFormatButtonPressed() {
-    const QMimeData *mime = global.clipboard->mimeData();
+    const QMimeData *mime = QApplication::clipboard()->mimeData();
     if (!mime->hasText())
         return;
     QString text = mime->text();
-    global.clipboard->clear();
-    global.clipboard->setText(text, QClipboard::Clipboard);
+    QApplication::clipboard()->clear();
+    QApplication::clipboard()->setText(text, QClipboard::Clipboard);
     this->editor->triggerPageAction(QWebPage::Paste);
 
     // This is done because pasting into an encryption block
@@ -1453,16 +1447,23 @@ void NBrowserWindow::insertTableButtonPressed() {
     int rows = dialog.getRows();
     int width = dialog.getWidth();
     bool percent = dialog.isPercent();
+    QString tableStyle = "style=\"-evernote-table:true;border-collapse:collapse;width:%1;table-layout:fixed;margin-left:0px;\"";
+    QString cellStyle = "style=\"border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:33.33%;\"";
 
-    QString newHTML = QString("<table border=\"1\" width=\"") +QString::number(width);
+    QString newHTML = QString("<table border=\"1px\" width=\"") +QString::number(width);
+    QString widthString = QString::number(width);
     if (percent)
-        newHTML = newHTML +"%";
-    newHTML = newHTML + "\"><tbody>";
+        widthString = widthString+"%";
+//    newHTML = tableStyle.arg(width);
+//    if (percent)
+//        newHTML = newHTML +"%";
+//    newHTML = newHTML + "\"><tbody>";
+    newHTML = "<table "+tableStyle.arg(widthString)+"<tbody>";
 
     for (int i=0; i<rows; i++) {
         newHTML = newHTML +"<tr>";
         for (int j=0; j<cols; j++) {
-            newHTML = newHTML +"<td>&nbsp;</td>";
+            newHTML = newHTML +"<td "+cellStyle+">&nbsp;</td>";
         }
         newHTML = newHTML +"</tr>";
     }
@@ -1472,6 +1473,7 @@ void NBrowserWindow::insertTableButtonPressed() {
     editor->page()->mainFrame()->evaluateJavaScript(script);
     contentChanged();
 }
+
 
 void NBrowserWindow::insertTableRowButtonPressed() {
     QString js ="function insertTableRow() {"
@@ -1483,10 +1485,14 @@ void NBrowserWindow::insertTableRowButtonPressed() {
         "      if (workingNode.nodeName.toLowerCase()=='tr') {"
         "           row = document.createElement('TR');"
         "           var nodes = workingNode.getElementsByTagName('td');"
+        "           var style = '';"
         "           for (j=0; j<nodes.length; j=j+1) {"
-        "              cell = document.createElement('TD');"
-        "              cell.innerHTML='&nbsp;';"
-        "              row.appendChild(cell);"
+        "             if (style == '' && nodes[0].hasAttribute('style')) style = nodes[0].attributes['style'].value;"
+        "             window.browserWindow.printNodeName(style);"
+        "             cell = document.createElement('TD');"
+        "             if (style != '') cell.setAttribute('style',style);"
+        "             cell.innerHTML='&nbsp;';"
+        "             row.appendChild(cell);"
         "           }"
         "           workingNode.parentNode.insertBefore(row,workingNode.nextSibling);"
         "           return;"
@@ -1505,9 +1511,11 @@ void NBrowserWindow::insertTableColumnButtonPressed() {
             "   var selRange = selObj.getRangeAt(0);"
             "   var workingNode = window.getSelection().anchorNode.parentNode;"
             "   var current = 0;"
+            "   var style = '';"
             "   while (workingNode.nodeName.toLowerCase() != 'table' && workingNode != null) {"
             "       if (workingNode.nodeName.toLowerCase() == 'td') {"
             "          var td = workingNode;"
+            "          if (style == '' && td.hasAttribute('style')) style = td.attributes['style'].value;"
             "          while (td.previousSibling != null) { "
             "             current = current+1; td = td.previousSibling;"
             "          }"
@@ -1517,6 +1525,8 @@ void NBrowserWindow::insertTableColumnButtonPressed() {
             "   if (workingNode == null) return;"
             "   for (var i=0; i<workingNode.rows.length; i++) { "
             "      var cell = workingNode.rows[i].insertCell(current+1); "
+            "      cell.setAttribute('style',style);"
+//            "          window.browserWindow.printNodeName(cell.style);"
             "      cell.innerHTML = '&nbsp'; "
             "   }"
             "} insertTableColumn();";
@@ -1914,7 +1924,14 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
              QMessageBox::information(this, tr("Unable Open"), QString(tr("This is an ink note.\nInk notes are not supported since Evernote has not\n published any specifications on them\nand I'm too lazy to figure them out by myself.")));
              return;
          }
-         QString fullName = url.toString().mid(6).replace(global.fileManager.getDbaDirPath(),"");
+         QString filepath = global.fileManager.getDbaDirPath();
+// Windows check
+#ifdef _WIN32
+         filepath = filepath.replace("\\", "/");
+#endif // End windows check
+         QString fullName = url.toString().mid(6).replace(filepath,"");
+         filepath = filepath.replace("\\", "/");
+         QLOG_DEBUG() << global.fileManager.getDbaDirPath();
          int index = fullName.lastIndexOf(".");
          QString guid = "";
          if (index != -1) {
@@ -1932,6 +1949,11 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
          if (fileUrl == "")
              return;
          fileUrl = global.fileManager.getDbaDirPath()+fileUrl;
+
+// Windows check
+#ifdef _WIN32
+         fileUrl = fileUrl.replace("\\", "/");
+#endif // End windows check
          global.resourceWatcher.addPath(fileUrl);
          QDesktopServices::openUrl(fileUrl);
          return;
@@ -2092,7 +2114,7 @@ void NBrowserWindow::setInsideLink(QString link) {
 
 
 
-// Edit a latex formula
+// Edit a LaTeX formula
 void NBrowserWindow::editLatex(QString guid) {
     QString text = editor->selectedText();
     QString oldFormula = "";
@@ -2198,6 +2220,9 @@ void NBrowserWindow::editLatex(QString guid) {
     buffer.append(QString::number(newlid));
     buffer.append("\">");
     buffer.append("<img src=\"file://");
+#ifdef _WIN32
+    buffer.append("/");
+#endif
     buffer.append(outfile);
     buffer.append("\" type=\"image/gif\" hash=\"");
     buffer.append(hash.toHex());
@@ -2297,6 +2322,9 @@ void NBrowserWindow::insertImage(const QMimeData *mime) {
     if (d.bodyHash.isSet())
          hash = d.bodyHash;
     buffer.append("<img src=\"file://");
+#ifdef _WIN32
+    buffer.append("/");
+#endif
     buffer.append(path);
     buffer.append("\" type=\"image/png\" hash=\"");
     buffer.append(hash.toHex());
@@ -2451,7 +2479,6 @@ void NBrowserWindow::prepareEmailMessage(MimeMessage *message, QString note) {
         file->setContentType(mime);
         message->addPart(file);
     }
-
     return;
 
 }
@@ -2537,7 +2564,8 @@ void NBrowserWindow::emailNote() {
     message.setSubject(emailDialog.subject->text().trimmed());
 
     // Build the note content
-    prepareEmailMessage(&message, emailDialog.note->toPlainText());
+    QString text =  emailDialog.note->toPlainText();
+    prepareEmailMessage(&message, text);
 
     // Send the actual message.
     if (!smtp.connectToHost()) {
@@ -2578,10 +2606,15 @@ QString NBrowserWindow::stripContentsForPrint() {
         int endPos = contents.indexOf(">", pos);
         QString lidString = contents.mid(contents.indexOf("lid=", pos)+5);
         lidString = lidString.mid(0,lidString.indexOf("\" "));
+#ifndef _WIN32
         contents = contents.mid(0,pos) + "<img src=\"file://" +
                 global.fileManager.getTmpDirPath() + lidString +
                 QString("-print.png\" width=\"10%\" height=\"10%\"></img>")+contents.mid(endPos+1);
-
+#else
+        contents = contents.mid(0,pos) + "<img src=\"file:///" +
+                global.fileManager.getTmpDirPath() + lidString +
+                QString("-print.png\" width=\"10%\" height=\"10%\"></img>")+contents.mid(endPos+1);
+#endif
         pos = contents.indexOf("<object", endPos);
     }
     return contents.replace("src=\"file:////", "src=\"/");
@@ -2613,7 +2646,7 @@ void NBrowserWindow::printPreviewReady(QPrinter *printer) {
 
 
 // Print the contents of a note.  Basically it loops through the
-// note and repaces the <object> tags with <img> tags.  The plugin
+// note and replaces the <object> tags with <img> tags.  The plugin
 // object should be creating temporary images for the print.
 void NBrowserWindow::printNote() {
     QString contents = stripContentsForPrint();
@@ -2657,7 +2690,7 @@ void NBrowserWindow::printNote() {
         if (error) {
             fastPrint = false;
 
-            // Re-initialize printer object so we don't have any bugus
+            // Re-initialize printer object so we don't have any bogus
             // values from settings.
             delete printer;
             printer = new QPrinter();
@@ -2816,6 +2849,9 @@ void NBrowserWindow::attachFileSelected(QString filename) {
             hash = d.bodyHash;
         }
         buffer.append("<img src=\"file://");
+#ifdef _WIN32
+        buffer.append("/");
+#endif
         buffer.append(path);
         buffer.append("\" type=\"");
         buffer.append(mime);
@@ -2879,6 +2915,9 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
     buffer.append("<img en-tag=\"temporary\" title=\""+QFileInfo(filename).fileName() +"\" ");
     buffer.append("src=\"file://");
+#ifdef _WIN32
+    buffer.append("/");
+#endif
     buffer.append(tmpFile);
     buffer.append("\" />");
     buffer.append("</a>");
@@ -3098,7 +3137,11 @@ void NBrowserWindow::encryptButtonPressed() {
             + dialog.getHint().replace("'","\\'") + "\" length=\"64\" ");
     buffer.append("contentEditable=\"false\" alt=\"");
     buffer.append(encrypted);
+#ifndef _WIN32
     buffer.append("\" src=\"file://").append(global.fileManager.getImageDirPath("encrypt.png") +"\"");
+#else
+    buffer.append("\" src=\"file:///").append(global.fileManager.getImageDirPath("encrypt.png") +"\"");
+#endif
     global.cryptCounter++;
     buffer.append(" id=\"crypt"+QString::number(global.cryptCounter) +"\"");
     buffer.append(" onMouseOver=\"style.cursor=\\'hand\\'\"");
@@ -3143,10 +3186,11 @@ void NBrowserWindow::sendDateSubjectUpdateSignal() {
 // Send a signal that the note has been updated
 void NBrowserWindow::sendTitleUpdateSignal() {
     NoteTable ntable(global.db);
-    ntable.updateTitle(this->lid, this->noteTitle.text().trimmed(), true);
-    emit noteTitleEditedSignal(uuid, lid, this->noteTitle.text().trimmed());
+    QString text = this->noteTitle.text().replace("\n"," ").trimmed();
+    ntable.updateTitle(this->lid, text, true);
+    emit noteTitleEditedSignal(uuid, lid, text);
     emit(this->noteUpdated(lid));
-    emit(this->updateNoteList(lid, NOTE_TABLE_TITLE_POSITION, this->noteTitle.text()));
+    emit(this->updateNoteList(lid, NOTE_TABLE_TITLE_POSITION, text));
     sendDateUpdateSignal();
 }
 
@@ -3213,6 +3257,18 @@ void NBrowserWindow::sendUrlUpdateSignal() {
 
 
 void NBrowserWindow::spellCheckPressed() {
+    // Check if we have a plugin for Hunspell loaded. This could have been done at startup, but if this is
+    // an external window we could need to load it again.
+    if (!hunspellInterface) {
+        this->loadPlugins();
+    }
+
+    // If we STILL don't have a plugin then it can't be loaded. Quit out
+    if (!hunspellPluginAvailable) {
+        QMessageBox::critical(this, tr("Plugin Error"), tr("Hunspell plugin not found or could not be loaded."), QMessageBox::Ok);
+        return;
+    }
+
     QWebPage *page = editor->page();
     page->action(QWebPage::MoveToStartOfDocument);
     page->mainFrame()->setFocus();
@@ -3229,9 +3285,6 @@ void NBrowserWindow::spellCheckPressed() {
     //SpellChecker checker;
     bool finished = false;
 
-    if (!hunspellInterface) {
-        this->loadPlugins();
-    }
     for (int i=0; i<words.size() && !finished; i++) {
         QString currentWord = words[i];
         page->findText(currentWord);
@@ -3245,8 +3298,7 @@ void NBrowserWindow::spellCheckPressed() {
             if (dialog.ignoreAllPressed)
                 ignoreWords.append(currentWord);
             if (dialog.replacePressed)  {
-                QClipboard *clipboard = global.clipboard;
-                clipboard->setText(dialog.replacement);
+                QApplication::clipboard()->setText(dialog.replacement);
                 pasteButtonPressed();
             }
             if (dialog.addToDictionaryPressed) {
@@ -3260,8 +3312,6 @@ void NBrowserWindow::spellCheckPressed() {
     editor->keyPressEvent(&key2);
 
     QMessageBox::information(this, tr("Spell Check Complete"), tr("Spell Check Complete."), QMessageBox::Ok);
-
-
 }
 
 
@@ -3287,20 +3337,25 @@ void NBrowserWindow::handleUrls(const QMimeData *mime) {
     for (int i=0; i<urlList.size(); i++) {
         QString file  = urlList[i].toString();
         if (file.toLower().startsWith("file://") && !ctrlModifier) {
+#ifndef _WIN32
             attachFileSelected(file.mid(7));
-            return;
-        }
-        if (file.toLower().startsWith("file://") && ctrlModifier) {
+#else
+            attachFileSelected(file.mid(8));
+#endif
+            if (i<urlList.size()-1)
+                insertHtml("<div><br/></div>");
+        } else if (file.toLower().startsWith("file://") && ctrlModifier) {
             QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(file).arg(file).arg(file);
             QLOG_DEBUG() << url;
             insertHtml(url);
-            return;
+            if (i<urlList.size()-1)
+                insertHtml("<div><br/></div>");
+        } else {
+            editor->setFocus();
+            QApplication::clipboard()->clear();
+            QApplication::clipboard()->setText(file, QClipboard::Clipboard);
+            this->editor->triggerPageAction(QWebPage::Paste);
         }
-
-        editor->setFocus();
-        global.clipboard->clear();
-        global.clipboard->setText(file, QClipboard::Clipboard);
-        this->editor->triggerPageAction(QWebPage::Paste);
     }
 }
 
@@ -3445,7 +3500,7 @@ void NBrowserWindow::copyNoteUrl() {
            user.shardId +QString("/") +
             n.guid +QString("/") +
             n.guid + QString("/");
-    global.clipboard->setText(href, QClipboard::Clipboard);
+    QApplication::clipboard()->setText(href, QClipboard::Clipboard);
 }
 
 
@@ -3474,7 +3529,11 @@ void NBrowserWindow::subscriptButtonPressed() {
 // Set the editor background & font color
 void NBrowserWindow::setEditorStyle() {
     QString qss = global.getEditorCss();
+#ifndef _WIN32
     editor->settings()->setUserStyleSheetUrl(QUrl("file://"+qss));
+#else
+    editor->settings()->setUserStyleSheetUrl(QUrl("file:///"+qss));
+#endif
     return;
 }
 
@@ -3503,3 +3562,143 @@ void NBrowserWindow::loadPlugins() {
         }
     }
 }
+
+
+// Find shortcut activated
+void NBrowserWindow::findShortcut() {
+    if (!findReplace->isVisible()) {
+        findReplace->showFind();
+    } else {
+        if (findReplace->findLine->hasFocus())
+            findReplace->hide();
+        else {
+            findReplace->showFind();
+            findReplace->findLine->setFocus();
+            findReplace->findLine->selectAll();
+        }
+    }
+
+}
+
+
+//*******************************************
+//* Search for the next occurrence of text
+//* in a note.
+//*******************************************
+void NBrowserWindow::findNextShortcut() {
+    findReplace->showFind();
+    QString find = findReplace->findLine->text();
+    if (find != "")
+        editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+}
+
+
+
+//*******************************************
+//* Search for the previous occurrence of
+//* text in a note.
+//*******************************************
+void NBrowserWindow::findPrevShortcut() {
+    findReplace->showFind();
+    QString find = findReplace->findLine->text();
+    if (find != "")
+        editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindBackward | QWebPage::FindWrapsAroundDocument);
+}
+
+
+
+// Find shortcut activated
+void NBrowserWindow::findReplaceShortcut() {
+    this->findReplace->showFindReplace();
+}
+
+
+
+//***************************************
+//* Find/replace button pressed, so we
+//* need to highlight all the occurrences
+//* in a note.
+//***************************************
+void NBrowserWindow::findReplaceInNotePressed() {
+    QString find = findReplace->findLine->text();
+    QString replace = findReplace->replaceLine->text();
+    if (find == "")
+        return;
+    bool found = false;
+    found = editor->page()->findText(find,
+        findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+    if (!found)
+        return;
+
+    QApplication::clipboard()->setText(replace);
+    editor->pasteAction->trigger();
+}
+
+
+
+
+//*************************************************
+//* Replace All button pressed.
+//*************************************************
+void NBrowserWindow::findReplaceAllInNotePressed() {
+    QString find = findReplace->findLine->text();
+    QString replace = findReplace->replaceLine->text();
+    if (find == "")
+        return;
+    bool found = false;
+    while (true) {
+        found = editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+        if (!found)
+            return;
+        QApplication::clipboard()->setText(replace);
+        editor->pasteAction->trigger();
+    }
+}
+
+
+
+
+//*******************************************
+//* Search for the next occurrence of text
+//* in a note.
+//*******************************************
+void NBrowserWindow::findNextInNote() {
+    findReplace->showFind();
+    QString find = findReplace->findLine->text();
+    if (find != "")
+        editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+}
+
+
+
+//*******************************************
+//* Search for the previous occurrence of
+//* text in a note.
+//*******************************************
+void NBrowserWindow::findPrevInNote() {
+    findReplace->showFind();
+    QString find = findReplace->findLine->text();
+    if (find != "")
+        editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindBackward | QWebPage::FindWrapsAroundDocument);
+
+}
+
+
+
+
+//*******************************************
+//* This just does a null find to reset the
+//* text in a note so nothing is highlighted.
+//* This is triggered when the find dialog
+//* box is hidden.
+//*******************************************
+void NBrowserWindow::findReplaceWindowHidden() {
+   editor->page()->findText("");
+}
+
+

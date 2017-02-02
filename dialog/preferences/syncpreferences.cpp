@@ -46,13 +46,15 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     //syncOnShutdown->setEnabled(false);
     enableSyncNotifications = new QCheckBox(tr("Enable sync notifications"), this);
     showGoodSyncMessagesInTray = new QCheckBox(tr("Show successful syncs"), this);
+    apiRateRestart = new QCheckBox(tr("Restart sync on API limit (experimental)"), this);
 
     enableProxy = new QCheckBox(tr("Enable Proxy*"), this);
+    enableSocks5 = new QCheckBox(tr("Enable Socks5"),this);
     QLabel *hostLabel = new QLabel(tr("Proxy Hostname"), this);
     QLabel *portLabel = new QLabel(tr("Proxy Port"), this);
     QLabel *userLabel = new QLabel(tr("Proxy Username"), this);
     QLabel *passwordLabel = new QLabel(tr("Proxy Password"),this);
-    QLabel *restartLabel = new QLabel(tr("Note: Restart required"),this);
+    QLabel *restartLabel = new QLabel(tr("*Note: Restart required"),this);
 
     host = new QLineEdit(this);
     port = new QLineEdit(this);
@@ -60,6 +62,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     password = new QLineEdit(this);
 
     enableProxy->setChecked(global.isProxyEnabled());
+    enableSocks5->setChecked(global.isSocks5Enabled());
     host->setText(global.getProxyHost());
     port->setText(QString::number(global.getProxyPort()));
     port->setInputMask("00000");
@@ -67,14 +70,20 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     password->setText(global.getProxyPassword());
     password->setEchoMode(QLineEdit::Password);
 
+    popupOnSyncError = new QCheckBox(tr("Popup message on sync errors."),0);
+    popupOnSyncError->setChecked(global.popupOnSyncError());
+
     mainLayout->addWidget(enableSyncNotifications,0,0);
     mainLayout->addWidget(showGoodSyncMessagesInTray, 0,1);
     mainLayout->addWidget(syncOnStartup,1,0);
+    mainLayout->addWidget(popupOnSyncError, 1,1);
     mainLayout->addWidget(syncOnShutdown,2,0);
     mainLayout->addWidget(syncAutomatically,3,0);
     mainLayout->addWidget(syncInterval, 3,1);
+    mainLayout->addWidget(apiRateRestart, 4,0);
 
-    mainLayout->addWidget(enableProxy,4,0);
+    mainLayout->addWidget(enableProxy,5,0);
+    mainLayout->addWidget(enableSocks5,5,1);
     mainLayout->addWidget(hostLabel,6,0);
     mainLayout->addWidget(host, 6,1);
     mainLayout->addWidget(portLabel,7,0);
@@ -83,7 +92,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     mainLayout->addWidget(userId,8,1);
     mainLayout->addWidget(passwordLabel,9,0);
     mainLayout->addWidget(password,9,1);
-    mainLayout->addWidget(restartLabel,4,1);
+    mainLayout->addWidget(restartLabel,10,0);
     mainLayout->setAlignment(Qt::AlignTop);
 
     global.settings->beginGroup("Sync");
@@ -95,6 +104,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     syncOnStartup->setChecked(global.settings->value("syncOnStartup", false).toBool());
     enableSyncNotifications->setChecked(global.settings->value("enableNotification", true).toBool());
     showGoodSyncMessagesInTray->setChecked(global.showGoodSyncMessagesInTray);
+    apiRateRestart->setChecked(global.settings->value("apiRateLimitAutoRestart", false).toBool());
     global.settings->endGroup();
     global.showGoodSyncMessagesInTray = showGoodSyncMessagesInTray->isChecked();
 
@@ -148,14 +158,18 @@ void SyncPreferences::saveValues() {
     global.settings->setValue("enableNotification", enableSyncNotifications->isChecked());
     global.settings->setValue("syncInterval", getSyncInterval());
     global.settings->setValue("showGoodSyncMessagesInTray", showGoodSyncMessagesInTray ->isChecked());
+    global.settings->setValue("apiRateLimitAutoRestart", apiRateRestart ->isChecked());
     global.settings->endGroup();
+
     global.showGoodSyncMessagesInTray = showGoodSyncMessagesInTray->isChecked();
 
     global.setProxyEnabled(enableProxy->isChecked());
+    global.setSocks5Enabled(enableSocks5->isChecked());
     global.setProxyHost(host->text().trimmed());
     global.setProxyPort(port->text().toInt());
     global.setProxyUserid(userId->text().trimmed());
     global.setProxyPassword(password->text().trimmed());
+    global.setPopupOnSyncError(this->popupOnSyncError->isChecked());
 }
 
 
@@ -164,6 +178,7 @@ void SyncPreferences::proxyCheckboxAltered(int state) {
     bool value = false;
     if (state == Qt::Checked)
         value = true;
+    enableSocks5->setEnabled(value);
     host->setEnabled(value);
     port->setEnabled(value);
     userId->setEnabled(value);

@@ -59,6 +59,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "email/mimemessage.h"
 #include "plugins/hunspell/hunspellinterface.h"
 #include "plugins/hunspell/hunspellplugin.h"
+#include "gui/findreplace.h"
 
 class ToolbarWidgetAction;
 
@@ -111,6 +112,8 @@ private:
     QShortcut *insertLatexShortcut;
     QShortcut *copyNoteUrlShortcut;
 
+    FindReplace *findReplace;
+
     QString stripContentsForPrint();
 
 public:
@@ -118,7 +121,6 @@ public:
     QString uuid;
     NWebView *editor;
     void setContent(qint32 lid);
-    void saveNoteContent();
     NTitleEditor noteTitle;
     ReminderButton alarmButton;
     QPushButton alarmText;
@@ -183,6 +185,7 @@ signals:
     void setMessage(QString msg);
 
 public slots:
+    void saveNoteContent();
     void changeExpandState(int value);
     void tagRenamed(qint32 lid, QString oldName, QString newName);
     void notebookRenamed(qint32 lid, QString oldName, QString newName);
@@ -283,6 +286,16 @@ public slots:
     void fontSizeFocusShortcut();
     void urlFocusShortcut();
     void copyNoteUrl();
+    void findShortcut();
+    void findReplaceShortcut();
+    void findNextShortcut();
+    void findPrevShortcut();
+    void findReplaceAllInNotePressed();
+    void findNextInNote();
+    void findPrevInNote();
+    void findReplaceWindowHidden();
+    void findReplaceInNotePressed();
+
 
 private slots:
     void sendTitleUpdateSignal();

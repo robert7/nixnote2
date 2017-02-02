@@ -52,6 +52,7 @@ StartupConfig::StartupConfig()
     exportNotes = NULL;
     importNotes = NULL;
     alter = NULL;
+    signalGui = NULL;
 }
 
 
@@ -108,8 +109,9 @@ void StartupConfig::printHelp() {
                    +QString("                                       For multiple files, use multiple --attachment statements.\n")
                    +QString("          --delimiter=\"<delmiiter>\"    Character string identifying attachment points.\n")
                    +QString("                                       Defaults to %%.\n")
-                   +QString("          --created=\"<date_created>\"   Date created\n")
-                   +QString("          --updated=\"<date_updated>\"   Date created\n")
+                   +QString("          --created=\"<datetime>\"   Date & time created in yyyy-MM-ddTHH:mm:ss.zzzZ format.\n")
+                   +QString("          --updated=\"<datetime>\"   Date & time updated in yyyy-MM-ddTHH:mm:ss.zzzZ format.\n")
+                   +QString("          --reminder=\"<datetime>\"  Reminder date & time in yyyy-MM-ddTHH:mm:ss.zzzZ format.\n")
                    +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
                    +QString("                                       is read from stdin.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
@@ -130,6 +132,11 @@ void StartupConfig::printHelp() {
                    +QString("          --notebook=\"<notebook>\"      Move matching notes to this notebook.\n")
                    +QString("          --addTag=\"<tag_name>\"        Add this tag to matching notes.\n")
                    +QString("          --delTag=\"<tag_name>\"        Remove this tag from matching notes.\n")
+                   +QString("          --reminder=\"<datetime>\"      Set a reminder in yyyy-MM-ddTHH:mm:ss.zzzZ format")
+                   +QString("          --reminderClear              Clear the note's reminder.\n")
+                   +QString("          --reminderComplete           Set the reminder as complete.\n")
+                   +QString("                                       yyyy-MM-ddTHH:mm:ss.zzzZ format or the literal 'now' to default\n")
+                   +QString("                                       to the current date & time.")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
                    +QString("  readNote <options>                   Read the text contents of a note.\n")
                    +QString("          --id=\"<note_id>\"             ID of the note to read.\n")
@@ -173,6 +180,19 @@ void StartupConfig::printHelp() {
                    +QString("     openNotebook options:\n")
                    +QString("          --notebook=\"notebook\"        Notebook name.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
+                   +QString("  signalGui <options>                  Send command to a running NixNote.\n")
+                   +QString("     signalGui options:\n")
+                   +QString("          --show                       Show NixNote if hidden.\n")
+                   +QString("          --synchronize                Synchronize with Evernote.\n")
+                   +QString("          --shutdown                   Shutdown NixNote.\n")
+                   +QString("          --screenshot                 Start a screen capture.\n")
+                   +QString("          --openNote                   Open a note.  --id=<id> must be specified.\n")
+                   +QString("          --openNoteNewTab             Open a note in a new tab.  --id=<id> must be specified.\n")
+                   +QString("          --openExternalNote           Open a note in an external window.  --id=<id> must be specified.\n")
+                   +QString("          --id=<id>                    Note Id to open.\n")
+                   +QString("          --newNote                    Create a new note.\n")
+                   +QString("          --newExternalNote            Create a new note in an external window.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
                    +QString("  Examples:\n\n")
                    +QString("     To Start NixNote, do a sync, and then exit.\n")
                    +QString("     nixnote2 start --syncAndExit\n\n")
@@ -190,6 +210,8 @@ void StartupConfig::printHelp() {
                    +QString("     nixnote2 query --search=\"Famous Authors\" --delimiter=\" * \" --display=\"\%i%t10:%n\"\n\n")
                    +QString("     To extract all notes in the \"Notes\" notebook.\n")
                    +QString("     nixnote2 export --search=\"notebook:notes\" --output=/home/joe/exports.nnex\n\n")
+                   +QString("     To signal NixNote to do a screenshot from the command line (NixNote must already be running).\n")
+                   +QString("     nixnote2 signalGui --screenshot\n\n")
                    +QString("\n\n")
                    );
 
@@ -208,10 +230,12 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
     // that the GUI is available. We can override this with the --forceNoGui
     // as any parameter.
 
+// Windows Check
+#ifndef _WIN32
     QString display = QProcessEnvironment::systemEnvironment().value("DISPLAY", "");
     if (display.trimmed() == "")
         guiAvailable = false;
-
+#endif // End windows check
 
     for (int i=1; i<argc; i++) {
         QString parm(argv[i]);
@@ -306,6 +330,12 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             command->setBit(STARTUP_SQLEXEC);
             guiAvailable = false;
         }
+        if (parm.startsWith("signalGui")) {
+            command->setBit(STARTUP_SIGNALGUI,true);
+            if (signalGui == NULL)
+                signalGui = new SignalGui();
+            guiAvailable = false;
+        }
 
         // This should be last because it is the default
         if (parm.startsWith("start")) {
@@ -340,6 +370,10 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             if (parm.startsWith("--updated=", Qt::CaseSensitive)) {
                 parm = parm.mid(10);
                 newNote->updated = parm;
+            }
+            if (parm.startsWith("--reminder=", Qt::CaseSensitive)) {
+                parm = parm.mid(11);
+                newNote->reminder = parm;
             }
             if (parm.startsWith("--noteText=", Qt::CaseSensitive)) {
                 parm = parm.mid(11);
@@ -454,6 +488,30 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
                 extractText->lid = parm.toInt();
             }
         }
+        if (command->at(STARTUP_SIGNALGUI)) {
+            if (parm.startsWith("--id=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                signalGui->lid = parm.toInt();
+            }
+            if (parm.startsWith("--show", Qt::CaseSensitive))
+                signalGui->show=true;
+            if (parm.startsWith("--synchronize", Qt::CaseSensitive))
+                signalGui->synchronize=true;
+            if (parm.startsWith("--screenshot", Qt::CaseSensitive))
+                signalGui->takeScreenshot=true;
+            if (parm.startsWith("--openNote", Qt::CaseSensitive))
+                signalGui->openNote=true;
+            if (parm.startsWith("--openExternalNote", Qt::CaseSensitive))
+                signalGui->openExternalNote=true;
+            if (parm.startsWith("--openNoteNewTab", Qt::CaseSensitive))
+                signalGui->openNoteNewTab=true;
+            if (parm.startsWith("--newNote", Qt::CaseSensitive))
+                signalGui->newNote=true;
+            if (parm.startsWith("--newExternalNote", Qt::CaseSensitive))
+                signalGui->newExternalNote=true;
+            if (parm.startsWith("--shutdown", Qt::CaseSensitive))
+                signalGui->shutdown=true;
+        }
         if (command->at(STARTUP_ALTERNOTE)) {
             if (parm.startsWith("--id=", Qt::CaseSensitive)) {
                 parm = parm.mid(5);
@@ -479,6 +537,12 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             if (parm.startsWith("--delTag=", Qt::CaseSensitive)) {
                 parm = parm.mid(9);
                 alter->delTagNames.append(parm);
+            }
+            if (parm == "--clearReminder") {
+                alter->clearReminder=true;
+            }
+            if (parm == "--reminderComplete") {
+                alter->reminderCompleted=true;
             }
         }
         if (command->at(STARTUP_EMAILNOTE)) {
@@ -625,4 +689,8 @@ bool StartupConfig::openNotebook() {
 
 bool StartupConfig::closeNotebook() {
     return command->at(STARTUP_CLOSENOTEBOOK);
+}
+
+bool StartupConfig::signalOtherGui() {
+    return command->at(STARTUP_SIGNALGUI);
 }

@@ -94,7 +94,7 @@ class Global
 {
 public:
     Global();           // Generic constructor
-    ~Global();          // destructor
+    //~Global();          // destructor
 
     // Possible ways tags & notebook counts may be displayed to the user
     enum CountBehavior {
@@ -136,7 +136,6 @@ public:
     QString server;                        // Evernote server to sync with
     QSettings *settings;                   // Pointer to the nixnote config file.  There is a different one for each account.
     QSettings *globalSettings;             // Pointer to all the config file that is common to all accounts.
-    QClipboard *clipboard;                 // System clipboard pointer
     ShortcutKeys *shortcutKeys;            // Keyboard shortcuts defined by the user
     QList<qint32> expungedResources;       // List of expunged resource LIDs
     QFileSystemWatcher resourceWatcher;    // Watcher for file system directories.  New files here will create anote
@@ -147,6 +146,8 @@ public:
     void setCloseToTray(bool value);       // Set if we should close it to the tray
     bool showNoteListGrid();               // Should we whow the table grid?
     bool alternateNoteListColors();        // Should we alternate the table colors?
+    bool getForceUTF8();                    // force UTF8 encoding if not given by Evernote
+    void setForceUTF8(bool value);         // force UTF8 encoding if not given by Evernote
     void setColumnPosition(QString col, int position);    // Save the order of a  note list's column.
     void setColumnWidth(QString col, int width);          // Save the width of a note list column
     int getColumnPosition(QString col);                   // Get the desired position of a note column
@@ -157,10 +158,13 @@ public:
     qlonglong getLastReminderTime();                      // Get the last time we actually showed a user note reminders.
     void setLastReminderTime(qlonglong value);            // Save the date/time we last showed a user note reminders.
     void setMinimumRecognitionWeight(int weight);         // Set the minimum OCR recgnition confidence before including it in search results.
+    bool popupOnSyncError();                 // Should we do a popup on every sync error?
+    void setPopupOnSyncError(bool value);    // Set if we should do a popup on sync errors.
     QString dateFormat;                                   // Desired display date format
     QString timeFormat;                                   // Desired display time format
     DatabaseConnection *db;                               // "default" DB connection for the main thread.
     bool javaFound;                                       // Have we found Java?
+    bool forceUTF8;                                       // force UTF8 encoding
     QString defaultFont;                                  // Default editor font name
     int defaultFontSize;                                  // Default editor font size
     int defaultGuiFontSize;                               // Default GUI font size
@@ -214,8 +218,12 @@ public:
     QString getProxyPassword();
     QString getProxyUserid();
     bool isProxyEnabled();
+    bool isSocks5Enabled();
     void setProxyEnabled(bool value);
+    void setSocks5Enabled(bool value);
     QString systemNotifier();
+    bool previewFontsInDialog();
+    void setPreviewFontsInDialog(bool value);
 
     // Search Behavior
     void setClearNotebookOnSearch(bool value);
