@@ -33,10 +33,15 @@ private:
     QShortcut *focusTagShortcut;
     QShortcut *focusNoteShortcut;
     QShortcut *focusUrlShortcut;
+    QShortcut *fileSaveShortcut;
     QShortcut *focusAuthorShortcut;
     QShortcut *focusNotebookShortcut;
     QShortcut *focusFontShortcut;
     QShortcut *focusFontSizeShortcut;
+    QShortcut *findShortcut;
+    QShortcut *findReplaceShortcut;
+    QShortcut *findNextShortcut;
+    QShortcut *findPrevShortcut;
     void setupShortcut(QShortcut *shortcut, QString keySequence);
 
 public:

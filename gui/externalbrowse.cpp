@@ -46,6 +46,11 @@ ExternalBrowse::ExternalBrowse(qint32 lid, QWidget *parent) :
     this->setupShortcut(focusNoteShortcut, "Focus_Note");
     connect(focusNoteShortcut, SIGNAL(activated()), browser->editor, SLOT(setFocus()));
 
+    fileSaveShortcut = new QShortcut(this);
+    fileSaveShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(focusNoteShortcut, "File_Save_Content");
+    connect(fileSaveShortcut, SIGNAL(activated()), browser, SLOT(saveNoteContent()));
+
     focusTagShortcut = new QShortcut(this);
     focusTagShortcut->setContext(Qt::WidgetWithChildrenShortcut);
     this->setupShortcut(focusTagShortcut, "Focus_Tag");
@@ -76,6 +81,25 @@ ExternalBrowse::ExternalBrowse(qint32 lid, QWidget *parent) :
     this->setupShortcut(focusFontSizeShortcut, "Focus_Font_Size");
     connect(focusFontSizeShortcut, SIGNAL(activated()), browser, SLOT(fontSizeFocusShortcut()));
 
+    findShortcut = new QShortcut(this);
+    findShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(findShortcut, "Edit_Search_Find");
+    connect(findShortcut, SIGNAL(activated()), browser, SLOT(findShortcut()));
+
+    findReplaceShortcut = new QShortcut(this);
+    findReplaceShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(findReplaceShortcut, "Edit_Search_Find_Replace");
+    connect(findReplaceShortcut, SIGNAL(activated()), browser, SLOT(findReplaceShortcut()));
+
+    findNextShortcut = new QShortcut(this);
+    findNextShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(findNextShortcut, "Edit_Search_Find_Next");
+    connect(findNextShortcut, SIGNAL(activated()), browser, SLOT(findNextShortcut()));
+
+    findPrevShortcut = new QShortcut(this);
+    findPrevShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(findPrevShortcut, "Edit_Search_Find_Prev");
+    connect(findPrevShortcut, SIGNAL(activated()), browser, SLOT(findPrevShortcut()));
 
     // Load actual note
     browser->setContent(lid);

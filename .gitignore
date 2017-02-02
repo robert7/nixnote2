@@ -54,3 +54,7 @@ Makefile.Release
 #KDE workfile
 .directory
 /.project
+
+#eclipse files
+.cproject
+.settings

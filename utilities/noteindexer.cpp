@@ -156,7 +156,7 @@ void NoteIndexer::indexResource(qint32 lid) {
     QString mime = "";
     if (r.mime.isSet())
         mime = r.mime;
-    if (mime == "application/pdf")
+    if (mime.toLower() == "application/pdf")
         this->indexPdf(lid);
 //    else {
 //        if (mime.startsWith("application", Qt::CaseInsensitive))
@@ -200,7 +200,7 @@ void NoteIndexer::indexRecognition(qint32 reslid, Resource &r) {
     QLOG_TRACE() << "Beginning insertion of recognition:";
     QLOG_TRACE() << "Anchors found: " << anchors.length();
     sql.exec("begin;");
-    for (unsigned int i=0;  i<anchors.length(); i++) {
+    for (int i=0;  i<anchors.length(); i++) {
         QLOG_TRACE() << "Anchor: " << i;
         QApplication::processEvents();
         QDomElement enmedia = anchors.at(i).toElement();

@@ -48,7 +48,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/nattributetree.h"
 #include "gui/ntrashtree.h"
 #include "dialog/accountdialog.h"
-#include "gui/findreplace.h"
 #include "threads/counterrunner.h"
 //#include "oauth/oauthwindow.h"
 #include "html/thumbnailer.h"
@@ -87,6 +86,7 @@ private:
         NewScreenNote=3
     };
 
+    QWebView *pdfExportWindow;
     DatabaseConnection *db;  // The database connection
     NTableView *noteTableView;
     NSearchView *searchTreeView;
@@ -108,13 +108,13 @@ private:
     QWidget *topRightWidget;
     QVBoxLayout *topRightLayout;
     NAttributeTree *attributeTree;
-    FindReplace *findReplaceWindow;
     bool finalSync;
     QSystemTrayIcon *trayIcon;
     QString saveLastPath;   // Last path viewed in the restore dialog
     FileWatcherManager *importManager;
 //    OAuthWindow *oauthWindow;
     Thumbnailer *hammer;
+    QTimer indexTimer;
 
     // Tool & menu bar
     NMainMenuBar *menuBar;
@@ -170,6 +170,7 @@ private:
     RemoteQuery *remoteQuery;
 
     QShortcut *focusSearchShortcut;
+    QShortcut *fileSaveShortcut;
     QShortcut *focusNotebookShortcut;
     QShortcut *focusFontShortcut;
     QShortcut *focusFontSizeShortcut;
@@ -230,11 +231,14 @@ public slots:
     void disableEditing();
     void setSyncTimer();
     void notesDeleted(QList<qint32> lid);
+    void reindexCurrentNote();
     void openTrunk();
     void openAccount();
     void openDatabaseStatus();
     void openAbout();
+    void openShortcutsDialog();
     void openImportFolders();
+    void openQtAbout();
     void setMessage(QString msg, int timeout=15000);
     void toggleLeftPanel();
     void toggleFavoritesTree();
@@ -265,7 +269,7 @@ public slots:
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
     void toggleVisible();
     //void trayIconBehavior();
-    void changeEvent(QEvent *e);
+//    void changeEvent(QEvent *e);
     void openPreferences();
     void notifySyncComplete();
     void addAnotherUser();
@@ -290,6 +294,7 @@ public slots:
     void openExternalNote(qint32 lid);
     void pauseIndexing(bool value=true);
     void openEvernoteSupport();
+    void openGithub();
     void openMessageLog();
     void showDesktopUrl(const QUrl &url);
     void reloadIcons();
@@ -297,6 +302,9 @@ public slots:
     void toolbarVisibilityChanged();
     void presentationModeOn();
     void presentationModeOff();
+    void indexFinished(bool finished);
+    void exportAsPdf();
+    void exportAsPdfReady(bool);
 
 signals:
     void syncRequested();

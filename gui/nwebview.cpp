@@ -234,6 +234,10 @@ NWebView::NWebView(NBrowserWindow *parent) :
     this->pasteSequence = QKeySequence(this->pasteAction->shortcut()).toString().toLower();
     if (pasteSequence.trimmed() == "")
         pasteSequence = "ctrl+v";
+    pasteUnformattedSequence = QKeySequence(pasteWithoutFormatAction->shortcut()).toString().toLower();
+    if (pasteUnformattedSequence.trimmed() == "")
+        pasteUnformattedSequence = "ctrl+shft+v";
+    fileSaveSequence = "ctrl+s";
 }
 
 
@@ -395,6 +399,16 @@ void NWebView::keyPressEvent(QKeyEvent *e) {
         e->accept();
         return;
     }
+    if (ks.toString().toLower() == pasteUnformattedSequence) {
+        parent->pasteWithoutFormatButtonPressed();
+        e->accept();
+        return;
+    }
+    if (ks.toString().toLower() == fileSaveSequence) {
+        parent->saveNoteContent();
+        e->accept();
+        return;
+    }
 
     QWebView::keyPressEvent(e);
 }
@@ -453,6 +467,10 @@ void NWebView::downloadRequested(QNetworkRequest req) {
             urlString = urlString.mid(0,pos);
         }
         urlString = urlString.mid(6);
+        if (urlString.lastIndexOf("/") > 0)
+        	urlString = urlString.mid(urlString.lastIndexOf("/")+1);
+        if (urlString.indexOf(".")>0)
+        	urlString = urlString.mid(0,urlString.indexOf("."));
 
         qint32 lid = urlString.toInt();
         ResourceTable resTable(global.db);
