@@ -86,6 +86,7 @@ private:
         NewScreenNote=3
     };
 
+    QWebView *pdfExportWindow;
     DatabaseConnection *db;  // The database connection
     NTableView *noteTableView;
     NSearchView *searchTreeView;
@@ -169,6 +170,7 @@ private:
     RemoteQuery *remoteQuery;
 
     QShortcut *focusSearchShortcut;
+    QShortcut *fileSaveShortcut;
     QShortcut *focusNotebookShortcut;
     QShortcut *focusFontShortcut;
     QShortcut *focusFontSizeShortcut;
@@ -301,6 +303,8 @@ public slots:
     void presentationModeOn();
     void presentationModeOff();
     void indexFinished(bool finished);
+    void exportAsPdf();
+    void exportAsPdfReady(bool);
 
 signals:
     void syncRequested();

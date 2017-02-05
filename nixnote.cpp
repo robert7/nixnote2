@@ -63,6 +63,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/watchfolderdialog.h"
 #include "dialog/notehistoryselect.h"
 #include "gui/ntrashtree.h"
+#include "html/attachmenticonbuilder.h"
 #include "filters/filterengine.h"
 #include "global.h"
 #include "html/enmlformatter.h"
@@ -108,7 +109,7 @@ class SyncRunner;
 //*************************************************
 NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
-    splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImoge"));
+    splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImage"));
     global.settings->beginGroup("Appearance");
     if(global.settings->value("showSplashScreen", false).toBool()) {
         splashScreen->show();
@@ -162,6 +163,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     global.filterPosition = 0;
     this->setupGui();
 
+    global.resourceWatcher = new QFileSystemWatcher(this);
     QLOG_TRACE() << "Connecting signals";
     connect(favoritesTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(tagTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
@@ -170,7 +172,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(attributeTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(trashTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(searchText, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
-    connect(&global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
+    connect(global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
 
     hammer = new Thumbnailer(global.db);
     hammer->startTimer();
@@ -224,6 +226,8 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     //QDesktopServices::setUrlHandler("evernote", this, "showDesktopUrl");
     remoteQuery = new RemoteQuery();
 
+    // Initialize pdfExportWindow to null. We don't fully set this up in case the person requests it.
+    pdfExportWindow = NULL;
 
     // Setup file watcher
     importManager = new FileWatcherManager(this);
@@ -746,6 +750,11 @@ void NixNote::setupGui() {
     focusSearchShortcut->setContext(Qt::WidgetWithChildrenShortcut);
     this->setupShortcut(focusSearchShortcut, "Focus_Search");
     connect(focusSearchShortcut, SIGNAL(activated()), searchText, SLOT(setFocus()));
+
+    fileSaveShortcut = new QShortcut(this);
+    fileSaveShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(fileSaveShortcut, "File_Save_Content");
+    connect(fileSaveShortcut, SIGNAL(activated()), tabWindow, SLOT(saveAllNotes()));
 
     focusTitleShortcut = new QShortcut(this);
     focusTitleShortcut->setContext(Qt::WidgetShortcut);
@@ -1813,9 +1822,8 @@ void NixNote::databaseRestore(bool fullRestore) {
     else
         setMessage(tr("Importing Notes"));
 
-    ImportEnex enexReader;
-    ImportData noteReader(fullRestore);
     if (fileNames[0].endsWith(".nnex") || fullRestore) {
+        ImportData noteReader(fullRestore);
         noteReader.import(fileNames[0]);
 
         if (noteReader.lastError != 0) {
@@ -1826,6 +1834,7 @@ void NixNote::databaseRestore(bool fullRestore) {
             return;
         }
     } else {
+        ImportEnex enexReader;
         fullRestore = false;
         enexReader.import(fileNames[0]);
         QLOG_DEBUG() << "Back from import";
@@ -1975,9 +1984,7 @@ void NixNote::newNote() {
     n.created = QDateTime::currentMSecsSinceEpoch();
     n.updated = n.created;
     n.updateSequenceNum = 0;
-    if (notebookTreeView->selectedItems().size() == 0) {
-        n.notebookGuid = notebookTable.getDefaultNotebookGuid();
-    } else {
+    if (notebookTreeView->selectedItems().size() > 0) {
         NNotebookViewItem *item = (NNotebookViewItem*)notebookTreeView->selectedItems().at(0);
         qint32 lid = item->lid;
 
@@ -2006,6 +2013,22 @@ void NixNote::newNote() {
         QString notebookGuid;
         notebookTable.getGuid(notebookGuid, lid);
         n.notebookGuid = notebookGuid;
+    } else {
+        QList<QTreeWidgetItem *>items = favoritesTreeView->selectedItems();
+        QString notebookGuid = notebookTable.getDefaultNotebookGuid();
+        for (int i=0; i<items.size(); i++) {
+            FavoritesViewItem *item = (FavoritesViewItem*)items[i];
+            if (item->record.type == FavoritesRecord::LocalNotebook ||
+                    item->record.type == FavoritesRecord::SynchronizedNotebook) {
+                QString guid;
+                notebookTable.getGuid(guid, item->record.target.toInt());
+                if (guid != "") {
+                    notebookGuid = guid;
+                    i=items.size();
+                }
+            }
+        }
+            n.notebookGuid = notebookGuid;
     }
     if (global.full_username != "") {
         NoteAttributes na;
@@ -3043,6 +3066,12 @@ void NixNote::viewNoteListNarrow() {
 // has been updated by an external program.  The file name is the
 // resource file which starts with the lid.
 void NixNote::resourceExternallyUpdated(QString resourceFile) {
+    // We do a remove of the watcher at the beginning and a
+    // re-add at the end, because some applications don't actually
+    // update an existing file, but delete & re-add it. The delete
+    // causes NN to stop watching and any later saves are lost.
+    // This re-add at the end hopefully fixes it.
+    global.resourceWatcher->removePath(resourceFile);
     QString shortName = resourceFile;
     QString dba = global.fileManager.getDbaDirPath();
     shortName.replace(dba, "");
@@ -3064,6 +3093,9 @@ void NixNote::resourceExternallyUpdated(QString resourceFile) {
         noteTable.updateEnmediaHash(noteLid, oldHash, newHash, true);
         tabWindow->updateResourceHash(noteLid, oldHash, newHash);
     }
+    AttachmentIconBuilder icon;
+    icon.buildIcon(lid,resourceFile);
+    global.resourceWatcher->addPath(resourceFile);
 }
 
 
@@ -3757,7 +3789,8 @@ void NixNote::presentationModeOff() {
 
 
 
-
+// Check to see if plugins are avaialble and they match
+// the correct version expected. Load them if possible.
 void NixNote::loadPlugins() {
     webcamPluginAvailable = false;
 
@@ -3796,4 +3829,89 @@ void NixNote::loadPlugins() {
             }
         }
     }
+}
+
+
+
+// Export selected notes as PDF files.
+void NixNote::exportAsPdf() {
+
+
+    QList<qint32> lids;
+    noteTableView->getSelectedLids(lids);
+
+    if (pdfExportWindow == NULL) {
+        pdfExportWindow = new QWebView();
+        connect(pdfExportWindow, SIGNAL(loadFinished(bool)), this, SLOT(exportAsPdfReady(bool)));
+    }
+
+
+    if (lids.size() <= 0) {
+        QString file = "/home/randy/test.pdf";
+
+        if (file == "")
+            return;
+        QList<qint32> lids;
+        noteTableView->getSelectedLids(lids);
+
+        QPrinter printer;
+        printer.setOutputFormat(QPrinter::PdfFormat);
+        printer.setResolution(QPrinter::HighResolution);
+        printer.setPaperSize(QPrinter::A4);
+        printer.setOutputFileName(file);
+
+        printer.setDocName(tabWindow->currentBrowser()->noteTitle.text());
+        tabWindow->currentBrowser()->editor->print(&printer);
+        QMessageBox::information(0, tr("NixNote"), tr("Export complete"));
+
+        return;
+    }
+
+    NoteTable noteTable(global.db);
+    QByteArray content;
+    content.clear();
+    NoteFormatter formatter;
+
+    QProgressDialog *progress = new QProgressDialog(0);
+    progress->setMinimum(0);
+    progress->setWindowTitle(tr("Exporting Notes as PDF"));
+    progress->setLabelText(tr("Exporting notes as PDF"));
+    progress->setMaximum(lids.size());
+    progress->setVisible(true);
+    progress->setWindowModality(Qt::ApplicationModal);
+    progress->setCancelButton(0);
+    progress->show();
+    for (int i=0; i<lids.size(); i++) {
+        Note n;
+        noteTable.get(n,lids[i],true,false);
+        formatter.setNote(n,false);
+        if (n.title.isSet())
+            content.append("<h2>"+n.title+"</h2>");
+        content.append(formatter.rebuildNoteHTML());
+        if (i<lids.size()-1)
+            content.append("<p style=\"page-break-after:always;\"></p>");
+        progress->setValue(i);
+    }
+
+    progress->hide();
+    delete progress;
+    pdfExportWindow->setHtml(content);
+    return;
+}
+
+
+// Slot called when notes that were exported as PDF files are ready to be printed
+void NixNote::exportAsPdfReady(bool) {
+    QString file = QFileDialog::getSaveFileName(0,tr("PDF Export"), "","*.pdf");
+
+    if (file == "")
+        return;
+
+    QPrinter printer;
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setResolution(QPrinter::HighResolution);
+    printer.setPaperSize(QPrinter::A4);
+    printer.setOutputFileName(file);
+    pdfExportWindow->print(&printer);
+    QMessageBox::information(0, tr("NixNote"), tr("Export complete"));
 }
