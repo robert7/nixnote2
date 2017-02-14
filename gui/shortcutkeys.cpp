@@ -204,9 +204,13 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
 
     QString userFileName = global.fileManager.getHomeDirPath("") + QString("shortcuts.txt");
     QString systemFileName = global.fileManager.getProgramDirPath("") + QString("shortcuts.txt");
-    QLOG_DEBUG() << "Loading system shortcuts from " << systemFileName;
+#ifdef _WIN32
+    userFileName = userFileName.replace("\\","/");
+    systemFileName = systemFileName.replace("\\","/");
+#endif
+//    QLOG_DEBUG() << "Loading system shortcuts from " << systemFileName;
     loadCustomKeys(systemFileName);
-    QLOG_DEBUG() << "Loadng user shortcuts from " << userFileName;
+//    QLOG_DEBUG() << "Loadng user shortcuts from " << userFileName;
     loadCustomKeys(userFileName);
 
 }
