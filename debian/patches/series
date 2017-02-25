@@ -1,4 +1,3 @@
 0001-force-using-qt5qevercloud-3.x-library-from-system.patch
-0002-Add-the-ability-to-alter-the-default-notebook.patch
-0003-Fix-issue-where-tags-could-not-be-deleted-from-a-not.patch
-0004-Add-the-ability-to-search-for-a-in-a-note.patch
+0002-Correct-command-line-import-having-extra-after-the-h.patch
+0003-Add-multiple-search-paths-for-plugins.patch

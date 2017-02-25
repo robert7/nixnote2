@@ -1,3 +1,14 @@
+nixnote2 (2.0-1~exp1) experimental; urgency=medium
+
+  * New upstream stable release.
+  * Refresh d/copyright information.
+  * Refresh patches:
+    + Drop old patches 0002-0004, applied upstream.
+    + Cherry-pick upstream patch for command line import.
+    + Cherry-pick upstream patch for plugin-path finding.
+
+ -- Boyuan Yang <073plan@gmail.com>  Mon, 08 May 2017 14:16:08 +0800
+
 nixnote2 (2.0~beta11-1) unstable; urgency=medium
 
   * New upstream release.

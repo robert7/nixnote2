@@ -16,6 +16,10 @@ Files: images/purple-theme/*
 Copyright: Copyright Lexi Shriner
 License: GPL-2+
 
+Files: images/material-light/*
+Copyright: Copyright Daniel Maurer
+License: GPL-2+
+
 Files: qevercloud/*
 Copyright: 2014 Sergey Skoblikov
 License: Expat

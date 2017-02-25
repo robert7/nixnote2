@@ -212,7 +212,7 @@ index e4b6ab1..7b2eed8 100644
  #include <QtWebKit>
  #include <QLineEdit>
 diff --git a/gui/nbrowserwindow.h b/gui/nbrowserwindow.h
-index be93849..f7d242e 100644
+index f11c86c..581bef0 100644
 --- a/gui/nbrowserwindow.h
 +++ b/gui/nbrowserwindow.h
 @@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -264,10 +264,10 @@ index f4be709..81d13bc 100644
  
  
 diff --git a/nixnote.cpp b/nixnote.cpp
-index cf6455d..e6b2efc 100644
+index 06cd92e..12d98c2 100644
 --- a/nixnote.cpp
 +++ b/nixnote.cpp
-@@ -90,7 +90,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+@@ -91,7 +91,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  #include "xml/exportdata.h"
  #include "dialog/aboutdialog.h"
  
