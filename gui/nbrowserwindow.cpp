@@ -95,10 +95,10 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     // Setup line #1 of the window.  The text & notebook
     connect(&alarmText, SIGNAL(clicked()), this, SLOT(alarmCompleted()));
     layout->addLayout(line1Layout);
-    line1Layout->addWidget(&noteTitle);
+    line1Layout->addWidget(&noteTitle,20);
     line1Layout->addWidget(&alarmText);
     line1Layout->addWidget(&alarmButton);
-    line1Layout->addWidget(&notebookMenu);
+    line1Layout->addWidget(&notebookMenu,4);
     line1Layout->addWidget(&expandButton);
 
 
@@ -127,9 +127,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     font.setFamily("Courier");
     font.setFixedPitch(true);
     global.getGuiFont(font);
-//    font.setPointSize(global.defaultGuiFontSize);
     sourceEdit->setFont(global.getGuiFont(font));
-    //XmlHighlighter *highlighter = new XmlHighlighter(sourceEdit->document());
     sourceEditorTimer = new QTimer();
     connect(sourceEditorTimer, SIGNAL(timeout()), this, SLOT(setSource()));
 
@@ -151,7 +149,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     connect(findReplace->replaceButton, SIGNAL(clicked()), this, SLOT(findReplaceInNotePressed()));
     connect(findReplace->replaceAllButton, SIGNAL(clicked()), this, SLOT(findReplaceAllInNotePressed()));
     connect(findReplace->closeButton, SIGNAL(clicked()), this, SLOT(findReplaceWindowHidden()));
-
 
 
     // Setup shortcuts
@@ -248,9 +245,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     insertLatexShortcut = new QShortcut(this);
     this->setupShortcut(insertLatexShortcut, QString("Edit_Insert_Latex"));
     connect(insertLatexShortcut, SIGNAL(activated()),this, SLOT(insertLatexButtonPressed()));
-    //insertLatexShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-
-
 
 
     // Restore the expand/collapse state
@@ -258,7 +252,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     int expandButton = global.settings->value("ExpandButton", EXPANDBUTTON_1).toInt();
     global.settings->endGroup();
     this->expandButton.setState(expandButton);
-//    changeExpandState(expandButton);
 
     connect(&focusTimer, SIGNAL(timeout()), this, SLOT(focusCheck()));
     focusTimer.setInterval(100);
@@ -495,7 +488,6 @@ void NBrowserWindow::setContent(qint32 lid) {
         alarmText.setVisible(true);
         QDateTime atime;
         atime.setMSecsSinceEpoch(t);
-        //alarmText.setText(atime.toString(Qt::SystemLocaleShortDate));
         if (atime.date() == QDate::currentDate())
             alarmText.setText(tr("Today"));
         else if (atime.date() == QDate::currentDate().addDays(+1))
@@ -560,9 +552,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     QLOG_DEBUG() << "Checking thumbanail";
     if (hammer->idle && noteTable.isThumbnailNeeded(this->lid)) {
         hammer->render(this->lid);
-    } /*else
-        hammer->timer.start(1000);*/
-
+    }
     this->setEditorStyle();
 
     if (hasFocus)
@@ -590,8 +580,6 @@ void NBrowserWindow::setReadOnly(bool readOnly) {
     noteTitle.setFocusPolicy(Qt::StrongFocus);
     tagEditor.setEnabled(true);
     tagEditor.setFocusPolicy(Qt::StrongFocus);
-    //authorEditor.setFocusPolicy(Qt::StrongFocus);
-    //locationEditor.setFocusPolicy(Qt::StrongFocus);
     urlEditor.setFocusPolicy(Qt::StrongFocus);
     notebookMenu.setEnabled(true);
     dateEditor.setEnabled(true);
@@ -739,25 +727,12 @@ void NBrowserWindow::noteContentUpdated() {
         emit(noteUpdated(this->lid));
         emit(updateNoteList(this->lid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
     }
-//    if (sourceEdit->isVisible()) {
-//        sourceEditorTimer->stop();
-//        sourceEditorTimer->setInterval(500);
-//        sourceEditorTimer->setSingleShot(false);
-//        sourceEditorTimer->start();
-//    }
 }
 
 
 // Save the note's content
 void NBrowserWindow::saveNoteContent() {
-    //*** NOTE ***
-    // Focus changing is disabled to try and fix the changing position
-    // when syncing.
-    // Do a little bit of focus changing to make sure things are saved properly
-//    this->editor->setFocus();
     microFocusChanged();
-//    this->editor->titleEditor->setFocus();
-
 
     if (this->editor->isDirty) {
         //QString contents = editor->editorPage->mainFrame()->toHtml();
@@ -1472,16 +1447,23 @@ void NBrowserWindow::insertTableButtonPressed() {
     int rows = dialog.getRows();
     int width = dialog.getWidth();
     bool percent = dialog.isPercent();
+    QString tableStyle = "style=\"-evernote-table:true;border-collapse:collapse;width:%1;table-layout:fixed;margin-left:0px;\"";
+    QString cellStyle = "style=\"border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:33.33%;\"";
 
-    QString newHTML = QString("<table border=\"1\" width=\"") +QString::number(width);
+    QString newHTML = QString("<table border=\"1px\" width=\"") +QString::number(width);
+    QString widthString = QString::number(width);
     if (percent)
-        newHTML = newHTML +"%";
-    newHTML = newHTML + "\"><tbody>";
+        widthString = widthString+"%";
+//    newHTML = tableStyle.arg(width);
+//    if (percent)
+//        newHTML = newHTML +"%";
+//    newHTML = newHTML + "\"><tbody>";
+    newHTML = "<table "+tableStyle.arg(widthString)+"<tbody>";
 
     for (int i=0; i<rows; i++) {
         newHTML = newHTML +"<tr>";
         for (int j=0; j<cols; j++) {
-            newHTML = newHTML +"<td>&nbsp;</td>";
+            newHTML = newHTML +"<td "+cellStyle+">&nbsp;</td>";
         }
         newHTML = newHTML +"</tr>";
     }
@@ -1491,6 +1473,7 @@ void NBrowserWindow::insertTableButtonPressed() {
     editor->page()->mainFrame()->evaluateJavaScript(script);
     contentChanged();
 }
+
 
 void NBrowserWindow::insertTableRowButtonPressed() {
     QString js ="function insertTableRow() {"
@@ -1502,10 +1485,14 @@ void NBrowserWindow::insertTableRowButtonPressed() {
         "      if (workingNode.nodeName.toLowerCase()=='tr') {"
         "           row = document.createElement('TR');"
         "           var nodes = workingNode.getElementsByTagName('td');"
+        "           var style = '';"
         "           for (j=0; j<nodes.length; j=j+1) {"
-        "              cell = document.createElement('TD');"
-        "              cell.innerHTML='&nbsp;';"
-        "              row.appendChild(cell);"
+        "             if (style == '' && nodes[0].hasAttribute('style')) style = nodes[0].attributes['style'].value;"
+        "             window.browserWindow.printNodeName(style);"
+        "             cell = document.createElement('TD');"
+        "             if (style != '') cell.setAttribute('style',style);"
+        "             cell.innerHTML='&nbsp;';"
+        "             row.appendChild(cell);"
         "           }"
         "           workingNode.parentNode.insertBefore(row,workingNode.nextSibling);"
         "           return;"
@@ -1524,9 +1511,11 @@ void NBrowserWindow::insertTableColumnButtonPressed() {
             "   var selRange = selObj.getRangeAt(0);"
             "   var workingNode = window.getSelection().anchorNode.parentNode;"
             "   var current = 0;"
+            "   var style = '';"
             "   while (workingNode.nodeName.toLowerCase() != 'table' && workingNode != null) {"
             "       if (workingNode.nodeName.toLowerCase() == 'td') {"
             "          var td = workingNode;"
+            "          if (style == '' && td.hasAttribute('style')) style = td.attributes['style'].value;"
             "          while (td.previousSibling != null) { "
             "             current = current+1; td = td.previousSibling;"
             "          }"
@@ -1536,6 +1525,8 @@ void NBrowserWindow::insertTableColumnButtonPressed() {
             "   if (workingNode == null) return;"
             "   for (var i=0; i<workingNode.rows.length; i++) { "
             "      var cell = workingNode.rows[i].insertCell(current+1); "
+            "      cell.setAttribute('style',style);"
+//            "          window.browserWindow.printNodeName(cell.style);"
             "      cell.innerHTML = '&nbsp'; "
             "   }"
             "} insertTableColumn();";
@@ -1861,7 +1852,7 @@ void NBrowserWindow::setTableCursorPositionBackTab(int currentRow, int currentCo
 // If a user presses backtab from within a table
 void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, int tableRows, int tableColumns) {
     if (currentRow  == tableRows && currentCol == tableColumns) {
-        return;
+        this->insertTableRowButtonPressed();
     }
     QKeyEvent *down = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
     QCoreApplication::postEvent(editor->editorPage, down);
@@ -1963,7 +1954,7 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
 #ifdef _WIN32
          fileUrl = fileUrl.replace("\\", "/");
 #endif // End windows check
-         global.resourceWatcher.addPath(fileUrl);
+         global.resourceWatcher->addPath(fileUrl);
          QDesktopServices::openUrl(fileUrl);
          return;
      }
@@ -2123,7 +2114,7 @@ void NBrowserWindow::setInsideLink(QString link) {
 
 
 
-// Edit a latex formula
+// Edit a LaTeX formula
 void NBrowserWindow::editLatex(QString guid) {
     QString text = editor->selectedText();
     QString oldFormula = "";
@@ -2229,6 +2220,9 @@ void NBrowserWindow::editLatex(QString guid) {
     buffer.append(QString::number(newlid));
     buffer.append("\">");
     buffer.append("<img src=\"file://");
+#ifdef _WIN32
+    buffer.append("/");
+#endif
     buffer.append(outfile);
     buffer.append("\" type=\"image/gif\" hash=\"");
     buffer.append(hash.toHex());
@@ -2328,6 +2322,9 @@ void NBrowserWindow::insertImage(const QMimeData *mime) {
     if (d.bodyHash.isSet())
          hash = d.bodyHash;
     buffer.append("<img src=\"file://");
+#ifdef _WIN32
+    buffer.append("/");
+#endif
     buffer.append(path);
     buffer.append("\" type=\"image/png\" hash=\"");
     buffer.append(hash.toHex());
@@ -2609,10 +2606,15 @@ QString NBrowserWindow::stripContentsForPrint() {
         int endPos = contents.indexOf(">", pos);
         QString lidString = contents.mid(contents.indexOf("lid=", pos)+5);
         lidString = lidString.mid(0,lidString.indexOf("\" "));
+#ifndef _WIN32
         contents = contents.mid(0,pos) + "<img src=\"file://" +
                 global.fileManager.getTmpDirPath() + lidString +
                 QString("-print.png\" width=\"10%\" height=\"10%\"></img>")+contents.mid(endPos+1);
-
+#else
+        contents = contents.mid(0,pos) + "<img src=\"file:///" +
+                global.fileManager.getTmpDirPath() + lidString +
+                QString("-print.png\" width=\"10%\" height=\"10%\"></img>")+contents.mid(endPos+1);
+#endif
         pos = contents.indexOf("<object", endPos);
     }
     return contents.replace("src=\"file:////", "src=\"/");
@@ -2644,7 +2646,7 @@ void NBrowserWindow::printPreviewReady(QPrinter *printer) {
 
 
 // Print the contents of a note.  Basically it loops through the
-// note and repaces the <object> tags with <img> tags.  The plugin
+// note and replaces the <object> tags with <img> tags.  The plugin
 // object should be creating temporary images for the print.
 void NBrowserWindow::printNote() {
     QString contents = stripContentsForPrint();
@@ -2688,7 +2690,7 @@ void NBrowserWindow::printNote() {
         if (error) {
             fastPrint = false;
 
-            // Re-initialize printer object so we don't have any bugus
+            // Re-initialize printer object so we don't have any bogus
             // values from settings.
             delete printer;
             printer = new QPrinter();
@@ -2847,6 +2849,9 @@ void NBrowserWindow::attachFileSelected(QString filename) {
             hash = d.bodyHash;
         }
         buffer.append("<img src=\"file://");
+#ifdef _WIN32
+        buffer.append("/");
+#endif
         buffer.append(path);
         buffer.append("\" type=\"");
         buffer.append(mime);
@@ -2910,6 +2915,9 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
     buffer.append("<img en-tag=\"temporary\" title=\""+QFileInfo(filename).fileName() +"\" ");
     buffer.append("src=\"file://");
+#ifdef _WIN32
+    buffer.append("/");
+#endif
     buffer.append(tmpFile);
     buffer.append("\" />");
     buffer.append("</a>");
@@ -3129,7 +3137,11 @@ void NBrowserWindow::encryptButtonPressed() {
             + dialog.getHint().replace("'","\\'") + "\" length=\"64\" ");
     buffer.append("contentEditable=\"false\" alt=\"");
     buffer.append(encrypted);
+#ifndef _WIN32
     buffer.append("\" src=\"file://").append(global.fileManager.getImageDirPath("encrypt.png") +"\"");
+#else
+    buffer.append("\" src=\"file:///").append(global.fileManager.getImageDirPath("encrypt.png") +"\"");
+#endif
     global.cryptCounter++;
     buffer.append(" id=\"crypt"+QString::number(global.cryptCounter) +"\"");
     buffer.append(" onMouseOver=\"style.cursor=\\'hand\\'\"");
@@ -3174,10 +3186,11 @@ void NBrowserWindow::sendDateSubjectUpdateSignal() {
 // Send a signal that the note has been updated
 void NBrowserWindow::sendTitleUpdateSignal() {
     NoteTable ntable(global.db);
-    ntable.updateTitle(this->lid, this->noteTitle.text().trimmed(), true);
-    emit noteTitleEditedSignal(uuid, lid, this->noteTitle.text().trimmed());
+    QString text = this->noteTitle.text().replace("\n"," ").trimmed();
+    ntable.updateTitle(this->lid, text, true);
+    emit noteTitleEditedSignal(uuid, lid, text);
     emit(this->noteUpdated(lid));
-    emit(this->updateNoteList(lid, NOTE_TABLE_TITLE_POSITION, this->noteTitle.text()));
+    emit(this->updateNoteList(lid, NOTE_TABLE_TITLE_POSITION, text));
     sendDateUpdateSignal();
 }
 
@@ -3324,7 +3337,11 @@ void NBrowserWindow::handleUrls(const QMimeData *mime) {
     for (int i=0; i<urlList.size(); i++) {
         QString file  = urlList[i].toString();
         if (file.toLower().startsWith("file://") && !ctrlModifier) {
+#ifndef _WIN32
             attachFileSelected(file.mid(7));
+#else
+            attachFileSelected(file.mid(8));
+#endif
             if (i<urlList.size()-1)
                 insertHtml("<div><br/></div>");
         } else if (file.toLower().startsWith("file://") && ctrlModifier) {
@@ -3512,7 +3529,11 @@ void NBrowserWindow::subscriptButtonPressed() {
 // Set the editor background & font color
 void NBrowserWindow::setEditorStyle() {
     QString qss = global.getEditorCss();
+#ifndef _WIN32
     editor->settings()->setUserStyleSheetUrl(QUrl("file://"+qss));
+#else
+    editor->settings()->setUserStyleSheetUrl(QUrl("file:///"+qss));
+#endif
     return;
 }
 

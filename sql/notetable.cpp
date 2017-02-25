@@ -457,8 +457,7 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
             query.bindValue(":data", true);
             query.exec();
         }
-        if (content.contains("<en-todo checked=\"false\"") ||
-	    content.contains("<en-todo>")) {
+        if (content.contains("<en-todo checked=\"false\"") || content.contains("<en-todo/>")) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_HAS_TODO_UNCOMPLETED);
             query.bindValue(":data", true);
@@ -820,7 +819,7 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadBinary) 
         case (NOTE_CONTENT):
             note.content = query.value(1).toByteArray().data();
 
-            // Sometimes Evernote doesn't send the XML tag with UTF8 encoding. Ths forces it.
+            // Sometimes Evernote doesn't send the XML tag with UTF8 encoding. This forces it.
             if (global.forceUTF8 && !note.content->startsWith("<?xml"))
                 note.content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + note.content;
             break;
@@ -1074,13 +1073,18 @@ qint32 NoteTable::getNotesWithTag(QList<qint32> &retval, QString tag) {
 
 // Set if a note needs to be indexed
 void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
-    if (lid <= 0)
+    QLOG_TRACE_IN();
+    if (lid <= 0) {
+        QLOG_TRACE_OUT();
         return;
+    }
 
     // If it is already set to this value, then we don't need to
     // do anything.
-    if (this->isIndexNeeded(lid) == indexNeeded)
+    if (this->isIndexNeeded(lid) == indexNeeded) {
+        QLOG_TRACE_OUT();
         return;
+    }
 
     NSqlQuery query(db);
     db->lockForWrite();
@@ -1088,11 +1092,12 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
-    QLOG_DEBUG() << query.lastError();
 
     // We don't really need to do anything after deleting the flag
-    if (!indexNeeded)
+    if (!indexNeeded) {
+        QLOG_TRACE_OUT();
         return;
+    }
 
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     query.bindValue(":lid", lid);
@@ -1104,7 +1109,9 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
 
     // Experimental class to index at save
     NoteIndexer indexer(db);
+    QLOG_TRACE() << "Calling indexNote";
     indexer.indexNote(lid);
+    QLOG_TRACE_OUT();
 }
 
 
@@ -1326,8 +1333,8 @@ void NoteTable::removeTag(qint32 lid, qint32 tag, bool isDirty = false) {
     query.prepare("delete from DataStore where lid=:lid and key=:key and data=:tag");
     query.bindValue(":lid", lid);
     query.bindValue(":key",NOTE_TAG_LID);
-    query.bindValue(":tag:", tag);
-    query.exec();
+    query.bindValue(":tag", tag);
+    query.exec();;
     query.finish();
     db->unlock();
     if (isDirty) {
@@ -1829,12 +1836,18 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
 
 
     if (content.contains("<en-todo")) {
+        QLOG_DEBUG() << content;
         query.prepare("insert into datastore (lid, key, data) values (:lid, :key, 1)");
+        // If we have a todo that is checked, then it is completed.
+
         if (content.contains("<en-todo checked=\"true\"")) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_HAS_TODO_COMPLETED);
             query.exec();
-        } else {
+        }
+
+        // If we have a todo that is not checked, but still have a todo, then it must be uncoompleted.
+        if (content.contains("<en-todo checked=\"false\"") || content.contains("<en-todo/>")) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_HAS_TODO_UNCOMPLETED);
             query.exec();

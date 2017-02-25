@@ -228,6 +228,15 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.clear();
     content = b;
 
+    // Remove <o:p> tags in case pasting from MicroSoft products.
+    content = content.replace("<o:p>", "");
+    content = content.replace("</o:p>", "");
+    content = content.replace("<o:p/>", "");
+
+    // Remove auto-complete tags
+    content = content.replace("<ac:rich-text-body", "<div");
+    content = content.replace("</ac:rich-text-body", "</div");
+
     // Run it through "tidy".  It is a program which will fix any invalid HTML
     // and give us the results back through stdout.  In a perfect world this
     // wouldn't be needed, but WebKit doesn't always give back good HTML.
@@ -250,7 +259,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
             not errorList[e].contains("<img> proprietary attribute \"oncontextmenu\"") &&
             not errorList[e].contains("<img> lacks \"alt\" attribute")
             ) {
-            QLOG_DEBUG() << errorList[e];
+                QLOG_INFO() << errorList[e];
         }
     }
 
