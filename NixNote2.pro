@@ -9,13 +9,14 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
     unix:INCLUDEPATH += /usr/include/poppler/qt5
     win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
+    win32:INCLUDEPATH+= "$$PWD/winlib/includes"
     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
     unix:LIBS +=    -lcurl \
-               -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
-    win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
-    win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
+               -lpthread -L/usr/lib -lpoppler-qt5 -ltidy -g -rdynamic
+    win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5 -ltidy
     win32:RC_ICONS += "$$PWD/images/windowIcon.ico"
 }
+
 
 equals(QT_MAJOR_VERSION, 4) {
     QT       += core gui webkit sql network xml
@@ -236,7 +237,9 @@ SOURCES += main.cpp\
     dialog/preferences/thumbnailpreferences.cpp \
     dialog/noteproperties.cpp \
     dialog/shortcutdialog.cpp \
-    cmdtools/signalgui.cpp
+    cmdtools/signalgui.cpp \
+    gui/browserWidgets/table/tablepropertiesdialog.cpp \
+    threads/browserrunner.cpp
 
 
 
@@ -337,9 +340,7 @@ HEADERS  += nixnote.h \
     dialog/watchfolderadd.h \
     dialog/watchfolderdialog.h \
     dialog/preferences/preferencesdialog.h \
-    dialog/preferences/debugpreferences.h \
     dialog/preferences/syncpreferences.h \
-    dialog/preferences/appearancepreferences.h \
     settings/accountsmanager.h \
     dialog/adduseraccountdialog.h \
     dialog/accountmaintenancedialog.h \
@@ -435,7 +436,11 @@ HEADERS  += nixnote.h \
     dialog/preferences/thumbnailpreferences.h \
     dialog/noteproperties.h \
     dialog/shortcutdialog.h \
-    cmdtools/signalgui.h
+    cmdtools/signalgui.h \
+    gui/browserWidgets/table/tablepropertiesdialog.h \
+    dialog/preferences/appearancepreferences.h \
+    dialog/preferences/debugpreferences.h \
+    threads/browserrunner.h
 
 
 
@@ -446,25 +451,33 @@ win32:QMAKE_CXXFLAGS +=-g -O2 --param=ssp-buffer-size=4 -Wformat -Werror=format-
 win32:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions
 win32:DEFINES += SMTP_BUILD
 
-binary.path = /usr/bin/
+isEmpty(PREFIX) {
+    PREFIX = /usr/local
+}
+
+binary.path = $$PREFIX/bin/
 binary.files = nixnote2
 
-desktop.path = /usr/share/applications/
+desktop.path = $$PREFIX/share/applications/
 desktop.files = nixnote2.desktop
 
-images.path = /usr/share/nixnote2/images
+images.path = $$PREFIX/share/nixnote2/images
 images.files = images/*
 
-java.path = /usr/share/nixnote2/java
+java.path = $$PREFIX/share/nixnote2/java
 java.files = java/*
 
-translations.path = /usr/share/nixnote2/translations
+translations.path = $$PREFIX/share/nixnote2/translations
 translations.files = translations/*
 
-qss.path = /usr/share/nixnote2/qss
+qss.path = $$PREFIX/share/nixnote2/qss
 qss.files = qss/*
 
-help.path = /usr/share/nixnote2/help
+pixmap.path = $$PREFIX/share/pixmaps/
+pixmap.extra = cp images/windowIcon.png images/nixnote2.png
+pixmap.files = images/nixnote2.png
+
+help.path = $$PREFIX/share/nixnote2/help
 help.files = help/*
 
-INSTALLS = binary desktop images java translations qss help
+INSTALLS = binary desktop images java translations qss pixmap help
