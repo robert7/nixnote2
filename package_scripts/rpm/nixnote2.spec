@@ -9,13 +9,13 @@ URL: http://nevernote.sourceforge.net/
 Packager: Randy Baumgarte <randy@fbn.cx>
 Source: /home/randy/nn2/package_scripts/nixnote2___VERSION_____ARCH__.tar.gz
 AutoReqProv: no
-Requires: tidy, bash, qt >= 4.8.5, qt-x11 >= 4.8.5, qtwebkit >= 2.3, glibc >= 2.18, libgcc >= 4.8.2, poppler-qt, libstdc++ >= 4.8.2, openssl >= 1.0.0, OpenEXR >= 1.7, tbb >= 4.1, libcurl >= 3.75.0
+Requires: tidy, bash, qt >= 4.8.5, qt-x11 >= 4.8.5, qtwebkit >= 2.3, glibc >= 2.18, libgcc >= 4.8.2, poppler-qt, libstdc++ >= 4.8.2, openssl >= 1.0.0, OpenEXR >= 1.7, tbb >= 4.1, libcurl >= 3.75.0, libtidy >= 5.0
 
 %description
 NixNote:: Evernote client clone for Linux
 
 Copyright 2009-2015, Randy Baumgarte 
-Licensed under GNU General Public Lisence version 2+
+Licensed under GNU General Public License version 2+
 
 This is an incomplete clone of Evernote designed to run on Linux. 
 While this is designed to work with Evernote, it is in no way

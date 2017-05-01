@@ -48,8 +48,8 @@ TagEditorNewTag::TagEditorNewTag(QWidget *parent) :
 
     this->setFont(global.getGuiFont(font()));
 
-    inactiveColor = "QLineEdit {background-color: transparent; border-radius: 0px;} ";
-    activeColor = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
+    inactiveColor = global.getTagEditorInactiveStyle();
+    activeColor = global.getTagEditorActiveStyle();
     this->setStyleSheet(inactiveColor);
 
     this->setPlaceholderText(tr("Click to add tag..."));
@@ -107,6 +107,9 @@ void TagEditorNewTag::loadCompleter() {
     qSort(tagNames.begin(), tagNames.end(), caseInsensitiveLessThan);
     completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
+#if QT_VERSION >= 0x050000
+    completer->setFilterMode(Qt::MatchContains);
+#endif
     setCompleter(completer);
 
     QStringListModel *model;

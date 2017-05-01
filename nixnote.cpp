@@ -688,16 +688,14 @@ void NixNote::setupGui() {
     // Determine if we should start minimized
     QLOG_DEBUG() << "isSystemTrayAvailable:" << QSystemTrayIcon::isSystemTrayAvailable();
     if (global.startMinimized && !global.forceNoStartMimized && (QSystemTrayIcon::isSystemTrayAvailable()||global.forceSystemTrayAvailable)) {
+        this->setWindowState(Qt::WindowMinimized);
         if (minimizeToTray)
-            this->hide();
-        else
-            this->setWindowState(Qt::WindowMinimized);
+            QTimer::singleShot(100,this, SLOT(hide()));
     }
     if (global.forceStartMinimized) {
+        this->setWindowState(Qt::WindowMinimized);
         if (minimizeToTray)
-            this->hide();
-        else
-            this->setWindowState(Qt::WindowMinimized);
+            QTimer::singleShot(100,this, SLOT(hide()));
     }
 
     // Restore expanded tags & stacks
@@ -1489,9 +1487,7 @@ void NixNote::syncButtonReset() {
            bool restart = global.settings->value("apiRateLimitAutoRestart", false).toBool();
            global.settings->endGroup();
            if (restart) {
-               QTime t = QTime::currentTime();
-               int minutes = 60-t.minute()+1; // Time to the top of the hour plus a padding.
-               QTimer::singleShot(60*1000*minutes, this, SLOT(synchronize()));
+               QTimer::singleShot(60*1000* (syncRunner.minutesToNextSync + 1), this, SLOT(synchronize()));
            }
     }
 }
@@ -1914,7 +1910,13 @@ void NixNote::notifySyncComplete() {
         return;
     if (syncRunner.error) {
         showMessage(tr("Sync Error"), tr("Sync completed with errors."));
-        if (global.popupOnSyncError()) {
+
+        global.settings->beginGroup("Sync");
+        bool isAutoRestartEnabled = global.settings->value("apiRateLimitAutoRestart", false).toBool();
+        global.settings->endGroup();
+
+        //Do not show popup when automatic sync after error enabled
+        if (global.popupOnSyncError() && !isAutoRestartEnabled) {
             QMessageBox::critical(0, tr("Sync Error"), tr("Sync error. See message log for details"));
         }
     } else
