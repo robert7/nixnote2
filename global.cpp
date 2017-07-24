@@ -258,6 +258,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     multiThreadSaveEnabled = this->getMultiThreadSave();
     useLibTidy = this->getUseLibTidy();
 
+    exitManager = new ExitManager();
+    exitManager->loadExits();
 }
 
 
@@ -579,7 +581,7 @@ bool Global::getStrictDTD() {
 
 bool Global::getForceUTF8() {
     settings->beginGroup("Debugging");
-    bool value = settings->value("forceUTF8",false).toBool();
+    bool value = settings->value("forceUTF8",true).toBool();
     settings->endGroup();
     forceUTF8 = value;
     return value;
