@@ -51,6 +51,7 @@ public:
     QAction *insertDatetimeVisible;
     QAction *leftJustifyVisible;
     QAction *centerJustifyVisible;
+    QAction *fullJustifyVisible;
     QAction *rightJustifyVisible;
     QAction *hlineVisible;
     QAction *shiftRightVisible;
@@ -67,6 +68,7 @@ public:
     QAction *htmlEntitiesButtonVisible;
     QAction *subscriptVisible;
     QAction *superscriptVisible;
+    QAction *formatCodeButtonVisible;
 
     QAction *removeFormatButtonAction;
     QShortcut * removeFormatButtonShortcut;
@@ -98,6 +100,8 @@ public:
     QShortcut *leftJustifyButtonShortcut;
     QAction *centerJustifyButtonAction;
     QShortcut *centerJustifyButtonShortcut;
+    QAction *fullJustifyButtonAction;
+    QShortcut *fullJustifyButtonShortcut;
     QAction *rightJustifyButtonAction;
     QShortcut *rightJustifyButtonShortcut;
     QAction *hlineButtonAction;
@@ -124,6 +128,8 @@ public:
     QShortcut *spellCheckButtonShortcut;
     QAction *htmlEntitiesButtonAction;
     QShortcut *htmlEntitiesButtonShortcut;
+    QAction *formatCodeButtonAction;
+    QShortcut *formatCodeButtonShortcut;
 
     FontNameComboBox *fontNames;
     FontSizeComboBox *fontSizes;
@@ -164,6 +170,7 @@ public slots:
     void toggleInsertDatetimeVisible();
     void toggleLeftJustifyButtonVisible();
     void toggleCenterJustifyButtonVisible();
+    void toggleFullJustifyButtonVisible();
     void toggleRightJustifyButtonVisible();
     void toggleHlineButtonVisible();
     void toggleShiftRightButtonVisible();
@@ -181,7 +188,8 @@ public slots:
     void toggleHtmlEntitiesButtonVisible();
     void loadFontSizeComboBox(QString font);
     void loadFontNames();
-    
+    void toggleFormatCodeButtonVisible();
+
 };
 
 #endif // EDITORBUTTONBAR_H

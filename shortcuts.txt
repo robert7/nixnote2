@@ -98,12 +98,14 @@ Format_Superscript		Ctrl+=		// Set superscript
 Format_Subscript		Ctrl+Shift+=	// Subscript
 Format_Alignment_Left		Ctrl+L		// Left align text
 Format_Alignment_Center	        Ctrl+E		// Center text
+Format_Alignment_Full	        		// Fully align text
 Format_Alignment_Right		Ctrl+R		// Right align text
 Format_List_Bullet		Ctrl+Shift+B	// Bullet list
 Format_List_Numbered		Ctrl+Shift+N	// Numbered list 
 Format_Indent_Increase		Ctrl+M		// Increase the indentation
 Format_Indent_Decrease		Ctrl+Shift+M	// Decrease the indent
 Format_Highlight                                // Highlight the current text
+Format_Code_Block                               // Format code block
 
 Tools_Synchronize		F9		// Synchronize with Evernote
 Tools_Connect					// Connect to Evernote

@@ -251,6 +251,21 @@ NTableView::NTableView(QWidget *parent) :
     copyNoteAction->setFont(global.getGuiFont(font()));
     connect(copyNoteAction, SIGNAL(triggered()), this, SLOT(copyNote()));
 
+    reminderMenu = new QMenu(tr("Reminders"));
+    reminderMenu->setFont(global.getGuiFont(font()));
+    contextMenu->addMenu(reminderMenu);
+
+    reminderRemoveAction = new QAction(tr("Remove"), this);
+    reminderMenu->addAction(reminderRemoveAction);
+    reminderRemoveAction->setFont(global.getGuiFont(font()));
+    connect(reminderRemoveAction, SIGNAL(triggered()), this, SLOT(removeReminder()));
+
+    reminderMarkCompletedAction = new QAction(tr("Mark Completed"), this);
+    reminderMenu->addAction(reminderMarkCompletedAction);
+    reminderMarkCompletedAction->setFont(global.getGuiFont(font()));
+    connect(reminderMarkCompletedAction, SIGNAL(triggered()), this, SLOT(markReminderCompleted()));
+
+
     pinNoteAction = new QAction(tr("Pin Note"), this);
     contextMenu->addAction(pinNoteAction);
     pinNoteAction->setFont(global.getGuiFont(font()));
@@ -909,19 +924,22 @@ void NTableView::copyNoteLink() {
 
     Note note;
     NoteTable ntable(global.db);
-    ntable.get(note, lids[0], false, false);
+    QString lidUrl = "";
+    for (int i=0; i<lids.size(); i++) {
+        ntable.get(note, lids[i], false, false);
 
-    QString guid = "";
-    if (note.guid.isSet())
-        guid = note.guid;
-    QString localid;
-    if (!note.updateSequenceNum.isSet() || note.updateSequenceNum == 0) {
-        syncneeded = true;
-        localid = QString::number(lids[0]);
-    } else
-        localid = guid;
+        QString guid = "";
+        if (note.guid.isSet())
+            guid = note.guid;
+        QString localid;
+        if (!note.updateSequenceNum.isSet() || note.updateSequenceNum == 0) {
+            syncneeded = true;
+            localid = QString::number(lids[i]);
+        } else
+            localid = guid;
 
-    QString lidUrl = "evernote:///view/" + userid +"/" +shard + "/" +guid + "/" +localid +"/";
+        lidUrl = lidUrl+"evernote:///view/" + userid +"/" +shard + "/" +guid + "/" +localid +"/" + " ";
+    }
     if (syncneeded) {
         QMessageBox msgBox;
         msgBox.setWindowTitle(tr("Unsynchronized Note"));
@@ -1341,8 +1359,10 @@ void NTableView::createTableOfContents() {
                 }
             }
         }
-        QString url = QString("<a href=\"")+href2+QString("\" title=\"")+n.title+
-                QString("\">")+n.title+QString("</a>");
+        QString tempTitle = n.title;
+        tempTitle.replace("&", "&amp;");
+        QString url = QString("<a href=\"")+href2+QString("\" title=\"")+tempTitle+
+                QString("\">")+tempTitle+QString("</a>");
         content = content+"<li>"+url+"</li>";
     }
     content = content+QString("</ol></en-note>");
@@ -1576,13 +1596,23 @@ void NTableView::setTitleColor(QString color) {
 
 
 void NTableView::noteTagsUpdated(QString uuid, qint32 lid, QStringList names) {
-	QString value="";
+    Q_UNUSED(uuid);
+    QString value="";
 	for (int i=0; i<names.size(); i++) {
 		value = value + names[i];
 		if (names.size() > i+1)
 			value = value + ",";
 	}
 	this->refreshCell(lid, NOTE_TABLE_TAGS_POSITION, QVariant(value));
+
+}
+
+
+
+
+void NTableView::noteNotebookUpdated(QString uuid, qint32 lid, QString name) {
+    Q_UNUSED(uuid);
+    this->refreshCell(lid, NOTE_TABLE_NOTEBOOK_POSITION, QVariant(name));
 
 }
 
@@ -1749,3 +1779,47 @@ void NTableView::showPropertiesDialog() {
     }
 }
 
+
+
+
+void NTableView::markReminderCompleted() {
+    // Make sure we save whatever we are currently viewing
+    emit saveAllNotes();
+
+    QList<qint32> lids;
+    getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
+    NoteTable ntable(global.db);
+    for (int i=0; i<lids.size(); i++) {
+        int sourceRow = proxy->lidMap->value(lids[i]);
+        QModelIndex sourceIndex = model()->index(sourceRow, NOTE_TABLE_REMINDER_TIME_POSITION);
+        qlonglong value = sourceIndex.data().toLongLong();
+        QLOG_DEBUG() << value;
+        if (value > 0)
+            ntable.setReminderCompleted(lids[i], true);
+    }
+    FilterEngine engine;
+    engine.filter();
+    refreshData();
+}
+
+
+void NTableView::removeReminder() {
+    // Make sure we save whatever we are currently viewing
+    emit saveAllNotes();
+
+    QList<qint32> lids;
+    getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
+    NoteTable ntable(global.db);
+    for (int i=0; i<lids.size(); i++) {
+        ntable.removeReminder(lids[i]);
+    }
+    FilterEngine engine;
+    engine.filter();
+    refreshData();
+}

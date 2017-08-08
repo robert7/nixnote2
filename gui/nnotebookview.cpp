@@ -155,6 +155,8 @@ NNotebookView::NNotebookView(QWidget *parent) :
 
     expandedImage = new QImage(":expandedIcon");
     collapsedImage = new QImage(":collapsedIcon");
+
+    this->setProperty("animated", false);
 }
 
 
@@ -693,7 +695,11 @@ void NNotebookView::editComplete() {
 
         // Check that this notebook doesn't already exist
         // if it exists or the length == 0, we go back to the original name
-        qint32 check = table.findByName(text);
+        qint32 check = 0;
+        if (text.toLower() == oldName.toLower() && text != oldName)
+            check = 0;
+        else
+            check = table.findByName(text);
         if (check != 0 || text.trimmed() == "") {
             NNotebookViewItem *item = dataStore[lid];
             item->setData(NAME_POSITION, Qt::DisplayRole, oldName);
@@ -1038,10 +1044,12 @@ void NNotebookView::drawBranches(QPainter *painter, const QRect &rect, const QMo
     painter->save();
     if (isExpanded(index)) {
         int offset = rect.width()-expandedImage->width()-1;
-        painter->drawImage(offset, rect.y(),*expandedImage);
+        int voffset = (rect.height() - expandedImage->height()) / 2;
+        painter->drawImage(offset, rect.y()+voffset,*expandedImage);
     } else {
         int offset = rect.width()-collapsedImage->width()-1;
-        painter->drawImage(offset, rect.y(),*collapsedImage);
+        int voffset = (rect.height() - collapsedImage->height()) / 2;
+        painter->drawImage(offset, rect.y()+voffset,*collapsedImage);
     }
     painter->restore();
     return;

@@ -45,6 +45,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "application.h"
 
 
+NixNote *w;
+
 using namespace std;
 
 //*********************************************
@@ -67,9 +69,25 @@ void fault_handler(int sig) {
 
   // print out all the frames to stderr
   fprintf(stderr, "Error: signal %d:\n", sig);
-  backtrace_symbols_fd(array, size, 2);
+  backtrace_symbols_fd(array, size, 2);  
+  if (w!=NULL) {
+      fprintf(stderr, "Forcing save\n");
+      w->saveState();
+  }
   exit(1);
 }
+
+
+
+void sighup_handler(int sig) {
+  // print out all the frames to stderr
+  fprintf(stderr, "Error: signal %d:\n", sig);
+  if (w!=NULL) {
+      fprintf(stderr, "Forcing save\n");
+      w->saveState();
+  }
+}
+
 
 #endif // End Windows check
 
@@ -82,7 +100,7 @@ void fault_handler(int sig) {
 //*********************************************************************
 int main(int argc, char *argv[])
 {
-
+    w = NULL;
     bool guiAvailable = true;
 
 // Windows Check
@@ -227,9 +245,13 @@ int main(int argc, char *argv[])
         global.sharedMemory->clearMemory();
     }
 
+#ifndef _WIN32
+    if (global.getInterceptSigHup())
+        signal(SIGHUP, sighup_handler);   // install our handler
+#endif
 
     QLOG_DEBUG() << "Setting up NN";
-    NixNote *w = new NixNote();
+    w = new NixNote();
     w->setAttribute(Qt::WA_QuitOnClose);
     bool show = true;
     if (global.minimizeToTray() && global.startMinimized)
@@ -243,11 +265,9 @@ int main(int argc, char *argv[])
 
     // Setup the proxy
     QNetworkProxy proxy;
-    if (global.isSocks5Enabled())
-	proxy.setType(QNetworkProxy::Socks5Proxy);
-    else
-    	proxy.setType(QNetworkProxy::HttpProxy);
     if (global.isProxyEnabled()) {
+        if (global.isSocks5Enabled())
+            proxy.setType(QNetworkProxy::Socks5Proxy);
         QString host = global.getProxyHost();
         int port = global.getProxyPort();
         QString user = global.getProxyUserid();
@@ -263,7 +283,13 @@ int main(int argc, char *argv[])
             proxy.setPassword(password.trimmed());
 
         QNetworkProxy::setApplicationProxy(proxy);
+    } else {
+        proxy.setType(QNetworkProxy::HttpProxy);
     }
+
+    QLOG_DEBUG() << "Setting up exit signal";
+
+    QObject::connect(a, SIGNAL(aboutToQuit()), w, SLOT(saveOnExit()));
 
     QLOG_DEBUG() << "Launching";
     int rc = a->exec();

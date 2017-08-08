@@ -131,6 +131,8 @@ NTagView::NTagView(QWidget *parent) :
     this->setFrameShape(QFrame::NoFrame);
     expandedImage = new QImage(":expandedIcon");
     collapsedImage = new QImage(":collapsedIcon");
+
+    this->setProperty("animated", false);
 }
 
 
@@ -241,7 +243,6 @@ void NTagView::loadData() {
             dataStore.remove(keys[i]);
             if (ptr->parent() != NULL)
                 ptr->parent()->removeChild(ptr);
-            QLOG_DEBUG() << ptr;
             ptr->setHidden(true);
            // delete ptr;  << We can leak memory, but otherwise it sometimes gets confused and causes crashes
         }
@@ -810,7 +811,11 @@ void NTagView::editComplete() {
 
     // Check that this tag doesn't already exist
     // if it exists, we go back to the original name
-    qint32 check = table.findByName(text, accountFilter);
+    qint32 check = 0;
+    if (text.toLower() == oldName.toLower() && text != oldName)
+        check = 0;
+    else
+        check = table.findByName(text, accountFilter);
     if (check != 0) {
         NTagViewItem *item = dataStore[lid];
         QString tagname = "";
@@ -930,10 +935,12 @@ void NTagView::drawBranches(QPainter *painter, const QRect &rect, const QModelIn
     painter->save();
     if (isExpanded(index)) {
         int offset = rect.width()-expandedImage->width()-1;
-        painter->drawImage(offset, rect.y(),*expandedImage);
+        int voffset = (rect.height() - expandedImage->height()) / 2;
+        painter->drawImage(offset, rect.y()+voffset,*expandedImage);
     } else {
         int offset = rect.width()-collapsedImage->width()-1;
-        painter->drawImage(offset, rect.y(),*collapsedImage);
+        int voffset = (rect.height() - collapsedImage->height()) / 2;
+        painter->drawImage(offset, rect.y()+voffset,*collapsedImage);
     }
     painter->restore();
     return;

@@ -25,6 +25,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QMessageBox>
+#ifdef _WIN32
+#include <QDesktopServices>
+#endif
 
 extern Global global;
 
@@ -46,7 +49,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     dynamicTotals = new QCheckBox(tr("Show notebook and tag totals"), this);
     autoHideEditorButtonbar = new QCheckBox(tr("Auto-Hide editor toolbar"), this);
     autoHideEditorButtonbar->setChecked(global.autoHideEditorToolbar);
-    disableEditingOnStartup = new QCheckBox(tr("Disable note editing on statup"), this);
+    disableEditingOnStartup = new QCheckBox(tr("Disable note editing on startup"), this);
     newNoteFocusOnTitle = new QCheckBox(tr("Focus on Note Title on New Note"), this);
     forceWebFonts = new QCheckBox(tr("Limit Editor to Web Fonts*"), this);
     forceWebFonts->setChecked(global.forceWebFonts);
@@ -58,16 +61,25 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     fontPreviewInDialog->setChecked(global.previewFontsInDialog());
 
     traySingleClickAction = new QComboBox();
+    traySingleClickAction->addItem(tr("Do Nothing"), -1);
     traySingleClickAction->addItem(tr("Show/Hide NixNote"), 0);
     traySingleClickAction->addItem(tr("New Text Note"), 1);
     traySingleClickAction->addItem(tr("New Quick Note"), 2);
     traySingleClickAction->addItem(tr("Screen Capture"), 3);
 
     trayMiddleClickAction = new QComboBox();
+    trayMiddleClickAction->addItem(tr("Do Nothing"), -1);
     trayMiddleClickAction->addItem(tr("Show/Hide NixNote"), 0);
     trayMiddleClickAction->addItem(tr("New Text Note"), 1);
     trayMiddleClickAction->addItem(tr("New Quick Note"), 2);
     trayMiddleClickAction->addItem(tr("Screen Capture"), 3);
+
+    trayDoubleClickAction = new QComboBox();
+    trayDoubleClickAction->addItem(tr("Do Nothing"), -1);
+    trayDoubleClickAction->addItem(tr("Show/Hide NixNote"), 0);
+    trayDoubleClickAction->addItem(tr("New Text Note"), 1);
+    trayDoubleClickAction->addItem(tr("New Quick Note"), 2);
+    trayDoubleClickAction->addItem(tr("Screen Capture"), 3);
 
     mouseMiddleClickAction = new QComboBox();
     mouseMiddleClickAction->addItem(tr("Open New Tab"), MOUSE_MIDDLE_CLICK_NEW_TAB);
@@ -143,6 +155,9 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(new QLabel(tr("Tray Icon Middle Click Action")), row, 0);
     mainLayout->addWidget(trayMiddleClickAction, row++, 1);
 
+    mainLayout->addWidget(new QLabel(tr("Tray Icon Double Click Action")), row, 0);
+    mainLayout->addWidget(trayDoubleClickAction, row++, 1);
+
     mainLayout->addWidget(new QLabel(tr("Default GUI Font*")), row, 0);
     mainLayout->addWidget(defaultGuiFontChooser, row++, 1);
 
@@ -162,12 +177,18 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     global.settings->beginGroup("Appearance");
 
     disableEditingOnStartup->setChecked(global.settings->value("disableEditingOnStartup",false).toBool());
+
     int idx  = global.settings->value("traySingleClickAction", 0).toInt();
     idx = traySingleClickAction->findData(idx, Qt::UserRole);
     traySingleClickAction->setCurrentIndex(idx);
+
     idx  = global.settings->value("trayMiddleClickAction", 0).toInt();
-    idx = traySingleClickAction->findData(idx, Qt::UserRole);
+    idx = trayMiddleClickAction->findData(idx, Qt::UserRole);
     trayMiddleClickAction->setCurrentIndex(idx);
+
+    idx  = global.settings->value("trayDoubleClickAction", 0).toInt();
+    idx = trayDoubleClickAction->findData(idx, Qt::UserRole);
+    trayDoubleClickAction->setCurrentIndex(idx);
 
     showTrayIcon->setChecked(global.settings->value("showTrayIcon", false).toBool());
     showPDFs->setChecked(global.settings->value("showPDFs", true).toBool());
@@ -202,11 +223,10 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 
     this->setFont(global.getGuiFont(font()));
 
-    // Check if Tidy is installed
+    // Check if notify-send is installed
     QProcess notifyProcess;
     notifyProcess.start("notify-send -?");
     notifyProcess.waitForFinished();
-    QLOG_DEBUG() << notifyProcess.exitCode();
     if (notifyProcess.exitCode()) {
         systemNotifier->setEnabled(false);
     } else {
@@ -215,6 +235,10 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
         systemNotifier->setCurrentIndex(idx);
     }
 }
+
+
+
+
 
 
 void AppearancePreferences::saveValues() {
@@ -234,10 +258,11 @@ void AppearancePreferences::saveValues() {
     global.autoHideEditorToolbar = this->autoHideEditorButtonbar->isChecked();
     global.settings->setValue("autoHideEditorToolbar", global.autoHideEditorToolbar);
     global.settings->setValue("mouseMiddleClickOpen", mouseMiddleClickAction->currentIndex());
+    global.settings->setValue("trayDoubleClickAction", trayDoubleClickAction->currentIndex());
     global.settings->setValue("traySingleClickAction", traySingleClickAction->currentIndex());
     global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentIndex());
     global.settings->setValue("systemNotifier", sysnotifier);
-    global.settings->remove("trayDoubleClickAction");
+//    global.settings->remove("trayDoubleClickAction");
     global.settings->setValue("showNoteListGrid", showNoteListGrid->isChecked());
     global.settings->setValue("alternateNoteListColors", alternateNoteListColors->isChecked());
     global.pdfPreview = showPDFs->isChecked();
@@ -293,10 +318,6 @@ void AppearancePreferences::saveValues() {
 
 
     // See if the user has overridden the window icon
-//    index = windowThemeChooser->currentIndex();
-//    QString userIcon = windowThemeChooser->itemData(index).toString();
-//    if (userIcon != global.getResourceFileName(userIcon)) {
-        //global.settings->setValue("windowIcon", userIcon);
 
         //Copy the nixnote2.desktop so we can override the app icon
         // Ideally, we could use QSettings since it is ini format, but
@@ -334,10 +355,18 @@ void AppearancePreferences::saveValues() {
 
     // Setup if the user wants to start NixNote the next time they login.
     global.settings->setValue("autoStart", autoStart->isChecked());
-    QString startFile =  QDir::homePath()+"/.config/autostart/nixnote2.desktop";
+#ifdef _WIN32
+    QFileInfo fileInfo(QCoreApplication::applicationFilePath());
+    QFile::remove(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
+#else
     QDir dir;
+    QString startFile =  QDir::homePath()+"/.config/autostart/nixnote2.desktop";
     dir.remove(startFile);
+#endif
     if (autoStart->isChecked()) {
+#ifdef _WIN32
+        QFile::link(QCoreApplication::applicationFilePath(), QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
+#else
         //Copy the nixnote2.desktop to the ~/.config/autostart directory
         QString systemFile = "/usr/share/applications/nixnote2.desktop";
         QFile systemIni(systemFile);
@@ -367,17 +396,14 @@ void AppearancePreferences::saveValues() {
             data << "X-GNOME-Autostart-enabled=true";
         }
         userIni.close();
+#endif
     }
-
 
     global.settings->endGroup();
 
     global.setPreviewFontsInDialog(fontPreviewInDialog->isChecked());
 
 }
-
-
-
 
 
 // Load the list of font names

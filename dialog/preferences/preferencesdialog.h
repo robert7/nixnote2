@@ -1,14 +1,3 @@
-#ifndef PREFERENCESDIALOG_H
-#define PREFERENCESDIALOG_H
-
-#include <QDialog>
-#include <QTabWidget>
-#include <QGridLayout>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QPushButton>
-
-
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
 Copyright (C) 2013 Randy Baumgarte
@@ -28,6 +17,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+#ifndef PREFERENCESDIALOG_H
+#define PREFERENCESDIALOG_H
+
+#include <QDialog>
+#include <QTabWidget>
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QPushButton>
+
+
 #include "dialog/preferences/debugpreferences.h"
 #include "dialog/preferences/syncpreferences.h"
 #include "dialog/preferences/appearancepreferences.h"
@@ -35,6 +35,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/preferences/localepreferences.h"
 #include "dialog/preferences/emailpreferences.h"
 #include "dialog/preferences/thumbnailpreferences.h"
+#include "dialog/preferences/exitpreferences.h"
+
 
 class PreferencesDialog : public QDialog
 {
@@ -50,6 +52,7 @@ private:
     void setupSearchPanel();
     void setupEmailPanel();
     void setupThumbnailPanel();
+    void setupExitPanel();
 
     DebugPreferences *debugPanel;
     EmailPreferences *emailPanel;
@@ -58,6 +61,7 @@ private:
     LocalePreferences *localePanel;
     ThumbnailPreferences *thumbnailPanel;
     AppearancePreferences *appearancePanel;
+    ExitPreferences *exitPanel;
     QPushButton *okButton;
     QPushButton *cancelButton;
 

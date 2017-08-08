@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTextEdit>
 #include <QTimer>
 #include <QPrinter>
+#include <QThread>
 
 #include "gui/nwebview.h"
 
@@ -60,6 +61,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "plugins/hunspell/hunspellinterface.h"
 #include "plugins/hunspell/hunspellplugin.h"
 #include "gui/findreplace.h"
+#include "threads/browserrunner.h"
 
 class ToolbarWidgetAction;
 
@@ -74,6 +76,8 @@ class NBrowserWindow : public QWidget
 {
     Q_OBJECT
 private:
+    QThread *browserThread;
+    BrowserRunner *browserRunner;
     void setupToolBar();
     QTimer *sourceEditorTimer;
     bool insertHyperlink;
@@ -81,6 +85,7 @@ private:
     bool insideList;
     bool insideTable;
     bool insideEncryption;
+    bool insidePre;
     bool forceTextPaste;
     void editLatex(QString guid);
     QString selectedFileName;
@@ -93,6 +98,7 @@ private:
     Thumbnailer *hammer;
     Thumbnailer *thumbnailer;
     QTimer focusTimer;
+    QTimer saveTimer;
     QString attachFilePath;  // Save path of last selected attachment.
 
     // Global plugins
@@ -116,8 +122,16 @@ private:
 
     QString stripContentsForPrint();
 
+    QString tableCellStyle;
+    QString tableStyle;
+    QPoint scrollPoint;
+
+    void exitPoint(ExitPoint *exit);
+
+
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
+    ~NBrowserWindow();
     QString uuid;
     NWebView *editor;
     void setContent(qint32 lid);
@@ -158,6 +172,7 @@ public:
 
     void tabPressed();
     void backtabPressed();
+    bool enterPressed();
     void clear();
     void setupShortcut(QShortcut *action, QString text);
     void contentChanged();
@@ -183,6 +198,7 @@ signals:
     void noteAlarmEditedSignal(QString uuid, qint32 lid, bool strikeout, QString text);
     void showHtmlEntities();
     void setMessage(QString msg);
+    void requestNoteContentUpdate(qint32, QString, bool);
 
 public slots:
     void saveNoteContent();
@@ -218,6 +234,7 @@ public slots:
     void subscriptButtonPressed();
     void alignLeftButtonPressed();
     void alignCenterButtonPressed();
+    void alignFullButtonPressed();
     void alignRightButtonPressed();
     void horizontalLineButtonPressed();
     void shiftLeftButtonPressed();
@@ -238,11 +255,13 @@ public slots:
     void insertTableButtonPressed();
     void insertTableRowButtonPressed();
     void insertTableColumnButtonPressed();
+    void tablePropertiesButtonPressed();
     void deleteTableRowButtonPressed();
     void deleteTableColumnButtonPressed();
     void rotateImageLeftButtonPressed();
     void rotateImageRightButtonPressed();
     void removeFormatButtonPressed();
+    void formatCodeButtonPressed();
     void linkClicked(const QUrl url);
     void toggleSource();
     void setSource();
@@ -253,6 +272,9 @@ public slots:
     void attachFile();
     void attachFileSelected(QString filename);
 
+    void setTableCellStyle(QString value);
+    void setTableStyle(QString value);
+
     void exposeToJavascript();
     void boldActive();
     void italicsActive();
@@ -260,6 +282,7 @@ public slots:
     void underlineActive();
     void setInsideList();
     void setInsideTable();
+    void setInsidePre();
     void noteSourceUpdated();
     void setInsideLink(QString link);
     QString fixEncryptionPaste(QString data);
@@ -307,7 +330,9 @@ private slots:
     void sendUrlUpdateSignal();
     void newTagAdded(qint32);
     void focusCheck();
-
+    void saveTimeCheck();
+    void browserThreadStarted();
+    void repositionAfterSourceEdit(bool);
 };
 
 #endif // NBROWSERWINDOW_H

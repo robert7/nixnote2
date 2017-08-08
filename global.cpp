@@ -138,8 +138,15 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
         globalSettings->endGroup();
     }
 
-    QString key = "1b73cc55-9a2f-441b-877a-ca1d0131cd2"+
-            QString::number(accountId);
+    globalSettings->beginGroup("MemoryKey");
+    QString key = globalSettings->value("key", "").toString();
+    if (key == "") {
+        key = QUuid::createUuid().toString().replace("}","").replace("{","");
+        globalSettings->setValue("key",key);
+    }
+    globalSettings->endGroup();
+
+    key = key+QString::number(accountId);
     sharedMemory = new CrossMemoryMapper(key);
 
 
@@ -157,7 +164,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     this->startupNote = startupConfig.startupNoteLid;
     startupConfig.accountId = accountId;
     accountsManager = new AccountsManager(startupConfig.accountId);
-    enableIndexing = startupConfig.enableIndexing;
+    if (startupConfig.enableIndexing || getBackgroundIndexing())
+        enableIndexing = true;
 
     this->purgeTemporaryFilesOnShutdown=true;
 
@@ -231,6 +239,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     indexPDFLocally=getIndexPDFLocally();
     forceSearchLowerCase=getForceSearchLowerCase();
     strictDTD = getStrictDTD();
+    bypassTidy = getBypassTidy();
     forceUTF8 = getForceUTF8();
 
 
@@ -244,6 +253,14 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     // reset username
     full_username = "";
 
+    // Set auto-save interval
+    autoSaveInterval = getAutoSaveInterval()*1000;
+
+    multiThreadSaveEnabled = this->getMultiThreadSave();
+    useLibTidy = this->getUseLibTidy();
+
+    exitManager = new ExitManager();
+    exitManager->loadExits();
 }
 
 
@@ -253,12 +270,10 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 // allows for users to run it out of a non-path location.
 QString Global::getProgramDirPath() {
     QString path = QCoreApplication::applicationDirPath();
-    if (path == "/usr/bin")
-        return "/usr/share/nixnote2";
-    if (path == "/usr/share/bin")
-        return "/usr/share/nixnote2";
-    if (path == "/usr/local/bin")
-        return "/usr/share/nixnote2";
+    if (path.endsWith("/bin")) {
+        path.chop(3);
+        return path+"share/nixnote2";
+    }
     return path;
 }
 
@@ -477,6 +492,26 @@ bool Global::getClearTagsOnSearch() {
     return value;
 }
 
+
+bool Global::getBackgroundIndexing() {
+    settings->beginGroup("Search");
+    bool value = settings->value("backgroundIndexing",false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+
+
+
+void Global::setBackgroundIndexing(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("backgroundIndexing",value);
+    settings->endGroup();
+}
+
+
+
+
 bool Global::getTagSelectionOr() {
     settings->beginGroup("Search");
     bool value = settings->value("tagSelectionOr",false).toBool();
@@ -545,9 +580,29 @@ bool Global::getStrictDTD() {
 
 
 
+
+void Global::setBypassTidy(bool value) {
+    settings->beginGroup("Debugging");
+    settings->setValue("bypassTidy",value);
+    settings->endGroup();
+    bypassTidy=value;
+}
+
+
+bool Global::getBypassTidy() {
+    settings->beginGroup("Debugging");
+    bool value = settings->value("bypassTidy",true).toBool();
+    settings->endGroup();
+    bypassTidy = value;
+    return value;
+}
+
+
+
+
 bool Global::getForceUTF8() {
     settings->beginGroup("Debugging");
-    bool value = settings->value("forceUTF8",false).toBool();
+    bool value = settings->value("forceUTF8",true).toBool();
     settings->endGroup();
     forceUTF8 = value;
     return value;
@@ -1081,14 +1136,14 @@ bool Global::isProxyEnabled() {
 // Set the Sock5 proxy
 void Global::setSocks5Enabled(bool value) {
     settings->beginGroup("Proxy");
-    settings->setValue("enabled", value);
+    settings->setValue("socks5", value);
     settings->endGroup();
 }
 
 // Get the Socks5 proxy
 bool Global::isSocks5Enabled() {
     settings->beginGroup("Proxy");
-    bool value = settings->value("enabled", false).toBool();
+    bool value = settings->value("socks5", false).toBool();
     settings->endGroup();
     return value;
 }
@@ -1234,7 +1289,8 @@ void Global::stackDump(int max) {
 
     free(messages);
     QLOG_ERROR() << "**** Stack dump complete *****";
-
+#else
+    Q_UNUSED(max)
 #endif // End windows check
 }
 
@@ -1304,4 +1360,80 @@ bool Global::popupOnSyncError() {
     bool value = global.settings->value("popupOnSyncError", true).toBool();
     global.settings->endGroup();
     return value;
+}
+
+
+// save the user-specified auto-save interval
+int Global::getAutoSaveInterval() {
+    global.settings->beginGroup("Appearance");
+    int value = global.settings->value("autoSaveInterval", 500).toInt();
+    global.settings->endGroup();
+    return value;
+}
+
+// Save the user specified auto-save interval
+void Global::setAutoSaveInterval(int value) {
+    global.settings->beginGroup("Appearance");
+    global.settings->setValue("autoSaveInterval", value);
+    global.settings->endGroup();
+    global.autoSaveInterval = value*1000;
+}
+
+
+
+
+// Should we intercept SIGHUP on Unix platforms
+bool Global::getInterceptSigHup() {
+    global.settings->beginGroup("Appearance");
+    bool value = global.settings->value("interceptSigHup", true).toBool();
+    global.settings->endGroup();
+    return value;
+}
+
+void Global::setInterceptSigHup(bool value) {
+    global.settings->beginGroup("Appearance");
+    global.settings->setValue("interceptSigHup", value);
+    global.settings->endGroup();
+
+}
+
+
+
+
+// Should we use multiple theads to do note saving
+bool Global::getMultiThreadSave() {
+    global.settings->beginGroup("Appearance");
+    bool value = global.settings->value("multiThreadSave", false).toBool();
+    global.settings->endGroup();
+    return value;
+}
+
+void Global::setMultiThreadSave(bool value) {
+    global.settings->beginGroup("Appearance");
+    global.settings->setValue("multiThreadSave", value);
+    global.settings->endGroup();
+    this->multiThreadSaveEnabled = value;
+}
+
+
+
+
+
+
+// Should we use multiple theads to do note saving
+bool Global::getUseLibTidy() {
+    global.settings->beginGroup("Appearance");
+    bool value = global.settings->value("useLibTidy", false).toBool();
+    global.settings->endGroup();
+    return value;
+}
+
+void Global::setUseLibTidy(bool value) {
+    global.settings->beginGroup("Appearance");
+    global.settings->setValue("useLibTidy", value);
+    global.settings->endGroup();
+    this->useLibTidy = value;
+#ifndef _WIN32
+    this->useLibTidy = false;  // Removing obsolete setting.
+#endif
 }

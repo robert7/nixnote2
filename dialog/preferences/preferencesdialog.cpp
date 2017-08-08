@@ -44,6 +44,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
     this->setupSearchPanel();
     this->setupEmailPanel();
     this->setupThumbnailPanel();
+    this->setupExitPanel();
     this->setupDebugPanel();
 
     cancelButton = new QPushButton(tr("Cancel"), this);
@@ -122,9 +123,16 @@ void PreferencesDialog::setupThumbnailPanel() {
 }
 
 
+
+void PreferencesDialog::setupExitPanel() {
+    exitPanel = new ExitPreferences(this);
+    tabs->addTab(exitPanel, tr("Exits"));
+}
+
+
 void PreferencesDialog::setupDebugPanel() {
     debugPanel = new DebugPreferences(this);
-    tabs->addTab(debugPanel, tr("Debugging"));
+    tabs->addTab(debugPanel, tr("Advanced"));
 }
 
 
@@ -142,6 +150,7 @@ void PreferencesDialog::okButtonClicked() {
     emailPanel->saveValues();
     searchPanel->saveValues();
     thumbnailPanel->saveValues();
+    exitPanel->saveValues();
     this->close();
 }
 

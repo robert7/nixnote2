@@ -37,6 +37,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/databaseconnection.h"
 #include "threads/indexrunner.h"
 #include "utilities/crossmemorymapper.h"
+#include "exits/exitpoint.h"
+#include "exits/exitmanager.h"
 
 #include <string>
 #include <QSqlDatabase>
@@ -160,6 +162,8 @@ public:
     void setMinimumRecognitionWeight(int weight);         // Set the minimum OCR recgnition confidence before including it in search results.
     bool popupOnSyncError();                 // Should we do a popup on every sync error?
     void setPopupOnSyncError(bool value);    // Set if we should do a popup on sync errors.
+    void setBackgroundIndexing(bool value);                         // Should we do indexing in a separate thread?
+    bool getBackgroundIndexing();                         // Should we do indexing in a separate thread?
     QString dateFormat;                                   // Desired display date format
     QString timeFormat;                                   // Desired display time format
     DatabaseConnection *db;                               // "default" DB connection for the main thread.
@@ -254,6 +258,9 @@ public:
     bool strictDTD;                                        // Should we do strict enml checking?
     bool getStrictDTD();                                   // Should we do strict enml checking? (read from settings)
     void setStrictDTD(bool value);                         // save strict enml checking
+    bool bypassTidy;                                       // Bypass HTML Tidy
+    bool getBypassTidy();                                  // should we bypass HTML tidy?
+    void setBypassTidy(bool value);                        // Set if we should bypass HTML tidy.
     QString getEditorStyle(bool colorOnly);                // Get note editor style overrides
     QString getEditorFontColor();                           // Get the editor font color from the theme
     QString getEditorBackgroundColor();                     // Get the editor background color from the theme
@@ -278,6 +285,23 @@ public:
     int maximumThumbnailInterval;                               // Maximum time to scan for thumbnails
     bool disableThumbnails;                                     // Disable thumbnail generation
     int batchThumbnailCount;                                    // Maximum number of thumbails to generate per batch
+
+    int getAutoSaveInterval();                                  // Time (in seconds) between auto-saving of notes.
+    void setAutoSaveInterval(int value);                                 // Save auto save interval
+    int autoSaveInterval;                                       // current auto save interval
+
+    bool getInterceptSigHup();                                  // Intercept SIGHUP on Unix platforms.
+    void setInterceptSigHup(bool value);                        // Intercept SIGHUP on Unix platforms
+
+    void setMultiThreadSave(bool value);                        // Should we use multiple theads in the browser window to save
+    bool getMultiThreadSave();
+    bool multiThreadSaveEnabled;
+
+    void setUseLibTidy(bool value);                            // Should we use new tidy or classic
+    bool getUseLibTidy();
+    bool useLibTidy;
+
+    ExitManager *exitManager;                                  // Utility to manage exit points.
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

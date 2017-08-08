@@ -196,7 +196,7 @@ void SyncRunner::evernoteSync() {
 
 
 bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
-    QLOG_TRACE() << "Entering SyncRunner::SyncRemoteToLocal()";
+    QLOG_TRACE_IN();
 
     // The sync is run in several parts.
     // Part #1: Get all remote tags, notebooks, & saved searches for
@@ -231,6 +231,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;
             this->communicationErrorHandler();
+            QLOG_TRACE_OUT();
             return false;
         }
         QLOG_DEBUG() << "-(Pass 1)->>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
@@ -260,6 +261,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;
             this->communicationErrorHandler();
+            QLOG_TRACE_OUT();
             return false;
         }
         QLOG_DEBUG() << "-(Pass 2) ->>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
@@ -278,6 +280,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     }
 
     emit setMessage(tr("Download complete."), defaultMsgTimeout);
+    QLOG_TRACE_OUT();
     return true;
 }
 
@@ -615,6 +618,7 @@ void SyncRunner::syncRemoteResources(QList<Resource> resources) {
 
 // Synchronize remote linked notebooks
 void SyncRunner::syncRemoteLinkedNotebooksChunk(QList<LinkedNotebook> books) {
+    QLOG_TRACE_IN();
     LinkedNotebookTable ltable(db);
     for (int i=0; i<books.size(); i++) {
         qint32 lid = ltable.sync(books[i]);
@@ -628,6 +632,7 @@ void SyncRunner::syncRemoteLinkedNotebooksChunk(QList<LinkedNotebook> books) {
         if (!finalSync)
             emit notebookUpdated(lid, sharename, username, true, false);
     }
+    QLOG_TRACE_OUT();
 }
 
 
@@ -635,6 +640,7 @@ void SyncRunner::syncRemoteLinkedNotebooksChunk(QList<LinkedNotebook> books) {
 
 // Synchronize remote linked notebooks
 bool SyncRunner::syncRemoteLinkedNotebooksActual() {
+    QLOG_TRACE_IN();
     LinkedNotebookTable ltable(db);
     QList<qint32> lids;
     ltable.getAll(lids);
@@ -690,6 +696,7 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
                 } else {
                     this->communicationErrorHandler();
                     error = true;
+                    QLOG_TRACE_OUT();
                     return false;
                 }
             } else {
@@ -755,6 +762,7 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
     }
     TagTable tagTable(db);
     tagTable.cleanupLinkedTags();
+    QLOG_TRACE_OUT();
     return true;
 }
 
@@ -762,6 +770,7 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
 
 // Upload notes that belong to me
 qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
+    QLOG_TRACE_IN();
     qint32 usn;
     qint32 maxUsn = 0;
     NoteTable noteTable(db);
@@ -822,6 +831,7 @@ qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
         if (usn == 0) {
             this->communicationErrorHandler();
             error = true;
+            QLOG_TRACE_OUT();
             return maxUsn;
         }
         if (usn > maxUsn) {
@@ -836,7 +846,7 @@ qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
             error = true;
         }
     }
-
+    QLOG_TRACE_OUT();
     return maxUsn;
 }
 
@@ -867,13 +877,16 @@ void SyncRunner::applicationException(QString s) {
 
 // Upload any saved searchs
 qint32 SyncRunner::uploadSavedSearches() {
+    QLOG_TRACE_IN();
     qint32 usn;
     qint32 maxUsn = 0;
     SearchTable stable(db);
     QList<qint32> lids;
     stable.getAllDirty(lids);
-    if (lids.size() == 0)
+    if (lids.size() == 0) {
+        QLOG_TRACE_OUT();
         return 0;
+    }
 
     for (int i=0; i<lids.size(); i++) {
         SavedSearch search;
@@ -884,6 +897,7 @@ qint32 SyncRunner::uploadSavedSearches() {
             if (usn == 0) {
                 this->communicationErrorHandler();
                 error = true;
+                QLOG_TRACE_OUT();
                 return maxUsn;
             }
             if (usn > maxUsn) {
@@ -904,20 +918,25 @@ qint32 SyncRunner::uploadSavedSearches() {
             }
         }
     }
+    QLOG_TRACE_OUT();
     return maxUsn;
 }
 
 
 // Upload any tags
 qint32 SyncRunner::uploadTags() {
+    QLOG_TRACE_IN();
     qint32 usn;
     qint32 maxUsn = 0;
     TagTable table(db);
     QList<qint32> lids, deletedLids, updatedLids;
     table.resetLinkedTagsDirty();
     table.getAllDirty(lids);
-    if (lids.size() == 0)
+    if (lids.size() == 0) {
+        QLOG_TRACE_OUT();
         return 0;
+    }
+
     // Split the lids into lids to be updated, and lids to be deleted
     for (int i=0; i<lids.size(); i++) {
         if (table.isDeleted(lids[i]))
@@ -926,24 +945,30 @@ qint32 SyncRunner::uploadTags() {
             updatedLids.append(lids[i]);
     }
 
+    // Get existing tags in case there is a duplicate name
+    QList<Tag> existingTags;
+    comm->getTagList(existingTags);
+
     // Update any lids
+    QLOG_DEBUG() << "Beginning to upload new & altered tags";
     int i=0;
     while(updatedLids.size() > 0) {
-        // Get existing tags in case there is a duplicate name
-        QList<Tag> existingTags;
-        comm->getTagList(existingTags);
 
         Tag tag;
         table.get(tag, updatedLids[i]);
+        if (tag.name.isSet()) {
+            QLOG_DEBUG() << "Found changed tag " << tag.name;
+        }
         qint32 parentLid = 0;
         QString parentGuid = "";
         if (tag.parentGuid.isSet())
             parentGuid = tag.parentGuid;
         if (parentGuid != "")
             parentLid = table.getLid(tag.parentGuid);
+
         // If the parent is either not dirty, or there is no parent we can update this lid.
         if (parentLid <= 0 || !table.isDirty(parentLid)) {
-
+            QLOG_DEBUG() << "Tag has no parent or parent is unaltered";
             // Check if a tag with this name already exists.
             // In reality this should never happen, but there was a bug
             // where a tag was uploaded but the USN & GUID wasn't
@@ -961,17 +986,24 @@ qint32 SyncRunner::uploadTags() {
             }
 
             if (!matchFound) {
-                qint32 oldUsn = tag.updateSequenceNum;
+                qint32 oldUsn = 0;
+                if (tag.updateSequenceNum.isSet())
+                    oldUsn = tag.updateSequenceNum;
+                QLOG_DEBUG() << "Uploaing tag " << tag.name;
                 usn = comm->uploadTag(tag);
                 if (usn == 0) {
                     this->communicationErrorHandler();
                     error = true;
+                    QLOG_TRACE_OUT();
                     return maxUsn;
                 }
                 if (usn > 0) {
                     maxUsn = usn;
-                    if (oldUsn == 0)
+                    QLOG_DEBUG() << "Tag USN: " << usn;
+                    if (oldUsn == 0) {
+                        QLOG_DEBUG() << "New USN: " << tag.guid;
                         table.updateGuid(updatedLids[i], tag.guid);
+                    }
                     table.setUpdateSequenceNumber(updatedLids[i], usn);
                     table.setDirty(tag.guid, false);
                     updatedLids.removeAt(i);
@@ -981,6 +1013,7 @@ qint32 SyncRunner::uploadTags() {
                     updatedLids.clear();
                 }
             } else {
+                QLOG_DEBUG() << "Tag with this name exists.";
                 table.updateGuid(updatedLids[i], foundTag.guid);
                 table.setUpdateSequenceNumber(updatedLids[i], foundTag.updateSequenceNum);
                 updatedLids.removeAt(i);
@@ -990,6 +1023,7 @@ qint32 SyncRunner::uploadTags() {
         i++;
     }
 
+    QLOG_DEBUG() << "Deleting LIDS";
     // delete any lids
     for (int i=0; i<deletedLids.size(); i++) {
         Tag tag;
@@ -1001,6 +1035,7 @@ qint32 SyncRunner::uploadTags() {
                 maxUsn = usn;
         }
     }
+    QLOG_TRACE_OUT();
     return maxUsn;
 }
 
@@ -1009,6 +1044,7 @@ qint32 SyncRunner::uploadTags() {
 
 // Upload any saved searchs
 qint32 SyncRunner::uploadNotebooks() {
+    QLOG_TRACE_IN();
     qint32 usn;
     qint32 maxUsn = 0;
     NotebookTable table(db);
@@ -1025,6 +1061,7 @@ qint32 SyncRunner::uploadNotebooks() {
             if (usn == 0) {
                 this->communicationErrorHandler();
                 error = true;
+                QLOG_TRACE_OUT();
                 return maxUsn;
             }
             if (usn > maxUsn) {
@@ -1046,6 +1083,7 @@ qint32 SyncRunner::uploadNotebooks() {
             }
         }
     }
+    QLOG_TRACE_OUT();
     return maxUsn;
 }
 
@@ -1054,6 +1092,7 @@ qint32 SyncRunner::uploadNotebooks() {
 
 // Upload notes that belong to me
 qint32 SyncRunner::uploadPersonalNotes() {
+    QLOG_TRACE_IN();
     qint32 usn;
     qint32 maxUsn = 0;
     NotebookTable notebookTable(db);
@@ -1164,7 +1203,7 @@ qint32 SyncRunner::uploadPersonalNotes() {
             error = true;
         }
     }
-
+    QLOG_TRACE_OUT();
     return maxUsn;
 }
 

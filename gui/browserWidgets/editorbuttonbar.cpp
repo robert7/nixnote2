@@ -48,6 +48,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     strikethroughVisible = contextMenu->addAction(tr("Strikethrough"));
     leftJustifyVisible = contextMenu->addAction(tr("Align Left"));
     centerJustifyVisible = contextMenu->addAction(tr("Align Center"));
+    fullJustifyVisible = contextMenu->addAction(tr("Align Full"));
     rightJustifyVisible = contextMenu->addAction(tr("Align Right"));
     hlineVisible = contextMenu->addAction(tr("Horizontal Line"));
     insertDatetimeVisible = contextMenu->addAction(tr("Insert Date && Time"));
@@ -63,6 +64,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     spellCheckButtonVisible = contextMenu->addAction(tr("Spell Check"));
     insertTableButtonVisible = contextMenu->addAction(tr("Insert Table"));
     htmlEntitiesButtonVisible = contextMenu->addAction(tr("HTML Entities"));
+    formatCodeButtonVisible = contextMenu->addAction(tr("Format Code Block"));
 
     undoVisible->setCheckable(true);
     redoVisible->setCheckable(true);
@@ -78,6 +80,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     subscriptVisible->setCheckable(true);
     leftJustifyVisible->setCheckable(true);
     centerJustifyVisible->setCheckable(true);
+    fullJustifyVisible->setCheckable(true);
     rightJustifyVisible->setCheckable(true);
     hlineVisible->setCheckable(true);
     shiftRightVisible->setCheckable(true);
@@ -95,6 +98,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     insertTableButtonVisible->setCheckable(true);
     htmlEntitiesButtonVisible->setCheckable(true);
     insertDatetimeVisible->setCheckable(true);
+    formatCodeButtonVisible->setCheckable(true);
 
     connect(undoVisible, SIGNAL(triggered()), this, SLOT(toggleUndoButtonVisible()));
     connect(redoVisible, SIGNAL(triggered()), this, SLOT(toggleRedoButtonVisible()));
@@ -111,6 +115,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(insertDatetimeVisible, SIGNAL(triggered()), this, SLOT(toggleInsertDatetimeVisible()));
     connect(leftJustifyVisible, SIGNAL(triggered()), this, SLOT(toggleLeftJustifyButtonVisible()));
     connect(centerJustifyVisible, SIGNAL(triggered()), this, SLOT(toggleCenterJustifyButtonVisible()));
+    connect(fullJustifyVisible, SIGNAL(triggered()), this, SLOT(toggleFullJustifyButtonVisible()));
     connect(rightJustifyVisible, SIGNAL(triggered()), this, SLOT(toggleRightJustifyButtonVisible()));
     connect(hlineVisible, SIGNAL(triggered()), this, SLOT(toggleHlineButtonVisible()));
     connect(shiftRightVisible, SIGNAL(triggered()), this, SLOT(toggleShiftRightButtonVisible()));
@@ -125,6 +130,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(insertTableButtonVisible, SIGNAL(triggered()), this, SLOT(toggleInsertTableButtonVisible()));
     connect(spellCheckButtonVisible, SIGNAL(triggered()), this, SLOT(toggleSpellCheckButtonVisible()));
     connect(htmlEntitiesButtonVisible, SIGNAL(triggered()), this, SLOT(toggleHtmlEntitiesButtonVisible()));
+    connect(formatCodeButtonVisible, SIGNAL(triggered()), this, SLOT(toggleFormatCodeButtonVisible()));
 
 
   undoButtonAction = this->addAction(global.getIconResource(":undoIcon"), tr("Undo"));
@@ -186,9 +192,13 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   subscriptButtonShortcut = new QShortcut(this);
   this->setupShortcut(subscriptButtonShortcut, "Format_Subscript");
 
-  centerJustifyButtonAction = this->addAction(global.getIconResource(":centerAlignIcon"), tr("Center"));
+  centerJustifyButtonAction = this->addAction(global.getIconResource(":centerAlignIcon"), tr("Center Justify"));
   centerJustifyButtonShortcut = new QShortcut(this);
   this->setupShortcut(centerJustifyButtonShortcut, "Format_Alignment_Center");
+
+  fullJustifyButtonAction = this->addAction(global.getIconResource(":fullAlignIcon"), tr("Fully Justify"));
+  fullJustifyButtonShortcut = new QShortcut(this);
+  this->setupShortcut(fullJustifyButtonShortcut, "Format_Alignment_Full");
 
   rightJustifyButtonAction = this->addAction(global.getIconResource(":rightAlignIcon"), tr("Right Justify"));
   rightJustifyButtonShortcut = new QShortcut(this);
@@ -268,6 +278,12 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   htmlEntitiesButtonShortcut = new QShortcut(this);
   setupShortcut(htmlEntitiesButtonShortcut, "Edit_Insert_Html_Entities");
   htmlEntitiesButtonShortcut->setContext(Qt::WidgetShortcut);
+
+
+  formatCodeButtonAction = this->addAction(global.getIconResource(":formatCodeIcon"), tr("Format Code Block"));
+  formatCodeButtonShortcut = new QShortcut(this);
+  this->setupShortcut(formatCodeButtonShortcut, "Format_Code_Block");
+
 }
 
 
@@ -283,6 +299,8 @@ EditorButtonBar::~EditorButtonBar() {
     delete strikethroughVisible;
     delete leftJustifyVisible;
     delete centerJustifyVisible;
+    delete formatCodeButtonVisible;
+    delete fullJustifyVisible;
     delete rightJustifyVisible;
     delete hlineVisible;
     delete shiftRightVisible;
@@ -352,6 +370,9 @@ void EditorButtonBar::saveVisibleButtons() {
     value = centerJustifyButtonAction->isVisible();
     global.settings->setValue("centerJustifyButtonVisible", value);
 
+    value = fullJustifyButtonAction->isVisible();
+    global.settings->setValue("fullJustifyButtonVisible", value);
+
     value = shiftLeftButtonAction->isVisible();
     global.settings->setValue("shiftLeftButtonVisible", value);
 
@@ -390,6 +411,9 @@ void EditorButtonBar::saveVisibleButtons() {
 
     value = insertDatetimeButtonAction->isVisible();
     global.settings->setValue("insertDatetimeButtonVisible", value);
+
+    value = formatCodeButtonAction->isVisible();
+    global.settings->setValue("formatCodeButtonVisible", value);
 
     global.settings->endGroup();
 }
@@ -443,6 +467,9 @@ void EditorButtonBar::setupVisibleButtons() {
     centerJustifyButtonAction->setVisible(global.settings->value("centerJustifyButtonVisible", true).toBool());
     centerJustifyVisible->setChecked(centerJustifyButtonAction->isVisible());
 
+    fullJustifyButtonAction->setVisible(global.settings->value("fullJustifyButtonVisible", true).toBool());
+    fullJustifyVisible->setChecked(fullJustifyButtonAction->isVisible());
+
     rightJustifyButtonAction->setVisible(global.settings->value("rightJustifyButtonVisible", true).toBool());
     rightJustifyVisible->setChecked(rightJustifyButtonAction->isVisible());
 
@@ -484,6 +511,9 @@ void EditorButtonBar::setupVisibleButtons() {
 
     insertDatetimeButtonAction->setVisible(global.settings->value("insertDatetimeButtonVisible", true).toBool());
     insertDatetimeVisible->setChecked(insertDatetimeButtonAction->isVisible());
+
+    formatCodeButtonAction->setVisible(global.settings->value("formatCodeButtonVisible", true).toBool());
+    formatCodeButtonVisible->setChecked(formatCodeButtonAction->isVisible());
 
     global.settings->endGroup();
 }
@@ -550,6 +580,10 @@ void EditorButtonBar::toggleCenterJustifyButtonVisible() {
     centerJustifyButtonAction->setVisible(centerJustifyVisible->isChecked());
     saveVisibleButtons();
 }
+void EditorButtonBar::toggleFullJustifyButtonVisible() {
+    fullJustifyButtonAction->setVisible(fullJustifyVisible->isChecked());
+    saveVisibleButtons();
+}
 void EditorButtonBar::toggleRightJustifyButtonVisible() {
     rightJustifyButtonAction->setVisible(rightJustifyVisible->isChecked());
     saveVisibleButtons();
@@ -604,6 +638,10 @@ void EditorButtonBar::toggleSpellCheckButtonVisible() {
 }
 void EditorButtonBar::toggleHtmlEntitiesButtonVisible() {
     htmlEntitiesButtonAction->setVisible(htmlEntitiesButtonVisible->isChecked());
+    saveVisibleButtons();
+}
+void EditorButtonBar::toggleFormatCodeButtonVisible() {
+    formatCodeButtonAction->setVisible(formatCodeButtonVisible->isChecked());
     saveVisibleButtons();
 }
 
@@ -728,6 +766,7 @@ void EditorButtonBar::reloadIcons() {
     leftJustifyButtonAction->setIcon(global.getIconResource(":leftAlignIcon"));
     rightJustifyButtonAction->setIcon(global.getIconResource(":rightAlignIcon"));
     centerJustifyButtonAction->setIcon(global.getIconResource(":centerAlignIcon"));
+    fullJustifyButtonAction->setIcon(global.getIconResource(":fullAlignIcon"));
     hlineButtonAction->setIcon(global.getIconResource(":hlineIcon"));
     shiftRightButtonAction->setIcon(global.getIconResource(":shiftRightIcon"));
     shiftLeftButtonAction->setIcon(global.getIconResource(":shiftLeftIcon"));
@@ -739,4 +778,5 @@ void EditorButtonBar::reloadIcons() {
     spellCheckButtonAction->setIcon(global.getIconResource(":spellCheckIcon"));
     insertTableButtonAction->setIcon(global.getIconResource(":gridIcon"));
     htmlEntitiesButtonAction->setIcon(global.getIconResource(":htmlentitiesIcon"));
+    formatCodeButtonAction->setIcon(global.getIconResource(":formatCodeIcon"));
 }
