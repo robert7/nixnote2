@@ -144,7 +144,7 @@ void FileWatcher::saveFile(QString file) {
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
            QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
            QString("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">");
-    if (newNote.content.isSet() && newNote.content != "")
+    if (newNote.content.isSet())
         newNoteBody.append(newNote.content);
 
     MimeReference mimeRef;
@@ -261,10 +261,10 @@ void FileWatcher::exitPoint(ExitPoint *exit, Note &n) {
     QLOG_TRACE_IN();
     ExitPoint_FileImport *saveExit = new ExitPoint_FileImport();
 
+#if QT_VERSION >= 0x050000
     QJSEngine engine;
     QJSValue exit_s = engine.newQObject(saveExit);
     engine.globalObject().setProperty("note", exit_s);
-#if QT_VERSION >= 0x050000
     // Start loading values
     QLOG_INFO() << tr("Calling exit ") << exit->getExitName();
     saveExit->setExitName(exit->getExitName());
