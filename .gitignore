@@ -37,6 +37,9 @@ qrc_*.*
 nixnote
 nixnote2
 
+# Nixnote database backup files
+*.nnex
+
 # Makefiles
 Makefile*
 
