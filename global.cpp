@@ -92,7 +92,7 @@ Global::Global()
     this->forceStartMinimized = false;
     this->globalSettings = NULL;
     this->disableUploads = false;
-    this->enableIndexing = true;
+    this->enableIndexing = false;
     this->disableThumbnails = false;
     this->defaultGuiFont = "";
     this->defaultGuiFontSize = 8;
@@ -837,6 +837,31 @@ bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
 
 
 
+
+// Get a generic CSS theme setting from the themes.ini file.
+QString Global::getThemeCss(QString key) {
+    if (colorList.contains(key))
+        return colorList[key].trimmed();
+    if (resourceList.contains(":"+key)) {
+        QString value = resourceList[":"+key].trimmed();
+#ifdef _WIN32
+        value = value.replace("/usr/share/nixnote2/images/",fileManager.getImageDirPath("").replace("\\","/"));
+#endif
+        QFile f(value);
+        if (f.exists()) {
+            f.open(QIODevice::ReadOnly);
+            QString css = f.readAll();
+            return css;
+        }
+    }
+
+    return "";
+}
+
+
+
+
+
 // Get the default GUI font
 QFont Global::getGuiFont(QFont f) {
     if (defaultGuiFont != "")
@@ -985,29 +1010,6 @@ QString Global::getUrlEditorInactiveStyle() {
     if(result.length() == 0)
     {
         result = "QLineEdit {background-color: transparent; border-radius: 0px;}";
-    }
-
-    return result;
-}
-
-QString Global::getLineEditSearchActiveStyle() {
-    QString result = this->getGenricStyle("lineEditSearchActiveCss");
-
-    if(result.length() == 0)
-    {
-        result = "QLineEdit {color: black; font:normal;} ";
-    }
-
-    return result;
-}
-
-
-QString Global::getLineEditSearchInactiveStyle() {
-    QString result = this->getGenricStyle("lineEditSearchInactiveCss");
-
-    if(result.length() == 0)
-    {
-        result = "QLineEdit {color: gray; font:italic;} ";
     }
 
     return result;

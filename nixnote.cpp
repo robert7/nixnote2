@@ -117,6 +117,9 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
         QTimer::singleShot(2500, splashScreen, SLOT(close()));
     }
     global.settings->endGroup();
+    QString css = global.getThemeCss("mainWindowCss");
+    if (css!="")
+        this->setStyleSheet(css);
 
 #if QT_VERSION < 0x050000
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
@@ -126,9 +129,15 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     // Load any plugins
     this->loadPlugins();
 
-    QTranslator *nixnoteTranslator = new QTranslator();
-    QLOG_DEBUG() << "Looking for transaltions: " << global.fileManager.getTranslateFilePath("nixnote2_" + QLocale::system().name() + ".qm");
-    nixnoteTranslator->load(global.fileManager.getTranslateFilePath("nixnote2_" + QLocale::system().name() + ".qm"));
+    nixnoteTranslator = new QTranslator();
+    QString translation;
+    global.settings->beginGroup("Locale");
+    translation = global.settings->value("translation", QLocale::system().name()).toString();
+    global.settings->endGroup();
+    translation = global.fileManager.getTranslateFilePath("nixnote2_" + translation + ".qm");
+    QLOG_DEBUG() << "Looking for transaltions: " << translation;
+    bool translationResult = nixnoteTranslator->load(translation);
+    QLOG_DEBUG() << "Translation loaded:" << translationResult;
     QApplication::instance()->installTranslator(nixnoteTranslator);
 
     connect(&syncThread, SIGNAL(started()), this, SLOT(syncThreadStarted()));
@@ -289,6 +298,9 @@ void NixNote::setupGui() {
 
     QLOG_TRACE() << "Setting up tool bar";
     toolBar = addToolBar(tr("ToolBar"));
+    QString css = global.getThemeCss("mainToolbarCss");
+    if (css!="")
+        toolBar->setStyleSheet(css);
     connect(toolBar, SIGNAL(visibilityChanged(bool)), this, SLOT(toolbarVisibilityChanged()));
     //menuBar = new NMainMenuBar(this);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -2964,6 +2976,18 @@ void NixNote::openPreferences() {
             //trayIconBehavior();
         }
         indexRunner.officeFound = global.synchronizeAttachments();
+
+//        global.settings->beginGroup("Locale");
+//        QString translation;
+//        translation = global.settings->value("translation", QLocale::system().name()).toString();
+//        global.settings->endGroup();
+//        translation = global.fileManager.getTranslateFilePath("nixnote2_" + translation + ".qm");
+//        QApplication::removeTranslator(nixnoteTranslator);
+//        QLOG_DEBUG() << "Looking for transaltions: " << translation;
+//        bool translationResult = nixnoteTranslator->load(translation);
+//        QLOG_DEBUG() << "Translation loaded:" << translationResult;
+//        QApplication::instance()->installTranslator(nixnoteTranslator);
+
     }
     global.setDebugLevel();
 }
@@ -3636,7 +3660,6 @@ void NixNote::reloadIcons() {
     attributeTree->reloadIcons();
     trashTree->reloadIcons();
     searchTreeView->reloadIcons();
-    searchText->reloadIcons();
     favoritesTreeView->reloadIcons();
     tabWindow->reloadIcons();
 
@@ -3884,7 +3907,7 @@ void NixNote::loadPlugins() {
                 if (plugin) {
                     HunspellInterface *hunspellInterface;
                     hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                    if (hunspellInterface) {
+                    if (hunspellInterface != NULL) {
                         hunspellPluginAvailable = true;
                     }
                     delete hunspellInterface;

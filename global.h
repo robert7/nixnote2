@@ -265,6 +265,7 @@ public:
     QString getEditorFontColor();                           // Get the editor font color from the theme
     QString getEditorBackgroundColor();                     // Get the editor background color from the theme
 
+    QString getThemeCss(QString key);                               // Generic theme css from theme.ini
     QString getGenricCss(QString key);
     QString getGenricStyle(QString key);
 
@@ -281,8 +282,8 @@ public:
     QString getUrlEditorActiveStyle();
     QString getUrlEditorInactiveStyle();
 
-    QString getLineEditSearchActiveStyle();
-    QString getLineEditSearchInactiveStyle();
+//    QString getLineEditSearchActiveStyle();
+//    QString getLineEditSearchInactiveStyle();
 
     QString getDateTimeEditorColor();
     QString getDateTimeEditorActiveStyle();
