@@ -1293,10 +1293,12 @@ void NixNote::closeEvent(QCloseEvent *event) {
     syncRunner.keepRunning = false;
     syncThread.quit();
 
-    if (trayIcon->isVisible())
-        trayIcon->hide();
-    if (trayIcon != NULL)
+    if (trayIcon != NULL) {
+        if (trayIcon->isVisible())
+            trayIcon->hide();
         delete trayIcon;
+        trayIcon = NULL;
+    }
 
     QMainWindow::closeEvent(event);
     QLOG_DEBUG() << "Quitting";
