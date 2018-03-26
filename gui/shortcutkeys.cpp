@@ -243,7 +243,7 @@ void ShortcutKeys::loadCustomKeys(QString fileName) {
         }
         file.close();
     } else {
-        QLOG_DEBUG() << "Unable to open file for reading or file does not exist.";
+        qDebug() << Q_FUNC_INFO << "Unable to open" << fileName << "for reading or file does not exist.";
     }
 }
 

@@ -54,18 +54,20 @@ void ExitManager::loadExitPoint(QString name, int goodVersion) {
     if (fileName =="")  {
         QLOG_ERROR() << tr("Script filename is blank. Disabling exit ") << name;
         enabled = false;
+        return;
     }
 
     if (version != goodVersion) {
         enabled = false;
-        QLOG_ERROR() << tr("Unknown script version. Disabling exit.") << name;
+        QLOG_ERROR() << tr("Unknown script version. Disabling exit.") << version << "," << name;
     }
 
     QString script;
     QFile f(fileName);
     if (!f.exists()) {
-        QLOG_ERROR() << tr("Script file doesn't exist or cannot be read. Disabling exit ") << name;
+        QLOG_ERROR() << tr("Script file doesn't exist or cannot be read. Disabling exit ") << fileName;
         enabled = false;
+        return;
     } else {
         f.open(QIODevice::ReadOnly);
         script = f.readAll();
