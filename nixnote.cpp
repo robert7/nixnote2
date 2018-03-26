@@ -3199,8 +3199,12 @@ void NixNote::screenCapture() {
     this->hide();
     sleep(1);
 
-    ScreenCapture sc;
-    sc.exec();
+    ScreenCapture sc(this);
+    int result = sc.exec();
+    if (result == QDialog::Rejected) {
+        show();
+        return;
+    }
     QPixmap pix = sc.getSelection();
     this->show();
     ConfigStore cs(global.db);
