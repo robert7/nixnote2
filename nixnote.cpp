@@ -289,7 +289,10 @@ void NixNote::setupGui() {
     // Setup the GUI
     //this->setStyleSheet("background-color: white;");
     //statusBar();    setWindowTitle(tr("NixNote 2"));
-    setWindowIcon(QIcon(global.getIconResource(":windowIcon")));
+    const auto wIcon = QIcon(global.getIconResource(":windowIcon"));
+    if (!wIcon.isNull()) {
+        setWindowIcon(wIcon);
+    }
 
     //QLOG_TRACE() << "Setting up menu bar";
     searchText = new LineEdit();
@@ -2961,7 +2964,10 @@ void NixNote::openPreferences() {
     if (prefs.okButtonPressed) {
         setSyncTimer();
         bool showTrayIcon = global.showTrayIcon();
-        setWindowIcon(global.getIconResource(":windowIcon"));
+        const auto wIcon = QIcon(global.getIconResource(":windowIcon"));
+        if (!wIcon.isNull()) {
+            setWindowIcon(wIcon);
+        }
         trayIcon->setIcon(global.getIconResource(":trayIcon"));
         if (!showTrayIcon) {
             //trayIconBehavior();
@@ -3641,7 +3647,10 @@ void NixNote::reloadIcons() {
         global.loadTheme(global.resourceList,global.colorList,newThemeName);
     }
 
-    setWindowIcon(QIcon(global.getIconResource(":windowIcon")));
+    const auto wIcon = QIcon(global.getIconResource(":windowIcon"));
+    if (!wIcon.isNull()) {
+        setWindowIcon(wIcon);
+    }
     leftArrowButton->setIcon(global.getIconResource(":leftArrowIcon"));
     rightArrowButton->setIcon(global.getIconResource(":rightArrowIcon"));
     homeButton->setIcon(global.getIconResource(":homeIcon"));
