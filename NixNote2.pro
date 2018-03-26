@@ -7,13 +7,15 @@
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-    unix:INCLUDEPATH += /usr/include/poppler/qt5
+    unix {
+        CONFIG += link_pkgconfig
+        PKGCONFIG += poppler-qt5 libcurl
+    }
 #    unix:INCLUDEPATH += /usr/include/tidy
     win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
     win32:INCLUDEPATH+= "$$PWD/winlib/includes"
     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
-    unix:LIBS +=    -lcurl \
-               -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
+    unix:!mac:LIBS += -lpthread -g -rdynamic
     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5 -ltidy
     win32:RC_ICONS += "$$PWD/images/windowIcon.ico"
 }
@@ -38,7 +40,7 @@ CONFIG(debug, debug|release) {
         MOC_DIR = build/debug
 }
 
-CONFIG += debug_and_release
+# CONFIG += debug_and_release
 
 TRANSLATIONS = \
     translations/nixnote2_cs_CZ.ts \
@@ -452,15 +454,15 @@ HEADERS  += nixnote.h \
 
 
 
-unix:QMAKE_CXXFLAGS +=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security
-unix:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
+# unix:QMAKE_CXXFLAGS +=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security
+# unix:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
 
 win32:QMAKE_CXXFLAGS +=-g -O2 --param=ssp-buffer-size=4 -Wformat -Werror=format-security
 win32:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions
 win32:DEFINES += SMTP_BUILD
 
 isEmpty(PREFIX) {
-    PREFIX = /usr/local
+    PREFIX = $$[QT_INSTALL_PREFIX]
 }
 
 binary.path = $$PREFIX/bin/
@@ -482,10 +484,30 @@ qss.path = $$PREFIX/share/nixnote2/qss
 qss.files = qss/*
 
 pixmap.path = $$PREFIX/share/pixmaps/
-pixmap.extra = cp images/windowIcon.png images/nixnote2.png
+pixmap.extra = cp $$PWD/images/windowIcon.png $$PWD/images/nixnote2.png
 pixmap.files = images/nixnote2.png
 
 help.path = $$PREFIX/share/nixnote2/help
 help.files = help/*
 
-INSTALLS = binary desktop images java translations qss pixmap help
+mac {
+    ICON = images/NixNote2.icns
+    TARGET = NixNote2
+
+    # we go for an appbundle that contains all resources (except
+    # the shared library dependencies - use macdeployqt for those).
+    images.path = Contents/Resources
+    images.files = images
+    java.path = Contents/Resources
+    java.files = java
+    translations.path = Contents/Resources
+    translations.files = translations
+    qss.path = Contents/Resources
+    qss.files = qss
+    help.path = Contents/Resources
+    help.files = help
+    QMAKE_BUNDLE_DATA += images java translations qss help
+    INSTALLS = binary
+} else {
+    INSTALLS = binary desktop images java translations qss pixmap help
+}
