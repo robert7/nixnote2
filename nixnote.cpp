@@ -3876,9 +3876,24 @@ void NixNote::loadPlugins() {
     QStringList dirList;
     dirList.append(global.fileManager.getProgramDirPath(""));
     dirList.append(global.fileManager.getProgramDirPath("")+"/plugins");
-    dirList.append("/usr/lib/nixnote2/");
-    dirList.append("/usr/local/lib/nixnote2/");
+    const QString prefixPath = QLibraryInfo::location(QLibraryInfo::PrefixPath);
+    dirList.append(prefixPath + "/lib/nixnote2/");
+#ifndef Q_OS_MAC_OS
+    if (prefixPath != "/usr") {
+        dirList.append("/usr/lib/nixnote2/");
+    }
+    if (prefixPath != "/usr/local") {
+        dirList.append("/usr/local/lib/nixnote2/");
+    }
     dirList.append("/usr/local/lib");
+#endif
+#if defined(Q_OS_MACOS) && defined(USE_QSP)
+    // support installing additional plugins in the standard locations where they might be found
+    dirList.append(QStandardPaths::locate(QStandardPaths::AppDataLocation, "plugins", QStandardPaths::LocateDirectory));
+#endif
+    if (prefixPath != "/usr") {
+        dirList.append(prefixPath + "/lib");
+    }
     dirList.append("/usr/lib");
 
     // Start loading plugins

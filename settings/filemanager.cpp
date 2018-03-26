@@ -22,6 +22,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <iostream>
 #include <cstdlib>
 
+#ifdef USE_QSP
+#include <QLibraryInfo>
+#endif
 
 //*******************************************
 //* This class is used to find the location
@@ -34,19 +37,44 @@ FileManager::FileManager() {
 }
 
 void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
-
+#ifdef Q_OS_MACOS
+    QString appDirPath = QCoreApplication::applicationDirPath();
+    if (appDirPath.endsWith(".app/Contents/MacOS")) {
+        // get rid of the MacOS component
+        appDirPath.chop(5);
+        programDirPath = appDirPath + "/Resources/";
+    }
+#endif
     homeDir.setPath(toPlatformPathSeparator(homeDirPath));
     programDir.setPath(toPlatformPathSeparator(programDirPath));
     createDirOrCheckWriteable(homeDir);
     this->homeDirPath = slashTerminatePath(homeDir.path());
     this->programDirPath = slashTerminatePath(programDir.path());
 
+#ifdef USE_QSP
+#ifdef Q_OS_MACOS
+    // get the resources from the app bundle
+    dataDirPath = programDirPath;
+#else
+    dataDirPath = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/nixnote2/";
+#endif
+    const QString userDataDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)+"/");
+    const QString configDir(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/");
+#else
+    // preserve the legacy behaviour
+    dataDirPat = programDirPath;
+    const QString userDataDir(homeDirPath);
+    const QString configDir(getHomeDirPath(""));
+#endif
+
+    dataDir.setPath(dataDirPath);
+
     // Read only files that everyone uses
-    imagesDir.setPath(programDirPath+"images");
+    imagesDir.setPath(dataDirPath+"images");
     checkExistingReadableDir(imagesDir);
     imagesDirPath = slashTerminatePath(imagesDir.path());
 
-    javaDir.setPath(programDirPath+"java");
+    javaDir.setPath(dataDirPath+"java");
     checkExistingReadableDir(javaDir);
     javaDirPath = slashTerminatePath(javaDir.path());
 
@@ -54,24 +82,24 @@ void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
 //    checkExistingReadableDir(spellDir);
 //    spellDirPath = slashTerminatePath(spellDir.path());
 
-    spellDirUser.setPath(homeDirPath+"spell");
+    spellDirUser.setPath(userDataDir+"spell");
     createDirOrCheckWriteable(spellDirUser);
     spellDirPathUser = slashTerminatePath(spellDirUser.path());
 
     //xmlDir.setPath(programDirPath+"xml");
     //checkExistingReadableDir(xmlDir);
 
-    translateDir.setPath(programDirPath+"translations");
+    translateDir.setPath(dataDirPath+"translations");
     checkExistingReadableDir(translateDir);
     translateDirPath= slashTerminatePath(translateDir.path());
 
-    qssDir.setPath(programDirPath+"qss");
+    qssDir.setPath(dataDirPath+"qss");
     checkExistingReadableDir(qssDir);
     qssDirPath = slashTerminatePath(qssDir.path());
 
     // Read/write directories that only we use
 
-    QString settingsFile = getHomeDirPath("") + "nixnote.conf";
+    QString settingsFile = configDir + "nixnote.conf";
     QSettings globalSettings(settingsFile, QSettings::IniFormat);
 
     if (id <=0) {
@@ -81,19 +109,23 @@ void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
         id = accountId;
     }
 
-    qssDirUser.setPath(homeDirPath+"qss");
+    qssDirUser.setPath(userDataDir+"qss");
     createDirOrCheckWriteable(qssDirUser);
     qssDirPathUser = slashTerminatePath(qssDirUser.path());
 
-    logsDir.setPath(homeDirPath+"logs-" +QString::number(id));
+    logsDir.setPath(userDataDir+"logs-" +QString::number(id));
     createDirOrCheckWriteable(logsDir);
     logsDirPath = slashTerminatePath(logsDir.path());
 
-    tmpDir.setPath(homeDirPath+"tmp-" +QString::number(id));
+    tmpDir.setPath(userDataDir+"tmp-" +QString::number(id));
     createDirOrCheckWriteable(tmpDir);
     tmpDirPath = slashTerminatePath(tmpDir.path());
 
+#ifdef USE_QSP
+    dbDir.setPath(userDataDir+"db-" +QString::number(id));
+#else
     dbDir.setPath(homeDirPath+"db-" +QString::number(id));
+#endif
     createDirOrCheckWriteable(dbDir);
     dbDirPath = slashTerminatePath(dbDir.path());
 
@@ -154,7 +186,7 @@ void FileManager::deleteTopLevelFiles(QDir dir, bool exitOnFail) {
 void FileManager::createDirOrCheckWriteable(QDir dir) {
 
     if (!dir.exists()) {
-         if (!dir.mkdir(dir.path())) {
+         if (!dir.mkpath(dir.path())) {
              QLOG_FATAL() << "Failed to create directory '" << dir.path() << "'.  Aborting program.";
              exit(16);
          }
@@ -202,11 +234,19 @@ void FileManager::checkExistingWriteableDir(QDir dir) {
 
 
 QDir FileManager::getProgramDirFile(QString relativePath) {
+#ifdef USE_QSP
+    return QDir(dataDir.dirName() + toPlatformPathSeparator(relativePath));
+#else
     return QDir(programDir.dirName() + toPlatformPathSeparator(relativePath));
+#endif
 }
 
 QString FileManager::getProgramDirPath(QString relativePath) {
+#ifdef USE_QSP
+    return dataDirPath + toPlatformPathSeparator(relativePath);
+#else
     return programDirPath + toPlatformPathSeparator(relativePath);
+#endif
 }
 QDir FileManager::getHomeDirFile(QString relativePath) {
     return QDir(homeDir.dirName() + toPlatformPathSeparator(relativePath));
