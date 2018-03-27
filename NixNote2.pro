@@ -477,8 +477,20 @@ images.files = images/*
 java.path = $$PREFIX/share/nixnote2/java
 java.files = java/*
 
-translations.path = $$PREFIX/share/nixnote2/translations
-translations.files = translations/*
+# compile the translation files:
+isEmpty(QMAKE_LRELEASE) {
+    win32:LANGREL = $$[QT_INSTALL_BINS]\lrelease.exe
+    else:LANGREL = $$[QT_INSTALL_BINS]/lrelease
+}
+TRANSLATION_TARGET_DIR = $${OUT_PWD}/translations
+langrel.input = TRANSLATIONS
+langrel.output = $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
+langrel.commands = \
+    $$LANGREL -compress -nounfinished -removeidentical ${QMAKE_FILE_IN} -qm $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
+langrel.CONFIG += no_link
+QMAKE_EXTRA_COMPILERS += langrel
+# this launches the actual work:
+PRE_TARGETDEPS += compiler_langrel_make_all
 
 qss.path = $$PREFIX/share/nixnote2/qss
 qss.files = qss/*
@@ -500,14 +512,16 @@ mac {
     images.files = images
     java.path = Contents/Resources
     java.files = java
-    translations.path = Contents/Resources
-    translations.files = translations
+    mactranslations.path = Contents/Resources/translations
+    mactranslations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
     qss.path = Contents/Resources
     qss.files = qss
     help.path = Contents/Resources
     help.files = help
-    QMAKE_BUNDLE_DATA += images java translations qss help
+    QMAKE_BUNDLE_DATA += images java mactranslations qss help
     INSTALLS = binary
 } else {
+    translations.path = $$PREFIX/share/nixnote2/translations
+    translations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
     INSTALLS = binary desktop images java translations qss pixmap help
 }
