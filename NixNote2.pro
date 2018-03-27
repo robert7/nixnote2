@@ -45,6 +45,7 @@ CONFIG(debug, debug|release) {
 TRANSLATIONS = \
     translations/nixnote2_cs_CZ.ts \
     translations/nixnote2_de.ts    \
+    translations/nixnote2_en_GB.ts \
     translations/nixnote2_ca.ts    \
     translations/nixnote2_da.ts    \
     translations/nixnote2_es.ts    \
