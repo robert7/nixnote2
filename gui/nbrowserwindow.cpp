@@ -3511,7 +3511,7 @@ void NBrowserWindow::spellCheckPressed() {
 
     // If we STILL don't have a plugin then it can't be loaded. Quit out
     if (!hunspellPluginAvailable) {
-        QMessageBox::critical(this, tr("Plugin Error"), tr("Hunspell plugin not found or could not be loaded."), QMessageBox::Ok);
+        QMessageBox::critical(this, tr("Plugin Error"), tr("Hunspell plugin not available or no dictionary for current locale"), QMessageBox::Ok);
         return;
     }
 
@@ -3832,20 +3832,23 @@ void NBrowserWindow::loadPlugins() {
         QDir pluginsDir(dirList[i]);
         QStringList filter;
         filter.append("libhunspellplugin.so");
+        filter.append("libhunspellplugin.dylib");
         foreach (QString fileName, pluginsDir.entryList(filter)) {
             QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
             QObject *plugin = pluginLoader.instance();
-            if (fileName == "libhunspellplugin.so") {
+            if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
                 if (plugin) {
                     hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
                     if (hunspellInterface) {
-                        hunspellPluginAvailable = true;
-
+                        QString errMsg;
                         global.settings->beginGroup("Locale");
                         QString dict = global.settings->value("translation").toString();
                         global.settings->endGroup();
-
-                        hunspellInterface->initialize(global.fileManager.getProgramDirPath(""), global.fileManager.getSpellDirPathUser(),dict);
+                        hunspellPluginAvailable = hunspellInterface->initialize(global.fileManager.getProgramDirPath(""),
+                            global.fileManager.getSpellDirPathUser(), errMsg, dict);
+                        if (!hunspellPluginAvailable) {
+                            QLOG_ERROR() << errMsg;
+                        }
                     }
                 } else {
                     QLOG_ERROR() << pluginLoader.errorString();

@@ -3917,10 +3917,12 @@ void NixNote::loadPlugins() {
         QStringList filter;
         filter.append("libwebcamplugin.so");
         filter.append("libhunspellplugin.so");
+        filter.append("libwebcamplugin.dylib");
+        filter.append("libhunspellplugin.dylib");
         foreach (QString fileName, pluginsDir.entryList(filter)) {
             QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
             QObject *plugin = pluginLoader.instance();
-            if (fileName == "libwebcamplugin.so") {
+            if (fileName == "libwebcamplugin.so" || fileName == "libwebcamplugin.dylib") {
                 if (plugin) {
                     webcamInterface = qobject_cast<WebCamInterface *>(plugin);
                     if (webcamInterface) {
@@ -3933,7 +3935,7 @@ void NixNote::loadPlugins() {
 
             // The Hunspell plugin isn't actually used here. We just use this as a
             // check to be sure that the menu should be available.
-            if (fileName == "libhunspellplugin.so") {
+            if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
                 if (plugin) {
                     HunspellInterface *hunspellInterface;
                     hunspellInterface = qobject_cast<HunspellInterface *>(plugin);

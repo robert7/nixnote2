@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "global.h"
 #include "spellcheckdialog.h"
+#include "../utilities/spellchecker.h"
 
 extern Global global;
 
@@ -167,22 +168,7 @@ void SpellCheckDialog::replacementChosen() {
 
 
 void SpellCheckDialog::loadLanguages() {
-    QStringList dictionaryPath;
-    dictionaryPath.append("/usr/share/hunspell/");
-    dictionaryPath.append("/usr/share/myspell/");
-    dictionaryPath.append("/usr/share/myspell/dicts/");
-    dictionaryPath.append("/Library/Spelling/");
-    dictionaryPath.append("/opt/openoffice.org/basis3.0/share/dict/ooo/");
-    dictionaryPath.append("/opt/openoffice.org2.4/share/dict/ooo/");
-    dictionaryPath.append("/usr/lib/openoffice.org2.4/share/dict/ooo");
-    dictionaryPath.append("/opt/openoffice.org2.3/share/dict/ooo/");
-    dictionaryPath.append("/usr/lib/openoffice.org2.3/share/dict/ooo/");
-    dictionaryPath.append("/opt/openoffice.org2.2/share/dict/ooo/");
-    dictionaryPath.append("/usr/lib/openoffice.org2.2/share/dict/ooo/");
-    dictionaryPath.append("/opt/openoffice.org2.1/share/dict/ooo/");
-    dictionaryPath.append("/usr/lib/openoffice.org2.1/share/dict/ooo");
-    dictionaryPath.append("/opt/openoffice.org2.0/share/dict/ooo/");
-    dictionaryPath.append("/usr/lib/openoffice.org2.0/share/dict/ooo/");
+    QStringList dictionaryPath = SpellChecker::dictionaryPaths();
 
     QStringList values;
     // Start loading available language dictionaries
