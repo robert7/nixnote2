@@ -67,3 +67,6 @@ cmake-build-debug/
 
 #QMake file
 .qmake.stash
+
+# created during the build:
+images/nixnote2.png
