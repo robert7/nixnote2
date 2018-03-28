@@ -14,7 +14,7 @@ for storing user settings and data).
 
 ### Mac
 
-Check out the RJVB-MP branch of this repository, and in a terminal, do
+Make sure you're on the default (RJVB-MP) branch of this repository, and in a terminal, do
 
 ```bash
 > mkdir build
@@ -25,12 +25,17 @@ Check out the RJVB-MP branch of this repository, and in a terminal, do
 
 Upon successful completion you will have the NixNote2.app bundle in the build directory.
 
-Here, qmake is the one from Qt5. You will need to have Qt5 installed, as well as pkgconfig,
-hunspell and curl; these dependencies can come from MacPorts, Fink or HomeBrew (I use MacPorts).
+Here, qmake is the one from Qt5. You will need to have Qt5 installed (qtbase, qtdeclarative and qtwebkit),
+as well as pkgconfig, poppler-qt5, hunspell and curl; dependencies can come from MacPorts, Fink or HomeBrew (I use MacPorts).
 It should be possible to use official Qt5 packages too but I haven't tested that.
 
 The resulting application still depends MacPorts (or Fink or HomeBrew); instructions how
 to make it fully standalone will follow when I've figured that out.
+
+### Building from source on other systems
+
+This works much as described for Mac above. You'll need the same dependencies installed (including
+libtidy on MS Windows). Then, run the same sequence of commands, followed by `sudo make install`.
 
 ### Debian and Ubuntu
 
