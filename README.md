@@ -29,8 +29,16 @@ Here, qmake is the one from Qt5. You will need to have Qt5 installed (qtbase, qt
 as well as pkgconfig, poppler-qt5, hunspell and curl; dependencies can come from MacPorts, Fink or HomeBrew (I use MacPorts).
 It should be possible to use official Qt5 packages too but I haven't tested that.
 
-The resulting application still depends MacPorts (or Fink or HomeBrew); instructions how
-to make it fully standalone will follow when I've figured that out.
+The resulting application still depends MacPorts (or Fink or HomeBrew). To turn this into a standalone app bundle that can be
+deployed anywhere:
+
+```bash
+> cd build
+> macdeployqt NixNote2.app [-no-strip]
+```
+
+As far as I can tell this will find and copy all required dependencies into the app bundle and modify them so they
+can be loaded from inside that bundle (wherever it ends up).
 
 ### Building from source on other systems
 
