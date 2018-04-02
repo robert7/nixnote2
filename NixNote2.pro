@@ -29,7 +29,11 @@ equals(QT_MAJOR_VERSION, 4) {
                -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
 }
 
-TARGET = nixnote2
+mac {
+    TARGET = NixNote2
+} else {
+    TARGET = nixnote2
+}
 TEMPLATE = app
 RESOURCES = NixNote2.qrc
 
@@ -505,7 +509,6 @@ help.files = help/*
 
 mac {
     ICON = images/NixNote2.icns
-    TARGET = NixNote2
 
     # we go for an appbundle that contains all resources (except
     # the shared library dependencies - use macdeployqt for those).
@@ -515,6 +518,7 @@ mac {
     java.files = java
     mactranslations.path = Contents/Resources/translations
     mactranslations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
+    mactranslations.depends = compiler_langrel_make_all
     qss.path = Contents/Resources
     qss.files = qss
     help.path = Contents/Resources
