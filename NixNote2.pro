@@ -459,8 +459,8 @@ HEADERS  += nixnote.h \
 
 
 
-# unix:QMAKE_CXXFLAGS +=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security
-# unix:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
+linux:QMAKE_CXXFLAGS += -std=c++11 -g -O2 -fstack-protector-strong -Wformat -Werror=format-security
+linux:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
 
 win32:QMAKE_CXXFLAGS +=-g -O2 --param=ssp-buffer-size=4 -Wformat -Werror=format-security
 win32:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions

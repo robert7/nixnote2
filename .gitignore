@@ -62,6 +62,7 @@ Makefile.Release
 .cproject
 .settings
 
+build/
 cmake-build-debug/
 .idea/
 
