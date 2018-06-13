@@ -60,7 +60,7 @@ QStringList ColorMenu::colorNames() {
 
 
 void ColorMenu::populateList() {
-    QLOG_DEBUG() << "Populating colormenu";
+    // note: menu is created at beginning (not at runtime)
     QStringList list = colorNames();
     for (int i=0; i<list.size(); i++) {
         QPixmap pix(QSize(22,22));

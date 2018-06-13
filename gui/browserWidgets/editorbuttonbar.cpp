@@ -131,7 +131,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(htmlEntitiesButtonVisible, SIGNAL(triggered()), this, SLOT(toggleHtmlEntitiesButtonVisible()));
     connect(formatCodeButtonVisible, SIGNAL(triggered()), this, SLOT(toggleFormatCodeButtonVisible()));
 
-
+    // note editor toolbar items begin
     fontNames = new FontNameComboBox(this);
     fontSizes = new FontSizeComboBox(this);
 
@@ -155,6 +155,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     highlightColorButtonWidget->setIcon(global.getIconResource(":fontHighlightIcon"));
     highlightColorButtonWidget->setToolTip(tr("Highlight"));
     highlightColorAction = this->addWidget(highlightColorButtonWidget);
+
     highlightColorShortcut = new QShortcut(this);
     this->setupShortcut(highlightColorShortcut, "Format_Highlight");
 
