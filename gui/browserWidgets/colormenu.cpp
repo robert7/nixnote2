@@ -41,6 +41,8 @@ QStringList ColorMenu::colorNames() {
     colors << "darkGrey";
 
     colors << "red";
+    colors << "magenta";
+    colors << "darkMagenta";
     colors << "darkRed";
 
     colors << "green";
@@ -48,15 +50,11 @@ QStringList ColorMenu::colorNames() {
 
     colors << "blue";
     colors << "darkBlue";
-
     colors << "cyan";
     colors << "darkCyan";
 
-    colors << "magenta";
-    colors << "darkMagenta";
-
     colors << "yellow";
-    colors << "darkYellow";
+    colors << "white";
     return colors;
 }
 
