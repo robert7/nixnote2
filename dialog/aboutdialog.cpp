@@ -58,6 +58,18 @@ AboutDialog::AboutDialog(QDialog *parent) :
     } else {
         data = data.replace("__TRANSLATION__", translationInformation);
     }
+
+    // To provide git based version number, just replace the string in the html file during build process
+    // then this replacement will do nothing
+    QString version("Build at: ");
+    version.append(__DATE__);
+    version.append(" ");
+    version.append(__TIME__);
+    version.append(" Qt ");
+    version.append(QT_VERSION_STR);
+
+    data.replace("__VERSION__", version);
+
 #ifndef _WIN32
     data = data.replace("__LOGO__", "file://"+global.fileManager.getImageDirPath("")+"splash_logo.png");
 #else
