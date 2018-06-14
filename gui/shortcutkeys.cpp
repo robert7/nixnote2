@@ -224,10 +224,6 @@ void ShortcutKeys::loadCustomKeys(QString fileName) {
     if (file.isOpen()) {
         while (!file.atEnd()) {
             QString line = file.readLine().simplified();
-            //line = line.replace("\t", " ");
-            //line = line.replace("\n", " ");
-            //line = line.replace("\r", " " );
-            //line = line.trimmed();
             QStringList list = line.split(" ");
             QStringList keyvalue;
 
