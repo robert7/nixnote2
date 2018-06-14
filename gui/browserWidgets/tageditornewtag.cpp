@@ -48,8 +48,13 @@ TagEditorNewTag::TagEditorNewTag(QWidget *parent) :
 
     this->setFont(global.getGuiFont(font()));
 
-    inactiveColor = "QLineEdit {background-color: transparent; border-radius: 0px;} ";
-    activeColor = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
+    inactiveColor = global.getThemeCss("noteTagAddInactiveCss");
+    if (inactiveColor=="")
+        inactiveColor = global.getTagEditorInactiveStyle();
+
+    activeColor = global.getThemeCss("noteTagAddActiveCss");
+    if (activeColor == "")
+        activeColor = global.getTagEditorActiveStyle();
     this->setStyleSheet(inactiveColor);
 
     this->setPlaceholderText(tr("Click to add tag..."));
@@ -119,7 +124,6 @@ void TagEditorNewTag::loadCompleter() {
 
     model->setStringList(tagNames);
     completer->setModel(model);
-    //completer->popup()->setItemDelegate(new Tag)
     QLOG_TRACE_OUT() << typeid(*this).name();
 }
 

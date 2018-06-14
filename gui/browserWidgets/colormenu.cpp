@@ -18,6 +18,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "colormenu.h"
+#include "global.h"
+
+extern Global global;
 
 ColorMenu::ColorMenu(QObject *parent) :
     QObject(parent)
@@ -25,13 +28,40 @@ ColorMenu::ColorMenu(QObject *parent) :
     this->parent = parent;
     currentColor.setNamedColor("black");
     populateList();
+    QString css = global.getThemeCss("colorMenuCss");
+    if (css!="")
+        this->menu.setStyleSheet(css);
+
+}
+
+QStringList ColorMenu::colorNames() {
+    QStringList colors;
+    colors << "black";
+    colors << "gray";
+    colors << "darkGrey";
+
+    colors << "red";
+    colors << "magenta";
+    colors << "darkMagenta";
+    colors << "darkRed";
+
+    colors << "green";
+    colors << "darkGreen";
+
+    colors << "blue";
+    colors << "darkBlue";
+    colors << "cyan";
+    colors << "darkCyan";
+
+    colors << "yellow";
+    colors << "white";
+    return colors;
 }
 
 
-
-
 void ColorMenu::populateList() {
-    QStringList list = QColor::colorNames();
+    // note: menu is created at beginning (not at runtime)
+    QStringList list = colorNames();
     for (int i=0; i<list.size(); i++) {
         QPixmap pix(QSize(22,22));
         pix.fill(QColor(list[i]));
@@ -41,7 +71,10 @@ void ColorMenu::populateList() {
         menu.addAction(newAction);
         connect(newAction, SIGNAL(hovered()), this, SLOT(itemHovered()));
     }
+    QLOG_DEBUG() << "Done: populating colormenu";
 }
+
+
 
 
 QColor *ColorMenu::getColor() {

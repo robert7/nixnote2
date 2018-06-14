@@ -62,7 +62,11 @@ FavoritesView::FavoritesView(QWidget *parent) :
     this->setRootIsDecorated(true);
     this->setSortingEnabled(true);
     this->header()->setVisible(false);
-    this->setStyleSheet("QTreeView {border-image:none; image:none;} ");
+    QString css = global.getThemeCss("shortcutsTreeCss");
+    if (css!="")
+        this->setStyleSheet(css);
+    else
+        this->setStyleSheet("QTreeView {border-image:none; image:none;} ");
     root = new FavoritesViewItem(0);
     root->setData(NAME_POSITION, Qt::UserRole, "root");
     root->setData(NAME_POSITION, Qt::DisplayRole, tr("Shortcuts"));
@@ -523,7 +527,7 @@ void FavoritesView::dragEnterEvent(QDragEnterEvent *event) {
     }
 
     if (event->mimeData()->hasFormat("application/x-nixnote-notebook")) {
-        QLOG_DEBUG() << event->mimeData()->data("application/x-nixnote-notebook").trimmed();
+//        QLOG_DEBUG() << event->mimeData()->data("application/x-nixnote-notebook").trimmed();
         if (event->mimeData()->data("application/x-nixnote-notebook").trimmed() != "")
             event->accept();
         else
@@ -642,7 +646,7 @@ void FavoritesView::buildSelection() {
             if (item->record.type == FavoritesRecord::Search) {
                 SavedSearch search;
                 SearchTable table(global.db);
-                QLOG_DEBUG() << item->record.target.toInt();
+//                QLOG_DEBUG() << item->record.target.toInt();
                 table.get(search, item->record.target.toInt());
                 if (search.query.isSet())
                     newFilter->setSearchString(search.query);

@@ -30,25 +30,24 @@ UrlEditor::UrlEditor(QWidget *parent) :
 {
     // Setup the note title editor
     QPalette pal;
-    //pal.setColor(QPalette::Text, QColor(102,153,255));
-    //pal.setColor(QPalette::Text, QColor(14,28,209));
     pal.setColor(backgroundRole(), QPalette::Base);
     setPalette(pal);
 
     this->setFont(global.getGuiFont(font()));
 
-    inactiveColor = "QLineEdit {background-color: transparent; border-radius: 0px;} ";
-    activeColor = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
+    inactiveColor = global.getUrlEditorInactiveStyle();
+    activeColor = global.getUrlEditorActiveStyle();
     this->setCursor(Qt::PointingHandCursor);
     this->setStyleSheet(inactiveColor);
 
     this->setPlaceholderText(tr("Click to set source URL..."));
-//    defaultText = QString(tr("Click to set source URL..."));
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(textModified(QString)));
-    //this->textModified(defaultText);
-
-    //connect(this, SIGNAL(focussed(bool)), this, SLOT(gainedFocus(bool)));
     hide();
+
+    QString css = global.getThemeCss("urlEditorCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 void UrlEditor::setActiveColor() {

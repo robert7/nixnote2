@@ -10,7 +10,7 @@ shortcuts.  If you are happy with those then you don't need to do a thing.
 If you want to customize your shortcuts then you need to do a little work.
 
 You should have a shortcuts_sample.txt file.  Copy this to shortcuts.txt 
-in your Nixnote home directory (~/.nevernote on Linux & OS-X and your user
+in your Nixnote home directory (~/.nixnote on Linux & OS-X and your user
 home directory on Windows).  This is the file that is read 
 when Nixnote starts.  Any changes to this file only happen at startup
 so if you change it you need to restart the program to see those changes.

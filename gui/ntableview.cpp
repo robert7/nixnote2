@@ -85,7 +85,7 @@ NTableView::NTableView(QWidget *parent) :
     setModel(proxy);
 
     // Set the date deligates
-    QLOG_TRACE() << "Setting up table deligates";
+    QLOG_TRACE() << "Setting up table delegates";
     dateDelegate = new DateDelegate();
     blankNumber = new NumberDelegate(NumberDelegate::BlankNumber);
     kbNumber = new NumberDelegate(NumberDelegate::KBNumber);
@@ -342,6 +342,11 @@ NTableView::NTableView(QWidget *parent) :
     // Set note list appearance
     this->setShowGrid(global.showNoteListGrid());
     this->setAlternatingRowColors(global.alternateNoteListColors());
+
+    QString css = global.getThemeCss("noteTableViewCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 
     QLOG_TRACE() << "Exiting NTableView constructor";
 

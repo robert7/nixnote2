@@ -210,9 +210,9 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     userFileName = userFileName.replace("\\","/");
     systemFileName = systemFileName.replace("\\","/");
 #endif
-//    QLOG_DEBUG() << "Loading system shortcuts from " << systemFileName;
+    QLOG_DEBUG() << "Loading system shortcuts from " << systemFileName;
     loadCustomKeys(systemFileName);
-//    QLOG_DEBUG() << "Loadng user shortcuts from " << userFileName;
+    QLOG_DEBUG() << "Loading user shortcuts from " << userFileName;
     loadCustomKeys(userFileName);
 
 }
@@ -223,27 +223,34 @@ void ShortcutKeys::loadCustomKeys(QString fileName) {
     file.open(QFile::ReadOnly);
     if (file.isOpen()) {
         while (!file.atEnd()) {
-            QString line = file.readLine();
-            line = line.replace("\t", " ");
-            line = line.replace("\n", " ");
-            line = line.replace("\r", " " );
-            line = line.trimmed();
+            QString line = file.readLine().simplified();
             QStringList list = line.split(" ");
             QStringList keyvalue;
-            for(int i=0;i<list.size(); i++) {
-                if (list[i].trimmed() != "" && !list[i].trimmed().startsWith("//"))
-                    keyvalue.append(list[i].trimmed().toLower());
-                if (list[i].trimmed().startsWith("//"))
-                    i = list.size();
+
+            for (int i = 0; i < list.size(); i++) {
+                QString str = list[i].trimmed();
+
+                if (str.startsWith("//")) {
+                    break;
+                }
+                if (str != "") {
+                    keyvalue.append(str.toLower());
+                }
             }
-            if (keyvalue.size() == 1)
-                removeByAction(keyvalue[0]);
-            if (keyvalue.size() >= 2)
-                loadkey(keyvalue[0], &keyvalue[1]);
+
+            if (keyvalue.size() >= 1) {
+                QString keyStr = keyvalue[0];
+                removeByAction(keyStr);
+
+                if (keyvalue.size() >= 2) {
+                    loadkey(keyStr, &keyvalue[1]);
+                    // QLOG_TRACE() << "Setting " + keyStr + " to " + keyvalue[1];
+                }
+            }
         }
         file.close();
     } else {
-        QLOG_DEBUG() << "Unable to open file for reading or file does not exist.";
+        QLOG_DEBUG() << "Unable to open file " << fileName << " for reading or file does not exist.";
     }
 }
 

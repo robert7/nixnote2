@@ -278,6 +278,11 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     saveTimer.start();
 
     hunspellInterface = NULL;
+
+    QString css = global.getThemeCss("browserWindowCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 
@@ -1363,10 +1368,11 @@ void NBrowserWindow::fontNameSelected(int index) {
 }
 
 
-
 // The font highlight color was pressed
 void NBrowserWindow::fontHighlightClicked() {
+    QLOG_DEBUG() << "fontHighlightClicked";
     QColor *color = buttonBar->highlightColorMenuWidget->getColor();
+    QLOG_DEBUG() << "fontHighlight got color" << *color;
     if (color->isValid()) {
         this->editor->page()->mainFrame()->evaluateJavaScript(
                 "document.execCommand('backColor', false, '"+color->name()+"');");
@@ -1379,7 +1385,9 @@ void NBrowserWindow::fontHighlightClicked() {
 
 // The font color was pressed
 void NBrowserWindow::fontColorClicked() {
+    QLOG_DEBUG() << "fontColorClicked";
     QColor *color = buttonBar->fontColorMenuWidget->getColor();
+    QLOG_DEBUG() << "fontColor got color" << *color;
     if (color->isValid()) {
         this->editor->page()->mainFrame()->evaluateJavaScript(
                 "document.execCommand('foreColor', false, '"+color->name()+"');");
@@ -3523,8 +3531,11 @@ void NBrowserWindow::spellCheckPressed() {
     QStringList words = page->mainFrame()->toPlainText().split(" ");
     QStringList ignoreWords;
     QStringList rwords;
-    //SpellChecker checker;
     bool finished = false;
+
+    global.settings->beginGroup("Locale");
+    QString dict = global.settings->value("translation").toString();
+    global.settings->endGroup();
 
     for (int i=0; i<words.size() && !finished; i++) {
         QString currentWord = words[i];
@@ -3541,6 +3552,14 @@ void NBrowserWindow::spellCheckPressed() {
             if (dialog.replacePressed)  {
                 QApplication::clipboard()->setText(dialog.replacement);
                 pasteButtonPressed();
+            }
+            if (dialog.changeLanguage) {
+                dialog.changeLanguage = false;
+                i--;
+                QString newLang;
+                int idx = dialog.language->currentIndex();
+                newLang = dialog.language->itemText(idx);
+                hunspellInterface->initialize(global.fileManager.getProgramDirPath(""), global.fileManager.getSpellDirPathUser(),newLang);
             }
             if (dialog.addToDictionaryPressed) {
                 hunspellInterface->addWord(global.fileManager.getSpellDirPathUser() +"user.lst", currentWord);
@@ -3809,7 +3828,12 @@ void NBrowserWindow::loadPlugins() {
                     hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
                     if (hunspellInterface) {
                         hunspellPluginAvailable = true;
-                        hunspellInterface->initialize(global.fileManager.getProgramDirPath(""), global.fileManager.getSpellDirPathUser());
+
+                        global.settings->beginGroup("Locale");
+                        QString dict = global.settings->value("translation").toString();
+                        global.settings->endGroup();
+
+                        hunspellInterface->initialize(global.fileManager.getProgramDirPath(""), global.fileManager.getSpellDirPathUser(),dict);
                     }
                 } else {
                     QLOG_ERROR() << pluginLoader.errorString();
