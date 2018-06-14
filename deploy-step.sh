@@ -7,7 +7,7 @@
 echo Deploying `pwd` to $1
 
 # copy folders ...
-cp -r \
+cp -rf \
  help \
  images \
  java \
@@ -16,7 +16,7 @@ cp -r \
  $1
 
 # ... and files required for execution
-cp \
+cp -f \
  changelog.txt \
  license.html \
  shortcuts.txt \

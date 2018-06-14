@@ -1,133 +1,136 @@
-File_Note_Add			Ctrl+N		// Add a new note
-File_Note_Reindex				// Reindex the current note
-File_Note_Modify_Tags				// Change current note tags
-File_Note_Delete                Ctrl+Shift+D	// Delete a tag
-File_Note_Restore				// Restore from the trash
-File_Note_Duplicate				// Duplicate the current note
-File_Note_Merge					// Merge multiple notes
-File_Note_History				// View the current note history
-File_Notebook_Add				// Add a notebook
-File_Notebook_Edit				// Edit an existing notebook
-File_Notebook_Delete				// Delete the existing notebook
-File_Notebook_Close				// Open/Close (i.e. archive) a notebook
-File_Notebook_Icon				// Modify the selected notebook icon
-File_Notebook_Stack				// Stack/Unstack notebooks
-File_Notebook_Publish				// publish a notebook
-File_Notebook_Share				// Share a notebook with others
-File_Tag_Add			Ctrl+Shift+T	// Add a notebook
-File_Tag_Edit					// Edit an existing notebook
-File_Tag_Delete					// Delete the existing notebook
-File_Tag_Icon					// Modify the selected tag(s) icon.
-File_SavedSearch_Add				// Add a notebook
-File_SavedSearch_Edit				// Edit an existing notebook
-File_SavedSearch_Delete				// Delete the existing notebook
-File_Save_Content               Ctrl+S          // Force an immediate save of all notes
-File_Print			Ctrl+P		// Print
-File_Selective_Sync				// Selective sync setup
-File_Empty_Trash				// Purge all delete notes
-File_Exit			Ctrl+Q		// I'm outahere
+// standard shortcuts
+// you may copy the file to ~/.nixnote and adjust keyboard mappings
+
+File_Note_Add                 Ctrl+N            // Add a new note
+File_Note_Reindex                               // Reindex the current note
+File_Note_Modify_Tags                           // Change current note tags
+File_Note_Delete              Ctrl+Shift+D      // Delete a tag
+File_Note_Restore                               // Restore from the trash
+File_Note_Duplicate                             // Duplicate the current note
+File_Note_Merge                                 // Merge multiple notes
+File_Note_History                               // View the current note history
+File_Notebook_Add                               // Add a notebook
+File_Notebook_Edit                              // Edit an existing notebook
+File_Notebook_Delete                            // Delete the existing notebook
+File_Notebook_Close                             // Open/Close (i.e. archive) a notebook
+File_Notebook_Icon                              // Modify the selected notebook icon
+File_Notebook_Stack                             // Stack/Unstack notebooks
+File_Notebook_Publish                           // Publish a notebook
+File_Notebook_Share                             // Share a notebook with others
+File_Tag_Add                  Ctrl+Shift+T      // Add a notebook
+File_Tag_Edit                                   // Edit an existing notebook
+File_Tag_Delete                                 // Delete the existing notebook
+File_Tag_Icon                                   // Modify the selected tag(s) icon.
+File_SavedSearch_Add                            // Add a notebook
+File_SavedSearch_Edit                           // Edit an existing notebook
+File_SavedSearch_Delete                         // Delete the existing notebook
+File_Save_Content             Ctrl+S            // Force an immediate save of all notes
+File_Print                    Ctrl+P            // Print
+File_Selective_Sync                             // Selective sync setup
+File_Empty_Trash                                // Purge all deleted notes
+File_Exit                     Ctrl+Q            // I'm outahere
 File_Note_Export_Pdf                            // Export selected notes as a PDF
 
-Edit_Search_Find		Ctrl+F		// Search only within the current note
-Edit_Search_Find_Next		Ctrl+G		// Find the next occurrence within the current note
-Edit_Search_Find_Prev		Ctrl+Shift+G	// Find the previous occurrence within the current note
-Edit_Search_Find_Replace	Ctrl+H		// Find & Replace within the current note
-Edit_Undo			Ctrl+Z		// Undo last change
-Edit_Redo			Ctrl+Y		// Redo the last undone change
-Edit_Cut			Ctrl+X		// Cut current selection to the clipboard
-Edit_Copy			Ctrl+C		// Copy the current selection to the clipboard
-Edit_Paste			Ctrl+V		// Paste
-Edit_Paste_Without_Formatting	Ctrl+Shift+V	// Paste as plain text
+Edit_Search_Find              Ctrl+F            // Search only within the current note
+Edit_Search_Find_Next         Ctrl+G            // Find the next occurrence within the current note
+Edit_Search_Find_Prev         Ctrl+Shift+G      // Find the previous occurrence within the current note
+Edit_Search_Find_Replace      Ctrl+H            // Find & Replace within the current note
+Edit_Undo                     Ctrl+Z            // Undo last change
+Edit_Redo                     Ctrl+Y            // Redo the last undone change
+Edit_Cut                      Ctrl+X            // Cut current selection to the clipboard
+Edit_Copy                     Ctrl+C            // Copy the current selection to the clipboard
+Edit_Paste                    Ctrl+V            // Paste
+Edit_Paste_Without_Formatting Ctrl+Shift+V      // Paste as plain text
 Edit_Remove_Formatting                          // Remove selected formatting from text
-Edit_Preferences				// Settings dialog box
-Edit_Image_Rotate_Left				// Rotate an image left
-Edit_Image_Rotate_Right				// Rotate an image to the right
-Edit_Delete_Table_Row				// Delete a table row
-Edit_Insert_Table_Row				// Insert a table row
-Edit_Insert_Table_Column			// Insert a table row
-Edit_Delete_Table_Column			// Delete a table row
+Edit_Preferences                                // Settings dialog box
+Edit_Image_Rotate_Left                          // Rotate an image left
+Edit_Image_Rotate_Right                         // Rotate an image to the right
+Edit_Delete_Table_Row                           // Delete a table row
+Edit_Insert_Table_Row                           // Insert a table row
+Edit_Insert_Table_Column                        // Insert a table row
+Edit_Delete_Table_Column                        // Delete a table row
 
-Edit_Insert_Hyperlink		Ctrl+K		// Insert a hyperlink (Popup menu)
-Edit_Insert_Todo	                        // Insert a todo checkbox (Popup menu)
-Edit_Insert_QuickLink				// Insert a quick link to another note (Popup menu)
+Edit_Insert_Hyperlink         Ctrl+K            // Insert a hyperlink (Popup menu)
+Edit_Insert_Todo                                // Insert a todo checkbox (Popup menu)
+Edit_Insert_QuickLink                           // Insert a quick link to another note (Popup menu)
 Edit_Remove_Hyperlink                           // Remove hyperlink from text
 Edit_Insert_Html_Entities                       // Insert HTML Entities
-Edit_Encrypt_Text				// Encrypt selected text (Popup menu)
-Edit_Insert_Table				// Insert a table into a note (Popup menu)
+Edit_Encrypt_Text                               // Encrypt selected text (Popup menu)
+Edit_Insert_Table                               // Insert a table into a note (Popup menu)
 Edit_Attach_File                                // Attach a file
-Edit_Insert_Latex				// Insert a LaTeX formula.
-Edit_Copy_Note_Url				// Copy the current note URL to the clipboard
+Edit_Insert_Latex                               // Insert a LaTeX formula.
+Edit_Copy_Note_Url                              // Copy the current note URL to the clipboard
 
-View_List_Narrow				// View with the list on the side
-View_List_Wide					// View with the list on the top
-View_Thumbnail					// Fullscreen preview
-View_Source					// Reveal the HTML source of a note
-View_Extended_Information	F8	// View details on the current note
-View_Show_Note_List		F10		// Show current notes
-View_Show_Notebooks				// Show notebooks
-View_Show_Tags					// Show the tags window
-View_Show_Attribute_Searches			// Show the attribute selection tree
-View_Show_SavedSearches				// Show the saved search tree
-View_Show_Trash					// Show the trash window
-View_Show_Editor_Button_Bar			// Hide the editor button bar
-View_Show_Left_Side		F11		// Hide all left hand windows
-View_Show_Favorites_List			// Show/Hide the favorites list in the left hand window
-View_Show_Notebook_List 			// Show/Hide the notebook list in the left hand window
-View_Show_Tags_List     			// Show/Hide the tags list in the left hand window
-View_Show_Saved_Search_List			// Show/Hide the saved searcht list in the left hand window
-View_Show_Attribute_List			// Show/Hide the attribute list in the left hand window
+View_List_Narrow                                // View with the list on the side
+View_List_Wide                                  // View with the list on the top
+View_Thumbnail                                  // Fullscreen preview
+View_Source                   Ctrl+Shift+S      // Reveal the HTML source of a note
+View_Extended_Information     F8                // View details on the current note
+View_Show_Note_List           F10               // Show current notes
+View_Show_Notebooks                             // Show notebooks
+View_Show_Tags                                  // Show the tags window
+View_Show_Attribute_Searches                    // Show the attribute selection tree
+View_Show_SavedSearches                         // Show the saved search tree
+View_Show_Trash                                 // Show the trash window
+View_Show_Editor_Button_Bar                     // Hide the editor button bar
+View_Show_Left_Side           F11               // Hide all left hand windows
+View_Show_Favorites_List                        // Show/Hide the favorites list in the left hand window
+View_Show_Notebook_List                         // Show/Hide the notebook list in the left hand window
+View_Show_Tags_List                             // Show/Hide the tags list in the left hand window
+View_Show_Saved_Search_List                     // Show/Hide the saved searcht list in the left hand window
+View_Show_Attribute_List                        // Show/Hide the attribute list in the left hand window
 View_Show_Trash                                 // Show/Hide the trash list in the left hand window
-View_Toolbar					// Show/hide the toolbar
-View_Show_Search				// Show/hide the search box
-View_Show_Quota					// Show/hide the user quota
-View_Show_Zoom					// Show/hide the zoom spinner
+View_Toolbar                                    // Show/hide the toolbar
+View_Show_Search                                // Show/hide the search box
+View_Show_Quota                                 // Show/hide the user quota
+View_Show_Zoom                                  // Show/hide the zoom spinner
 View_Presentation_Mode                          // Turn on presentation mode
 
-Prev_Tab                       Ctrl+PgDown      // Previous tab 
-Next_Tab                       Ctrl+PgUp        // Next Tab
-Close_Tab		       Ctrl+W           // Close the current tab
-Up_Note                        Ctrl+Shift+PgUp      // Move up one note in the list 
-Down_Note                      Ctrl+Shift+PgDown    // Move down one note in the list
+Prev_Tab                      Ctrl+PgDown       // Previous tab 
+Next_Tab                      Ctrl+PgUp         // Next Tab
+Close_Tab                     Ctrl+W            // Close the current tab
+Up_Note                       Ctrl+Shift+PgUp   // Move up one note in the list 
+Down_Note                     Ctrl+Shift+PgDown // Move down one note in the list
 
-Format_Bold			Ctrl+B		// Bold (duh)
-Format_Underline		Ctrl+U		// Underline
-Format_Italic			Ctrl+I		// Italic
-Format_Strikethrough		Ctrl+-		// Strikethrough
-Format_Horizontal_Line				// Href line
-Format_Superscript		Ctrl+=		// Set superscript
-Format_Subscript		Ctrl+Shift+=	// Subscript
-Format_Alignment_Left		Ctrl+L		// Left align text
-Format_Alignment_Center	        Ctrl+E		// Center text
-Format_Alignment_Full	        		// Fully align text
-Format_Alignment_Right		Ctrl+R		// Right align text
-Format_List_Bullet		Ctrl+Shift+B	// Bullet list
-Format_List_Numbered		Ctrl+Shift+N	// Numbered list 
-Format_Indent_Increase		Ctrl+M		// Increase the indentation
-Format_Indent_Decrease		Ctrl+Shift+M	// Decrease the indent
+Format_Bold                   Ctrl+B            // Bold (duh)
+Format_Underline              Ctrl+U            // Underline
+Format_Italic                 Ctrl+I            // Italic
+Format_Strikethrough          Ctrl+-            // Strikethrough
+Format_Horizontal_Line                          // Href line
+Format_Superscript            Ctrl+=            // Set superscript
+Format_Subscript              Ctrl+Shift+=      // Subscript
+Format_Alignment_Left         Ctrl+L            // Left align text
+Format_Alignment_Center       Ctrl+E            // Center text
+Format_Alignment_Full                           // Fully align text
+Format_Alignment_Right        Ctrl+R            // Right align text
+Format_List_Bullet            Ctrl+Shift+B      // Bullet list
+Format_List_Numbered          Ctrl+Shift+N      // Numbered list 
+Format_Indent_Increase        Ctrl+M            // Increase the indentation // seems Tab doesn't work
+Format_Indent_Decrease        Ctrl+Shift+M      // Decrease the indent      // seems Shift-Tab doesn't work
 Format_Highlight                                // Highlight the current text
 Format_Code_Block                               // Format code block
 
-Tools_Synchronize		F9		// Synchronize with Evernote
-Tools_Connect					// Connect to Evernote
-Tools_Spell_Check				// Spell check dialog
-Tools_Account_Information			// Show account information
-Tools_Reindex_Database				// Reindex the entire database
-Tools_Disable_Note_Indexing			// Disable note indexing
-Tools_Compact_Database				// Free unused database space
-Tools_Database_Status				// Current database information
+Tools_Synchronize             F9                // Synchronize with Evernote
+Tools_Connect                                   // Connect to Evernote
+Tools_Spell_Check                               // Spell check dialog
+Tools_Account_Information                       // Show account information
+Tools_Reindex_Database                          // Reindex the entire database
+Tools_Disable_Note_Indexing                     // Disable note indexing
+Tools_Compact_Database                          // Free unused database space
+Tools_Database_Status                           // Current database information
 Tools_Disable_Editing                           // Enable/Disable note editing
 
-About_Release_Notes				// Current version's release notes
-About_Log					// Message log
-About_About					// About dialog box
+About_Release_Notes                             // Current version's release notes
+About_Log                                       // Message log
+About_About                                     // About dialog box
 
-Insert_DateTime			Ctrl+;		// Insert the current date/time
-Focus_Title		      			// Focus on the current note title
-Focus_Tag					// Focus on the tag line
-Focus_Note					// Focus on the note itself
-Focus_Author		        		// Focus on the author field
-Focus_Url					// Focus on the source URL field
-Focus_Search					// Focus on the search field
-Focus_Notebook				        // Focus on the notebook
-Focus_Font				        // Focus on the font drop down
-Focus_Font_Size					// Focus on the font size drop down
+Insert_DateTime               Ctrl+;            // Insert the current date/time
+Focus_Title                                     // Focus on the current note title
+Focus_Tag                                       // Focus on the tag line
+Focus_Note                                      // Focus on the note itself
+Focus_Author                                    // Focus on the author field
+Focus_Url                                       // Focus on the source URL field
+Focus_Search                                    // Focus on the search field
+Focus_Notebook                                  // Focus on the notebook
+Focus_Font                                      // Focus on the font drop down
+Focus_Font_Size                                 // Focus on the font size drop down

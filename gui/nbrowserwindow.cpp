@@ -1368,10 +1368,11 @@ void NBrowserWindow::fontNameSelected(int index) {
 }
 
 
-
 // The font highlight color was pressed
 void NBrowserWindow::fontHighlightClicked() {
+    QLOG_DEBUG() << "fontHighlightClicked";
     QColor *color = buttonBar->highlightColorMenuWidget->getColor();
+    QLOG_DEBUG() << "fontHighlight got color" << *color;
     if (color->isValid()) {
         this->editor->page()->mainFrame()->evaluateJavaScript(
                 "document.execCommand('backColor', false, '"+color->name()+"');");
@@ -1384,7 +1385,9 @@ void NBrowserWindow::fontHighlightClicked() {
 
 // The font color was pressed
 void NBrowserWindow::fontColorClicked() {
+    QLOG_DEBUG() << "fontColorClicked";
     QColor *color = buttonBar->fontColorMenuWidget->getColor();
+    QLOG_DEBUG() << "fontColor got color" << *color;
     if (color->isValid()) {
         this->editor->page()->mainFrame()->evaluateJavaScript(
                 "document.execCommand('foreColor', false, '"+color->name()+"');");
