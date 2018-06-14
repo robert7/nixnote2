@@ -144,6 +144,11 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
     thumbnailAction->setCheckable(true);
     addAction(thumbnailAction);
 
+    relevanceAction = new QAction(this);
+    relevanceAction->setText(tr("Relevance"));
+    relevanceAction->setCheckable(true);
+    addAction(relevanceAction);
+
 
     this->setMouseTracking(true);
 
@@ -161,6 +166,7 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
    connect(hasEncryptionAction, SIGNAL(toggled(bool)), this, SLOT(hasEncryptionChecked(bool)));
    connect(sizeAction, SIGNAL(toggled(bool)), this, SLOT(sizeChecked(bool)));
    connect(thumbnailAction, SIGNAL(toggled(bool)), this, SLOT(thumbnailChecked(bool)));
+   connect(relevanceAction, SIGNAL(toggled(bool)), this, SLOT(relevanceChecked(bool)));
    connect(latitudeAction, SIGNAL(toggled(bool)), this, SLOT(latitudeChecked(bool)));
    connect(longitudeAction, SIGNAL(toggled(bool)), this, SLOT(longitudeChecked(bool)));
    connect(altitudeAction, SIGNAL(toggled(bool)), this, SLOT(altitudeChecked(bool)));
@@ -171,7 +177,7 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
    connect(reminderOrderAction, SIGNAL(toggled(bool)), this, SLOT(reminderOrderChecked(bool)));
    connect(pinnedAction, SIGNAL(toggled(bool)), this, SLOT(pinnedChecked(bool)));
 
-    this->setFont(global.getGuiFont(font()));
+   this->setFont(global.getGuiFont(font()));
 
    QString css = global.getThemeCss("noteTableViewHeaderCss");
    if (css!="")
@@ -284,6 +290,10 @@ void NTableViewHeader::thumbnailChecked(bool checked) {
     emit (setColumnVisible(NOTE_TABLE_THUMBNAIL_POSITION, checked));
     checkActions();
 }
+void NTableViewHeader::relevanceChecked(bool checked) {
+    emit (setColumnVisible(NOTE_TABLE_SEARCH_RELEVANCE_POSITION, checked));
+    checkActions();
+}
 void NTableViewHeader::reminderTimeChecked(bool checked) {
     emit (setColumnVisible(NOTE_TABLE_REMINDER_TIME_POSITION, checked));
     checkActions();
@@ -304,4 +314,8 @@ void NTableViewHeader::pinnedChecked(bool checked) {
 
 bool NTableViewHeader::isThumbnailVisible() {
     return thumbnailAction->isChecked();
+}
+
+bool NTableViewHeader::isRelevanceVisible() {
+    return relevanceAction->isChecked();
 }
