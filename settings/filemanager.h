@@ -27,6 +27,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDir>
 #include <exception>
 
+// Under Qt5, use QStandardPaths except when told not to, or on MS Windows
+// (the latter choice may be unwise but I cannot test).
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0) && !defined(DONT_USE_QSTANDARDPATHS) && !defined(_WIN32)
+#define USE_QSP
+#endif
+
+#ifdef USE_QSP
+#include <QStandardPaths>
+#endif
+
 //************************************************
 //* This class is used to retrieve the
 //* location of certain directories.
@@ -44,6 +54,9 @@ private:
 
     QString  homeDirPath;
     QDir homeDir;
+
+    QString  dataDirPath;
+    QDir dataDir;
 
     QString dbDirPath;
     QDir dbDir;

@@ -30,8 +30,17 @@ qrc_*.*
 # autosave files
 *.autosave
 
+# Vim backup files
+*~
+
 # the main program itself
 nixnote2
+
+# Nixnote database backup files
+*.nnex
+
+# Makefiles
+Makefile*
 
 # user files
 *.pro.*
@@ -52,6 +61,7 @@ Makefile.Release
 .cproject
 .settings
 
+build/
 cmake-build-debug/
 build/
 
@@ -64,3 +74,6 @@ build/
 
 # QMake file
 .qmake.stash
+
+# created during the build:
+images/nixnote2.png

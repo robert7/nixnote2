@@ -520,8 +520,8 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
     LinkedNotebookTable linkedNotebookTable(db);
     QString notebookName = "";
 
-    qint32 account = 0;   // By default we search in our account.  This is used later to find tag names
     qint32 notebookLid = notebook;
+    qint32 account = 0;
     if (notebookLid <= 0)
         notebookLid = notebookTable.getLid(t.notebookGuid);
     if (notebookLid <=0) {

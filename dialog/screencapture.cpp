@@ -24,22 +24,65 @@
 
 #include <QDesktopWidget>
 #include <QApplication>
+#include <QMainWindow>
+#include <QPoint>
+#include <QEvent>
+#include <QKeyEvent>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QScreen>
+#include <QWindow>
+#endif
 
-ScreenCapture::ScreenCapture(QWidget *parent) :
+ScreenCapture::ScreenCapture(QMainWindow *appWindow, QWidget *parent) :
     QDialog(parent)
 {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    // fetch the QScreen on which NixNote2 is currently running:
+    const auto desktopWidget = QApplication::desktop();
+    int ourScreenNr = desktopWidget->screenNumber(appWindow);
+    QScreen *ourScreen = qApp->screens().at(ourScreenNr);
+
+    // move our fullscreen window to the top-left of our current screen
+    scOrigin = ourScreen->geometry().topLeft();
+    move(scOrigin);
+    // also be certain the fullscreen window is on that screen.
+    if (auto window = windowHandle()) {
+        window->setScreen(ourScreen);
+    }
+#endif
+
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint );
     setWindowState(Qt::WindowFullScreen);
+#ifdef __APPLE__
+    setWindowOpacity(0.25);
+#endif
     setCursor(Qt::CrossCursor);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    // get the geometry of the entire desktop spanning all screens
+    const auto desktopGeo = ourScreen->virtualGeometry();
+    sizeDesktop = desktopGeo.size();
+    desktopOrigin = desktopGeo.topLeft();
+    // size our fullscreen window to the virtual desktop size. In theory we
+    // should move the top-left to desktopOrigin, but in practice we seem to
+    // be limited to the size of the screen we're on anyway (on Mac at least).
+    resize(sizeDesktop);
+
+    // QPixmap::grabWindow is deprecated in Qt5 so we use QScreen::grabWindow()
+    // and we grab the entire (virtual) desktop.
+    desktopPixmapBkg = ourScreen->grabWindow(desktopWidget->winId(),
+        desktopGeo.x(), desktopGeo.y(), desktopGeo.width(), desktopGeo.height());
+#else
     sizeDesktop = QApplication::desktop()->size();
     resize(sizeDesktop);
 
     desktopPixmapBkg = QPixmap::grabWindow(QApplication::desktop()->winId());
+    move(0, 0);
+    desktopOrigin = scOrigin = QPoint(0,0);
+#endif
     desktopPixmapClr = desktopPixmapBkg;
 
-    move(0, 0);
     drawBackGround();
 }
 
@@ -49,27 +92,41 @@ ScreenCapture::ScreenCapture(QWidget *parent) :
 
 ScreenCapture::~ScreenCapture()
 {
+    setWindowState(Qt::WindowMinimized);
 }
 
 bool ScreenCapture::event(QEvent *event)
 {
-  if (event->type() == QEvent::MouseButtonRelease
-   || event->type() == QEvent::KeyPress)
-  {
-    accept();
-  }
-  if (event->type() == QEvent::MouseButtonPress)
-  {
-    QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
+    switch (event->type()) {
+        case QEvent::MouseButtonRelease:
+            accept();
+            break;
+        case QEvent::KeyPress: {
+            QKeyEvent *qke = static_cast<QKeyEvent*>(event);
+            if (qke->key() == Qt::Key_Escape) {
+                // escape key cancels the grab
+                reject();
+            } else {
+                // any other key terminates the grab
+                // if this happens before a selection was made,
+                // the grab will be of the entire (virtual) desktop
+                accept();
+            }
+            break;
+        }
+        case QEvent::MouseButtonPress: {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
 
-    if (mouseEvent->button() != Qt::LeftButton)
-      reject();
+            if (mouseEvent->button() != Qt::LeftButton)
+                reject();
 
-    selStartPoint = mouseEvent->pos();
-    selectRect = QRect(selStartPoint, QSize());
-  }
+            selStartPoint = mouseEvent->pos();
+            selectRect = QRect(selStartPoint, QSize());
+            break;
+        }
+    }
 
-  return QDialog::event(event);
+    return QDialog::event(event);
 }
 
 void ScreenCapture::paintEvent(QPaintEvent *event)
@@ -101,7 +158,7 @@ void ScreenCapture::drawBackGround()
     // set painter brush on 85% transparency
     painter.setBrush(QBrush(QColor(0, 0, 0, 85), Qt::SolidPattern));
 
-    // draw rect of desktop size in poainter
+    // draw rect of desktop size in painter
     painter.drawRect(QApplication::desktop()->rect());
 
     QRect txtRect = QApplication::desktop()->screenGeometry(QApplication::desktop()->primaryScreen());
@@ -182,7 +239,16 @@ void ScreenCapture::drawRectSelection(QPainter &painter)
 QPixmap ScreenCapture::getSelection()
 {
     QPixmap sel;
-    sel = desktopPixmapClr.copy(selectRect);
+    QRect selected = selectRect;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    // make sure we take the respective origins of the (virtual) desktop "window"
+    // and the fullscreen (ScreenCapture) window into account:
+    QPoint offset = desktopOrigin;
+    offset -= scOrigin;
+    offset *= -1;
+    selected.translate(offset);
+#endif
+    sel = desktopPixmapClr.copy(selected);
     return sel;
 }
 

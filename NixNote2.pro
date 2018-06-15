@@ -7,13 +7,15 @@
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-    unix:INCLUDEPATH += /usr/include/poppler/qt5
+    unix {
+        CONFIG += link_pkgconfig
+        PKGCONFIG += poppler-qt5 libcurl
+    }
 #    unix:INCLUDEPATH += /usr/include/tidy
     win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
     win32:INCLUDEPATH+= "$$PWD/winlib/includes"
     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
-    unix:LIBS +=    -lcurl \
-               -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
+    unix:!mac:LIBS += -lpthread -g -rdynamic
     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5 -ltidy
     win32:RC_ICONS += "$$PWD/images/windowIcon.ico"
 }
@@ -27,7 +29,11 @@ equals(QT_MAJOR_VERSION, 4) {
                -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
 }
 
-TARGET = nixnote2
+mac {
+    TARGET = NixNote2
+} else {
+    TARGET = nixnote2
+}
 TEMPLATE = app
 RESOURCES = NixNote2.qrc
 
@@ -38,11 +44,12 @@ CONFIG(debug, debug|release) {
         MOC_DIR = build/debug
 }
 
-CONFIG += debug_and_release
+# CONFIG += debug_and_release
 
 TRANSLATIONS = \
     translations/nixnote2_cs_CZ.ts \
     translations/nixnote2_de.ts    \
+    translations/nixnote2_en_GB.ts \
     translations/nixnote2_ca.ts    \
     translations/nixnote2_da.ts    \
     translations/nixnote2_es.ts    \
@@ -452,15 +459,15 @@ HEADERS  += nixnote.h \
 
 
 
-unix:QMAKE_CXXFLAGS +=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security
-unix:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
+linux:QMAKE_CXXFLAGS += -std=c++11 -g -O2 -fstack-protector-strong -Wformat -Werror=format-security
+linux:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
 
 win32:QMAKE_CXXFLAGS +=-g -O2 --param=ssp-buffer-size=4 -Wformat -Werror=format-security
 win32:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions
 win32:DEFINES += SMTP_BUILD
 
 isEmpty(PREFIX) {
-    PREFIX = /usr/local
+    PREFIX = $$[QT_INSTALL_PREFIX]
 }
 
 binary.path = $$PREFIX/bin/
@@ -475,17 +482,51 @@ images.files = images/*
 java.path = $$PREFIX/share/nixnote2/java
 java.files = java/*
 
-translations.path = $$PREFIX/share/nixnote2/translations
-translations.files = translations/*
+# compile the translation files:
+isEmpty(QMAKE_LRELEASE) {
+    win32:LANGREL = $$[QT_INSTALL_BINS]\lrelease.exe
+    else:LANGREL = $$[QT_INSTALL_BINS]/lrelease
+}
+TRANSLATION_TARGET_DIR = $${OUT_PWD}/translations
+langrel.input = TRANSLATIONS
+langrel.output = $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
+langrel.commands = \
+    $$LANGREL -compress -nounfinished -removeidentical ${QMAKE_FILE_IN} -qm $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
+langrel.CONFIG += no_link
+QMAKE_EXTRA_COMPILERS += langrel
+# this launches the actual work:
+PRE_TARGETDEPS += compiler_langrel_make_all
 
 qss.path = $$PREFIX/share/nixnote2/qss
 qss.files = qss/*
 
 pixmap.path = $$PREFIX/share/pixmaps/
-pixmap.extra = cp images/windowIcon.png images/nixnote2.png
+pixmap.extra = cp $$PWD/images/windowIcon.png $$PWD/images/nixnote2.png
 pixmap.files = images/nixnote2.png
 
 help.path = $$PREFIX/share/nixnote2/help
 help.files = help/*
 
-INSTALLS = binary desktop images java translations qss pixmap help
+mac {
+    ICON = images/NixNote2.icns
+
+    # we go for an appbundle that contains all resources (except
+    # the shared library dependencies - use macdeployqt for those).
+    images.path = Contents/Resources
+    images.files = images
+    java.path = Contents/Resources
+    java.files = java
+    mactranslations.path = Contents/Resources/translations
+    mactranslations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
+    mactranslations.depends = compiler_langrel_make_all
+    qss.path = Contents/Resources
+    qss.files = qss
+    help.path = Contents/Resources
+    help.files = help
+    QMAKE_BUNDLE_DATA += images java mactranslations qss help
+    INSTALLS = binary
+} else {
+    translations.path = $$PREFIX/share/nixnote2/translations
+    translations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
+    INSTALLS = binary desktop images java translations qss pixmap help
+}

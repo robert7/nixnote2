@@ -6,7 +6,44 @@ An unofficial client of Evernote for Linux.
 
 ![Nixnote](screenshot.png)
 
+This version contains the original code plus the changes made by @jeffkowalski and some
+of my own that should make the application more stable (and use standard-compliant locations
+for storing user settings and data).
+
 ## Installation
+
+### Mac
+
+Make sure you're on the default (RJVB-MP) branch of this repository, and in a terminal, do
+
+```bash
+> mkdir build
+> cd build
+> qmake ../nixnote2/NixNote2.pro
+> make
+```
+
+Upon successful completion you will have the NixNote2.app bundle in the build directory.
+
+Here, qmake is the one from Qt5. You will need to have Qt5 installed (qtbase, qtdeclarative and qtwebkit),
+as well as pkgconfig, poppler-qt5, hunspell and curl; dependencies can come from MacPorts, Fink or HomeBrew (I use MacPorts).
+It should be possible to use official Qt5 packages too but I haven't tested that.
+
+The resulting application still depends MacPorts (or Fink or HomeBrew). To turn this into a standalone app bundle that can be
+deployed anywhere:
+
+```bash
+> cd build
+> macdeployqt NixNote2.app [-no-strip]
+```
+
+As far as I can tell this will find and copy all required dependencies into the app bundle and modify them so they
+can be loaded from inside that bundle (wherever it ends up).
+
+### Building from source on other systems
+
+This works much as described for Mac above. You'll need the same dependencies installed (including
+libtidy on MS Windows). Then, run the same sequence of commands, followed by `sudo make install`.
 
 ### Debian and Ubuntu
 

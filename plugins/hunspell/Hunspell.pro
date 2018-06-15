@@ -1,5 +1,5 @@
-TARGET = ../hunspellplugin
-CONFIG += plugin
+TARGET = hunspellplugin
+CONFIG += plugin link_pkgconfig
 TEMPLATE = lib
 
 SOURCES += hunspellplugin.cpp \
@@ -10,6 +10,6 @@ HEADERS += hunspellplugin.h \
            hunspellinterface.h \
            ../../utilities/spellchecker.h
 
-LIBS +=    -lhunspell
+PKGCONFIG += hunspell
 
-QMAKE_LFLAGS += -Wl,-soname,libhunspellplugin.so.1
+unix:!mac:QMAKE_LFLAGS += -Wl,-soname,libhunspellplugin.so.1

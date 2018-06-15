@@ -30,7 +30,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 StartupConfig::StartupConfig()
 {
+#ifdef USE_QSP
+    homeDirPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/";
+#else
     homeDirPath = QDir().homePath() + QString("/.nixnote/");
+#endif
     this->forceNoStartMinimized = false;
     this->startupNewNote = false;
     this->sqlExec = false;

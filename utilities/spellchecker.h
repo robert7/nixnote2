@@ -24,10 +24,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QObject>
 #include <QStringList>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0) && !defined(_WIN32)
+#include <QLibraryInfo>
+#endif
 
 // Windows Check
 #ifndef _WIN32
-#include <hunspell/hunspell.hxx>
+class Hunspell;
 
 class SpellChecker : public QObject
 {
@@ -37,18 +40,42 @@ private:
     QString findDictionary(QString file);
     Hunspell *hunspell;
     bool error;
-    QString errorMsg;
 
 public:
     explicit SpellChecker(QObject *parent = 0);
-    void setup(QString programDictionary, QString customDictionary, QString language);
+    bool setup(QString programDictionary, QString customDictionary, QString language=QString());
     bool spellCheck(QString word, QStringList &suggestions);
     void addWord(QString dictionary, QString word);
-    
+
+    static const QStringList dictionaryPaths()
+    {
+        QStringList dictPath;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0) && !defined(_WIN32)
+        dictPath.append(QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/hunspell/");
+#endif
+        dictPath.append("/usr/share/hunspell/");
+        dictPath.append("/usr/share/myspell/");
+        dictPath.append("/usr/share/myspell/dicts/");
+        dictPath.append("/Library/Spelling/");
+        dictPath.append("/opt/openoffice.org/basis3.0/share/dict/ooo/");
+        dictPath.append("/opt/openoffice.org2.4/share/dict/ooo/");
+        dictPath.append("/usr/lib/openoffice.org2.4/share/dict/ooo");
+        dictPath.append("/opt/openoffice.org2.3/share/dict/ooo/");
+        dictPath.append("/usr/lib/openoffice.org2.3/share/dict/ooo/");
+        dictPath.append("/opt/openoffice.org2.2/share/dict/ooo/");
+        dictPath.append("/usr/lib/openoffice.org2.2/share/dict/ooo/");
+        dictPath.append("/opt/openoffice.org2.1/share/dict/ooo/");
+        dictPath.append("/usr/lib/openoffice.org2.1/share/dict/ooo");
+        dictPath.append("/opt/openoffice.org2.0/share/dict/ooo/");
+        dictPath.append("/usr/lib/openoffice.org2.0/share/dict/ooo/");
+        return dictPath;
+    }
+
+    QString errorMsg;
 signals:
-    
+
 public slots:
-    
+
 };
 
 #endif // end of windows check

@@ -24,18 +24,19 @@
 #define SCREENCAPTURE_H
 
 #include <QDialog>
-#include <QDialog>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPixmap>
 #include <QSize>
 #include <QPoint>
 
+class QMainWindow;
+
 class ScreenCapture : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ScreenCapture(QWidget *parent = 0);
+    explicit ScreenCapture(QMainWindow *appWindow, QWidget *parent = 0);
     ~ScreenCapture();
     QPixmap getSelection();
 
@@ -43,6 +44,7 @@ signals:
 
 private:
     QRect selectRect;
+    QPoint desktopOrigin, scOrigin;
     QSize sizeDesktop;
 
     QPoint selStartPoint;

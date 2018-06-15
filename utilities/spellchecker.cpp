@@ -23,26 +23,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QFile>
 #include <QLocale>
 #include <QTextStream>
+#include <QDebug>
 
+#include <hunspell.hxx>
 
 SpellChecker::SpellChecker(QObject *parent) :
     QObject(parent)
 {
-    dictionaryPath.append("/usr/share/hunspell/");
-    dictionaryPath.append("/usr/share/myspell/");
-    dictionaryPath.append("/usr/share/myspell/dicts/");
-    dictionaryPath.append("/Library/Spelling/");
-    dictionaryPath.append("/opt/openoffice.org/basis3.0/share/dict/ooo/");
-    dictionaryPath.append("/opt/openoffice.org2.4/share/dict/ooo/");
-    dictionaryPath.append("/usr/lib/openoffice.org2.4/share/dict/ooo");
-    dictionaryPath.append("/opt/openoffice.org2.3/share/dict/ooo/");
-    dictionaryPath.append("/usr/lib/openoffice.org2.3/share/dict/ooo/");
-    dictionaryPath.append("/opt/openoffice.org2.2/share/dict/ooo/");
-    dictionaryPath.append("/usr/lib/openoffice.org2.2/share/dict/ooo/");
-    dictionaryPath.append("/opt/openoffice.org2.1/share/dict/ooo/");
-    dictionaryPath.append("/usr/lib/openoffice.org2.1/share/dict/ooo");
-    dictionaryPath.append("/opt/openoffice.org2.0/share/dict/ooo/");
-    dictionaryPath.append("/usr/lib/openoffice.org2.0/share/dict/ooo/");
+    dictionaryPath = dictionaryPaths();
 
     error = false;
 }
@@ -51,29 +39,32 @@ SpellChecker::SpellChecker(QObject *parent) :
 
 
 QString SpellChecker::findDictionary(QString file) {
-    for (int i=0; i<dictionaryPath.size(); i++) {
-        QFile f(dictionaryPath[i]+file);
+    for (int i = 0; i < dictionaryPath.size(); ++i) {
+        const QString dictFile = dictionaryPath[i] + file;
+        QFile f(dictFile);
         if (f.exists())
-            return dictionaryPath[i]+file;
+            return dictFile;
     }
-    return "";
+    return QString();
 }
 
 
 
-void SpellChecker::setup(QString programDictionary, QString customDictionary, QString language) {
+bool SpellChecker::setup(QString programDictionary, QString customDictionary, QString language) {
     QString locale = QLocale::system().name();
-    if (language != "")
+    if (!language.isEmpty())
         locale = language;
     dictionaryPath.prepend(programDictionary);
     dictionaryPath.prepend(customDictionary);
 
     QString aff = findDictionary(locale+".aff");
     QString dic = findDictionary(locale+".dic");
-    if (dic=="" || aff == "") {
+    if (dic.isEmpty() || aff.isEmpty()) {
         error = true;
-        errorMsg = tr("Unable to find dictionaries.  Is Huntspell installed?");
-        return;
+        errorMsg = tr("Unable to find dictionaries for locale %1. Is a Hunspell dictionary installed for %2?")
+            .arg(locale).arg(language);
+        qWarning() << errorMsg << "path=" << dictionaryPath;
+        // don't bail out, we now have a language selector in the spellcheck dialog
     }
     hunspell = new Hunspell(aff.toStdString().c_str(), dic.toStdString().c_str());
 
@@ -88,25 +79,30 @@ void SpellChecker::setup(QString programDictionary, QString customDictionary, QS
         }
         f.close();
     }
+    return true;
 }
 
 
 bool SpellChecker::spellCheck(QString word, QStringList &suggestions) {
-    int isValid = hunspell->spell(word.toStdString().c_str());
-    suggestions.empty();
+    suggestions.clear();
+    if (Q_UNLIKELY(error)) {
+        return false;
+    }
+    int isValid = hunspell->spell(word.toStdString());
     if (isValid) {
         return true;
     }
-    char **wlst;
-    int ns = hunspell->suggest(&wlst,word.toStdString().c_str());
-    for (int i=0; i < ns; i++) {
-      suggestions.append(QString::fromStdString(wlst[i]));
-    }
+    const auto suggested = hunspell->suggest(word.toStdString());
+    for_each (suggested.begin(), suggested.end(), [&suggestions](const std::string &suggestion) {
+            suggestions << QString::fromStdString(suggestion); });
     return false;
 }
 
 
 void SpellChecker::addWord(QString dictionary, QString word) {
+    if (Q_UNLIKELY(error)) {
+        return;
+    }
     hunspell->add(word.toStdString().c_str());
 
     // Append to the end of the user dictionary
