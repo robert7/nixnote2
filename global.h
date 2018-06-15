@@ -245,7 +245,8 @@ public:
     bool getClearSearchOnNotebook();
     bool getClearTagsOnSearch();
     bool getTagSelectionOr();
-    void setDebugLevel();
+    void setDebugLevel(int level);
+    void setDebugLevelBySetting();
     bool disableImageHighlight();
 
 

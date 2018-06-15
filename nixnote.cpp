@@ -124,7 +124,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 #if QT_VERSION < 0x050000
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 #endif
-    global.setDebugLevel();
+    global.setDebugLevelBySetting();
 
     // Load any plugins
     this->loadPlugins();
@@ -3005,7 +3005,7 @@ void NixNote::openPreferences() {
 //        QApplication::instance()->installTranslator(nixnoteTranslator);
 
     }
-    global.setDebugLevel();
+    global.setDebugLevelBySetting();
 }
 
 

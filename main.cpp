@@ -103,6 +103,17 @@ int main(int argc, char *argv[])
     w = NULL;
     bool guiAvailable = true;
 
+    // Setup the QLOG functions for debugging & messages
+    // we need to do it at very beginning, else we lose the startup messages
+    QsLogging::Logger& logger = QsLogging::Logger::instance();
+    // at very beginning we starting with info level to get basic startup info
+    // log level is later adjusted by settings
+    logger.setLoggingLevel(QsLogging::InfoLevel);
+
+    QsLogging::DestinationPtr debugDestination(
+        QsLogging::DestinationFactory::MakeDebugOutputDestination() );
+    logger.addDestination(debugDestination.get());
+
 // Windows Check
 #ifndef _WIN32
     signal(SIGSEGV, fault_handler);   // install our handler
@@ -130,15 +141,7 @@ int main(int argc, char *argv[])
     }
     global.application = a;
 
-    // Setup the QLOG functions for debugging & messages
-    QsLogging::Logger& logger = QsLogging::Logger::instance();
-    logger.setLoggingLevel(QsLogging::TraceLevel);
-
-    QsLogging::DestinationPtr debugDestination(
-                QsLogging::DestinationFactory::MakeDebugOutputDestination() );
-    logger.addDestination(debugDestination.get());
-
-    startupConfig.programDirPath = global.getProgramDirPath() + QDir().separator();
+    //startupConfig.programDirPath = global.getProgramDirPath() + QDir().separator();
     startupConfig.name = "NixNote";
     global.setup(startupConfig, guiAvailable);
 //    global.syncAndExit=startupConfig.syncAndExit;

@@ -60,19 +60,28 @@ class StartupConfig
 {
 private:
     void loadTheme(QString theme);
-private:
     QBitArray *command;
+
+    // stores startup info about directory of config files
+    QString configDir;
+    // stores startup info about directory of program base
+    QString programDir;
+    int accountId;
 
 public:
     StartupConfig();
+
     QString name;
-    QString homeDirPath;
-    QString programDirPath;
+
+    QString getConfigDir() { return configDir; }
+    QString getProgramDir() { return programDir; }
+    int getAccountId() { return accountId; }
+    void setAccountId(int accountId);
+
     QString queryString;
     bool forceNoStartMinimized;
     bool startupNewNote;
     bool sqlExec;
-    int accountId;
     qint32 startupNoteLid;
     bool forceStartMinimized;
     bool enableIndexing;

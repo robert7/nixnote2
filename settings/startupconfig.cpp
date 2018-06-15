@@ -22,18 +22,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QString>
 #include <iostream>
 #include "threads/syncrunner.h"
+#include "global.h"
 
 #include <QProcessEnvironment>
 
-//extern Global global;
-
+extern Global global;
 
 StartupConfig::StartupConfig()
 {
 #ifdef USE_QSP
-    homeDirPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/";
+    configDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/";
 #else
-    homeDirPath = QDir().homePath() + QString("/.nixnote/");
+    configDir = QDir().homePath() + QString("/.nixnote/");
 #endif
     this->forceNoStartMinimized = false;
     this->startupNewNote = false;
@@ -69,6 +69,8 @@ void StartupConfig::printHelp() {
                    +QString("  start <options>                      Start NixNote GUI with the specified options.\n")
                    +QString("                                       If no command is specified, this is the default.\n")
                    +QString("     start options:\n")
+                   +QString("          --logLevel=<level>           Set initial logging level (0=trace,1=debug,2=info,3=error,..\n")
+                   +QString("                                       This is ONLY valid at program startup until settings are read.\n")
                    +QString("          --accountId=<id>             Start with specified user account.\n")
                    +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("          --dontStartMinimized         Override option to start minimized.\n")
@@ -240,7 +242,6 @@ void StartupConfig::printHelp() {
 
 
 int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
-
     guiAvailable = true;
 
     // Check if we have a GUI available. This is ugly, but it works.
@@ -255,19 +256,29 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
         guiAvailable = false;
 #endif // End windows check
 
+    QLOG_INFO() << "StartupConfig: configDir " << configDir;
+
     for (int i=1; i<argc; i++) {
         QString parm(argv[i]);
         if (parm == "--help" || parm == "-?" || parm == "help" || parm == "--?") {
             printHelp();
             return 1;
         }
+        if (parm.startsWith("--logLevel=", Qt::CaseSensitive)) {
+            parm = parm.section('=', 1, 1); // 2nd part
+            int level= parm.toInt();
+            global.setDebugLevel(level);
+            QLOG_DEBUG() << "Changed logLevel via command line option to " << level;
+        }
         if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-            parm = parm.mid(12);
+            parm = parm.section('=', 1, 1);
             accountId = parm.toInt();
+            QLOG_DEBUG() << "Changed accountId via command line option to " + accountId;
         }
         if (parm.startsWith("--configDir=", Qt::CaseSensitive)) {
-            parm = parm.mid(12);
-            homeDirPath = parm;
+            parm = parm.section('=', 1, 1);
+            configDir = parm;
+            QLOG_DEBUG() << "Changed configDir via command line to " + configDir;
         }
         if (parm.startsWith("addNote")) {
             command->setBit(STARTUP_ADDNOTE,true);
@@ -716,3 +727,13 @@ bool StartupConfig::closeNotebook() {
 bool StartupConfig::signalOtherGui() {
     return command->at(STARTUP_SIGNALGUI);
 }
+
+void StartupConfig::setAccountId(int accountId) {
+    if (this->accountId == accountId) {
+        return;
+    }
+    QLOG_DEBUG() << "StartupConfig: updating accountId to" << accountId;
+    this->accountId = accountId;
+}
+
+

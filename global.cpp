@@ -126,7 +126,8 @@ Global::Global()
 //Initial global settings setup
 void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     this->guiAvailable = guiAvailable;
-    fileManager.setup(startupConfig.homeDirPath, startupConfig.programDirPath, startupConfig.accountId);
+    fileManager.setup(startupConfig.getConfigDir(), startupConfig.getProgramDir(), startupConfig.getAccountId());
+
     shortcutKeys = new ShortcutKeys();
 #ifdef USE_QSP
     const QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/";
@@ -136,7 +137,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 #endif
 
     globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
-    int accountId = startupConfig.accountId;
+    int accountId = startupConfig.getAccountId();
     if (accountId <=0) {
         globalSettings->beginGroup("SaveState");
         accountId = globalSettings->value("lastAccessedAccount", 1).toInt();
@@ -163,7 +164,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 
-    setDebugLevel();
+    setDebugLevelBySetting();
 
     this->forceNoStartMimized = startupConfig.forceNoStartMinimized;
     this->forceSystemTrayAvailable = startupConfig.forceSystemTrayAvailable;
@@ -171,8 +172,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     //this->syncAndExit = startupConfig.syncAndExit;
     this->forceStartMinimized = startupConfig.forceStartMinimized;
     this->startupNote = startupConfig.startupNoteLid;
-    startupConfig.accountId = accountId;
-    accountsManager = new AccountsManager(startupConfig.accountId);
+    startupConfig.setAccountId(accountId);
+    accountsManager = new AccountsManager(startupConfig.getAccountId());
     if (startupConfig.enableIndexing || getBackgroundIndexing())
         enableIndexing = true;
 
@@ -1495,16 +1496,18 @@ void Global::stackDump(int max) {
 #endif // End windows check
 }
 
+void Global::setDebugLevelBySetting() {
+    settings->beginGroup("Debugging");
+    int level = settings->value("messageLevel", -1).toInt();
+    settings->endGroup();
+    setDebugLevel(level);
+}
 
 
 //************************************************
 //* Set the user debug level.
 //************************************************
-void Global::setDebugLevel() {
-    settings->beginGroup("Debugging");
-    int level = settings->value("messageLevel", -1).toInt();
-    settings->endGroup();
-
+void Global::setDebugLevel(int level) {
     // Setup the QLOG functions for debugging & messages
     QsLogging::Logger& logger = QsLogging::Logger::instance();
     if (level == QsLogging::TraceLevel)
