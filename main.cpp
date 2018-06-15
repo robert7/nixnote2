@@ -141,10 +141,9 @@ int main(int argc, char *argv[])
     }
     global.application = a;
 
-    //startupConfig.programDirPath = global.getProgramDirPath() + QDir().separator();
     startupConfig.name = "NixNote";
     global.setup(startupConfig, guiAvailable);
-//    global.syncAndExit=startupConfig.syncAndExit;
+    //    global.syncAndExit=startupConfig.syncAndExit;
 
     // We were passed a SQL command
     if (startupConfig.sqlExec) {
@@ -191,7 +190,7 @@ int main(int argc, char *argv[])
 
 
     // Show Qt version.  This is useful for debugging
-    QLOG_DEBUG() << "Program Home: " << global.fileManager.getProgramDirPath("");
+    QLOG_DEBUG() << "programDir: " << global.fileManager.getProgramDirPath();
     QLOG_DEBUG() << "Built on " << __DATE__ << " at " << __TIME__;
     QLOG_DEBUG() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
 

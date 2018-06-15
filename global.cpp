@@ -133,7 +133,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     const QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/";
     QString settingsFile = configDir + "nixnote.conf";
 #else
-    QString settingsFile = fileManager.getHomeDirPath("") + "nixnote.conf";
+    QString settingsFile = fileManager.getHomeDirPath() + "nixnote.conf";
 #endif
 
     globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
@@ -159,7 +159,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 #ifdef USE_QSP
     settingsFile = configDir + "nixnote-"+QString::number(accountId)+".conf";
 #else
-    settingsFile = fileManager.getHomeDirPath("") + "nixnote-"+QString::number(accountId)+".conf";
+    settingsFile = fileManager.getHomeDirPath() + "nixnote-"+QString::number(accountId)+".conf";
 #endif
 
     settings = new QSettings(settingsFile, QSettings::IniFormat);
@@ -272,27 +272,6 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     exitManager = new ExitManager();
     exitManager->loadExits();
 }
-
-
-// Return the path the program is executing under
-// If we are in /usr/bin, then we need to return /usr/share/nixnote2.
-// This is because we want to find other paths (like images).  This
-// allows for users to run it out of a non-path location.
-QString Global::getProgramDirPath() {
-#ifdef USE_QSP
-    // FileManager::getProgramDirPath() already returns exactly what
-    // we want to return ourselves.
-    return fileManager.getProgramDirPath("");
-#else
-    QString path = QCoreApplication::applicationDirPath();
-    if (path.endsWith("/bin")) {
-        path.chop(3);
-        return path+"share/nixnote2";
-    }
-    return path;
-#endif
-}
-
 
 void Global::setDeleteConfirmation(bool value) {
     settings->beginGroup("Appearance");
@@ -1120,22 +1099,10 @@ void Global::loadTheme(QHash<QString, QString> &resourceList, QHash<QString,QStr
     colorList.clear();
     if (theme.trimmed() == "")
         return;
-#ifndef _WIN32
-    QFile systemTheme(fileManager.getProgramDirPath("theme.ini"));
-#else
-    QFile systemTheme(fileManager.getProgramDirPath("theme.ini").replace("\\","/"));
-#endif
-    this->loadThemeFile(resourceList,colorList, systemTheme, theme);
+    QFile systemTheme(fileManager.getProgramDirPath() + "theme.ini");
+    this->loadThemeFile(resourceList, colorList, systemTheme, theme);
 
-#ifndef _WIN32
-#ifdef USE_QSP
-    QFile userTheme(QStandardPaths::locate(QStandardPaths::AppConfigLocation, "theme.ini"));
-#else
-    QFile userTheme(fileManager.getHomeDirPath("theme.ini"));
-#endif
-#else
-    QFile userTheme(fileManager.getHomeDirPath("theme.ini").replace("\\","/"));
-#endif
+    QFile userTheme(fileManager.getHomeDirPath() + "theme.ini");
     this->loadThemeFile(resourceList, colorList, userTheme, theme);
 }
 
@@ -1194,22 +1161,12 @@ void Global::loadThemeFile(QHash<QString,QString> &resourceList, QHash<QString,Q
 QStringList Global::getThemeNames() {
     QStringList values;
     values.empty();
-#ifndef _WIN32
-    QFile systemTheme(fileManager.getProgramDirPath("theme.ini"));
-#else
-    QFile systemTheme(fileManager.getProgramDirPath("theme.ini").replace("\\","/"));
-#endif
+    QFile systemTheme(fileManager.getProgramDirPath() + "theme.ini");
     this->getThemeNamesFromFile(systemTheme, values);
-#ifndef _WIN32
-#ifdef USE_QSP
-    QFile userTheme(QStandardPaths::locate(QStandardPaths::AppConfigLocation, "theme.ini"));
-#else
-    QFile userTheme(fileManager.getHomeDirPath("theme.ini"));
-#endif
-#else
-    QFile userTheme(fileManager.getHomeDirPath("theme.ini").replace("\\","/"));
-#endif
-        this->getThemeNamesFromFile(userTheme, values);
+
+    QFile userTheme(fileManager.getHomeDirPath() + "theme.ini");
+    this->getThemeNamesFromFile(userTheme, values);
+
     if (!nonAsciiSortBug)
         qSort(values.begin(), values.end(), caseInsensitiveLessThan);
 

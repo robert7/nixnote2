@@ -47,9 +47,7 @@ class FileManager : public QObject
 private:
     QString programDirPath;
     QString configDirPath;
-
     QString dataDirPath;
-    QDir dataDir;
 
     QString dbDirPath;
     QDir dbDir;
@@ -98,8 +96,8 @@ public:
     FileManager();
     void setup(QString startupConfigDirPath, QString startupProgramDirPath, int accountId);
 
-    QString getProgramDirPath(QString relativePath);
-    QString getHomeDirPath(QString relativePath);
+    QString getProgramDirPath();
+    QString getHomeDirPath();
 
     QString getSpellDirPath();
     QDir getSpellDirFileUser(QString relativePath);

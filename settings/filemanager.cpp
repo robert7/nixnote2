@@ -36,56 +36,69 @@ using namespace std;
 FileManager::FileManager() {
 }
 
+// Return the path the program is executing under
+// If we are in /usr/bin, then we need to return /usr/share/nixnote2.
+// This is because we want to find other paths (like images).  This
+// allows for users to run it out of a non-path location.
+QString getDefaultProgramDirPath() {
+#ifdef Q_OS_MACOS
+    QString appDirPath = QCoreApplication::applicationDirPath();
+    if (appDirPath.endsWith(".app/Contents/MacOS")) {
+        // get rid of the MacOS component
+        appDirPath.chop(5);
+        return appDirPath + "/Resources/";
+    }
+#endif
+    QString path = QCoreApplication::applicationDirPath();
+    if (path.endsWith("/bin")) {
+        path.chop(3); // remove 3 chars from end of string
+        return path + "share/nixnote2";
+    }
+    return path;
+}
+
+
 void FileManager::setup(QString startupConfigDirPath, QString startupProgramDirPath, int accountId) {
     if (!startupConfigDirPath.isEmpty()) {
         startupConfigDirPath = slashTerminatePath(startupConfigDirPath);
     }
     if (!startupProgramDirPath.isEmpty()) {
-       startupProgramDirPath = slashTerminatePath(startupProgramDirPath);
+        startupProgramDirPath = slashTerminatePath(startupProgramDirPath);
     }
-    QLOG_DEBUG() << "FileManager::setup startupConfigDirPath: " << startupConfigDirPath << ", startupProgramDirPath: " << startupProgramDirPath;
+    QLOG_DEBUG() << "FileManager::setup startupConfigDirPath: " << startupConfigDirPath << ", startupProgramDirPath: "
+                 << startupProgramDirPath;
 
-    this -> programDirPath = startupProgramDirPath;
-    this -> configDirPath = startupConfigDirPath;
+    this->programDirPath = startupProgramDirPath;
+    this->configDirPath = startupConfigDirPath;
 
-    if (this -> configDirPat.isEmpty()) {
-        this -> configDirPath = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    if (this->configDirPath.isEmpty()) {
+        // default config path
+        this->configDirPath = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
 
         // TODO
         // in order to not break things for existing user, check whenewer this -> configDirPath exists
         // if it doesn't exist & the OLD path exists - take old path
         // OLD: this -> configDirPath = slashTerminatePath(QDir().homePath() + QString("/.nixnote"));
     }
-    createDirOrCheckWriteable(configDir);
+    createDirOrCheckWriteable(configDirPath);
+
+    if (this->programDirPath.isEmpty()) {
+        // default config path
+        this->programDirPath = slashTerminatePath(getDefaultProgramDirPath());
+    }
+
+    QLOG_DEBUG() << "FileManager::setup configDirPath: " << this->configDirPath << ", programDirPath: "
+                 << this->programDirPath;
 
     #ifdef Q_OS_MACOS
-        QString appDirPath = QCoreApplication::applicationDirPath();
-        if (appDirPath.endsWith(".app/Contents/MacOS")) {
-            // get rid of the MacOS component
-            appDirPath.chop(5);
-            this -> programDirPath = appDirPath + "/Resources/";
-        }
+        // get the resources from the app bundle
+        this->dataDirPath = programDirPath;
+    #else
+        this->dataDirPath = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/nixnote2/";
     #endif
 
-
-
-#ifdef USE_QSP
-#ifdef Q_OS_MACOS
-    // get the resources from the app bundle
-    dataDirPath = programDir;
-#else
-    dataDirPath = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/nixnote2/";
-#endif
-    const QString userDataDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)+"/");
-    const QString configDir(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/");
-#else
-    // preserve the legacy behaviour
-    dataDirPat = programDirPath;
-    const QString userDataDir(configDirPath);
-    const QString configDir(getHomeDirPath(""));
-#endif
-
-    dataDir.setPath(dataDirPath);
+    const QString userDataDir(slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)));
+    QLOG_DEBUG() << "FileManager::setup dataDirPath: " << this->dataDirPath;
 
     // Read only files that everyone uses
     imagesDir.setPath(dataDirPath+"images");
@@ -96,16 +109,9 @@ void FileManager::setup(QString startupConfigDirPath, QString startupProgramDirP
     checkExistingReadableDir(javaDir);
     javaDirPath = slashTerminatePath(javaDir.path());
 
-//    spellDir.setPath(programDirPath+"spell");
-//    checkExistingReadableDir(spellDir);
-//    spellDirPath = slashTerminatePath(spellDir.path());
-
     spellDirUser.setPath(userDataDir+"spell");
     createDirOrCheckWriteable(spellDirUser);
     spellDirPathUser = slashTerminatePath(spellDirUser.path());
-
-    //xmlDir.setPath(programDirPath+"xml");
-    //checkExistingReadableDir(xmlDir);
 
     translateDir.setPath(dataDirPath+"translations");
     checkExistingReadableDir(translateDir);
@@ -117,7 +123,8 @@ void FileManager::setup(QString startupConfigDirPath, QString startupProgramDirP
 
     // Read/write directories that only we use
 
-    QString settingsFile = configDir + "nixnote.conf";
+    QString settingsFile = configDirPath + "nixnote.conf";
+    QLOG_DEBUG() << "FileManager::setup settingsFile: " << settingsFile;
     QSettings globalSettings(settingsFile, QSettings::IniFormat);
 
     if (accountId <=0) {
@@ -139,11 +146,9 @@ void FileManager::setup(QString startupConfigDirPath, QString startupProgramDirP
     createDirOrCheckWriteable(tmpDir);
     tmpDirPath = slashTerminatePath(tmpDir.path());
 
-#ifdef USE_QSP
-    dbDir.setPath(userDataDir+"db-" +QString::number(accountId));
-#else
-    dbDir.setPath(configDirPath+"db-" +QString::number(accountId));
-#endif
+    QString dbPath = userDataDir+"db-" +QString::number(accountId);
+    dbDir.setPath(dbPath);
+
     createDirOrCheckWriteable(dbDir);
     dbDirPath = slashTerminatePath(dbDir.path());
 
@@ -203,11 +208,13 @@ void FileManager::deleteTopLevelFiles(QDir dir, bool exitOnFail) {
 /*************************************************/
 void FileManager::createDirOrCheckWriteable(QDir dir) {
     if (!dir.exists()) {
+        QLOG_DEBUG() << "About to create directory " << dir;
          if (!dir.mkpath(dir.path())) {
              QLOG_FATAL() << "Failed to create directory '" << dir.path() << "'.  Aborting program.";
              exit(16);
          }
     } else {
+        QLOG_DEBUG() << "Checking read access for directory " << dir;
         if (!dir.isReadable()) {
             QLOG_FATAL() << "Directory '" + dir.path() + "' does not have read permission.  Aborting program.";
             exit(16);
@@ -242,15 +249,11 @@ void FileManager::checkExistingWriteableDir(QDir dir) {
     this->checkExistingReadableDir(dir);
 }
 
-QString FileManager::getProgramDirPath(QString relativePath) {
-#ifdef USE_QSP
-    return dataDirPath + toPlatformPathSeparator(relativePath);
-#else
-    return programDirPath + toPlatformPathSeparator(relativePath);
-#endif
+QString FileManager::getProgramDirPath() {
+    return programDirPath;
 }
-QString FileManager::getHomeDirPath(QString relativePath) {
-    return configDirPath + toPlatformPathSeparator(relativePath);
+QString FileManager::getHomeDirPath() {
+    return configDirPath;
 }
 QDir FileManager::getSpellDirFileUser(QString relativePath) {
     return spellDirPathUser + toPlatformPathSeparator(relativePath);
@@ -324,11 +327,6 @@ QString FileManager::getThumbnailDirPath(QString relativePath) {
 QString FileManager::getThumbnailDirPathSpecialChar(QString relativePath) {
     return thumbnailDirPath + toPlatformPathSeparator(relativePath).replace("#", "%23");
 }
-/*
-QDir FileManager::getXMLDirFile(QString relativePath) {
-    return QDir(xmlDir.dirName() + toPlatformPathSeparator(relativePath));
-}
-*/
 QString FileManager::getTranslateFilePath(QString relativePath) {
     return translateDirPath + toPlatformPathSeparator(relativePath);
 }

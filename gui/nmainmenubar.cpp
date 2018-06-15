@@ -605,13 +605,8 @@ void NMainMenuBar::setupShortcut(QAction *action, QString text) {
 
 
 void NMainMenuBar::openManual() {
-#ifndef _WIN32
     QDesktopServices::openUrl(QString("file://") +
-                             global.getProgramDirPath()+"/help/UserDocumentation.pdf");
-#else
-    QDesktopServices::openUrl(QString("file:///") +
-                             global.getProgramDirPath().replace("\\","/")+"/help/UserDocumentation.pdf");
-#endif
+                             global.getProgramDirPath()+"help/UserDocumentation.pdf");
 }
 
 

@@ -43,7 +43,7 @@ AboutDialog::AboutDialog(QDialog *parent) :
     buttonLayout->addSpacerItem(spacer2);
     mainLayout->addLayout(buttonLayout);
     this->setLayout(mainLayout);
-    QString file = global.fileManager.getProgramDirPath("") + "/help/about.html";
+    QString file = global.fileManager.getProgramDirPath() + "help/about.html";
     QFile f(file);
     if(!f.open(QFile::ReadOnly))
         return;

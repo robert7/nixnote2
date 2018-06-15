@@ -46,8 +46,9 @@ ColorSettings::ColorSettings(QObject *parent) :
     colors.insert(tr("Grey"), "grey");
     colors.insert(tr("Powder Blue"), "powderblue");
 
-    QString userFile = global.fileManager.getHomeDirPath("") + QString("colors.txt");
-    QString globalFile = global.fileManager.getProgramDirPath("") +QString("colors.txt");
+    QString userFile = global.fileManager.getHomeDirPath() + QString("colors.txt");
+    QString globalFile = global.fileManager.getProgramDirPath() +QString("colors.txt");
+
     QSettings globalSettings(globalFile, QSettings::IniFormat);
     QSettings userSettings(userFile, QSettings::IniFormat);
 

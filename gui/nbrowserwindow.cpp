@@ -3559,7 +3559,7 @@ void NBrowserWindow::spellCheckPressed() {
                 QString newLang;
                 int idx = dialog.language->currentIndex();
                 newLang = dialog.language->itemText(idx);
-                hunspellInterface->initialize(global.fileManager.getProgramDirPath(""), global.fileManager.getSpellDirPathUser(),newLang);
+                hunspellInterface->initialize(global.fileManager.getProgramDirPath(), global.fileManager.getSpellDirPathUser(),newLang);
             }
             if (dialog.addToDictionaryPressed) {
                 hunspellInterface->addWord(global.fileManager.getSpellDirPathUser() +"user.lst", currentWord);
@@ -3808,8 +3808,8 @@ void NBrowserWindow::loadPlugins() {
     hunspellPluginAvailable = false;
 
     QStringList dirList;
-    dirList.append(global.fileManager.getProgramDirPath(""));
-    dirList.append(global.fileManager.getProgramDirPath("")+"/plugins");
+    dirList.append(global.fileManager.getProgramDirPath());
+    dirList.append(global.fileManager.getProgramDirPath()+"plugins");
     const QString prefixPath = QLibraryInfo::location(QLibraryInfo::PrefixPath);
     dirList.append(prefixPath + "/lib/nixnote2/");
 #ifndef Q_OS_MAC_OS
@@ -3847,7 +3847,7 @@ void NBrowserWindow::loadPlugins() {
                         global.settings->beginGroup("Locale");
                         QString dict = global.settings->value("translation").toString();
                         global.settings->endGroup();
-                        hunspellPluginAvailable = hunspellInterface->initialize(global.fileManager.getProgramDirPath(""),
+                        hunspellPluginAvailable = hunspellInterface->initialize(global.fileManager.getProgramDirPath(),
                             global.fileManager.getSpellDirPathUser(), errMsg, dict);
                         if (!hunspellPluginAvailable) {
                             QLOG_ERROR() << errMsg;
