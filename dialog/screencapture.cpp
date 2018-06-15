@@ -124,6 +124,8 @@ bool ScreenCapture::event(QEvent *event)
             selectRect = QRect(selStartPoint, QSize());
             break;
         }
+        default:
+            break;
     }
 
     return QDialog::event(event);
