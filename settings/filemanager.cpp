@@ -37,12 +37,6 @@ FileManager::FileManager() {
 }
 
 void FileManager::setup(QString startupConfigDirPath, QString startupProgramDirPath, int accountId) {
-    //#ifdef USE_QSP
-    //    configDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/";
-    //#else
-    //    configDir = QDir().homePath() + QString("/.nixnote/");
-    //#endif
-
     if (!startupConfigDirPath.isEmpty()) {
         startupConfigDirPath = slashTerminatePath(startupConfigDirPath);
     }
@@ -52,22 +46,28 @@ void FileManager::setup(QString startupConfigDirPath, QString startupProgramDirP
     QLOG_DEBUG() << "FileManager::setup startupConfigDirPath: " << startupConfigDirPath << ", startupProgramDirPath: " << startupProgramDirPath;
 
     this -> programDirPath = startupProgramDirPath;
+    this -> configDirPath = startupConfigDirPath;
 
+    if (this -> configDirPat.isEmpty()) {
+        this -> configDirPath = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
 
-#ifdef Q_OS_MACOS
-    QString appDirPath = QCoreApplication::applicationDirPath();
-    if (appDirPath.endsWith(".app/Contents/MacOS")) {
-        // get rid of the MacOS component
-        appDirPath.chop(5);
-        programDir = appDirPath + "/Resources/";
+        // TODO
+        // in order to not break things for existing user, check whenewer this -> configDirPath exists
+        // if it doesn't exist & the OLD path exists - take old path
+        // OLD: this -> configDirPath = slashTerminatePath(QDir().homePath() + QString("/.nixnote"));
     }
-#endif
-
-    configDir.setPath(toPlatformPathSeparator(configDirPath));
-    programDir.setPath(toPlatformPathSeparator(programDirPath));
     createDirOrCheckWriteable(configDir);
-    this->configDirPath = slashTerminatePath(configDir.path());
-    this->programDirPath = slashTerminatePath(programDir.path());
+
+    #ifdef Q_OS_MACOS
+        QString appDirPath = QCoreApplication::applicationDirPath();
+        if (appDirPath.endsWith(".app/Contents/MacOS")) {
+            // get rid of the MacOS component
+            appDirPath.chop(5);
+            this -> programDirPath = appDirPath + "/Resources/";
+        }
+    #endif
+
+
 
 #ifdef USE_QSP
 #ifdef Q_OS_MACOS
@@ -202,7 +202,6 @@ void FileManager::deleteTopLevelFiles(QDir dir, bool exitOnFail) {
 /* Create a directory if it doesn't exist.       */
 /*************************************************/
 void FileManager::createDirOrCheckWriteable(QDir dir) {
-
     if (!dir.exists()) {
          if (!dir.mkpath(dir.path())) {
              QLOG_FATAL() << "Failed to create directory '" << dir.path() << "'.  Aborting program.";
