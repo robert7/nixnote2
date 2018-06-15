@@ -30,11 +30,10 @@ extern Global global;
 
 StartupConfig::StartupConfig()
 {
-#ifdef USE_QSP
-    configDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/";
-#else
-    configDir = QDir().homePath() + QString("/.nixnote/");
-#endif
+    // we first allow command line override and set-up final directory later in global.setup()
+    configDir = QString("");
+    programDir = QString("");
+
     this->forceNoStartMinimized = false;
     this->startupNewNote = false;
     this->sqlExec = false;
@@ -256,8 +255,6 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
         guiAvailable = false;
 #endif // End windows check
 
-    QLOG_INFO() << "StartupConfig: configDir " << configDir;
-
     for (int i=1; i<argc; i++) {
         QString parm(argv[i]);
         if (parm == "--help" || parm == "-?" || parm == "help" || parm == "--?") {
@@ -273,12 +270,17 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
         if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1);
             accountId = parm.toInt();
-            QLOG_DEBUG() << "Changed accountId via command line option to " + accountId;
+            QLOG_DEBUG() << "Set accountId via command line option to " + accountId;
         }
         if (parm.startsWith("--configDir=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1);
             configDir = parm;
-            QLOG_DEBUG() << "Changed configDir via command line to " + configDir;
+            QLOG_DEBUG() << "Set configDir via command line to " + configDir;
+        }
+        if (parm.startsWith("--programDir=", Qt::CaseSensitive)) {
+            parm = parm.section('=', 1, 1);
+            programDir = parm;
+            QLOG_DEBUG() << "Set programDir via command line to " + programDir;
         }
         if (parm.startsWith("addNote")) {
             command->setBit(STARTUP_ADDNOTE,true);
