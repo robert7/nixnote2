@@ -57,18 +57,16 @@ NoteModel::NoteModel(QObject *parent)
     this->setFilter("lid in (select lid from filter)");
 }
 
-QString NoteModel::orderByClause() const
-{
-    return "order by relevance desc, isDirty desc, dateUpdated desc";
+QString NoteModel::orderByClause() const {
+    QString order("order by relevance desc, dateUpdated desc");
+    QLOG_DEBUG() << "Sort order: " << order;
+    // TODO: add more sort options
+    return order;
 }
-
 
 // Destructor
 NoteModel::~NoteModel() {
 }
-
-
-
 
 //* Create the NoteModel table.
 void NoteModel::createNoteTable() {
@@ -158,12 +156,11 @@ void NoteModel::createNoteTableV() {
 //    }
 //    int rowCount = QVariant(sql.value(0)).toInt();
 //    return rowCount;
-
 // }
 
 int NoteModel::columnCount(const QModelIndex &parent) const {
     Q_UNUSED(parent);  // Suppress unused variable
-//    parent.column();
+    //    parent.column();
     return NOTE_TABLE_COLUMN_COUNT;
 }
 
@@ -198,7 +195,7 @@ QVariant NoteModel::data (const QModelIndex & index, int role) const {
 }
 
 bool NoteModel::select() {
-    //QLOG_DEBUG() << "Performing NoteModel select " << selectStatement();
+    QLOG_DEBUG() << "Performing NoteModel select " << selectStatement();
     return QSqlTableModel::select();
 }
 
