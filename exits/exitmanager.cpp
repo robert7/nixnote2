@@ -52,7 +52,7 @@ void ExitManager::loadExitPoint(QString name, int goodVersion) {
     global.settings->endGroup();
 
     if (fileName =="")  {
-        QLOG_ERROR() << tr("Script filename is blank. Disabling exit ") << name;
+        QLOG_DEBUG() << tr("Script filename is blank. Disabling exit ") << name;
         enabled = false;
         return;
     }
