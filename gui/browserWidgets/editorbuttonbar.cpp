@@ -282,8 +282,15 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
 
     formatCodeButtonAction = this->addAction(global.getIconResource(":formatCodeIcon"), tr("Format Code Block"));
+
     formatCodeButtonShortcut = new QShortcut(this);
     this->setupShortcut(formatCodeButtonShortcut, "Format_Code_Block");
+
+    //formatCodeButtonShortcut = new QShortcut(this);
+    //this->setupShortcut(fontColorButtonShortcut, "Format_Font_Color");
+
+    //formatCodeButtonShortcut = new QShortcut(this);
+    //this->setupShortcut(fontHighlightColorShortcut, "Format_Font_BackgroundColor");
 
     QString css = global.getThemeCss("editorButtonBarCss");
     if (css != "")

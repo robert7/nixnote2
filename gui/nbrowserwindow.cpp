@@ -50,6 +50,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/pixelconverter.h"
 #include "gui/browserWidgets/table/tablepropertiesdialog.h"
 #include "exits/exitmanager.h"
+#include "browserWidgets/editorbuttonbar.h"
 
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
@@ -375,19 +376,17 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->spellCheckButtonShortcut, SIGNAL(activated()), this, SLOT(spellCheckPressed()));
 
     connect(buttonBar->fontSizes, SIGNAL(currentIndexChanged(int)), this, SLOT(fontSizeSelected(int)));
-
     connect(buttonBar->fontNames, SIGNAL(currentIndexChanged(int)), this, SLOT(fontNameSelected(int)));
 
     connect(buttonBar->fontColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontColorClicked()));
-    //connect(fontColorButtonShortcut, SIGNAL(activated()), this, SLOT(fontColorClicked()));
-
     connect(buttonBar->fontColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontColorClicked()));
+    connect(buttonBar->fontColorAction, SIGNAL(triggered()), this, SLOT(fontColorClicked()));
+    //connect(buttonBar->fontColorButtonShortcut, SIGNAL(activated()), this, SLOT(fontColorClicked()));
 
     connect(buttonBar->highlightColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontHighlightClicked()));
-    //connect(fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
-    connect(buttonBar->highlightColorAction, SIGNAL(triggered()), this, SLOT(fontHighlightClicked()));
-
     connect(buttonBar->highlightColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHighlightClicked()));
+    connect(buttonBar->highlightColorAction, SIGNAL(triggered()), this, SLOT(fontHighlightClicked()));
+    //connect(buttonBar->fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
 
     connect(buttonBar->insertTableButtonAction, SIGNAL(triggered()), this, SLOT(insertTableButtonPressed()));
     connect(buttonBar->insertTableButtonShortcut, SIGNAL(activated()), this, SLOT(insertTableButtonPressed()));
@@ -402,8 +401,6 @@ void NBrowserWindow::setupToolBar() {
 
     connect(buttonBar->formatCodeButtonAction, SIGNAL(triggered()), this, SLOT(formatCodeButtonPressed()));
     connect(buttonBar->formatCodeButtonShortcut, SIGNAL(activated()), this, SLOT(formatCodeButtonPressed()));
-
-
 }
 
 
@@ -1371,26 +1368,25 @@ void NBrowserWindow::fontNameSelected(int index) {
 // The font highlight color was pressed
 void NBrowserWindow::fontHighlightClicked() {
     QLOG_DEBUG() << "fontHighlightClicked";
-    QColor *color = buttonBar->highlightColorMenuWidget->getColor();
-    QLOG_DEBUG() << "fontHighlight got color" << *color;
+    QColor *color = buttonBar->highlightColorMenuWidget->getCurrentColor();
+    QLOG_DEBUG() << "Setting text background color to: " << buttonBar->fontColorMenuWidget->getCurrentColorName();
     if (color->isValid()) {
         this->editor->page()->mainFrame()->evaluateJavaScript(
-                "document.execCommand('backColor', false, '"+color->name()+"');");
+            "document.execCommand('backColor', false, '" + color->name() + "');");
         editor->setFocus();
         microFocusChanged();
     }
 }
 
 
-
 // The font color was pressed
 void NBrowserWindow::fontColorClicked() {
     QLOG_DEBUG() << "fontColorClicked";
-    QColor *color = buttonBar->fontColorMenuWidget->getColor();
-    QLOG_DEBUG() << "fontColor got color" << *color;
+    QColor *color = buttonBar->fontColorMenuWidget->getCurrentColor();
+    QLOG_DEBUG() << "Setting text color to: " << buttonBar->fontColorMenuWidget->getCurrentColorName();
     if (color->isValid()) {
         this->editor->page()->mainFrame()->evaluateJavaScript(
-                "document.execCommand('foreColor', false, '"+color->name()+"');");
+            "document.execCommand('foreColor', false, '" + color->name() + "');");
         editor->setFocus();
         microFocusChanged();
     }

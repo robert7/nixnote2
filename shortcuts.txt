@@ -125,12 +125,14 @@ About_Log                                       // Message log
 About_About                                     // About dialog box
 
 Insert_DateTime               Ctrl+;            // Insert the current date/time
-Focus_Title                                     // Focus on the current note title
-Focus_Tag                                       // Focus on the tag line
+Focus_Title                   F2                // Focus on the current note title
+Focus_Tag                     F3                // Focus on the tag line
 Focus_Note                                      // Focus on the note itself
 Focus_Author                                    // Focus on the author field
 Focus_Url                                       // Focus on the source URL field
-Focus_Search                                    // Focus on the search field
-Focus_Notebook                                  // Focus on the notebook
+Focus_Search                  F6                // Focus on the search field
+Focus_Notebook                Alt-Shift-B       // Focus on the notebook
 Focus_Font                                      // Focus on the font drop down
 Focus_Font_Size                                 // Focus on the font size drop down
+Format_Font_Color             Ctrl-D            // Set font color
+Format_Font_BackgroundColor   Ctrl+Shift+H      // Set font background color

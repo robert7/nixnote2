@@ -570,10 +570,11 @@ void NMainMenuBar::setupHelpMenu() {
     connect(openEvernoteSupportAction, SIGNAL(triggered()), parent, SLOT(openEvernoteSupport()));
     helpMenu->addAction(openEvernoteSupportAction);
 
-    openTrunkAction = new QAction(tr("Evernote &Trunk"), this);
-    openTrunkAction->setToolTip(tr("Go to Evernote Trunk"));
-    connect(openTrunkAction, SIGNAL(triggered()), parent, SLOT(openTrunk()));
-    helpMenu->addAction(openTrunkAction);
+    // seems to be obsolete
+    //openTrunkAction = new QAction(tr("Evernote &Trunk"), this);
+    //openTrunkAction->setToolTip(tr("Go to Evernote Trunk"));
+    //connect(openTrunkAction, SIGNAL(triggered()), parent, SLOT(openTrunk()));
+    //helpMenu->addAction(openTrunkAction);
 
     openUserForumAction = new QAction(tr("Evernote User &Forum"), this);
     openUserForumAction->setToolTip(tr("Go to the Evernote user support forum."));
@@ -582,17 +583,18 @@ void NMainMenuBar::setupHelpMenu() {
 
     helpMenu->addSeparator();
 
+
+    aboutQtAction = new QAction(tr("About &Qt"), this);
+    aboutQtAction->setMenuRole(QAction::AboutQtRole);
+    aboutQtAction->setToolTip(tr("About Qt"));
+    connect(aboutQtAction, SIGNAL(triggered()), parent, SLOT(openQtAbout()));
+    helpMenu->addAction(aboutQtAction);
+
     aboutAction = new QAction(tr("&About"), this);
     aboutAction->setToolTip(tr("About"));
     aboutAction->setMenuRole(QAction::AboutRole);
     connect(aboutAction, SIGNAL(triggered()), parent, SLOT(openAbout()));
     helpMenu->addAction(aboutAction);
-
-    aboutQtAction = new QAction(tr("About &Qt"), this);
-    aboutQtAction->setMenuRole(QAction::AboutQtRole);
-    aboutQtAction->setToolTip(tr("About"));
-    connect(aboutQtAction, SIGNAL(triggered()), parent, SLOT(openQtAbout()));
-    helpMenu->addAction(aboutQtAction);
 }
 
 void NMainMenuBar::setupShortcut(QAction *action, QString text) {

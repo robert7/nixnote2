@@ -129,7 +129,10 @@ public:
     QAction *htmlEntitiesButtonAction;
     QShortcut *htmlEntitiesButtonShortcut;
     QAction *formatCodeButtonAction;
+
     QShortcut *formatCodeButtonShortcut;
+    QShortcut *fontColorButtonShortcut;
+    QShortcut *fontHighlightColorShortcut;
 
     FontNameComboBox *fontNames;
     FontSizeComboBox *fontSizes;
