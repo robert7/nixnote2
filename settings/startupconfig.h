@@ -62,10 +62,14 @@ private:
     void loadTheme(QString theme);
     QBitArray *command;
 
-    // stores startup info about directory of config files
+    // see FileManager.getConfigDir() for more info
     QString configDir;
-    // stores startup info about directory of program base
-    QString programDir;
+    QString programDataDir;
+    QString userDataDir;
+    // command line set log level
+    // this is used to check: if log leven was set on command line, then it overrides the conf file value
+    int logLevel;
+
     int accountId;
 
 public:
@@ -74,8 +78,14 @@ public:
     QString name;
 
     QString getConfigDir() { return configDir; }
-    QString getProgramDir() { return programDir; }
+    QString getProgramDataDir() { return programDataDir; }
+    QString getUserDataDir() { return userDataDir; }
+
+
     int getAccountId() { return accountId; }
+    int getLogLevel() { return logLevel; }
+
+    // TODO refactor its not very clean to set the account id here from "global"
     void setAccountId(int accountId);
 
     QString queryString;

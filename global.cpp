@@ -123,18 +123,18 @@ Global::Global()
 
 
 
-//Initial global settings setup
+// Initial global settings setup
 void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     this->guiAvailable = guiAvailable;
-    fileManager.setup(startupConfig.getConfigDir(), startupConfig.getProgramDir(), startupConfig.getAccountId());
+    fileManager.setup(
+        startupConfig.getConfigDir(),
+        startupConfig.getUserDataDir(),
+        startupConfig.getProgramDataDir(),
+        startupConfig.getAccountId());
 
     shortcutKeys = new ShortcutKeys();
-#ifdef USE_QSP
-    const QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/";
-    QString settingsFile = configDir + "nixnote.conf";
-#else
     QString settingsFile = fileManager.getConfigDir() + "nixnote.conf";
-#endif
+    QLOG_DEBUG() << "Global::setup settingsFile: " << settingsFile;
 
     globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
     int accountId = startupConfig.getAccountId();
@@ -155,16 +155,13 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     key = key+QString::number(accountId);
     sharedMemory = new CrossMemoryMapper(key);
 
-
-#ifdef USE_QSP
-    settingsFile = configDir + "nixnote-"+QString::number(accountId)+".conf";
-#else
     settingsFile = fileManager.getConfigDir() + "nixnote-"+QString::number(accountId)+".conf";
-#endif
-
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 
-    setDebugLevelBySetting();
+    if (startupConfig.getLogLevel() == 0) {
+        // set log level from conf file, but only if it was not already se on command line
+        setDebugLevelBySetting();
+    }
 
     this->forceNoStartMimized = startupConfig.forceNoStartMinimized;
     this->forceSystemTrayAvailable = startupConfig.forceSystemTrayAvailable;
@@ -1102,7 +1099,7 @@ void Global::loadTheme(QHash<QString, QString> &resourceList, QHash<QString,QStr
     QFile systemTheme(fileManager.getProgramDataDir() + "theme.ini");
     this->loadThemeFile(resourceList, colorList, systemTheme, theme);
 
-    QFile userTheme(fileManager.getConfigDir() + "theme.ini");
+    QFile userTheme(fileManager.getConfigDir() + "theme.ini"); // user theme
     this->loadThemeFile(resourceList, colorList, userTheme, theme);
 }
 
@@ -1164,7 +1161,7 @@ QStringList Global::getThemeNames() {
     QFile systemTheme(fileManager.getProgramDataDir() + "theme.ini");
     this->getThemeNamesFromFile(systemTheme, values);
 
-    QFile userTheme(fileManager.getConfigDir() + "theme.ini");
+    QFile userTheme(fileManager.getConfigDir() + "theme.ini"); // user theme
     this->getThemeNamesFromFile(userTheme, values);
 
     if (!nonAsciiSortBug)

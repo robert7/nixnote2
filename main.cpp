@@ -128,6 +128,9 @@ int main(int argc, char *argv[])
     if (retval != 0)
         return retval;
 
+    // Show Qt version.  This is useful for debugging
+    QLOG_DEBUG() << "Built on " << __DATE__ << " at " << __TIME__;
+    QLOG_DEBUG() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
 
 
     // Setup the application. If we have a GUI, then we use Application.
@@ -187,13 +190,6 @@ int main(int argc, char *argv[])
     QsLogging::DestinationPtr fileDestination(
                  QsLogging::DestinationFactory::MakeFileDestination(logPath) ) ;
     logger.addDestination(fileDestination.get());
-
-
-    // Show Qt version.  This is useful for debugging
-    QLOG_DEBUG() << "programDir: " << global.fileManager.getProgramDataDir();
-    QLOG_DEBUG() << "Built on " << __DATE__ << " at " << __TIME__;
-    QLOG_DEBUG() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
-
 
 
     // Create a shared memory region.  We use this to communicate

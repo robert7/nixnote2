@@ -204,8 +204,8 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
 
     loadkey(QString("Insert_DateTime"), Insert_DateTime);
 
-    QString userFileName = global.fileManager.getConfigDir() + QString("shortcuts.txt");
-    QString systemFileName = global.fileManager.getProgramDataDir() + QString("shortcuts.txt");
+    QString userFileName = global.fileManager.getConfigDir() + QString("shortcuts.txt"); // user shortcuts
+    QString systemFileName = global.fileManager.getProgramDataDir() + QString("shortcuts.txt"); // system shortcuts
 #ifdef _WIN32
     userFileName = userFileName.replace("\\","/");
     systemFileName = systemFileName.replace("\\","/");

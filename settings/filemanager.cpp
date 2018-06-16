@@ -58,44 +58,58 @@ QString getDefaultProgramDirPath() {
 }
 
 
-void FileManager::setup(QString startupConfigDir, QString startupProgramDataDir, int accountId) {
+void FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir, int accountId) {
     if (!startupConfigDir.isEmpty()) {
         startupConfigDir = slashTerminatePath(startupConfigDir);
     }
     if (!startupProgramDataDir.isEmpty()) {
         startupProgramDataDir = slashTerminatePath(startupProgramDataDir);
     }
+    if (!startupUserDataDir.isEmpty()) {
+        startupUserDataDir = slashTerminatePath(startupUserDataDir);
+    }
+
     QLOG_DEBUG() << "FileManager::setup"
                  << " startupConfigDirPath: " << startupConfigDir
+                 << ", startupUserDataDir: " << startupUserDataDir
                  << ", startupProgramDirPath: " << startupProgramDataDir;
 
-    this->programDataDir = startupProgramDataDir;
     this->configDir = startupConfigDir;
+    this->userDataDir = startupUserDataDir;
+    this->programDataDir = startupProgramDataDir;
 
     if (this->configDir.isEmpty()) {
         // default config path
-        this->configDir = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+        this->configDir = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
 
         // TODO
         // in order to not break things for existing user, check whenever this -> configDir exists
         // if it doesn't exist & the OLD path exists - take old path
         // OLD: this -> configDir = slashTerminatePath(QDir().homePath() + QString("/.nixnote"));
     }
-    createDirOrCheckWriteable(configDir);
+    createDirOrCheckWriteable(this->configDir);
+
+    if (this->userDataDir.isEmpty()) {
+        // default config path
+        this->userDataDir = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+
+        // TODO
+        // in order to not break things for existing user, check whenever this -> configDir exists
+        // if it doesn't exist & the OLD path exists - take old path
+        // OLD: this -> configDir = slashTerminatePath(QDir().homePath() + QString("/.nixnote"));
+    }
+    createDirOrCheckWriteable(this->userDataDir);
 
     // in case nothing was given on command line, set to default
     if (this->programDataDir.isEmpty()) {
-        // default config path
+        // default program data path
         this->programDataDir = slashTerminatePath(getDefaultProgramDirPath());
     }
 
     QLOG_DEBUG() << "FileManager::setup "
                  << "configDir: " << this->configDir
+                 << ", userDataDir: " << this->userDataDir
                  << ", programDataDir: " << this->programDataDir;
-
-    // TODO need first check if old data is present !!
-    this->userDataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-    QLOG_DEBUG() << "FileManager::setup userDataDir: " << this->userDataDir;
 
     // Read only files that everyone uses
     imagesDir.setPath(programDataDir + "images");
@@ -119,12 +133,12 @@ void FileManager::setup(QString startupConfigDir, QString startupProgramDataDir,
     qssDirPath = slashTerminatePath(qssDir.path());
 
     // Read/write directories that only we use
-
-    QString settingsFile = configDir + "nixnote.conf";
-    QLOG_DEBUG() << "FileManager::setup settingsFile: " << settingsFile;
-    QSettings globalSettings(settingsFile, QSettings::IniFormat);
+    QString globalSettingsFileName = configDir + "nixnote.conf";
+    QLOG_DEBUG() << "FileManager::setup globalSettingsFileName: " << globalSettingsFileName;
+    QSettings globalSettings(globalSettingsFileName, QSettings::IniFormat);
 
     if (accountId <= 0) {
+        // not given on command line: get from conf file
         globalSettings.beginGroup("SaveState");
         int accountIdFromSettings = globalSettings.value("lastAccessedAccount", 1).toInt();
         globalSettings.endGroup();

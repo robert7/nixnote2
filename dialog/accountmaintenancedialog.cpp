@@ -139,7 +139,7 @@ void AccountMaintenanceDialog::deleteAccount() {
     }
     QFile configFile(global.fileManager.getConfigDir()+"nixnote-"+QString::number(id) +".conf");
     configFile.remove();
-    removeDir(global.fileManager.getConfigDir()+QString("db-")+QString::number(id));
+    removeDir(global.fileManager.getUserDataDir()+QString("db-")+QString::number(id));
 }
 
 void AccountMaintenanceDialog::renameAccount() {

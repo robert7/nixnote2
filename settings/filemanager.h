@@ -95,7 +95,7 @@ private:
 
 public:
     FileManager();
-    void setup(QString startupConfigDir, QString startupProgramDataDir, int accountId);
+    void setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir, int accountId);
 
     // new global file path interface ------- -----------------------------------------------------------
     // where "nixnote.conf" is stored (but NOT database, logs etc.)
