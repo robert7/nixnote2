@@ -3,7 +3,7 @@
 
 (Fork/clone of) nixnote2 - An unofficial client of Evernote for Linux.
 
-This version contains the original code plus, changes made by @jeffkowalski and my changes. 
+This version contains the original code, selected changes merged from other forks and my changes. 
 The aim is:
 * mainly fixes to make the application more stable
 * minor improvements (mainly focused on my personal needs)

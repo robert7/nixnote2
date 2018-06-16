@@ -3,4 +3,6 @@
 * fix text color picker
 * improve status info when sync and/or indexing is running (as it sometimes makes app unusable)
 * improve search (~title search should not do automatic right truncation)
+* improve description how to build from source
+* AppImage build
 
