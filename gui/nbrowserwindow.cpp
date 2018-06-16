@@ -3821,7 +3821,7 @@ void NBrowserWindow::loadPlugins() {
     }
     dirList.append("/usr/local/lib");
 #endif
-#if defined(Q_OS_MACOS) && defined(USE_QSP)
+#if defined(Q_OS_MACOS)
     // support installing additional plugins in the standard locations where they might be found
     dirList.append(QStandardPaths::locate(QStandardPaths::AppDataLocation, "plugins", QStandardPaths::LocateDirectory));
 #endif

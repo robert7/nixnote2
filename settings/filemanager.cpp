@@ -21,10 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include <iostream>
 #include <cstdlib>
-
-#ifdef USE_QSP
 #include <QLibraryInfo>
-#endif
 
 //*******************************************
 //* This class is used to find the location

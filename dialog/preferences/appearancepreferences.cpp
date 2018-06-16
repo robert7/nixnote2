@@ -323,11 +323,7 @@ void AppearancePreferences::saveValues() {
         // Ideally, we could use QSettings since it is ini format, but
         // it puts [Desktop Entry] as [Desktop%20Enry], which screws
         // things up.
-#ifdef USE_QSP
         QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/nixnote2.desktop";
-#else
-        QString systemFile = "/usr/share/applications/nixnote2.desktop";
-#endif
         QFile systemIni(systemFile);
         QStringList desktopData;
 
@@ -374,11 +370,7 @@ void AppearancePreferences::saveValues() {
         QFile::link(QCoreApplication::applicationFilePath(), QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
 #elif !defined(__APPLE__)
         //Copy the nixnote2.desktop to the ~/.config/autostart directory
-#ifdef USE_QSP
         QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/nixnote2.desktop";
-#else
-        QString systemFile = "/usr/share/applications/nixnote2.desktop";
-#endif
         QFile systemIni(systemFile);
         QStringList desktopData;
 

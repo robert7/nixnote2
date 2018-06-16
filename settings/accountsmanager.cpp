@@ -30,11 +30,7 @@ AccountsManager::AccountsManager(int id, QObject *parent) :
     QObject(parent)
 {
     currentId = id;
-#ifdef USE_QSP
-    configFile = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/accounts.conf";
-#else
     configFile = global.fileManager.getConfigDir()+"accounts.conf";
-#endif
     if (!QFile(configFile).exists()) {
         QFile xmlFile(configFile);
         xmlFile.open(QIODevice::WriteOnly | QIODevice::Text);
