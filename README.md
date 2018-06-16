@@ -5,9 +5,10 @@
 
 This version contains the original code, selected changes merged from other forks and my changes. 
 The aim is:
-* mainly fixes to make the application more stable
-* minor improvements (mainly focused on my personal needs)
-* [TODO list..](docs/TODO.md)
+* Make the application more stable
+* Improve status info (sync, error cases)
+* Minor usability improvements (mainly focused on my personal needs)
+* [TODO list](docs/TODO.md)
 * [CHANGELOG](docs/CHANGELOG.md)
 
 
