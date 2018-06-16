@@ -58,7 +58,7 @@ QString getDefaultProgramDirPath() {
 }
 
 
-void FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir, int accountId) {
+void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir, int accountId) {
     if (!startupConfigDir.isEmpty()) {
         startupConfigDir = slashTerminatePath(startupConfigDir);
     }
@@ -79,24 +79,31 @@ void FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QS
     this->programDataDir = startupProgramDataDir;
 
     if (this->configDir.isEmpty()) {
+        // OK, there was NO command line override, now for backward compatibility, check, whenewer there
+        // legacy config exists
+        QDir legacyConfigDir;
+        QString legacyConfigDirPath(QDir().homePath() + QString("/.nixnote"));
+        legacyConfigDir.setPath(legacyConfigDirPath);
+        QLOG_DEBUG() << "FileManager::setup checking whenever legacy config dir exists: " << legacyConfigDirPath;
+        if (legacyConfigDir.exists()) {
+            QLOG_DEBUG() << "FileManager::setup legacy config/data dir found. Reverting to that: "
+                         << legacyConfigDirPath;
+            this->configDir = legacyConfigDirPath;
+            this->userDataDir = legacyConfigDirPath;
+        }
+    }
+
+    if (this->configDir.isEmpty()) {
         // default config path
         this->configDir = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
-
-        // TODO
-        // in order to not break things for existing user, check whenever this -> configDir exists
-        // if it doesn't exist & the OLD path exists - take old path
-        // OLD: this -> configDir = slashTerminatePath(QDir().homePath() + QString("/.nixnote"));
+        QLOG_DEBUG() << "FileManager::setup setting up standard config path: " << this->configDir;
     }
     createDirOrCheckWriteable(this->configDir);
 
     if (this->userDataDir.isEmpty()) {
         // default config path
         this->userDataDir = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-
-        // TODO
-        // in order to not break things for existing user, check whenever this -> configDir exists
-        // if it doesn't exist & the OLD path exists - take old path
-        // OLD: this -> configDir = slashTerminatePath(QDir().homePath() + QString("/.nixnote"));
+        QLOG_DEBUG() << "FileManager::setup setting up standard user data path: " << this->userDataDir;
     }
     createDirOrCheckWriteable(this->userDataDir);
 
@@ -214,23 +221,18 @@ void FileManager::deleteTopLevelFiles(QDir dir, bool exitOnFail) {
 }
 
 
-/*************************************************/
-/* Create a directory if it doesn't exist.       */
-/*************************************************/
+/**
+ * Check directory is writeable, if it doesn't exist, create it first.
+ **/
 void FileManager::createDirOrCheckWriteable(QDir dir) {
     if (!dir.exists()) {
         QLOG_DEBUG() << "About to create directory " << dir;
-         if (!dir.mkpath(dir.path())) {
-             QLOG_FATAL() << "Failed to create directory '" << dir.path() << "'.  Aborting program.";
-             exit(16);
-         }
-    } else {
-        QLOG_DEBUG() << "Checking read access for directory " << dir;
-        if (!dir.isReadable()) {
-            QLOG_FATAL() << "Directory '" + dir.path() + "' does not have read permission.  Aborting program.";
+        if (!dir.mkpath(dir.path())) {
+            QLOG_FATAL() << "Failed to create directory '" << dir.path() << "'.  Aborting program.";
             exit(16);
         }
     }
+    checkExistingWriteableDir(dir);
 }
 
 
@@ -238,26 +240,43 @@ void FileManager::createDirOrCheckWriteable(QDir dir) {
 /* Check that an existing directory is readable.  */
 /**************************************************/
 void FileManager::checkExistingReadableDir(QDir dir) {
-// Windows Check
-#ifndef _WIN32
+    // Windows Check
+    #ifndef _WIN32
+    QLOG_DEBUG() << "Checking read access for directory " << dir;
     if (!dir.isReadable()) {
             QLOG_FATAL() << "Directory '" + dir.path() + "' does not have read permission.  Aborting program.";
             exit(16);
     }
-#endif  // end windows check
+    #endif  // end windows check
+
     if (!dir.exists()) {
          QLOG_FATAL() << "Directory '" + dir.path() + "' does not exist.  Aborting program";
          exit(16);
     }
 }
 
+bool isWriteable(QDir dir) {
+#ifndef _WIN32
+    // non windows
+    QString path(dir.path());
+    QFileInfo fi(path);
+    return (fi.isDir() && fi.isWritable());
+#else
+    // TODO recheck of windows, if this works and whenewer there is better way
+    return dir.exists();
+#endif
+}
 
 
 /**************************************************/
 /* Check that an existing directory is writable.  */
 /**************************************************/
 void FileManager::checkExistingWriteableDir(QDir dir) {
-    this->checkExistingReadableDir(dir);
+    QLOG_DEBUG() << "Checking write access for directory " << dir;
+    if (!isWriteable(dir)) {
+        QLOG_FATAL() << "Directory '" + dir.path() + "' does not have read permission.  Aborting program.";
+        exit(16);
+    }
 }
 
 QDir FileManager::getSpellDirFileUser(QString relativePath) {
@@ -287,7 +306,6 @@ QDir FileManager::getLogsDirFile(QString relativePath) {
 QString FileManager::getLogsDirPath(QString relativePath) {
     return logsDirPath + toPlatformPathSeparator(relativePath);
 }
-
 
 QString FileManager::getQssDirPath(QString relativePath) {
     return qssDirPath + toPlatformPathSeparator(relativePath);
