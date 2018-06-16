@@ -1,0 +1,382 @@
+From: Boyuan Yang <073plan@gmail.com>
+Date: Sat, 31 Dec 2016 14:25:52 +0800
+Subject: force using qt5qevercloud 3.x library from system.
+Forwarded: https://github.com/baumgarr/nixnote2/issues/187
+
+To remove the bundled libqevercloud, we need to modify the
+buildsystem and the source code to use the library provided
+from the system.
+
+Ever since QEverCloud 3.x, the headers for Qt4/Qt5 has been
+separated. We are building against Qt5, so replacing all
+header #include lines with the qt5 version.
+---
+ NixNote2.pro                            | 31 ++-----------------------------
+ cmdtools/addnote.h                      |  2 +-
+ communication/communicationmanager.h    |  4 ++--
+ dialog/notehistoryselect.h              |  2 +-
+ filters/lenseresults.h                  |  2 +-
+ gui/browserWidgets/dateeditor.h         |  2 +-
+ gui/browserWidgets/datetimeeditor.h     |  2 +-
+ gui/browserWidgets/notebookmenubutton.h |  2 +-
+ gui/browserWidgets/ntitleeditor.h       |  2 +-
+ gui/nbrowserwindow.h                    |  2 +-
+ html/noteformatter.h                    |  2 +-
+ html/thumbnailer.h                      |  2 +-
+ models/notecache.h                      |  2 +-
+ nixnote.cpp                             |  2 +-
+ sql/datastore.h                         |  2 +-
+ sql/notetable.h                         |  2 +-
+ sql/usertable.h                         |  2 +-
+ threads/indexrunner.h                   |  2 +-
+ threads/syncrunner.h                    |  2 +-
+ utilities/debugtool.h                   |  2 +-
+ utilities/noteindexer.h                 |  2 +-
+ xml/exportdata.h                        |  2 +-
+ 22 files changed, 24 insertions(+), 51 deletions(-)
+
+diff --git a/NixNote2.pro b/NixNote2.pro
+index 34f8c36..5b2582a 100644
+--- a/NixNote2.pro
++++ b/NixNote2.pro
+@@ -11,6 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
+     win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
+     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
+     unix:LIBS +=    -lcurl \
++               -lqt5qevercloud \
+                -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
+     win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
+     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
+@@ -21,6 +22,7 @@ equals(QT_MAJOR_VERSION, 4) {
+     QT       += core gui webkit sql network xml
+     INCLUDEPATH += /usr/include/poppler/qt4
+     LIBS +=    -lcurl \
++               -lqt4qevercloud \
+                -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
+ }
+ 
+@@ -183,15 +185,6 @@ SOURCES += main.cpp\
+     xml/exportdata.cpp \
+     dialog/logviewer.cpp \
+     dialog/htmlentitiesdialog.cpp \
+-    qevercloud/exceptions.cpp \
+-    qevercloud/http.cpp \
+-    qevercloud/services_nongenerated.cpp \
+-    qevercloud/oauth.cpp \
+-    qevercloud/AsyncResult.cpp \
+-    qevercloud/EventLoopFinisher.cpp \
+-    qevercloud/generated/constants.cpp \
+-    qevercloud/generated/services.cpp \
+-    qevercloud/generated/types.cpp \
+     gui/traymenu.cpp \
+     gui/favoritesview.cpp \
+     gui/favoritesviewdelegate.cpp \
+@@ -368,26 +361,6 @@ HEADERS  += nixnote.h \
+     xml/exportdata.h \
+     dialog/logviewer.h \
+     dialog/htmlentitiesdialog.h \
+-    qevercloud/exceptions.h \
+-    qevercloud/globals.h \
+-    qevercloud/http.h \
+-    qevercloud/impl.h \
+-    qevercloud/oauth.h \
+-    qevercloud/public.h \
+-    qevercloud/thrift.h \
+-    qevercloud/thumbnail.h \
+-    qevercloud/AsyncResult.h \
+-    qevercloud/EventLoopFinisher.h \
+-    qevercloud/EverCloudException.h \
+-    qevercloud/Optional.h \
+-    qevercloud/qt4helpers.h \
+-    qevercloud/generated/constants.h \
+-    qevercloud/generated/services.h \
+-    qevercloud/generated/types.h \
+-    qevercloud/generated/types_impl.h \
+-    qevercloud/generated/EDAMErrorCode.h \
+-    qevercloud/include/QEverCloud.h \
+-    qevercloud/include/QEverCloudOAuth.h \
+     gui/traymenu.h \
+     gui/favoritesview.h \
+     gui/favoritesviewdelegate.h \
+diff --git a/cmdtools/addnote.h b/cmdtools/addnote.h
+index 79c9231..5695fda 100644
+--- a/cmdtools/addnote.h
++++ b/cmdtools/addnote.h
+@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include <QObject>
+ #include <QStringList>
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ using namespace qevercloud;
+ 
+ class AddNote : public QObject
+diff --git a/communication/communicationmanager.h b/communication/communicationmanager.h
+index 8f81420..f66d170 100644
+--- a/communication/communicationmanager.h
++++ b/communication/communicationmanager.h
+@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ //*  NixNote.  A lot of this is done with QEvercloud.
+ //***************************************************************************
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ 
+ #include "global.h"
+ 
+@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include <QNetworkAccessManager>
+ #include <QSqlDatabase>
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ using namespace qevercloud;
+ 
+ typedef unsigned int SOCKET;
+diff --git a/dialog/notehistoryselect.h b/dialog/notehistoryselect.h
+index 7c5e0b6..4d1c46e 100644
+--- a/dialog/notehistoryselect.h
++++ b/dialog/notehistoryselect.h
+@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include <QListWidget>
+ #include <QCheckBox>
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ using namespace qevercloud;
+ 
+ using namespace std;
+diff --git a/filters/lenseresults.h b/filters/lenseresults.h
+index 71585fc..e998373 100644
+--- a/filters/lenseresults.h
++++ b/filters/lenseresults.h
+@@ -2,7 +2,7 @@
+ #define LENSERESULTS_H
+ 
+ #include <QObject>
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ 
+ class LenseResults : public QObject
+ {
+diff --git a/gui/browserWidgets/dateeditor.h b/gui/browserWidgets/dateeditor.h
+index 4f5fd4a..e7fc43d 100644
+--- a/gui/browserWidgets/dateeditor.h
++++ b/gui/browserWidgets/dateeditor.h
+@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include "gui/browserWidgets/datetimeeditor.h"
+ #include "gui/browserWidgets/locationeditor.h"
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ using namespace qevercloud;
+ 
+ using namespace std;
+diff --git a/gui/browserWidgets/datetimeeditor.h b/gui/browserWidgets/datetimeeditor.h
+index 884f59a..78f39f5 100644
+--- a/gui/browserWidgets/datetimeeditor.h
++++ b/gui/browserWidgets/datetimeeditor.h
+@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include <QWidget>
+ #include <QPushButton>
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ using namespace qevercloud;
+ 
+ using namespace std;
+diff --git a/gui/browserWidgets/notebookmenubutton.h b/gui/browserWidgets/notebookmenubutton.h
+index 00f5c3b..794dfe1 100644
+--- a/gui/browserWidgets/notebookmenubutton.h
++++ b/gui/browserWidgets/notebookmenubutton.h
+@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include <QAction>
+ #include <QActionGroup>
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ 
+ 
+ using namespace std;
+diff --git a/gui/browserWidgets/ntitleeditor.h b/gui/browserWidgets/ntitleeditor.h
+index e4b6ab1..7b2eed8 100644
+--- a/gui/browserWidgets/ntitleeditor.h
++++ b/gui/browserWidgets/ntitleeditor.h
+@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #ifndef NTITLEEDITOR_H
+ #define NTITLEEDITOR_H
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ 
+ #include <QtWebKit>
+ #include <QLineEdit>
+diff --git a/gui/nbrowserwindow.h b/gui/nbrowserwindow.h
+index f11c86c..581bef0 100644
+--- a/gui/nbrowserwindow.h
++++ b/gui/nbrowserwindow.h
+@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ 
+ #include "gui/nwebview.h"
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ #include "gui/browserWidgets/ntitleeditor.h"
+ #include "gui/browserWidgets/notebookmenubutton.h"
+ #include "gui/plugins/pluginfactory.h"
+diff --git a/html/noteformatter.h b/html/noteformatter.h
+index 0ef40db..9fcd155 100644
+--- a/html/noteformatter.h
++++ b/html/noteformatter.h
+@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include <QVector>
+ #include <QtXml>
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ using namespace qevercloud;
+ 
+ using namespace std;
+diff --git a/html/thumbnailer.h b/html/thumbnailer.h
+index cd28550..df69530 100644
+--- a/html/thumbnailer.h
++++ b/html/thumbnailer.h
+@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include "sql/databaseconnection.h"
+ 
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ using namespace qevercloud;
+ 
+ using namespace std;
+diff --git a/models/notecache.h b/models/notecache.h
+index f4be709..81d13bc 100644
+--- a/models/notecache.h
++++ b/models/notecache.h
+@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #ifndef NOTECACHE_H
+ #define NOTECACHE_H
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ #include <QObject>
+ 
+ 
+diff --git a/nixnote.cpp b/nixnote.cpp
+index 06cd92e..12d98c2 100644
+--- a/nixnote.cpp
++++ b/nixnote.cpp
+@@ -91,7 +91,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include "xml/exportdata.h"
+ #include "dialog/aboutdialog.h"
+ 
+-#include "qevercloud/include/QEverCloudOAuth.h"
++#include <qt5qevercloud/QEverCloudOAuth.h>
+ 
+ using namespace qevercloud;
+ 
+diff --git a/sql/datastore.h b/sql/datastore.h
+index 5e2aef4..b3c1694 100644
+--- a/sql/datastore.h
++++ b/sql/datastore.h
+@@ -36,7 +36,7 @@ class DatabaseConnection;
+ //***********************************************************
+ using namespace std;
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ using namespace qevercloud;
+ 
+ 
+diff --git a/sql/notetable.h b/sql/notetable.h
+index f8767da..f026b12 100644
+--- a/sql/notetable.h
++++ b/sql/notetable.h
+@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include <QString>
+ #include "sql/databaseconnection.h"
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ using namespace qevercloud;
+ 
+ 
+diff --git a/sql/usertable.h b/sql/usertable.h
+index 92e7f00..c472095 100644
+--- a/sql/usertable.h
++++ b/sql/usertable.h
+@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include <QSqlDatabase>
+ #include "sql/databaseconnection.h"
+ 
+-#include <qevercloud/include/QEverCloud.h>
++#include <qt5qevercloud/QEverCloud.h>
+ 
+ 
+ using namespace qevercloud;
+diff --git a/threads/indexrunner.h b/threads/indexrunner.h
+index d647a13..a1bb844 100644
+--- a/threads/indexrunner.h
++++ b/threads/indexrunner.h
+@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include <QTimer>
+ #include <QTextDocument>
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ using namespace qevercloud;
+ 
+ using namespace std;
+diff --git a/threads/syncrunner.h b/threads/syncrunner.h
+index b650a8b..4adfa27 100644
+--- a/threads/syncrunner.h
++++ b/threads/syncrunner.h
+@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include <string>
+ #include <stdio.h>
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ using namespace qevercloud;
+ 
+ class SyncRunner : public QObject
+diff --git a/utilities/debugtool.h b/utilities/debugtool.h
+index 67cd943..a935540 100644
+--- a/utilities/debugtool.h
++++ b/utilities/debugtool.h
+@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #ifndef DEBUGTOOL_H
+ #define DEBUGTOOL_H
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ 
+ using namespace qevercloud;
+ 
+diff --git a/utilities/noteindexer.h b/utilities/noteindexer.h
+index f06484c..04e46fe 100644
+--- a/utilities/noteindexer.h
++++ b/utilities/noteindexer.h
+@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include <QFileInfo>
+ #include <QTextDocument>
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ using namespace qevercloud;
+ 
+ using namespace std;
+diff --git a/xml/exportdata.h b/xml/exportdata.h
+index f4c0ab5..ecc7bd8 100644
+--- a/xml/exportdata.h
++++ b/xml/exportdata.h
+@@ -36,7 +36,7 @@ typedef qint64 int64_t;
+ 
+ using namespace std;
+ 
+-#include "qevercloud/include/QEverCloud.h"
++#include <qt5qevercloud/QEverCloud.h>
+ using namespace qevercloud;
+ 
+ 

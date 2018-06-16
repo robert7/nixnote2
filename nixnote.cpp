@@ -124,8 +124,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 #if QT_VERSION < 0x050000
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 #endif
-    global.setDebugLevel();
-
     // Load any plugins
     this->loadPlugins();
 
@@ -289,7 +287,10 @@ void NixNote::setupGui() {
     // Setup the GUI
     //this->setStyleSheet("background-color: white;");
     //statusBar();    setWindowTitle(tr("NixNote 2"));
-    setWindowIcon(QIcon(global.getIconResource(":windowIcon")));
+    const auto wIcon = QIcon(global.getIconResource(":windowIcon"));
+    if (!wIcon.isNull()) {
+        setWindowIcon(wIcon);
+    }
 
     //QLOG_TRACE() << "Setting up menu bar";
     searchText = new LineEdit();
@@ -1290,10 +1291,12 @@ void NixNote::closeEvent(QCloseEvent *event) {
     syncRunner.keepRunning = false;
     syncThread.quit();
 
-    if (trayIcon->isVisible())
-        trayIcon->hide();
-    if (trayIcon != NULL)
+    if (trayIcon != NULL) {
+        if (trayIcon->isVisible())
+            trayIcon->hide();
         delete trayIcon;
+        trayIcon = NULL;
+    }
 
     QMainWindow::closeEvent(event);
     QLOG_DEBUG() << "Quitting";
@@ -2969,7 +2972,10 @@ void NixNote::openPreferences() {
     if (prefs.okButtonPressed) {
         setSyncTimer();
         bool showTrayIcon = global.showTrayIcon();
-        setWindowIcon(global.getIconResource(":windowIcon"));
+        const auto wIcon = QIcon(global.getIconResource(":windowIcon"));
+        if (!wIcon.isNull()) {
+            setWindowIcon(wIcon);
+        }
         trayIcon->setIcon(global.getIconResource(":trayIcon"));
         if (!showTrayIcon) {
             //trayIconBehavior();
@@ -2997,7 +3003,7 @@ void NixNote::openPreferences() {
 //        QApplication::instance()->installTranslator(nixnoteTranslator);
 
     }
-    global.setDebugLevel();
+    global.setDebugLevelBySetting();
 }
 
 
@@ -3199,8 +3205,12 @@ void NixNote::screenCapture() {
     this->hide();
     sleep(1);
 
-    ScreenCapture sc;
-    sc.exec();
+    ScreenCapture sc(this);
+    int result = sc.exec();
+    if (result == QDialog::Rejected) {
+        show();
+        return;
+    }
     QPixmap pix = sc.getSelection();
     this->show();
     ConfigStore cs(global.db);
@@ -3649,7 +3659,10 @@ void NixNote::reloadIcons() {
         global.loadTheme(global.resourceList,global.colorList,newThemeName);
     }
 
-    setWindowIcon(QIcon(global.getIconResource(":windowIcon")));
+    const auto wIcon = QIcon(global.getIconResource(":windowIcon"));
+    if (!wIcon.isNull()) {
+        setWindowIcon(wIcon);
+    }
     leftArrowButton->setIcon(global.getIconResource(":leftArrowIcon"));
     rightArrowButton->setIcon(global.getIconResource(":rightArrowIcon"));
     homeButton->setIcon(global.getIconResource(":homeIcon"));
@@ -3882,11 +3895,26 @@ void NixNote::loadPlugins() {
     webcamPluginAvailable = false;
 
     QStringList dirList;
-    dirList.append(global.fileManager.getProgramDirPath(""));
-    dirList.append(global.fileManager.getProgramDirPath("")+"/plugins");
-    dirList.append("/usr/lib/nixnote2/");
-    dirList.append("/usr/local/lib/nixnote2/");
+    dirList.append(global.fileManager.getProgramDataDir());
+    dirList.append(global.fileManager.getProgramDataDir()+"plugins");
+    const QString prefixPath = QLibraryInfo::location(QLibraryInfo::PrefixPath);
+    dirList.append(prefixPath + "/lib/nixnote2/");
+#ifndef Q_OS_MAC_OS
+    if (prefixPath != "/usr") {
+        dirList.append("/usr/lib/nixnote2/");
+    }
+    if (prefixPath != "/usr/local") {
+        dirList.append("/usr/local/lib/nixnote2/");
+    }
     dirList.append("/usr/local/lib");
+#endif
+#if defined(Q_OS_MACOS)
+    // support installing additional plugins in the standard locations where they might be found
+    dirList.append(QStandardPaths::locate(QStandardPaths::AppDataLocation, "plugins", QStandardPaths::LocateDirectory));
+#endif
+    if (prefixPath != "/usr") {
+        dirList.append(prefixPath + "/lib");
+    }
     dirList.append("/usr/lib");
 
     // Start loading plugins
@@ -3895,10 +3923,12 @@ void NixNote::loadPlugins() {
         QStringList filter;
         filter.append("libwebcamplugin.so");
         filter.append("libhunspellplugin.so");
+        filter.append("libwebcamplugin.dylib");
+        filter.append("libhunspellplugin.dylib");
         foreach (QString fileName, pluginsDir.entryList(filter)) {
             QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
             QObject *plugin = pluginLoader.instance();
-            if (fileName == "libwebcamplugin.so") {
+            if (fileName == "libwebcamplugin.so" || fileName == "libwebcamplugin.dylib") {
                 if (plugin) {
                     webcamInterface = qobject_cast<WebCamInterface *>(plugin);
                     if (webcamInterface) {
@@ -3911,7 +3941,7 @@ void NixNote::loadPlugins() {
 
             // The Hunspell plugin isn't actually used here. We just use this as a
             // check to be sure that the menu should be available.
-            if (fileName == "libhunspellplugin.so") {
+            if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
                 if (plugin) {
                     HunspellInterface *hunspellInterface;
                     hunspellInterface = qobject_cast<HunspellInterface *>(plugin);

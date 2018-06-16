@@ -37,5 +37,4 @@ include_directories("${PROJECT_SOURCE_DIR}")
 #include_directories(watcher)
 #include_directories(xml)
 
-
-add_custom_target(nixnote2 COMMAND make debug -C ${PROJECT_SOURCE_DIR})
+add_custom_target(nixnote2 ALL COMMAND make -C ${PROJECT_SOURCE_DIR})

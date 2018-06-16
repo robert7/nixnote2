@@ -22,15 +22,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QString>
 #include <iostream>
 #include "threads/syncrunner.h"
+#include "global.h"
 
 #include <QProcessEnvironment>
 
-//extern Global global;
-
+extern Global global;
 
 StartupConfig::StartupConfig()
 {
-    homeDirPath = QDir().homePath() + QString("/.nixnote/");
+    // we first allow command line override and set-up final directory later in global.setup()
+    configDir = QString("");
+    programDataDir = QString("");
+    this->logLevel = -1; // default: not set by command line
     this->forceNoStartMinimized = false;
     this->startupNewNote = false;
     this->sqlExec = false;
@@ -41,6 +44,7 @@ StartupConfig::StartupConfig()
     this->forceSystemTrayAvailable=false;
     this->disableEditing = false;
     this->accountId=-1;
+
     command = new QBitArray(STARTUP_OPTION_COUNT);
     command->fill(false);
     newNote = NULL;
@@ -65,8 +69,17 @@ void StartupConfig::printHelp() {
                    +QString("  start <options>                      Start NixNote GUI with the specified options.\n")
                    +QString("                                       If no command is specified, this is the default.\n")
                    +QString("     start options:\n")
+                   +QString("          --logLevel=<level>           Set initial logging level (0=trace,1=debug,2=info,3=error,..\n")
+                   +QString("                                       This is ONLY valid at program startup until settings are read.\n")
                    +QString("          --accountId=<id>             Start with specified user account.\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
+
+                   // see FileManager.getConfigDir() for more info
+                   +QString("          --configDir=<dir>            Directory containing config files.\n")
+                   +QString("          --userDataDir=<dir>          Directory containing database, logs etc..\n")
+                   +QString("                                       Warning: ff you set configDir, but don't set userDataDir; userDataDir defaults\n")
+                   +QString("                                       to configDir.\n")
+                   +QString("          --programDataDir=<dir>       Directory containing deployed fixed program data (like images).\n")
+
                    +QString("          --dontStartMinimized         Override option to start minimized.\n")
                    +QString("          --disableEditing             Disable note editing\n")
                    +QString("          --enableIndexing             Enable background Indexing (can cause problems)\n")
@@ -80,8 +93,6 @@ void StartupConfig::printHelp() {
                    +QString("  show_window                          If running, ask NixNote to show the main window.\n")
                    +QString("  query <options>                      If running, search NixNote and display the results.\n")
                    +QString("     query options:\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("          --search=\"search string\"     Search string.\n\n")
                    +QString("          --delimiter=\"character\"      Character to place between fields.  Defaults to |.\n")
                    +QString("          --noHeaders                  Do not show column headings.")
@@ -116,8 +127,6 @@ void StartupConfig::printHelp() {
                    +QString("          --reminder=\"<datetime>\"  Reminder date & time in yyyy-MM-ddTHH:mm:ss.zzzZ format.\n")
                    +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
                    +QString("                                       is read from stdin.\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("  appendNote <options>                 Append to an existing note.\n")
                    +QString("     appendNote options:\n")
                    +QString("          --id=\"<title>\"               ID of note to append.\n")
@@ -127,8 +136,6 @@ void StartupConfig::printHelp() {
                    +QString("                                       Defaults to %%.\n")
                    +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
                    +QString("                                       is read from stdin.\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("  alterNote <options>                  Change a notes't notebook or tags.\n")
                    +QString("     alterNote options:\n")
                    +QString("          --id=\"<note_ids>\"            Space separated list of note IDs to extract.\n")
@@ -141,18 +148,12 @@ void StartupConfig::printHelp() {
                    +QString("          --reminderComplete           Set the reminder as complete.\n")
                    +QString("                                       yyyy-MM-ddTHH:mm:ss.zzzZ format or the literal 'now' to default\n")
                    +QString("                                       to the current date & time.")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("  readNote <options>                   Read the text contents of a note.\n")
                    +QString("          --id=\"<note_id>\"             ID of the note to read.\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("  deleteNote <options>                 Move a note to the trash via the command line.\n")
                    +QString("     deleteNote options:\n")
                    +QString("          --id=\"<note_id>\"             ID of the note to delete.\n")
                    +QString("          --noVerify                   Do not prompt for verification.\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("  emailNote <options>                  Move a note to the trash via the command line.\n")
                    +QString("     emailNote options:\n")
                    +QString("          --id=\"<note_id>\"             ID of the note to email.\n")
@@ -162,13 +163,9 @@ void StartupConfig::printHelp() {
                    +QString("          --bcc=\"<address list>\"       List of recipients to blind carbon copy.\n")
                    +QString("          --note=\"<note>\"              Additional comments.\n")
                    +QString("          --ccSelf                     Send a copy to yourself.\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("  backup <options>                     Backup the NixNote database.\n")
                    +QString("     backup options:\n")
                    +QString("          --output=<filename>          Output filename.\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("  export <options>                     Export notes from NixNote.\n")
                    +QString("     export options:\n")
                    +QString("          --id=\"<note_ids>\"            Space separated list of note IDs to extract.\n")
@@ -176,23 +173,15 @@ void StartupConfig::printHelp() {
                    +QString("          --output=\"filename\"        Output file name.\n")
                    +QString("          --deleteAfterExtract         Delete notes after the extract completes.\n")
                    +QString("          --noVerifyDelete             Don't verify deletions.\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("  import <options>                     Import notes from a NixNote extract (.nnex).\n")
                    +QString("     import options:\n")
                    +QString("          --input=\"filename\"         Input file name.\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("  closeNotebook <options>              Close a notebook.\n")
                    +QString("     closeNotebook options:\n")
                    +QString("          --notebook=\"notebook\"        Notebook name.\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("  openNotebook <options>               Open a closed a notebook.\n")
                    +QString("     openNotebook options:\n")
                    +QString("          --notebook=\"notebook\"        Notebook name.\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("  signalGui <options>                  Send command to a running NixNote.\n")
                    +QString("     signalGui options:\n")
                    +QString("          --show                       Show NixNote if hidden.\n")
@@ -205,10 +194,8 @@ void StartupConfig::printHelp() {
                    +QString("          --id=<id>                    Note Id to open.\n")
                    +QString("          --newNote                    Create a new note.\n")
                    +QString("          --newExternalNote            Create a new note in an external window.\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
-                   +QString("          --configDir=<dir>            Directory containing config & database.\n")
                    +QString("  Examples:\n\n")
-                   +QString("     To Start NixNote, do a sync, and then exit.\n")
+                   +QString("     To start NixNote, do a sync, and then exit.\n")
                    +QString("     nixnote2 start --syncAndExit\n\n")
                    +QString("     To start NixNote using a secondary account.\n")
                    +QString("     nixnote2 --accountId=2\n\n")
@@ -236,7 +223,6 @@ void StartupConfig::printHelp() {
 
 
 int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
-
     guiAvailable = true;
 
     // Check if we have a GUI available. This is ugly, but it works.
@@ -257,14 +243,37 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             printHelp();
             return 1;
         }
+        if (parm.startsWith("--logLevel=", Qt::CaseSensitive)) {
+            parm = parm.section('=', 1, 1); // 2nd part
+            int level = parm.toInt();
+            QLOG_INFO() << "Changed logLevel via command line option to " << level;
+            global.setDebugLevel(level);
+            this->logLevel = level;
+        }
         if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-            parm = parm.mid(12);
+            parm = parm.section('=', 1, 1);
             accountId = parm.toInt();
+            QLOG_DEBUG() << "Set accountId via command line option to " + accountId;
         }
+
+        // directory overrides
         if (parm.startsWith("--configDir=", Qt::CaseSensitive)) {
-            parm = parm.mid(12);
-            homeDirPath = parm;
+            parm = parm.section('=', 1, 1);
+            configDir = parm;
+            QLOG_INFO() << "Set configDir via command line to " + configDir;
         }
+        if (parm.startsWith("--programDataDir=", Qt::CaseSensitive)) {
+            parm = parm.section('=', 1, 1);
+            programDataDir = parm;
+            QLOG_INFO() << "Set programDataDir via command line to " + programDataDir;
+        }
+        if (parm.startsWith("--userDataDir=", Qt::CaseSensitive)) {
+            parm = parm.section('=', 1, 1);
+            userDataDir = parm;
+            QLOG_INFO() << "Set userDataDir via command line to " + userDataDir;
+        }
+
+
         if (parm.startsWith("addNote")) {
             command->setBit(STARTUP_ADDNOTE,true);
             if (newNote == NULL)
@@ -360,9 +369,6 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             command->setBit(STARTUP_GUI,true);
             guiAvailable = true;
         }
-
-
-
 
         if (command->at(STARTUP_ADDNOTE)) {
             if (parm.startsWith("--title=", Qt::CaseSensitive)) {
@@ -615,6 +621,12 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
         }
     }
 
+    if ((!configDir.isEmpty()) && userDataDir.isEmpty()) {
+        QLOG_WARN() << "As you provided configDir but not provided userDataDir, userDataDir will fallback to configDir: "
+                       << configDir;
+        userDataDir = configDir;
+    }
+
 
     if (command->count(true) == 0)
         command->setBit(STARTUP_GUI,true);
@@ -712,3 +724,13 @@ bool StartupConfig::closeNotebook() {
 bool StartupConfig::signalOtherGui() {
     return command->at(STARTUP_SIGNALGUI);
 }
+
+void StartupConfig::setAccountId(int accountId) {
+    if (this->accountId == accountId) {
+        return;
+    }
+    QLOG_DEBUG() << "StartupConfig: updating accountId to" << accountId;
+    this->accountId = accountId;
+}
+
+

@@ -262,6 +262,7 @@ void NMainMenuBar::setupEditMenu() {
     editMenu->addMenu(themeMenu);
 
     preferencesAction = new QAction(tr("Preferences"), this);
+    preferencesAction->setMenuRole(QAction::PreferencesRole);
     setupShortcut(preferencesAction, QString("Edit_Preferences"));
     editMenu->addAction(preferencesAction);
     connect(preferencesAction, SIGNAL(triggered()), parent, SLOT(openPreferences()));
@@ -583,10 +584,12 @@ void NMainMenuBar::setupHelpMenu() {
 
     aboutAction = new QAction(tr("&About"), this);
     aboutAction->setToolTip(tr("About"));
+    aboutAction->setMenuRole(QAction::AboutRole);
     connect(aboutAction, SIGNAL(triggered()), parent, SLOT(openAbout()));
     helpMenu->addAction(aboutAction);
 
     aboutQtAction = new QAction(tr("About &Qt"), this);
+    aboutQtAction->setMenuRole(QAction::AboutQtRole);
     aboutQtAction->setToolTip(tr("About"));
     connect(aboutQtAction, SIGNAL(triggered()), parent, SLOT(openQtAbout()));
     helpMenu->addAction(aboutQtAction);
@@ -602,13 +605,8 @@ void NMainMenuBar::setupShortcut(QAction *action, QString text) {
 
 
 void NMainMenuBar::openManual() {
-#ifndef _WIN32
     QDesktopServices::openUrl(QString("file://") +
-                             global.getProgramDirPath()+"/help/UserDocumentation.pdf");
-#else
-    QDesktopServices::openUrl(QString("file:///") +
-                             global.getProgramDirPath().replace("\\","/")+"/help/UserDocumentation.pdf");
-#endif
+                             global.getProgramDataDir()+"help/UserDocumentation.pdf");
 }
 
 

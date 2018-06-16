@@ -318,12 +318,12 @@ void AppearancePreferences::saveValues() {
 
 
     // See if the user has overridden the window icon
-
+#ifndef __APPLE__
         //Copy the nixnote2.desktop so we can override the app icon
         // Ideally, we could use QSettings since it is ini format, but
         // it puts [Desktop Entry] as [Desktop%20Enry], which screws
         // things up.
-        QString systemFile = "/usr/share/applications/nixnote2.desktop";
+        QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/nixnote2.desktop";
         QFile systemIni(systemFile);
         QStringList desktopData;
 
@@ -341,16 +341,18 @@ void AppearancePreferences::saveValues() {
         systemIni.close();
 
         // Now, write it back out
-        QString userFile =  QDir::homePath()+"/.local/share/applications/nixnote2.desktop";
-        QFile userIni(userFile);
-        if (userIni.open(QIODevice::WriteOnly)) {
-            QTextStream data(&userIni);
-            for (int i=0; i<desktopData.size(); i++) {
-                data << desktopData[i] << "\n";
+        if (!desktopData.isEmpty()) {
+            QString userFile =  QDir::homePath()+"/.local/share/applications/nixnote2.desktop";
+            QFile userIni(userFile);
+            if (userIni.open(QIODevice::WriteOnly)) {
+                QTextStream data(&userIni);
+                for (int i=0; i<desktopData.size(); i++) {
+                    data << desktopData[i] << "\n";
+                }
             }
+            userIni.close();
         }
-        userIni.close();
-
+#endif
 //    }
 
     // Setup if the user wants to start NixNote the next time they login.
@@ -366,9 +368,9 @@ void AppearancePreferences::saveValues() {
     if (autoStart->isChecked()) {
 #ifdef _WIN32
         QFile::link(QCoreApplication::applicationFilePath(), QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
-#else
+#elif !defined(__APPLE__)
         //Copy the nixnote2.desktop to the ~/.config/autostart directory
-        QString systemFile = "/usr/share/applications/nixnote2.desktop";
+        QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/nixnote2.desktop";
         QFile systemIni(systemFile);
         QStringList desktopData;
 

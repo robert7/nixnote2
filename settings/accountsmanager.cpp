@@ -30,7 +30,7 @@ AccountsManager::AccountsManager(int id, QObject *parent) :
     QObject(parent)
 {
     currentId = id;
-    configFile = global.fileManager.getHomeDirPath("")+"accounts.conf";
+    configFile = global.fileManager.getConfigDir()+"accounts.conf";
     if (!QFile(configFile).exists()) {
         QFile xmlFile(configFile);
         xmlFile.open(QIODevice::WriteOnly | QIODevice::Text);

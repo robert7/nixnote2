@@ -207,7 +207,6 @@ public:
     bool autosetUsername();                                   // Should the username be set automatically?
     void setAutosetUsername(bool value);
     QString getUsername();                                    // pull username from the system.
-    QString getProgramDirPath();                              // Get the path the program is executing from
     QList< QPair<QString, QString> > passwordRemember;        // Cache of passwords
     QHash< QString, QPair <QString, QString> > passwordSafe;  // Saved passwords
     void appendFilter(FilterCriteria *criteria);
@@ -245,7 +244,8 @@ public:
     bool getClearSearchOnNotebook();
     bool getClearTagsOnSearch();
     bool getTagSelectionOr();
-    void setDebugLevel();
+    void setDebugLevel(int level);
+    void setDebugLevelBySetting();
     bool disableImageHighlight();
 
 
@@ -334,6 +334,7 @@ public:
     bool useLibTidy;
 
     ExitManager *exitManager;                                  // Utility to manage exit points.
+    QString getProgramDataDir() { return fileManager.getProgramDataDir(); }
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.
