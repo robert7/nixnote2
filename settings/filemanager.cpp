@@ -125,7 +125,7 @@ void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, Q
     javaDirPath = slashTerminatePath(javaDir.path());
 
     spellDirUser.setPath(programDataDir + "spell");
-    createDirOrCheckWriteable(spellDirUser);
+    checkExistingReadableDir(spellDirUser);
     spellDirPathUser = slashTerminatePath(spellDirUser.path());
 
     translateDir.setPath(programDataDir + "translations");

@@ -75,8 +75,10 @@ void StartupConfig::printHelp() {
 
                    // see FileManager.getConfigDir() for more info
                    +QString("          --configDir=<dir>            Directory containing config files.\n")
-                   +QString("          --programDataDir=<dir>       Directory containing deployed fixed program data (like images).\n")
                    +QString("          --userDataDir=<dir>          Directory containing database, logs etc..\n")
+                   +QString("                                       Warning: ff you set configDir, but don't set userDataDir; userDataDir defaults\n")
+                   +QString("                                       to configDir.\n")
+                   +QString("          --programDataDir=<dir>       Directory containing deployed fixed program data (like images).\n")
 
                    +QString("          --dontStartMinimized         Override option to start minimized.\n")
                    +QString("          --disableEditing             Disable note editing\n")
@@ -258,17 +260,17 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
         if (parm.startsWith("--configDir=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1);
             configDir = parm;
-            QLOG_DEBUG() << "Set configDir via command line to " + configDir;
+            QLOG_INFO() << "Set configDir via command line to " + configDir;
         }
         if (parm.startsWith("--programDataDir=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1);
             programDataDir = parm;
-            QLOG_DEBUG() << "Set programDataDir via command line to " + programDataDir;
+            QLOG_INFO() << "Set programDataDir via command line to " + programDataDir;
         }
         if (parm.startsWith("--userDataDir=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1);
-            programDataDir = parm;
-            QLOG_DEBUG() << "Set userDataDir via command line to " + userDataDir;
+            userDataDir = parm;
+            QLOG_INFO() << "Set userDataDir via command line to " + userDataDir;
         }
 
 
@@ -367,9 +369,6 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             command->setBit(STARTUP_GUI,true);
             guiAvailable = true;
         }
-
-
-
 
         if (command->at(STARTUP_ADDNOTE)) {
             if (parm.startsWith("--title=", Qt::CaseSensitive)) {
@@ -620,6 +619,12 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
                 sqlString = sqlString + " " + parm;
             }
         }
+    }
+
+    if ((!configDir.isEmpty()) && userDataDir.isEmpty()) {
+        QLOG_WARN() << "As you provided configDir but not provided userDataDir, userDataDir will fallback to configDir: "
+                       << configDir;
+        userDataDir = configDir;
     }
 
 
