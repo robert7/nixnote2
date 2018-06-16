@@ -12,9 +12,53 @@ The aim is:
 * [CHANGELOG](docs/CHANGELOG.md)
 
 
-## Installation
+## Building from source
 
-### Mac
+Tha app is mainly targeted at linux, but it should compile quite easily on Windows and 
+also macOS config is already present (see more detailed info bellow). It could be,
+that minor adjustments are needed for the non linux builds.
+
+You'll need the same dependencies installed (including libtidy on MS Windows).
+
+### Linux
+
+* Install development dependencies
+  * Install basic dependencies (recipe for Ubuntu, use similar for other distros)
+    * ```sudo apt-get install -y git-core qt5-default build-essential```
+    * ```sudo apt-get install -y libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev``` 
+  * Install qt5 and poppler
+    * ```sudo apt-get install -y libpoppler-qt5-dev```
+    * ```sudo apt-get install -y libqt5webkit5-dev```
+    * ```sudo apt install -y qt5-qmake```
+  * ~Optional
+    * ```sudo apt-get install -y libopencv-dev libhunspell-dev``` 
+  * As alternative you can download qt5 directly from [qt.io/download](https://www.qt.io/download). 
+    Highest currently supported version is 5.5. Building against 5.6+ needs some 
+    source changes (and will probably break qt4 compatibility).
+* It should be possible to build against qt4 but its **discouraged/deprecated**
+* Get latest source ..
+* Build
+
+```bash
+> mkdir build
+> # although `release`, for now I recommend `debug` config
+
+> # important: make sure you are using qt5 qmake 
+> # version check: `qmake --version`
+> qmake --version
+> # check you get something like `Using Qt version 5.5.1` and NOT `Using Qt version 4.x.x'
+> # on Ubuntu 16.04 I need to use /usr/lib/x86_64-linux-gnu/qt5/bin/qmake as just default qmake is 4.x
+
+> # generate Makefile 
+> qmake CONFIG+=debug
+
+> # compile binaries
+> make
+```
+If all got OK, you should have "nixnote2" binary available now.. if not, install the missing
+dependency :)
+
+### macOS
 
 ```bash
 > mkdir build
@@ -40,10 +84,7 @@ deployed anywhere:
 As far as I can tell this will find and copy all required dependencies into the app bundle and modify them so they
 can be loaded from inside that bundle (wherever it ends up).
 
-### Building from source on other systems
-
-This works much as described for Mac above. You'll need the same dependencies installed (including
-libtidy on MS Windows). Then, run the same sequence of commands, followed by `sudo make install`.
+## Binary distribution -- **this will take older version from upstream repository**
 
 ### Debian and Ubuntu
 
