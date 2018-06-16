@@ -124,8 +124,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 #if QT_VERSION < 0x050000
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 #endif
-    global.setDebugLevelBySetting();
-
     // Load any plugins
     this->loadPlugins();
 

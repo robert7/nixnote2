@@ -129,9 +129,10 @@ int main(int argc, char *argv[])
         return retval;
 
     // Show Qt version.  This is useful for debugging
-    QLOG_DEBUG() << "Built on " << __DATE__ << " at " << __TIME__;
-    QLOG_DEBUG() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
-
+    // initial log level is INFO - so this will be SHOWN per default
+    QLOG_INFO() << "Nixnote2 - build (" << __DATE__ << " at " << __TIME__
+                << ", with Qt" << QT_VERSION_STR << "running on" << qVersion() << ")";
+    QLOG_INFO() << "To get more detailed startup logging use --logLevel=1";
 
     // Setup the application. If we have a GUI, then we use Application.
     // If we don't, then we just use a derivative of QCoreApplication

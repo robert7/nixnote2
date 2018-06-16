@@ -158,7 +158,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     settingsFile = fileManager.getConfigDir() + "nixnote-"+QString::number(accountId)+".conf";
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 
-    if (startupConfig.getLogLevel() == 0) {
+    if (startupConfig.getLogLevel() < 0) {
         // set log level from conf file, but only if it was not already se on command line
         setDebugLevelBySetting();
     }
@@ -1454,6 +1454,7 @@ void Global::setDebugLevelBySetting() {
     settings->beginGroup("Debugging");
     int level = settings->value("messageLevel", -1).toInt();
     settings->endGroup();
+    QLOG_INFO() << "Changed logLevel via settings to " << level;
     setDebugLevel(level);
 }
 

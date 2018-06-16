@@ -83,10 +83,10 @@ void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, Q
         legacyConfigDir.setPath(legacyConfigDirPath);
         QLOG_DEBUG() << "FileManager::setup checking whenever legacy config dir exists: " << legacyConfigDirPath;
         if (legacyConfigDir.exists()) {
-            QLOG_DEBUG() << "FileManager::setup legacy config/data dir found. Reverting to that: "
-                         << legacyConfigDirPath;
-            this->configDir = legacyConfigDirPath;
-            this->userDataDir = legacyConfigDirPath;
+            this->configDir = slashTerminatePath(legacyConfigDirPath);
+            this->userDataDir = this->configDir;
+            QLOG_DEBUG() << "FileManager::setup legacy config/data dir found. falling back to that: "
+                         << this->configDir;
         }
     }
 
@@ -237,17 +237,18 @@ void FileManager::createDirOrCheckWriteable(QDir dir) {
 /* Check that an existing directory is readable.  */
 /**************************************************/
 void FileManager::checkExistingReadableDir(QDir dir) {
+    QString path = dir.path();
     // Windows Check
     #ifndef _WIN32
-    QLOG_DEBUG() << "Checking read access for directory " << dir;
+    QLOG_DEBUG() << "Checking read access for directory " << path;
     if (!dir.isReadable()) {
-            QLOG_FATAL() << "Directory '" + dir.path() + "' does not have read permission.  Aborting program.";
+            QLOG_FATAL() << "Directory '" + path + "' does not have read permission.  Aborting program.";
             exit(16);
     }
     #endif  // end windows check
 
     if (!dir.exists()) {
-         QLOG_FATAL() << "Directory '" + dir.path() + "' does not exist.  Aborting program";
+         QLOG_FATAL() << "Directory '" + path + "' does not exist.  Aborting program";
          exit(16);
     }
 }
@@ -269,9 +270,10 @@ bool isWriteable(QDir dir) {
 /* Check that an existing directory is writable.  */
 /**************************************************/
 void FileManager::checkExistingWriteableDir(QDir dir) {
-    QLOG_DEBUG() << "Checking write access for directory " << dir;
+    QString path(dir.path());
+    QLOG_DEBUG() << "Checking write access for directory " << path;
     if (!isWriteable(dir)) {
-        QLOG_FATAL() << "Directory '" + dir.path() + "' does not have read permission.  Aborting program.";
+        QLOG_FATAL() << "Directory '" + path + "' does not have read permission.  Aborting program.";
         exit(16);
     }
 }

@@ -33,7 +33,7 @@ StartupConfig::StartupConfig()
     // we first allow command line override and set-up final directory later in global.setup()
     configDir = QString("");
     programDataDir = QString("");
-
+    this->logLevel = -1; // default: not set by command line
     this->forceNoStartMinimized = false;
     this->startupNewNote = false;
     this->sqlExec = false;
@@ -44,6 +44,7 @@ StartupConfig::StartupConfig()
     this->forceSystemTrayAvailable=false;
     this->disableEditing = false;
     this->accountId=-1;
+
     command = new QBitArray(STARTUP_OPTION_COUNT);
     command->fill(false);
     newNote = NULL;
@@ -242,9 +243,10 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
         }
         if (parm.startsWith("--logLevel=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1); // 2nd part
-            int level= parm.toInt();
+            int level = parm.toInt();
+            QLOG_INFO() << "Changed logLevel via command line option to " << level;
             global.setDebugLevel(level);
-            QLOG_DEBUG() << "Changed logLevel via command line option to " << level;
+            this->logLevel = level;
         }
         if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1);
