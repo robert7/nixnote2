@@ -186,7 +186,7 @@ void HtmlEntitiesDialog::editClicked() {
     if (editMode) {
         if (textEdit->document()->isModified()) {
             QString value = textEdit->toPlainText();
-            QString fileName = global.fileManager.getHomeDirPath() + QString("entities.txt");
+            QString fileName = global.fileManager.getConfigDir() + QString("entities.txt");
             QDir dir;
             dir.remove(fileName);
             QFile file(fileName);
@@ -259,7 +259,7 @@ void HtmlEntitiesDialog::getEntitiesList(QStringList *list, QString entitiesAsTe
 
 void HtmlEntitiesDialog::loadCustomEntities() {
     entities.clear();
-    QString fileName = global.fileManager.getHomeDirPath() + QString("entities.txt");
+    QString fileName = global.fileManager.getConfigDir() + QString("entities.txt");
     QFile file(fileName);
     file.open(QFile::ReadOnly);
     if (file.isOpen()) {

@@ -606,7 +606,7 @@ void NMainMenuBar::setupShortcut(QAction *action, QString text) {
 
 void NMainMenuBar::openManual() {
     QDesktopServices::openUrl(QString("file://") +
-                             global.getProgramDirPath()+"help/UserDocumentation.pdf");
+                             global.getProgramDataDir()+"help/UserDocumentation.pdf");
 }
 
 

@@ -33,7 +33,7 @@ AccountsManager::AccountsManager(int id, QObject *parent) :
 #ifdef USE_QSP
     configFile = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/accounts.conf";
 #else
-    configFile = global.fileManager.getHomeDirPath()+"accounts.conf";
+    configFile = global.fileManager.getConfigDir()+"accounts.conf";
 #endif
     if (!QFile(configFile).exists()) {
         QFile xmlFile(configFile);

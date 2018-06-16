@@ -334,7 +334,7 @@ public:
     bool useLibTidy;
 
     ExitManager *exitManager;                                  // Utility to manage exit points.
-    QString getProgramDirPath() { return fileManager.getProgramDirPath(); }
+    QString getProgramDataDir() { return fileManager.getProgramDataDir(); }
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

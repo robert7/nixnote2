@@ -68,31 +68,32 @@ void FileManager::setup(QString startupConfigDirPath, QString startupProgramDirP
     QLOG_DEBUG() << "FileManager::setup startupConfigDirPath: " << startupConfigDirPath << ", startupProgramDirPath: "
                  << startupProgramDirPath;
 
-    this->programDirPath = startupProgramDirPath;
-    this->configDirPath = startupConfigDirPath;
+    this->programDataDir = startupProgramDirPath;
+    this->configDir = startupConfigDirPath;
 
-    if (this->configDirPath.isEmpty()) {
+    if (this->configDir.isEmpty()) {
         // default config path
-        this->configDirPath = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+        this->configDir = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
 
         // TODO
-        // in order to not break things for existing user, check whenewer this -> configDirPath exists
+        // in order to not break things for existing user, check whenewer this -> configDir exists
         // if it doesn't exist & the OLD path exists - take old path
-        // OLD: this -> configDirPath = slashTerminatePath(QDir().homePath() + QString("/.nixnote"));
+        // OLD: this -> configDir = slashTerminatePath(QDir().homePath() + QString("/.nixnote"));
     }
-    createDirOrCheckWriteable(configDirPath);
+    createDirOrCheckWriteable(configDir);
 
-    if (this->programDirPath.isEmpty()) {
+    if (this->programDataDir.isEmpty()) {
         // default config path
-        this->programDirPath = slashTerminatePath(getDefaultProgramDirPath());
+        this->programDataDir = slashTerminatePath(getDefaultProgramDirPath());
     }
 
-    QLOG_DEBUG() << "FileManager::setup configDirPath: " << this->configDirPath << ", programDirPath: "
-                 << this->programDirPath;
+    QLOG_DEBUG() << "FileManager::setup "
+                 << "configDir: " << this->configDirPath
+                 << ", programDataDir: " << this->programDataDir;
 
-    #ifdef Q_OS_MACOS
+#ifdef Q_OS_MACOS
         // get the resources from the app bundle
-        this->dataDirPath = programDirPath;
+        this->dataDirPath = programDataDir;
     #else
         this->dataDirPath = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/nixnote2/";
     #endif
@@ -249,10 +250,10 @@ void FileManager::checkExistingWriteableDir(QDir dir) {
     this->checkExistingReadableDir(dir);
 }
 
-QString FileManager::getProgramDirPath() {
-    return programDirPath;
+QString FileManager::getProgramDataDir() {
+    return programDataDir;
 }
-QString FileManager::getHomeDirPath() {
+QString FileManager::getConfigDir() {
     return configDirPath;
 }
 QDir FileManager::getSpellDirFileUser(QString relativePath) {

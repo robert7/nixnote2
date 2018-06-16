@@ -3897,8 +3897,8 @@ void NixNote::loadPlugins() {
     webcamPluginAvailable = false;
 
     QStringList dirList;
-    dirList.append(global.fileManager.getProgramDirPath());
-    dirList.append(global.fileManager.getProgramDirPath()+"plugins");
+    dirList.append(global.fileManager.getProgramDataDir());
+    dirList.append(global.fileManager.getProgramDataDir()+"plugins");
     const QString prefixPath = QLibraryInfo::location(QLibraryInfo::PrefixPath);
     dirList.append(prefixPath + "/lib/nixnote2/");
 #ifndef Q_OS_MAC_OS

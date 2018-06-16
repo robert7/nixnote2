@@ -133,7 +133,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     const QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/";
     QString settingsFile = configDir + "nixnote.conf";
 #else
-    QString settingsFile = fileManager.getHomeDirPath() + "nixnote.conf";
+    QString settingsFile = fileManager.getConfigDir() + "nixnote.conf";
 #endif
 
     globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
@@ -159,7 +159,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 #ifdef USE_QSP
     settingsFile = configDir + "nixnote-"+QString::number(accountId)+".conf";
 #else
-    settingsFile = fileManager.getHomeDirPath() + "nixnote-"+QString::number(accountId)+".conf";
+    settingsFile = fileManager.getConfigDir() + "nixnote-"+QString::number(accountId)+".conf";
 #endif
 
     settings = new QSettings(settingsFile, QSettings::IniFormat);
@@ -1099,10 +1099,10 @@ void Global::loadTheme(QHash<QString, QString> &resourceList, QHash<QString,QStr
     colorList.clear();
     if (theme.trimmed() == "")
         return;
-    QFile systemTheme(fileManager.getProgramDirPath() + "theme.ini");
+    QFile systemTheme(fileManager.getProgramDataDir() + "theme.ini");
     this->loadThemeFile(resourceList, colorList, systemTheme, theme);
 
-    QFile userTheme(fileManager.getHomeDirPath() + "theme.ini");
+    QFile userTheme(fileManager.getConfigDir() + "theme.ini");
     this->loadThemeFile(resourceList, colorList, userTheme, theme);
 }
 
@@ -1161,10 +1161,10 @@ void Global::loadThemeFile(QHash<QString,QString> &resourceList, QHash<QString,Q
 QStringList Global::getThemeNames() {
     QStringList values;
     values.empty();
-    QFile systemTheme(fileManager.getProgramDirPath() + "theme.ini");
+    QFile systemTheme(fileManager.getProgramDataDir() + "theme.ini");
     this->getThemeNamesFromFile(systemTheme, values);
 
-    QFile userTheme(fileManager.getHomeDirPath() + "theme.ini");
+    QFile userTheme(fileManager.getConfigDir() + "theme.ini");
     this->getThemeNamesFromFile(userTheme, values);
 
     if (!nonAsciiSortBug)
