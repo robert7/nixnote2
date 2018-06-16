@@ -87,7 +87,7 @@ deployed anywhere:
 As far as I can tell this will find and copy all required dependencies into the app bundle and modify them so they
 can be loaded from inside that bundle (wherever it ends up).
 
-## Binary distribution -- **this will take older version from upstream repository**
+## Binary distribution -- **this will take older version build from source from upstream repository**
 
 ### Debian and Ubuntu
 
