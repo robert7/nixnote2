@@ -1,20 +1,19 @@
 # NixNote2
-
 ## Introduction
 
-An unofficial client of Evernote for Linux.
+(Fork/clone of) nixnote2 - An unofficial client of Evernote for Linux.
 
-![Nixnote](screenshot.png)
+This version contains the original code plus, changes made by @jeffkowalski and my changes. 
+The aim is:
+* mainly fixes to make the application more stable
+* minor improvements (mainly focused on my personal needs)
+* [TODO list..](docs/TODO.md)
+* [CHANGELOG](docs/CHANGELOG.md)
 
-This version contains the original code plus the changes made by @jeffkowalski and some
-of my own that should make the application more stable (and use standard-compliant locations
-for storing user settings and data).
 
 ## Installation
 
 ### Mac
-
-Make sure you're on the default (RJVB-MP) branch of this repository, and in a terminal, do
 
 ```bash
 > mkdir build
@@ -112,3 +111,5 @@ dnf install nixnote2
 yum copr enable nunodias/nixnote2
 yum install nixnote2
 ```
+
+![Nixnote](screenshot.png)
