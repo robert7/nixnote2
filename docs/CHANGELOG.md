@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## 2018-06
+
+### #4
 * Merged changes from [jeffkowalski/Nixnote2](https://github.com/jeffkowalski/Nixnote2)
 * Rewrite of the path handling logic after merge
 * Program has 3 directory paths "config dir", "program data dir" (like images), "user data" (database logs)
