@@ -45,9 +45,10 @@ class FileManager : public QObject
 {
     Q_OBJECT
 private:
-    QString programDataDir;
+    // see: getter method for description
     QString configDir;
-    QString dataDirPath;
+    QString programDataDir;
+    QString userDataDir;
 
     QString dbDirPath;
     QDir dbDir;
@@ -94,12 +95,19 @@ private:
 
 public:
     FileManager();
-    void setup(QString startupConfigDirPath, QString startupProgramDirPath, int accountId);
+    void setup(QString startupConfigDir, QString startupProgramDataDir, int accountId);
 
-    // new global file path interface -------
-    QString getProgramDataDir();
-    QString getConfigDir();
-    // new global file path interface -------
+    // new global file path interface ------- -----------------------------------------------------------
+    // where "nixnote.conf" is stored (but NOT database, logs etc.)
+    QString getConfigDir() { return configDir; };
+
+    // where additional resources are stored e.g. "help/*", "images/*" etc.
+    QString getProgramDataDir() { return programDataDir; };
+
+    // where user data dir is stored (e.g. database, logs etc.)
+    QString getUserDataDir() { return userDataDir; };
+    // new global file path interface ------- -----------------------------------------------------------
+
 
     QString getSpellDirPath();
     QDir getSpellDirFileUser(QString relativePath);

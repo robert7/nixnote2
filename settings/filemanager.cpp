@@ -58,110 +58,106 @@ QString getDefaultProgramDirPath() {
 }
 
 
-void FileManager::setup(QString startupConfigDirPath, QString startupProgramDirPath, int accountId) {
-    if (!startupConfigDirPath.isEmpty()) {
-        startupConfigDirPath = slashTerminatePath(startupConfigDirPath);
+void FileManager::setup(QString startupConfigDir, QString startupProgramDataDir, int accountId) {
+    if (!startupConfigDir.isEmpty()) {
+        startupConfigDir = slashTerminatePath(startupConfigDir);
     }
-    if (!startupProgramDirPath.isEmpty()) {
-        startupProgramDirPath = slashTerminatePath(startupProgramDirPath);
+    if (!startupProgramDataDir.isEmpty()) {
+        startupProgramDataDir = slashTerminatePath(startupProgramDataDir);
     }
-    QLOG_DEBUG() << "FileManager::setup startupConfigDirPath: " << startupConfigDirPath << ", startupProgramDirPath: "
-                 << startupProgramDirPath;
+    QLOG_DEBUG() << "FileManager::setup"
+                 << " startupConfigDirPath: " << startupConfigDir
+                 << ", startupProgramDirPath: " << startupProgramDataDir;
 
-    this->programDataDir = startupProgramDirPath;
-    this->configDir = startupConfigDirPath;
+    this->programDataDir = startupProgramDataDir;
+    this->configDir = startupConfigDir;
 
     if (this->configDir.isEmpty()) {
         // default config path
         this->configDir = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
 
         // TODO
-        // in order to not break things for existing user, check whenewer this -> configDir exists
+        // in order to not break things for existing user, check whenever this -> configDir exists
         // if it doesn't exist & the OLD path exists - take old path
         // OLD: this -> configDir = slashTerminatePath(QDir().homePath() + QString("/.nixnote"));
     }
     createDirOrCheckWriteable(configDir);
 
+    // in case nothing was given on command line, set to default
     if (this->programDataDir.isEmpty()) {
         // default config path
         this->programDataDir = slashTerminatePath(getDefaultProgramDirPath());
     }
 
     QLOG_DEBUG() << "FileManager::setup "
-                 << "configDir: " << this->configDirPath
+                 << "configDir: " << this->configDir
                  << ", programDataDir: " << this->programDataDir;
 
-#ifdef Q_OS_MACOS
-        // get the resources from the app bundle
-        this->dataDirPath = programDataDir;
-    #else
-        this->dataDirPath = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/nixnote2/";
-    #endif
-
-    const QString userDataDir(slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)));
-    QLOG_DEBUG() << "FileManager::setup dataDirPath: " << this->dataDirPath;
+    // TODO need first check if old data is present !!
+    this->userDataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QLOG_DEBUG() << "FileManager::setup userDataDir: " << this->userDataDir;
 
     // Read only files that everyone uses
-    imagesDir.setPath(dataDirPath+"images");
+    imagesDir.setPath(programDataDir + "images");
     checkExistingReadableDir(imagesDir);
     imagesDirPath = slashTerminatePath(imagesDir.path());
 
-    javaDir.setPath(dataDirPath+"java");
+    javaDir.setPath(programDataDir + "java");
     checkExistingReadableDir(javaDir);
     javaDirPath = slashTerminatePath(javaDir.path());
 
-    spellDirUser.setPath(userDataDir+"spell");
+    spellDirUser.setPath(programDataDir + "spell");
     createDirOrCheckWriteable(spellDirUser);
     spellDirPathUser = slashTerminatePath(spellDirUser.path());
 
-    translateDir.setPath(dataDirPath+"translations");
+    translateDir.setPath(programDataDir + "translations");
     checkExistingReadableDir(translateDir);
-    translateDirPath= slashTerminatePath(translateDir.path());
+    translateDirPath = slashTerminatePath(translateDir.path());
 
-    qssDir.setPath(dataDirPath+"qss");
+    qssDir.setPath(programDataDir + "qss");
     checkExistingReadableDir(qssDir);
     qssDirPath = slashTerminatePath(qssDir.path());
 
     // Read/write directories that only we use
 
-    QString settingsFile = configDirPath + "nixnote.conf";
+    QString settingsFile = configDir + "nixnote.conf";
     QLOG_DEBUG() << "FileManager::setup settingsFile: " << settingsFile;
     QSettings globalSettings(settingsFile, QSettings::IniFormat);
 
-    if (accountId <=0) {
+    if (accountId <= 0) {
         globalSettings.beginGroup("SaveState");
         int accountIdFromSettings = globalSettings.value("lastAccessedAccount", 1).toInt();
         globalSettings.endGroup();
         accountId = accountIdFromSettings;
     }
 
-    qssDirUser.setPath(userDataDir+"qss");
+    qssDirUser.setPath(configDir + "qss");
     createDirOrCheckWriteable(qssDirUser);
     qssDirPathUser = slashTerminatePath(qssDirUser.path());
 
-    logsDir.setPath(userDataDir+"logs-" +QString::number(accountId));
+    logsDir.setPath(userDataDir + "logs-" + QString::number(accountId));
     createDirOrCheckWriteable(logsDir);
     logsDirPath = slashTerminatePath(logsDir.path());
 
-    tmpDir.setPath(userDataDir+"tmp-" +QString::number(accountId));
+    tmpDir.setPath(userDataDir + "tmp-" + QString::number(accountId));
     createDirOrCheckWriteable(tmpDir);
     tmpDirPath = slashTerminatePath(tmpDir.path());
 
-    QString dbPath = userDataDir+"db-" +QString::number(accountId);
+    QString dbPath = userDataDir + "db-" + QString::number(accountId);
     dbDir.setPath(dbPath);
 
     createDirOrCheckWriteable(dbDir);
     dbDirPath = slashTerminatePath(dbDir.path());
 
-    dbaDir.setPath(dbDirPath+"dba");
+    dbaDir.setPath(dbDirPath + "dba");
     createDirOrCheckWriteable(dbaDir);
     dbaDirPath = slashTerminatePath(dbaDir.path());
 
-    dbiDir.setPath(dbDirPath+"dbi");
+    dbiDir.setPath(dbDirPath + "dbi");
     createDirOrCheckWriteable(dbiDir);
     dbiDirPath = slashTerminatePath(dbiDir.path());
 
-    thumbnailDir.setPath(dbDirPath+"tdba");
+    thumbnailDir.setPath(dbDirPath + "tdba");
     createDirOrCheckWriteable(thumbnailDir);
     thumbnailDirPath = slashTerminatePath(thumbnailDir.path());
 }
@@ -250,12 +246,6 @@ void FileManager::checkExistingWriteableDir(QDir dir) {
     this->checkExistingReadableDir(dir);
 }
 
-QString FileManager::getProgramDataDir() {
-    return programDataDir;
-}
-QString FileManager::getConfigDir() {
-    return configDirPath;
-}
 QDir FileManager::getSpellDirFileUser(QString relativePath) {
     return spellDirPathUser + toPlatformPathSeparator(relativePath);
 }
