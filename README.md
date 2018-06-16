@@ -1,4 +1,4 @@
-# NixNote2
+# NixNote2(+)
 ## Introduction
 
 (Fork/clone of) nixnote2 - An unofficial client of Evernote for Linux.
@@ -14,7 +14,7 @@ The aim is:
 
 ## Building from source
 
-Tha app is mainly targeted at linux, but it should compile quite easily on Windows and 
+Tha app is mainly targeted at Linux, but it should compile quite easily on Windows and 
 also macOS config is already present (see more detailed info bellow). It could be,
 that minor adjustments are needed for the non linux builds.
 
