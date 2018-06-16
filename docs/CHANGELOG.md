@@ -3,8 +3,8 @@
 ## 2018-06
 
 ### #4
-* Merged changes from [jeffkowalski/Nixnote2](https://github.com/jeffkowalski/Nixnote2)
-* Rewrite of the path handling logic after merge
+* Merged changes from [jeffkowalski/Nixnote2](https://github.com/jeffkowalski/Nixnote2) - **various fixes, build config for macOS**
+* **Rewrite of the path handling logic after merge. Now standard compliant path for config and user data are used.**
 * Program has 3 directory paths "config dir", "program data dir" (like images), "user data" (database logs)
 * All three can be given on commandline for non-standard cases - those have priority (logic is in 
   StartupConfig)
@@ -23,7 +23,7 @@
 
 
 ### #3
-* Added simple search term relevance evaluation for free text search.
+* **Added simple search term relevance evaluation for free text search.**
 * It tries to sort the found notes according to where the search term was found. If the word was found 
   in title it gets +1 point, if another word is found in title another +1 point. If the word is found 
   in tag +1. 
@@ -33,12 +33,12 @@
 * [Preview](https://www.dropbox.com/sh/62lnikzyf4r0sa2/AADMk-EHBwvBt7G5bOga9tyia?dl=0&preview=RS-3-search-sort-relevance.png)
 
 ### #2
-* some note editing and toolbar tweeks (color picker has now restricted list of color; but does'nt really 
+* Some note editing and toolbar tweeks (color picker has now restricted list of color; but does'nt really 
   work correctly yet)
 
 ### #1
 * Merged master to development
-* Fixed [#363](https://github.com/baumgarr/nixnote2/issues/363) (Unknown Tag record key: 1004)
+* Fixed [#363](https://github.com/baumgarr/nixnote2/issues/363) (**Unknown Tag record key: 1004/1006**)
 * Fixed minor error in date (copy of "fixed Date Format setting item bug for yy-MM-dd format" by julee)
 * Added new compact date format yyMMdd
 * Discarded ellipsis in date columns to allow more compact display
