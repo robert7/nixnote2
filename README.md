@@ -36,7 +36,10 @@ You'll need the same dependencies installed (including libtidy on MS Windows).
     Highest currently supported version is 5.5. Building against 5.6+ needs some 
     source changes (and will probably break qt4 compatibility).
 * It should be possible to build against qt4 but its **discouraged/deprecated**
-* Get latest source ..
+* Get latest source from github... 
+  * I recommend using `master` branch, `development` may contain
+  bit more, but could be less stable.
+  * Anyway there isn't any guarantee for `master` branch either :-) ).
 * Build
 
 ```bash
@@ -55,8 +58,8 @@ You'll need the same dependencies installed (including libtidy on MS Windows).
 > # compile binaries
 > make
 ```
-If all got OK, you should have "nixnote2" binary available now.. if not, install the missing
-dependency :)
+If all got OK, you should have "nixnote2" binary available now.. if not... 
+Go! install the missing dependency! :-)
 
 ### macOS
 
