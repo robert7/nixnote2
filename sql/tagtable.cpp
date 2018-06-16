@@ -374,13 +374,13 @@ bool TagTable::get(Tag &tag, qint32 lid) {
     while (query.next()) {
         qint32 key = query.value(0).toInt();
         switch (key) {
-            case (TAG_GUID):
+            case TAG_GUID:
                 tag.guid = query.value(1).toString();
                 break;
-            case (TAG_UPDATE_SEQUENCE_NUMBER):
+            case TAG_UPDATE_SEQUENCE_NUMBER:
                 tag.updateSequenceNum = query.value(1).toInt();
                 break;
-            case (TAG_PARENT_LID): {
+            case TAG_PARENT_LID: {
                 if (query.value(1).toInt() > 0) {
                         QString parentGuid;
                         if (getGuid(parentGuid, query.value(1).toInt()))
@@ -388,11 +388,12 @@ bool TagTable::get(Tag &tag, qint32 lid) {
                         break;
                     }
                 }
-            case (TAG_NAME):
+            case TAG_NAME:
                 tag.name = query.value(1).toString();
                 break;
-            case (TAG_ISDIRTY):
-                // currently just ignore the dirty flag
+            case TAG_ISDIRTY:
+            case TAG_OWNING_ACCOUNT:
+                // currently just ignore the "dirty flag" and "owning account"
                 // fixes https://github.com/baumgarr/nixnote2/issues/363
                 break;
 
