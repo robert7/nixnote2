@@ -106,7 +106,7 @@ void SyncRunner::evernoteSync() {
     UserTable userTable(db);
     if (!comm->getUserInfo(user)) {
         this->communicationErrorHandler();
-        error =true;
+        error = true;
         return;
     }
     userTable.updateUser(user);
@@ -123,8 +123,8 @@ void SyncRunner::evernoteSync() {
     qlonglong lastSyncDate = userTable.getLastSyncDate();
     updateSequenceNumber = userTable.getLastSyncNumber();
 
-    if ((syncState.fullSyncBefore/1000) > lastSyncDate) {
-        QLOG_DEBUG() <<  "Full sequence date has expired";
+    if ((syncState.fullSyncBefore / 1000) > lastSyncDate) {
+        QLOG_DEBUG() << "Full sequence date has expired";
         lastSyncDate = 0;
         fullSync = true;
     }
@@ -134,11 +134,11 @@ void SyncRunner::evernoteSync() {
 
     emit setMessage(tr("Beginning Sync"), defaultMsgTimeout);
     // If there are remote changes
-    QLOG_DEBUG() <<  "--->>>  Current Chunk High Sequence Number: " << syncState.updateCount;
-    QLOG_DEBUG() <<  "--->>>  Last User High Sequence Number: " <<  updateSequenceNumber;
+    QLOG_DEBUG() << "--->>>  Current Chunk High Sequence Number: " << syncState.updateCount;
+    QLOG_DEBUG() << "--->>>  Last User High Sequence Number: " << updateSequenceNumber;
 
     if (syncState.updateCount > updateSequenceNumber) {
-        QLOG_DEBUG() <<  "Remote changes found";
+        QLOG_DEBUG() << "Remote changes found";
         QLOG_DEBUG() << "Downloading changes";
         emit setMessage(tr("Downloading changes"), defaultMsgTimeout);
         bool rc = syncRemoteToLocal(syncState.updateCount);
@@ -170,27 +170,27 @@ void SyncRunner::evernoteSync() {
 
     // Synchronize linked notebooks
     if (!error && !syncRemoteLinkedNotebooksActual())
-           error = true;
+        error = true;
 
     if (error || !comm->getSyncState("", syncState)) {
-        error =true;
+        error = true;
         this->communicationErrorHandler();
         return;
     }
     userTable.updateSyncState(syncState);
 
     // Cleanup any missing parent tags
-    QList<qint32> lids;
+    QList <qint32> lids;
     TagTable tagTable(db);
     tagTable.findMissingParents(lids);
-    for (int i=0; i<lids.size(); i++) {
+    for (int i = 0; i < lids.size(); i++) {
         if (!finalSync)
             emit(tagExpunged(lids[i]));
     }
     tagTable.cleanupMissingParents();
 
     if (!error)
-        emit setMessage(tr("Sync Complete Successfully"), defaultMsgTimeout);
+        emit setMessage(tr("Sync completed successfully"), defaultMsgTimeout);
     QLOG_TRACE() << "Leaving SyncRunner::evernoteSync()";
 }
 
@@ -1224,7 +1224,7 @@ void SyncRunner::communicationErrorHandler() {
     QString emitMsg;
     if (comm->error.type == CommunicationError::ThriftException) {
         if (comm->error.message != "")
-            emitMsg = "Thrift error: " +comm->error.message;
+            emitMsg = "Thrift error: " + comm->error.message;
         else
             emitMsg = "Thrift error communicating with Evernote";
         emit(setMessage(emitMsg, defaultMsgTimeout));
@@ -1232,7 +1232,7 @@ void SyncRunner::communicationErrorHandler() {
     }
     if (comm->error.type == CommunicationError::TTransportException) {
         if (comm->error.message != "")
-            emitMsg = "Network Transport error: " +comm->error.message;
+            emitMsg = "Network Transport error: " + comm->error.message;
         else
             emitMsg = "Network Transport error communicating with Evernote";
         emit(setMessage(emitMsg, defaultMsgTimeout));
@@ -1272,22 +1272,22 @@ void SyncRunner::communicationErrorHandler() {
         CommunicationError *e = &comm->error;
 
         if (e->code == EDAMErrorCode::UNKNOWN)
-            emitMsg = "An unknown error has occurred" +e->message;
+            emitMsg = "An unknown error has occurred" + e->message;
 
         if (e->code == EDAMErrorCode::BAD_DATA_FORMAT)
-            emitMsg = "Unable to sync. Bad data format : " +e->message;
+            emitMsg = "Unable to sync. Bad data format : " + e->message;
 
         if (e->code == EDAMErrorCode::PERMISSION_DENIED)
-            emitMsg = "Unable to sync. Permission denied : " +e->message;
+            emitMsg = "Unable to sync. Permission denied : " + e->message;
 
         if (e->code == EDAMErrorCode::INTERNAL_ERROR)
-            emitMsg = "Internal Evernote error : " +e->message + " Please try again later.";
+            emitMsg = "Internal Evernote error : " + e->message + " Please try again later.";
 
         if (e->code == EDAMErrorCode::DATA_REQUIRED)
-            emitMsg = "Communication Error - Data required : " +e->message;
+            emitMsg = "Communication Error - Data required : " + e->message;
 
         if (e->code == EDAMErrorCode::INVALID_AUTH)
-            emitMsg = "Invalid authorization : " +e->message;
+            emitMsg = "Invalid authorization : " + e->message;
 
         if (e->code == EDAMErrorCode::AUTH_EXPIRED) {
             emitMsg = "Authorization token has expired or been revoked.";
@@ -1295,34 +1295,34 @@ void SyncRunner::communicationErrorHandler() {
         }
 
         if (e->code == EDAMErrorCode::DATA_CONFLICT)
-            emitMsg = "Communication Error - Data conflict : " +e->message;
+            emitMsg = "Communication Error - Data conflict : " + e->message;
 
         if (e->code == EDAMErrorCode::ENML_VALIDATION)
-            emitMsg = "Unable to update note.  Invalid note structure : " +e->message;
+            emitMsg = "Unable to update note.  Invalid note structure : " + e->message;
 
         if (e->code == EDAMErrorCode::LIMIT_REACHED)
-            emitMsg = "Communication Error - limit reached : " +e->message;
+            emitMsg = "Communication Error - limit reached : " + e->message;
 
         if (e->code == EDAMErrorCode::QUOTA_REACHED)
-            emitMsg = "Communication Error - User quota exceeded : " +e->message;
+            emitMsg = "Communication Error - User quota exceeded : " + e->message;
 
         if (e->code == EDAMErrorCode::SHARD_UNAVAILABLE)
-            emitMsg = "Communication Error - Shard unavailable.  Please try again later. " +e->message;
+            emitMsg = "Communication Error - Shard unavailable.  Please try again later. " + e->message;
 
         if (e->code == EDAMErrorCode::LEN_TOO_SHORT)
-            emitMsg = "Communication Error - Length too short : " +e->message;
+            emitMsg = "Communication Error - Length too short : " + e->message;
 
         if (e->code == EDAMErrorCode::LEN_TOO_LONG)
-            emitMsg = "Communication Error - Length too long : " +e->message;
+            emitMsg = "Communication Error - Length too long : " + e->message;
 
         if (e->code == EDAMErrorCode::TOO_FEW)
-            emitMsg = "Communication Error - Length \"too few\" error : " +e->message;
+            emitMsg = "Communication Error - Length \"too few\" error : " + e->message;
 
         if (e->code == EDAMErrorCode::TOO_MANY)
-            emitMsg = "Communication Error - \"too many\" error : " +e->message;
+            emitMsg = "Communication Error - \"too many\" error : " + e->message;
 
         if (e->code == EDAMErrorCode::UNSUPPORTED_OPERATION)
-            emitMsg = "Communication Error - Unsupported operation " +e->message;
+            emitMsg = "Communication Error - Unsupported operation " + e->message;
 
         emit(setMessage(emitMsg, defaultMsgTimeout));
         return;
@@ -1330,23 +1330,22 @@ void SyncRunner::communicationErrorHandler() {
 
     if (comm->error.type == CommunicationError::TSSLException) {
         CommunicationError *e = &comm->error;
-        emitMsg = "Communication Error - SSL Exception: " +e->message;
+        emitMsg = "Communication Error - SSL Exception: " + e->message;
         emit(setMessage(emitMsg, 0));
         return;
     }
 
     if (comm->error.type == CommunicationError::TException) {
         CommunicationError *e = &comm->error;
-        emitMsg = "TException: " +e->message;
+        emitMsg = "TException: " + e->message;
         emit(setMessage(emitMsg, 0));
         return;
     }
 
     if (comm->error.type == CommunicationError::StdException) {
         CommunicationError *e = &comm->error;
-        emitMsg = "Internal Error: " +e->message;
+        emitMsg = "Internal Error: " + e->message;
         emit(setMessage(emitMsg, 0));
         return;
     }
-
 }

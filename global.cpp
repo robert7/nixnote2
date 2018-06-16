@@ -123,15 +123,21 @@ Global::Global()
 
 
 
-//Initial global settings setup
+// Initial global settings setup
 void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     this->guiAvailable = guiAvailable;
-    fileManager.setup(startupConfig.homeDirPath, startupConfig.programDirPath, startupConfig.accountId);
+    fileManager.setup(
+        startupConfig.getConfigDir(),
+        startupConfig.getUserDataDir(),
+        startupConfig.getProgramDataDir(),
+        startupConfig.getAccountId());
+
     shortcutKeys = new ShortcutKeys();
-    QString settingsFile = fileManager.getHomeDirPath("") + "nixnote.conf";
+    QString settingsFile = fileManager.getConfigDir() + "nixnote.conf";
+    QLOG_DEBUG() << "Global::setup settingsFile: " << settingsFile;
 
     globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
-    int accountId = startupConfig.accountId;
+    int accountId = startupConfig.getAccountId();
     if (accountId <=0) {
         globalSettings->beginGroup("SaveState");
         accountId = globalSettings->value("lastAccessedAccount", 1).toInt();
@@ -149,12 +155,13 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     key = key+QString::number(accountId);
     sharedMemory = new CrossMemoryMapper(key);
 
-
-    settingsFile = fileManager.getHomeDirPath("") + "nixnote-"+QString::number(accountId)+".conf";
-
+    settingsFile = fileManager.getConfigDir() + "nixnote-"+QString::number(accountId)+".conf";
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 
-    setDebugLevel();
+    if (startupConfig.getLogLevel() < 0) {
+        // set log level from conf file, but only if it was not already se on command line
+        setDebugLevelBySetting();
+    }
 
     this->forceNoStartMimized = startupConfig.forceNoStartMinimized;
     this->forceSystemTrayAvailable = startupConfig.forceSystemTrayAvailable;
@@ -162,8 +169,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     //this->syncAndExit = startupConfig.syncAndExit;
     this->forceStartMinimized = startupConfig.forceStartMinimized;
     this->startupNote = startupConfig.startupNoteLid;
-    startupConfig.accountId = accountId;
-    accountsManager = new AccountsManager(startupConfig.accountId);
+    startupConfig.setAccountId(accountId);
+    accountsManager = new AccountsManager(startupConfig.getAccountId());
     if (startupConfig.enableIndexing || getBackgroundIndexing())
         enableIndexing = true;
 
@@ -262,21 +269,6 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     exitManager = new ExitManager();
     exitManager->loadExits();
 }
-
-
-// Return the path the program is executing under
-// If we are in /usr/bin, then we need to return /usr/share/nixnote2.
-// This is because we want to find other paths (like images).  This
-// allows for users to run it out of a non-path location.
-QString Global::getProgramDirPath() {
-    QString path = QCoreApplication::applicationDirPath();
-    if (path.endsWith("/bin")) {
-        path.chop(3);
-        return path+"share/nixnote2";
-    }
-    return path;
-}
-
 
 void Global::setDeleteConfirmation(bool value) {
     settings->beginGroup("Appearance");
@@ -1104,18 +1096,10 @@ void Global::loadTheme(QHash<QString, QString> &resourceList, QHash<QString,QStr
     colorList.clear();
     if (theme.trimmed() == "")
         return;
-#ifndef _WIN32
-    QFile systemTheme(fileManager.getProgramDirPath("theme.ini"));
-#else
-    QFile systemTheme(fileManager.getProgramDirPath("theme.ini").replace("\\","/"));
-#endif
-    this->loadThemeFile(resourceList,colorList, systemTheme, theme);
+    QFile systemTheme(fileManager.getProgramDataDir() + "theme.ini");
+    this->loadThemeFile(resourceList, colorList, systemTheme, theme);
 
-#ifndef _WIN32
-    QFile userTheme(fileManager.getHomeDirPath("theme.ini"));
-#else
-    QFile userTheme(fileManager.getHomeDirPath("theme.ini").replace("\\","/"));
-#endif
+    QFile userTheme(fileManager.getConfigDir() + "theme.ini"); // user theme
     this->loadThemeFile(resourceList, colorList, userTheme, theme);
 }
 
@@ -1174,18 +1158,12 @@ void Global::loadThemeFile(QHash<QString,QString> &resourceList, QHash<QString,Q
 QStringList Global::getThemeNames() {
     QStringList values;
     values.empty();
-#ifndef _WIN32
-    QFile systemTheme(fileManager.getProgramDirPath("theme.ini"));
-#else
-    QFile systemTheme(fileManager.getProgramDirPath("theme.ini").replace("\\","/"));
-#endif
+    QFile systemTheme(fileManager.getProgramDataDir() + "theme.ini");
     this->getThemeNamesFromFile(systemTheme, values);
-#ifndef _WIN32
-    QFile userTheme(fileManager.getHomeDirPath("theme.ini"));
-#else
-    QFile userTheme(fileManager.getHomeDirPath("theme.ini").replace("\\","/"));
-#endif
-        this->getThemeNamesFromFile(userTheme, values);
+
+    QFile userTheme(fileManager.getConfigDir() + "theme.ini"); // user theme
+    this->getThemeNamesFromFile(userTheme, values);
+
     if (!nonAsciiSortBug)
         qSort(values.begin(), values.end(), caseInsensitiveLessThan);
 
@@ -1472,16 +1450,19 @@ void Global::stackDump(int max) {
 #endif // End windows check
 }
 
+void Global::setDebugLevelBySetting() {
+    settings->beginGroup("Debugging");
+    int level = settings->value("messageLevel", -1).toInt();
+    settings->endGroup();
+    QLOG_INFO() << "Changed logLevel via settings to " << level;
+    setDebugLevel(level);
+}
 
 
 //************************************************
 //* Set the user debug level.
 //************************************************
-void Global::setDebugLevel() {
-    settings->beginGroup("Debugging");
-    int level = settings->value("messageLevel", -1).toInt();
-    settings->endGroup();
-
+void Global::setDebugLevel(int level) {
     // Setup the QLOG functions for debugging & messages
     QsLogging::Logger& logger = QsLogging::Logger::instance();
     if (level == QsLogging::TraceLevel)

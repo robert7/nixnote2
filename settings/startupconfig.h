@@ -60,19 +60,38 @@ class StartupConfig
 {
 private:
     void loadTheme(QString theme);
-private:
     QBitArray *command;
+
+    // see FileManager.getConfigDir() for more info
+    QString configDir;
+    QString programDataDir;
+    QString userDataDir;
+    // command line set log level
+    // this is used to check: if log leven was set on command line, then it overrides the conf file value
+    int logLevel;
+
+    int accountId;
 
 public:
     StartupConfig();
+
     QString name;
-    QString homeDirPath;
-    QString programDirPath;
+
+    QString getConfigDir() { return configDir; }
+    QString getProgramDataDir() { return programDataDir; }
+    QString getUserDataDir() { return userDataDir; }
+
+
+    int getAccountId() { return accountId; }
+    int getLogLevel() { return logLevel; }
+
+    // TODO refactor its not very clean to set the account id here from "global"
+    void setAccountId(int accountId);
+
     QString queryString;
     bool forceNoStartMinimized;
     bool startupNewNote;
     bool sqlExec;
-    int accountId;
     qint32 startupNoteLid;
     bool forceStartMinimized;
     bool enableIndexing;

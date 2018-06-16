@@ -204,8 +204,8 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
 
     loadkey(QString("Insert_DateTime"), Insert_DateTime);
 
-    QString userFileName = global.fileManager.getHomeDirPath("") + QString("shortcuts.txt");
-    QString systemFileName = global.fileManager.getProgramDirPath("") + QString("shortcuts.txt");
+    QString userFileName = global.fileManager.getConfigDir() + QString("shortcuts.txt"); // user shortcuts
+    QString systemFileName = global.fileManager.getProgramDataDir() + QString("shortcuts.txt"); // system shortcuts
 #ifdef _WIN32
     userFileName = userFileName.replace("\\","/");
     systemFileName = systemFileName.replace("\\","/");
@@ -250,7 +250,7 @@ void ShortcutKeys::loadCustomKeys(QString fileName) {
         }
         file.close();
     } else {
-        QLOG_DEBUG() << "Unable to open file " << fileName << " for reading or file does not exist.";
+        QLOG_TRACE() << "Unable to open" << fileName << "for reading or file does not exist.";
     }
 }
 

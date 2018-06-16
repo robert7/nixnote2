@@ -3514,7 +3514,7 @@ void NBrowserWindow::spellCheckPressed() {
 
     // If we STILL don't have a plugin then it can't be loaded. Quit out
     if (!hunspellPluginAvailable) {
-        QMessageBox::critical(this, tr("Plugin Error"), tr("Hunspell plugin not found or could not be loaded."), QMessageBox::Ok);
+        QMessageBox::critical(this, tr("Plugin Error"), tr("Hunspell plugin not available or no dictionary for current locale"), QMessageBox::Ok);
         return;
     }
 
@@ -3559,7 +3559,7 @@ void NBrowserWindow::spellCheckPressed() {
                 QString newLang;
                 int idx = dialog.language->currentIndex();
                 newLang = dialog.language->itemText(idx);
-                hunspellInterface->initialize(global.fileManager.getProgramDirPath(""), global.fileManager.getSpellDirPathUser(),newLang);
+                hunspellInterface->initialize(global.fileManager.getProgramDataDir(), global.fileManager.getSpellDirPathUser(),newLang);
             }
             if (dialog.addToDictionaryPressed) {
                 hunspellInterface->addWord(global.fileManager.getSpellDirPathUser() +"user.lst", currentWord);
@@ -3808,11 +3808,26 @@ void NBrowserWindow::loadPlugins() {
     hunspellPluginAvailable = false;
 
     QStringList dirList;
-    dirList.append(global.fileManager.getProgramDirPath(""));
-    dirList.append(global.fileManager.getProgramDirPath("")+"/plugins");
-    dirList.append("/usr/lib/nixnote2/");
-    dirList.append("/usr/local/lib/nixnote2/");
+    dirList.append(global.fileManager.getProgramDataDir());
+    dirList.append(global.fileManager.getProgramDataDir()+"plugins");
+    const QString prefixPath = QLibraryInfo::location(QLibraryInfo::PrefixPath);
+    dirList.append(prefixPath + "/lib/nixnote2/");
+#ifndef Q_OS_MAC_OS
+    if (prefixPath != "/usr") {
+        dirList.append("/usr/lib/nixnote2/");
+    }
+    if (prefixPath != "/usr/local") {
+        dirList.append("/usr/local/lib/nixnote2/");
+    }
     dirList.append("/usr/local/lib");
+#endif
+#if defined(Q_OS_MACOS)
+    // support installing additional plugins in the standard locations where they might be found
+    dirList.append(QStandardPaths::locate(QStandardPaths::AppDataLocation, "plugins", QStandardPaths::LocateDirectory));
+#endif
+    if (prefixPath != "/usr") {
+        dirList.append(prefixPath + "/lib");
+    }
     dirList.append("/usr/lib");
 
     for (int i=0; i<dirList.size(); i++) {
@@ -3820,20 +3835,23 @@ void NBrowserWindow::loadPlugins() {
         QDir pluginsDir(dirList[i]);
         QStringList filter;
         filter.append("libhunspellplugin.so");
+        filter.append("libhunspellplugin.dylib");
         foreach (QString fileName, pluginsDir.entryList(filter)) {
             QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
             QObject *plugin = pluginLoader.instance();
-            if (fileName == "libhunspellplugin.so") {
+            if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
                 if (plugin) {
                     hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
                     if (hunspellInterface) {
-                        hunspellPluginAvailable = true;
-
+                        QString errMsg;
                         global.settings->beginGroup("Locale");
                         QString dict = global.settings->value("translation").toString();
                         global.settings->endGroup();
-
-                        hunspellInterface->initialize(global.fileManager.getProgramDirPath(""), global.fileManager.getSpellDirPathUser(),dict);
+                        hunspellPluginAvailable = hunspellInterface->initialize(global.fileManager.getProgramDataDir(),
+                            global.fileManager.getSpellDirPathUser(), errMsg, dict);
+                        if (!hunspellPluginAvailable) {
+                            QLOG_ERROR() << errMsg;
+                        }
                     }
                 } else {
                     QLOG_ERROR() << pluginLoader.errorString();

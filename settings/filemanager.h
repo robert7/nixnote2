@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QFile>
 #include <QDir>
 #include <exception>
+#include <QStandardPaths>
 
 //************************************************
 //* This class is used to retrieve the
@@ -34,16 +35,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class FileManager : public QObject
 {
     Q_OBJECT
-
 private:
-
-    //QRegExp ALL_PATH_SEPARATORS_REGEX = "[/\\\\]";
-
-    QString programDirPath;
-    QDir programDir;
-
-    QString  homeDirPath;
-    QDir homeDir;
+    // see: getter method for description
+    QString configDir;
+    QString programDataDir;
+    QString userDataDir;
 
     QString dbDirPath;
     QDir dbDir;
@@ -56,9 +52,6 @@ private:
 
     QString javaDirPath;
     QDir javaDir;
-
-//    QString spellDirPath;
-//    QDir spellDir;
 
     QString spellDirPathUser;
     QDir spellDirUser;
@@ -81,8 +74,6 @@ private:
     QString thumbnailDirPath;
     QDir thumbnailDir;
 
-    //QDir xmlDir;
-
     QString translateDirPath;
     QDir translateDir;
 
@@ -93,16 +84,22 @@ private:
     void checkExistingReadableDir(QDir dir);
     void checkExistingWriteableDir(QDir dir);
 
-
 public:
     FileManager();
-    void setup(QString homeDirPath, QString programDirPath, int id);
-    QDir getProgramDirFile(QString relativePath);
-    QString getProgramDirPath(QString relativePath);
-    QDir getHomeDirFile(QString relativePath);
-    QString getHomeDirPath(QString relativePath);
-//    QString getSpellDirPath(QString relativePath);
-//    QDir getSpellDirFile(QString relativePath);
+    void setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir, int accountId);
+
+    // new global file path interface ------- -----------------------------------------------------------
+    // where "nixnote.conf" is stored (but NOT database, logs etc.)
+    QString getConfigDir() { return configDir; };
+
+    // where additional resources are stored e.g. "help/*", "images/*" etc.
+    QString getProgramDataDir() { return programDataDir; };
+
+    // where user data dir is stored (e.g. database, logs etc.)
+    QString getUserDataDir() { return userDataDir; };
+    // new global file path interface ------- -----------------------------------------------------------
+
+
     QString getSpellDirPath();
     QDir getSpellDirFileUser(QString relativePath);
     QString getSpellDirPathUser();
@@ -127,15 +124,8 @@ public:
     QString getTmpDirPath();
     QString getTmpDirPath(QString relativePath);
     QString getTmpDirPathSpecialChar(QString relativePath);
-    //QDir getXMLDirFile(QString relativePath);
     QString getTranslateFilePath(QString relativePath);
     void purgeResDirectory(bool exitOnFail);
-
-
-signals:
-
-public slots:
-
 };
 
 #endif // FILEMANAGER_H
