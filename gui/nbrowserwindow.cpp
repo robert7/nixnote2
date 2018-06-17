@@ -404,7 +404,6 @@ void NBrowserWindow::setupToolBar() {
 
     connect(buttonBar->insertDatetimeButtonAction, SIGNAL(triggered()), this, SLOT(insertDatetime()));
     connect(buttonBar->insertDatetimeButtonWidget,SIGNAL(clicked()), this, SLOT(insertDatetime()));
-    connect(buttonBar->insertDatetimeButtonShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
 
     connect(buttonBar->formatCodeButtonAction, SIGNAL(triggered()), this, SLOT(formatCodeButtonPressed()));
     connect(buttonBar->formatCodeButtonShortcut, SIGNAL(activated()), this, SLOT(formatCodeButtonPressed()));
@@ -412,7 +411,7 @@ void NBrowserWindow::setupToolBar() {
 
 // Load the note content into the window
 void NBrowserWindow::setContent(qint32 lid) {
-    QLOG_DEBUG() << "Setting note contents to " << lid;
+    QLOG_DEBUG() << "Setting note contents to lid: " << lid;
 
     // First, make sure we have a valid lid
     if (lid == -1) {

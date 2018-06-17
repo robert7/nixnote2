@@ -146,8 +146,8 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     fontColorButtonWidget->setIcon(global.getIconResource(":fontColorIcon"));
     fontColorButtonWidget->setToolTip(tr("Change color of marked text to current color (long press to select color)"));
     fontColorAction = this->addWidget(fontColorButtonWidget);
-    fontColorButtonShortcut = new QShortcut(this);
-    global.setupShortcut(fontColorButtonShortcut, "Format_Font_Color");
+    //fontColorShortcut = new QShortcut(this);
+    //global.setupShortcut(fontColorShortcut, "Format_Font_Color");
 
     highlightColorMenuWidget = new ColorMenu();
     highlightColorMenuWidget->setDefault(Qt::yellow);
@@ -157,8 +157,8 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     highlightColorButtonWidget->setIcon(global.getIconResource(":fontHighlightIcon"));
     highlightColorButtonWidget->setToolTip(tr("Change background color of marked text to current color - highlight (long press to select color)"));
     highlightColorAction = this->addWidget(highlightColorButtonWidget);
-    highlightColorShortcut = new QShortcut(this);
-    global.setupShortcut(highlightColorShortcut, "Format_Highlight");
+    //highlightColorShortcut = new QShortcut(this);
+    //global.setupShortcut(highlightColorShortcut, "Format_Highlight");
 
     undoButtonAction = this->addAction(global.getIconResource(":undoIcon"), tr("Undo"));
     undoButtonShortcut = new QShortcut(this);
@@ -244,9 +244,6 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     insertDatetimeButtonWidget->setText(tr("Insert Date & Time"));
     insertDatetimeButtonWidget->setToolTip(tr("Insert Date & Time"));
     insertDatetimeButtonAction = this->addWidget(insertDatetimeButtonWidget);
-    //
-    insertDatetimeButtonShortcut = new QShortcut(this);
-    insertDatetimeButtonShortcut->setKey(insertDatetimeButtonWidget->shortcut());
 
     shiftRightButtonAction = this->addAction(global.getIconResource(":shiftRightIcon"), tr("Shift Right"));
     shiftRightButtonShortcut = new QShortcut(this);

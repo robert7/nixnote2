@@ -94,8 +94,9 @@ public:
     QShortcut *subscriptButtonShortcut;
     QAction *superscriptButtonAction;
     QShortcut *superscriptButtonShortcut;
+
     QAction *insertDatetimeButtonAction;
-    QShortcut *insertDatetimeButtonShortcut;
+
     QAction *leftJustifyButtonAction;
     QShortcut *leftJustifyButtonShortcut;
     QAction *centerJustifyButtonAction;
@@ -114,10 +115,13 @@ public:
     QShortcut *bulletListButtonShortcut;
     QAction *numberListButtonAction;
     QShortcut *numberListButtonShortcut;
+
     QAction *highlightColorAction;
-    QShortcut *highlightColorShortcut;
+    //QShortcut *highlightColorShortcut;
+
     QAction *fontColorAction;
-    QShortcut *fontColorShortcut;
+    //QShortcut *fontColorShortcut;
+
     QAction *todoButtonAction;
     QShortcut *todoButtonShortcut;
     QAction *fontButtonAction;
@@ -131,8 +135,6 @@ public:
     QAction *formatCodeButtonAction;
 
     QShortcut *formatCodeButtonShortcut;
-    QShortcut *fontColorButtonShortcut;
-    QShortcut *fontHighlightColorShortcut;
 
     FontNameComboBox *fontNames;
     FontSizeComboBox *fontSizes;
