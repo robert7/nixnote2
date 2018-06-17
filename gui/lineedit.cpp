@@ -19,20 +19,19 @@ extern Global global;
  LineEdit::LineEdit(QWidget *parent)
      : QLineEdit(parent)
  {
-
      filterPosition = -1;
 
      QString css = global.getThemeCss("searchInputCss");
      if (css == "")
          css = "QLineEdit { padding-right: %1px; }";
      setStyleSheet(css);
+
 #if QT_VERSION > 0x050000
      this->setClearButtonEnabled(true);
      this->setStyleSheet(css);
 #endif
      defaultText = QString(tr("Search"));
      this->setPlaceholderText(defaultText);
-
 
      connect(this, SIGNAL(returnPressed()), this, SLOT(buildSelection()));
      connect(this, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
@@ -52,8 +51,8 @@ extern Global global;
 
      // First, find out if we're already viewing history.  If we are we
      // chop off the end of the history & start a new one
-     if (global.filterPosition+1 < global.filterCriteria.size()) {
-         while (global.filterPosition+1 < global.filterCriteria.size())
+     if (global.filterPosition + 1 < global.filterCriteria.size()) {
+         while (global.filterPosition + 1 < global.filterCriteria.size())
              global.filterCriteria.removeLast();
      }
 
@@ -120,3 +119,19 @@ bool LineEdit::isSet() {
     else
         return false;
 }
+
+// We now have focus.  Change the appearance
+void LineEdit::focusInEvent(QFocusEvent *e)
+{
+    QLineEdit::focusInEvent(e);
+    QLOG_DEBUG() << "Search got focusInEvent";
+
+    // this is workaround.. improve later
+    QString shortcutInfo = global.appendShortcutInfo(QString(), "Focus_Search");
+    global.setMessage(tr("Shortcut") + shortcutInfo, SET_MESSAGE_TIMEOUT_SHORT);
+}
+
+void LineEdit::setFocus(Qt::FocusReason reason) {
+    QLOG_DEBUG() << "Search got setFocus";
+    QLineEdit::setFocus(reason);
+};

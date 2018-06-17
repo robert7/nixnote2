@@ -1031,15 +1031,19 @@ QPixmap Global::getPixmapResource(QHash <QString, QString> &resourceList, QStrin
 
 // Load a theme into a resourceList.
 void Global::loadTheme(QHash <QString, QString> &resourceList, QHash <QString, QString> &colorList, QString theme) {
+    QLOG_DEBUG() << "Loading theme " << theme;
+
     resourceList.clear();
     colorList.clear();
-    if (theme.trimmed() == "")
+    if (theme.trimmed() == "") {
         return;
-    QFile systemTheme(fileManager.getProgramDataDir() + "theme.ini");
-    this->loadThemeFile(resourceList, colorList, systemTheme, theme);
+    }
 
-    QFile userTheme(fileManager.getConfigDir() + "theme.ini"); // user theme
-    this->loadThemeFile(resourceList, colorList, userTheme, theme);
+    QFile systemThemeFn(fileManager.getProgramDataDir() + "theme.ini");
+    this->loadThemeFile(resourceList, colorList, systemThemeFn, theme);
+
+    QFile userThemeFn(fileManager.getConfigDir() + "theme.ini"); // user theme
+    this->loadThemeFile(resourceList, colorList, userThemeFn, theme);
 }
 
 
@@ -1548,7 +1552,7 @@ QString Global::setupShortcut(QShortcut *action, QString shortCutCode) {
         return QString();
     }
     QKeySequence key(shortcutStr);
-    QLOG_DEBUG() << "Setting up shortcut key " << shortcutStr;
+    //QLOG_DEBUG() << "Setting up shortcut key " << shortcutStr;
     action->setKey(key);
     return appendShortcutInfo(QString(), shortCutCode);
 }
@@ -1561,7 +1565,7 @@ QString Global::setupShortcut(QAction *action, QString shortCutCode) {
         return QString();
     }
     QKeySequence key(shortcutStr);
-    QLOG_DEBUG() << "Setting up shortcut key " << shortcutStr;
+    //QLOG_DEBUG() << "Setting up shortcut key " << shortcutStr;
     action->setShortcut(key);
     return appendShortcutInfo(QString(), shortCutCode);
 }

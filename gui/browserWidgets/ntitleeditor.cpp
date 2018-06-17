@@ -64,7 +64,7 @@ void NTitleEditor::focusInEvent(QFocusEvent *e)
     setStyleSheet(activeColor);
     emit(focussed(true));
 
-    // this is quite a workaround improve later
+    // this is workaround.. improve later
     QString shortcutInfo = global.appendShortcutInfo(QString(), "Focus_Title");
     global.setMessage(tr("Shortcut") + shortcutInfo, SET_MESSAGE_TIMEOUT_SHORT);
 }

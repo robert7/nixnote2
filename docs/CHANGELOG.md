@@ -1,14 +1,15 @@
 # CHANGELOG
 
 ## 2018-06
-
 ### #5
 * Minor improvement in font color/background color (highlight selection). 
-  Tooltip now show how to use. Keyboard shortcuts possible (default Ctrl-d, Ctrl-Shift-H). Context
-  menu option added.
+  Tooltip now shows how to use. Keyboard shortcuts possible (default Ctrl-d, Ctrl-Shift-H). Context
+  menu option added. **Tooltips with kbd shortcut info for all editor toolbar icons added.**
+* Few more default kbd shortcuts added.  
 
 ### #4
-* Merged changes from [jeffkowalski/Nixnote2](https://github.com/jeffkowalski/Nixnote2) - **various fixes, build config for macOS**
+* Merged changes from [jeffkowalski/Nixnote2](https://github.com/jeffkowalski/Nixnote2) 
+  and [RJVB/nixnote2](https://github.com/RJVB/nixnote2) - **various fixes, build config for macOS**
 * **Rewrite of the path handling logic after merge. Now standard compliant path for config and user data are used.**
 * Program has 3 directory paths "config dir", "program data dir" (like images), "user data" (database logs)
 * All three can be given on commandline for non-standard cases - those have priority (logic is in 
