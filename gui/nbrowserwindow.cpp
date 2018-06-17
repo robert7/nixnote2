@@ -381,12 +381,12 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->fontColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontColorClicked()));
     connect(buttonBar->fontColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontColorClicked()));
     connect(buttonBar->fontColorAction, SIGNAL(triggered()), this, SLOT(fontColorClicked()));
-    connect(buttonBar->fontColorButtonShortcut, SIGNAL(activated()), this, SLOT(fontColorClicked()));
+    //connect(buttonBar->fontColorButtonShortcut, SIGNAL(activated()), this, SLOT(fontColorClicked()));
 
     connect(buttonBar->highlightColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontHighlightClicked()));
     connect(buttonBar->highlightColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHighlightClicked()));
     connect(buttonBar->highlightColorAction, SIGNAL(triggered()), this, SLOT(fontHighlightClicked()));
-    connect(buttonBar->fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
+    //connect(buttonBar->fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
 
     connect(buttonBar->insertTableButtonAction, SIGNAL(triggered()), this, SLOT(insertTableButtonPressed()));
     connect(buttonBar->insertTableButtonShortcut, SIGNAL(activated()), this, SLOT(insertTableButtonPressed()));
