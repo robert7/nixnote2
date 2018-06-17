@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSqlDatabase>
 #include <QReadWriteLock>
 #include <QShortcut>
+#include <QAction>
 
 
 //*******************************
@@ -338,7 +339,9 @@ public:
     ExitManager *exitManager;                                  // Utility to manage exit points.
     QString getProgramDataDir() { return fileManager.getProgramDataDir(); }
 
+    QString getShortcutStr(QString text);
     void setupShortcut(QShortcut *action, QString text);
+    void setupShortcut(QAction *action, QString text);
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

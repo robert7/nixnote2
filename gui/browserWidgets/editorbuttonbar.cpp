@@ -146,7 +146,6 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     fontColorButtonWidget->setIcon(global.getIconResource(":fontColorIcon"));
     fontColorButtonWidget->setToolTip(tr("Font Color"));
     fontColorAction = this->addWidget(fontColorButtonWidget);
-    //
     fontColorButtonShortcut = new QShortcut(this);
     global.setupShortcut(fontColorButtonShortcut, "Format_Font_Color");
 
@@ -158,14 +157,8 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     highlightColorButtonWidget->setIcon(global.getIconResource(":fontHighlightIcon"));
     highlightColorButtonWidget->setToolTip(tr("Highlight"));
     highlightColorAction = this->addWidget(highlightColorButtonWidget);
-    //
     highlightColorShortcut = new QShortcut(this);
     global.setupShortcut(highlightColorShortcut, "Format_Highlight");
-
-
-
-
-
 
     undoButtonAction = this->addAction(global.getIconResource(":undoIcon"), tr("Undo"));
     undoButtonShortcut = new QShortcut(this);
@@ -251,6 +244,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     insertDatetimeButtonWidget->setText(tr("Insert Date & Time"));
     insertDatetimeButtonWidget->setToolTip(tr("Insert Date & Time"));
     insertDatetimeButtonAction = this->addWidget(insertDatetimeButtonWidget);
+    //
     insertDatetimeButtonShortcut = new QShortcut(this);
     insertDatetimeButtonShortcut->setKey(insertDatetimeButtonWidget->shortcut());
 

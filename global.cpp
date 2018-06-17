@@ -1597,11 +1597,32 @@ void Global::setUseLibTidy(bool value) {
 #endif
 }
 
+QString Global::getShortcutStr(QString text)  {
+    ShortcutKeys *shortcutKeys = this->shortcutKeys;
+
+    if (!shortcutKeys->containsAction(&text)) {
+        return QString();
+    }
+    return QString(shortcutKeys->getShortcut(&text));
+}
 
 // Load any shortcut keys
 void Global::setupShortcut(QShortcut *action, QString text) {
-    if (!this->shortcutKeys->containsAction(&text))
+    QString shortcutStr = this->getShortcutStr(text);
+    if (shortcutStr.isEmpty()) {
         return;
-    QKeySequence key(this->shortcutKeys->getShortcut(&text));
+    }
+    QKeySequence key(shortcutStr);
+    QLOG_DEBUG() << "Setting up shortcut key " << shortcutStr;
     action->setKey(key);
+}
+
+void Global::setupShortcut(QAction *action, QString text) {
+    QString shortcutStr = this->getShortcutStr(text);
+    if (shortcutStr.isEmpty()) {
+        return;
+    }
+    QKeySequence key(shortcutStr);
+    QLOG_DEBUG() << "Setting up shortcut key " << shortcutStr;
+    action->setShortcut(key);
 }
