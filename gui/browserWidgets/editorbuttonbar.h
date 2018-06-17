@@ -117,10 +117,7 @@ public:
     QShortcut *numberListButtonShortcut;
 
     QAction *highlightColorAction;
-    //QShortcut *highlightColorShortcut;
-
     QAction *fontColorAction;
-    //QShortcut *fontColorShortcut;
 
     QAction *todoButtonAction;
     QShortcut *todoButtonShortcut;

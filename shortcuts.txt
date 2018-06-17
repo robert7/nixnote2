@@ -39,9 +39,9 @@ Edit_Undo                     Ctrl+Z            // Undo last change
 Edit_Redo                     Ctrl+Y            // Redo the last undone change
 Edit_Cut                      Ctrl+X            // Cut current selection to the clipboard
 Edit_Copy                     Ctrl+C            // Copy the current selection to the clipboard
-Edit_Paste                    Ctrl+V            // Paste
+Edit_Paste                    Ctrl+V            // Paste (note: probably can't be changed)
 Edit_Paste_Without_Formatting Ctrl+Shift+V      // Paste as plain text
-Edit_Remove_Formatting                          // Remove selected formatting from text
+Edit_Remove_Formatting        Ctrl+Shift+Space  // Remove selected formatting from text
 Edit_Preferences                                // Settings dialog box
 Edit_Image_Rotate_Left                          // Rotate an image left
 Edit_Image_Rotate_Right                         // Rotate an image to the right
@@ -96,7 +96,7 @@ Format_Bold                   Ctrl+B            // Bold (duh)
 Format_Underline              Ctrl+U            // Underline
 Format_Italic                 Ctrl+I            // Italic
 Format_Strikethrough          Ctrl+-            // Strikethrough
-Format_Horizontal_Line                          // Href line
+Format_Horizontal_Line        Ctrl+Shift+-      // Href line
 Format_Superscript            Ctrl+=            // Set superscript
 Format_Subscript              Ctrl+Shift+=      // Subscript
 Format_Alignment_Left         Ctrl+L            // Left align text
@@ -113,7 +113,7 @@ Format_Font_Color             Ctrl+D            // Set font color
 
 Tools_Synchronize             F9                // Synchronize with Evernote
 Tools_Connect                                   // Connect to Evernote
-Tools_Spell_Check                               // Spell check dialog
+Tools_Spell_Check             F7                // Spell check dialog
 Tools_Account_Information                       // Show account information
 Tools_Reindex_Database                          // Reindex the entire database
 Tools_Disable_Note_Indexing                     // Disable note indexing

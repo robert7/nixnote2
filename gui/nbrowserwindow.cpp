@@ -1131,7 +1131,10 @@ void NBrowserWindow::underlineButtonPressed() {
 
 // The underline button was toggled
 void NBrowserWindow::removeFormatButtonPressed() {
+    // for some reason first call doesn't remove background color, but the second does...
     this->editor->triggerPageAction(QWebPage::RemoveFormat);
+    this->editor->triggerPageAction(QWebPage::RemoveFormat);
+
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -2813,7 +2816,7 @@ void NBrowserWindow::emailNote() {
 
     smtp.quit();
     emit(setMessage("Message Sent"));
-//    QMessageBox::information(this, tr("Message Sent"), tr("Message sent."), QMessageBox::Ok);
+    //    QMessageBox::information(this, tr("Message Sent"), tr("Message sent."), QMessageBox::Ok);
 }
 
 

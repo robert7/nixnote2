@@ -60,13 +60,8 @@ ShortcutDialog::ShortcutDialog()
     while (i.hasNext()) {
         i.next();
         tableWidget->setItem(row, 0, new QTableWidgetItem(i.key().toUpper()));
-        QString sc = i.value().toUpper();
-        sc = sc.replace("SPACE", "Space");
-        sc = sc.replace("CTRL", "Ctrl");
-        sc = sc.replace("ALT", "Alt");
-        sc = sc.replace("SHIFT", "Shift");
-        sc = sc.replace("PGUP", "PgUp");
-        sc = sc.replace("PGDOWN", "PgDown");
+        QString sc = i.value();
+        sc = global.formatShortcutKeyString(sc);
         tableWidget->setItem(row++, 1, new QTableWidgetItem(sc));
     }
     tableWidget->sortByColumn(0, Qt::AscendingOrder);

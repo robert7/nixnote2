@@ -339,9 +339,11 @@ public:
     ExitManager *exitManager;                                  // Utility to manage exit points.
     QString getProgramDataDir() { return fileManager.getProgramDataDir(); }
 
-    QString getShortcutStr(QString text);
-    void setupShortcut(QShortcut *action, QString text);
-    void setupShortcut(QAction *action, QString text);
+    QString formatShortcutKeyString(QString shortcutKeyString);
+    QString getShortcutStr(QString shortCutCode, bool lowerCased);
+    QString setupShortcut(QShortcut *action, QString shortCutCode);
+    QString setupShortcut(QAction *action, QString shortCutCode);
+    QString appendShortcutInfo(QString tooltip, QString shortCutCode);
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

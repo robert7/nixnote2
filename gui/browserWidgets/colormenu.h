@@ -39,7 +39,7 @@ private:
 
 public:
     explicit ColorMenu(QObject *parent = 0);
-    void setDefault(QColor color);
+    void setCurrentColor(QColor color);
     QColor* getCurrentColor();
     QString getCurrentColorName();
     QMenu* getMenu();

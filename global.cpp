@@ -1579,7 +1579,7 @@ void Global::setMultiThreadSave(bool value) {
 
 
 
-// Should we use multiple theads to do note saving
+// Should we use multiple threads to do note saving
 bool Global::getUseLibTidy() {
     global.settings->beginGroup("Appearance");
     bool value = global.settings->value("useLibTidy", false).toBool();
@@ -1597,32 +1597,65 @@ void Global::setUseLibTidy(bool value) {
 #endif
 }
 
-QString Global::getShortcutStr(QString text)  {
-    ShortcutKeys *shortcutKeys = this->shortcutKeys;
-
-    if (!shortcutKeys->containsAction(&text)) {
-        return QString();
-    }
-    return QString(shortcutKeys->getShortcut(&text));
+// kind of "pretty print"
+// format from lower cased to "display version"
+QString Global::formatShortcutKeyString(QString shortcutKeyString) {
+    return shortcutKeyString.toUpper()
+        .replace("SPACE", "Space")
+        .replace("CTRL", "Ctrl")
+        .replace("ALT", "Alt")
+        .replace("SHIFT", "Shift")
+        .replace("PGUP", "PgUp")
+        .replace("PGDOWN", "PgDown");
 }
 
-// Load any shortcut keys
-void Global::setupShortcut(QShortcut *action, QString text) {
-    QString shortcutStr = this->getShortcutStr(text);
+// used to append active short info to tolltip strings
+QString Global::appendShortcutInfo(QString tooltip, QString shortCutCode) {
+    QString shortcutStr = getShortcutStr(shortCutCode, false);
     if (shortcutStr.isEmpty()) {
-        return;
+        return tooltip;
+    }
+    return tooltip.append(" - ").append(shortcutStr);
+}
+
+// get short cut string for given shortcut code (by shortcuts.txt)
+QString Global::getShortcutStr(QString shortCutCode, bool lowerCased) {
+    ShortcutKeys *shortcutKeys = this->shortcutKeys;
+
+    if (!shortcutKeys->containsAction(&shortCutCode)) {
+        // none defined
+        return QString();
+    }
+    QString code = shortcutKeys->getShortcut(&shortCutCode);
+    if (!lowerCased) {
+        // pretty print
+        code = formatShortcutKeyString(code);
+    }
+    return code;
+}
+
+// setup shortcut key
+// in case match was found, return info to be appended to tooltip
+QString Global::setupShortcut(QShortcut *action, QString shortCutCode) {
+    QString shortcutStr = this->getShortcutStr(shortCutCode, true);
+    if (shortcutStr.isEmpty()) {
+        return QString();
     }
     QKeySequence key(shortcutStr);
     QLOG_DEBUG() << "Setting up shortcut key " << shortcutStr;
     action->setKey(key);
+    return appendShortcutInfo(QString(), shortCutCode);
 }
 
-void Global::setupShortcut(QAction *action, QString text) {
-    QString shortcutStr = this->getShortcutStr(text);
+// setup shortcut key
+// in case match was found, return info to be appended to tooltip
+QString Global::setupShortcut(QAction *action, QString shortCutCode) {
+    QString shortcutStr = this->getShortcutStr(shortCutCode, true);
     if (shortcutStr.isEmpty()) {
-        return;
+        return QString();
     }
     QKeySequence key(shortcutStr);
     QLOG_DEBUG() << "Setting up shortcut key " << shortcutStr;
     action->setShortcut(key);
+    return appendShortcutInfo(QString(), shortCutCode);
 }
