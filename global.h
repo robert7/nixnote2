@@ -40,6 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "exits/exitpoint.h"
 #include "exits/exitmanager.h"
 
+#include <QObject>
 #include <string>
 #include <QSqlDatabase>
 #include <QReadWriteLock>
@@ -100,13 +101,15 @@ using namespace std;
 class DatabaseConnection;
 class IndexRunner;
 
+#define SET_MESSAGE_TIMEOUT_SHORT 1000
+#define SET_MESSAGE_TIMEOUT_LONGER 15000
 
+class Global : public QObject {
+    Q_OBJECT
 
-class Global
-{
 public:
     Global();           // Generic constructor
-    //~Global();          // destructor
+    virtual ~Global() {};          // destructor
 
     // Possible ways tags & notebook counts may be displayed to the user
     enum CountBehavior {
@@ -344,6 +347,13 @@ public:
     QString setupShortcut(QShortcut *action, QString shortCutCode);
     QString setupShortcut(QAction *action, QString shortCutCode);
     QString appendShortcutInfo(QString tooltip, QString shortCutCode);
+
+    // update status bar with given string
+    void setMessage(QString msg, int timeout=SET_MESSAGE_TIMEOUT_LONGER);
+
+signals:
+    // global can send signal about updating status bar
+    void setMessageSignal(QString msg, int timeout);
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

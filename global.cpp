@@ -29,11 +29,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // The following include is needed for demangling names on a backtrace
 // Windows Check
 #ifndef _WIN32
+
 #include <cxxabi.h>
 #include <execinfo.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #endif  // End Windows Check
 
 #include "sql/usertable.h"
@@ -41,8 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //******************************************
 //* Global settings used by the program
 //******************************************
-Global::Global()
-{
+Global::Global() {
 
     dbLock = new QReadWriteLock(QReadWriteLock::Recursive);
     listView = ListViewWide;
@@ -63,12 +64,12 @@ Global::Global()
     this->accountsManager = NULL;
     criteria->resetSearchString = true;
     this->application = NULL;
-    this->autoHideEditorToolbar  = false;
+    this->autoHideEditorToolbar = false;
     this->showGoodSyncMessagesInTray = false;
     this->batchThumbnailCount = 4;
     username = "";
     this->defaultFontSize = 8;
-    this->countBehavior =  Global::CountAll;
+    this->countBehavior = Global::CountAll;
     password = "";
     javaFound = false;
     reminderManager = NULL;
@@ -138,7 +139,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 
     globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
     int accountId = startupConfig.getAccountId();
-    if (accountId <=0) {
+    if (accountId <= 0) {
         globalSettings->beginGroup("SaveState");
         accountId = globalSettings->value("lastAccessedAccount", 1).toInt();
         globalSettings->endGroup();
@@ -147,15 +148,15 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     globalSettings->beginGroup("MemoryKey");
     QString key = globalSettings->value("key", "").toString();
     if (key == "") {
-        key = QUuid::createUuid().toString().replace("}","").replace("{","");
-        globalSettings->setValue("key",key);
+        key = QUuid::createUuid().toString().replace("}", "").replace("{", "");
+        globalSettings->setValue("key", key);
     }
     globalSettings->endGroup();
 
-    key = key+QString::number(accountId);
+    key = key + QString::number(accountId);
     sharedMemory = new CrossMemoryMapper(key);
 
-    settingsFile = fileManager.getConfigDir() + "nixnote-"+QString::number(accountId)+".conf";
+    settingsFile = fileManager.getConfigDir() + "nixnote-" + QString::number(accountId) + ".conf";
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 
     if (startupConfig.getLogLevel() < 0) {
@@ -174,7 +175,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     if (startupConfig.enableIndexing || getBackgroundIndexing())
         enableIndexing = true;
 
-    this->purgeTemporaryFilesOnShutdown=true;
+    this->purgeTemporaryFilesOnShutdown = true;
 
     cryptCounter = 0;
     attachmentNameDelimeter = "------";
@@ -187,9 +188,9 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     // Cleanup any temporary files from the last time
     QDir myDir(fileManager.getTmpDirPath());
     QStringList list = myDir.entryList();
-    for (int i=0; i<list.size(); i++) {
+    for (int i = 0; i < list.size(); i++) {
         if (list[i] != "." && list[i] != "..") {
-            QString file = fileManager.getTmpDirPath()+ list[i];
+            QString file = fileManager.getTmpDirPath() + list[i];
             myDir.remove(file);
         }
     }
@@ -203,18 +204,18 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 
     settings->beginGroup("Appearance");
     int countbehavior = settings->value("countBehavior", CountAll).toInt();
-    if (countbehavior==1)
+    if (countbehavior == 1)
         countBehavior = CountAll;
-    if (countbehavior==2)
+    if (countbehavior == 2)
         countBehavior = CountNone;
     pdfPreview = settings->value("showPDFs", false).toBool();
-    defaultFont = settings->value("defaultFont","").toString();
-    defaultFontSize = settings->value("defaultFontSize",0).toInt();
+    defaultFont = settings->value("defaultFont", "").toString();
+    defaultFontSize = settings->value("defaultFontSize", 0).toInt();
     defaultGuiFontSize = settings->value("defaultGuiFontSize", 0).toInt();
-    defaultGuiFont = settings->value("defaultGuiFont","").toString();
+    defaultGuiFont = settings->value("defaultGuiFont", "").toString();
     forceWebFonts = settings->value("forceWebFonts", false).toBool();
     disableEditing = false;
-    if (settings->value("disableEditingOnStartup",false).toBool() || startupConfig.disableEditing)
+    if (settings->value("disableEditingOnStartup", false).toBool() || startupConfig.disableEditing)
         disableEditing = true;
     settings->endGroup();
 
@@ -224,8 +225,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
         // QWebkit DPI is hard coded to 96. Hence, we calculate the correct
         // font size based on desktop logical DPI.
         settings->setFontSize(QWebSettings::DefaultFontSize,
-            defaultFontSize * (QApplication::desktop()->logicalDpiX() / 96.0)
-            );
+                              defaultFontSize * (QApplication::desktop()->logicalDpiX() / 96.0)
+        );
     }
     if (defaultFont != "" && defaultFontSize <= 0 && this->guiAvailable) {
         QWebSettings *settings = QWebSettings::globalSettings();
@@ -234,17 +235,17 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 
     settings->beginGroup("Appearance");
     QString theme = settings->value("themeName", "").toString();
-    loadTheme(resourceList,colorList,theme);
+    loadTheme(resourceList, colorList, theme);
     autoHideEditorToolbar = settings->value("autoHideEditorToolbar", true).toBool();
     settings->endGroup();
 
     minIndexInterval = 5000;
     maxIndexInterval = 120000;
-    indexResourceCountPause=2;
-    indexNoteCountPause=100;
-    isFullscreen=false;
-    indexPDFLocally=getIndexPDFLocally();
-    forceSearchLowerCase=getForceSearchLowerCase();
+    indexResourceCountPause = 2;
+    indexNoteCountPause = 100;
+    isFullscreen = false;
+    indexPDFLocally = getIndexPDFLocally();
+    forceSearchLowerCase = getForceSearchLowerCase();
     strictDTD = getStrictDTD();
     bypassTidy = getBypassTidy();
     forceUTF8 = getForceUTF8();
@@ -261,7 +262,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     full_username = "";
 
     // Set auto-save interval
-    autoSaveInterval = getAutoSaveInterval()*1000;
+    autoSaveInterval = getAutoSaveInterval() * 1000;
 
     multiThreadSaveEnabled = this->getMultiThreadSave();
     useLibTidy = this->getUseLibTidy();
@@ -286,28 +287,24 @@ bool Global::confirmDeletes() {
 }
 
 
-
 // Should we display tag counts?  This is really just a stub for future changes
 QString Global::tagBehavior() {
     return "Count";
 }
 
 
-
-
 // Append the filter criteria to the filterCriteria queue.
 void Global::appendFilter(FilterCriteria *criteria) {
     // First, find out if we're already viewing history.  If we are we
     // chop off the end of the history & start a new one
-    if (filterPosition+1 < filterCriteria.size()) {
+    if (filterPosition + 1 < filterCriteria.size()) {
         int position = filterPosition;
-        while (position+1 < filterCriteria.size())
+        while (position + 1 < filterCriteria.size())
             delete filterCriteria.takeAt(position);
     }
 
     filterCriteria.append(criteria);
 }
-
 
 
 // Should we show the tray icon?
@@ -320,7 +317,6 @@ bool Global::showTrayIcon() {
 }
 
 
-
 // Should we minimize to the tray
 bool Global::minimizeToTray() {
     bool minimizeToTray;
@@ -329,7 +325,6 @@ bool Global::minimizeToTray() {
     settings->endGroup();
     return minimizeToTray;
 }
-
 
 
 // Should we close to the tray?
@@ -342,14 +337,12 @@ bool Global::closeToTray() {
 }
 
 
-
 // Save the user request to minimize to the tray
 void Global::setMinimizeToTray(bool value) {
     settings->beginGroup("SaveState");
     settings->setValue("minimizeToTray", value);
     settings->endGroup();
 }
-
 
 
 // Save the user's request to close to the tray
@@ -388,8 +381,6 @@ void Global::setColumnPosition(QString col, int position) {
 }
 
 
-
-
 // Save the with of a column in the note list
 void Global::setColumnWidth(QString col, int width) {
     if (listView == ListViewWide)
@@ -401,7 +392,6 @@ void Global::setColumnWidth(QString col, int width) {
 }
 
 
-
 // Get the desired width for a given column
 int Global::getColumnWidth(QString col) {
     if (listView == ListViewWide)
@@ -411,8 +401,7 @@ int Global::getColumnWidth(QString col) {
     int value = settings->value(col, -1).toInt();
     settings->endGroup();
     return value;
- }
-
+}
 
 
 // Get the position of a given column in the note list
@@ -424,8 +413,7 @@ int Global::getColumnPosition(QString col) {
     int value = settings->value(col, -1).toInt();
     settings->endGroup();
     return value;
- }
-
+}
 
 
 // Get the minimum recognition confidence.  Anything below this minimum will not be
@@ -439,39 +427,39 @@ int Global::getMinimumRecognitionWeight() {
 
 void Global::setClearNotebookOnSearch(bool value) {
     settings->beginGroup("Search");
-    settings->setValue("clearNotebookOnSearch",value);
+    settings->setValue("clearNotebookOnSearch", value);
     settings->endGroup();
 }
 
 
 void Global::setClearTagsOnSearch(bool value) {
     settings->beginGroup("Search");
-    settings->setValue("clearTagsOnSearch",value);
+    settings->setValue("clearTagsOnSearch", value);
     settings->endGroup();
 }
 
 void Global::setClearSearchOnNotebook(bool value) {
     settings->beginGroup("Search");
-    settings->setValue("clearSearchOnNotebook",value);
+    settings->setValue("clearSearchOnNotebook", value);
     settings->endGroup();
 }
 
 void Global::setTagSelectionOr(bool value) {
     settings->beginGroup("Search");
-    settings->setValue("tagSelectionOr",value);
+    settings->setValue("tagSelectionOr", value);
     settings->endGroup();
 }
 
 bool Global::getClearNotebookOnSearch() {
     settings->beginGroup("Search");
-    bool value = settings->value("clearNotebookOnSearch",false).toBool();
+    bool value = settings->value("clearNotebookOnSearch", false).toBool();
     settings->endGroup();
     return value;
 }
 
 bool Global::getClearSearchOnNotebook() {
     settings->beginGroup("Search");
-    bool value = settings->value("clearSearchOnNotebook",false).toBool();
+    bool value = settings->value("clearSearchOnNotebook", false).toBool();
     settings->endGroup();
     return value;
 }
@@ -479,7 +467,7 @@ bool Global::getClearSearchOnNotebook() {
 
 bool Global::getClearTagsOnSearch() {
     settings->beginGroup("Search");
-    bool value = settings->value("clearTagsOnSearch",false).toBool();
+    bool value = settings->value("clearTagsOnSearch", false).toBool();
     settings->endGroup();
     return value;
 }
@@ -487,128 +475,110 @@ bool Global::getClearTagsOnSearch() {
 
 bool Global::getBackgroundIndexing() {
     settings->beginGroup("Search");
-    bool value = settings->value("backgroundIndexing",false).toBool();
+    bool value = settings->value("backgroundIndexing", false).toBool();
     settings->endGroup();
     return value;
 }
-
-
 
 
 void Global::setBackgroundIndexing(bool value) {
     settings->beginGroup("Search");
-    settings->setValue("backgroundIndexing",value);
+    settings->setValue("backgroundIndexing", value);
     settings->endGroup();
 }
 
 
-
-
 bool Global::getTagSelectionOr() {
     settings->beginGroup("Search");
-    bool value = settings->value("tagSelectionOr",false).toBool();
+    bool value = settings->value("tagSelectionOr", false).toBool();
     settings->endGroup();
     return value;
 }
 
 
-
-
 void Global::setIndexPDFLocally(bool value) {
     settings->beginGroup("Search");
-    settings->setValue("indexPDFLocally",value);
+    settings->setValue("indexPDFLocally", value);
     settings->endGroup();
-    indexPDFLocally=value;
+    indexPDFLocally = value;
 }
 
 
 bool Global::getIndexPDFLocally() {
     settings->beginGroup("Search");
-    bool value = settings->value("indexPDFLocally",true).toBool();
+    bool value = settings->value("indexPDFLocally", true).toBool();
     settings->endGroup();
     indexPDFLocally = value;
     return value;
 }
 
 
-
-
 void Global::setForceSearchLowerCase(bool value) {
     settings->beginGroup("Search");
-    settings->setValue("forceLowerCase",value);
+    settings->setValue("forceLowerCase", value);
     settings->endGroup();
-    indexPDFLocally=value;
+    indexPDFLocally = value;
 }
 
 
 bool Global::getForceSearchLowerCase() {
     settings->beginGroup("Search");
-    bool value = settings->value("forceLowerCase",false).toBool();
+    bool value = settings->value("forceLowerCase", false).toBool();
     settings->endGroup();
     forceSearchLowerCase = value;
     return value;
 }
 
 
-
-
-
 void Global::setStrictDTD(bool value) {
     settings->beginGroup("Debugging");
-    settings->setValue("strictDTD",value);
+    settings->setValue("strictDTD", value);
     settings->endGroup();
-    strictDTD=value;
+    strictDTD = value;
 }
 
 
 bool Global::getStrictDTD() {
     settings->beginGroup("Debugging");
-    bool value = settings->value("strictDTD",true).toBool();
+    bool value = settings->value("strictDTD", true).toBool();
     settings->endGroup();
     strictDTD = value;
     return value;
 }
 
 
-
-
-
 void Global::setBypassTidy(bool value) {
     settings->beginGroup("Debugging");
-    settings->setValue("bypassTidy",value);
+    settings->setValue("bypassTidy", value);
     settings->endGroup();
-    bypassTidy=value;
+    bypassTidy = value;
 }
 
 
 bool Global::getBypassTidy() {
     settings->beginGroup("Debugging");
-    bool value = settings->value("bypassTidy",true).toBool();
+    bool value = settings->value("bypassTidy", true).toBool();
     settings->endGroup();
     bypassTidy = value;
     return value;
 }
 
 
-
-
 bool Global::getForceUTF8() {
     settings->beginGroup("Debugging");
-    bool value = settings->value("forceUTF8",true).toBool();
+    bool value = settings->value("forceUTF8", true).toBool();
     settings->endGroup();
     forceUTF8 = value;
     return value;
 }
 
 
-
 void Global::setForceUTF8(bool value) {
     settings->beginGroup("Debugging");
-    settings->setValue("forceUTF8",value);
+    settings->setValue("forceUTF8", value);
     settings->endGroup();
-    forceUTF8=value;
+    forceUTF8 = value;
 }
-
 
 
 // Save the minimum recognition weight for an item to be included in a serch result
@@ -617,8 +587,6 @@ void Global::setMinimumRecognitionWeight(int weight) {
     settings->setValue("minimumRecognitionWeight", weight);
     settings->endGroup();
 }
-
-
 
 
 // Should we synchronize attachments?  Not really useful except in debugging
@@ -630,14 +598,12 @@ bool Global::synchronizeAttachments() {
 }
 
 
-
 // Should we synchronize attachments?  Not really useful except in debugging
 void Global::setSynchronizeAttachments(bool value) {
     settings->beginGroup("Search");
     settings->setValue("synchronizeAttachments", value);
     settings->endGroup();
 }
-
 
 
 // get the last time we issued a reminder
@@ -655,7 +621,6 @@ void Global::setLastReminderTime(qlonglong value) {
     settings->setValue("lastReminderTime", value);
     settings->endGroup();
 }
-
 
 
 // Setup the default date & time formatting
@@ -697,73 +662,73 @@ void Global::setupDateTimeFormat() {
 
     datefmt = "MM/dd/yy";
     switch (date) {
-    case MMddyy:
-        datefmt = "MM/dd/yy";
-        break;
-    case MMddyyyy:
-        datefmt = "MM/dd/yyyy";
-        break;
-    case Mddyyyy:
-        datefmt = "M/dd/yyyy";
-        break;
-    case Mdyyyy:
-        datefmt = "M/d/yyyy";
-        break;
-    case ddMMyy:
-        datefmt = "dd/MM/yy";
-        break;
-    case dMyy:
-        datefmt = "d/M/yy";
-        break;
-    case ddMMyyyy:
-        datefmt = "dd/MM/yyyy";
-        break;
-    case dMyyyy:
-        datefmt = "d/M/yyyy";
-        break;
-    case yyyyMMdd:
-        datefmt = "yyyy-MM-dd";
-        break;
-    case yyMMdd:
-        datefmt = "yy-MM-dd";
-        break;
-    case yyMMdd2:
-        datefmt = "yyMMdd";
-        break;
+        case MMddyy:
+            datefmt = "MM/dd/yy";
+            break;
+        case MMddyyyy:
+            datefmt = "MM/dd/yyyy";
+            break;
+        case Mddyyyy:
+            datefmt = "M/dd/yyyy";
+            break;
+        case Mdyyyy:
+            datefmt = "M/d/yyyy";
+            break;
+        case ddMMyy:
+            datefmt = "dd/MM/yy";
+            break;
+        case dMyy:
+            datefmt = "d/M/yy";
+            break;
+        case ddMMyyyy:
+            datefmt = "dd/MM/yyyy";
+            break;
+        case dMyyyy:
+            datefmt = "d/M/yyyy";
+            break;
+        case yyyyMMdd:
+            datefmt = "yyyy-MM-dd";
+            break;
+        case yyMMdd:
+            datefmt = "yy-MM-dd";
+            break;
+        case yyMMdd2:
+            datefmt = "yyMMdd";
+            break;
     }
 
     timefmt = "HH:mm:ss";
     switch (time) {
-    case HHmmss:
-        timefmt = "HH:mm:ss";
-        break;
-    case HHMMSSa:
-        timefmt = "HH:MM:SS a";
-        break;
-    case HHmm:
-        timefmt = "HH:mm";
-        break;
-    case HHmma:
-        timefmt = "HH:mm a";
-        break;
-    case hhmmss:
-        timefmt = "hh:mm:ss";
-        break;
-    case hhmmssa:
-        timefmt = "hh:mm:ss a";
-        break;
-    case hmmssa:
-        timefmt = "h:mm:ss a";
-        break;
-    case hhmm:
-        timefmt = "hh:mm";
-        break;
-    case hhmma:
-        timefmt = "hh:mm a";
-        break;
-    case hmma:
-        timefmt = "h:mm a";
-        break;
+        case HHmmss:
+            timefmt = "HH:mm:ss";
+            break;
+        case HHMMSSa:
+            timefmt = "HH:MM:SS a";
+            break;
+        case HHmm:
+            timefmt = "HH:mm";
+            break;
+        case HHmma:
+            timefmt = "HH:mm a";
+            break;
+        case hhmmss:
+            timefmt = "hh:mm:ss";
+            break;
+        case hhmmssa:
+            timefmt = "hh:mm:ss a";
+            break;
+        case hmmssa:
+            timefmt = "h:mm:ss a";
+            break;
+        case hhmm:
+            timefmt = "hh:mm";
+            break;
+        case hhmma:
+            timefmt = "hh:mm a";
+            break;
+        case hmma:
+            timefmt = "h:mm a";
+            break;
     }
 
     this->dateFormat = datefmt;
@@ -787,7 +752,7 @@ QString Global::getUsername() {
 #ifndef _WIN32
     register struct passwd *pw;
     register uid_t uid;
-    QString username="";
+    QString username = "";
 
     uid = geteuid();
     pw = getpwuid(uid);
@@ -824,23 +789,18 @@ void Global::setAutosetUsername(bool value) {
 }
 
 
-
-
 // Utility function for case insensitive sorting
-bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
- {
-     return s1.toLower() < s2.toLower();
- }
-
-
+bool caseInsensitiveLessThan(const QString &s1, const QString &s2) {
+    return s1.toLower() < s2.toLower();
+}
 
 
 // Get a generic CSS theme setting from the themes.ini file.
 QString Global::getThemeCss(QString key) {
     if (colorList.contains(key))
         return colorList[key].trimmed();
-    if (resourceList.contains(":"+key)) {
-        QString value = resourceList[":"+key].trimmed();
+    if (resourceList.contains(":" + key)) {
+        QString value = resourceList[":" + key].trimmed();
 #ifdef _WIN32
         value = value.replace("/usr/share/nixnote2/images/",fileManager.getImageDirPath("").replace("\\","/"));
 #endif
@@ -856,9 +816,6 @@ QString Global::getThemeCss(QString key) {
 }
 
 
-
-
-
 // Get the default GUI font
 QFont Global::getGuiFont(QFont f) {
     if (defaultGuiFont != "")
@@ -870,8 +827,8 @@ QFont Global::getGuiFont(QFont f) {
 
 
 // Get a QIcon of in an icon theme
-QIcon Global::getIconResource(QHash<QString,QString> &resourceList, QString key) {
-    if (resourceList.contains(key) && resourceList[key].trimmed()!="")
+QIcon Global::getIconResource(QHash <QString, QString> &resourceList, QString key) {
+    if (resourceList.contains(key) && resourceList[key].trimmed() != "")
         return QIcon(resourceList[key]);
     return QIcon(key);
 }
@@ -880,13 +837,12 @@ QIcon Global::getIconResource(QHash<QString,QString> &resourceList, QString key)
 QString Global::getEditorStyle(bool colorOnly) {
     QString returnValue = "";
     if (!colorOnly) {
-        returnValue = "document.body.style.background='"+this->getEditorBackgroundColor()+"'; ";
+        returnValue = "document.body.style.background='" + this->getEditorBackgroundColor() + "'; ";
     }
-    returnValue = returnValue+"document.body.style.color='"+this->getEditorFontColor()+"';";
+    returnValue = returnValue + "document.body.style.color='" + this->getEditorFontColor() + "';";
 
-    return "function setColor() { "+returnValue +" }; setColor();";
+    return "function setColor() { " + returnValue + " }; setColor();";
 }
-
 
 
 QString Global::getEditorFontColor() {
@@ -914,8 +870,7 @@ QString Global::getNoteTitleColor() {
 QString Global::getNoteTitleActiveStyle() {
     QString result = this->getGenricStyle("titleActiveCss");
 
-    if(result.length() == 0)
-    {
+    if (result.length() == 0) {
         result = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
     }
 
@@ -925,8 +880,7 @@ QString Global::getNoteTitleActiveStyle() {
 QString Global::getNoteTitleInactiveStyle() {
     QString result = this->getGenricStyle("titleInactiveCss");
 
-    if(result.length() == 0)
-    {
+    if (result.length() == 0) {
         result = "QLineEdit {background-color: transparent; border-radius: 0px;} QLineEdit:hover {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
     }
 
@@ -943,8 +897,7 @@ QString Global::getDateTimeEditorColor() {
 QString Global::getTagViewerInactiveStyle() {
     QString result = this->getGenricStyle("tagViewerInactiveCss");
 
-    if(result.length() == 0)
-    {
+    if (result.length() == 0) {
         result = "QLineEdit {color: black; font:normal;} ";
     }
 
@@ -955,8 +908,7 @@ QString Global::getTagViewerInactiveStyle() {
 QString Global::getTagViewerActiveStyle() {
     QString result = this->getGenricStyle("tagViewerActiveCss");
 
-    if(result.length() == 0)
-    {
+    if (result.length() == 0) {
         result = "QLineEdit {color: black; font:normal;} ";
     }
 
@@ -967,8 +919,7 @@ QString Global::getTagViewerActiveStyle() {
 QString Global::getTagEditorInactiveStyle() {
     QString result = this->getGenricStyle("tagEditorInactiveCss");
 
-    if(result.length() == 0)
-    {
+    if (result.length() == 0) {
         result = "QLineEdit {background-color: transparent; border-radius: 0px;} ";
     }
 
@@ -979,8 +930,7 @@ QString Global::getTagEditorInactiveStyle() {
 QString Global::getTagEditorActiveStyle() {
     QString result = this->getGenricStyle("tagEditorActiveCss");
 
-    if(result.length() == 0)
-    {
+    if (result.length() == 0) {
         result = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;}";
     }
 
@@ -988,13 +938,10 @@ QString Global::getTagEditorActiveStyle() {
 }
 
 
-
-
 QString Global::getUrlEditorActiveStyle() {
     QString result = this->getGenricStyle("urlEditorActiveCss");
 
-    if(result.length() == 0)
-    {
+    if (result.length() == 0) {
         result = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;}";
     }
 
@@ -1004,8 +951,7 @@ QString Global::getUrlEditorActiveStyle() {
 QString Global::getUrlEditorInactiveStyle() {
     QString result = this->getGenricStyle("urlEditorInactiveCss");
 
-    if(result.length() == 0)
-    {
+    if (result.length() == 0) {
         result = "QLineEdit {background-color: transparent; border-radius: 0px;}";
     }
 
@@ -1016,8 +962,7 @@ QString Global::getUrlEditorInactiveStyle() {
 QString Global::getDateTimeEditorActiveStyle() {
     QString result = this->getGenricStyle("dateTimeEditorActiveCss");
 
-    if(result.length() == 0)
-    {
+    if (result.length() == 0) {
         result = "QDateTimeEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;}  QDateTimeEdit::up-button {width: 14px;} QDateTimeEdit::down-button{width: 14px;}";
     }
 
@@ -1027,9 +972,8 @@ QString Global::getDateTimeEditorActiveStyle() {
 QString Global::getDateTimeEditorInactiveStyle() {
     QString result = this->getGenricStyle("dateTimeEditorInactiveCss");
 
-    if(result.length() == 0)
-    {
-       result = "QDateTimeEdit {background-color: transparent; border-radius: 1px;} QDateTimeEdit:hover {border: 1px solid #808080; background-color: white; border-radius: 4px;} QDateTimeEdit::up-button {width: 0px; image:none;} QDateTimeEdit::down-button{width: 0px; image: none;}";
+    if (result.length() == 0) {
+        result = "QDateTimeEdit {background-color: transparent; border-radius: 1px;} QDateTimeEdit:hover {border: 1px solid #808080; background-color: white; border-radius: 4px;} QDateTimeEdit::up-button {width: 0px; image:none;} QDateTimeEdit::down-button{width: 0px; image: none;}";
     }
 
     return result;
@@ -1041,10 +985,8 @@ QString Global::getEditorCss() {
 
 QString Global::getGenricStyle(QString key) {
     QFile file(getGenricCss(key));
-    if(file.exists())
-    {
-        if(file.open(QFile::ReadOnly | QFile::Text))
-        {
+    if (file.exists()) {
+        if (file.open(QFile::ReadOnly | QFile::Text)) {
             QTextStream in(&file);
             return in.readAll();
         }
@@ -1054,16 +996,16 @@ QString Global::getGenricStyle(QString key) {
 }
 
 QString Global::getGenricCss(QString key) {
- QString css=fileManager.getQssDirPath("")+ key + ".css";
- if (colorList.contains(key)) {
-     css = fileManager.getQssDirPathUser("")+colorList[key].trimmed();
-     if (QFile(css).exists())
-         return css;
-     css = fileManager.getQssDirPath("")+colorList[key].trimmed();
-     if (QFile(css).exists())
-         return css;
- }
- return css;
+    QString css = fileManager.getQssDirPath("") + key + ".css";
+    if (colorList.contains(key)) {
+        css = fileManager.getQssDirPathUser("") + colorList[key].trimmed();
+        if (QFile(css).exists())
+            return css;
+        css = fileManager.getQssDirPath("") + colorList[key].trimmed();
+        if (QFile(css).exists())
+            return css;
+    }
+    return css;
 }
 
 
@@ -1073,8 +1015,6 @@ QIcon Global::getIconResource(QString key) {
 }
 
 
-
-
 // Get a QPixmap from an icon theme
 QPixmap Global::getPixmapResource(QString key) {
     return this->getPixmapResource(resourceList, key);
@@ -1082,16 +1022,15 @@ QPixmap Global::getPixmapResource(QString key) {
 
 
 // Get a QPixmap from an icon theme
-QPixmap Global::getPixmapResource(QHash<QString,QString> &resourceList, QString key) {
-    if (resourceList.contains(key) && resourceList[key].trimmed()!="")
+QPixmap Global::getPixmapResource(QHash <QString, QString> &resourceList, QString key) {
+    if (resourceList.contains(key) && resourceList[key].trimmed() != "")
         return QPixmap(resourceList[key]);
     return QPixmap(key);
 }
 
 
-
 // Load a theme into a resourceList.
-void Global::loadTheme(QHash<QString, QString> &resourceList, QHash<QString,QString> &colorList, QString theme) {
+void Global::loadTheme(QHash <QString, QString> &resourceList, QHash <QString, QString> &colorList, QString theme) {
     resourceList.clear();
     colorList.clear();
     if (theme.trimmed() == "")
@@ -1104,27 +1043,26 @@ void Global::loadTheme(QHash<QString, QString> &resourceList, QHash<QString,QStr
 }
 
 
-
 // Load a theme from a given file
 void Global::loadThemeFile(QFile &file, QString themeName) {
     this->loadThemeFile(resourceList, colorList, file, themeName);
 }
 
 
-
 // Load a theme from a given file
-void Global::loadThemeFile(QHash<QString,QString> &resourceList, QHash<QString,QString> &colorList, QFile &file, QString themeName) {
+void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QString, QString> &colorList, QFile &file,
+                           QString themeName) {
     if (!file.exists())
         return;
-    if(!file.open(QIODevice::ReadOnly))
+    if (!file.open(QIODevice::ReadOnly))
         return;
 
     QTextStream in(&file);
     bool themeFound = false;
     QString themeHeader = "[" + themeName.trimmed() + "]";
-    while(!in.atEnd()) {
+    while (!in.atEnd()) {
         QString line = in.readLine();
-        if (!line.startsWith("#")){
+        if (!line.startsWith("#")) {
             if (line.startsWith("[") && themeHeader != line)
                 themeFound = false;
             if (line.startsWith("[") && themeHeader == line)
@@ -1139,8 +1077,8 @@ void Global::loadThemeFile(QHash<QString,QString> &resourceList, QHash<QString,Q
 #endif
                     QFile f(value);
                     if (f.exists()) {
-                        resourceList.remove(":"+key);
-                        resourceList.insert(":"+key,value);
+                        resourceList.remove(":" + key);
+                        resourceList.insert(":" + key, value);
                     } else {
                         colorList.remove("key");
                         colorList.insert(key, fields[1].simplified());
@@ -1171,16 +1109,15 @@ QStringList Global::getThemeNames() {
 }
 
 
-
 // Get themes contained in a given file
 void Global::getThemeNamesFromFile(QFile &file, QStringList &values) {
     if (!file.exists())
         return;
-    if(!file.open(QIODevice::ReadOnly))
+    if (!file.open(QIODevice::ReadOnly))
         return;
 
     QTextStream in(&file);
-    while(!in.atEnd()) {
+    while (!in.atEnd()) {
         QString line = in.readLine().simplified();
         if (line.startsWith("[")) {
             QString name = line.mid(1);
@@ -1198,18 +1135,14 @@ void Global::getThemeNamesFromFile(QFile &file, QStringList &values) {
 
 
 // Get the full path of a resource in a theme file
-QString Global::getResourceFileName(QHash<QString,QString> &resourceList, QString key) {
-        if (resourceList.contains(key) && resourceList[key].trimmed()!="")
-            return resourceList[key];
+QString Global::getResourceFileName(QHash <QString, QString> &resourceList, QString key) {
+    if (resourceList.contains(key) && resourceList[key].trimmed() != "")
+        return resourceList[key];
 
-        // If we have a default resource
-        QString fileName = key.remove(":");
-        return fileManager.getImageDirPath("")+fileName;
+    // If we have a default resource
+    QString fileName = key.remove(":");
+    return fileManager.getImageDirPath("") + fileName;
 }
-
-
-
-
 
 
 // save the proxy address
@@ -1236,7 +1169,7 @@ void Global::setProxyPassword(QString password) {
 
 
 // Save the proxy userid
-void Global::setProxyUserid(QString userid){
+void Global::setProxyUserid(QString userid) {
     settings->beginGroup("Proxy");
     settings->setValue("userid", userid);
     settings->endGroup();
@@ -1313,12 +1246,11 @@ void Global::setMiddleClickAction(int value) {
 }
 
 int Global::getMiddleClickAction() {
-   settings->beginGroup("Appearance");
-   int value = settings->value("mouseMiddleClickOpen", 0).toInt();
-   settings->endGroup();
-   return value;
+    settings->beginGroup("Appearance");
+    int value = settings->value("mouseMiddleClickOpen", 0).toInt();
+    settings->endGroup();
+    return value;
 }
-
 
 
 bool Global::newNoteFocusToTitle() {
@@ -1333,8 +1265,6 @@ void Global::setNewNoteFocusToTitle(bool focus) {
     settings->setValue("newNoteFocusOnTitle", focus);
     settings->endGroup();
 }
-
-
 
 
 bool Global::disableImageHighlight() {
@@ -1372,8 +1302,6 @@ QString Global::systemNotifier() {
 }
 
 
-
-
 void Global::stackDump(int max) {
 // Windows Check
 #ifndef _WIN32
@@ -1387,24 +1315,17 @@ void Global::stackDump(int max) {
     char **messages = backtrace_symbols(array, size);
 
     if (max > 0)
-        size = max+1;  // We add one here because we always skip the first thing on the stack (this function).
-    for (size_t i = 1; i < size && messages != NULL; ++i)
-    {
+        size = max + 1;  // We add one here because we always skip the first thing on the stack (this function).
+    for (size_t i = 1; i < size && messages != NULL; ++i) {
         char *mangled_name = 0, *offset_begin = 0, *offset_end = 0;
 
         // find parantheses and +address offset surrounding mangled name
-        for (char *p = messages[i]; *p; ++p)
-        {
-            if (*p == '(')
-            {
+        for (char *p = messages[i]; *p; ++p) {
+            if (*p == '(') {
                 mangled_name = p;
-            }
-            else if (*p == '+')
-            {
+            } else if (*p == '+') {
                 offset_begin = p;
-            }
-            else if (*p == ')')
-            {
+            } else if (*p == ')') {
                 offset_end = p;
                 break;
             }
@@ -1412,33 +1333,29 @@ void Global::stackDump(int max) {
 
         // if the line could be processed, attempt to demangle the symbol
         if (mangled_name && offset_begin && offset_end &&
-            mangled_name < offset_begin)
-        {
+            mangled_name < offset_begin) {
             *mangled_name++ = '\0';
             *offset_begin++ = '\0';
             *offset_end++ = '\0';
 
             int status;
-            char * real_name = abi::__cxa_demangle(mangled_name, 0, 0, &status);
+            char *real_name = abi::__cxa_demangle(mangled_name, 0, 0, &status);
 
             // if demangling is successful, output the demangled function name
-            if (status == 0)
-            {
-               QLOG_ERROR() << "[bt]: (" << i << ") " << messages[i] << " : "
-                          << real_name << "+" << offset_begin << offset_end;
+            if (status == 0) {
+                QLOG_ERROR() << "[bt]: (" << i << ") " << messages[i] << " : "
+                             << real_name << "+" << offset_begin << offset_end;
 
             }
-            // otherwise, output the mangled function name
-            else
-            {
+                // otherwise, output the mangled function name
+            else {
                 QLOG_ERROR() << "[bt]: (" << i << ") " << messages[i] << " : "
-                          << mangled_name << "+" << offset_begin << offset_end;
+                             << mangled_name << "+" << offset_begin << offset_end;
             }
             free(real_name);
         }
-        // otherwise, print the whole line
-        else
-        {
+            // otherwise, print the whole line
+        else {
             QLOG_ERROR() << "[bt]: (" << i << ") " << messages[i];
         }
     }
@@ -1464,7 +1381,7 @@ void Global::setDebugLevelBySetting() {
 //************************************************
 void Global::setDebugLevel(int level) {
     // Setup the QLOG functions for debugging & messages
-    QsLogging::Logger& logger = QsLogging::Logger::instance();
+    QsLogging::Logger &logger = QsLogging::Logger::instance();
     if (level == QsLogging::TraceLevel)
         logger.setLoggingLevel(QsLogging::TraceLevel);
     else if (level == QsLogging::DebugLevel)
@@ -1484,9 +1401,7 @@ void Global::setDebugLevel(int level) {
 }
 
 
-
 Global global;
-
 
 
 // Should we preview fonts in the editor window?
@@ -1506,14 +1421,13 @@ void Global::setPreviewFontsInDialog(bool value) {
 }
 
 
-
-
 // Should we show a popup on sync errors?
 void Global::setPopupOnSyncError(bool value) {
     global.settings->beginGroup("Sync");
     global.settings->setValue("popupOnSyncError", value);
     global.settings->endGroup();
 }
+
 bool Global::popupOnSyncError() {
     global.settings->beginGroup("Sync");
     bool value = global.settings->value("popupOnSyncError", true).toBool();
@@ -1535,10 +1449,8 @@ void Global::setAutoSaveInterval(int value) {
     global.settings->beginGroup("Appearance");
     global.settings->setValue("autoSaveInterval", value);
     global.settings->endGroup();
-    global.autoSaveInterval = value*1000;
+    global.autoSaveInterval = value * 1000;
 }
-
-
 
 
 // Should we intercept SIGHUP on Unix platforms
@@ -1557,8 +1469,6 @@ void Global::setInterceptSigHup(bool value) {
 }
 
 
-
-
 // Should we use multiple theads to do note saving
 bool Global::getMultiThreadSave() {
     global.settings->beginGroup("Appearance");
@@ -1573,10 +1483,6 @@ void Global::setMultiThreadSave(bool value) {
     global.settings->endGroup();
     this->multiThreadSaveEnabled = value;
 }
-
-
-
-
 
 
 // Should we use multiple threads to do note saving
@@ -1658,4 +1564,8 @@ QString Global::setupShortcut(QAction *action, QString shortCutCode) {
     QLOG_DEBUG() << "Setting up shortcut key " << shortcutStr;
     action->setShortcut(key);
     return appendShortcutInfo(QString(), shortCutCode);
+}
+
+void Global::setMessage(QString msg, int timeout) {
+    emit setMessageSignal(msg, timeout);
 }

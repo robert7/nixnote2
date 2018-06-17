@@ -252,6 +252,10 @@ int main(int argc, char *argv[])
     QLOG_DEBUG() << "Setting up NN";
     w = new NixNote();
     w->setAttribute(Qt::WA_QuitOnClose);
+
+    // this is bit dirty, maybe improve later
+    QObject::connect(&global, SIGNAL(setMessageSignal(QString, int)), w, SLOT(setMessage(QString,int)));
+
     bool show = true;
     if (global.minimizeToTray() && global.startMinimized)
         show = false;

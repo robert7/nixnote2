@@ -60,11 +60,13 @@ void NTitleEditor::setActiveColor() {
 // We now have focus.  Change the appearance
 void NTitleEditor::focusInEvent(QFocusEvent *e)
 {
-  QLineEdit::focusInEvent(e);
-  setStyleSheet(activeColor);
-  emit(focussed(true));
+    QLineEdit::focusInEvent(e);
+    setStyleSheet(activeColor);
+    emit(focussed(true));
 
-  emit(setMessage(tr("Shortcut - F2")));
+    // this is quite a workaround improve later
+    QString shortcutInfo = global.appendShortcutInfo(QString(), "Focus_Title");
+    global.setMessage(tr("Shortcut") + shortcutInfo, SET_MESSAGE_TIMEOUT_SHORT);
 }
 
 

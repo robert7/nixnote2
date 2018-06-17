@@ -55,12 +55,10 @@ signals:
   void focussed(bool hasFocus);
   void titleChanged();
   void titleUpdated(QString);
-  void setMessage(QString msg);
 
 protected:
   virtual void focusInEvent(QFocusEvent *e);
   virtual void focusOutEvent(QFocusEvent *e);
-    
 };
 
 #endif // NTITLEEDITOR_H
