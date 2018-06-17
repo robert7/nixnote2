@@ -6,6 +6,10 @@
   Tooltip now shows how to use. Keyboard shortcuts possible (default Ctrl-d, Ctrl-Shift-H). Context
   menu option added. **Tooltips with kbd shortcut info for all editor toolbar icons added.**
 * Few more default kbd shortcuts added.  
+* Remove hardcoded build in kbd shortcuts (now all comes from shortcuts.ini)
+* Changed theme handling - now all themes come from ini file (incl. of the Default theme). This is 
+  similar to shortcuts.txt
+  
 
 ### #4
 * Merged changes from [jeffkowalski/Nixnote2](https://github.com/jeffkowalski/Nixnote2) 

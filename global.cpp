@@ -801,9 +801,6 @@ QString Global::getThemeCss(QString key) {
         return colorList[key].trimmed();
     if (resourceList.contains(":" + key)) {
         QString value = resourceList[":" + key].trimmed();
-#ifdef _WIN32
-        value = value.replace("/usr/share/nixnote2/images/",fileManager.getImageDirPath("").replace("\\","/"));
-#endif
         QFile f(value);
         if (f.exists()) {
             f.open(QIODevice::ReadOnly);
@@ -1106,8 +1103,9 @@ QStringList Global::getThemeNames() {
     QFile userTheme(fileManager.getConfigDir() + "theme.ini"); // user theme
     this->getThemeNamesFromFile(userTheme, values);
 
-    if (!nonAsciiSortBug)
-        qSort(values.begin(), values.end(), caseInsensitiveLessThan);
+    // leave in order how they were defined in the file (this makes sure DEFAULT theme will be first)
+    //if (!nonAsciiSortBug)
+    //    qSort(values.begin(), values.end(), caseInsensitiveLessThan);
 
     return values;
 }

@@ -103,6 +103,8 @@ class IndexRunner;
 
 #define SET_MESSAGE_TIMEOUT_SHORT 1000
 #define SET_MESSAGE_TIMEOUT_LONGER 15000
+#define DEFAULT_THEME_NAME "Default"
+
 
 class Global : public QObject {
     Q_OBJECT
