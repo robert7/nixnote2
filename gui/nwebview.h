@@ -82,6 +82,10 @@ public:
     QAction *insertHtmlEntitiesAction;
     QAction *copyNoteUrlAction;
 
+    QAction *fontColorAction;
+    QAction *fontBackgroundColorAction;
+
+
     QShortcut *attachFileShortcut;
 
     bool isDirty;

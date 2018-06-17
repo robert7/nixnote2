@@ -155,6 +155,10 @@ public:
     QShortcut *focusNoteShortcut;
     QShortcut *focusTitleShortcut;
     QShortcut *insertDatetimeShortcut;
+    QShortcut *fontColorShortcut;
+    QShortcut *fontHighlightShortcut;
+
+
     QTextEdit *printPage;
     QTextEdit *printPreviewPage;
     bool fastPrint;

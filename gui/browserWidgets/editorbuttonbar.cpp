@@ -144,7 +144,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     fontColorButtonWidget->setAutoRaise(false);
     fontColorButtonWidget->setMenu(fontColorMenuWidget->getMenu());
     fontColorButtonWidget->setIcon(global.getIconResource(":fontColorIcon"));
-    fontColorButtonWidget->setToolTip(tr("Font Color"));
+    fontColorButtonWidget->setToolTip(tr("Change color of marked text to current color (long press to select color)"));
     fontColorAction = this->addWidget(fontColorButtonWidget);
     fontColorButtonShortcut = new QShortcut(this);
     global.setupShortcut(fontColorButtonShortcut, "Format_Font_Color");
@@ -155,7 +155,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     highlightColorButtonWidget->setAutoRaise(false);
     highlightColorButtonWidget->setMenu(highlightColorMenuWidget->getMenu());
     highlightColorButtonWidget->setIcon(global.getIconResource(":fontHighlightIcon"));
-    highlightColorButtonWidget->setToolTip(tr("Highlight"));
+    highlightColorButtonWidget->setToolTip(tr("Change background color of marked text to current color - highlight (long press to select color)"));
     highlightColorAction = this->addWidget(highlightColorButtonWidget);
     highlightColorShortcut = new QShortcut(this);
     global.setupShortcut(highlightColorShortcut, "Format_Highlight");

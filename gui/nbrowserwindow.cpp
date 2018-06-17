@@ -97,7 +97,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     browserThread->start();
 
 
-//    this->setStyleSheet("margins:0px;");
+    //    this->setStyleSheet("margins:0px;");
     QHBoxLayout *line1Layout = new QHBoxLayout();
     QVBoxLayout *layout = new QVBoxLayout();   // Note content layout
 
@@ -148,7 +148,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     sourceEditorTimer = new QTimer();
     connect(sourceEditorTimer, SIGNAL(timeout()), this, SLOT(setSource()));
 
-    // addthe actual note editor & source view
+    // add the actual note editor & source view
     QSplitter *editorSplitter = new QSplitter(Qt::Vertical, this);
     editorSplitter->addWidget(editor);
     editorSplitter->addWidget(sourceEdit);
@@ -172,16 +172,26 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     focusNoteShortcut = new QShortcut(this);
     global.setupShortcut(focusNoteShortcut, "Focus_Note");
     connect(focusNoteShortcut, SIGNAL(activated()), this, SLOT(focusNote()));
+
     focusTitleShortcut = new QShortcut(this);
     global.setupShortcut(focusTitleShortcut, "Focus_Title");
     connect(focusTitleShortcut, SIGNAL(activated()), this, SLOT(focusTitle()));
+
     insertDatetimeShortcut = new QShortcut(this);
     global.setupShortcut(insertDatetimeShortcut, "Insert_DateTime");
     connect(insertDatetimeShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
+
+    fontColorShortcut = new QShortcut(this);
+    global.setupShortcut(fontColorShortcut, "Format_Font_Color");
+    connect(fontColorShortcut, SIGNAL(activated()), this, SLOT(fontColorClicked()));
+
+    fontHighlightShortcut = new QShortcut(this);
+    global.setupShortcut(fontHighlightShortcut, "Format_Highlight");
+    connect(fontHighlightShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
+
     copyNoteUrlShortcut = new QShortcut(this);
     global.setupShortcut(copyNoteUrlShortcut, "Edit_Copy_Note_Url");
     connect(copyNoteUrlShortcut, SIGNAL(activated()), this, SLOT(copyNoteUrl()));
-
 
     // Setup the signals
     connect(&expandButton, SIGNAL(stateChanged(int)), this, SLOT(changeExpandState(int)));
@@ -379,14 +389,12 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->fontNames, SIGNAL(currentIndexChanged(int)), this, SLOT(fontNameSelected(int)));
 
     connect(buttonBar->fontColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontColorClicked()));
+    // pressed/long click
     connect(buttonBar->fontColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontColorClicked()));
-    connect(buttonBar->fontColorAction, SIGNAL(triggered()), this, SLOT(fontColorClicked()));
-    //connect(buttonBar->fontColorButtonShortcut, SIGNAL(activated()), this, SLOT(fontColorClicked()));
 
     connect(buttonBar->highlightColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontHighlightClicked()));
+    // pressed/long click
     connect(buttonBar->highlightColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHighlightClicked()));
-    connect(buttonBar->highlightColorAction, SIGNAL(triggered()), this, SLOT(fontHighlightClicked()));
-    //connect(buttonBar->fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
 
     connect(buttonBar->insertTableButtonAction, SIGNAL(triggered()), this, SLOT(insertTableButtonPressed()));
     connect(buttonBar->insertTableButtonShortcut, SIGNAL(activated()), this, SLOT(insertTableButtonPressed()));
@@ -397,7 +405,6 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->insertDatetimeButtonAction, SIGNAL(triggered()), this, SLOT(insertDatetime()));
     connect(buttonBar->insertDatetimeButtonWidget,SIGNAL(clicked()), this, SLOT(insertDatetime()));
     connect(buttonBar->insertDatetimeButtonShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
-
 
     connect(buttonBar->formatCodeButtonAction, SIGNAL(triggered()), this, SLOT(formatCodeButtonPressed()));
     connect(buttonBar->formatCodeButtonShortcut, SIGNAL(activated()), this, SLOT(formatCodeButtonPressed()));
@@ -1352,21 +1359,6 @@ void NBrowserWindow::fontNameSelected(int index) {
     microFocusChanged();
 }
 
-
-// The font highlight color was pressed
-void NBrowserWindow::fontHighlightClicked() {
-    QLOG_DEBUG() << "fontHighlightClicked";
-    QColor *color = buttonBar->highlightColorMenuWidget->getCurrentColor();
-    QLOG_DEBUG() << "Setting text background color to: " << buttonBar->fontColorMenuWidget->getCurrentColorName();
-    if (color->isValid()) {
-        this->editor->page()->mainFrame()->evaluateJavaScript(
-            "document.execCommand('backColor', false, '" + color->name() + "');");
-        editor->setFocus();
-        microFocusChanged();
-    }
-}
-
-
 // The font color was pressed
 void NBrowserWindow::fontColorClicked() {
     QLOG_DEBUG() << "fontColorClicked";
@@ -1380,6 +1372,19 @@ void NBrowserWindow::fontColorClicked() {
     }
 }
 
+
+// The font highlight color was pressed
+void NBrowserWindow::fontHighlightClicked() {
+    QLOG_DEBUG() << "fontHighlightClicked";
+    QColor *color = buttonBar->highlightColorMenuWidget->getCurrentColor();
+    QLOG_DEBUG() << "Setting text background color to: " << buttonBar->highlightColorMenuWidget->getCurrentColorName();
+    if (color->isValid()) {
+        this->editor->page()->mainFrame()->evaluateJavaScript(
+            "document.execCommand('backColor', false, '" + color->name() + "');");
+        editor->setFocus();
+        microFocusChanged();
+    }
+}
 
 void NBrowserWindow::insertLinkButtonPressed() {
     QString text = editor->selectedText().trimmed();

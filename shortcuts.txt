@@ -109,7 +109,7 @@ Format_Indent_Increase        Ctrl+M            // Increase the indentation // s
 Format_Indent_Decrease        Ctrl+Shift+M      // Decrease the indent      // seems Shift-Tab doesn't work
 Format_Highlight              Ctrl+Shift+H      // Highlight the current text (background color)
 Format_Code_Block                               // Format code block
-Format_Font_Color             Ctrl-D            // Set font color
+Format_Font_Color             Ctrl+D            // Set font color
 
 Tools_Synchronize             F9                // Synchronize with Evernote
 Tools_Connect                                   // Connect to Evernote
@@ -132,6 +132,6 @@ Focus_Note                                      // Focus on the note itself
 Focus_Author                                    // Focus on the author field
 Focus_Url                                       // Focus on the source URL field
 Focus_Search                  F6                // Focus on the search field
-Focus_Notebook                Alt-Shift-B       // Focus on the notebook
+Focus_Notebook                Alt+Shift+B       // Focus on the notebook
 Focus_Font                                      // Focus on the font drop down
 Focus_Font_Size                                 // Focus on the font size drop down

@@ -53,6 +53,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     this->setFont(global.getGuiFont(font()));
 
     contextMenu = new QMenu(this);
+
     openAction = new QAction(tr("Open"), this);
     contextMenu->addAction(openAction);
     contextMenu->addSeparator();
@@ -90,9 +91,9 @@ NWebView::NWebView(NBrowserWindow *parent) :
 
     contextMenu->addSeparator();
 
-    QMenu *colorMenu = new QMenu(tr("Background Color"), this);
+    // change background color of WHOLE note (this is different from changing font/text background color)
+    QMenu *colorMenu = new QMenu(tr("Note Background Color"), this);
     colorMenu->setFont(global.getGuiFont(font()));
-
     // Build the background color menu
     backgroundColorMapper = new QSignalMapper(this);
     QAction *action;
@@ -104,8 +105,17 @@ NWebView::NWebView(NBrowserWindow *parent) :
         connect(action, SIGNAL(triggered()), backgroundColorMapper, SLOT(map()));
         connect(backgroundColorMapper, SIGNAL(mapped(QString)), this, SLOT(setBackgroundColor(QString)));
     }
+    // QAction *action = setupColorMenuOption(tr("White"));
 
-//    QAction *action = setupColorMenuOption(tr("White"));
+    fontColorAction = new QAction(tr("Set text color"), this);
+    global.setupShortcut(fontColorAction, "Format_Font_Color");
+    contextMenu->addAction(fontColorAction);
+    connect(fontColorAction, SIGNAL(triggered()), parent, SLOT(fontColorClicked()));
+
+    fontBackgroundColorAction = new QAction(tr("Set text background color"), this);
+    global.setupShortcut(fontBackgroundColorAction, "Format_Highlight");
+    contextMenu->addAction(fontBackgroundColorAction);
+    connect(fontBackgroundColorAction, SIGNAL(triggered()), parent, SLOT(fontHighlightClicked()));
 
     contextMenu->addMenu(colorMenu);
     contextMenu->addSeparator();
@@ -132,7 +142,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     insertDateTimeAction = new QAction(tr("Insert Date && Time"), this);
     global.setupShortcut(insertDateTimeAction, "Insert_DateTime");
     contextMenu->addAction(insertDateTimeAction);
-    connect(insertDateTimeAction, SIGNAL(triggered()), parent, SLOT(insertDatetime()));
+    connect(insertDateTimeAction, SIGNAL(triggered()), parent, SLOT(insertDatetime()));  // => nbrowserwindow.cpp
 
     insertLinkAction = new QAction(tr("Insert Hyperlink"), this);
     contextMenu->addAction(insertLinkAction);
@@ -254,7 +264,6 @@ NWebView::NWebView(NBrowserWindow *parent) :
     QString css = global.getThemeCss("noteContentsCss");
     if (css!="")
         this->setStyleSheet(css);
-
 }
 
 
