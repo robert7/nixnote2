@@ -145,9 +145,6 @@ public:
     ColorMenu *fontColorMenuWidget;
     QToolButton *highlightColorButtonWidget;
     ColorMenu *highlightColorMenuWidget;
-//    void setupShortcut(QToolButton *toolbutton, QString text);
-//    void setupShortcut(QAction *action, QString text);
-    void setupShortcut(QShortcut *shortcut, QString text);
 
     explicit EditorButtonBar(QWidget *parent = 0);
     ~EditorButtonBar();

@@ -1596,3 +1596,12 @@ void Global::setUseLibTidy(bool value) {
     this->useLibTidy = false;  // Removing obsolete setting.
 #endif
 }
+
+
+// Load any shortcut keys
+void Global::setupShortcut(QShortcut *action, QString text) {
+    if (!this->shortcutKeys->containsAction(&text))
+        return;
+    QKeySequence key(this->shortcutKeys->getShortcut(&text));
+    action->setKey(key);
+}

@@ -174,7 +174,6 @@ public:
     void backtabPressed();
     bool enterPressed();
     void clear();
-    void setupShortcut(QShortcut *action, QString text);
     void contentChanged();
     void printPreviewNote();
     void printNote();

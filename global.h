@@ -43,6 +43,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <string>
 #include <QSqlDatabase>
 #include <QReadWriteLock>
+#include <QShortcut>
+
 
 //*******************************
 //* This class is used to store
@@ -335,6 +337,8 @@ public:
 
     ExitManager *exitManager;                                  // Utility to manage exit points.
     QString getProgramDataDir() { return fileManager.getProgramDataDir(); }
+
+    void setupShortcut(QShortcut *action, QString text);
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

@@ -186,7 +186,6 @@ private:
     QShortcut *closeTabShortcut;
     QShortcut *downNoteShortcut;
     QShortcut *upNoteShortcut;
-    void setupShortcut(QShortcut *shortcut, QString keySequence);
 
     // Plugins
     void loadPlugins();

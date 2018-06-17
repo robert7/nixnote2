@@ -583,12 +583,13 @@ void NMainMenuBar::setupHelpMenu() {
 
     helpMenu->addSeparator();
 
-
     aboutQtAction = new QAction(tr("About &Qt"), this);
     aboutQtAction->setMenuRole(QAction::AboutQtRole);
     aboutQtAction->setToolTip(tr("About Qt"));
     connect(aboutQtAction, SIGNAL(triggered()), parent, SLOT(openQtAbout()));
     helpMenu->addAction(aboutQtAction);
+
+    helpMenu->addSeparator();
 
     aboutAction = new QAction(tr("&About"), this);
     aboutAction->setToolTip(tr("About"));

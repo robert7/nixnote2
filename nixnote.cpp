@@ -761,82 +761,82 @@ void NixNote::setupGui() {
     // Setup application-wide shortcuts
     focusSearchShortcut = new QShortcut(this);
     focusSearchShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-    this->setupShortcut(focusSearchShortcut, "Focus_Search");
+    global.setupShortcut(focusSearchShortcut, "Focus_Search");
     connect(focusSearchShortcut, SIGNAL(activated()), searchText, SLOT(setFocus()));
 
     fileSaveShortcut = new QShortcut(this);
     fileSaveShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-    this->setupShortcut(fileSaveShortcut, "File_Save_Content");
+    global.setupShortcut(fileSaveShortcut, "File_Save_Content");
     connect(fileSaveShortcut, SIGNAL(activated()), tabWindow, SLOT(saveAllNotes()));
 
     focusTitleShortcut = new QShortcut(this);
     focusTitleShortcut->setContext(Qt::WidgetShortcut);
-    this->setupShortcut(focusTitleShortcut, "Focus_Title");
+    global.setupShortcut(focusTitleShortcut, "Focus_Title");
     connect(focusTitleShortcut, SIGNAL(activated()), &tabWindow->currentBrowser()->noteTitle, SLOT(setFocus()));
 
     focusNoteShortcut = new QShortcut(this);
     focusNoteShortcut->setContext(Qt::WidgetShortcut);
-    this->setupShortcut(focusNoteShortcut, "Focus_Note");
+    global.setupShortcut(focusNoteShortcut, "Focus_Note");
     connect(focusNoteShortcut, SIGNAL(activated()), tabWindow->currentBrowser()->editor, SLOT(setFocus()));
 
     copyNoteUrlShortcut = new QShortcut(this);
     copyNoteUrlShortcut->setContext(Qt::WidgetShortcut);
-    this->setupShortcut(copyNoteUrlShortcut, "Edit_Copy_Note_Url");
+    global.setupShortcut(copyNoteUrlShortcut, "Edit_Copy_Note_Url");
     connect(copyNoteUrlShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(copyNoteUrl()));
 
     focusTagShortcut = new QShortcut(this);
     focusTagShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-    this->setupShortcut(focusTagShortcut, "Focus_Tag");
+    global.setupShortcut(focusTagShortcut, "Focus_Tag");
     connect(focusTagShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(newTagFocusShortcut()));
 
     focusUrlShortcut = new QShortcut(this);
     focusUrlShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-    this->setupShortcut(focusUrlShortcut, "Focus_Url");
+    global.setupShortcut(focusUrlShortcut, "Focus_Url");
     connect(focusUrlShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(urlFocusShortcut()));
 
     focusAuthorShortcut = new QShortcut(this);
     focusAuthorShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-    this->setupShortcut(focusAuthorShortcut, "Focus_Author");
+    global.setupShortcut(focusAuthorShortcut, "Focus_Author");
     connect(focusAuthorShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(authorFocusShortcut()));
 
     focusNotebookShortcut = new QShortcut(this);
     focusNotebookShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-    this->setupShortcut(focusNotebookShortcut, "Focus_Notebook");
+    global.setupShortcut(focusNotebookShortcut, "Focus_Notebook");
     connect(focusNotebookShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(notebookFocusShortcut()));
 
     focusFontShortcut = new QShortcut(this);
     focusFontShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-    this->setupShortcut(focusFontShortcut, "Focus_Font");
+    global.setupShortcut(focusFontShortcut, "Focus_Font");
     connect(focusFontShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(fontFocusShortcut()));
 
     focusFontSizeShortcut = new QShortcut(this);
     focusFontSizeShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-    this->setupShortcut(focusFontSizeShortcut, "Focus_Font_Size");
+    global.setupShortcut(focusFontSizeShortcut, "Focus_Font_Size");
     connect(focusFontSizeShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(fontSizeFocusShortcut()));
 
     nextTabShortcut = new QShortcut(this);
     nextTabShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-    this->setupShortcut(nextTabShortcut, "Next_Tab");
+    global.setupShortcut(nextTabShortcut, "Next_Tab");
     connect(nextTabShortcut, SIGNAL(activated()), tabWindow, SLOT(nextTab()));
 
     prevTabShortcut = new QShortcut(this);
     prevTabShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-    this->setupShortcut(prevTabShortcut, "Prev_Tab");
+    global.setupShortcut(prevTabShortcut, "Prev_Tab");
     connect(prevTabShortcut, SIGNAL(activated()), tabWindow, SLOT(prevTab()));
 
     closeTabShortcut = new QShortcut(this);
     closeTabShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-    this->setupShortcut(closeTabShortcut, "Close_Tab");
+    global.setupShortcut(closeTabShortcut, "Close_Tab");
     connect(closeTabShortcut, SIGNAL(activated()), tabWindow, SLOT(closeTab()));
 
     downNoteShortcut = new QShortcut(this);
     downNoteShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-    this->setupShortcut(downNoteShortcut, "Down_Note");
+    global.setupShortcut(downNoteShortcut, "Down_Note");
     connect(downNoteShortcut, SIGNAL(activated()), noteTableView, SLOT(downNote()));
 
     upNoteShortcut = new QShortcut(this);
     upNoteShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-    this->setupShortcut(upNoteShortcut, "Up_Note");
+    global.setupShortcut(upNoteShortcut, "Up_Note");
     connect(upNoteShortcut, SIGNAL(activated()), noteTableView, SLOT(upNote()));
 
 
@@ -3827,18 +3827,6 @@ void NixNote::checkLeftPanelSeparators() {
     leftseparator4->setVisible(s4);
     leftSeparator5->setVisible(s5);
 }
-
-
-
-// Load any shortcut keys
-void NixNote::setupShortcut(QShortcut *action, QString text) {
-    if (!global.shortcutKeys->containsAction(&text))
-        return;
-    QKeySequence key(global.shortcutKeys->getShortcut(&text));
-    action->setKey(key);
-}
-
-
 
 // Make sure the toolbar checkbox & the menu match.
 void NixNote::toolbarVisibilityChanged() {
