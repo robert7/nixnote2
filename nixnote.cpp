@@ -333,7 +333,7 @@ void NixNote::setupGui() {
 
     homeButtonShortcut = new QShortcut(this);
     homeButton = toolBar->addAction(global.getIconResource(":homeIcon"), tr("All Notes"));
-    homeButton->setToolTip(global.appendShortcutInfo(tr("All Notes"), "View_All_Notes"));
+    homeButton->setToolTip(tr("All Notes") + global.setupShortcut(homeButtonShortcut, "View_All_Notes"));
 
     toolBar->addSeparator();
 
@@ -378,7 +378,10 @@ void NixNote::setupGui() {
 
 
     connect(syncButton, SIGNAL(triggered()), this, SLOT(synchronize()));
+
     connect(homeButton, SIGNAL(triggered()), this, SLOT(resetView()));
+    connect(homeButtonShortcut, SIGNAL(activated()), this, SLOT(resetView()));
+
     connect(printNoteButton, SIGNAL(triggered()), this, SLOT(fastPrintNote()));
     connect(deleteNoteButton, SIGNAL(triggered()), this, SLOT(deleteCurrentNote()));
     connect(newNoteButton, SIGNAL(triggered()), this, SLOT(newNote()));
