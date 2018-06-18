@@ -1,6 +1,6 @@
 # TODO
 ## 1
-* Reset table view position to top after search
+* Reset table view position to top after search --- missing:horizontal reset
 * Focus search box after "all notes"
 * Send email using external email client
 * Improve info related to sync error - e.g. "Unable to update note.  Invalid note 
