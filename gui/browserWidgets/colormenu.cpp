@@ -108,8 +108,13 @@ void ColorMenu::setCurrentColor(QColor color) {
     currentColor = color;
 }
 
+void ColorMenu::setCurrentColor(QString color) {
+    currentColor.setNamedColor(color);
+}
+
 void ColorMenu::itemHovered() {
     if (menu.activeAction() != NULL && menu.activeAction()->toolTip() != NULL) {
-        currentColor.setNamedColor(menu.activeAction()->toolTip());
+        QString color = menu.activeAction()->toolTip();
+        setCurrentColor(color);
     }
 }

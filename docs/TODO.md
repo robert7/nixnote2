@@ -1,6 +1,5 @@
 # TODO
 ## 1
-* Save/restore colors to/from state
 * Reset table view position to top after search
 * Clear search term after clicking on all notes
 * Send email using external email client

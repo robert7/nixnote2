@@ -31,7 +31,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 EditorButtonBar::EditorButtonBar(QWidget *parent) :
-        QToolBar(parent) {
+    QToolBar(parent) {
+
+    // read state of the colors from init file
+    getButtonbarColorState();
+
     contextMenu = new QMenu();
     undoVisible = contextMenu->addAction(tr("Undo"));
     redoVisible = contextMenu->addAction(tr("Redo"));
@@ -152,7 +156,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     );
     fontColorAction = this->addWidget(fontColorButtonWidget);
     // TODO load from settings
-    fontColorMenuWidget->setCurrentColor(Qt::red);
+    fontColorMenuWidget->setCurrentColor(fontColor);
 
     highlightColorMenuWidget = new ColorMenu();
     highlightColorButtonWidget = new QToolButton(this);
@@ -165,11 +169,9 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
             "Format_Highlight"
         )
     );
-
-
     highlightColorAction = this->addWidget(highlightColorButtonWidget);
     // TODO load from settings
-    highlightColorMenuWidget->setCurrentColor(Qt::yellow);
+    highlightColorMenuWidget->setCurrentColor(fontHighlightColor);
 
     QString tooltipInfo;
     undoButtonShortcut = new QShortcut(this);
@@ -195,7 +197,8 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
     removeFormatButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(removeFormatButtonShortcut, "Edit_Remove_Formatting");
-    removeFormatButtonAction = this->addAction(global.getIconResource(":eraserIcon"), tr("Remove Formatting").append(tooltipInfo));
+    removeFormatButtonAction = this->addAction(global.getIconResource(":eraserIcon"),
+                                               tr("Remove Formatting").append(tooltipInfo));
 
     boldButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(boldButtonShortcut, "Format_Bold");
@@ -223,35 +226,43 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
     strikethroughButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(strikethroughButtonShortcut, "Format_Strikethrough");
-    strikethroughButtonAction = this->addAction(global.getIconResource(":strikethroughIcon"), tr("Strikethrough").append(tooltipInfo));
+    strikethroughButtonAction = this->addAction(global.getIconResource(":strikethroughIcon"),
+                                                tr("Strikethrough").append(tooltipInfo));
 
     superscriptButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(superscriptButtonShortcut, "Format_Superscript");
-    superscriptButtonAction = this->addAction(global.getIconResource(":superscriptIcon"), tr("Superscript").append(tooltipInfo));
+    superscriptButtonAction = this->addAction(global.getIconResource(":superscriptIcon"),
+                                              tr("Superscript").append(tooltipInfo));
 
     subscriptButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(subscriptButtonShortcut, "Format_Subscript");
-    subscriptButtonAction = this->addAction(global.getIconResource(":subscriptIcon"), tr("Subscript").append(tooltipInfo));
+    subscriptButtonAction = this->addAction(global.getIconResource(":subscriptIcon"),
+                                            tr("Subscript").append(tooltipInfo));
 
     centerJustifyButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(centerJustifyButtonShortcut, "Format_Alignment_Center");
-    centerJustifyButtonAction = this->addAction(global.getIconResource(":centerAlignIcon"), tr("Center Justify").append(tooltipInfo));
+    centerJustifyButtonAction = this->addAction(global.getIconResource(":centerAlignIcon"),
+                                                tr("Center Justify").append(tooltipInfo));
 
     fullJustifyButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(fullJustifyButtonShortcut, "Format_Alignment_Full");
-    fullJustifyButtonAction = this->addAction(global.getIconResource(":fullAlignIcon"), tr("Fully Justify").append(tooltipInfo));
+    fullJustifyButtonAction = this->addAction(global.getIconResource(":fullAlignIcon"),
+                                              tr("Fully Justify").append(tooltipInfo));
 
     rightJustifyButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(rightJustifyButtonShortcut, "Format_Alignment_Right");
-    rightJustifyButtonAction = this->addAction(global.getIconResource(":rightAlignIcon"), tr("Right Justify").append(tooltipInfo));
+    rightJustifyButtonAction = this->addAction(global.getIconResource(":rightAlignIcon"),
+                                               tr("Right Justify").append(tooltipInfo));
 
     leftJustifyButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(leftJustifyButtonShortcut, "Format_Alignment_Left");
-    leftJustifyButtonAction = this->addAction(global.getIconResource(":leftAlignIcon"), tr("Left Justify").append(tooltipInfo));
+    leftJustifyButtonAction = this->addAction(global.getIconResource(":leftAlignIcon"),
+                                              tr("Left Justify").append(tooltipInfo));
 
     hlineButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(hlineButtonShortcut, "Format_Horizontal_Line");
-    hlineButtonAction = this->addAction(global.getIconResource(":hlineIcon"), tr("Horizontal Line").append(tooltipInfo));
+    hlineButtonAction = this->addAction(global.getIconResource(":hlineIcon"),
+                                        tr("Horizontal Line").append(tooltipInfo));
 
     tooltipInfo = global.appendShortcutInfo(QString(), "Insert_DateTime");
     insertDatetimeButtonWidget = new QToolButton(this);
@@ -262,19 +273,23 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
     shiftRightButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(shiftRightButtonShortcut, "Format_Indent_Increase");
-    shiftRightButtonAction = this->addAction(global.getIconResource(":shiftRightIcon"), tr("Indent/Shift Right").append(tooltipInfo));
+    shiftRightButtonAction = this->addAction(global.getIconResource(":shiftRightIcon"),
+                                             tr("Indent/Shift Right").append(tooltipInfo));
 
     shiftLeftButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(shiftLeftButtonShortcut, "Format_Indent_Decrease");
-    shiftLeftButtonAction = this->addAction(global.getIconResource(":shiftLeftIcon"), tr("Outdent/Shift Left").append(tooltipInfo));
+    shiftLeftButtonAction = this->addAction(global.getIconResource(":shiftLeftIcon"),
+                                            tr("Outdent/Shift Left").append(tooltipInfo));
 
     bulletListButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(bulletListButtonShortcut, "Format_List_Bullet");
-    bulletListButtonAction = this->addAction(global.getIconResource(":bulletListIcon"), tr("Bullet List").append(tooltipInfo));
+    bulletListButtonAction = this->addAction(global.getIconResource(":bulletListIcon"),
+                                             tr("Bullet List").append(tooltipInfo));
 
     numberListButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(numberListButtonShortcut, "Format_List_Numbered");
-    numberListButtonAction = this->addAction(global.getIconResource(":numberListIcon"), tr("Number List").append(tooltipInfo));
+    numberListButtonAction = this->addAction(global.getIconResource(":numberListIcon"),
+                                             tr("Number List").append(tooltipInfo));
 
     todoButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(todoButtonShortcut, "Edit_Insert_Todo");
@@ -282,20 +297,24 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
     spellCheckButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(spellCheckButtonShortcut, "Tools_Spell_Check");
-    spellCheckButtonAction = this->addAction(global.getIconResource(":spellCheckIcon"), tr("Spell Check").append(tooltipInfo));
+    spellCheckButtonAction = this->addAction(global.getIconResource(":spellCheckIcon"),
+                                             tr("Spell Check").append(tooltipInfo));
 
     insertTableButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(insertTableButtonShortcut, "Edit_Insert_Table");
-    insertTableButtonAction = this->addAction(global.getIconResource(":gridIcon"), tr("Insert Table").append(tooltipInfo));
+    insertTableButtonAction = this->addAction(global.getIconResource(":gridIcon"),
+                                              tr("Insert Table").append(tooltipInfo));
 
     htmlEntitiesButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(htmlEntitiesButtonShortcut, "Edit_Insert_Html_Entities");
-    htmlEntitiesButtonAction = this->addAction(global.getIconResource(":htmlentitiesIcon"), tr("Insert HTML Entities").append(tooltipInfo));
+    htmlEntitiesButtonAction = this->addAction(global.getIconResource(":htmlentitiesIcon"),
+                                               tr("Insert HTML Entities").append(tooltipInfo));
     htmlEntitiesButtonShortcut->setContext(Qt::WidgetShortcut);
 
     formatCodeButtonShortcut = new QShortcut(this);
     tooltipInfo = global.setupShortcut(formatCodeButtonShortcut, "Format_Code_Block");
-    formatCodeButtonAction = this->addAction(global.getIconResource(":formatCodeIcon"), tr("Format Code Block").append(tooltipInfo));
+    formatCodeButtonAction = this->addAction(global.getIconResource(":formatCodeIcon"),
+                                             tr("Format Code Block").append(tooltipInfo));
 
     QString css = global.getThemeCss("editorButtonBarCss");
     if (css != "")
@@ -334,7 +353,8 @@ void EditorButtonBar::contextMenuEvent(QContextMenuEvent *event) {
 }
 
 
-void EditorButtonBar::saveVisibleButtons() {
+void EditorButtonBar::saveButtonbarState() {
+    QLOG_DEBUG() << "Buttonbar state save";
     global.settings->beginGroup("SaveState");
 
     bool value;
@@ -431,11 +451,16 @@ void EditorButtonBar::saveVisibleButtons() {
     value = formatCodeButtonAction->isVisible();
     global.settings->setValue("formatCodeButtonVisible", value);
 
+    QString valueS = fontColorMenuWidget->getCurrentColorName();
+    global.settings->setValue("fontColor", valueS);
+    valueS = highlightColorMenuWidget->getCurrentColorName();
+    global.settings->setValue("fontHighlightColor", valueS);
+
     global.settings->endGroup();
 }
 
 
-void EditorButtonBar::setupVisibleButtons() {
+void EditorButtonBar::getButtonbarState() {
     global.settings->beginGroup("SaveState");
 
     undoButtonAction->setVisible(global.settings->value("undoButtonVisible", true).toBool());
@@ -513,7 +538,7 @@ void EditorButtonBar::setupVisibleButtons() {
     insertTableButtonAction->setVisible(global.settings->value("insertTableButtonVisible", true).toBool());
     insertTableButtonVisible->setChecked(insertTableButtonAction->isVisible());
 
-    fontColorAction ->setVisible(global.settings->value("fontColorButtonVisible", true).toBool());
+    fontColorAction->setVisible(global.settings->value("fontColorButtonVisible", true).toBool());
     fontColorVisible->setChecked(fontColorAction->isVisible());
 
     highlightColorAction->setVisible(global.settings->value("highlightButtonVisible", true).toBool());
@@ -531,6 +556,15 @@ void EditorButtonBar::setupVisibleButtons() {
     formatCodeButtonAction->setVisible(global.settings->value("formatCodeButtonVisible", true).toBool());
     formatCodeButtonVisible->setChecked(formatCodeButtonAction->isVisible());
 
+
+    global.settings->endGroup();
+}
+
+// we can't easily call getButtonbarState, as the buttons are not yet ready at creation time
+void EditorButtonBar::getButtonbarColorState() {
+    global.settings->beginGroup("SaveState");
+    fontColor = global.settings->value("fontColor", "red").toString();
+    fontHighlightColor = global.settings->value("fontHighlightColor", "yellow").toString();
     global.settings->endGroup();
 }
 
@@ -538,133 +572,163 @@ void EditorButtonBar::setupVisibleButtons() {
 
 void EditorButtonBar::toggleUndoButtonVisible() {
     undoButtonAction->setVisible(undoVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
-void EditorButtonBar::toggleRedoButtonVisible()  {
+
+void EditorButtonBar::toggleRedoButtonVisible() {
     redoButtonAction->setVisible(redoVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleCutButtonVisible() {
     cutButtonAction->setVisible(cutVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleCopyButtonVisible() {
     copyButtonAction->setVisible(copyVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::togglePasteButtonVisible() {
     pasteButtonAction->setVisible(pasteVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleRemoveFormatVisible() {
     removeFormatButtonAction->setVisible(removeFormatVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleBoldButtonVisible() {
     boldButtonAction->setVisible(boldVisible->isChecked());
-    saveVisibleButtons();
-    }
+    saveButtonbarState();
+}
+
 void EditorButtonBar::toggleItalicButtonVisible() {
     italicButtonAction->setVisible(italicVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleUnderlineButtonVisible() {
     underlineButtonAction->setVisible(underlineVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleStrikethroughButtonVisible() {
     strikethroughButtonAction->setVisible(strikethroughVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleSuperscriptButtonVisible() {
     superscriptButtonAction->setVisible(superscriptVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleSubscriptButtonVisible() {
     subscriptButtonAction->setVisible(subscriptVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleInsertDatetimeVisible() {
     insertDatetimeButtonAction->setVisible(insertDatetimeVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleLeftJustifyButtonVisible() {
     leftJustifyButtonAction->setVisible(leftJustifyVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleCenterJustifyButtonVisible() {
     centerJustifyButtonAction->setVisible(centerJustifyVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleFullJustifyButtonVisible() {
     fullJustifyButtonAction->setVisible(fullJustifyVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleRightJustifyButtonVisible() {
     rightJustifyButtonAction->setVisible(rightJustifyVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleHlineButtonVisible() {
     hlineButtonAction->setVisible(hlineVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleShiftRightButtonVisible() {
     shiftRightButtonAction->setVisible(shiftRightVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleShiftLeftButtonVisible() {
     shiftLeftButtonAction->setVisible(shiftLeftVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleBulletListButtonVisible() {
     bulletListButtonAction->setVisible(bulletListVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleNumberListButtonVisible() {
     numberListButtonAction->setVisible(numberListVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleFontButtonVisible() {
     fontButtonAction->setVisible(fontVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleFontSizeButtonVisible() {
     fontSizeButtonAction->setVisible(fontSizeVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleTodoButtonVisible() {
     todoButtonAction->setVisible(todoVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleHighlightColorVisible() {
     highlightColorAction->setVisible(highlightVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleFontColorVisible() {
     fontColorAction->setVisible(fontColorVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleInsertTableButtonVisible() {
     insertTableButtonAction->setVisible(insertTableButtonVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleSpellCheckButtonVisible() {
     spellCheckButtonAction->setVisible(spellCheckButtonVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleHtmlEntitiesButtonVisible() {
     htmlEntitiesButtonAction->setVisible(htmlEntitiesButtonVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
+
 void EditorButtonBar::toggleFormatCodeButtonVisible() {
     formatCodeButtonAction->setVisible(formatCodeButtonVisible->isChecked());
-    saveVisibleButtons();
+    saveButtonbarState();
 }
 
 
 // Load the list of font names
 void EditorButtonBar::loadFontNames() {
-    if (global.forceWebFonts){
+    if (global.forceWebFonts) {
         QStringList fontFamilies;
         fontFamilies.append("Gotham");
         fontFamilies.append("Georgia");
@@ -685,7 +749,7 @@ void EditorButtonBar::loadFontNames() {
             fontNames->setItemData(i, QVariant(f), Qt::FontRole);
             if (first) {
                 loadFontSizeComboBox(fontFamilies[i]);
-                first=false;
+                first = false;
             }
         }
         return;
@@ -704,15 +768,13 @@ void EditorButtonBar::loadFontNames() {
         global.getGuiFont(f);
         f.setFamily(fontFamilies[i]);
         if (global.previewFontsInDialog())
-           fontNames->setItemData(i, QVariant(f), Qt::FontRole);
+            fontNames->setItemData(i, QVariant(f), Qt::FontRole);
         if (first) {
             loadFontSizeComboBox(fontFamilies[i]);
-            first=false;
+            first = false;
         }
     }
 }
-
-
 
 
 // Load the list of font sizes
@@ -720,7 +782,7 @@ void EditorButtonBar::loadFontSizeComboBox(QString name) {
     QFontDatabase fdb;
     fontSizes->clear();
     QList<int> sizes = fdb.smoothSizes(name, "Normal");
-    for (int i=0; i<sizes.size(); i++) {
+    for (int i = 0; i < sizes.size(); i++) {
         fontSizes->addItem(QString::number(sizes[i]), sizes[i]);
     }
     if (sizes.size() == 0) {

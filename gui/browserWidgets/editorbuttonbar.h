@@ -148,9 +148,14 @@ public:
     explicit EditorButtonBar(QWidget *parent = 0);
     ~EditorButtonBar();
     void contextMenuEvent(QContextMenuEvent *event);
-    void saveVisibleButtons();
-    void setupVisibleButtons();
+
+    void saveButtonbarState();
+    void getButtonbarState();
     void reloadIcons();
+private:
+    QString fontColor;
+    QString fontHighlightColor;
+    void getButtonbarColorState();
 
 signals:
     

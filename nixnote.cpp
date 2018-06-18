@@ -325,10 +325,11 @@ void NixNote::setupGui() {
     toolBar->addSeparator();
 
     homeButton = toolBar->addAction(global.getIconResource(":homeIcon"), tr("All Notes"));
-//    homeButton->setPriority(QAction::LowPriority);   Hide the text by the icon
+    // homeButton->setPriority(QAction::LowPriority);   Hide the text by the icon
     syncButton = toolBar->addAction(global.getIconResource(":synchronizeIcon"), tr("Sync"));
-//  syncButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
-    toolBar->addSeparator();
+    // syncButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
+
+        toolBar->addSeparator();
     printNoteButton = toolBar->addAction(global.getIconResource(":printerIcon"), tr("Print"));
     printNoteButton->setToolTip(tr("Print the current note"));
 

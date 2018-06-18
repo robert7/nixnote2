@@ -219,7 +219,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     factory = new PluginFactory(this);
     editor->page()->setPluginFactory(factory);
 
-    buttonBar->setupVisibleButtons();
+    buttonBar->getButtonbarState();
 
     printPage = new QTextEdit();
     printPage->setVisible(false);
@@ -1371,6 +1371,7 @@ void NBrowserWindow::fontColorClicked() {
             "document.execCommand('foreColor', false, '" + color->name() + "');");
         editor->setFocus();
         microFocusChanged();
+        buttonBar->saveButtonbarState();
     }
 }
 
@@ -1385,6 +1386,7 @@ void NBrowserWindow::fontHighlightClicked() {
             "document.execCommand('backColor', false, '" + color->name() + "');");
         editor->setFocus();
         microFocusChanged();
+        buttonBar->saveButtonbarState();
     }
 }
 
