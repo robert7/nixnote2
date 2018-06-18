@@ -1,5 +1,6 @@
 # TODO
 ## 1
+* finish File_History_Previous/Next
 * Reset table view position to top after search
 * Send email using external email client
 * Improve info related to sync error - e.g. "Unable to update note.  Invalid note 

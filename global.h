@@ -344,10 +344,23 @@ public:
     ExitManager *exitManager;                                  // Utility to manage exit points.
     QString getProgramDataDir() { return fileManager.getProgramDataDir(); }
 
+    // kind of "pretty print"
+    // format from lower cased to "display version"
     QString formatShortcutKeyString(QString shortcutKeyString);
-    QString getShortcutStr(QString shortCutCode, bool lowerCased);
+
+    // get short cut string for given shortcut code (by shortcuts.txt)
+    // lowerCased=true => return lower cased string (as it is stored internally and shoudl be used to setup shortcuts)
+    // lowerCased=false => will try "pretty print"
+    QString getShortcutStr(QString shortCutCode, bool lowerCased = false);
+
+    // setup shortcut key
+    // in case match was found, return info to be appended to tooltip
     QString setupShortcut(QShortcut *action, QString shortCutCode);
+    // setup shortcut key
+    // in case match was found, return info to be appended to tooltip
     QString setupShortcut(QAction *action, QString shortCutCode);
+
+    // used to append active short info to tolltip strings
     QString appendShortcutInfo(QString tooltip, QString shortCutCode);
 
     // update status bar with given string

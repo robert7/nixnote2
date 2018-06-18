@@ -1505,8 +1505,6 @@ void Global::setUseLibTidy(bool value) {
 #endif
 }
 
-// kind of "pretty print"
-// format from lower cased to "display version"
 QString Global::formatShortcutKeyString(QString shortcutKeyString) {
     return shortcutKeyString.toUpper()
         .replace("SPACE", "Space")
@@ -1517,7 +1515,6 @@ QString Global::formatShortcutKeyString(QString shortcutKeyString) {
         .replace("PGDOWN", "PgDown");
 }
 
-// used to append active short info to tolltip strings
 QString Global::appendShortcutInfo(QString tooltip, QString shortCutCode) {
     QString shortcutStr = getShortcutStr(shortCutCode, false);
     if (shortcutStr.isEmpty()) {
@@ -1526,7 +1523,6 @@ QString Global::appendShortcutInfo(QString tooltip, QString shortCutCode) {
     return tooltip.append(" - ").append(shortcutStr);
 }
 
-// get short cut string for given shortcut code (by shortcuts.txt)
 QString Global::getShortcutStr(QString shortCutCode, bool lowerCased) {
     ShortcutKeys *shortcutKeys = this->shortcutKeys;
 
@@ -1542,8 +1538,6 @@ QString Global::getShortcutStr(QString shortCutCode, bool lowerCased) {
     return code;
 }
 
-// setup shortcut key
-// in case match was found, return info to be appended to tooltip
 QString Global::setupShortcut(QShortcut *action, QString shortCutCode) {
     QString shortcutStr = this->getShortcutStr(shortCutCode, true);
     if (shortcutStr.isEmpty()) {
@@ -1555,8 +1549,6 @@ QString Global::setupShortcut(QShortcut *action, QString shortCutCode) {
     return appendShortcutInfo(QString(), shortCutCode);
 }
 
-// setup shortcut key
-// in case match was found, return info to be appended to tooltip
 QString Global::setupShortcut(QAction *action, QString shortCutCode) {
     QString shortcutStr = this->getShortcutStr(shortCutCode, true);
     if (shortcutStr.isEmpty()) {

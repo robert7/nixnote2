@@ -477,8 +477,8 @@ void NMainMenuBar::setupToolsMenu() {
     connect(disableEditingAction, SIGNAL(triggered()), parent, SLOT(disableEditing()));
     toolsMenu->addAction(disableEditingAction);
 
-    accountDialogAction = new QAction(tr("A&ccount"), this);
-    accountDialogAction->setToolTip(tr("Account information"));
+    accountDialogAction = new QAction(tr("A&ccount / Usage"), this);
+    accountDialogAction->setToolTip(tr("Account and usage information"));
     connect(accountDialogAction, SIGNAL(triggered()), parent, SLOT(openAccount()));
     setupShortcut(accountDialogAction, QString("Tools_Account_Information"));
     toolsMenu->addAction(accountDialogAction);

@@ -131,8 +131,6 @@ private:
     QAction *newWebcamNoteButton;
     QAction *screenCaptureButton;
     QAction *newExternalNoteButton;
-    QAction *trunkButton;
-    QAction *usageButton;
     QAction *emailButton;
     QAction *toolsAccountAction;
 
@@ -186,6 +184,7 @@ private:
     QShortcut *closeTabShortcut;
     QShortcut *downNoteShortcut;
     QShortcut *upNoteShortcut;
+    QShortcut *homeButtonShortcut;
 
     // Plugins
     void loadPlugins();
