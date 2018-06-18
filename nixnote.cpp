@@ -2008,6 +2008,8 @@ void NixNote::resetView() {
     criteria->unsetSearchString();
     global.filterCriteria.append(criteria);
     global.filterPosition++;
+    // clear search text, after we clicked "all notes"
+    searchText->setText("");
     updateSelectionCriteria();
 }
 
