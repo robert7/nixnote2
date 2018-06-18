@@ -9,8 +9,8 @@
 * Few more default kbd shortcuts added.  
 * Remove hardcoded build in kbd shortcuts (now all comes from shortcuts.ini)
 * Changed theme handling - now all themes come from ini file (incl. of the Default theme). This is 
-  similar to shortcuts.txt
-* Clear search text, after click on "all notes"  
+  similar to shortcuts.txt.
+* Clear search text, after click on "all notes".  
 * Restructured main toolbar. All buttons now have kbd shortcuts and tooltips showing it.
   
 

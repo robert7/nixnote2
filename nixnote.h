@@ -185,6 +185,8 @@ private:
     QShortcut *downNoteShortcut;
     QShortcut *upNoteShortcut;
     QShortcut *homeButtonShortcut;
+    QShortcut *leftArrowButtonShortcut;
+    QShortcut *rightArrowButtonShortcut;
 
     // Plugins
     void loadPlugins();

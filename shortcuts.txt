@@ -31,8 +31,8 @@ File_Empty_Trash                                // Purge all deleted notes
 File_Exit                     Ctrl+Q            // I'm outahere
 File_Note_Export_Pdf                            // Export selected notes as a PDF
 File_Email                    Ctrl+Alt+E        // Email
-File_History_Previous         Alt-Left          // Go back in history
-File_History_Next             Alt-Right         // Go forward in history
+File_History_Previous         Alt+Left          // Go back in history
+File_History_Next             Alt+Right         // Go forward in history
 
 
 

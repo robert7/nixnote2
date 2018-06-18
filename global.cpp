@@ -1511,6 +1511,8 @@ QString Global::formatShortcutKeyString(QString shortcutKeyString) {
         .replace("CTRL", "Ctrl")
         .replace("ALT", "Alt")
         .replace("SHIFT", "Shift")
+        .replace("LEFT", "Left")
+        .replace("RIGHT", "Right")
         .replace("PGUP", "PgUp")
         .replace("PGDOWN", "PgDown");
 }

@@ -313,15 +313,25 @@ void NixNote::setupGui() {
     toolBar->setAllowedAreas(Qt::BottomToolBarArea | Qt::TopToolBarArea);
     //toolBar->addSeparator();
 
-    leftArrowButton = toolBar->addAction(global.getIconResource(":leftArrowIcon"), tr("Back"));
+    leftArrowButtonShortcut = new QShortcut(this);
+    leftArrowButton = toolBar->addAction(
+        global.getIconResource(":leftArrowIcon"),
+        tr("Back") + global.setupShortcut(leftArrowButtonShortcut, "File_History_Previous")
+    );
     leftArrowButton->setEnabled(false);
     leftArrowButton->setPriority(QAction::LowPriority);
     connect(leftArrowButton, SIGNAL(triggered(bool)), this, SLOT(leftButtonTriggered()));
+    connect(leftArrowButtonShortcut, SIGNAL(activated()), this, SLOT(leftButtonTriggered()));
 
-    rightArrowButton = toolBar->addAction(global.getIconResource(":rightArrowIcon"), tr("Next"));
+    rightArrowButtonShortcut = new QShortcut(this);
+    rightArrowButton = toolBar->addAction(
+        global.getIconResource(":rightArrowIcon"),
+        tr("Next") + global.setupShortcut(rightArrowButtonShortcut, "File_History_Next")
+    );
     rightArrowButton->setEnabled(false);
     rightArrowButton->setPriority(QAction::LowPriority);
     connect(rightArrowButton, SIGNAL(triggered(bool)), this, SLOT(rightButtonTriggered()));
+    connect(rightArrowButtonShortcut, SIGNAL(activated()), this, SLOT(rightButtonTriggered()));
 
     toolBar->addSeparator();
 
@@ -371,7 +381,8 @@ void NixNote::setupGui() {
     );
     printNoteButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
 
-    emailButton = toolBar->addAction(global.getIconResource(":emailIcon"), global.appendShortcutInfo(tr("Email the current note"), "File_Email"));
+    emailButton = toolBar->addAction(global.getIconResource(":emailIcon"),
+                                     global.appendShortcutInfo(tr("Email the current note"), "File_Email"));
     emailButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
 
     toolBar->addSeparator();
@@ -1584,7 +1595,8 @@ void NixNote::openNote(bool newWindow) {
     }
     rightArrowButton->setEnabled(false);
     leftArrowButton->setEnabled(false);
-    if (global.filterPosition + 1 < global.filterCriteria.size())
+    int maxFilterPosition = global.filterCriteria.size() - 1;
+    if (global.filterPosition < maxFilterPosition)
         rightArrowButton->setEnabled(true);
     if (global.filterPosition > 0)
         leftArrowButton->setEnabled(true);
@@ -1641,7 +1653,8 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
 
     rightArrowButton->setEnabled(false);
     leftArrowButton->setEnabled(false);
-    if (global.filterPosition + 1 < global.filterCriteria.size())
+    int maxFilterPosition = global.filterCriteria.size() - 1;
+    if (global.filterPosition < maxFilterPosition)
         rightArrowButton->setEnabled(true);
     if (global.filterPosition > 0)
         leftArrowButton->setEnabled(true);
@@ -1700,6 +1713,11 @@ void NixNote::checkReadOnlyNotebook() {
 //* to go to the next history position.
 //*********************************************
 void NixNote::rightButtonTriggered() {
+    int maxFilterPosition = global.filterCriteria.size() - 1;
+    if (global.filterPosition >= maxFilterPosition) {
+        return;
+    }
+
     global.filterPosition++;
     updateSelectionCriteria();
 }
@@ -1710,6 +1728,9 @@ void NixNote::rightButtonTriggered() {
 //* to go to the previous history position.
 //*********************************************
 void NixNote::leftButtonTriggered() {
+    if (global.filterPosition <= 0) {
+        return;
+    }
     global.filterPosition--;
     updateSelectionCriteria();
 }
