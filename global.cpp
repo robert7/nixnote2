@@ -1025,6 +1025,8 @@ QPixmap Global::getPixmapResource(QHash <QString, QString> &resourceList, QStrin
     return QPixmap(key);
 }
 
+#define THEME_FILE "theme.ini"
+
 
 // Load a theme into a resourceList.
 void Global::loadTheme(QHash <QString, QString> &resourceList, QHash <QString, QString> &colorList, QString theme) {
@@ -1036,10 +1038,10 @@ void Global::loadTheme(QHash <QString, QString> &resourceList, QHash <QString, Q
         return;
     }
 
-    QFile systemThemeFn(fileManager.getImageDirPath("") + "theme.ini");
+    QFile systemThemeFn(fileManager.getImageDirPath("") + THEME_FILE);
     this->loadThemeFile(resourceList, colorList, systemThemeFn, theme);
 
-    QFile userThemeFn(fileManager.getConfigDir() + "theme.ini"); // user theme
+    QFile userThemeFn(fileManager.getConfigDir() + THEME_FILE); // user theme
     this->loadThemeFile(resourceList, colorList, userThemeFn, theme);
 }
 
@@ -1060,52 +1062,73 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
 
     QTextStream in(&file);
     bool themeFound = false;
-    QString themeHeader = "[" + themeName.trimmed() + "]";
+    QString wantedThemeHeader = "[" + themeName.trimmed() + "]";
     while (!in.atEnd()) {
-        QString line = in.readLine();
-        if (!line.startsWith("#")) {
-            if (line.startsWith("[") && themeHeader != line)
-                themeFound = false;
-            if (line.startsWith("[") && themeHeader == line)
-                themeFound = true;
-            if (themeFound && !line.startsWith("[") && line != "") {
-                QStringList fields = line.split("=");
-                if (fields.size() >= 2) {
-                    QString key = fields[0].simplified();
-                    QString value = fields[1].split("#").at(0).simplified();
-#ifdef _WIN32
-                    value = value.replace("/usr/share/nixnote2/images/",fileManager.getImageDirPath("").replace("\\","/"));
-#endif
-                    QFile f(value);
+        QString line = in.readLine().simplified();
+        bool isComment = line.startsWith("#");
+        if (isComment) {
+            continue;
+        }
+        bool isThemeHeader = line.startsWith("[");
+
+        if (isThemeHeader && wantedThemeHeader != line) {
+            themeFound = false;
+            continue;
+        }
+        if (isThemeHeader && wantedThemeHeader == line) {
+            themeFound = true;
+        }
+
+        if (themeFound) {
+            QStringList fields = line.split("=");
+            if (fields.size() >= 2) {
+                QString key = line.section('=', 0, 0).simplified();
+                QString value = line.section('=', 1, 999).split("##").at(0).simplified();
+
+                //QLOG_DEBUG() << "Theme " << wantedThemeHeader << ": key=" << key << "value=" << value;
+
+                // this is a guess, but inline CSS always needs to contain ":", file path should never
+                bool isInlineCss = value.contains(QString(":"));
+                if (isInlineCss) {
+                    colorList.remove("key");
+                    colorList.insert(key, value);
+                    QLOG_DEBUG() << "Theme " << wantedThemeHeader << ": added CSS key=" << key << "value=" << value;
+                } else {
+                    QString filePath = fileManager.getImageDirPath("").append(value);
+                    QFile f(filePath);
                     if (f.exists()) {
+                        QLOG_DEBUG() << "Theme " << wantedThemeHeader << ": added image key=" << key << "path=" << filePath;
                         resourceList.remove(":" + key);
-                        resourceList.insert(":" + key, value);
+                        resourceList.insert(":" + key, filePath);
                     } else {
-                        colorList.remove("key");
-                        colorList.insert(key, fields[1].simplified());
+                        QLOG_WARN() << "Theme file not found: " + filePath;
                     }
                 }
             }
         }
+
     }
 
     file.close();
 }
 
-
 // Get all available themes
 QStringList Global::getThemeNames() {
     QStringList values;
     values.empty();
-    QFile systemTheme(fileManager.getProgramDataDir() + "theme.ini");
+    QFile systemTheme(fileManager.getImageDirPath("") + THEME_FILE);
     this->getThemeNamesFromFile(systemTheme, values);
 
-    QFile userTheme(fileManager.getConfigDir() + "theme.ini"); // user theme
+    QFile userTheme(fileManager.getConfigDir() + THEME_FILE); // user theme
     this->getThemeNamesFromFile(userTheme, values);
 
     // leave in order how they were defined in the file (this makes sure DEFAULT theme will be first)
     //if (!nonAsciiSortBug)
     //    qSort(values.begin(), values.end(), caseInsensitiveLessThan);
+    if (values.size() == 0) {
+        QLOG_FATAL() << "No themes found";
+        exit(16);
+    }
 
     return values;
 }
