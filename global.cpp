@@ -1036,7 +1036,7 @@ void Global::loadTheme(QHash <QString, QString> &resourceList, QHash <QString, Q
         return;
     }
 
-    QFile systemThemeFn(fileManager.getProgramDataDir() + "theme.ini");
+    QFile systemThemeFn(fileManager.getImageDirPath("") + "theme.ini");
     this->loadThemeFile(resourceList, colorList, systemThemeFn, theme);
 
     QFile userThemeFn(fileManager.getConfigDir() + "theme.ini"); // user theme
