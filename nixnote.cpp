@@ -1294,7 +1294,7 @@ void NixNote::saveOnExit() {
     indexThread.quit();
     counterThread.quit();
 
-    QLOG_DEBUG() << "Exitng saveOnExit()";
+    QLOG_DEBUG() << "Exiting saveOnExit()";
 }
 
 //*****************************************************************************

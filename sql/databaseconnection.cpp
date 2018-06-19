@@ -41,7 +41,7 @@ DatabaseConnection::DatabaseConnection(QString connection)
     conn.setDatabaseName(global.fileManager.getDbDirPath("nixnote.db"));
     QLOG_TRACE() << "Opening database";
     if (!conn.open()) {
-        QLOG_ERROR() << "Error opening database: " << conn.lastError();
+        QLOG_FATAL() << "Error opening database: " << conn.lastError();
         exit(16);
     }
 

@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
         int retval = cmdline.run(startupConfig);
         if (global.sharedMemory->isAttached())
             global.sharedMemory->detach();
-        QLOG_DEBUG() << "Exiting: RC=" << retval;
+        QLOG_INFO() << "Exit: retcode=" << retval;
         if (a!=NULL)
             delete a;
         exit(retval);
@@ -304,7 +304,7 @@ int main(int argc, char *argv[])
     a->exit(rc);
     QLOG_DEBUG() << "Deleting application instance";
     delete a;
-    QLOG_DEBUG() << "Exiting: RC=" << rc;
+    QLOG_INFO() << "Exit: retcode=" << rc;
     exit(rc);
     return rc;
 }

@@ -210,7 +210,7 @@ void FileManager::deleteTopLevelFiles(QDir dir, bool exitOnFail) {
     for (qint32 i=0; i<list.size(); i++) {
         QFile f(list.at(i));
         if (!f.remove() && exitOnFail) {
-            cout << "Error deleting file '" +f.fileName().toStdString() <<
+            QLOG_FATAL() << "Error deleting file '" +f.fileName().toStdString() <<
                     "'. Aborting program";
             exit(16);
         }
