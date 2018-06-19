@@ -36,8 +36,7 @@ struct QPairFirstComparer {
 NMainMenuBar::NMainMenuBar(QWidget *parent) :
     QMenuBar(parent) {
     this->parent = (NixNote *) parent;
-    QFont f;
-    f = global.getGuiFont(f);
+    QFont f = global.getGuiFont(QFont());
     this->setFont(f);
 
     setupFileMenu();
@@ -50,8 +49,7 @@ NMainMenuBar::NMainMenuBar(QWidget *parent) :
 
 
 void NMainMenuBar::setupFileMenu() {
-    QFont f;
-    f = global.getGuiFont(f);
+    QFont f = global.getGuiFont(QFont());
     this->setFont(f);
 
     fileMenu = this->addMenu(tr("&File"));
@@ -176,8 +174,7 @@ void NMainMenuBar::addUserAccount(QAction *action) {
 
 void NMainMenuBar::setupEditMenu() {
     editMenu = this->addMenu(tr("&Edit"));
-    QFont f;
-    f = global.getGuiFont(f);
+    QFont f = global.getGuiFont(QFont());
     editMenu->setFont(f);
 
     undoAction = new QAction(tr("&Undo"), this);
@@ -219,6 +216,7 @@ void NMainMenuBar::setupEditMenu() {
     editMenu->addSeparator();
 
     findReplaceMenu = editMenu->addMenu(tr("F&ind and Replace"));
+    findReplaceMenu->setFont(f);
 
     searchNotesAction = new QAction(tr("&Search Notes"), this);
     setupShortcut(searchNotesAction, QString("Edit_Search_Notes"));
@@ -259,6 +257,7 @@ void NMainMenuBar::setupEditMenu() {
 
     setupThemeMenu();
     editMenu->addMenu(themeMenu);
+    themeMenu->setFont(f);
 
     preferencesAction = new QAction(tr("Preferences"), this);
     preferencesAction->setMenuRole(QAction::PreferencesRole);
@@ -270,8 +269,7 @@ void NMainMenuBar::setupEditMenu() {
 
 void NMainMenuBar::setupViewMenu() {
     viewMenu = this->addMenu(tr("&View"));
-    QFont f;
-    f = global.getGuiFont(f);
+    QFont f = global.getGuiFont(QFont());
     viewMenu->setFont(f);
 
     viewNoteListWide = new QAction(tr("Wide Note List"), this);
@@ -388,8 +386,7 @@ void NMainMenuBar::setupViewMenu() {
 void NMainMenuBar::setupNoteMenu() {
 
     noteMenu = this->addMenu(tr("&Note"));
-    QFont f;
-    f = global.getGuiFont(f);
+    QFont f = global.getGuiFont(QFont());
     noteMenu->setFont(f);
 
     newNoteAction = new QAction(tr("New &Note"), noteMenu);
@@ -443,8 +440,7 @@ void NMainMenuBar::setupNoteMenu() {
 
 void NMainMenuBar::setupToolsMenu() {
     toolsMenu = this->addMenu(tr("&Tools"));
-    QFont f;
-    f = global.getGuiFont(f);
+    QFont f = global.getGuiFont(QFont());
     toolsMenu->setFont(f);
 
     synchronizeAction = new QAction(tr("&Synchronize"), this);
@@ -511,9 +507,8 @@ void NMainMenuBar::setupToolsMenu() {
 
 void NMainMenuBar::setupHelpMenu() {
     helpMenu = this->addMenu(tr("&Help"));
-    QFont font;
-    font = global.getGuiFont(font);
-    helpMenu->setFont(font);
+    QFont f = global.getGuiFont(QFont());
+    helpMenu->setFont(f);
 
     openManualAction = new QAction(tr("&User's Guide"), this);
     openManualAction->setToolTip(tr("Open the user manual."));
@@ -529,8 +524,8 @@ void NMainMenuBar::setupHelpMenu() {
     themeInformationAction->setVisible(false);
     if (url.startsWith("http://", Qt::CaseInsensitive) || url.startsWith("https://", Qt::CaseInsensitive))
         themeInformationAction->setVisible(true);
-    QFile f(url);
-    if (f.exists())
+    QFile file(url);
+    if (file.exists())
         themeInformationAction->setVisible(true);
     global.settings->beginGroup("Appearance");
     QString themeName = global.settings->value("themeName", "").toString();
@@ -624,8 +619,7 @@ void NMainMenuBar::openEvernoteAccountPage() {
 void NMainMenuBar::setupThemeMenu() {
     themeMenu = editMenu->addMenu(tr("Theme"));
     QStringList list = global.getThemeNames();
-    QFont f;
-    global.getGuiFont(f);
+    QFont f = global.getGuiFont(QFont());
 
     global.settings->beginGroup("Appearance");
     QString userTheme = global.settings->value("themeName", DEFAULT_THEME_NAME).toString();
@@ -634,12 +628,18 @@ void NMainMenuBar::setupThemeMenu() {
 
     // Setup themes (we expect to find the DEFAULT_THEME_NAME theme as first one)
     for (int i = 0; i < list.size(); i++) {
-        QAction *themeAction = new QAction(list[i], this);
-        themeAction->setData(list[i]);
+        QString themeName(list[i]);
+        if ((i == 0) && (QString::compare(themeName, DEFAULT_THEME_NAME, Qt::CaseInsensitive) != 0)) {
+            QLOG_ERROR() << "First theme is expected to be " << DEFAULT_THEME_NAME;
+        }
+
+
+        QAction *themeAction = new QAction(themeName, this);
+        themeAction->setData(themeName);
         themeAction->setCheckable(true);
         themeAction->setFont(f);
         connect(themeAction, SIGNAL(triggered()), parent, SLOT(reloadIcons()));
-        if (list[i] == userTheme) {
+        if (themeName == userTheme) {
             themeAction->setChecked(true);
         }
         themeActions.append(themeAction);
