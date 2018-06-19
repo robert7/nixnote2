@@ -3785,15 +3785,26 @@ void NBrowserWindow::subscriptButtonPressed() {
     editor->page()->mainFrame()->evaluateJavaScript("document.execCommand('subscript');");
 }
 
+QString base64_encode(QString string){
+    QByteArray ba;
+    ba.append(string);
+    return ba.toBase64();
+}
+
 // Set the editor background & font color
 void NBrowserWindow::setEditorStyle() {
-    QString qss = global.getEditorCss();
-#ifndef _WIN32
-    editor->settings()->setUserStyleSheetUrl(QUrl("file://"+qss));
-#else
-    editor->settings()->setUserStyleSheetUrl(QUrl("file:///"+qss));
-#endif
-    return;
+    QString css = global.getEditorCss();
+    if (css.isEmpty()) {
+        return;
+    }
+    QString url = QString("data:text/css;charset=utf-8;base64,").append(base64_encode(css));
+    // http://doc.qt.io/archives/qt-5.5/qwebsettings.html#setUserStyleSheetUrl
+    // hack to pass inline css to avoid putting it in file
+    // The location must be either a path on the local filesystem, or a data URL with UTF-8 and Base64 encoded data, such as:
+    // "data:text/css;charset=utf-8;base64,cCB7IGJhY2tncm91bmQtY29sb3I6IHJlZCB9Ow=="
+    QLOG_DEBUG() << "applied css " << css << " as " << url;
+
+    editor->settings()->setUserStyleSheetUrl(url);
 }
 
 

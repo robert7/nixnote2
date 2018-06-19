@@ -251,14 +251,14 @@ NWebView::NWebView(NBrowserWindow *parent) :
     QString qss = global.fileManager.getQssDirPathUser("");
     if (qss == "")
         qss = global.fileManager.getQssDirPath("");
-    this->settings()->setUserStyleSheetUrl(QUrl("file://"+qss+"editor.css"));
+    //this->settings()->setUserStyleSheetUrl(QUrl("file://"+qss+"editor.css"));
 
     this->pasteSequence = QKeySequence(this->pasteAction->shortcut()).toString().toLower();
     if (pasteSequence.trimmed() == "")
         pasteSequence = "ctrl+v";
     pasteUnformattedSequence = QKeySequence(pasteWithoutFormatAction->shortcut()).toString().toLower();
     if (pasteUnformattedSequence.trimmed() == "")
-        pasteUnformattedSequence = "ctrl+shft+v";
+        pasteUnformattedSequence = "ctrl+shift+v";
     fileSaveSequence = "ctrl+s";
 
     QString css = global.getThemeCss("noteContentsCss");

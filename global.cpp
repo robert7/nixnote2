@@ -976,21 +976,21 @@ QString Global::getDateTimeEditorInactiveStyle() {
     return result;
 }
 
-QString Global::getEditorCss() {
-    return this->getGenricCss("editorCss");
-}
-
-QString Global::getGenricStyle(QString key) {
-    QFile file(getGenricCss(key));
-    if (file.exists()) {
-        if (file.open(QFile::ReadOnly | QFile::Text)) {
-            QTextStream in(&file);
-            return in.readAll();
-        }
-    }
-
-    return "";
-}
+//QString Global::getEditorCss() {
+//    return this->getGenricCss("editorCss");
+//}
+//
+//QString Global::getGenricStyle(QString key) {
+//    QFile file(getGenricCss(key));
+//    if (file.exists()) {
+//        if (file.open(QFile::ReadOnly | QFile::Text)) {
+//            QTextStream in(&file);
+//            return in.readAll();
+//        }
+//    }
+//
+//    return "";
+//}
 
 QString Global::getGenricCss(QString key) {
     QString css = fileManager.getQssDirPath("") + key + ".css";
