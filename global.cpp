@@ -1069,6 +1069,9 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
         return;
 
     QTextStream in(&file);
+    QString colon(":");
+    QString openingBracket(":");
+
     bool themeFound = false;
     QString wantedThemeHeader = "[" + themeName.trimmed() + "]";
     while (!in.atEnd()) {
@@ -1088,6 +1091,7 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
             // we don't clear the existing values, as we want user theme be able to add to system theme but doesn't need to replace all
         }
 
+
         if (themeFound) {
             QStringList fields = line.split("=");
             if (fields.size() >= 2) {
@@ -1099,20 +1103,21 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
                     continue;
                 }
 
-                //QLOG_DEBUG() << "Theme " << wantedThemeHeader << ": key=" << key << "value=" << value;
+                QLOG_TRACE() << "Theme " << wantedThemeHeader << ": key=" << key << "value=" << value;
 
                 // this is a guess, but inline CSS always needs to contain ":", file path should never
-                bool isInlineCss = value.contains(QString(":"));
+                // or at least "{"
+                bool isInlineCss = value.contains(colon) || value.contains(openingBracket);
                 if (isInlineCss) {
                     colorList.insert(key, value);
-                    QLOG_DEBUG() << "Theme " << wantedThemeHeader << ": added CSS key=" << key << "value=" << value;
+                    QLOG_TRACE() << "Theme " << wantedThemeHeader << ": added CSS key=" << key << "value=" << value;
                 } else {
                     // image
                     // css in external file unsupported now
                     QString filePath = fileManager.getImageDirPath("").append(value);
                     QFile f(filePath);
                     if (f.exists()) {
-                        QLOG_DEBUG() << "Theme " << wantedThemeHeader << ": added image key=" << key << "path=" << filePath;
+                        QLOG_TRACE() << "Theme " << wantedThemeHeader << ": added image key=" << key << "path=" << filePath;
                         resourceList.insert(":" + key, filePath);
                     } else {
                         QLOG_WARN() << "Theme image file for key=" << key << "not found: " + filePath;
