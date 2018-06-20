@@ -1,6 +1,9 @@
 # CHANGELOG
 
 ## 2018-06
+### #6
+* Focus on search box after "all notes"
+
 ### #5
 * Minor improvement in font color/background color (highlight selection). 
   Tooltip now shows how to use. Keyboard shortcuts possible (default Ctrl-d, Ctrl-Shift-H). Context

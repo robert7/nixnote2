@@ -1642,6 +1642,11 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
     QLOG_DEBUG() << "Refreshing data";
 
     noteTableView->refreshData();
+    noteTableView->scrollToTop();            // vertical scroll
+    noteTableView->reset();                  // reset selection (to none)
+    // yet missing:horizontal reset
+    // focus search text after updating search criteria
+    searchText->setFocus(Qt::OtherFocusReason);
 
     favoritesTreeView->updateSelection();
     tagTreeView->updateSelection();

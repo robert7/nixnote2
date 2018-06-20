@@ -66,7 +66,7 @@ NTableView::NTableView(QWidget *parent) :
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     // Set the default column height
-    QLOG_TRACE() << "Setting up fort metrics";
+    QLOG_TRACE() << "Setting up font metrics";
     this->verticalHeader()->setDefaultSectionSize(QApplication::fontMetrics().height());
 
     QLOG_TRACE() << "Initializing proxy";
@@ -511,11 +511,6 @@ void NTableView::refreshData() {
         verticalHeader()->setDefaultSectionSize(fm.height());
         //verticalHeader()->setDefaultSectionSize(QApplication::fontMetrics().height()*200);
     }
-
-    this->scrollToTop(); // vertical scroll
-    // will additionaly reset selection (to none)
-    this->reset();
-    // missing:horizontal reset
 }
 
 

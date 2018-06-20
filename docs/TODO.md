@@ -1,6 +1,5 @@
 # TODO
 ## 1
-* Focus search box after "all notes"
 * Improve info related to sync error - e.g. "Unable to update note.  Invalid note 
   structure"
 * "unable to save this note"
