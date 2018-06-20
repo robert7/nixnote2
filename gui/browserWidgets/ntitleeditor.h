@@ -59,7 +59,6 @@ signals:
 protected:
   virtual void focusInEvent(QFocusEvent *e);
   virtual void focusOutEvent(QFocusEvent *e);
-    
 };
 
 #endif // NTITLEEDITOR_H

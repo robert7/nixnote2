@@ -30,6 +30,11 @@ File_Selective_Sync                             // Selective sync setup
 File_Empty_Trash                                // Purge all deleted notes
 File_Exit                     Ctrl+Q            // I'm outahere
 File_Note_Export_Pdf                            // Export selected notes as a PDF
+File_Email                    Ctrl+Alt+E        // Email
+File_History_Previous         Alt+Left          // Go back in history
+File_History_Next             Alt+Right         // Go forward in history
+
+
 
 Edit_Search_Find              Ctrl+F            // Search only within the current note
 Edit_Search_Find_Next         Ctrl+G            // Find the next occurrence within the current note
@@ -39,9 +44,9 @@ Edit_Undo                     Ctrl+Z            // Undo last change
 Edit_Redo                     Ctrl+Y            // Redo the last undone change
 Edit_Cut                      Ctrl+X            // Cut current selection to the clipboard
 Edit_Copy                     Ctrl+C            // Copy the current selection to the clipboard
-Edit_Paste                    Ctrl+V            // Paste
+Edit_Paste                    Ctrl+V            // Paste (note: probably can't be changed)
 Edit_Paste_Without_Formatting Ctrl+Shift+V      // Paste as plain text
-Edit_Remove_Formatting                          // Remove selected formatting from text
+Edit_Remove_Formatting        Ctrl+Shift+Space  // Remove selected formatting from text
 Edit_Preferences                                // Settings dialog box
 Edit_Image_Rotate_Left                          // Rotate an image left
 Edit_Image_Rotate_Right                         // Rotate an image to the right
@@ -85,6 +90,7 @@ View_Show_Search                                // Show/hide the search box
 View_Show_Quota                                 // Show/hide the user quota
 View_Show_Zoom                                  // Show/hide the zoom spinner
 View_Presentation_Mode                          // Turn on presentation mode
+View_All_Notes                Ctrl+Shift+A      // View all notes
 
 Prev_Tab                      Ctrl+PgDown       // Previous tab 
 Next_Tab                      Ctrl+PgUp         // Next Tab
@@ -96,7 +102,7 @@ Format_Bold                   Ctrl+B            // Bold (duh)
 Format_Underline              Ctrl+U            // Underline
 Format_Italic                 Ctrl+I            // Italic
 Format_Strikethrough          Ctrl+-            // Strikethrough
-Format_Horizontal_Line                          // Href line
+Format_Horizontal_Line        Ctrl+Shift+-      // Href line
 Format_Superscript            Ctrl+=            // Set superscript
 Format_Subscript              Ctrl+Shift+=      // Subscript
 Format_Alignment_Left         Ctrl+L            // Left align text
@@ -107,12 +113,13 @@ Format_List_Bullet            Ctrl+Shift+B      // Bullet list
 Format_List_Numbered          Ctrl+Shift+N      // Numbered list 
 Format_Indent_Increase        Ctrl+M            // Increase the indentation // seems Tab doesn't work
 Format_Indent_Decrease        Ctrl+Shift+M      // Decrease the indent      // seems Shift-Tab doesn't work
-Format_Highlight                                // Highlight the current text
+Format_Highlight              Ctrl+Shift+H      // Highlight the current text (background color)
 Format_Code_Block                               // Format code block
+Format_Font_Color             Ctrl+D            // Set font color
 
 Tools_Synchronize             F9                // Synchronize with Evernote
 Tools_Connect                                   // Connect to Evernote
-Tools_Spell_Check                               // Spell check dialog
+Tools_Spell_Check             F7                // Spell check dialog
 Tools_Account_Information                       // Show account information
 Tools_Reindex_Database                          // Reindex the entire database
 Tools_Disable_Note_Indexing                     // Disable note indexing
@@ -125,12 +132,12 @@ About_Log                                       // Message log
 About_About                                     // About dialog box
 
 Insert_DateTime               Ctrl+;            // Insert the current date/time
-Focus_Title                                     // Focus on the current note title
-Focus_Tag                                       // Focus on the tag line
+Focus_Title                   F2                // Focus on the current note title
+Focus_Tag                     F3                // Focus on the tag line
 Focus_Note                                      // Focus on the note itself
 Focus_Author                                    // Focus on the author field
 Focus_Url                                       // Focus on the source URL field
-Focus_Search                                    // Focus on the search field
-Focus_Notebook                                  // Focus on the notebook
+Focus_Search                  F6                // Focus on the search field
+Focus_Notebook                Alt+Shift+B       // Focus on the notebook
 Focus_Font                                      // Focus on the font drop down
 Focus_Font_Size                                 // Focus on the font size drop down

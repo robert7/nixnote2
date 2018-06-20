@@ -94,8 +94,9 @@ public:
     QShortcut *subscriptButtonShortcut;
     QAction *superscriptButtonAction;
     QShortcut *superscriptButtonShortcut;
+
     QAction *insertDatetimeButtonAction;
-    QShortcut *insertDatetimeButtonShortcut;
+
     QAction *leftJustifyButtonAction;
     QShortcut *leftJustifyButtonShortcut;
     QAction *centerJustifyButtonAction;
@@ -114,10 +115,10 @@ public:
     QShortcut *bulletListButtonShortcut;
     QAction *numberListButtonAction;
     QShortcut *numberListButtonShortcut;
+
     QAction *highlightColorAction;
-    QShortcut *highlightColorShortcut;
     QAction *fontColorAction;
-    QShortcut *fontColorShortcut;
+
     QAction *todoButtonAction;
     QShortcut *todoButtonShortcut;
     QAction *fontButtonAction;
@@ -129,6 +130,7 @@ public:
     QAction *htmlEntitiesButtonAction;
     QShortcut *htmlEntitiesButtonShortcut;
     QAction *formatCodeButtonAction;
+
     QShortcut *formatCodeButtonShortcut;
 
     FontNameComboBox *fontNames;
@@ -142,16 +144,18 @@ public:
     ColorMenu *fontColorMenuWidget;
     QToolButton *highlightColorButtonWidget;
     ColorMenu *highlightColorMenuWidget;
-//    void setupShortcut(QToolButton *toolbutton, QString text);
-//    void setupShortcut(QAction *action, QString text);
-    void setupShortcut(QShortcut *shortcut, QString text);
 
     explicit EditorButtonBar(QWidget *parent = 0);
     ~EditorButtonBar();
     void contextMenuEvent(QContextMenuEvent *event);
-    void saveVisibleButtons();
-    void setupVisibleButtons();
+
+    void saveButtonbarState();
+    void getButtonbarState();
     void reloadIcons();
+private:
+    QString fontColor;
+    QString fontHighlightColor;
+    void getButtonbarColorState();
 
 signals:
     

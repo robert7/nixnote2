@@ -26,21 +26,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
-struct QPairFirstComparer
-{
+struct QPairFirstComparer {
     template<typename T1, typename T2>
-    bool operator()(const QPair<T1,T2> & a, const QPair<T1,T2> & b) const
-    {
+    bool operator()(const QPair <T1, T2> &a, const QPair <T1, T2> &b) const {
         return a.first < b.first;
     }
 };
 
 NMainMenuBar::NMainMenuBar(QWidget *parent) :
-    QMenuBar(parent)
-{
-    this->parent = (NixNote*)parent;
-    QFont f;
-    f =  global.getGuiFont(f);
+    QMenuBar(parent) {
+    this->parent = (NixNote *) parent;
+    QFont f = global.getGuiFont(QFont());
     this->setFont(f);
 
     setupFileMenu();
@@ -53,8 +49,7 @@ NMainMenuBar::NMainMenuBar(QWidget *parent) :
 
 
 void NMainMenuBar::setupFileMenu() {
-    QFont f;
-    f =  global.getGuiFont(f);
+    QFont f = global.getGuiFont(QFont());
     this->setFont(f);
 
     fileMenu = this->addMenu(tr("&File"));
@@ -116,21 +111,23 @@ void NMainMenuBar::setupFileMenu() {
     fileMenu->addAction(importNoteAction);
 
     fileMenu->addSeparator();
-    QList<QString> names = global.accountsManager->nameList();
+    QList <QString> names = global.accountsManager->nameList();
     QList<int> ids = global.accountsManager->idList();
-    QList< QPair<int, QString> > pairList;
-    for (int i=0; i<ids.size(); i++) {
-        pairList.append(QPair<int,QString>(ids[i], names[i]));
+    QList <QPair<int, QString>> pairList;
+    for (int i = 0; i < ids.size(); i++) {
+        pairList.append(QPair<int, QString>(ids[i], names[i]));
     }
     qSort(pairList.begin(), pairList.end(), QPairFirstComparer());
-    for (int i=0; i<ids.size(); i++) {
-        QAction *accountAction = new QAction(pairList[i].second +" - (" +QString::number(pairList[i].first)+")", this);
+    for (int i = 0; i < ids.size(); i++) {
+        QAction *accountAction = new QAction(pairList[i].second + " - (" + QString::number(pairList[i].first) + ")",
+                                             this);
         accountAction->setData(pairList[i].first);
         accountAction->setCheckable(true);
         if (global.accountsManager->currentId == pairList[i].first)
             accountAction->setChecked(true);
         else {
-            accountAction->setText(tr("Switch to ")+pairList[i].second +" - (" +QString::number(pairList[i].first)+")");
+            accountAction->setText(
+                tr("Switch to ") + pairList[i].second + " - (" + QString::number(pairList[i].first) + ")");
         }
         fileMenu->addAction(accountAction);
         connect(accountAction, SIGNAL(triggered()), parent, SLOT(switchUser()));
@@ -141,7 +138,7 @@ void NMainMenuBar::setupFileMenu() {
     fileMenu->addAction(addUserAction);
     connect(addUserAction, SIGNAL(triggered()), parent, SLOT(addAnotherUser()));
 
-    userMaintenanceAction = new QAction(tr("&User Account Maintenance"),this);
+    userMaintenanceAction = new QAction(tr("&User Account Maintenance"), this);
     fileMenu->addAction(userMaintenanceAction);
     connect(userMaintenanceAction, SIGNAL(triggered()), parent, SLOT(userMaintenance()));
 
@@ -177,8 +174,7 @@ void NMainMenuBar::addUserAccount(QAction *action) {
 
 void NMainMenuBar::setupEditMenu() {
     editMenu = this->addMenu(tr("&Edit"));
-    QFont f;
-    f =  global.getGuiFont(f);
+    QFont f = global.getGuiFont(QFont());
     editMenu->setFont(f);
 
     undoAction = new QAction(tr("&Undo"), this);
@@ -220,6 +216,7 @@ void NMainMenuBar::setupEditMenu() {
     editMenu->addSeparator();
 
     findReplaceMenu = editMenu->addMenu(tr("F&ind and Replace"));
+    findReplaceMenu->setFont(f);
 
     searchNotesAction = new QAction(tr("&Search Notes"), this);
     setupShortcut(searchNotesAction, QString("Edit_Search_Notes"));
@@ -260,6 +257,7 @@ void NMainMenuBar::setupEditMenu() {
 
     setupThemeMenu();
     editMenu->addMenu(themeMenu);
+    themeMenu->setFont(f);
 
     preferencesAction = new QAction(tr("Preferences"), this);
     preferencesAction->setMenuRole(QAction::PreferencesRole);
@@ -271,8 +269,7 @@ void NMainMenuBar::setupEditMenu() {
 
 void NMainMenuBar::setupViewMenu() {
     viewMenu = this->addMenu(tr("&View"));
-    QFont f;
-    f =  global.getGuiFont(f);
+    QFont f = global.getGuiFont(QFont());
     viewMenu->setFont(f);
 
     viewNoteListWide = new QAction(tr("Wide Note List"), this);
@@ -330,23 +327,23 @@ void NMainMenuBar::setupViewMenu() {
     connect(viewTagTree, SIGNAL(triggered()), parent, SLOT(toggleTagTree()));
 
     viewSearchTree = new QAction(tr("Show Sa&ved Searches"), this);
-    setupShortcut(viewSearchTree , "View_Show_Saved_Search_List");
-    viewSearchTree ->setCheckable(true);
-    viewSearchTree ->setChecked(true);
+    setupShortcut(viewSearchTree, "View_Show_Saved_Search_List");
+    viewSearchTree->setCheckable(true);
+    viewSearchTree->setChecked(true);
     viewMenu->addAction(viewSearchTree);
-    connect(viewSearchTree , SIGNAL(triggered()), parent, SLOT(toggleSavedSearchTree()));
+    connect(viewSearchTree, SIGNAL(triggered()), parent, SLOT(toggleSavedSearchTree()));
 
     viewAttributesTree = new QAction(tr("Show &Attribute Filter"), this);
     setupShortcut(viewAttributesTree, "View_Attributes_List");
-    viewAttributesTree ->setCheckable(true);
-    viewAttributesTree ->setChecked(true);
+    viewAttributesTree->setCheckable(true);
+    viewAttributesTree->setChecked(true);
     viewMenu->addAction(viewAttributesTree);
-    connect(viewAttributesTree , SIGNAL(triggered()), parent, SLOT(toggleAttributesTree()));
+    connect(viewAttributesTree, SIGNAL(triggered()), parent, SLOT(toggleAttributesTree()));
 
     viewTrashTree = new QAction(tr("Show T&rash"), this);
     setupShortcut(viewTrashTree, "View_Trash");
-    viewTrashTree ->setCheckable(true);
-    viewTrashTree ->setChecked(true);
+    viewTrashTree->setCheckable(true);
+    viewTrashTree->setChecked(true);
     viewMenu->addAction(viewTrashTree);
     connect(viewTrashTree, SIGNAL(triggered()), parent, SLOT(toggleTrashTree()));
 
@@ -389,8 +386,7 @@ void NMainMenuBar::setupViewMenu() {
 void NMainMenuBar::setupNoteMenu() {
 
     noteMenu = this->addMenu(tr("&Note"));
-    QFont f;
-    f =  global.getGuiFont(f);
+    QFont f = global.getGuiFont(QFont());
     noteMenu->setFont(f);
 
     newNoteAction = new QAction(tr("New &Note"), noteMenu);
@@ -443,78 +439,76 @@ void NMainMenuBar::setupNoteMenu() {
 
 
 void NMainMenuBar::setupToolsMenu() {
-  toolsMenu = this->addMenu(tr("&Tools"));
-  QFont f;
-  f =  global.getGuiFont(f);
-  toolsMenu->setFont(f);
+    toolsMenu = this->addMenu(tr("&Tools"));
+    QFont f = global.getGuiFont(QFont());
+    toolsMenu->setFont(f);
 
-  synchronizeAction = new QAction(tr("&Synchronize"), this);
-  synchronizeAction->setToolTip(tr("Synchronize with Evernote"));
-  connect(synchronizeAction, SIGNAL(triggered()), parent, SLOT(synchronize()));
-  setupShortcut(synchronizeAction, QString("Tools_Synchronize"));
-  toolsMenu->addAction(synchronizeAction);
+    synchronizeAction = new QAction(tr("&Synchronize"), this);
+    synchronizeAction->setToolTip(tr("Synchronize with Evernote"));
+    connect(synchronizeAction, SIGNAL(triggered()), parent, SLOT(synchronize()));
+    setupShortcut(synchronizeAction, QString("Tools_Synchronize"));
+    toolsMenu->addAction(synchronizeAction);
 
-  disconnectAction = new QAction(tr("&Disconnect"), this);
-  disconnectAction->setToolTip(tr("Disconnect from Evernote"));
-  connect(disconnectAction, SIGNAL(triggered()), parent, SLOT(disconnect()));
-  setupShortcut(disconnectAction, QString(""));
-  toolsMenu->addAction(disconnectAction);
-  disconnectAction->setEnabled(false);
-  disconnectAction->setVisible(false);  /// We can probably delete this whole menu option
+    disconnectAction = new QAction(tr("&Disconnect"), this);
+    disconnectAction->setToolTip(tr("Disconnect from Evernote"));
+    connect(disconnectAction, SIGNAL(triggered()), parent, SLOT(disconnect()));
+    setupShortcut(disconnectAction, QString(""));
+    toolsMenu->addAction(disconnectAction);
+    disconnectAction->setEnabled(false);
+    disconnectAction->setVisible(false);  /// We can probably delete this whole menu option
 
-  pauseIndexingAction = new QAction(tr("Pause &Indexing"), this);
-  pauseIndexingAction->setToolTip(tr("Temporarily pause indexing"));
-  setupShortcut(pauseIndexingAction, QString("Tools_Pause_Indexing"));
-  connect(pauseIndexingAction, SIGNAL(triggered()), parent, SLOT(pauseIndexing()));
-  pauseIndexingAction->setCheckable(true);
-  toolsMenu->addAction(pauseIndexingAction);
-  pauseIndexingAction->setVisible(global.enableIndexing);
+    pauseIndexingAction = new QAction(tr("Pause &Indexing"), this);
+    pauseIndexingAction->setToolTip(tr("Temporarily pause indexing"));
+    setupShortcut(pauseIndexingAction, QString("Tools_Pause_Indexing"));
+    connect(pauseIndexingAction, SIGNAL(triggered()), parent, SLOT(pauseIndexing()));
+    pauseIndexingAction->setCheckable(true);
+    toolsMenu->addAction(pauseIndexingAction);
+    pauseIndexingAction->setVisible(global.enableIndexing);
 
-  disableEditingAction = new QAction(tr("Disable &Editing"), this);
-  disableEditingAction->setToolTip(tr("Temporarily disable note editing"));
-  setupShortcut(disableEditingAction, QString("Tools_Disable_Editing"));
-  disableEditingAction->setCheckable(true);
-  disableEditingAction->setChecked(global.disableEditing);
-  connect(disableEditingAction, SIGNAL(triggered()), parent, SLOT(disableEditing()));
-  toolsMenu->addAction(disableEditingAction);
+    disableEditingAction = new QAction(tr("Disable &Editing"), this);
+    disableEditingAction->setToolTip(tr("Temporarily disable note editing"));
+    setupShortcut(disableEditingAction, QString("Tools_Disable_Editing"));
+    disableEditingAction->setCheckable(true);
+    disableEditingAction->setChecked(global.disableEditing);
+    connect(disableEditingAction, SIGNAL(triggered()), parent, SLOT(disableEditing()));
+    toolsMenu->addAction(disableEditingAction);
 
-  accountDialogAction = new QAction(tr("A&ccount"), this);
-  accountDialogAction->setToolTip(tr("Account information"));
-  connect(accountDialogAction, SIGNAL(triggered()), parent, SLOT(openAccount()));
-  setupShortcut(accountDialogAction, QString("Tools_Account_Information"));
-  toolsMenu->addAction(accountDialogAction);
+    accountDialogAction = new QAction(tr("A&ccount / Usage"), this);
+    accountDialogAction->setToolTip(tr("Account and usage information"));
+    connect(accountDialogAction, SIGNAL(triggered()), parent, SLOT(openAccount()));
+    setupShortcut(accountDialogAction, QString("Tools_Account_Information"));
+    toolsMenu->addAction(accountDialogAction);
 
-  toolsMenu->addSeparator();
+    toolsMenu->addSeparator();
 
-  databaseStatusDialogAction = new QAction(tr("&Database Status"), this);
-  databaseStatusDialogAction->setToolTip(tr("Database Status"));
-  setupShortcut(databaseStatusDialogAction, QString("Tools_Database_Status"));
-  connect(databaseStatusDialogAction, SIGNAL(triggered()), parent, SLOT(openDatabaseStatus()));
-  toolsMenu->addAction(databaseStatusDialogAction);
+    databaseStatusDialogAction = new QAction(tr("&Database Status"), this);
+    databaseStatusDialogAction->setToolTip(tr("Database Status"));
+    setupShortcut(databaseStatusDialogAction, QString("Tools_Database_Status"));
+    connect(databaseStatusDialogAction, SIGNAL(triggered()), parent, SLOT(openDatabaseStatus()));
+    toolsMenu->addAction(databaseStatusDialogAction);
 
-  reindexDatabaseAction = new QAction(tr("&Reindex Database"), this);
-  reindexDatabaseAction->setToolTip(tr("Reindex all notes"));
-  setupShortcut(reindexDatabaseAction, QString("Tools_Database_Reindex"));
-  connect(reindexDatabaseAction, SIGNAL(triggered()), parent, SLOT(reindexDatabase()));
-  toolsMenu->addAction(reindexDatabaseAction);
-  reindexDatabaseAction->setVisible(global.enableIndexing);
+    reindexDatabaseAction = new QAction(tr("&Reindex Database"), this);
+    reindexDatabaseAction->setToolTip(tr("Reindex all notes"));
+    setupShortcut(reindexDatabaseAction, QString("Tools_Database_Reindex"));
+    connect(reindexDatabaseAction, SIGNAL(triggered()), parent, SLOT(reindexDatabase()));
+    toolsMenu->addAction(reindexDatabaseAction);
+    reindexDatabaseAction->setVisible(global.enableIndexing);
 
-  toolsMenu->addSeparator();
+    toolsMenu->addSeparator();
 
-  importFoldersDialogAction = new QAction(tr("&Import Folders"), this);
-  importFoldersDialogAction->setToolTip(tr("Import Folders"));
-  setupShortcut(importFoldersDialogAction, QString("Tools_Import_Folders"));
-  connect(importFoldersDialogAction, SIGNAL(triggered()), parent, SLOT(openImportFolders()));
-  toolsMenu->addAction(importFoldersDialogAction);
+    importFoldersDialogAction = new QAction(tr("&Import Folders"), this);
+    importFoldersDialogAction->setToolTip(tr("Import Folders"));
+    setupShortcut(importFoldersDialogAction, QString("Tools_Import_Folders"));
+    connect(importFoldersDialogAction, SIGNAL(triggered()), parent, SLOT(openImportFolders()));
+    toolsMenu->addAction(importFoldersDialogAction);
 
 
 }
 
 void NMainMenuBar::setupHelpMenu() {
     helpMenu = this->addMenu(tr("&Help"));
-    QFont font;
-    font =  global.getGuiFont(font);
-    helpMenu->setFont(font);
+    QFont f = global.getGuiFont(QFont());
+    helpMenu->setFont(f);
 
     openManualAction = new QAction(tr("&User's Guide"), this);
     openManualAction->setToolTip(tr("Open the user manual."));
@@ -529,12 +523,12 @@ void NMainMenuBar::setupHelpMenu() {
     QString url = global.getResourceFileName(global.resourceList, ":themeInformation");
     themeInformationAction->setVisible(false);
     if (url.startsWith("http://", Qt::CaseInsensitive) || url.startsWith("https://", Qt::CaseInsensitive))
-            themeInformationAction->setVisible(true);
-    QFile f(url);
-    if (f.exists())
+        themeInformationAction->setVisible(true);
+    QFile file(url);
+    if (file.exists())
         themeInformationAction->setVisible(true);
     global.settings->beginGroup("Appearance");
-    QString themeName = global.settings->value("themeName","").toString();
+    QString themeName = global.settings->value("themeName", "").toString();
     global.settings->endGroup();
     if (themeName == "")
         themeInformationAction->setVisible(true);
@@ -570,10 +564,11 @@ void NMainMenuBar::setupHelpMenu() {
     connect(openEvernoteSupportAction, SIGNAL(triggered()), parent, SLOT(openEvernoteSupport()));
     helpMenu->addAction(openEvernoteSupportAction);
 
-    openTrunkAction = new QAction(tr("Evernote &Trunk"), this);
-    openTrunkAction->setToolTip(tr("Go to Evernote Trunk"));
-    connect(openTrunkAction, SIGNAL(triggered()), parent, SLOT(openTrunk()));
-    helpMenu->addAction(openTrunkAction);
+    // seems to be obsolete
+    //openTrunkAction = new QAction(tr("Evernote &Trunk"), this);
+    //openTrunkAction->setToolTip(tr("Go to Evernote Trunk"));
+    //connect(openTrunkAction, SIGNAL(triggered()), parent, SLOT(openTrunk()));
+    //helpMenu->addAction(openTrunkAction);
 
     openUserForumAction = new QAction(tr("Evernote User &Forum"), this);
     openUserForumAction->setToolTip(tr("Go to the Evernote user support forum."));
@@ -582,17 +577,19 @@ void NMainMenuBar::setupHelpMenu() {
 
     helpMenu->addSeparator();
 
+    aboutQtAction = new QAction(tr("About &Qt"), this);
+    aboutQtAction->setMenuRole(QAction::AboutQtRole);
+    aboutQtAction->setToolTip(tr("About Qt"));
+    connect(aboutQtAction, SIGNAL(triggered()), parent, SLOT(openQtAbout()));
+    helpMenu->addAction(aboutQtAction);
+
+    helpMenu->addSeparator();
+
     aboutAction = new QAction(tr("&About"), this);
     aboutAction->setToolTip(tr("About"));
     aboutAction->setMenuRole(QAction::AboutRole);
     connect(aboutAction, SIGNAL(triggered()), parent, SLOT(openAbout()));
     helpMenu->addAction(aboutAction);
-
-    aboutQtAction = new QAction(tr("About &Qt"), this);
-    aboutQtAction->setMenuRole(QAction::AboutQtRole);
-    aboutQtAction->setToolTip(tr("About"));
-    connect(aboutQtAction, SIGNAL(triggered()), parent, SLOT(openQtAbout()));
-    helpMenu->addAction(aboutQtAction);
 }
 
 void NMainMenuBar::setupShortcut(QAction *action, QString text) {
@@ -603,19 +600,15 @@ void NMainMenuBar::setupShortcut(QAction *action, QString text) {
 }
 
 
-
 void NMainMenuBar::openManual() {
     QDesktopServices::openUrl(QString("file://") +
-                             global.getProgramDataDir()+"help/UserDocumentation.pdf");
+                              global.getProgramDataDir() + "help/UserDocumentation.pdf");
 }
-
-
 
 
 void NMainMenuBar::openUserForum() {
     QDesktopServices::openUrl(QUrl("https://discussion.evernote.com/index.php"));
 }
-
 
 
 void NMainMenuBar::openEvernoteAccountPage() {
@@ -626,30 +619,27 @@ void NMainMenuBar::openEvernoteAccountPage() {
 void NMainMenuBar::setupThemeMenu() {
     themeMenu = editMenu->addMenu(tr("Theme"));
     QStringList list = global.getThemeNames();
-    QFont f;
-    global.getGuiFont(f);
+    QFont f = global.getGuiFont(QFont());
 
     global.settings->beginGroup("Appearance");
-    QString userTheme = global.settings->value("themeName", "").toString();
+    QString userTheme = global.settings->value("themeName", DEFAULT_THEME_NAME).toString();
     global.settings->endGroup();
-    // Setup system default
-    QAction *themeAction = new QAction(tr("System Default"), this);
-    themeAction->setCheckable(true);
-    themeAction->setData("");
-    if (userTheme == "")
-        themeAction->setChecked(true);
-    themeAction->setFont(f);
-    connect(themeAction, SIGNAL(triggered()), parent, SLOT(reloadIcons()));
-    themeActions.append(themeAction);
 
-    // Setup the user themes
-    for (int i=0; i<list.size(); i++) {
-        QAction *themeAction = new QAction(list[i],this);
-        themeAction->setData(list[i]);
+
+    // Setup themes (we expect to find the DEFAULT_THEME_NAME theme as first one)
+    for (int i = 0; i < list.size(); i++) {
+        QString themeName(list[i]);
+        if ((i == 0) && (QString::compare(themeName, DEFAULT_THEME_NAME, Qt::CaseInsensitive) != 0)) {
+            QLOG_ERROR() << "First theme is expected to be " << DEFAULT_THEME_NAME;
+        }
+
+
+        QAction *themeAction = new QAction(themeName, this);
+        themeAction->setData(themeName);
         themeAction->setCheckable(true);
         themeAction->setFont(f);
         connect(themeAction, SIGNAL(triggered()), parent, SLOT(reloadIcons()));
-        if (list[i] == userTheme) {
+        if (themeName == userTheme) {
             themeAction->setChecked(true);
         }
         themeActions.append(themeAction);
@@ -658,13 +648,12 @@ void NMainMenuBar::setupThemeMenu() {
 }
 
 
-
 void NMainMenuBar::openThemeInformation() {
     global.settings->beginGroup("Appearance");
-    QString themeName = global.settings->value("themeName","").toString();
+    QString themeName = global.settings->value("themeName", "").toString();
     global.settings->endGroup();
     if (themeName == "") {
-        QDesktopServices::openUrl(QUrl(global.fileManager.getImageDirPath("")+"themeInfo.html"));
+        QDesktopServices::openUrl(QUrl(global.fileManager.getImageDirPath("") + "themeInfo.html"));
         return;
     }
     QString url = global.getResourceFileName(global.resourceList, ":themeInformation");

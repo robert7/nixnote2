@@ -43,7 +43,6 @@ class NWebView : public QWebView
     Q_OBJECT
 private:
     QAction *setupColorMenuOption(QString color);
-    void setupShortcut(QAction *action, QString text);
     QSignalMapper *backgroundColorMapper;
 
 public:
@@ -82,6 +81,10 @@ public:
     QAction *insertQuickLinkAction;
     QAction *insertHtmlEntitiesAction;
     QAction *copyNoteUrlAction;
+
+    QAction *fontColorAction;
+    QAction *fontBackgroundColorAction;
+
 
     QShortcut *attachFileShortcut;
 

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QObject>
 #include <QColor>
 #include <QMenu>
+#include <QMap>
 
 class ColorMenu : public QObject
 {
@@ -32,16 +33,18 @@ private:
     QObject *parent;
     void populateList();
     QColor currentColor;
+    QMap<QString, QString> colorMap;
 
     static QStringList colorNames();
 
 public:
     explicit ColorMenu(QObject *parent = 0);
-    void setDefault(QColor color);
-    QColor* getColor();
+    void setCurrentColor(QColor color);
+    void setCurrentColor(QString color);
+    QColor* getCurrentColor();
+    QString getCurrentColorName();
     QMenu* getMenu();
 
-    
 signals:
     
 public slots:

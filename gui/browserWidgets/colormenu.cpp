@@ -26,7 +26,8 @@ ColorMenu::ColorMenu(QObject *parent) :
     QObject(parent)
 {
     this->parent = parent;
-    currentColor.setNamedColor("black");
+    setCurrentColor(Qt::black);
+
     populateList();
     QString css = global.getThemeCss("colorMenuCss");
     if (css!="")
@@ -62,38 +63,58 @@ QStringList ColorMenu::colorNames() {
 void ColorMenu::populateList() {
     // note: menu is created at beginning (not at runtime)
     QStringList list = colorNames();
-    for (int i=0; i<list.size(); i++) {
-        QPixmap pix(QSize(22,22));
-        pix.fill(QColor(list[i]));
+    for (int i = 0; i < list.size(); i++) {
+        QPixmap pix(QSize(22, 22));
+
+        // (english) color name from the list
+        QString colorname(list[i]);
+        QColor color(colorname);
+        pix.fill(color);
+        // get color code and save into local map
+        QString colorCode(color.name());
+        colorMap[colorCode] = colorname;
+
         QAction *newAction = new QAction(QIcon(pix), "", parent);
         newAction->setToolTip(list[i]);
         newAction->setText(list[i]);
         menu.addAction(newAction);
         connect(newAction, SIGNAL(hovered()), this, SLOT(itemHovered()));
     }
-    QLOG_DEBUG() << "Done: populating colormenu";
+    //QLOG_DEBUG() << "Done: populating colormenu";
 }
 
 
-
-
-QColor *ColorMenu::getColor() {
+QColor *ColorMenu::getCurrentColor() {
+    //QLOG_DEBUG() << "ColorMenu::getCurrentColor; currentColor=" << currentColor.name();
     return &currentColor;
 }
 
+QString ColorMenu::getCurrentColorName() {
+    QString colorCode(currentColor.name());
+    // get name from map created curring construction
+    QString colorName(colorMap[colorCode]);
+    if (colorName.isEmpty()) {
+        colorName = colorCode;
+    }
+    //QLOG_DEBUG() << "ColorMenu::getCurrentColorName; currentColorName=" << colorName;
+    return colorName;
+}
 
 QMenu *ColorMenu::getMenu() {
     return &menu;
 }
 
-
-
-void ColorMenu::setDefault(QColor color) {
+void ColorMenu::setCurrentColor(QColor color) {
     currentColor = color;
+}
+
+void ColorMenu::setCurrentColor(QString color) {
+    currentColor.setNamedColor(color);
 }
 
 void ColorMenu::itemHovered() {
     if (menu.activeAction() != NULL && menu.activeAction()->toolTip() != NULL) {
-        currentColor.setNamedColor(menu.activeAction()->toolTip());
+        QString color = menu.activeAction()->toolTip();
+        setCurrentColor(color);
     }
 }

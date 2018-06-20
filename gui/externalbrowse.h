@@ -42,7 +42,6 @@ private:
     QShortcut *findReplaceShortcut;
     QShortcut *findNextShortcut;
     QShortcut *findPrevShortcut;
-    void setupShortcut(QShortcut *shortcut, QString keySequence);
 
 public:
     explicit ExternalBrowse(qint32 lid, QWidget *parent = 0);
