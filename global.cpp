@@ -798,16 +798,18 @@ bool caseInsensitiveLessThan(const QString &s1, const QString &s2) {
 // Get a generic CSS theme setting from the themes.ini file.
 QString Global::getThemeCss(QString key) {
     if (colorList.contains(key))
-        return colorList[key].trimmed();
-    if (resourceList.contains(":" + key)) {
-        QString value = resourceList[":" + key].trimmed();
-        QFile f(value);
-        if (f.exists()) {
-            f.open(QIODevice::ReadOnly);
-            QString css = f.readAll();
-            return css;
-        }
-    }
+        return colorList[key];
+
+    // read from file - currently unsupported - may be reintroduced later
+    //    if (resourceList.contains(":" + key)) {
+    //        QString value = resourceList[":" + key].trimmed();
+    //        QFile f(value);
+    //        if (f.exists()) {
+    //            f.open(QIODevice::ReadOnly);
+    //            QString css = f.readAll();
+    //            return css;
+    //        }
+    //    }
 
     return "";
 }
@@ -844,7 +846,7 @@ QString Global::getEditorStyle(bool colorOnly) {
 
 QString Global::getEditorFontColor() {
     if (colorList.contains("editorFontColor"))
-        return colorList["editorFontColor"].trimmed();
+        return colorList["editorFontColor"];
     else
         return "black";
 }
@@ -852,14 +854,14 @@ QString Global::getEditorFontColor() {
 
 QString Global::getEditorBackgroundColor() {
     if (colorList.contains("editorBackgroundColor"))
-        return colorList["editorBackgroundColor"].trimmed();
+        return colorList["editorBackgroundColor"];
     else
         return "white";
 }
 
 QString Global::getNoteTitleColor() {
     if (colorList.contains("noteTitleColor"))
-        return colorList["noteTitleColor"].trimmed();
+        return colorList["noteTitleColor"];
     else
         return "#0e1cd1";
 }
@@ -886,7 +888,7 @@ QString Global::getNoteTitleInactiveStyle() {
 
 QString Global::getDateTimeEditorColor() {
     if (colorList.contains("dateTimeEditorColor"))
-        return colorList["dateTimeEditorColor"].trimmed();
+        return colorList["dateTimeEditorColor"];
     else
         return "#0e1cd1";
 }
@@ -1025,7 +1027,7 @@ QPixmap Global::getPixmapResource(QString key) {
 
 // Get a QPixmap from an icon theme
 QPixmap Global::getPixmapResource(QHash <QString, QString> &resourceList, QString key) {
-    if (resourceList.contains(key) && resourceList[key].trimmed() != "")
+    if (resourceList.contains(key) && resourceList[key] != "")
         return QPixmap(resourceList[key]);
     return QPixmap(key);
 }
@@ -1096,10 +1098,12 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
                 // this is a guess, but inline CSS always needs to contain ":", file path should never
                 bool isInlineCss = value.contains(QString(":"));
                 if (isInlineCss) {
-                    colorList.remove("key");
+                    colorList.remove(key);
                     colorList.insert(key, value);
                     QLOG_DEBUG() << "Theme " << wantedThemeHeader << ": added CSS key=" << key << "value=" << value;
                 } else {
+                    // image
+                    // css in external file unsupported now
                     QString filePath = fileManager.getImageDirPath("").append(value);
                     QFile f(filePath);
                     if (f.exists()) {
@@ -1107,7 +1111,7 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
                         resourceList.remove(":" + key);
                         resourceList.insert(":" + key, filePath);
                     } else {
-                        QLOG_WARN() << "Theme file not found: " + filePath;
+                        QLOG_WARN() << "Theme image file for key=" << key << "not found: " + filePath;
                     }
                 }
             }

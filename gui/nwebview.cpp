@@ -247,11 +247,15 @@ NWebView::NWebView(NBrowserWindow *parent) :
 
     connect(this->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(exposeToJavascript()));
 
-        //this->setStyleSheet("QWebView,html,body { background-color : red; foreground-color : white; }");
-    QString qss = global.fileManager.getQssDirPathUser("");
-    if (qss == "")
-        qss = global.fileManager.getQssDirPath("");
-    //this->settings()->setUserStyleSheetUrl(QUrl("file://"+qss+"editor.css"));
+    //    this->setStyleSheet("QWebView,html,body { background-color : red; foreground-color : white; }");
+    // ////////////////
+    //    QString qss = global.fileManager.getQssDirPathUser("");
+    //    if (qss == "")
+    //        qss = global.fileManager.getQssDirPath("");
+    //    this->settings()->setUserStyleSheetUrl(QUrl("file://"+qss+"editor.css"));
+
+    // style apply: see Global::getEditorCss
+    // then NBrowserWindow::setEditorStyle()
 
     this->pasteSequence = QKeySequence(this->pasteAction->shortcut()).toString().toLower();
     if (pasteSequence.trimmed() == "")

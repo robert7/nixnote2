@@ -3802,7 +3802,7 @@ void NBrowserWindow::setEditorStyle() {
     // hack to pass inline css to avoid putting it in file
     // The location must be either a path on the local filesystem, or a data URL with UTF-8 and Base64 encoded data, such as:
     // "data:text/css;charset=utf-8;base64,cCB7IGJhY2tncm91bmQtY29sb3I6IHJlZCB9Ow=="
-    QLOG_DEBUG() << "applied css " << css << " as " << url;
+    //QLOG_DEBUG() << "applied css " << css << " as " << url;
 
     editor->settings()->setUserStyleSheetUrl(url);
 }
