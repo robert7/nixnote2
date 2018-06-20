@@ -12,6 +12,9 @@
   similar to shortcuts.txt.
 * Clear search text, after click on "all notes".  
 * Restructured main toolbar. All buttons now have kbd shortcuts and tooltips showing it.
+* Renamed theme.ini to themes.ini because of structure changes prevent loading of legacy user themes 
+  (they need minor fixes). To make thing easier, now all CSS is inline. Loading from file my be 
+  reintroduced later.
   
 
 ### #4

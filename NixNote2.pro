@@ -497,8 +497,8 @@ QMAKE_EXTRA_COMPILERS += langrel
 # this launches the actual work:
 PRE_TARGETDEPS += compiler_langrel_make_all
 
-qss.path = $$PREFIX/share/nixnote2/qss
-qss.files = qss/*
+#qss.path = $$PREFIX/share/nixnote2/qss
+#qss.files = qss/*
 
 pixmap.path = $$PREFIX/share/pixmaps/
 pixmap.extra = cp $$PWD/images/windowIcon.png $$PWD/images/nixnote2.png
@@ -519,14 +519,14 @@ mac {
     mactranslations.path = Contents/Resources/translations
     mactranslations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
     mactranslations.depends = compiler_langrel_make_all
-    qss.path = Contents/Resources
-    qss.files = qss
+    #qss.path = Contents/Resources
+    #qss.files = qss
     help.path = Contents/Resources
     help.files = help
-    QMAKE_BUNDLE_DATA += images java mactranslations qss help
+    QMAKE_BUNDLE_DATA += images java mactranslations help
     INSTALLS = binary
 } else {
     translations.path = $$PREFIX/share/nixnote2/translations
     translations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
-    INSTALLS = binary desktop images java translations qss pixmap help
+    INSTALLS = binary desktop images java translations pixmap help
 }

@@ -264,25 +264,27 @@ public:
     bool disableEditing;                                    // Disable all editing of notes
     bool isFullscreen;                                      // Are we in fullscreen mode?
     // These functions deal with the icon themes
-    QHash<QString,QString> resourceList;                      // Hashmap of icons used in the current theme
-    QHash<QString,QString> colorList;                         // List of colors used in the current theme
+    QHash<QString,QString> resourceList;                    // Hashmap of icons used in the current theme
+    QHash<QString,QString> colorList;                       // List of colors used in the current theme
     bool indexPDFLocally;                                   // Should we index PDFs locally?
     bool forceSearchLowerCase;                              // force storing of notes to lower case
     bool getIndexPDFLocally();                              // Should we index PDFs locally (read from settings)
     void setIndexPDFLocally(bool value);                    // save local index of PDFs option
-    bool strictDTD;                                        // Should we do strict enml checking?
-    bool getStrictDTD();                                   // Should we do strict enml checking? (read from settings)
-    void setStrictDTD(bool value);                         // save strict enml checking
-    bool bypassTidy;                                       // Bypass HTML Tidy
-    bool getBypassTidy();                                  // should we bypass HTML tidy?
-    void setBypassTidy(bool value);                        // Set if we should bypass HTML tidy.
-    QString getEditorStyle(bool colorOnly);                // Get note editor style overrides
+    bool strictDTD;                                         // Should we do strict enml checking?
+    bool getStrictDTD();                                    // Should we do strict enml checking? (read from settings)
+    void setStrictDTD(bool value);                          // save strict enml checking
+    bool bypassTidy;                                        // Bypass HTML Tidy
+    bool getBypassTidy();                                   // should we bypass HTML tidy?
+    void setBypassTidy(bool value);                         // Set if we should bypass HTML tidy.
+    QString getEditorStyle(bool colorOnly);                 // Get note editor style overrides
     QString getEditorFontColor();                           // Get the editor font color from the theme
     QString getEditorBackgroundColor();                     // Get the editor background color from the theme
 
-    QString getThemeCss(QString key);                               // Generic theme css from theme.ini
-    QString getGenricCss(QString key);
-    QString getGenricStyle(QString key);
+    // Generic inline theme css
+    QString getThemeCss(QString key);
+
+    // QString getGenricCss(QString key); //obsolete - remove
+    // QString getGenricStyle(QString key); //obsolete - remove
 
     QString getNoteTitleColor();
     QString getNoteTitleActiveStyle();
@@ -297,8 +299,8 @@ public:
     QString getUrlEditorActiveStyle();
     QString getUrlEditorInactiveStyle();
 
-//    QString getLineEditSearchActiveStyle();
-//    QString getLineEditSearchInactiveStyle();
+    // QString getLineEditSearchActiveStyle();
+    // QString getLineEditSearchInactiveStyle();
 
     QString getDateTimeEditorColor();
     QString getDateTimeEditorActiveStyle();

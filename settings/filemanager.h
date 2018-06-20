@@ -56,11 +56,10 @@ private:
     QString spellDirPathUser;
     QDir spellDirUser;
 
-    QString qssDirPath;
-    QDir qssDir;
-
-    QString qssDirPathUser;
-    QDir qssDirUser;
+    //    QString qssDirPath;
+    //    QDir qssDir;
+    //    QString qssDirPathUser;
+    //    QDir qssDirUser;
 
     QString tmpDirPath;
     QDir tmpDir;
@@ -119,8 +118,8 @@ public:
     QString getJavaDirPath(QString relativePath);
     QDir getLogsDirFile(QString relativePath);
     QString getLogsDirPath(QString relativePath);
-    QString getQssDirPath(QString relativePath);
-    QString getQssDirPathUser(QString relativePath);
+    //    QString getQssDirPath(QString relativePath);
+    //    QString getQssDirPathUser(QString relativePath);
     QString getTmpDirPath();
     QString getTmpDirPath(QString relativePath);
     QString getTmpDirPathSpecialChar(QString relativePath);

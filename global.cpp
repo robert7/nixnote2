@@ -865,7 +865,7 @@ QString Global::getNoteTitleColor() {
 }
 
 QString Global::getNoteTitleActiveStyle() {
-    QString result = this->getGenricStyle("titleActiveCss");
+    QString result = this->getThemeCss("titleActiveCss");
 
     if (result.length() == 0) {
         result = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
@@ -875,7 +875,7 @@ QString Global::getNoteTitleActiveStyle() {
 }
 
 QString Global::getNoteTitleInactiveStyle() {
-    QString result = this->getGenricStyle("titleInactiveCss");
+    QString result = this->getThemeCss("titleInactiveCss");
 
     if (result.length() == 0) {
         result = "QLineEdit {background-color: transparent; border-radius: 0px;} QLineEdit:hover {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
@@ -892,7 +892,7 @@ QString Global::getDateTimeEditorColor() {
 }
 
 QString Global::getTagViewerInactiveStyle() {
-    QString result = this->getGenricStyle("tagViewerInactiveCss");
+    QString result = this->getThemeCss("tagViewerInactiveCss");
 
     if (result.length() == 0) {
         result = "QLineEdit {color: black; font:normal;} ";
@@ -903,7 +903,7 @@ QString Global::getTagViewerInactiveStyle() {
 
 
 QString Global::getTagViewerActiveStyle() {
-    QString result = this->getGenricStyle("tagViewerActiveCss");
+    QString result = this->getThemeCss("tagViewerActiveCss");
 
     if (result.length() == 0) {
         result = "QLineEdit {color: black; font:normal;} ";
@@ -914,7 +914,7 @@ QString Global::getTagViewerActiveStyle() {
 
 
 QString Global::getTagEditorInactiveStyle() {
-    QString result = this->getGenricStyle("tagEditorInactiveCss");
+    QString result = this->getThemeCss("tagEditorInactiveCss");
 
     if (result.length() == 0) {
         result = "QLineEdit {background-color: transparent; border-radius: 0px;} ";
@@ -925,7 +925,7 @@ QString Global::getTagEditorInactiveStyle() {
 
 
 QString Global::getTagEditorActiveStyle() {
-    QString result = this->getGenricStyle("tagEditorActiveCss");
+    QString result = this->getThemeCss("tagEditorActiveCss");
 
     if (result.length() == 0) {
         result = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;}";
@@ -936,7 +936,7 @@ QString Global::getTagEditorActiveStyle() {
 
 
 QString Global::getUrlEditorActiveStyle() {
-    QString result = this->getGenricStyle("urlEditorActiveCss");
+    QString result = this->getThemeCss("urlEditorActiveCss");
 
     if (result.length() == 0) {
         result = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;}";
@@ -946,7 +946,7 @@ QString Global::getUrlEditorActiveStyle() {
 }
 
 QString Global::getUrlEditorInactiveStyle() {
-    QString result = this->getGenricStyle("urlEditorInactiveCss");
+    QString result = this->getThemeCss("urlEditorInactiveCss");
 
     if (result.length() == 0) {
         result = "QLineEdit {background-color: transparent; border-radius: 0px;}";
@@ -957,7 +957,7 @@ QString Global::getUrlEditorInactiveStyle() {
 
 
 QString Global::getDateTimeEditorActiveStyle() {
-    QString result = this->getGenricStyle("dateTimeEditorActiveCss");
+    QString result = this->getThemeCss("dateTimeEditorActiveCss");
 
     if (result.length() == 0) {
         result = "QDateTimeEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;}  QDateTimeEdit::up-button {width: 14px;} QDateTimeEdit::down-button{width: 14px;}";
@@ -967,7 +967,7 @@ QString Global::getDateTimeEditorActiveStyle() {
 }
 
 QString Global::getDateTimeEditorInactiveStyle() {
-    QString result = this->getGenricStyle("dateTimeEditorInactiveCss");
+    QString result = this->getThemeCss("dateTimeEditorInactiveCss");
 
     if (result.length() == 0) {
         result = "QDateTimeEdit {background-color: transparent; border-radius: 1px;} QDateTimeEdit:hover {border: 1px solid #808080; background-color: white; border-radius: 4px;} QDateTimeEdit::up-button {width: 0px; image:none;} QDateTimeEdit::down-button{width: 0px; image: none;}";
@@ -976,10 +976,14 @@ QString Global::getDateTimeEditorInactiveStyle() {
     return result;
 }
 
-//QString Global::getEditorCss() {
-//    return this->getGenricCss("editorCss");
-//}
+
+QString Global::getEditorCss() {
+    return this->getThemeCss("editorCss");
+}
+
+
 //
+//obsolete - remove
 //QString Global::getGenricStyle(QString key) {
 //    QFile file(getGenricCss(key));
 //    if (file.exists()) {
@@ -992,18 +996,19 @@ QString Global::getDateTimeEditorInactiveStyle() {
 //    return "";
 //}
 
-QString Global::getGenricCss(QString key) {
-    QString css = fileManager.getQssDirPath("") + key + ".css";
-    if (colorList.contains(key)) {
-        css = fileManager.getQssDirPathUser("") + colorList[key].trimmed();
-        if (QFile(css).exists())
-            return css;
-        css = fileManager.getQssDirPath("") + colorList[key].trimmed();
-        if (QFile(css).exists())
-            return css;
-    }
-    return css;
-}
+//obsolete - remove
+//QString Global::getGenricCss(QString key) {
+//    QString css = fileManager.getQssDirPath("") + key + ".css";
+//    if (colorList.contains(key)) {
+//        css = fileManager.getQssDirPathUser("") + colorList[key].trimmed();
+//        if (QFile(css).exists())
+//            return css;
+//        css = fileManager.getQssDirPath("") + colorList[key].trimmed();
+//        if (QFile(css).exists())
+//            return css;
+//    }
+//    return css;
+//}
 
 
 // Get a QIcon in an icon theme
@@ -1025,7 +1030,8 @@ QPixmap Global::getPixmapResource(QHash <QString, QString> &resourceList, QStrin
     return QPixmap(key);
 }
 
-#define THEME_FILE "theme.ini"
+// renamed on 20.6.2018 because of structure changes prevent loading of legacy user themes (they need minor fixes)
+#define THEME_FILE "themes.ini"
 
 
 // Load a theme into a resourceList.
@@ -1038,7 +1044,7 @@ void Global::loadTheme(QHash <QString, QString> &resourceList, QHash <QString, Q
         return;
     }
 
-    QFile systemThemeFn(fileManager.getImageDirPath("") + THEME_FILE);
+    QFile systemThemeFn(fileManager.getProgramDataDir() + THEME_FILE);
     this->loadThemeFile(resourceList, colorList, systemThemeFn, theme);
 
     QFile userThemeFn(fileManager.getConfigDir() + THEME_FILE); // user theme
@@ -1116,7 +1122,7 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
 QStringList Global::getThemeNames() {
     QStringList values;
     values.empty();
-    QFile systemTheme(fileManager.getImageDirPath("") + THEME_FILE);
+    QFile systemTheme(fileManager.getProgramDataDir() + THEME_FILE);
     this->getThemeNamesFromFile(systemTheme, values);
 
     QFile userTheme(fileManager.getConfigDir() + THEME_FILE); // user theme
