@@ -40,9 +40,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "exits/exitpoint.h"
 #include "exits/exitmanager.h"
 
+#include <QObject>
 #include <string>
 #include <QSqlDatabase>
 #include <QReadWriteLock>
+#include <QShortcut>
+#include <QAction>
+
 
 //*******************************
 //* This class is used to store
@@ -97,13 +101,17 @@ using namespace std;
 class DatabaseConnection;
 class IndexRunner;
 
+#define SET_MESSAGE_TIMEOUT_SHORT 1000
+#define SET_MESSAGE_TIMEOUT_LONGER 15000
+#define DEFAULT_THEME_NAME "Default"
 
 
-class Global
-{
+class Global : public QObject {
+    Q_OBJECT
+
 public:
     Global();           // Generic constructor
-    //~Global();          // destructor
+    virtual ~Global() {};          // destructor
 
     // Possible ways tags & notebook counts may be displayed to the user
     enum CountBehavior {
@@ -256,25 +264,27 @@ public:
     bool disableEditing;                                    // Disable all editing of notes
     bool isFullscreen;                                      // Are we in fullscreen mode?
     // These functions deal with the icon themes
-    QHash<QString,QString> resourceList;                      // Hashmap of icons used in the current theme
-    QHash<QString,QString> colorList;                         // List of colors used in the current theme
+    QHash<QString,QString> resourceList;                    // Hashmap of icons used in the current theme
+    QHash<QString,QString> colorList;                       // List of colors used in the current theme
     bool indexPDFLocally;                                   // Should we index PDFs locally?
     bool forceSearchLowerCase;                              // force storing of notes to lower case
     bool getIndexPDFLocally();                              // Should we index PDFs locally (read from settings)
     void setIndexPDFLocally(bool value);                    // save local index of PDFs option
-    bool strictDTD;                                        // Should we do strict enml checking?
-    bool getStrictDTD();                                   // Should we do strict enml checking? (read from settings)
-    void setStrictDTD(bool value);                         // save strict enml checking
-    bool bypassTidy;                                       // Bypass HTML Tidy
-    bool getBypassTidy();                                  // should we bypass HTML tidy?
-    void setBypassTidy(bool value);                        // Set if we should bypass HTML tidy.
-    QString getEditorStyle(bool colorOnly);                // Get note editor style overrides
+    bool strictDTD;                                         // Should we do strict enml checking?
+    bool getStrictDTD();                                    // Should we do strict enml checking? (read from settings)
+    void setStrictDTD(bool value);                          // save strict enml checking
+    bool bypassTidy;                                        // Bypass HTML Tidy
+    bool getBypassTidy();                                   // should we bypass HTML tidy?
+    void setBypassTidy(bool value);                         // Set if we should bypass HTML tidy.
+    QString getEditorStyle(bool colorOnly);                 // Get note editor style overrides
     QString getEditorFontColor();                           // Get the editor font color from the theme
     QString getEditorBackgroundColor();                     // Get the editor background color from the theme
 
-    QString getThemeCss(QString key);                               // Generic theme css from theme.ini
-    QString getGenricCss(QString key);
-    QString getGenricStyle(QString key);
+    // Generic inline theme css
+    QString getThemeCss(QString key);
+
+    // QString getGenricCss(QString key); //obsolete - remove
+    // QString getGenricStyle(QString key); //obsolete - remove
 
     QString getNoteTitleColor();
     QString getNoteTitleActiveStyle();
@@ -289,8 +299,8 @@ public:
     QString getUrlEditorActiveStyle();
     QString getUrlEditorInactiveStyle();
 
-//    QString getLineEditSearchActiveStyle();
-//    QString getLineEditSearchInactiveStyle();
+    // QString getLineEditSearchActiveStyle();
+    // QString getLineEditSearchInactiveStyle();
 
     QString getDateTimeEditorColor();
     QString getDateTimeEditorActiveStyle();
@@ -335,6 +345,32 @@ public:
 
     ExitManager *exitManager;                                  // Utility to manage exit points.
     QString getProgramDataDir() { return fileManager.getProgramDataDir(); }
+
+    // kind of "pretty print"
+    // format from lower cased to "display version"
+    QString formatShortcutKeyString(QString shortcutKeyString);
+
+    // get short cut string for given shortcut code (by shortcuts.txt)
+    // lowerCased=true => return lower cased string (as it is stored internally and shoudl be used to setup shortcuts)
+    // lowerCased=false => will try "pretty print"
+    QString getShortcutStr(QString shortCutCode, bool lowerCased = false);
+
+    // setup shortcut key
+    // in case match was found, return info to be appended to tooltip
+    QString setupShortcut(QShortcut *action, QString shortCutCode);
+    // setup shortcut key
+    // in case match was found, return info to be appended to tooltip
+    QString setupShortcut(QAction *action, QString shortCutCode);
+
+    // used to append active short info to tolltip strings
+    QString appendShortcutInfo(QString tooltip, QString shortCutCode);
+
+    // update status bar with given string
+    void setMessage(QString msg, int timeout=SET_MESSAGE_TIMEOUT_LONGER);
+
+signals:
+    // global can send signal about updating status bar
+    void setMessageSignal(QString msg, int timeout);
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

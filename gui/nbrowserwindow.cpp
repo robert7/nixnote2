@@ -50,6 +50,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/pixelconverter.h"
 #include "gui/browserWidgets/table/tablepropertiesdialog.h"
 #include "exits/exitmanager.h"
+#include "browserWidgets/editorbuttonbar.h"
 
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
@@ -96,7 +97,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     browserThread->start();
 
 
-//    this->setStyleSheet("margins:0px;");
+    //    this->setStyleSheet("margins:0px;");
     QHBoxLayout *line1Layout = new QHBoxLayout();
     QVBoxLayout *layout = new QVBoxLayout();   // Note content layout
 
@@ -147,7 +148,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     sourceEditorTimer = new QTimer();
     connect(sourceEditorTimer, SIGNAL(timeout()), this, SLOT(setSource()));
 
-    // addthe actual note editor & source view
+    // add the actual note editor & source view
     QSplitter *editorSplitter = new QSplitter(Qt::Vertical, this);
     editorSplitter->addWidget(editor);
     editorSplitter->addWidget(sourceEdit);
@@ -169,18 +170,28 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     // Setup shortcuts
     focusNoteShortcut = new QShortcut(this);
-    setupShortcut(focusNoteShortcut, "Focus_Note");
+    global.setupShortcut(focusNoteShortcut, "Focus_Note");
     connect(focusNoteShortcut, SIGNAL(activated()), this, SLOT(focusNote()));
-    focusTitleShortcut = new QShortcut(this);
-    setupShortcut(focusTitleShortcut, "Focus_Title");
-    connect(focusTitleShortcut, SIGNAL(activated()), this, SLOT(focusTitle()));
-    insertDatetimeShortcut = new QShortcut(this);
-    setupShortcut(insertDatetimeShortcut, "Insert_DateTime");
-    connect(insertDatetimeShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
-    copyNoteUrlShortcut = new QShortcut(this);
-    setupShortcut(copyNoteUrlShortcut, "Edit_Copy_Note_Url");
-    connect(copyNoteUrlShortcut, SIGNAL(activated()), this, SLOT(copyNoteUrl()));
 
+    focusTitleShortcut = new QShortcut(this);
+    global.setupShortcut(focusTitleShortcut, "Focus_Title");
+    connect(focusTitleShortcut, SIGNAL(activated()), this, SLOT(focusTitle()));
+
+    insertDatetimeShortcut = new QShortcut(this);
+    global.setupShortcut(insertDatetimeShortcut, "Insert_DateTime");
+    connect(insertDatetimeShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
+
+    fontColorShortcut = new QShortcut(this);
+    global.setupShortcut(fontColorShortcut, "Format_Font_Color");
+    connect(fontColorShortcut, SIGNAL(activated()), this, SLOT(fontColorClicked()));
+
+    fontHighlightShortcut = new QShortcut(this);
+    global.setupShortcut(fontHighlightShortcut, "Format_Highlight");
+    connect(fontHighlightShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
+
+    copyNoteUrlShortcut = new QShortcut(this);
+    global.setupShortcut(copyNoteUrlShortcut, "Edit_Copy_Note_Url");
+    connect(copyNoteUrlShortcut, SIGNAL(activated()), this, SLOT(copyNoteUrl()));
 
     // Setup the signals
     connect(&expandButton, SIGNAL(stateChanged(int)), this, SLOT(changeExpandState(int)));
@@ -208,7 +219,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     factory = new PluginFactory(this);
     editor->page()->setPluginFactory(factory);
 
-    buttonBar->setupVisibleButtons();
+    buttonBar->getButtonbarState();
 
     printPage = new QTextEdit();
     printPage->setVisible(false);
@@ -224,42 +235,42 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     //Setup shortcuts for context menu
     removeFormattingShortcut = new QShortcut(this);
-    this->setupShortcut(removeFormattingShortcut, "Edit_Remove_Formatting");
+    global.setupShortcut(removeFormattingShortcut, "Edit_Remove_Formatting");
     connect(removeFormattingShortcut, SIGNAL(activated()), this, SLOT(removeFormatButtonPressed()));
     //removeFormattingShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     insertHtmlEntitiesShortcut = new QShortcut(this);
-    this->setupShortcut(insertHtmlEntitiesShortcut, QString("Edit_Insert_Html_Entities"));
+    global.setupShortcut(insertHtmlEntitiesShortcut, QString("Edit_Insert_Html_Entities"));
     connect(insertHtmlEntitiesShortcut, SIGNAL(activated()),this, SLOT(insertHtmlEntities()));
     //insertHtmlEntitiesShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     encryptTextShortcut = new QShortcut(this);
-    this->setupShortcut(encryptTextShortcut, QString("Edit_Encrypt_Text"));
+    global.setupShortcut(encryptTextShortcut, QString("Edit_Encrypt_Text"));
     connect(encryptTextShortcut, SIGNAL(activated()),this, SLOT(encryptButtonPressed()));
     //encryptTextShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     insertHyperlinkShortcut = new QShortcut(this);
-    this->setupShortcut(insertHyperlinkShortcut, QString("Edit_Insert_Hyperlink"));
+    global.setupShortcut(insertHyperlinkShortcut, QString("Edit_Insert_Hyperlink"));
     connect(insertHyperlinkShortcut, SIGNAL(activated()),this, SLOT(insertLinkButtonPressed()));
     //insertHyperlinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     insertQuicklinkShortcut = new QShortcut(this);
-    this->setupShortcut(insertQuicklinkShortcut, QString("Edit_Insert_QuickLink"));
+    global.setupShortcut(insertQuicklinkShortcut, QString("Edit_Insert_QuickLink"));
     connect(insertQuicklinkShortcut, SIGNAL(activated()),this, SLOT(insertQuickLinkButtonPressed()));
     //insertQuicklinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     removeHyperlinkShortcut = new QShortcut(this);
-    this->setupShortcut(removeHyperlinkShortcut, QString("Edit_Remove_Hyperlink"));
+    global.setupShortcut(removeHyperlinkShortcut, QString("Edit_Remove_Hyperlink"));
     connect(removeHyperlinkShortcut, SIGNAL(activated()),this, SLOT(removeLinkButtonPressed()));
     //removeHyperlinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     attachFileShortcut = new QShortcut(this);
-    this->setupShortcut(attachFileShortcut, QString("Edit_Attach_File"));
+    global.setupShortcut(attachFileShortcut, QString("Edit_Attach_File"));
     connect(attachFileShortcut, SIGNAL(activated()),this, SLOT(attachFile()));
     //attachFileShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     insertLatexShortcut = new QShortcut(this);
-    this->setupShortcut(insertLatexShortcut, QString("Edit_Insert_Latex"));
+    global.setupShortcut(insertLatexShortcut, QString("Edit_Insert_Latex"));
     connect(insertLatexShortcut, SIGNAL(activated()),this, SLOT(insertLatexButtonPressed()));
 
 
@@ -375,18 +386,14 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->spellCheckButtonShortcut, SIGNAL(activated()), this, SLOT(spellCheckPressed()));
 
     connect(buttonBar->fontSizes, SIGNAL(currentIndexChanged(int)), this, SLOT(fontSizeSelected(int)));
-
     connect(buttonBar->fontNames, SIGNAL(currentIndexChanged(int)), this, SLOT(fontNameSelected(int)));
 
     connect(buttonBar->fontColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontColorClicked()));
-    //connect(fontColorButtonShortcut, SIGNAL(activated()), this, SLOT(fontColorClicked()));
-
+    // pressed/long click
     connect(buttonBar->fontColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontColorClicked()));
 
     connect(buttonBar->highlightColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontHighlightClicked()));
-    //connect(fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
-    connect(buttonBar->highlightColorAction, SIGNAL(triggered()), this, SLOT(fontHighlightClicked()));
-
+    // pressed/long click
     connect(buttonBar->highlightColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHighlightClicked()));
 
     connect(buttonBar->insertTableButtonAction, SIGNAL(triggered()), this, SLOT(insertTableButtonPressed()));
@@ -397,30 +404,14 @@ void NBrowserWindow::setupToolBar() {
 
     connect(buttonBar->insertDatetimeButtonAction, SIGNAL(triggered()), this, SLOT(insertDatetime()));
     connect(buttonBar->insertDatetimeButtonWidget,SIGNAL(clicked()), this, SLOT(insertDatetime()));
-    connect(buttonBar->insertDatetimeButtonShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
-
 
     connect(buttonBar->formatCodeButtonAction, SIGNAL(triggered()), this, SLOT(formatCodeButtonPressed()));
     connect(buttonBar->formatCodeButtonShortcut, SIGNAL(activated()), this, SLOT(formatCodeButtonPressed()));
-
-
 }
-
-
-
-
-// Load any shortcut keys
-void NBrowserWindow::setupShortcut(QShortcut *action, QString text) {
-    if (!global.shortcutKeys->containsAction(&text))
-        return;
-    QKeySequence key(global.shortcutKeys->getShortcut(&text));
-    action->setKey(key);
-}
-
 
 // Load the note content into the window
 void NBrowserWindow::setContent(qint32 lid) {
-    QLOG_DEBUG() << "Setting note contents to " << lid;
+    QLOG_DEBUG() << "Setting note contents to lid: " << lid;
 
     // First, make sure we have a valid lid
     if (lid == -1) {
@@ -1140,7 +1131,10 @@ void NBrowserWindow::underlineButtonPressed() {
 
 // The underline button was toggled
 void NBrowserWindow::removeFormatButtonPressed() {
+    // for some reason first call doesn't remove background color, but the second does...
     this->editor->triggerPageAction(QWebPage::RemoveFormat);
+    this->editor->triggerPageAction(QWebPage::RemoveFormat);
+
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -1367,35 +1361,34 @@ void NBrowserWindow::fontNameSelected(int index) {
     microFocusChanged();
 }
 
+// The font color was pressed
+void NBrowserWindow::fontColorClicked() {
+    QLOG_DEBUG() << "fontColorClicked";
+    QColor *color = buttonBar->fontColorMenuWidget->getCurrentColor();
+    QLOG_DEBUG() << "Setting text color to: " << buttonBar->fontColorMenuWidget->getCurrentColorName();
+    if (color->isValid()) {
+        this->editor->page()->mainFrame()->evaluateJavaScript(
+            "document.execCommand('foreColor', false, '" + color->name() + "');");
+        editor->setFocus();
+        microFocusChanged();
+        buttonBar->saveButtonbarState();
+    }
+}
+
 
 // The font highlight color was pressed
 void NBrowserWindow::fontHighlightClicked() {
     QLOG_DEBUG() << "fontHighlightClicked";
-    QColor *color = buttonBar->highlightColorMenuWidget->getColor();
-    QLOG_DEBUG() << "fontHighlight got color" << *color;
+    QColor *color = buttonBar->highlightColorMenuWidget->getCurrentColor();
+    QLOG_DEBUG() << "Setting text background color to: " << buttonBar->highlightColorMenuWidget->getCurrentColorName();
     if (color->isValid()) {
         this->editor->page()->mainFrame()->evaluateJavaScript(
-                "document.execCommand('backColor', false, '"+color->name()+"');");
+            "document.execCommand('backColor', false, '" + color->name() + "');");
         editor->setFocus();
         microFocusChanged();
+        buttonBar->saveButtonbarState();
     }
 }
-
-
-
-// The font color was pressed
-void NBrowserWindow::fontColorClicked() {
-    QLOG_DEBUG() << "fontColorClicked";
-    QColor *color = buttonBar->fontColorMenuWidget->getColor();
-    QLOG_DEBUG() << "fontColor got color" << *color;
-    if (color->isValid()) {
-        this->editor->page()->mainFrame()->evaluateJavaScript(
-                "document.execCommand('foreColor', false, '"+color->name()+"');");
-        editor->setFocus();
-        microFocusChanged();
-    }
-}
-
 
 void NBrowserWindow::insertLinkButtonPressed() {
     QString text = editor->selectedText().trimmed();
@@ -2825,7 +2818,7 @@ void NBrowserWindow::emailNote() {
 
     smtp.quit();
     emit(setMessage("Message Sent"));
-//    QMessageBox::information(this, tr("Message Sent"), tr("Message sent."), QMessageBox::Ok);
+    //    QMessageBox::information(this, tr("Message Sent"), tr("Message sent."), QMessageBox::Ok);
 }
 
 
@@ -3792,15 +3785,26 @@ void NBrowserWindow::subscriptButtonPressed() {
     editor->page()->mainFrame()->evaluateJavaScript("document.execCommand('subscript');");
 }
 
+QString base64_encode(QString string){
+    QByteArray ba;
+    ba.append(string);
+    return ba.toBase64();
+}
+
 // Set the editor background & font color
 void NBrowserWindow::setEditorStyle() {
-    QString qss = global.getEditorCss();
-#ifndef _WIN32
-    editor->settings()->setUserStyleSheetUrl(QUrl("file://"+qss));
-#else
-    editor->settings()->setUserStyleSheetUrl(QUrl("file:///"+qss));
-#endif
-    return;
+    QString css = global.getEditorCss();
+    if (css.isEmpty()) {
+        return;
+    }
+    QString url = QString("data:text/css;charset=utf-8;base64,").append(base64_encode(css));
+    // http://doc.qt.io/archives/qt-5.5/qwebsettings.html#setUserStyleSheetUrl
+    // hack to pass inline css to avoid putting it in file
+    // The location must be either a path on the local filesystem, or a data URL with UTF-8 and Base64 encoded data, such as:
+    // "data:text/css;charset=utf-8;base64,cCB7IGJhY2tncm91bmQtY29sb3I6IHJlZCB9Ow=="
+    //QLOG_DEBUG() << "applied css " << css << " as " << url;
+
+    editor->settings()->setUserStyleSheetUrl(url);
 }
 
 

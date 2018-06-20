@@ -132,9 +132,9 @@ void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, Q
     checkExistingReadableDir(translateDir);
     translateDirPath = slashTerminatePath(translateDir.path());
 
-    qssDir.setPath(programDataDir + "qss");
-    checkExistingReadableDir(qssDir);
-    qssDirPath = slashTerminatePath(qssDir.path());
+    //    qssDir.setPath(programDataDir + "qss");
+    //    checkExistingReadableDir(qssDir);
+    //    qssDirPath = slashTerminatePath(qssDir.path());
 
     // Read/write directories that only we use
     QString globalSettingsFileName = configDir + "nixnote.conf";
@@ -149,9 +149,9 @@ void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, Q
         accountId = accountIdFromSettings;
     }
 
-    qssDirUser.setPath(configDir + "qss");
-    createDirOrCheckWriteable(qssDirUser);
-    qssDirPathUser = slashTerminatePath(qssDirUser.path());
+    //    qssDirUser.setPath(configDir + "qss");
+    //    createDirOrCheckWriteable(qssDirUser);
+    //    qssDirPathUser = slashTerminatePath(qssDirUser.path());
 
     logsDir.setPath(userDataDir + "logs-" + QString::number(accountId));
     createDirOrCheckWriteable(logsDir);
@@ -210,8 +210,8 @@ void FileManager::deleteTopLevelFiles(QDir dir, bool exitOnFail) {
     for (qint32 i=0; i<list.size(); i++) {
         QFile f(list.at(i));
         if (!f.remove() && exitOnFail) {
-            cout << "Error deleting file '" +f.fileName().toStdString() <<
-                    "'. Aborting program";
+            QLOG_FATAL() << "Error deleting file '" << f.fileName()
+                         << "'. Aborting program";
             exit(16);
         }
     }
@@ -306,12 +306,12 @@ QString FileManager::getLogsDirPath(QString relativePath) {
     return logsDirPath + toPlatformPathSeparator(relativePath);
 }
 
-QString FileManager::getQssDirPath(QString relativePath) {
-    return qssDirPath + toPlatformPathSeparator(relativePath);
-}
-QString FileManager::getQssDirPathUser(QString relativePath) {
-    return qssDirPathUser + toPlatformPathSeparator(relativePath);
-}
+//QString FileManager::getQssDirPath(QString relativePath) {
+//    return qssDirPath + toPlatformPathSeparator(relativePath);
+//}
+//QString FileManager::getQssDirPathUser(QString relativePath) {
+//    return qssDirPathUser + toPlatformPathSeparator(relativePath);
+//}
 
 QString FileManager::getTmpDirPath() {
     return tmpDirPath;

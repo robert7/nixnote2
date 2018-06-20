@@ -53,46 +53,47 @@ NWebView::NWebView(NBrowserWindow *parent) :
     this->setFont(global.getGuiFont(font()));
 
     contextMenu = new QMenu(this);
+
     openAction = new QAction(tr("Open"), this);
     contextMenu->addAction(openAction);
     contextMenu->addSeparator();
     contextMenu->setFont(global.getGuiFont(font()));
 
     cutAction = new QAction(tr("Cut"), this);
-    this->setupShortcut(cutAction, "Edit_Cut");
+    global.setupShortcut(cutAction, "Edit_Cut");
     contextMenu->addAction(cutAction);
     connect(cutAction, SIGNAL(triggered()), parent, SLOT(cutButtonPressed()));
 
     copyAction = new QAction(tr("Copy"), this);
-    this->setupShortcut(copyAction, "Edit_Copy");
+    global.setupShortcut(copyAction, "Edit_Copy");
     contextMenu->addAction(copyAction);
     connect(copyAction, SIGNAL(triggered()), parent, SLOT(copyButtonPressed()));
 
     pasteAction = new QAction(tr("Paste"), this);
-    setupShortcut(pasteAction, "Edit_Paste");
+    global.setupShortcut(pasteAction, "Edit_Paste");
     contextMenu->addAction(pasteAction);
     connect(pasteAction, SIGNAL(triggered()), parent, SLOT(pasteButtonPressed()));
 
     pasteWithoutFormatAction = new QAction(tr("Paste as Unformatted Text"), this);
-    this->setupShortcut(pasteWithoutFormatAction, "Edit_Paste_Without_Formatting");
+    global.setupShortcut(pasteWithoutFormatAction, "Edit_Paste_Without_Formatting");
     contextMenu->addAction(pasteWithoutFormatAction);
     connect(pasteWithoutFormatAction, SIGNAL(triggered()), parent, SLOT(pasteWithoutFormatButtonPressed()));
 
     removeFormattingAction = new QAction(tr("Remove Formatting"), this);
-    this->setupShortcut(removeFormattingAction, "Edit_Remove_Formatting");
+    global.setupShortcut(removeFormattingAction, "Edit_Remove_Formatting");
     contextMenu->addAction(removeFormattingAction);
     connect(removeFormattingAction, SIGNAL(triggered()), parent, SLOT(removeFormatButtonPressed()));
 
     copyNoteUrlAction = new QAction(tr("Copy Note URL"), this);
-    this->setupShortcut(copyNoteUrlAction, "Edit_Copy_Note_Url");
+    global.setupShortcut(copyNoteUrlAction, "Edit_Copy_Note_Url");
     contextMenu->addAction(copyNoteUrlAction);
     connect(copyNoteUrlAction, SIGNAL(triggered()), parent, SLOT(copyNoteUrl()));
 
     contextMenu->addSeparator();
 
-    QMenu *colorMenu = new QMenu(tr("Background Color"), this);
+    // change background color of WHOLE note (this is different from changing font/text background color)
+    QMenu *colorMenu = new QMenu(tr("Note Background Color"), this);
     colorMenu->setFont(global.getGuiFont(font()));
-
     // Build the background color menu
     backgroundColorMapper = new QSignalMapper(this);
     QAction *action;
@@ -104,60 +105,69 @@ NWebView::NWebView(NBrowserWindow *parent) :
         connect(action, SIGNAL(triggered()), backgroundColorMapper, SLOT(map()));
         connect(backgroundColorMapper, SIGNAL(mapped(QString)), this, SLOT(setBackgroundColor(QString)));
     }
+    // QAction *action = setupColorMenuOption(tr("White"));
 
-//    QAction *action = setupColorMenuOption(tr("White"));
+    fontColorAction = new QAction(tr("Set text color"), this);
+    global.setupShortcut(fontColorAction, "Format_Font_Color");
+    contextMenu->addAction(fontColorAction);
+    connect(fontColorAction, SIGNAL(triggered()), parent, SLOT(fontColorClicked()));
+
+    fontBackgroundColorAction = new QAction(tr("Set text background color"), this);
+    global.setupShortcut(fontBackgroundColorAction, "Format_Highlight");
+    contextMenu->addAction(fontBackgroundColorAction);
+    connect(fontBackgroundColorAction, SIGNAL(triggered()), parent, SLOT(fontHighlightClicked()));
 
     contextMenu->addMenu(colorMenu);
     contextMenu->addSeparator();
 
     todoAction = new QAction(tr("To-do"), this);
     contextMenu->addAction(todoAction);
-    this->setupShortcut(todoAction, "Edit_Insert_Todo");
+    global.setupShortcut(todoAction, "Edit_Insert_Todo");
     connect(todoAction, SIGNAL(triggered()), parent, SLOT(todoButtonPressed()));
 
     contextMenu->addSeparator();
 
     insertHtmlEntitiesAction = new QAction(tr("HTML Entities"),this);
     contextMenu->addAction(insertHtmlEntitiesAction);
-    this->setupShortcut(insertHtmlEntitiesAction, "Edit_Insert_Html_Entities");
+    global.setupShortcut(insertHtmlEntitiesAction, "Edit_Insert_Html_Entities");
     connect(insertHtmlEntitiesAction, SIGNAL(triggered()), parent, SLOT(insertHtmlEntities()));
 
     contextMenu->addSeparator();
 
     encryptAction = new QAction(tr("Encrypted Selected Text"), this);
     contextMenu->addAction(encryptAction);
-    this->setupShortcut(encryptAction, "Edit_Encrypt_Text");
+    global.setupShortcut(encryptAction, "Edit_Encrypt_Text");
     connect(encryptAction, SIGNAL(triggered()), parent, SLOT(encryptButtonPressed()));
 
     insertDateTimeAction = new QAction(tr("Insert Date && Time"), this);
-    this->setupShortcut(insertDateTimeAction, "Insert_DateTime");
+    global.setupShortcut(insertDateTimeAction, "Insert_DateTime");
     contextMenu->addAction(insertDateTimeAction);
-    connect(insertDateTimeAction, SIGNAL(triggered()), parent, SLOT(insertDatetime()));
+    connect(insertDateTimeAction, SIGNAL(triggered()), parent, SLOT(insertDatetime()));  // => nbrowserwindow.cpp
 
     insertLinkAction = new QAction(tr("Insert Hyperlink"), this);
     contextMenu->addAction(insertLinkAction);
-    this->setupShortcut(insertLinkAction, "Edit_Insert_Hyperlink");
+    global.setupShortcut(insertLinkAction, "Edit_Insert_Hyperlink");
     connect(insertLinkAction, SIGNAL(triggered()),parent, SLOT(insertLinkButtonPressed()));
 
     insertQuickLinkAction = new QAction(tr("Quick Link"), this);
     contextMenu->addAction(insertQuickLinkAction);
-    this->setupShortcut(insertQuickLinkAction, "Edit_Insert_QuickLink");
+    global.setupShortcut(insertQuickLinkAction, "Edit_Insert_QuickLink");
     connect(insertQuickLinkAction, SIGNAL(triggered()),parent, SLOT(insertQuickLinkButtonPressed()));
 
     removeLinkAction = new QAction(tr("Remove Hyperlink"), this);
     contextMenu->addAction(removeLinkAction);
-    this->setupShortcut(removeLinkAction, "Edit_Remove_Hyperlink");
+    global.setupShortcut(removeLinkAction, "Edit_Remove_Hyperlink");
     connect(removeLinkAction, SIGNAL(triggered()),parent, SLOT(removeLinkButtonPressed()));
 
     attachFileAction = new QAction(tr("Attach File"), this);
     contextMenu->addAction(attachFileAction);
-    this->setupShortcut(attachFileAction, "Edit_Attach_File");
+    global.setupShortcut(attachFileAction, "Edit_Attach_File");
     connect(attachFileAction, SIGNAL(triggered()),parent, SLOT(attachFile()));
     contextMenu->addSeparator();
 
     insertLatexAction = new QAction(tr("Insert LaTeX Formula"), this);
     contextMenu->addAction(insertLatexAction);
-    this->setupShortcut(insertLatexAction, "Edit_Insert_Latex");
+    global.setupShortcut(insertLatexAction, "Edit_Insert_Latex");
     connect(insertLatexAction, SIGNAL(triggered()),parent, SLOT(insertLatexButtonPressed()));
     contextMenu->addSeparator();
 
@@ -165,18 +175,18 @@ NWebView::NWebView(NBrowserWindow *parent) :
     tableMenu->setFont(global.getGuiFont(font()));
     contextMenu->addMenu(tableMenu);
     insertTableAction = new QAction(tr("Insert Table"), this);
-    this->setupShortcut(insertTableAction, "Edit_Insert_Table");
+    global.setupShortcut(insertTableAction, "Edit_Insert_Table");
     tableMenu->addAction(insertTableAction);
     connect(insertTableAction, SIGNAL(triggered()), parent, SLOT(insertTableButtonPressed()));
     tableMenu->addSeparator();
 
     insertTableRowAction = new QAction(tr("Insert Row"), this);
-    this->setupShortcut(insertTableRowAction, "Edit_Insert_Table_Row");
+    global.setupShortcut(insertTableRowAction, "Edit_Insert_Table_Row");
     tableMenu->addAction(insertTableRowAction);
     connect(insertTableRowAction, SIGNAL(triggered()), parent, SLOT(insertTableRowButtonPressed()));
 
     insertTableColumnAction = new QAction(tr("Insert Column"), this);
-    this->setupShortcut(insertTableColumnAction, "Edit_Insert_Table_Column");
+    global.setupShortcut(insertTableColumnAction, "Edit_Insert_Table_Column");
     tableMenu->addAction(insertTableColumnAction);
     connect(insertTableColumnAction, SIGNAL(triggered()), parent, SLOT(insertTableColumnButtonPressed()));
 
@@ -184,17 +194,17 @@ NWebView::NWebView(NBrowserWindow *parent) :
 
     deleteTableRowAction = new QAction(tr("Delete Row"), this);
     tableMenu->addAction(deleteTableRowAction);
-    this->setupShortcut(deleteTableRowAction, "Edit_Delete_Table_Row");
+    global.setupShortcut(deleteTableRowAction, "Edit_Delete_Table_Row");
     connect(deleteTableRowAction, SIGNAL(triggered()), parent, SLOT(deleteTableRowButtonPressed()));
     deleteTableColumnAction = new QAction(tr("Delete Column"), this);
     tableMenu->addAction(deleteTableColumnAction);
-    this->setupShortcut(deleteTableColumnAction, "Edit_Delete_Table_Column");
+    global.setupShortcut(deleteTableColumnAction, "Edit_Delete_Table_Column");
     connect(deleteTableColumnAction, SIGNAL(triggered()), parent, SLOT(deleteTableColumnButtonPressed()));
 
     tableMenu->addSeparator();
 
     tablePropertiesAction = new QAction(tr("Table Properties"), this);
-    this->setupShortcut(tablePropertiesAction, "Edit_Table_Properties");
+    global.setupShortcut(tablePropertiesAction, "Edit_Table_Properties");
     tableMenu->addAction(tablePropertiesAction);
     connect(tablePropertiesAction, SIGNAL(triggered()), parent, SLOT(tablePropertiesButtonPressed()));
 
@@ -213,10 +223,10 @@ NWebView::NWebView(NBrowserWindow *parent) :
 
     rotateImageLeftAction = new QAction(tr("Rotate Left"), this);
     imageMenu->addAction(rotateImageLeftAction);
-    this->setupShortcut(rotateImageLeftAction, "Edit_Image_Rotate_Left");
+    global.setupShortcut(rotateImageLeftAction, "Edit_Image_Rotate_Left");
     connect(rotateImageLeftAction, SIGNAL(triggered()), parent, SLOT(rotateImageLeftButtonPressed()));
     rotateImageRightAction = new QAction(tr("Rotate Right"), this);
-    this->setupShortcut(rotateImageRightAction, "Edit_Image_Rotate_Right");
+    global.setupShortcut(rotateImageRightAction, "Edit_Image_Rotate_Right");
     imageMenu->addAction(rotateImageRightAction);
     connect(rotateImageRightAction, SIGNAL(triggered()), parent, SLOT(rotateImageRightButtonPressed()));
     contextMenu->addSeparator();
@@ -237,24 +247,27 @@ NWebView::NWebView(NBrowserWindow *parent) :
 
     connect(this->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(exposeToJavascript()));
 
-        //this->setStyleSheet("QWebView,html,body { background-color : red; foreground-color : white; }");
-    QString qss = global.fileManager.getQssDirPathUser("");
-    if (qss == "")
-        qss = global.fileManager.getQssDirPath("");
-    this->settings()->setUserStyleSheetUrl(QUrl("file://"+qss+"editor.css"));
+    //    this->setStyleSheet("QWebView,html,body { background-color : red; foreground-color : white; }");
+    // ////////////////
+    //    QString qss = global.fileManager.getQssDirPathUser("");
+    //    if (qss == "")
+    //        qss = global.fileManager.getQssDirPath("");
+    //    this->settings()->setUserStyleSheetUrl(QUrl("file://"+qss+"editor.css"));
+
+    // style apply: see Global::getEditorCss
+    // then NBrowserWindow::setEditorStyle()
 
     this->pasteSequence = QKeySequence(this->pasteAction->shortcut()).toString().toLower();
     if (pasteSequence.trimmed() == "")
         pasteSequence = "ctrl+v";
     pasteUnformattedSequence = QKeySequence(pasteWithoutFormatAction->shortcut()).toString().toLower();
     if (pasteUnformattedSequence.trimmed() == "")
-        pasteUnformattedSequence = "ctrl+shft+v";
+        pasteUnformattedSequence = "ctrl+shift+v";
     fileSaveSequence = "ctrl+s";
 
     QString css = global.getThemeCss("noteContentsCss");
     if (css!="")
         this->setStyleSheet(css);
-
 }
 
 
@@ -467,16 +480,6 @@ void NWebView::setDefaultTitle() {
     QString body = this->page()->mainFrame()->toPlainText();
     titleEditor->setTitleFromContent(body);
 }
-
-
-
-void NWebView::setupShortcut(QAction *action, QString text) {
-    if (!global.shortcutKeys->containsAction(&text))
-        return;
-    QKeySequence key(global.shortcutKeys->getShortcut(&text));
-    action->setShortcut(key);
-}
-
 
 void NWebView::downloadRequested(QNetworkRequest req) {
     QString urlString = req.url().toString();

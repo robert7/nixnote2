@@ -28,17 +28,17 @@
      LineEdit(QWidget *parent = 0);
      void updateSelection();
      bool isSet();
+     void setFocus(Qt::FocusReason reason);
 
  protected:
+     virtual void focusInEvent(QFocusEvent *e);
 
  private slots:
      void buildSelection();
      void textChanged(QString text);
 
- private:
-
  signals:
      void updateSelectionRequested();
  };
 
- #endif // LIENEDIT_H
+ #endif // LINEEDIT_H

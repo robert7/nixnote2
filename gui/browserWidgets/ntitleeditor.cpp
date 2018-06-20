@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 
 #include <QPalette>
+#include <QToolTip>
 
 using namespace qevercloud;
 
@@ -59,20 +60,26 @@ void NTitleEditor::setActiveColor() {
 // We now have focus.  Change the appearance
 void NTitleEditor::focusInEvent(QFocusEvent *e)
 {
-  QLineEdit::focusInEvent(e);
-  setStyleSheet(activeColor);
-  emit(focussed(true));
+    QLineEdit::focusInEvent(e);
+    setStyleSheet(activeColor);
+    emit(focussed(true));
+
+    // this is workaround.. improve later
+    QString shortcutInfo = global.appendShortcutInfo(QString(), "Focus_Title");
+    global.setMessage(tr("Shortcut") + shortcutInfo, SET_MESSAGE_TIMEOUT_SHORT);
 }
 
 
 // Focus is lost.  Set the colors back and check for text changed
-void NTitleEditor::focusOutEvent(QFocusEvent *e)
-{
-  QLineEdit::focusOutEvent(e);
-  setStyleSheet(inactiveColor);
-  titleChanged(cleanupTitle(text()));
-  emit(focussed(false));
-  this->setCursorPosition(0);
+void NTitleEditor::focusOutEvent(QFocusEvent *e) {
+    QLineEdit::focusOutEvent(e);
+    setStyleSheet(inactiveColor);
+    titleChanged(cleanupTitle(text()));
+    emit(focussed(false));
+    this->setCursorPosition(0);
+
+    //QLOG_DEBUG() << "focus out";
+    //QToolTip::showText(this->mapToGlobal(QPoint(0,0)), "A tool tip-------------------------------------------");
 }
 
 

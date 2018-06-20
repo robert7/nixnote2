@@ -511,6 +511,11 @@ void NTableView::refreshData() {
         verticalHeader()->setDefaultSectionSize(fm.height());
         //verticalHeader()->setDefaultSectionSize(QApplication::fontMetrics().height()*200);
     }
+
+    this->scrollToTop(); // vertical scroll
+    // will additionaly reset selection (to none)
+    this->reset();
+    // missing:horizontal reset
 }
 
 

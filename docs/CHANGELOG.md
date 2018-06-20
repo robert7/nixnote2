@@ -1,9 +1,25 @@
 # CHANGELOG
 
 ## 2018-06
+### #5
+* Minor improvement in font color/background color (highlight selection). 
+  Tooltip now shows how to use. Keyboard shortcuts possible (default Ctrl-d, Ctrl-Shift-H). Context
+  menu option added. Color buttons will preserve state across program restart.
+* **Tooltips with kbd shortcut info for all editor toolbar icons added.**
+* Few more default kbd shortcuts added.  
+* Remove hardcoded build in kbd shortcuts (now all comes from shortcuts.ini)
+* Changed theme handling - now all themes come from ini file (incl. of the Default theme). This is 
+  similar to shortcuts.txt.
+* Clear search text, after click on "all notes".  
+* Restructured main toolbar. All buttons now have kbd shortcuts and tooltips showing it.
+* Renamed theme.ini to themes.ini because of structure changes prevent loading of legacy user themes 
+  (they need minor fixes). To make thing easier, now all CSS is inline. Loading from file my be 
+  reintroduced later.
+  
 
 ### #4
-* Merged changes from [jeffkowalski/Nixnote2](https://github.com/jeffkowalski/Nixnote2) - **various fixes, build config for macOS**
+* Merged changes from [jeffkowalski/Nixnote2](https://github.com/jeffkowalski/Nixnote2) 
+  and [RJVB/nixnote2](https://github.com/RJVB/nixnote2) - **various fixes, build config for macOS**
 * **Rewrite of the path handling logic after merge. Now standard compliant path for config and user data are used.**
 * Program has 3 directory paths "config dir", "program data dir" (like images), "user data" (database logs)
 * All three can be given on commandline for non-standard cases - those have priority (logic is in 

@@ -216,7 +216,7 @@ void StartupConfig::printHelp() {
                    +QString("\n\n")
                    );
 
-    std::cout << help.toStdString();
+    std::cout << help.toStdString(); // ok to use cout => help text
 }
 
 
@@ -632,7 +632,7 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
         command->setBit(STARTUP_GUI,true);
 
     if (command->count(true) > 1) {
-        std::cout << "\nInvalid options specified.  Only one command may be specified at a time.\n";
+        QLOG_FATAL() << "\nInvalid options specified.  Only one command may be specified at a time.\n";
         return 16;
     }
 
