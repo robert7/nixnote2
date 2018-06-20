@@ -1085,6 +1085,7 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
         }
         if (isThemeHeader && wantedThemeHeader == line) {
             themeFound = true;
+            // we don't clear the existing values, as we want user theme be able to add to system theme but doesn't need to replace all
         }
 
         if (themeFound) {
@@ -1092,13 +1093,17 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
             if (fields.size() >= 2) {
                 QString key = line.section('=', 0, 0).simplified();
                 QString value = line.section('=', 1, 999).split("##").at(0).simplified();
+                if (key.isEmpty() || value.isEmpty()) {
+                    // empty keys and values are ignores
+                    // if user theme wants to reset existing style to blank, then it needs to put at least something
+                    continue;
+                }
 
                 //QLOG_DEBUG() << "Theme " << wantedThemeHeader << ": key=" << key << "value=" << value;
 
                 // this is a guess, but inline CSS always needs to contain ":", file path should never
                 bool isInlineCss = value.contains(QString(":"));
                 if (isInlineCss) {
-                    colorList.remove(key);
                     colorList.insert(key, value);
                     QLOG_DEBUG() << "Theme " << wantedThemeHeader << ": added CSS key=" << key << "value=" << value;
                 } else {
@@ -1108,7 +1113,6 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
                     QFile f(filePath);
                     if (f.exists()) {
                         QLOG_DEBUG() << "Theme " << wantedThemeHeader << ": added image key=" << key << "path=" << filePath;
-                        resourceList.remove(":" + key);
                         resourceList.insert(":" + key, filePath);
                     } else {
                         QLOG_WARN() << "Theme image file for key=" << key << "not found: " + filePath;
