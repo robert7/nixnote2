@@ -5,17 +5,19 @@
 * Minor improvement in font color/background color (highlight selection). 
   Tooltip now shows how to use. Keyboard shortcuts possible (default Ctrl-d, Ctrl-Shift-H). Context
   menu option added. Color buttons will preserve state across program restart.
-* **Tooltips with kbd shortcut info for all editor toolbar icons added.**
+* **Tooltips with kbd shortcut info for all editor and main toolbar icons added.**
 * Few more default kbd shortcuts added.  
 * Remove hardcoded build in kbd shortcuts (now all comes from shortcuts.ini)
 * Changed theme handling - now all themes come from ini file (incl. of the Default theme). This is 
   similar to shortcuts.txt.
-* Clear search text, after click on "all notes".  
-* Restructured main toolbar. All buttons now have kbd shortcuts and tooltips showing it.
+* Clear search text, after click on "All notes".  
+* Restructured main toolbar.
 * Renamed theme.ini to themes.ini because of structure changes prevent loading of legacy user themes 
-  (they need minor fixes). To make thing easier, now all CSS is inline. Loading from file my be 
-  reintroduced later.
-  
+  (they will need minor fixes to work with new version). To make things easier, now all CSS is inline. 
+  Loading from file my be reintroduced later.
+
+* [Preview 1](https://www.dropbox.com/sh/62lnikzyf4r0sa2/AADMk-EHBwvBt7G5bOga9tyia?dl=0&preview=RS-5-toolbar-1.png)
+  [Preview 2](https://www.dropbox.com/sh/62lnikzyf4r0sa2/AADMk-EHBwvBt7G5bOga9tyia?dl=0&preview=RS-5-toolbar-2.png)
 
 ### #4
 * Merged changes from [jeffkowalski/Nixnote2](https://github.com/jeffkowalski/Nixnote2) 
