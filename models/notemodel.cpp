@@ -174,24 +174,48 @@ Qt::ItemFlags NoteModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
+// enum Qt::ItemDataRole - http://doc.qt.io/qt-5/qt.html#ItemDataRole-enum
+
+QVariant NoteModel::data(const QModelIndex &index, int role) const {
+
+    int row = index.row();
+    int column = index.column();
+    //QLOG_DEBUG() << "Request for note data at row=" << row << " col=" << column << " role=" << role;
 
 
-QVariant NoteModel::data (const QModelIndex & index, int role) const {
-    if (role == Qt::ForegroundRole) {
-        QString color = index.sibling(index.row(), NOTE_TABLE_COLOR_POSITION).data().toString();
-        if (color != "") {
-            if (color == "blue" || color == "black")
-                return QColor("white");
+    if ((role == Qt::DisplayRole) && (column == NOTE_TABLE_TITLE_POSITION)) {
+        bool isDirty = index.sibling(row, NOTE_TABLE_IS_DIRTY_POSITION).data(Qt::DisplayRole).toBool();
+        int relevance = index.sibling(row, NOTE_TABLE_SEARCH_RELEVANCE_POSITION).data(Qt::DisplayRole).toInt();
+        if (isDirty || (relevance > 0)) {
+            QString title = QSqlTableModel::data(index, role).toString();
+            return QString("(")
+                           + (isDirty ? QString("*") : QString(""))
+                           + (relevance > 0 ? QString::number(relevance) : QString(""))
+                           + QString(") ") + title;
         }
     }
 
+    // foreground color
+    if (role == Qt::ForegroundRole) {
+        QVariant colorValue = index.sibling(row, NOTE_TABLE_COLOR_POSITION).data(Qt::DisplayRole);
+        QString color = colorValue.toString();
+        if (color != "") {
+            // kind of hack to return inverted FG color on dark BG color
+            if (color == "blue" || color == "black") {
+                return QColor("white");
+            }
+        }
+    }
+
+    // background color - this is given by NOTE_TABLE_COLOR_POSITION
     if (role == Qt::BackgroundRole) {
-        QString color = index.sibling(index.row(), NOTE_TABLE_COLOR_POSITION).data().toString();
+        QVariant colorValue = index.sibling(row, NOTE_TABLE_COLOR_POSITION).data(Qt::DisplayRole);
+        QString color = colorValue.toString();
         if (color != "") {
             return QColor(color);
         }
     }
-    return QSqlTableModel::data(index,role);
+    return QSqlTableModel::data(index, role);
 }
 
 bool NoteModel::select() {
