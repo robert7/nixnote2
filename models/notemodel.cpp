@@ -182,16 +182,15 @@ QVariant NoteModel::data(const QModelIndex &index, int role) const {
     int column = index.column();
     //QLOG_DEBUG() << "Request for note data at row=" << row << " col=" << column << " role=" << role;
 
-
+    // title compound - later this can be made configurable; and we can also adjust painting
     if ((role == Qt::DisplayRole) && (column == NOTE_TABLE_TITLE_POSITION)) {
         bool isDirty = index.sibling(row, NOTE_TABLE_IS_DIRTY_POSITION).data(Qt::DisplayRole).toBool();
         int relevance = index.sibling(row, NOTE_TABLE_SEARCH_RELEVANCE_POSITION).data(Qt::DisplayRole).toInt();
         if (isDirty || (relevance > 0)) {
             QString title = QSqlTableModel::data(index, role).toString();
-            return QString("(")
-                           + (isDirty ? QString("*") : QString(""))
-                           + (relevance > 0 ? QString::number(relevance) : QString(""))
-                           + QString(") ") + title;
+            return (isDirty ? QString("▲") : QString(""))
+                   + (relevance > 0 ? QString("○") : QString(""))
+                   + QString(" ") + title;
         }
     }
 
