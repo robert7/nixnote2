@@ -128,6 +128,9 @@ private:
 
     void exitPoint(ExitPoint *exit);
 
+    // get note title from the title UI field - and do some fixup (like discard line feeds)
+    QString getCurrentNoteTitle();
+
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);

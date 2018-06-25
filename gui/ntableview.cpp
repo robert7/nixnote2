@@ -431,28 +431,29 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
 
 // Update a specific table row/column.
 void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
-
     SelectionMode mode = selectionMode();
-//    this->blockSignals(true);
-//    proxy->blockSignals(true);
-//    model()->blockSignals(true);
+    //    this->blockSignals(true);
+    //    proxy->blockSignals(true);
+    //    model()->blockSignals(true);
 
-    QList<qint32> selectedLids;
+    QList <qint32> selectedLids;
     getSelectedLids(selectedLids);
 
     // Check the highlighted LIDs from the history selection.
-    if (proxy->lidMap->contains(lid)) {
+    // set to model ONLY, if data is valid
+    // so if we pass invalid "data" - then data is unchanged
+    if (proxy->lidMap->contains(lid) && data.isValid()) {
         int rowLocation = proxy->lidMap->value(lid);
         if (rowLocation >= 0) {
-            QModelIndex modelIndex = model()->index(rowLocation,cell);
+            QModelIndex modelIndex = model()->index(rowLocation, cell);
             model()->setData(modelIndex, data);
         }
     }
 
     // We need to re-select all the rows.  The selection model is
-    // temporarily set to multiselection so it allows multiple rows.
+    // temporarily set to multi selection, so it allows multiple rows.
     setSelectionMode(QAbstractItemView::MultiSelection);
-    for (int i=0; i<selectedLids.size(); i++) {
+    for (int i = 0; i < selectedLids.size(); i++) {
         int sourceRow = proxy->lidMap->value(selectedLids[i]);
         QModelIndex sourceIndex = model()->index(sourceRow, NOTE_TABLE_LID_POSITION);
         QModelIndex proxyIndex = proxy->mapFromSource(sourceIndex);
@@ -460,9 +461,9 @@ void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
     }
 
     setSelectionMode(mode);
-//    this->blockSignals(false);
-//    proxy->blockSignals(false);
-//    model()->blockSignals(false);
+    //    this->blockSignals(false);
+    //    proxy->blockSignals(false);
+    //    model()->blockSignals(false);
 }
 
 
