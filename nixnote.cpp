@@ -1998,6 +1998,9 @@ void NixNote::saveContents() {
         if (tabWindow->browserList->at(i)->editor->isDirty) {
             tabWindow->browserList->at(i)->saveNoteContent();
             noteTableView->refreshCell(lid, NOTE_TABLE_IS_DIRTY_POSITION, true);
+            // also redraw title column
+            QVariant noData;
+            noteTableView->refreshCell(lid, NOTE_TABLE_TITLE_POSITION, noData);
         }
 
     }

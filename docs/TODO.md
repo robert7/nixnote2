@@ -24,4 +24,6 @@
 * Improve search (~title search should not do automatic right truncation)
 * Automatic search after typing text in search box (search box "onchange" => search)
 * AppImage build
-
+* Optional removal of diacritics before search and index - currently mixing words with 
+  diacritics and without doesn't work at all 
+  

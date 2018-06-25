@@ -429,8 +429,12 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
 
 
 
-// Update a specific table row/column.
+// update specific one cell
+// if content did not really change, then invalid QVariant may be passed here
+// useful for compound fields
 void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
+    QLOG_DEBUG() << "Got: refresh cell in table view lid=" << lid << " cell=" << cell << " data=" << data;
+
     SelectionMode mode = selectionMode();
     //    this->blockSignals(true);
     //    proxy->blockSignals(true);
@@ -467,7 +471,7 @@ void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
 }
 
 
-// Update the list of notes.
+// refresh all data from underlying database source
 void NTableView::refreshData() {
     QLOG_TRACE() << "Getting valid lids in filter";
 

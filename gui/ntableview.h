@@ -129,12 +129,7 @@ public slots:
     void createTableOfContents();
     void showPropertiesDialog();
 
-    // refresh all data from underlying database source
     void refreshData();
-
-    // update one cell
-    // if content did not really change, then invalid QVariant may be passed here
-    // useful for compound fields
     void refreshCell(qint32 lid, int cell, QVariant data);
 
     void dragMoveEvent(QDragMoveEvent *event);

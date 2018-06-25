@@ -479,7 +479,7 @@ void NBrowserWindow::setContent(qint32 lid) {
             formatter.setHighlightText(criteria->getSearchString());
         formatter.setNote(n, global.pdfPreview);
         //formatter.setHighlight();
-        QLOG_DEBUG() << "rebuilding note HTML";
+        QLOG_DEBUG() << "Rebuilding note HTML";
         content = formatter.rebuildNoteHTML();
         if (!criteria->isSearchStringSet()) {
             QLOG_DEBUG() << "criteria search string set";
@@ -636,7 +636,6 @@ void NBrowserWindow::setReadOnly(bool readOnly) {
     dateEditor.setEnabled(true);
     editor->page()->setContentEditable(true);
     alarmButton.setEnabled(true);
-
 }
 
 
@@ -771,6 +770,7 @@ void NBrowserWindow::noteSyncUpdate(qint32 lid) {
 // A note's content was updated
 void NBrowserWindow::noteContentUpdated() {
     if (editor->isDirty) {
+        QLOG_DEBUG() << "noteContentUpdated() dirty=true";
         NoteTable noteTable(global.db);
         noteTable.setDirty(this->lid, true);
         editor->isDirty = false;
@@ -781,6 +781,8 @@ void NBrowserWindow::noteContentUpdated() {
         // signal to redraw title compound column (with unchanged data)
         QVariant noData;
         emit(updateNoteList(this->lid, NOTE_TABLE_TITLE_POSITION, noData));
+    } else {
+        QLOG_DEBUG() << "noteContentUpdated() - not dirty";
     }
 }
 
@@ -790,7 +792,7 @@ void NBrowserWindow::saveNoteContent() {
     microFocusChanged();
 
     if (this->editor->isDirty) {
-
+        QLOG_DEBUG() << "saveNoteContent() dirty=true";
         // BEGIN EXIT POINT
         QHash<QString, ExitPoint*> *points;
         points = global.exitManager->exitPoints;
@@ -859,6 +861,8 @@ void NBrowserWindow::saveNoteContent() {
             global.cache.remove(lid);
         }
         QLOG_DEBUG() << "Leaving saveNoteContent()";
+    } else {
+        QLOG_DEBUG() << "saveNoteContent() not dirty";
     }
 }
 
@@ -891,9 +895,9 @@ void NBrowserWindow::cutButtonPressed() {
 
 // The copy button was pressed
 void NBrowserWindow::copyButtonPressed() {
-//    editor->downloadImageAction()->setEnabled(true);
-//    selectedFileName = f;
-//    selectedFileLid = l.toInt();
+    //    editor->downloadImageAction()->setEnabled(true);
+    //    selectedFileName = f;
+    //    selectedFileLid = l.toInt();
 
     // If we have text selected
     if (this->editor->selectedText().trimmed() != "") {
@@ -908,7 +912,6 @@ void NBrowserWindow::copyButtonPressed() {
     }
 
     microFocusChanged();
-
 }
 
 
@@ -951,12 +954,12 @@ void NBrowserWindow::pasteButtonPressed() {
         for (int i=0; i<urls.size(); i++) {
             QLOG_DEBUG() << urls[i].toString();
             if (urls[i].toString().startsWith("file://")) {
-// Windows Check
-#ifndef _WIN32
-                QString fileName = urls[i].toString().mid(7);
-#else
-                QString fileName = urls[i].toString().mid(8);
-#endif  // End windows check
+            // Windows Check
+            #ifndef _WIN32
+                            QString fileName = urls[i].toString().mid(7);
+            #else
+                            QString fileName = urls[i].toString().mid(8);
+            #endif  // End windows check
                 attachFileSelected(fileName);
                 this->editor->triggerPageAction(QWebPage::InsertParagraphSeparator);
             }
@@ -1265,6 +1268,7 @@ void NBrowserWindow::bulletListButtonPressed() {
 
 
 void NBrowserWindow::contentChanged() {
+    QLOG_DEBUG() << "contentChanged()";
     this->editor->isDirty = true;
     saveNoteContent();
     this->sendDateUpdateSignal();
@@ -3447,9 +3451,9 @@ void NBrowserWindow::sendTitleUpdateSignal() {
 void NBrowserWindow::sendNotebookUpdateSignal() {
     NoteTable ntable(global.db);
 
-//    QString notebook = notebookMenu.d
-//    ntable.updateNotebook(this->lid, this->noteTitle.text().trimmed(), true);
-//    this->editor->isDirty = true;
+    //    QString notebook = notebookMenu.d
+    //    ntable.updateNotebook(this->lid, this->noteTitle.text().trimmed(), true);
+    //    this->editor->isDirty = true;
     ntable.setDirty(this->lid, true,false);
     emit(this->noteUpdated(lid));
     qint32 lid = notebookMenu.notebookLid;
@@ -3457,7 +3461,6 @@ void NBrowserWindow::sendNotebookUpdateSignal() {
     emit(this->updateNoteList(lid, NOTE_TABLE_NOTEBOOK_POSITION, name));
     emit(this->updateNoteList(lid, NOTE_TABLE_NOTEBOOK_LID_POSITION, lid));
     emit noteNotebookEditedSignal(uuid, this->lid, lid, name);
-
 
     //sendDateUpdateSignal();
 }
@@ -3703,8 +3706,10 @@ void NBrowserWindow::focusCheck() {
 
 
 void NBrowserWindow::saveTimeCheck() {
-    if (editor->isDirty)
-       this->saveNoteContent();
+    if (editor->isDirty) {
+        QLOG_DEBUG() << "saveTimeCheck()";
+        this->saveNoteContent();
+    }
 }
 
 
