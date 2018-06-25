@@ -173,7 +173,7 @@ Qt::ItemFlags NoteModel::flags(const QModelIndex &index) const {
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
-// enum Qt::ItemDataRole - http://doc.qt.io/qt-5/qt.html#ItemDataRole-enum
+// see "technical-notes" for docs regarding "role"
 
 QVariant NoteModel::data(const QModelIndex &index, int role) const {
 

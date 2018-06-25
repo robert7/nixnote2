@@ -777,6 +777,10 @@ void NBrowserWindow::noteContentUpdated() {
         qint64 dt = QDateTime::currentMSecsSinceEpoch();
         emit(noteUpdated(this->lid));
         emit(updateNoteList(this->lid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
+
+        // signal to redraw title compound column (with unchanged data)
+        QVariant noData;
+        emit(updateNoteList(this->lid, NOTE_TABLE_TITLE_POSITION, noData));
     }
 }
 
@@ -3423,12 +3427,14 @@ void NBrowserWindow::sendDateSubjectUpdateSignal() {
 }
 
 
+QString NBrowserWindow::getCurrentNoteTitle() {
+   return this->noteTitle.text().replace("\n"," ").simplified();
+}
 
 
-// Send a signal that the note has been updated
 void NBrowserWindow::sendTitleUpdateSignal() {
     NoteTable ntable(global.db);
-    QString text = this->noteTitle.text().replace("\n"," ").trimmed();
+    QString text = getCurrentNoteTitle();
     ntable.updateTitle(this->lid, text, true);
     emit noteTitleEditedSignal(uuid, lid, text);
     emit(this->noteUpdated(lid));

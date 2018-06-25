@@ -113,7 +113,6 @@ signals:
     void newNote();
 
 public slots:
-    void refreshData();
     void contextMenuEvent(QContextMenuEvent *event);
     void deleteSelectedNotes();
     void restoreSelectedNotes();
@@ -129,7 +128,15 @@ public slots:
     void mergeNotes();
     void createTableOfContents();
     void showPropertiesDialog();
+
+    // refresh all data from underlying database source
+    void refreshData();
+
+    // update one cell
+    // if content did not really change, then invalid QVariant may be passed here
+    // useful for compound fields
     void refreshCell(qint32 lid, int cell, QVariant data);
+
     void dragMoveEvent(QDragMoveEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);
     void mouseMoveEvent(QMouseEvent *event);

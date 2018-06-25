@@ -1,7 +1,8 @@
 # Technical notes
 * Here I will try to write some note-snippets about internal architecture.
 * I will try to add some text as I discover some relationships. 
-* **Caution:** Some info here may be not 100% accurate.
+* **Caution:** some info here may be not 100% accurate. And probably - at all times - there will
+  be more info missing then contained.
 
 ## Classes
 * NixNote (nixnote.cpp) - main window
@@ -17,4 +18,12 @@
 * NTableView - table view with notes 
   * slots
     * refreshCell(lid, column, data) - refresh one cell
-    * refreshData() - refresh whole table (does select from DB)
+    * refreshData() - refresh whole table (does select from DB; more expensive then refreshCell())
+    
+    
+## QT notes
+* QVariant
+  * QVariant::QVariant() - create invalid variant => variant.isValid()
+  * http://doc.qt.io/qt-5/qvariant.html
+* enum Qt::ItemDataRole - model - role
+  * http://doc.qt.io/qt-5/qt.html#ItemDataRole-enum
