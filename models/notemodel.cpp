@@ -165,8 +165,7 @@ int NoteModel::columnCount(const QModelIndex &parent) const {
 }
 
 
-Qt::ItemFlags NoteModel::flags(const QModelIndex &index) const
-{
+Qt::ItemFlags NoteModel::flags(const QModelIndex &index) const {
     if (!index.isValid())
         return Qt::ItemIsEnabled;
 
@@ -185,12 +184,21 @@ QVariant NoteModel::data(const QModelIndex &index, int role) const {
     // title compound - later this can be made configurable; and we can also adjust painting
     if ((role == Qt::DisplayRole) && (column == NOTE_TABLE_TITLE_POSITION)) {
         bool isDirty = index.sibling(row, NOTE_TABLE_IS_DIRTY_POSITION).data(Qt::DisplayRole).toBool();
-        int relevance = index.sibling(row, NOTE_TABLE_SEARCH_RELEVANCE_POSITION).data(Qt::DisplayRole).toInt();
-        if (isDirty || (relevance > 0)) {
+        //int relevance = index.sibling(row, NOTE_TABLE_SEARCH_RELEVANCE_POSITION).data(Qt::DisplayRole).toInt();
+        if (isDirty) {
             QString title = QSqlTableModel::data(index, role).toString();
-            return (isDirty ? QString("▲") : QString(""))
-                   + (relevance > 0 ? QString("○") : QString(""))
-                   + QString(" ") + title;
+            return
+                //(relevance > 0 ? QString("•") : QString(""))
+                (isDirty ? QString("▲") : QString(""))
+                + QString(" ") + title;
+        }
+    }
+    if ((role == Qt::FontRole) && (column == NOTE_TABLE_TITLE_POSITION)) {
+        int relevance = index.sibling(row, NOTE_TABLE_SEARCH_RELEVANCE_POSITION).data(Qt::DisplayRole).toInt();
+        if (relevance > 0) {
+            QFont font;
+            font.setBold(true);
+            return font;
         }
     }
 
