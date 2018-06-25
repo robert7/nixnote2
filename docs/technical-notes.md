@@ -12,6 +12,8 @@
     * updateNoteList(lid, column, data) => signal that some table column changes data 
 * NTabWidget - handles tab bar over note edit window (and the 1:N relationship between main window (NixNote)
   and NBrowserWindow)
+  * also holds a list of browser tabs (NBrowserWindow) and external browser windows ()
+  * and does sync between them
 * NoteModel - handles "note model" - relation ship between internal representation (database table 
   NoteTable) and provides source data for table view with notes.
   Here the multi column sorting is handled.

@@ -665,19 +665,10 @@ void NBrowserWindow::changeExpandState(int value) {
     global.settings->endGroup();
 }
 
-
-
-
-
-
-
-
 // Send a signal that a tag has been added to a note
 void NBrowserWindow::newTagAdded(qint32 lid) {
     emit(tagAdded(lid));
 }
-
-
 
 // Add a tag to a note
 void NBrowserWindow::addTagName(qint32 lid) {
@@ -777,10 +768,9 @@ void NBrowserWindow::noteContentUpdated() {
         qint64 dt = QDateTime::currentMSecsSinceEpoch();
         emit(noteUpdated(this->lid));
         emit(updateNoteList(this->lid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
-
+        emit(updateNoteList(this->lid, NOTE_TABLE_IS_DIRTY_POSITION, QVariant(true)));
         // signal to redraw title compound column (with unchanged data)
-        QVariant noData;
-        emit(updateNoteList(this->lid, NOTE_TABLE_TITLE_POSITION, noData));
+        emit(updateNoteList(this->lid, NOTE_TABLE_TITLE_POSITION, QVariant()));
     } else {
         QLOG_DEBUG() << "noteContentUpdated() - not dirty";
     }

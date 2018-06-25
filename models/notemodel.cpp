@@ -176,7 +176,6 @@ Qt::ItemFlags NoteModel::flags(const QModelIndex &index) const {
 // see "technical-notes" for docs regarding "role"
 
 QVariant NoteModel::data(const QModelIndex &index, int role) const {
-
     int row = index.row();
     int column = index.column();
     //QLOG_DEBUG() << "Request for note data at row=" << row << " col=" << column << " role=" << role;
@@ -184,13 +183,10 @@ QVariant NoteModel::data(const QModelIndex &index, int role) const {
     // title compound - later this can be made configurable; and we can also adjust painting
     if ((role == Qt::DisplayRole) && (column == NOTE_TABLE_TITLE_POSITION)) {
         bool isDirty = index.sibling(row, NOTE_TABLE_IS_DIRTY_POSITION).data(Qt::DisplayRole).toBool();
-        //int relevance = index.sibling(row, NOTE_TABLE_SEARCH_RELEVANCE_POSITION).data(Qt::DisplayRole).toInt();
+        QLOG_DEBUG() << "Request for note title at row=" << row << " dirty=" << isDirty;
         if (isDirty) {
             QString title = QSqlTableModel::data(index, role).toString();
-            return
-                //(relevance > 0 ? QString("•") : QString(""))
-                (isDirty ? QString("▲") : QString(""))
-                + QString(" ") + title;
+            return (isDirty ? QString("▲") : QString("")) + QString(" ") + title;
         }
     }
     if ((role == Qt::FontRole) && (column == NOTE_TABLE_TITLE_POSITION)) {
