@@ -758,7 +758,7 @@ void NBrowserWindow::noteSyncUpdate(qint32 lid) {
 // mark note currently open in editor as dirty (or as NOT dirty depending on param)
 // default setDateUpdated=true
 void NBrowserWindow::setDirty(qint32 lid, bool dirty, bool setDateUpdated) {
-    QLOG_DEBUG() << "setDirty() dirty=" << dirty << "setDateUpdated" << setDateUpdated;
+    QLOG_DEBUG() << "setDirty: lid=" << lid << ", dirty=" << dirty << ", setDateUpdated" << setDateUpdated;
     NoteTable noteTable(global.db);
     noteTable.setDirty(lid, dirty, setDateUpdated);
     if (setDateUpdated) {
@@ -774,12 +774,12 @@ void NBrowserWindow::setDirty(qint32 lid, bool dirty, bool setDateUpdated) {
 // A note's content was updated
 void NBrowserWindow::noteContentUpdated() {
     if (editor->isDirty) {
-        QLOG_DEBUG() << "noteContentUpdated() dirty=true";
+        QLOG_DEBUG() << "noteContentUpdated: lid=" << this->lid << " - content modified";
         setDirty(this->lid, true);
         editor->isDirty = false;
         emit(noteUpdated(this->lid));
     } else {
-        QLOG_DEBUG() << "noteContentUpdated() - not dirty";
+        QLOG_DEBUG() << "noteContentUpdated: - content not modified";
     }
 }
 

@@ -48,13 +48,13 @@ private:
     ImageDelegate *thumbnailDelegate;
     ReminderOrderDelegate *reminderOrderDelegate;
     QModelIndex dragStartIndex;
+    NoteModel *noteModel;
 
 
 public:
     explicit NTableView(QWidget *parent = 0);
     ~NTableView();
     NTableViewHeader *tableViewHeader;
-    NoteModel *noteModel;
     NoteModel *model();
     NoteSortFilterProxyModel *proxy;
     void mouseReleaseEvent(QMouseEvent *event);

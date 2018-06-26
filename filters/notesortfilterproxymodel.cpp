@@ -21,20 +21,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 
 NoteSortFilterProxyModel::NoteSortFilterProxyModel() :
-    QSortFilterProxyModel()
-{
-    lidMap = new QMap<qint32,qint32>();
+    QSortFilterProxyModel() {
+    lidMap = new QMap<qint32, qint32>();
 }
 
 
-NoteSortFilterProxyModel::~NoteSortFilterProxyModel()
-{
+NoteSortFilterProxyModel::~NoteSortFilterProxyModel() {
     delete lidMap;
 }
 
 
 bool NoteSortFilterProxyModel::filterAcceptsRow(qint32 source_row, const QModelIndex &source_parent) const {
-    QModelIndex idx = sourceModel()->index(source_row,NOTE_TABLE_LID_POSITION, source_parent);
+    QModelIndex idx = sourceModel()->index(source_row, NOTE_TABLE_LID_POSITION, source_parent);
     qint32 rowLid = sourceModel()->data(idx).toInt();
     if (lidMap->contains(rowLid)) {
         lidMap->remove(rowLid);
