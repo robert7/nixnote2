@@ -32,18 +32,24 @@ NoteSortFilterProxyModel::~NoteSortFilterProxyModel() {
 
 
 bool NoteSortFilterProxyModel::filterAcceptsRow(qint32 source_row, const QModelIndex &source_parent) const {
+
+    // index(row, column, parent_index) Returns the index of the item in the model specified by the
+    // given row, column and parent index.
     QModelIndex idx = sourceModel()->index(source_row, NOTE_TABLE_LID_POSITION, source_parent);
     qint32 rowLid = sourceModel()->data(idx).toInt();
     if (lidMap->contains(rowLid)) {
+        QLOG_DEBUG() << "filterAcceptsRow lid=" << rowLid << "OK";
         lidMap->remove(rowLid);
         lidMap->insert(rowLid, source_row);
         return true;
     }
+    QLOG_DEBUG() << "filterAcceptsRow lid=" << rowLid << "failed";
     return false;
 }
 
 
 bool NoteSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const {
+    QLOG_DEBUG() << "lessThan";
     QVariant leftData = this->sourceModel()->data(left);
     QVariant rightData = this->sourceModel()->data(right);
 

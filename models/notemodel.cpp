@@ -173,8 +173,14 @@ Qt::ItemFlags NoteModel::flags(const QModelIndex &index) const {
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
+// original underlying data
+QVariant NoteModel::sourceData(const QModelIndex &index, int role) const {
+    return QSqlTableModel::data(index, role);
+}
+
 // see "technical-notes" for docs regarding "role"
 
+// data which we get out of the model
 QVariant NoteModel::data(const QModelIndex &index, int role) const {
     int row = index.row();
     int column = index.column();
@@ -185,7 +191,7 @@ QVariant NoteModel::data(const QModelIndex &index, int role) const {
         bool isDirty = index.sibling(row, NOTE_TABLE_IS_DIRTY_POSITION).data(Qt::DisplayRole).toBool();
         QLOG_DEBUG() << "Request for note title at row=" << row << " dirty=" << isDirty;
         if (isDirty) {
-            QString title = QSqlTableModel::data(index, role).toString();
+            QString title = sourceData(index, role).toString();
             return (isDirty ? QString("▲") : QString("")) + QString(" ") + title;
         }
     }
@@ -218,7 +224,7 @@ QVariant NoteModel::data(const QModelIndex &index, int role) const {
             return QColor(color);
         }
     }
-    return QSqlTableModel::data(index, role);
+    return sourceData(index, role);
 }
 
 bool NoteModel::select() {

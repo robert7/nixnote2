@@ -433,7 +433,7 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
 // if content did not really change, then invalid QVariant may be passed here
 // useful for compound fields
 void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
-    QLOG_DEBUG() << "Got: refresh cell in table view lid=" << lid << " cell=" << cell << " data=" << data;
+    QLOG_DEBUG() << "refreshCell: lid=" << lid << ", col=" << cell << ", data=" << data;
 
     SelectionMode mode = selectionMode();
     //    this->blockSignals(true);
@@ -446,11 +446,30 @@ void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
     // Check the highlighted LIDs from the history selection.
     // set to model ONLY, if data is valid
     // so if we pass invalid "data" - then data is unchanged
-    if (proxy->lidMap->contains(lid) && data.isValid()) {
+    if (proxy->lidMap->contains(lid)) {
         int rowLocation = proxy->lidMap->value(lid);
         if (rowLocation >= 0) {
             QModelIndex modelIndex = model()->index(rowLocation, cell);
-            model()->setData(modelIndex, data);
+            if (data.isValid()) {
+                // set new data
+                model()->setData(modelIndex, data);
+                QLOG_DEBUG() << "refreshCell: lid=" << lid << ", updating at rowLocation=" << rowLocation << "data="
+                             << data;
+            } else {
+                // just set original data, forcing refresh
+                // TODO this is really bad solution - need to fix later
+                // we reread the original data and append space to force refresh
+                // as the data is not really saved anywhere from the table itself, it will not matter
+                // buts really wild :(
+                QVariant originalData = model()->sourceData(modelIndex, Qt::DisplayRole);
+                if (originalData.type() == QVariant::String) {
+                    originalData = originalData.toString() + QString(" ");
+                }
+
+                model()->setData(modelIndex, originalData);
+                QLOG_DEBUG() << "refreshCell: lid=" << lid << ", updating at rowLocation=" << rowLocation << "data="
+                             << originalData;
+            }
         }
     }
 
@@ -488,7 +507,8 @@ void NTableView::refreshData() {
     sql.exec("select lid from filter");
     proxy->lidMap->clear();
     while (sql.next()) {
-        proxy->lidMap->insert(sql.value(0).toInt(), 0);
+        qint32 lid = sql.value(0).toInt();
+        proxy->lidMap->insert(lid, 0);
     }
     sql.finish();
     QLOG_DEBUG() << "Valid LIDs retrieved.  Refreshing selection";

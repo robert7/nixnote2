@@ -764,10 +764,11 @@ void NBrowserWindow::setDirty(qint32 lid, bool dirty, bool setDateUpdated) {
     if (setDateUpdated) {
         qint64 dt = QDateTime::currentMSecsSinceEpoch();
         emit(updateNoteList(lid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
-        emit(updateNoteList(lid, NOTE_TABLE_IS_DIRTY_POSITION, QVariant(dirty)));
-        // signal to redraw title compound column (with unchanged data)
-        emit(updateNoteList(this->lid, NOTE_TABLE_TITLE_POSITION, QVariant()));
     }
+
+    emit(updateNoteList(lid, NOTE_TABLE_IS_DIRTY_POSITION, QVariant(dirty)));
+    // signal to redraw title compound column (with unchanged data)
+    emit(updateNoteList(lid, NOTE_TABLE_TITLE_POSITION, QVariant()));
 }
 
 
@@ -3480,16 +3481,16 @@ void NBrowserWindow::sendDateUpdateSignal(qint64 dt) {
 
 
 
-// Send a signal that the note has been updated
+// Send a signal that the note tag has been updated
 void NBrowserWindow::sendTagUpdateSignal() {
-    setDirty(this->lid, true, false);
+    // let update data also on tag change
+    setDirty(this->lid, true);
 
     emit(this->noteUpdated(lid));
     //sendDateUpdateSignal();
     QStringList names;
     tagEditor.getTags(names);
     emit noteTagsEditedSignal(uuid, lid, names);
-
 }
 
 
