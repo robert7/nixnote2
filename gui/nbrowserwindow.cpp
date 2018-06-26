@@ -755,22 +755,29 @@ void NBrowserWindow::noteSyncUpdate(qint32 lid) {
     setContent(lid);
 }
 
-
+// mark note currently open in editor as dirty (or as NOT dirty depending on param)
+// default setDateUpdated=true
+void NBrowserWindow::setDirty(qint32 lid, bool dirty, bool setDateUpdated) {
+    QLOG_DEBUG() << "setDirty() dirty=" << dirty << "setDateUpdated" << setDateUpdated;
+    NoteTable noteTable(global.db);
+    noteTable.setDirty(lid, dirty, setDateUpdated);
+    if (setDateUpdated) {
+        qint64 dt = QDateTime::currentMSecsSinceEpoch();
+        emit(updateNoteList(lid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
+        emit(updateNoteList(lid, NOTE_TABLE_IS_DIRTY_POSITION, QVariant(dirty)));
+        // signal to redraw title compound column (with unchanged data)
+        emit(updateNoteList(this->lid, NOTE_TABLE_TITLE_POSITION, QVariant()));
+    }
+}
 
 
 // A note's content was updated
 void NBrowserWindow::noteContentUpdated() {
     if (editor->isDirty) {
         QLOG_DEBUG() << "noteContentUpdated() dirty=true";
-        NoteTable noteTable(global.db);
-        noteTable.setDirty(this->lid, true);
+        setDirty(this->lid, true);
         editor->isDirty = false;
-        qint64 dt = QDateTime::currentMSecsSinceEpoch();
         emit(noteUpdated(this->lid));
-        emit(updateNoteList(this->lid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
-        emit(updateNoteList(this->lid, NOTE_TABLE_IS_DIRTY_POSITION, QVariant(true)));
-        // signal to redraw title compound column (with unchanged data)
-        emit(updateNoteList(this->lid, NOTE_TABLE_TITLE_POSITION, QVariant()));
     } else {
         QLOG_DEBUG() << "noteContentUpdated() - not dirty";
     }
@@ -2082,18 +2089,18 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
 
 
 // Set the background color of a note
- void NBrowserWindow::setBackgroundColor(QString value) {
-     QString js = QString("function changeBackground(color) {")
-         +QString("document.body.style.background = color;")
-         +QString("}")
-         +QString("changeBackground('" +value+"');");
-     editor->page()->mainFrame()->evaluateJavaScript(js);
-     NoteTable noteTable(global.db);
-     noteTable.setDirty(this->lid, true);
-     this->editor->isDirty = true;
-     editor->setFocus();
-     microFocusChanged();
- }
+void NBrowserWindow::setBackgroundColor(QString value) {
+    QString js = QString("function changeBackground(color) {")
+                 + QString("document.body.style.background = color;")
+                 + QString("}")
+                 + QString("changeBackground('" + value + "');");
+    editor->page()->mainFrame()->evaluateJavaScript(js);
+
+    setDirty(this->lid, true);
+    this->editor->isDirty = true;
+    editor->setFocus();
+    microFocusChanged();
+}
 
 
  // The user clicked a link in the note
@@ -3176,9 +3183,10 @@ void NBrowserWindow::alarmCompleted() {
     f.setStrikeOut(!f.strikeOut());
     alarmText.setFont(f);
 
+    setDirty(this->lid, true);
     NoteTable noteTable(global.db);
-    noteTable.setDirty(this->lid, true);
     noteTable.setReminderCompleted(this->lid, f.strikeOut());
+
     global.reminderManager->remove(this->lid);
     emit(noteUpdated(this->lid));
     emit noteAlarmEditedSignal(uuid, lid, f.strikeOut(), alarmText.text());
@@ -3241,8 +3249,9 @@ void NBrowserWindow::alarmClear() {
     alarmText.setText("");
     alarmText.setVisible(false);
 
+    setDirty(this->lid, true);
+
     NoteTable noteTable(global.db);
-    noteTable.setDirty(this->lid, true);
     noteTable.removeReminder(this->lid);
     emit(noteUpdated(this->lid));
     emit noteAlarmEditedSignal(uuid, lid, false, "");
@@ -3254,8 +3263,9 @@ void NBrowserWindow::alarmMenuActivated() {
     emit noteAlarmEditedSignal(uuid, lid, false, alarmText.text());
     alarmText.setFont(f);
 
+    setDirty(this->lid, true);
+
     NoteTable noteTable(global.db);
-    noteTable.setDirty(this->lid, true);
     noteTable.setReminderCompleted(this->lid, false);
     emit(noteUpdated(this->lid));
 }
@@ -3439,12 +3449,12 @@ void NBrowserWindow::sendTitleUpdateSignal() {
 
 // Send a signal that the note has been updated
 void NBrowserWindow::sendNotebookUpdateSignal() {
-    NoteTable ntable(global.db);
-
     //    QString notebook = notebookMenu.d
     //    ntable.updateNotebook(this->lid, this->noteTitle.text().trimmed(), true);
     //    this->editor->isDirty = true;
-    ntable.setDirty(this->lid, true,false);
+
+    setDirty(this->lid, true, false);
+
     emit(this->noteUpdated(lid));
     qint32 lid = notebookMenu.notebookLid;
     QString name = notebookMenu.notebookName;
@@ -3458,8 +3468,8 @@ void NBrowserWindow::sendNotebookUpdateSignal() {
 
 // Send a signal that the note has been updated
 void NBrowserWindow::sendDateUpdateSignal(qint64 dt) {
-    NoteTable ntable(global.db);
-    ntable.setDirty(this->lid, true);
+    setDirty(this->lid, true);
+
     if (dt == 0) {
         dt = QDateTime::currentMSecsSinceEpoch();
         this->dateEditor.setUpdateDate(dt);
@@ -3472,8 +3482,8 @@ void NBrowserWindow::sendDateUpdateSignal(qint64 dt) {
 
 // Send a signal that the note has been updated
 void NBrowserWindow::sendTagUpdateSignal() {
-    NoteTable ntable(global.db);
-    ntable.setDirty(this->lid, true,false);
+    setDirty(this->lid, true, false);
+
     emit(this->noteUpdated(lid));
     //sendDateUpdateSignal();
     QStringList names;
@@ -3485,8 +3495,8 @@ void NBrowserWindow::sendTagUpdateSignal() {
 
 // Send a signal that the note has been updated
 void NBrowserWindow::sendUrlUpdateSignal() {
-    NoteTable ntable(global.db);
-    ntable.setDirty(this->lid, true);
+    setDirty(this->lid, true);
+
     emit(this->noteUpdated(lid));
     sendDateUpdateSignal();
     emit(this->updateNoteList(lid, NOTE_TABLE_SOURCE_URL_POSITION, urlEditor.getText()));
@@ -4092,10 +4102,10 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
         QStringList newTags = saveExit->getTags();
         QStringList oldTags;
         tagEditor.getTags(oldTags);
-        for (int i=0; i<oldTags.size(); i++) {
+        for (int i = 0; i < oldTags.size(); i++) {
             tagEditor.removeTag(oldTags[i]);
         }
-        for (int i=0; i<newTags.size(); i++) {
+        for (int i = 0; i < newTags.size(); i++) {
             tagEditor.addTag(newTags[i]);
         }
     }
@@ -4103,13 +4113,12 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
         NotebookTable ntable(global.db);
         QString notebookName = saveExit->getNotebook();
         qint32 notebookLid = ntable.findByName(notebookName);
-        if (notebookLid >0) {
+        if (notebookLid > 0) {
             this->notebookMenu.updateCurrentNotebook(notebookLid, notebookName);
             NoteTable noteTable(global.db);
             noteTable.updateNotebook(this->lid, notebookLid, true);
-            emit (noteNotebookEditedSignal(uuid, lid, notebookLid, notebookName));
-        }
-        else
+            emit(noteNotebookEditedSignal(uuid, lid, notebookLid, notebookName));
+        } else
             QLOG_ERROR() << tr("Notebook was not found:") << notebookName;
     }
     if (saveExit->isContentsModified()) {
@@ -4117,8 +4126,8 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
         this->editor->setContent(data);
     }
     editor->isDirty = saveExit->isContentsDirty();
-    NoteTable ntable(global.db);
-    ntable.setDirty(this->lid, editor->isDirty,false);
+
+    setDirty(this->lid, editor->isDirty, false);
 
     QLOG_TRACE_OUT();
 }

@@ -131,6 +131,8 @@ private:
     // get note title from the title UI field - and do some fixup (like discard line feeds)
     QString getCurrentNoteTitle();
 
+    void setDirty(qint32 lid, bool dirty, bool setDateUpdated=true);
+
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
