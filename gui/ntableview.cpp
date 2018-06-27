@@ -406,7 +406,7 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
 // if content did not really change, then invalid QVariant may be passed here
 // useful for compound fields
 void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
-    QLOG_DEBUG() << "refreshCell: lid=" << lid << ", col=" << cell << ", data=" << data;
+    //QLOG_DEBUG() << "refreshCell: lid=" << lid << ", col=" << cell << ", data=" << data;
 
     SelectionMode mode = selectionMode();
     //    this->blockSignals(true);
@@ -426,8 +426,8 @@ void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
             if (data.isValid()) {
                 // set new data
                 model()->setData(modelIndex, data);
-                QLOG_DEBUG() << "refreshCell: lid=" << lid << ", updating at rowLocation=" << rowLocation << "data="
-                             << data;
+                //QLOG_DEBUG() << "refreshCell: lid=" << lid << ", updating at rowLocation=" << rowLocation << "data="
+                //             << data;
             } else {
                 // just set original data, forcing refresh
                 // TODO this is really bad solution - need to fix later
@@ -440,8 +440,8 @@ void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
                 }
 
                 model()->setData(modelIndex, originalData);
-                QLOG_DEBUG() << "refreshCell: lid=" << lid << ", updating at rowLocation=" << rowLocation << "data="
-                             << originalData;
+                //QLOG_DEBUG() << "refreshCell: lid=" << lid << ", updating at rowLocation=" << rowLocation << "data="
+                //             << originalData;
             }
         }
     }

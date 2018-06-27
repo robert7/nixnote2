@@ -192,6 +192,7 @@ void EnmlFormatter::setHtml(QString h) {
 /* Take the ENML note and transform it into HTML that WebKit will
   not complain about */
 QByteArray EnmlFormatter::rebuildNoteEnml() {
+    QLOG_INFO() << "rebuildNoteEnml";
     resources.clear();
     QByteArray b;
     qint32 index;
@@ -315,18 +316,23 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         tidyRelease(tdoc);
     }
 #endif
+    QLOG_INFO() << "Tidy check useLegacyTidy=" << useLegacyTidy
+                << ", useLibTidy=" << global.useLibTidy
+                << ", bypassTidy=" << global.bypassTidy;
 
     // IF the new tidy had an error, or we choose to use the old method
     if ((useLegacyTidy || !global.useLibTidy) && !global.bypassTidy) {
-        QLOG_DEBUG() << "Calling tidy";
+        QLOG_INFO() << "About to call tidy as process";
         QProcess tidyProcess;
         tidyProcess.start("tidy -raw -asxhtml -q -m -u -utf8 ", QIODevice::ReadWrite | QIODevice::Unbuffered);
-        QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
+        QLOG_INFO() << "Starting tidy " << tidyProcess.waitForStarted();
+
         tidyProcess.waitForStarted();
         tidyProcess.write(content);
         tidyProcess.closeWriteChannel();
         tidyProcess.waitForFinished();
-        QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
+        QLOG_INFO() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
+
         QString errors(tidyProcess.readAllStandardError());
         QStringList errorList = errors.split("\n");
         for (int e = 0; e < errorList.size(); e++) {
@@ -338,12 +344,12 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
                 not errorList[e].contains("<img> proprietary attribute \"oncontextmenu\"") &&
                 not errorList[e].contains("<img> lacks \"alt\" attribute")
                 ) {
-                QLOG_DEBUG() << errorList[e];
+                QLOG_INFO() << "Tidy error:" << errorList[e];
             }
         }
 
 
-        QLOG_DEBUG() << "After tidy";
+        QLOG_INFO() << "After tidy";
         content.clear();
         content.append(tidyProcess.readAllStandardOutput());
         tidyProcess.close();
@@ -351,6 +357,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 
 
     if (content == "") {
+        QLOG_ERROR() << "Got no output from tidy - cleanup failed";
         formattingError = true;
         return "";
     }
