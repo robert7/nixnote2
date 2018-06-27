@@ -72,19 +72,6 @@ NTableView::NTableView(QWidget *parent) :
     this->proxy = new NoteSortFilterProxyModel();
     proxy->setSourceModel(model());
 
-    // TODO experimental: disable sorting on view table level
-    //    global.settings->beginGroup("SaveState");
-    //    Qt::SortOrder order = Qt::SortOrder(global.settings->value("sortOrder", 0).toInt());
-    //    int col = global.settings->value("sortColumn", NOTE_TABLE_DATE_CREATED_POSITION).toInt();
-    //    global.settings->endGroup();
-    //
-    //    this->setSortingEnabled(true);
-    //    proxy->setFilterKeyColumn(NOTE_TABLE_LID_POSITION);
-    //    sortByColumn(col, order);
-    //    noteModel->sort(col,order);
-
-
-
     //refreshData();
     setModel(proxy);
     // disable user sorting
@@ -212,19 +199,7 @@ NTableView::NTableView(QWidget *parent) :
     this->setFont(global.getGuiFont(font()));
     contextMenu->setFont(global.getGuiFont(font()));
 
-    openNoteAction = new QAction(tr("Open Note"), this);
-    contextMenu->addAction(openNoteAction);
-    connect(openNoteAction, SIGNAL(triggered()), this, SLOT(openNoteContextMenuTriggered()));
-    openNoteAction->setFont(global.getGuiFont(font()));
-
-
-    openNoteNewTabAction = new QAction(tr("Open Note In New Tab"), this);
-    contextMenu->addAction(openNoteNewTabAction);
-    connect(openNoteNewTabAction, SIGNAL(triggered()), this, SLOT(openNoteNewTabTriggered()));
-    openNoteNewTabAction->setFont(global.getGuiFont(font()));
-
-
-    openNoteExternalWindowAction = new QAction(tr("Open Note In New Window"), this);
+    openNoteExternalWindowAction = new QAction(tr("Open Note"), this);
     contextMenu->addAction(openNoteExternalWindowAction);
     connect(openNoteExternalWindowAction, SIGNAL(triggered()), this, SLOT(openNoteExternalWindowTriggered()));
     openNoteExternalWindowAction->setFont(global.getGuiFont(font()));
@@ -382,7 +357,6 @@ NoteModel *NTableView::model() {
 
 
 void NTableView::contextMenuEvent(QContextMenuEvent *event) {
-    openNoteAction->setEnabled(false);
     deleteNoteAction->setEnabled(false);
     QList <qint32> lids;
     getSelectedLids(lids);
@@ -418,7 +392,6 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
         }
         if (!readOnlySelected)
             deleteNoteAction->setEnabled(true);
-        openNoteAction->setEnabled(true);
     }
     if (global.filterCriteria[global.filterPosition]->isDeletedOnlySet() &&
         global.filterCriteria[global.filterPosition]->getDeletedOnly())
@@ -516,14 +489,6 @@ void NTableView::refreshData() {
     while (model()->canFetchMore())
         model()->fetchMore();
 
-
-    // TODO experimental: disable sorting on view table level
-    //    // resort the table.  I'm not sure why, but it doesn't always
-    //    // do this itself.
-    //    Qt::SortOrder so = this->tableViewHeader->sortIndicatorOrder();
-    //    int si = this->tableViewHeader->sortIndicatorSection();
-    //    this->sortByColumn(si, so);
-
     // Re-select any notes
     refreshSelection();
     if (this->tableViewHeader->isThumbnailVisible())
@@ -601,7 +566,7 @@ void NTableView::refreshSelection() {
     if (lidHidden)
         setColumnHidden(NOTE_TABLE_LID_POSITION, true);
 
-    QLOG_TRACE() << "refleshSelection() complete";
+    QLOG_TRACE() << "refreshSelection() complete";
     this->blockSignals(false);
 }
 
@@ -864,34 +829,6 @@ qint32 NTableView::selectAnyNoteFromList() {
     }
     return -1;
 }
-
-
-// A user asked to open new notes via the context menu.
-void NTableView::openNoteContextMenuTriggered() {
-    QList <qint32> lids;
-    getSelectedLids(lids);
-    if (lids.size() == 0)
-        return;
-
-    // First, find out if we're already viewing history.  If we are we
-    // chop off the end of the history & start a new one
-    if (global.filterPosition + 1 < global.filterCriteria.size()) {
-        while (global.filterPosition + 1 < global.filterCriteria.size())
-            delete global.filterCriteria.takeAt(global.filterCriteria.size() - 1);
-    }
-
-    for (int i = 0; i < lids.size(); i++) {
-        FilterCriteria *newFilter = new FilterCriteria();
-        global.filterCriteria.at(global.filterPosition)->duplicate(*newFilter);
-
-        newFilter->setSelectedNotes(lids);
-        newFilter->setLid(lids.at(i));
-        global.filterCriteria.push_back(newFilter);
-        global.filterPosition++;
-        emit openNote(true);
-    }
-}
-
 
 // Copy (duplicate) a note
 void NTableView::copyNote() {
@@ -1623,16 +1560,9 @@ void NTableView::openNoteExternalWindowTriggered() {
         emit(openNoteExternalWindow(lids[i]));
 }
 
-
-void NTableView::openNoteNewTabTriggered() {
-    this->openSelectedLids(true);
-}
-
-
 void NTableView::createNewNote() {
     emit(newNote());
 }
-
 
 void NTableView::setTitleColorWhite() { setTitleColor("white"); }
 

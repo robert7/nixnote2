@@ -3442,6 +3442,7 @@ void NBrowserWindow::sendTitleUpdateSignal() {
     QString text = getCurrentNoteTitle();
     ntable.updateTitle(this->lid, text, true);
     emit noteTitleEditedSignal(uuid, lid, text);
+
     emit(this->noteUpdated(lid));
     emit(this->updateNoteList(lid, NOTE_TABLE_TITLE_POSITION, text));
     sendDateUpdateSignal();

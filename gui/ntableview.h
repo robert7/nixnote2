@@ -68,9 +68,7 @@ public:
     QAction *addNoteAction;
     QAction *deleteNoteAction;
     QAction *restoreNoteAction;
-    QAction *openNoteAction;
     QAction *openNoteExternalWindowAction;
-    QAction *openNoteNewTabAction;
     QAction *copyNoteLinkAction;
     QAction *copyNoteAction;
     QAction *pinNoteAction;
@@ -116,9 +114,12 @@ public slots:
     void contextMenuEvent(QContextMenuEvent *event);
     void deleteSelectedNotes();
     void restoreSelectedNotes();
-    void openNoteContextMenuTriggered();
+
+    // disabled as for now
+    //void openNoteContextMenuTriggered();
+    //void openNoteNewTabTriggered();
+
     void openNoteExternalWindowTriggered();
-    void openNoteNewTabTriggered();
     void copyNoteLink();
     void toggleColumnVisible(int position, bool visible);
     void copyNote();

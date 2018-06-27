@@ -3,6 +3,15 @@
 ## 2018-06
 ### #6
 * Focus on search box after "all notes"
+* Title column in note table view now display compound information - Title + sync needed + relevance hint.
+  (Sync is signalized by triangle at begin, if the note is found "more relevant" in search its displaed
+  bold). May be later made configurable.
+  Main aim is to be able to hide all other columns. Sorting is relevance+date update - so you may
+  just display title column & hide all others. See Preview
+* Removed function of opening notes in new tabs - doesn't work stable and is only confusing. Could be 
+  re-added back later.
+     
+  
 
 ### #5
 * Minor improvement in font color/background color (highlight selection). 

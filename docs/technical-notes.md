@@ -18,6 +18,11 @@
 * NBrowserWindow - represents one tab with note (in a tabbed interface) 
   * signals
     * updateNoteList(lid, column, data) => signal that some table column changes data 
+  * NTitleEditor - title editoe - instantiated in NBrowserWindow, but someway passed down
+  * NWebView - editor + some related stuff (actions, toolbar) 
+    * NWebPage - just the html editor itself
++ ExternalBrowse - external browser window
+  * uses internally NBrowserWindow for content edit
 * NTableView - table view with notes 
   * slots
     * refreshCell(lid, column, data) - refresh one cell
