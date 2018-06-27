@@ -30,24 +30,28 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QFileSystemModel>
 #include <QFileIconProvider>
+
 #if QT_VERSION < 0x050000
+
 #include <poppler-qt4.h>
+
 #else
 #include <poppler-qt5.h>
 #endif
+
 #include <QIcon>
 #include <QList>
 
 
 #include <iostream>
+
 using namespace std;
 
 extern Global global;
 
 /* Constructor. */
 NoteFormatter::NoteFormatter(QObject *parent) :
-    QObject(parent)
-{
+    QObject(parent) {
     thumbnail = false;
     this->setNoteHistory(false);
     this->noteHistory = false;
@@ -60,11 +64,11 @@ NoteFormatter::NoteFormatter(QObject *parent) :
 }
 
 
-  /*
-  Set the note we are currently formatting.  The pdfPreview
-  is an indication if we should generate a picture for the
-  attachment rather than doing it as an attachment.
-  */
+/*
+Set the note we are currently formatting.  The pdfPreview
+is an indication if we should generate a picture for the
+attachment rather than doing it as an attachment.
+*/
 void NoteFormatter::setNote(Note n, bool pdfPreview) {
     this->pdfPreview = pdfPreview;
     this->note = n;
@@ -73,14 +77,15 @@ void NoteFormatter::setNote(Note n, bool pdfPreview) {
     readOnly = false;
     inkNote = false;
     NoteAttributes attributes;
+
     if (note.attributes.isSet()) {
         attributes = note.attributes;
         QString contentClass;
         if (attributes.contentClass.isSet())
             contentClass = attributes.contentClass;
         if (contentClass != "") {
-            QLOG_DEBUG() << "Content class not empty.  Setting read-only.";
             readOnly = true;
+            QLOG_WARN() << "Content class not empty. Setting read-only. Note guid=" << note.guid;
         }
     }
 }
@@ -115,18 +120,18 @@ void NoteFormatter::setNoteHistory(bool value) {
 /* Take the ENML note and transform it into HTML that WebKit will
   not complain about */
 QByteArray NoteFormatter::rebuildNoteHTML() {
-    QLOG_TRACE() << "Rebuilding HTML";
+    QLOG_DEBUG() << "Rebuilding note HTML for note guid=" << note.guid;
 
     formatError = false;
     readOnly = false;
 
     ResourceTable resTable(global.db);
-    if (!note.guid.isSet())  {
-        formatError=true;
-        readOnly=true;
-        QLOG_TRACE() << "NOTE GUID IS NOT SET!!!";
+    if (!note.guid.isSet()) {
+        formatError = true;
+        readOnly = true;
+        QLOG_WARN() << "NOTE GUID IS NOT SET!!! => readOnly";
     } else {
-        QLOG_TRACE() << "getting resource from hash";
+        QLOG_DEBUG() << "Getting resource from note guid=" << note.guid;
         resTable.getResourceMap(hashMap, resourceMap, note.guid);
     }
 
@@ -152,7 +157,7 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     content.append(note.content);
 
     qint32 index = content.indexOf("<body");
-    content.remove(0,index);
+    content.remove(0, index);
     content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
     content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
     content.prepend("<html>");
@@ -163,19 +168,18 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
         if (note.notebookGuid.isSet()) {
             qint32 notebookLid = ntable.getLid(note.notebookGuid);
             if (ntable.isReadOnly(notebookLid)) {
-                QLOG_DEBUG() << "Notebook is read-only.  Marking note read-only.";
                 readOnly = true;
+                QLOG_WARN() << "Notebook is read-only.  Marking note read-only. Note guid=" << note.guid;
             }
         }
     }
     if (note.active.isSet() && !note.active) {
-        QLOG_DEBUG() << "Note is inactive.  Setting to read-only.";
         readOnly = true;
+        QLOG_WARN() << "Note is inactive.  Setting to read-only. Note guid=" << note.guid;
     }
-    QLOG_TRACE() << "Done rebuiling HTML";
+    QLOG_TRACE() << "Done rebuilding HTML";
     return content;
 }
-
 
 
 // This is to turn the <en-media/> tags into <en-media></en-media> tags because
@@ -196,15 +200,13 @@ QString NoteFormatter::preHtmlFormat(QString note) {
         // of the current tag or if it doesn't exist then we
         // need to fix the end of the img
         if (tagEndPos == -1 || tagEndPos < endPos) {
-            content = content.mid(0, endPos) + QByteArray("></en-media>") +content.mid(endPos+1);
+            content = content.mid(0, endPos) + QByteArray("></en-media>") + content.mid(endPos + 1);
         }
-        pos = content.indexOf("<en-media", pos+1);
+        pos = content.indexOf("<en-media", pos + 1);
     }
     QLOG_TRACE_OUT();
     return content;
 }
-
-
 
 
 /*
@@ -220,7 +222,8 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     QLOG_TRACE() << "Searching for all en-media tags;";
     QWebElementCollection anchors = doc.mainFrame()->findAllElements("en-media");
     QLOG_TRACE() << "Search complete: " << anchors.toList().size();
-    foreach (QWebElement enmedia, anchors) {
+    foreach(QWebElement
+    enmedia, anchors) {
         if (enmedia.hasAttribute("type")) {
             QString attr = enmedia.attribute("type");
             QString hash = enmedia.attribute("hash");
@@ -240,45 +243,45 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     // Modify todo tags
     anchors = doc.mainFrame()->findAllElements("en-todo");
     qint32 enTodoCount = anchors.count();
-    for (qint32 i=enTodoCount-1; i>=0; i--) {
-            QWebElement enmedia = anchors.at(i);
-            modifyTodoTags(enmedia);
+    for (qint32 i = enTodoCount - 1; i >= 0; i--) {
+        QWebElement enmedia = anchors.at(i);
+        modifyTodoTags(enmedia);
     }
 
     anchors = doc.mainFrame()->findAllElements("en-crypt");
     qint32 enCryptLen = anchors.count();
-    for (qint32 i=enCryptLen-1; i>=0; i--) {
+    for (qint32 i = enCryptLen - 1; i >= 0; i--) {
         QWebElement enmedia = anchors.at(i);
         QString hint = enmedia.attribute("hint");
         QString cipher = enmedia.attribute("cipher", "RC2");
-        QString length = enmedia.attribute("length","64");
+        QString length = enmedia.attribute("length", "64");
 
-        enmedia.setAttribute("contentEditable","false");
-        enmedia.setAttribute("src", QString("file://")+global.fileManager.getImageDirPath("encrypt.png"));
-        enmedia.setAttribute("en-tag","en-crypt");
+        enmedia.setAttribute("contentEditable", "false");
+        enmedia.setAttribute("src", QString("file://") + global.fileManager.getImageDirPath("encrypt.png"));
+        enmedia.setAttribute("en-tag", "en-crypt");
         enmedia.setAttribute("cipher", cipher);
         enmedia.setAttribute("length", length);
         enmedia.setAttribute("hint", hint);
         enmedia.setAttribute("alt", enmedia.toInnerXml());
         global.cryptCounter++;
-        enmedia.setAttribute("id", "crypt"+QString().number(global.cryptCounter));
+        enmedia.setAttribute("id", "crypt" + QString().number(global.cryptCounter));
         QString encryptedText = enmedia.toInnerXml();
 
         // If the encryption string contains crlf at the end, remove them because they mess up the javascript.
         if (encryptedText.endsWith("\n"))
-                encryptedText.truncate(encryptedText.length()-1);
+            encryptedText.truncate(encryptedText.length() - 1);
         if (encryptedText.endsWith("\r"))
-                encryptedText.truncate(encryptedText.length()-1);
+            encryptedText.truncate(encryptedText.length() - 1);
 
         // Add the commands
-        hint = hint.replace("'","&apos;");
-        enmedia.setAttribute("onClick", "window.browserWindow.decryptText('crypt"+
-                             QString().number(global.cryptCounter)+
-                             "', '"+encryptedText+"', '"+
-                             hint +"', '" +
-                             cipher+ "', " +
-                             length +
-                             ");");
+        hint = hint.replace("'", "&apos;");
+        enmedia.setAttribute("onClick", "window.browserWindow.decryptText('crypt" +
+                                        QString().number(global.cryptCounter) +
+                                        "', '" + encryptedText + "', '" +
+                                        hint + "', '" +
+                                        cipher + "', " +
+                                        length +
+                                        ");");
         enmedia.setAttribute("onMouseOver", "style.cursor='hand'");
         enmedia.setInnerXml("");
         QString k = enmedia.toOuterXml();
@@ -291,22 +294,19 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     // Modify link tags
     anchors = doc.mainFrame()->findAllElements("a");
     enCryptLen = anchors.count();
-    for (qint32 i=0; i<anchors.count(); i++) {
+    for (qint32 i = 0; i < anchors.count(); i++) {
         QWebElement element = anchors.at(i);
         if (!element.attribute("href").toLower().startsWith("http://latex.codecogs.com/gif.latex?")) {
             element.setAttribute("title", element.attribute("href"));
         } else {
-            QString formula = element.attribute("href").toLower().replace("http://latex.codecogs.com/gif.latex?","");
+            QString formula = element.attribute("href").toLower().replace("http://latex.codecogs.com/gif.latex?", "");
             element.setAttribute("title", formula);
-            QString resLid = element.firstChild().attribute("lid","");
-            element.setAttribute("href", "latex:///"+resLid);
+            QString resLid = element.firstChild().attribute("lid", "");
+            element.setAttribute("href", "latex:///" + resLid);
         }
     }
     QLOG_TRACE_OUT();
 }
-
-
-
 
 
 /* This function works the same as the addHighlight, but instead of highlighting
@@ -324,7 +324,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
     if (recoResource.recognition.isSet())
         recognition = recoResource.recognition;
     if (!recognition.size.isSet() || !recognition.body.isSet() ||
-            recognition.size == 0) {
+        recognition.size == 0) {
         return "";
     }
 
@@ -344,7 +344,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
     QPainter p2(&overlayPix);
     p2.save();
     p2.setBackgroundMode(Qt::TransparentMode);
-    p2.setRenderHint(QPainter::Antialiasing,true);
+    p2.setRenderHint(QPainter::Antialiasing, true);
     QColor yellow(Qt::yellow);
     p2.setBrush(yellow);
 
@@ -354,12 +354,12 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
     doc.setContent(xml);
 
     // Go through the "item" nodes
-    bool found=false;
+    bool found = false;
     QDomNodeList anchors = doc.elementsByTagName("item");
 #if QT_VERSION < 0x050000
-    for (unsigned int i=0; i<anchors.length(); i++) {
+    for (unsigned int i = 0; i < anchors.length(); i++) {
 #else
-    for (int i=0; i<anchors.length(); i++) {
+        for (int i=0; i<anchors.length(); i++) {
 #endif
         QDomElement element = anchors.at(i).toElement();
         int x = element.attribute("x").toInt();
@@ -370,9 +370,9 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
         // Get all children ("t" nodes)
         QDomNodeList children = element.childNodes();
 #if QT_VERSION < 0x050000
-        for (unsigned int j=0; j<children.length(); j++) {
+        for (unsigned int j = 0; j < children.length(); j++) {
 #else
-        for (int j=0; j<children.length(); j++) {
+            for (int j=0; j<children.length(); j++) {
 #endif
             QDomElement child = children.at(j).toElement();
             if (child.nodeName().toLower() == "t") {
@@ -381,13 +381,13 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
                 if (weight >= global.getMinimumRecognitionWeight()) {
 
                     // Check to see if this word matches something we're looking for
-                    for (int k=0; k<highlightWords.size(); k++) {
+                    for (int k = 0; k < highlightWords.size(); k++) {
                         QString searchWord = highlightWords[k].toLower();
                         if (searchWord.endsWith("*"))
                             searchWord.chop(1);
                         if (text.toLower().contains(searchWord)) {
                             found = true;
-                            p2.drawRect(x,y,w,h);
+                            p2.drawRect(x, y, w, h);
                         }
                     }
                 }
@@ -402,7 +402,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
 
     // Paint the highlight onto the background & save over the original
     p2.setOpacity(0.4);
-    p2.drawPixmap(0,0,overlayPix);
+    p2.drawPixmap(0, 0, overlayPix);
     p2.restore();
     //p2.end();
 
@@ -413,22 +413,20 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
     QPainter p3(&finalPix);
     p3.save();
     p3.setBackgroundMode(Qt::TransparentMode);
-    p3.setRenderHint(QPainter::Antialiasing,true);
-    p3.drawPixmap(0,0,originalFile);
+    p3.setRenderHint(QPainter::Antialiasing, true);
+    p3.drawPixmap(0, 0, originalFile);
     p3.setOpacity(0.4);
-    p3.drawPixmap(0,0,overlayPix);
+    p3.drawPixmap(0, 0, overlayPix);
     p3.restore();
     finalPix.save(filename);
 
     QLOG_TRACE_OUT();
-    return "file://"+filename;
+    return "file://" + filename;
 //    return "this.src='file://"+filename+"';";
 }
 
 
-
-
-const char* NoteFormatter::findImageFormat(QString file) {
+const char *NoteFormatter::findImageFormat(QString file) {
     QByteArray b;
     QFile f(file);
     f.open(QFile::ReadOnly);
@@ -448,21 +446,21 @@ const char* NoteFormatter::findImageFormat(QString file) {
 }
 
 
-
-
-
 /* Modify an image tag.  Basically we turn it back into a picture, write out the file, and
   modify the ENML */
 void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     QLOG_TRACE_IN();
+    QLOG_DEBUG() << "Getting resource hash=" << hash;
     QString mimetype = enMedia.attribute("type");
     qint32 resLid = 0;
     resLid = hashMap[hash];
     QString highlightString = "";
-    if (resLid>0) {
-        QLOG_TRACE() << "Getting resource";
+
+    if (resLid > 0) {
+        QLOG_DEBUG() << "Getting resource resLid=" << resLid;
         Resource r = resourceMap[resLid];
         QLOG_TRACE() << "resource retrieved";
+
         MimeReference ref;
         QString filename;
         ResourceAttributes attributes;
@@ -475,8 +473,11 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
         Data data;
         if (r.data.isSet())
             data = r.data;
+
         if (data.size.isSet() && data.size > 0) {
-            QString imgfile = "file:///"+global.fileManager.getDbDirPath(QString("dba/") +QString::number(resLid) +type);
+            QString imgfile =
+                "file:///" + global.fileManager.getDbDirPath(QString("dba/") + QString::number(resLid) + type);
+
             enMedia.setAttribute("src", imgfile);
             // Check if this is a LaTeX image
             ResourceAttributes attributes;
@@ -490,13 +491,13 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
                 QWebElement newText = enMedia.lastChild();
                 enMedia.setAttribute("en-tag", "en-latex");
                 newText.setAttribute("onMouseOver", "style.cursor='pointer'");
-                sourceUrl.replace("http://latex.codecogs.com/gif.latex?","");
+                sourceUrl.replace("http://latex.codecogs.com/gif.latex?", "");
                 newText.setAttribute("title", sourceUrl);
-                newText.setAttribute("href", "latex:///"+QString::number(resLid));
+                newText.setAttribute("href", "latex:///" + QString::number(resLid));
             }
             enMedia.setAttribute("onContextMenu", "window.browserWindow.imageContextMenu('"
-                                 +QString::number(resLid) +"', '"
-                                 +QString::number(resLid) +type  +"');");
+                                                  + QString::number(resLid) + "', '"
+                                                  + QString::number(resLid) + type + "');");
 
             if (!global.disableImageHighlight()) {
                 highlightString = addImageHighlight(resLid, imgfile);
@@ -507,13 +508,12 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
                 //if (highlightString != "")
                 //    enMedia.setAttribute("onload", highlightString);
             }
-
-
         }
     } else {
         resourceError = true;
-        QLOG_DEBUG() << "Resource error.  Setting note to read-only.";
         readOnly = true;
+        QLOG_WARN() << "Resource error. Setting note to read-only . Note guid=" << note.guid
+                    << ". Resource hash " << hash << ")";
     }
 
     // Reset the tags to something that WebKit will understand
@@ -522,22 +522,21 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     enMedia.setAttribute("lid", QString::number(resLid));
 
     // rename the <enmedia> tag to <img>
-    enMedia.setOuterXml(enMedia.toOuterXml().replace("<en-media","<img"));
-    enMedia.setOuterXml(enMedia.toOuterXml().replace("</en-media>","</img>"));
+    enMedia.setOuterXml(enMedia.toOuterXml().replace("<en-media", "<img"));
+    enMedia.setOuterXml(enMedia.toOuterXml().replace("</en-media>", "</img>"));
     QLOG_TRACE_OUT();
 }
-
 
 
 // Modify the en-media tag into an attachment
 void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, QString appl) {
     QLOG_TRACE_IN();
     if (appl.toLower() == "vnd.evernote.ink") {
-            QLOG_DEBUG() << "Note is ink-note.  Setting to read-only.";
-            inkNote = true;
-            readOnly = true;
-            buildInkNote(enmedia, hash);
-            return;
+        readOnly = true;
+        QLOG_INFO() << "Note is ink-note.  Setting to read-only. Note guid=" << note.guid;
+        inkNote = true;
+        buildInkNote(enmedia, hash);
+        return;
     }
 
     ResourceTable resTable(global.db);
@@ -556,36 +555,37 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
 
         // Check that we don't have a locked PDF.  If we do, then disable PDF previews.
         if (mimetype == "application/pdf") {
-            QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) +".pdf";
+            QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) + ".pdf";
             Poppler::Document *doc = Poppler::Document::load(file);
             if (doc != NULL && doc->isLocked())
                 pdfPreview = false;
         }
 
         if (mimetype == "application/pdf" && pdfPreview && !thumbnail) {
-           modifyPdfTags(resLid, enmedia);
-           return;
+            modifyPdfTags(resLid, enmedia);
+            return;
         }
 
 
         // If we are running the formatter so we can generate a thumbnail and it is a PDF
         if (mimetype == "application/pdf" && pdfPreview && thumbnail) {
-            QString printImageFile = global.fileManager.getTmpDirPath() + QString::number(resLid) +QString("-print.jpg");
-            QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) +".pdf";
+            QString printImageFile =
+                global.fileManager.getTmpDirPath() + QString::number(resLid) + QString("-print.jpg");
+            QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) + ".pdf";
             Poppler::Document *doc;
             doc = Poppler::Document::load(file);
             if (doc == NULL)
                 return;
 
             QImage *image = new QImage(doc->page(0)->renderToImage());
-            image->save(printImageFile,"jpg");
+            image->save(printImageFile, "jpg");
             delete image;
 
             enmedia.setAttribute("src", printImageFile);
             enmedia.removeAttribute("hash");
             enmedia.removeAttribute("type");
-            enmedia.setOuterXml(enmedia.toOuterXml().replace("<en-media","<img"));
-            enmedia.setOuterXml(enmedia.toOuterXml().replace("</en-media>","</img>"));
+            enmedia.setOuterXml(enmedia.toOuterXml().replace("<en-media", "<img"));
+            enmedia.setOuterXml(enmedia.toOuterXml().replace("</en-media>", "</img>"));
             return;
         }
         QString fileDetails = "";
@@ -596,13 +596,15 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
         if (attributes.fileName.isSet())
             fileDetails = ref.getExtensionFromMime(r.mime, fileDetails);
 
-        enmedia.setAttribute("href", QString("nnres:") +global.fileManager.getDbaDirPath()+QString::number(resLid)
-                             +fileDetails);
-        contextFileName = global.fileManager.getTmpDirPath("")+QString::number(resLid) +global.attachmentNameDelimeter + fileDetails;
+        enmedia.setAttribute("href", QString("nnres:") + global.fileManager.getDbaDirPath() + QString::number(resLid)
+                                     + fileDetails);
+        contextFileName =
+            global.fileManager.getTmpDirPath("") + QString::number(resLid) + global.attachmentNameDelimeter +
+            fileDetails;
 
         // Setup the context menu.  This is useful if we want to do a "save as" or such
         contextFileName = contextFileName.replace("\\", "/");
-        enmedia.setAttribute("onContextMenu", "window.browserWindow.resourceContextMenu('" +contextFileName +"');");
+        enmedia.setAttribute("onContextMenu", "window.browserWindow.resourceContextMenu('" + contextFileName + "');");
         enmedia.setAttribute("en-tag", "en-media");
         enmedia.setAttribute("lid", QString::number(resLid));
 
@@ -623,17 +625,16 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
             mime = r.mime;
         fileExt = ref.getExtensionFromMime(mime, fn);
         QString icon = findIcon(resLid, r, fileExt);
-        newText.setAttribute("src", "file:///"+icon);
+        newText.setAttribute("src", "file:///" + icon);
         if (attributes.fileName.isSet())
-            newText.setAttribute("title",attributes.fileName);
+            newText.setAttribute("title", attributes.fileName);
         newText.setAttribute("en-tag", "temporary");
         //Rename the tag to a <a> link
-        enmedia.setOuterXml(enmedia.toOuterXml().replace("<en-media","<a"));
-        enmedia.setOuterXml(enmedia.toOuterXml().replace("</en-media>","</a>"));
+        enmedia.setOuterXml(enmedia.toOuterXml().replace("<en-media", "<a"));
+        enmedia.setOuterXml(enmedia.toOuterXml().replace("</en-media>", "</a>"));
     }
     QLOG_TRACE_OUT();
 }
-
 
 
 // Build an icon for any attachments
@@ -648,7 +649,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
         resourceHighlight = engine.resourceContains(lid, criteria->getSearchString(), NULL);
     }
 
-    QString fileName = global.fileManager.getDbaDirPath(QString::number(lid) +appl);
+    QString fileName = global.fileManager.getDbaDirPath(QString::number(lid) + appl);
     QIcon icon;
     QFileInfo info(fileName);
     QFileIconProvider provider;
@@ -662,7 +663,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     if (attributes.fileName.isSet())
         displayName = attributes.fileName;
     else
-        displayName =  appl.toUpper() +" " +QString(tr("File"));
+        displayName = appl.toUpper() + " " + QString(tr("File"));
 
     // Setup the painter
     QPainter p;
@@ -674,15 +675,15 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     fontPen.setColor(QColor(global.getEditorFontColor()));
 //    font.setFamily("Arial");
     QFontMetrics fm(font);
-    int width =  fm.width(displayName);
+    int width = fm.width(displayName);
     if (width < 40)  // steup a minimum width
         width = 40;
-    width=width+50;  // Add 10 px for padding & 40 for the icon
+    width = width + 50;  // Add 10 px for padding & 40 for the icon
 
     // Start drawing a new pixmap for  the image in the note
-    QPoint textPoint(40,15);
-    QPoint sizePoint(40,29);
-    QPixmap pixmap(width,37);
+    QPoint textPoint(40, 15);
+    QPoint sizePoint(40, 29);
+    QPixmap pixmap(width, 37);
     if (resourceHighlight) {
         pixmap.fill(Qt::yellow);
     } else
@@ -691,7 +692,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     p.begin(&pixmap);
     p.setPen(fontPen);
     p.setFont(font);
-    p.drawPixmap(QPoint(3,3), icon.pixmap(QSize(30,40)));
+    p.drawPixmap(QPoint(3, 3), icon.pixmap(QSize(30, 40)));
 
     // Write out the attributes of the file
     p.drawText(textPoint, displayName);
@@ -699,16 +700,16 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     QString unit = QString(tr("Bytes"));
     qint64 size = QFileInfo(fileName).size();
     if (size > 1024) {
-        size = size/1024;
+        size = size / 1024;
         unit = QString(tr("KB"));
     }
     if (size > 1024) {
-        size = size/1024;
-        unit= QString("MB");
+        size = size / 1024;
+        unit = QString("MB");
     }
 
-    p.drawText(sizePoint, QString::number(size).trimmed() +" " +unit);
-    p.drawRect(0,0,width-1,37-1);   // Draw a rectangle around the image.
+    p.drawText(sizePoint, QString::number(size).trimmed() + " " + unit);
+    p.drawRect(0, 0, width - 1, 37 - 1);   // Draw a rectangle around the image.
     p.end();
 
     // Now that it is drawn, we write it out to a temporary file
@@ -717,8 +718,6 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     return tmpFile;
     QLOG_TRACE_OUT();
 }
-
-
 
 
 // Modify the en-to tag into an input field
@@ -734,14 +733,12 @@ void NoteFormatter::modifyTodoTags(QWebElement &todo) {
     else
         todo.removeAttribute("checked");
 
-    todo.setAttribute("onClick", "if(!checked) removeAttribute('checked'); else setAttribute('checked', 'checked'); editorWindow.editAlert();");
+    todo.setAttribute("onClick",
+                      "if(!checked) removeAttribute('checked'); else setAttribute('checked', 'checked'); editorWindow.editAlert();");
     todo.setAttribute("style", "cursor: hand;");
-    todo.setOuterXml(todo.toOuterXml().replace("en-todo","input"));
+    todo.setOuterXml(todo.toOuterXml().replace("en-todo", "input"));
     QLOG_TRACE_OUT();
 }
-
-
-
 
 
 /* If we have an ink note, then we need to pull the image and display it */
@@ -755,9 +752,10 @@ bool NoteFormatter::buildInkNote(QWebElement &docElem, QString &hash) {
     docElem.setAttribute("en-tag", "en-media");
     docElem.setAttribute("lid", QString::number(resLid));
     docElem.setAttribute("type", "application/vnd.evernote.ink");
-    QString filename = QString("file:///") +global.fileManager.getDbaDirPath()+QString::number(resLid)+QString(".png");
+    QString filename =
+        QString("file:///") + global.fileManager.getDbaDirPath() + QString::number(resLid) + QString(".png");
     docElem.setAttribute("src", filename);
-    QString k  = docElem.toOuterXml();
+    QString k = docElem.toOuterXml();
     k.replace("<en-media", "<img");
     k.replace("enmedia>", "img>");;
     docElem.setOuterXml(k);
@@ -765,7 +763,6 @@ bool NoteFormatter::buildInkNote(QWebElement &docElem, QString &hash) {
     QLOG_TRACE_OUT();
     return true;
 }
-
 
 
 void NoteFormatter::modifyPdfTags(qint32 resLid, QWebElement &enmedia) {
@@ -785,7 +782,7 @@ void NoteFormatter::modifyPdfTags(qint32 resLid, QWebElement &enmedia) {
 void NoteFormatter::setHighlightText(QString text) {
     QLOG_TRACE_IN();
     QStringList temp = text.split(" ");
-    for (int i=0; i<temp.size(); i++) {
+    for (int i = 0; i < temp.size(); i++) {
         if (temp[i].trimmed() != "")
             highlightWords.append(temp[i]);
     }

@@ -449,7 +449,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     QLOG_DEBUG() << "Getting note, lid=" << this->lid;
     bool rc = noteTable.get(n, this->lid, false, false);
     if (!rc) {
-        QLOG_DEBUG() << "Failed to load note, lid=" << this->lid;
+        QLOG_DEBUG() << "Failed to load note (guid not set), lid=" << this->lid;
         return;
     }
 
