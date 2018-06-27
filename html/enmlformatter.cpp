@@ -322,9 +322,10 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 
     // IF the new tidy had an error, or we choose to use the old method
     if ((useLegacyTidy || !global.useLibTidy) && !global.bypassTidy) {
-        QLOG_INFO() << "About to call tidy as process";
         QProcess tidyProcess;
-        tidyProcess.start("tidy -raw -asxhtml -q -m -u -utf8 ", QIODevice::ReadWrite | QIODevice::Unbuffered);
+        QString command("tidy -raw -asxhtml -q -m -u -utf8 ");
+        QLOG_INFO() << "About to call tidy as process: " << command;
+        tidyProcess.start(command, QIODevice::ReadWrite | QIODevice::Unbuffered);
         QLOG_INFO() << "Starting tidy " << tidyProcess.waitForStarted();
 
         tidyProcess.waitForStarted();
