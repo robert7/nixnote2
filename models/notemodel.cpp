@@ -189,7 +189,7 @@ QVariant NoteModel::data(const QModelIndex &index, int role) const {
     // title compound - later this can be made configurable; and we can also adjust painting
     if ((role == Qt::DisplayRole) && (column == NOTE_TABLE_TITLE_POSITION)) {
         bool isDirty = index.sibling(row, NOTE_TABLE_IS_DIRTY_POSITION).data(Qt::DisplayRole).toBool();
-        QLOG_DEBUG() << "Request for note title at row=" << row << " dirty=" << isDirty;
+        //QLOG_DEBUG() << "Request for note title at row=" << row << " dirty=" << isDirty;
         if (isDirty) {
             QString title = sourceData(index, role).toString();
             return (isDirty ? QString("▲") : QString("")) + QString(" ") + title;

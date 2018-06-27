@@ -411,7 +411,7 @@ void NBrowserWindow::setupToolBar() {
 
 // Load the note content into the window
 void NBrowserWindow::setContent(qint32 lid) {
-    QLOG_DEBUG() << "Setting note contents to lid: " << lid;
+    QLOG_DEBUG() << "Setting note contents to lid=" << lid;
 
     // First, make sure we have a valid lid
     if (lid == -1) {
@@ -423,18 +423,22 @@ void NBrowserWindow::setContent(qint32 lid) {
     }
 
     // If we are already updating this note, we don't do anything
-    QLOG_DEBUG() << "this.lid:" << this->lid << " " << lid;
-    if (lid == this->lid)
+    QLOG_DEBUG() << "Currrent editor lid=" << this->lid << ", changing to lid=" << lid;
+    if (lid == this->lid) {
+        QLOG_DEBUG() << "no change => exit";
         return;
+    }
 
     bool hasFocus = false;
     if (this->editor->hasFocus())
         hasFocus = true;
 
-    QLOG_DEBUG() << "editor is dirty";
-    if (this->editor->isDirty)
+    if (this->editor->isDirty) {
+        QLOG_DEBUG() << "editor is dirty - content save";
         this->saveNoteContent();
+    }
 
+    QLOG_DEBUG() << "===== Loading note contents, lid=" << lid;
     // let's load the new note
     this->lid = lid;
     this->editor->isDirty = false;
@@ -442,10 +446,12 @@ void NBrowserWindow::setContent(qint32 lid) {
     NoteTable noteTable(global.db);
     Note n;
 
-    QLOG_DEBUG() << "Getting note";
+    QLOG_DEBUG() << "Getting note, lid=" << this->lid;
     bool rc = noteTable.get(n, this->lid, false, false);
-    if (!rc)
+    if (!rc) {
+        QLOG_DEBUG() << "Failed to load note, lid=" << this->lid;
         return;
+    }
 
     QByteArray content;
     bool inkNote = false;
@@ -454,18 +460,19 @@ void NBrowserWindow::setContent(qint32 lid) {
     // If we are searching, we never pull from the cache since the search string may
     // have changed since the last time.
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
-    if (criteria->isSearchStringSet() && criteria->getSearchString().trimmed() != "")
+    if (criteria->isSearchStringSet() && criteria->getSearchString().trimmed() != "") {
         global.cache.remove(lid);
+    }
 
-    QLOG_DEBUG() << "Checking if note is in cache";
+    QLOG_DEBUG() << "Checking if note is in cache, lid=" << this->lid;
     if (global.cache.contains(lid)) {
-        QLOG_DEBUG() << "Fetching from cache";
+        QLOG_DEBUG() << "Fetching from cache, lid=" << this->lid;
         NoteCache *c = global.cache[lid];
         if (c == NULL || c->noteContent == (char*)NULL) {
             QLOG_DEBUG() << "Invalid note found in cache.  Removing it.";
             global.cache.remove(lid);
         } else {
-            QLOG_DEBUG() << "Setting content from cache.";
+            QLOG_DEBUG() << "Setting content from cache, lid=" << this->lid;
             content = c->noteContent;
             readOnly = c->isReadOnly;
             inkNote = c->isInkNote;
@@ -473,16 +480,18 @@ void NBrowserWindow::setContent(qint32 lid) {
     }
 
     if (!global.cache.contains(lid)) {
-        QLOG_DEBUG() << "Note not in cache";
+        QLOG_DEBUG() << "Note not in cache, lid=" << this->lid;
         NoteFormatter formatter;
         if (criteria->isSearchStringSet())
             formatter.setHighlightText(criteria->getSearchString());
+
         formatter.setNote(n, global.pdfPreview);
         //formatter.setHighlight();
-        QLOG_DEBUG() << "Rebuilding note HTML";
+
+        QLOG_DEBUG() << "Rebuilding note HTML, lid=" << this->lid;
         content = formatter.rebuildNoteHTML();
         if (!criteria->isSearchStringSet()) {
-            QLOG_DEBUG() << "criteria search string set";
+            QLOG_DEBUG() << "Criteria search string set";
             NoteCache *newCache = new NoteCache();
             newCache->isReadOnly = formatter.readOnly;
             newCache->isInkNote = formatter.inkNote;
@@ -504,15 +513,14 @@ void NBrowserWindow::setContent(qint32 lid) {
     QLOG_DEBUG() << "Setting editor contents";
 
     //**** BEGINNING CALL TO PRE-LOAD EXIT
-
     QHash<QString, ExitPoint*> *points;
     points = global.exitManager->exitPoints;
 
     if (points->contains("ExitPoint_LoadNote") &&
-            points->value("ExitPoint_LoadNote") != NULL &&
-            points->value("ExitPoint_LoadNote")->getEnabled())
+        points->value("ExitPoint_LoadNote") != NULL &&
+        points->value("ExitPoint_LoadNote")->getEnabled()) {
         exitPoint(points->value("ExitPoint_LoadNote"));
-
+    }
     //**** END OF CALL TO PRE-LOAD EXIT
 
     editor->setContent(content);
@@ -522,7 +530,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     // Setup the alarm
     NoteAttributes attributes;
-    QLOG_DEBUG() << "Setting attributes";
+    QLOG_DEBUG() << "Setting attributes, lid=" << this->lid;
     if (n.attributes.isSet())
         attributes = n.attributes;
     if (attributes.reminderTime.isSet()) {
@@ -547,8 +555,6 @@ void NBrowserWindow::setContent(qint32 lid) {
             alarmText.setText(tr("Yesterday"));
         else
             alarmText.setText(atime.date().toString(global.dateFormat));
-
-
     } else {
         alarmText.setText("");
         alarmText.setVisible(false);
@@ -556,7 +562,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
 
     // Set the tag names
-    QLOG_DEBUG() << "Setting tags";
+    QLOG_DEBUG() << "Setting tags, lid=" << this->lid;
     tagEditor.clear();
     QStringList names;
     QList<QString> tagNames;
@@ -575,13 +581,13 @@ void NBrowserWindow::setContent(qint32 lid) {
     else
         tagEditor.setAccount(0);
 
-    QLOG_DEBUG() << "Setting notebook";
+    QLOG_DEBUG() << "Setting notebook, lid=" << this->lid;
     //this->lid = lid;
     notebookMenu.setCurrentNotebook(lid, n);
     QLOG_DEBUG() << "Setting URL";
     urlEditor.setUrl(lid, "");
     NoteAttributes na;
-    QLOG_DEBUG() << "Setting note attributes";
+    QLOG_DEBUG() << "Setting note attributes, lid=" << this->lid;
     if (n.attributes.isSet()) {
         na = n.attributes;
         if (na.sourceURL.isSet()) {
@@ -590,7 +596,7 @@ void NBrowserWindow::setContent(qint32 lid) {
         }
     }
 
-    QLOG_DEBUG() << "Calling set source";
+    QLOG_DEBUG() << "Calling set source, lid=" << this->lid;
     setSource();
 
     if (criteria->isSearchStringSet()) {
@@ -600,7 +606,7 @@ void NBrowserWindow::setContent(qint32 lid) {
         }
     }
 
-    QLOG_DEBUG() << "Checking thumbnail";
+    QLOG_DEBUG() << "Checking thumbnail, lid=" << this->lid;
     if (hammer->idle && noteTable.isThumbnailNeeded(this->lid)) {
         hammer->render(this->lid);
     }
@@ -608,11 +614,13 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     if (hasFocus)
         this->editor->setFocus();
-    QLOG_DEBUG() << "Exiting setContent";
+    QLOG_DEBUG() << "===== Finished loading note contents, lid=" << lid;
 }
 
 
 void NBrowserWindow::setReadOnly(bool readOnly) {
+    QLOG_DEBUG() << "setReadOnly, lid=" << this->lid << " readOnly=" << readOnly;
+
     isReadOnly = readOnly;
     if (readOnly || global.disableEditing) {
         noteTitle.setFocusPolicy(Qt::NoFocus);
@@ -628,6 +636,7 @@ void NBrowserWindow::setReadOnly(bool readOnly) {
         alarmButton.setEnabled(false);
         return;
     }
+
     noteTitle.setFocusPolicy(Qt::StrongFocus);
     tagEditor.setEnabled(true);
     tagEditor.setFocusPolicy(Qt::StrongFocus);
@@ -806,7 +815,11 @@ void NBrowserWindow::saveNoteContent() {
         formatter.setHtml(contents);
         formatter.rebuildNoteEnml();
         if (formatter.formattingError) {
-            QMessageBox::information(this, tr("Unable to Save"), QString(tr("Unable to save this note.  Either tidy isn't installed or the note is too complex to save.")));
+            QMessageBox::information(
+                this,
+                tr("Unable to Save"),
+                QString(tr("Unable to save this note.  Either tidy isn't installed or the note is too complex to save."))
+            );
             return;
         }
 
@@ -818,21 +831,16 @@ void NBrowserWindow::saveNoteContent() {
         ResourceTable resTable(global.db);
         resTable.getResourceList(oldLids, lid);
 
-        QLOG_DEBUG() << "Valid Resource  LIDS:";
         for (int i=0; i<validLids.size(); i++) {
-            QLOG_DEBUG() << " * " << i << " : " << validLids[i];
+            QLOG_DEBUG() << "valid [" << i << "] " << validLids[i];
         }
-
-
-        QLOG_DEBUG() << "Old Resource  LIDS:";
         for (int i=0; i<oldLids.size(); i++) {
-            QLOG_DEBUG() << " * " << i << " : " << oldLids[i];
+            QLOG_DEBUG() << "old [" << i << "] " << oldLids[i];
         }
-
 
         for (int i=0; i<oldLids.size(); i++) {
             if (!validLids.contains(oldLids[i])) {
-                QLOG_DEBUG() << "Expunging old lid " << oldLids[i];
+                QLOG_DEBUG() << "expunging old lid " << oldLids[i];
                 resTable.expunge(oldLids[i]);
             }
         }
@@ -844,11 +852,12 @@ void NBrowserWindow::saveNoteContent() {
         } else
             emit requestNoteContentUpdate(lid, formatter.getEnml(), true);
         editor->isDirty = false;
+
         if (thumbnailer == NULL)
             thumbnailer = new Thumbnailer(global.db);
         QLOG_DEBUG() << "Beginning thumbnail";
         thumbnailer->render(lid);
-        QLOG_DEBUG() << "Thumbnail compleded";
+        QLOG_DEBUG() << "Thumbnail completed";
 
         NoteCache* cache = global.cache[lid];
         if (cache != NULL) {
@@ -1264,7 +1273,8 @@ void NBrowserWindow::bulletListButtonPressed() {
     microFocusChanged();
 }
 
-
+// called from many places (mainly here inside) after some action changed content of editor
+// also called 1x from outside
 void NBrowserWindow::contentChanged() {
     QLOG_DEBUG() << "contentChanged()";
     this->editor->isDirty = true;

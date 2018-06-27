@@ -1942,7 +1942,7 @@ void NixNote::waitCursor(bool value) {
 void NixNote::setMessage(QString text, int timeout) {
     QLOG_TRACE_IN();
     statusBar()->showMessage(text, timeout);
-    QLOG_DEBUG() << "setMessage: " << text;
+    //QLOG_DEBUG() << "setMessage: " << text;
     QLOG_TRACE_OUT();
 }
 

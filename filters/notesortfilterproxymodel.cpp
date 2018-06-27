@@ -38,15 +38,17 @@ bool NoteSortFilterProxyModel::filterAcceptsRow(qint32 source_row, const QModelI
     QModelIndex idx = sourceModel()->index(source_row, NOTE_TABLE_LID_POSITION, source_parent);
     qint32 rowLid = sourceModel()->data(idx).toInt();
     if (lidMap->contains(rowLid)) {
-        QLOG_DEBUG() << "filterAcceptsRow lid=" << rowLid << "OK";
+        //QLOG_DEBUG() << "filterAcceptsRow lid=" << rowLid << "OK";
         lidMap->remove(rowLid);
         lidMap->insert(rowLid, source_row);
         return true;
     }
-    QLOG_DEBUG() << "filterAcceptsRow lid=" << rowLid << "failed";
+    //QLOG_DEBUG() << "filterAcceptsRow lid=" << rowLid << "failed";
     return false;
 }
 
+
+// obsolete/unused
 
 bool NoteSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const {
     QLOG_DEBUG() << "lessThan";

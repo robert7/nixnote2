@@ -16,9 +16,10 @@
   * also holds a list of browser tabs (NBrowserWindow) and external browser windows ()
   * and does sync between them
 * NBrowserWindow - represents one tab with note (in a tabbed interface) 
-  * signals
-    * updateNoteList(lid, column, data) => signal that some table column changes data 
-  * NTitleEditor - title editoe - instantiated in NBrowserWindow, but someway passed down
+  * methods/signals
+    * updateNoteList(lid, column, data) => signal that some table column changes data
+    * saveNoteContent() - called to save note content (also validates HTML) 
+  * NTitleEditor - title editor - instantiated in NBrowserWindow, but someway passed down
   * NWebView - editor + some related stuff (actions, toolbar) 
     * NWebPage - just the html editor itself
 + ExternalBrowse - external browser window

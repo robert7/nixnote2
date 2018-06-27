@@ -9,7 +9,7 @@
   Main aim is to be able to hide all other columns. Sorting is relevance+date update - so you may
   just display title column & hide all others. See Preview
 * Removed function of opening notes in new tabs - doesn't work stable and is only confusing. Could be 
-  re-added back later.
+  re-added back later (commit id 6149a745d014f55352b2e6cad8ff4637414861b7).
      
   
 
