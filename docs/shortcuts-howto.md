@@ -1,3 +1,8 @@
+TODO: update this 
+
+----original text:
+
+
 I've tried to add the ability to customize your NixNote menu shortcuts,
 but I don't want to take the time to setup a new dialog box and all the
 junk that entails.  So, I chose a text file config instead.  Eventually I 
