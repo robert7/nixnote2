@@ -35,11 +35,10 @@ You'll need the same dependencies installed (including libtidy on MS Windows).
   * As alternative you can download qt5 directly from [qt.io/download](https://www.qt.io/download). 
     Highest currently supported version is 5.5. Building against 5.6+ needs some 
     source changes (and will probably break qt4 compatibility).
-* It should be possible to build against qt4 but its **discouraged/deprecated**
+* It should be possible to build against qt4 but its **deprecated** - will be removed soon
 * Get latest source from github... 
-  * I recommend using `master` branch, `development` may contain
-  bit more, but could be less stable.
-  * Anyway there isn't any guarantee for `master` branch either :-) ).
+  * I recommend using `master` branch. There maybe feature/* or release/* available, but this may 
+    not be stable. Anyway there isn't any guarantee for `master` branch either :-)
 * Build
 
 ```bash
