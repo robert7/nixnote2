@@ -36,14 +36,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 #include <iostream>
+
 using namespace std;
 
 extern Global global;
 
 /* Constructor. */
 EnmlFormatter::EnmlFormatter(QObject *parent) :
-    QObject(parent)
-{
+    QObject(parent) {
     //doc = new QDomDocument();
     formattingError = false;
 
@@ -176,7 +176,6 @@ EnmlFormatter::EnmlFormatter(QObject *parent) :
     ul.append("compact");
 
 
-
 }
 
 /* Return the formatted content */
@@ -193,33 +192,34 @@ void EnmlFormatter::setHtml(QString h) {
 /* Take the ENML note and transform it into HTML that WebKit will
   not complain about */
 QByteArray EnmlFormatter::rebuildNoteEnml() {
+    QLOG_INFO() << "rebuildNoteEnml";
     resources.clear();
     QByteArray b;
     qint32 index;
 
     // Remove invalid stuff
-    content.replace("</input>","");
+    content.replace("</input>", "");
     content = this->removeInvalidUnicode(content);
 
     // Strip off HTML header & remove the background & default font color
     // if they match the theme default.
     index = content.indexOf("<body");
-    QString header = content.mid(0,index);
+    QString header = content.mid(0, index);
     QByteArray c1 = content.mid(index);
     index = header.indexOf(">");
-    header = header.mid(0,index);
-    QByteArray c2 = content.mid(content.indexOf(">",index));
+    header = header.mid(0, index);
+    QByteArray c2 = content.mid(content.indexOf(">", index));
     QString newHeader = header;
-    QString bgColor = "background-color: "+global.getEditorBackgroundColor()+";";
-    QString fgColor = "color: "+global.getEditorFontColor()+";";
+    QString bgColor = "background-color: " + global.getEditorBackgroundColor() + ";";
+    QString fgColor = "color: " + global.getEditorFontColor() + ";";
     newHeader = newHeader.replace(bgColor, "");
-    newHeader = newHeader.replace(fgColor,"");
+    newHeader = newHeader.replace(fgColor, "");
     content = c1;
     content.append(newHeader).append(c2);
 
     // Start transforming the header
     index = content.indexOf("<body");
-    content.remove(0,index);
+    content.remove(0, index);
     index = content.indexOf("</body");
     content.truncate(index);
     b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -315,22 +315,28 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
             tidyBufFree(&errout);
         tidyRelease(tdoc);
     }
- #endif
+#endif
+    QLOG_INFO() << "Tidy check useLegacyTidy=" << useLegacyTidy
+                << ", useLibTidy=" << global.useLibTidy
+                << ", bypassTidy=" << global.bypassTidy;
 
     // IF the new tidy had an error, or we choose to use the old method
     if ((useLegacyTidy || !global.useLibTidy) && !global.bypassTidy) {
-        QLOG_DEBUG() << "Calling tidy";
         QProcess tidyProcess;
-        tidyProcess.start("tidy -raw -asxhtml -q -m -u -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
-        QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
+        QString command("tidy -raw -asxhtml -q -m -u -utf8 ");
+        QLOG_INFO() << "About to call tidy as process: " << command;
+        tidyProcess.start(command, QIODevice::ReadWrite | QIODevice::Unbuffered);
+        QLOG_INFO() << "Starting tidy " << tidyProcess.waitForStarted();
+
         tidyProcess.waitForStarted();
         tidyProcess.write(content);
         tidyProcess.closeWriteChannel();
         tidyProcess.waitForFinished();
-        QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
+        QLOG_INFO() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
+
         QString errors(tidyProcess.readAllStandardError());
         QStringList errorList = errors.split("\n");
-        for (int e=0; e<errorList.size(); e++) {
+        for (int e = 0; e < errorList.size(); e++) {
             if (not errorList[e].contains("<img> proprietary attribute \"type\"") &&
                 not errorList[e].contains("<img> proprietary attribute \"oncontextmenu\"") &&
                 not errorList[e].contains("<img> proprietary attribute \"hash\"") &&
@@ -339,12 +345,12 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
                 not errorList[e].contains("<img> proprietary attribute \"oncontextmenu\"") &&
                 not errorList[e].contains("<img> lacks \"alt\" attribute")
                 ) {
-                    QLOG_DEBUG() << errorList[e];
-           }
-       }
+                QLOG_INFO() << "Tidy error:" << errorList[e];
+            }
+        }
 
 
-        QLOG_DEBUG() << "After tidy";
+        QLOG_INFO() << "After tidy";
         content.clear();
         content.append(tidyProcess.readAllStandardOutput());
         tidyProcess.close();
@@ -352,6 +358,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 
 
     if (content == "") {
+        QLOG_ERROR() << "Got no output from tidy - cleanup failed";
         formattingError = true;
         return "";
     }
@@ -361,7 +368,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.replace("</form>", "");
 
     index = content.indexOf("<body");
-    content.remove(0,index);
+    content.remove(0, index);
     content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
     content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
     content.prepend("<html>");
@@ -378,10 +385,11 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         QWebElement element = page.mainFrame()->documentElement();
         QStringList tags = findAllTags(element);
 
-        for (int i=0; i<tags.size(); i++) {
+        for (int i = 0; i < tags.size(); i++) {
             QString tag = tags[i];
             QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
-            foreach (QWebElement element, anchors) {
+            foreach(QWebElement
+            element, anchors) {
                 //QLOG_DEBUG() << "Processing tag name: " << element.tagName();
                 if (element.tagName().toLower() == "input") {
                     processTodo(element);
@@ -391,7 +399,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
                     fixObjectNode(element);
                 } else if (element.tagName().toLower() == "img") {
                     fixImgNode(element);
-                } else if (element.tagName().toLower() == "span"){
+                } else if (element.tagName().toLower() == "span") {
                     fixSpanNode(element);
                 } else if (element.tagName().toLower() == "div") {
                     fixDivNode(element);
@@ -408,7 +416,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     // Strip off HTML header
     index = content.indexOf("<body");
     //index = content.indexOf(">", index)+1;
-    content.remove(0,index);
+    content.remove(0, index);
     index = content.indexOf("</body");
     content.truncate(index);
     b.clear();
@@ -425,31 +433,29 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 }
 
 
-
-
 QStringList EnmlFormatter::findAllTags(QWebElement &element) {
     QStringList tags;
     QString body = element.toOuterXml();
-    body = body.replace("</","<").replace("/>"," ").replace(">", " ");
+    body = body.replace("</", "<").replace("/>", " ").replace(">", " ");
     int i = body.indexOf("<body") + 1;
     // Look through and get a list of all possible tags
     i = body.indexOf("<", i);
 
     while (i != -1) {
-        int eot = body.indexOf(" ",i);
-        QString tag = body.mid(i+1, eot-i-1);
+        int eot = body.indexOf(" ", i);
+        QString tag = body.mid(i + 1, eot - i - 1);
         if (!tags.contains(tag) && tag != "body")
             tags.append(tag);
-        i=body.indexOf("<", eot);
+        i = body.indexOf("<", eot);
         if (tag == "body")
-            i=-1;
+            i = -1;
     }
     return tags;
 }
 
 
 void EnmlFormatter::processTodo(QWebElement &node) {
-    bool checked=false;
+    bool checked = false;
     if (node.hasAttribute("checked"))
         checked = true;
     node.removeAttribute("style");
@@ -461,13 +467,10 @@ void EnmlFormatter::processTodo(QWebElement &node) {
 }
 
 
-
 void EnmlFormatter::fixSpanNode(QWebElement &e) {
     e.removeAttribute("id");
     e.removeAttribute("class");
 }
-
-
 
 
 void EnmlFormatter::fixObjectNode(QWebElement &e) {
@@ -478,16 +481,15 @@ void EnmlFormatter::fixObjectNode(QWebElement &e) {
         e.removeAttribute("height");
         e.removeAttribute("lid");
         e.removeAttribute("border");
-        if (lid>0) {
+        if (lid > 0) {
             resources.append(lid);
-             e.setOuterXml(e.toOuterXml().replace("<object", "<en-media").replace("</object", "</en-media"));
+            e.setOuterXml(e.toOuterXml().replace("<object", "<en-media").replace("</object", "</en-media"));
         }
         removeInvalidAttributes(e);
     } else {
         e.removeFromDocument();
     }
 }
-
 
 
 void EnmlFormatter::fixEnCryptNode(QWebElement &e) {
@@ -515,15 +517,15 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         e.removeAttribute("style");
         removeInvalidAttributes(e);
         e.setInnerXml(encrypted);
-        e.setOuterXml("<en-crypt cipher=\"" +cipher +"\" length=\"" +
-                      length + "\" hint=\"" +hint
-                      +"\">"+encrypted+"</en-crypt>");
+        e.setOuterXml("<en-crypt cipher=\"" + cipher + "\" length=\"" +
+                      length + "\" hint=\"" + hint
+                      + "\">" + encrypted + "</en-crypt>");
 //        e.setOuterXml(e.toOuterXml().replace("<img", "<en-crypt").replace("</img", "</en-crypt"));
         return;
     }
 
     // Check if we have a temporary image.  If so, remove it
-    if (enType.toLower() ==  "temporary") {;
+    if (enType.toLower() == "temporary") { ;
         e.removeFromDocument();
         return;
     }
@@ -543,9 +545,8 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
     resources.append(lid);
     removeInvalidAttributes(e);
     e.setOuterXml(e.toOuterXml().replace("<img", "<en-media").replace("</img", "</en-media"));
-    checkAttributes(e, attrs+img);
+    checkAttributes(e, attrs + img);
 }
-
 
 
 void EnmlFormatter::fixLinkNode(QWebElement e) {
@@ -571,12 +572,8 @@ void EnmlFormatter::fixLinkNode(QWebElement e) {
         //e.setOuterXml(e.toInnerXml());
     }
     removeInvalidAttributes(e);
-    checkAttributes(e, attrs+focus+a);
+    checkAttributes(e, attrs + focus + a);
 }
-
-
-
-
 
 
 bool EnmlFormatter::isAttributeValid(QString attribute) {
@@ -605,248 +602,248 @@ bool EnmlFormatter::isElementValid(QWebElement e) {
     QString element = e.tagName().toLower();
     //QLOG_DEBUG() << "Checking tag " << element;
     if (element == "a") {
-        checkAttributes(e, attrs+focus+a);
+        checkAttributes(e, attrs + focus + a);
         return true;
     }
     if (element == "abbr") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "acronym") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "address") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "area") {
-        checkAttributes(e,attrs+focus+area);
+        checkAttributes(e, attrs + focus + area);
         return true;
     }
     if (element == "b") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "bdo") {
-        checkAttributes(e,coreattrs+bdo);
+        checkAttributes(e, coreattrs + bdo);
         return true;
     }
     if (element == "big") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "blockquote") {
-        checkAttributes(e,attrs+blockQuote);
+        checkAttributes(e, attrs + blockQuote);
         return true;
     }
     if (element == "br") {
-        checkAttributes(e,coreattrs+br);
+        checkAttributes(e, coreattrs + br);
         return true;
     }
     if (element == "caption") {
-        checkAttributes(e,attrs+caption);
+        checkAttributes(e, attrs + caption);
         return true;
     }
     if (element == "center") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "cite") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "code") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "col") {
-        checkAttributes(e,attrs+cellHalign+cellValign+col);
+        checkAttributes(e, attrs + cellHalign + cellValign + col);
         return true;
     }
     if (element == "colgroup") {
-        checkAttributes(e,attrs+cellHalign+cellValign+colGroup);
+        checkAttributes(e, attrs + cellHalign + cellValign + colGroup);
         return true;
     }
     if (element == "dd") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "del") {
-        checkAttributes(e,attrs+del);
+        checkAttributes(e, attrs + del);
         return true;
     }
     if (element == "dfn") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
-    if (element == "div")  {
-        checkAttributes(e,attrs+textAlign);
+    if (element == "div") {
+        checkAttributes(e, attrs + textAlign);
         return true;
     }
-    if (element == "dl")  {
-        checkAttributes(e,attrs+dl);
+    if (element == "dl") {
+        checkAttributes(e, attrs + dl);
         return true;
     }
-    if (element == "dt")  {
-        checkAttributes(e,attrs);
+    if (element == "dt") {
+        checkAttributes(e, attrs);
         return true;
     }
-    if (element == "em")  {
-        checkAttributes(e,attrs);
+    if (element == "em") {
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "en-media") return true;
     if (element == "en-crypt") return true;
     if (element == "en-todo") return true;
     if (element == "en-note") return true;
-    if (element == "font")  {
-        checkAttributes(e,coreattrs+i18n+font);
+    if (element == "font") {
+        checkAttributes(e, coreattrs + i18n + font);
         return true;
     }
-    if (element == "h1")  {
-        checkAttributes(e,attrs+textAlign);
+    if (element == "h1") {
+        checkAttributes(e, attrs + textAlign);
         return true;
     }
     if (element == "h2") {
-        checkAttributes(e,attrs+textAlign);
+        checkAttributes(e, attrs + textAlign);
         return true;
     }
     if (element == "h3") {
-        checkAttributes(e,attrs+textAlign);
+        checkAttributes(e, attrs + textAlign);
         return true;
     }
     if (element == "h4") {
-        checkAttributes(e,attrs+textAlign);
+        checkAttributes(e, attrs + textAlign);
         return true;
     }
     if (element == "h5") {
-        checkAttributes(e,attrs+textAlign);
+        checkAttributes(e, attrs + textAlign);
         return true;
     }
     if (element == "h6") {
-        checkAttributes(e,attrs+textAlign);
+        checkAttributes(e, attrs + textAlign);
         return true;
     }
     if (element == "hr") {
-        checkAttributes(e,attrs+hr);
+        checkAttributes(e, attrs + hr);
         return true;
     }
     if (element == "i") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "img") {
-        checkAttributes(e,attrs+img);
+        checkAttributes(e, attrs + img);
         return true;
     }
     if (element == "ins") {
-        checkAttributes(e,attrs+ins);
+        checkAttributes(e, attrs + ins);
         return true;
     }
     if (element == "kbd") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "li") {
-        checkAttributes(e,attrs+li);
+        checkAttributes(e, attrs + li);
         return true;
     }
     if (element == "map") {
-        checkAttributes(e,i18n+map);
+        checkAttributes(e, i18n + map);
         return true;
     }
     if (element == "ol") {
-        checkAttributes(e,attrs+ol);
+        checkAttributes(e, attrs + ol);
         return true;
     }
     if (element == "p") {
-        checkAttributes(e,attrs+textAlign);
+        checkAttributes(e, attrs + textAlign);
         return true;
     }
     if (element == "pre") {
-        checkAttributes(e,attrs+pre);
+        checkAttributes(e, attrs + pre);
         return true;
     }
     if (element == "q") {
-        checkAttributes(e,attrs+q);
+        checkAttributes(e, attrs + q);
         return true;
     }
     if (element == "s") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "samp") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "small") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "span") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "strike") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "strong") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "sub") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "sup") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "table") {
-        checkAttributes(e,attrs+table);
+        checkAttributes(e, attrs + table);
         return true;
     }
     if (element == "tbody") {
-        checkAttributes(e,attrs+cellHalign+cellValign);
+        checkAttributes(e, attrs + cellHalign + cellValign);
         return true;
     }
     if (element == "td") {
-        checkAttributes(e,attrs+cellValign+cellHalign+td);
+        checkAttributes(e, attrs + cellValign + cellHalign + td);
         return true;
     }
     if (element == "tfoot") {
-        checkAttributes(e,attrs+cellHalign+cellValign);
+        checkAttributes(e, attrs + cellHalign + cellValign);
         return true;
     }
     if (element == "th") {
-        checkAttributes(e,attrs+cellHalign+cellValign+th);
+        checkAttributes(e, attrs + cellHalign + cellValign + th);
         return true;
     }
     if (element == "thread") {
-        checkAttributes(e,attrs+cellHalign+cellValign);
+        checkAttributes(e, attrs + cellHalign + cellValign);
         return true;
     }
     if (element == "title") return true;
     if (element == "tr") {
-        checkAttributes(e,attrs+cellHalign+cellValign+tr_);
+        checkAttributes(e, attrs + cellHalign + cellValign + tr_);
         return true;
     }
     if (element == "tt") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "u") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "ul") {
-        checkAttributes(e,attrs+ul);
+        checkAttributes(e, attrs + ul);
         return true;
     }
     if (element == "var") {
-        checkAttributes(e,attrs);
+        checkAttributes(e, attrs);
         return true;
     }
     if (element == "xmp") return true;
@@ -857,11 +854,10 @@ bool EnmlFormatter::isElementValid(QWebElement e) {
 }
 
 
-
 void EnmlFormatter::removeInvalidAttributes(QWebElement &node) {
     // Remove any invalid attributes
     QStringList attributes = node.attributeNames();
-    for (int i=0; i<attributes.size(); i++) {
+    for (int i = 0; i < attributes.size(); i++) {
         if (!isAttributeValid(attributes[i])) {
             node.removeAttribute(attributes[i]);
         }
@@ -869,24 +865,18 @@ void EnmlFormatter::removeInvalidAttributes(QWebElement &node) {
 }
 
 
-
 void EnmlFormatter::fixDivNode(QWebElement &node) {
     // Remove any invalid attributes
     node.removeAttribute("class");
-    checkAttributes(node, attrs+textAlign);
+    checkAttributes(node, attrs + textAlign);
 }
-
 
 
 void EnmlFormatter::fixPreNode(QWebElement &node) {
     // Remove any invalid attributes
     node.removeAttribute("wrap");
-    checkAttributes(node, attrs+pre);
+    checkAttributes(node, attrs + pre);
 }
-
-
-
-
 
 
 void EnmlFormatter::postXmlFix() {
@@ -908,9 +898,9 @@ void EnmlFormatter::postXmlFix() {
         // of the current tag or if it doesn't exist then we
         // need to fix the end of the img
         if (tagEndPos == -1 || tagEndPos > endPos) {
-            content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
+            content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
         }
-         pos = content.indexOf("<br", pos+1);
+        pos = content.indexOf("<br", pos + 1);
     }
 
 
@@ -928,9 +918,9 @@ void EnmlFormatter::postXmlFix() {
         // of the current tag or if it doesn't exist then we
         // need to fix the end of the img
         if (tagEndPos == -1 || tagEndPos > endPos) {
-            content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
+            content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
         }
-         pos = content.indexOf("<en-todo", pos+1);
+        pos = content.indexOf("<en-todo", pos + 1);
     }
 
     // Fix any <img> tags
@@ -947,29 +937,28 @@ void EnmlFormatter::postXmlFix() {
         // of the current tag or if it doesn't exist then we
         // need to fix the end of the img
         if (tagEndPos == -1 || tagEndPos > endPos) {
-            content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
+            content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
         }
-        pos = content.indexOf("<en-media", pos+1);
+        pos = content.indexOf("<en-media", pos + 1);
     }
 }
 
 
-
 QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
-    int endPos, startPos, endData,slotStart, slotEnd;
+    int endPos, startPos, endData, slotStart, slotEnd;
     QByteArray eTag = "<table class=\"en-crypt-temp\"";
-    for (int i=newContent.indexOf(eTag); i != -1; i = newContent.indexOf(eTag,i+1)) {
-        slotStart = newContent.indexOf("slot", i+1)+6;
-        slotEnd = newContent.indexOf("\"",slotStart+1);
-        QString slot = newContent.mid(slotStart, slotEnd-slotStart);
+    for (int i = newContent.indexOf(eTag); i != -1; i = newContent.indexOf(eTag, i + 1)) {
+        slotStart = newContent.indexOf("slot", i + 1) + 6;
+        slotEnd = newContent.indexOf("\"", slotStart + 1);
+        QString slot = newContent.mid(slotStart, slotEnd - slotStart);
         slot = slot.replace("\"", "");
-        startPos = newContent.indexOf("<td>", i+1)+4;
-        endData = newContent.indexOf("</td>",startPos);
-        QString text = newContent.mid(startPos,endData-startPos);
-        endPos = newContent.indexOf("</table>",i+1)+8;
+        startPos = newContent.indexOf("<td>", i + 1) + 4;
+        endData = newContent.indexOf("</td>", startPos);
+        QString text = newContent.mid(startPos, endData - startPos);
+        endPos = newContent.indexOf("</table>", i + 1) + 8;
 
         // Encrypt the text
-        QPair<QString, QString> pair = global.passwordSafe.value(slot);
+        QPair <QString, QString> pair = global.passwordSafe.value(slot);
         QString password = pair.first;
         QString hint = pair.second;
         EnCrypt crypt;
@@ -977,7 +966,7 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
         crypt.encrypt(encrypted, text, password);
 
         // replace the table with an en-crypt tag.
-        QByteArray start = newContent.mid(0,i-1);
+        QByteArray start = newContent.mid(0, i - 1);
         QByteArray end = newContent.mid(endPos);
         newContent.clear();
         newContent.append(start);
@@ -992,14 +981,12 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
 }
 
 
-
 // Remove any invalid unicode characters to allow it to sync properly.
 QByteArray EnmlFormatter::removeInvalidUnicode(QByteArray content) {
     QString c(content);
-    c = c.remove(QChar( 0x1b ), Qt::CaseInsensitive);
+    c = c.remove(QChar(0x1b), Qt::CaseInsensitive);
     return c.toUtf8();
 }
-
 
 
 // Look through all attributes of the node.  If it isn't in the list of
@@ -1009,7 +996,7 @@ void EnmlFormatter::checkAttributes(QWebElement &e, QStringList valid) {
         return;
 
     QStringList attrs = e.attributeNames();
-    for (int i=0; i<attrs.size(); i++) {
+    for (int i = 0; i < attrs.size(); i++) {
         if (!valid.contains(attrs[i])) {
             QLOG_DEBUG() << "Removing invalid attribute: " << attrs[i];
             e.removeAttribute(attrs[i]);

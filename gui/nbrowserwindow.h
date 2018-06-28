@@ -128,6 +128,11 @@ private:
 
     void exitPoint(ExitPoint *exit);
 
+    // get note title from the title UI field - and do some fixup (like discard line feeds)
+    QString getCurrentNoteTitle();
+
+    void setDirty(qint32 lid, bool dirty, bool setDateUpdated=true);
+
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
@@ -189,6 +194,10 @@ signals:
     void noteUpdated(qint32);
     qint32 tagAdded(qint32);
     void evernoteLinkClicked(qint32 lid, bool newTab, bool newWindow);
+
+    // signal that note list at given lid/columns should update with "data"
+    // passing "invalid" qvariant; this may be useful in cases where content did not changed
+    // but we want to redraw
     void updateNoteList(qint32 lid, int column, QVariant data);
     void noteContentEditedSignal(QString uuid, qint32 lid, QString content);
     void noteTitleEditedSignal(QString uuid, qint32 lid, QString content);
@@ -324,7 +333,9 @@ public slots:
 
 
 private slots:
+    // Send a signal, that the note has been updated
     void sendTitleUpdateSignal();
+
     void sendNotebookUpdateSignal();
     void sendDateUpdateSignal(qint64 dt=0);
     void sendLocationUpdateSignal();

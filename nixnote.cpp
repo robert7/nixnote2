@@ -1642,6 +1642,11 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
     QLOG_DEBUG() << "Refreshing data";
 
     noteTableView->refreshData();
+    noteTableView->scrollToTop();            // vertical scroll
+    noteTableView->reset();                  // reset selection (to none)
+    // yet missing:horizontal reset
+    // focus search text after updating search criteria
+    searchText->setFocus(Qt::OtherFocusReason);
 
     favoritesTreeView->updateSelection();
     tagTreeView->updateSelection();
@@ -1937,7 +1942,7 @@ void NixNote::waitCursor(bool value) {
 void NixNote::setMessage(QString text, int timeout) {
     QLOG_TRACE_IN();
     statusBar()->showMessage(text, timeout);
-    QLOG_INFO() << text;
+    //QLOG_DEBUG() << "setMessage: " << text;
     QLOG_TRACE_OUT();
 }
 
@@ -1993,6 +1998,9 @@ void NixNote::saveContents() {
         if (tabWindow->browserList->at(i)->editor->isDirty) {
             tabWindow->browserList->at(i)->saveNoteContent();
             noteTableView->refreshCell(lid, NOTE_TABLE_IS_DIRTY_POSITION, true);
+            // also redraw title column
+            QVariant noData;
+            noteTableView->refreshCell(lid, NOTE_TABLE_TITLE_POSITION, noData);
         }
 
     }

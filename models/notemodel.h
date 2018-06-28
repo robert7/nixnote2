@@ -39,6 +39,7 @@ public:
     void createNoteTableV();
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
+    QVariant sourceData(const QModelIndex &index, int role) const;
     QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
     bool select();
     QString orderByClause() const;

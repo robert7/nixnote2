@@ -165,8 +165,7 @@ int NoteModel::columnCount(const QModelIndex &parent) const {
 }
 
 
-Qt::ItemFlags NoteModel::flags(const QModelIndex &index) const
-{
+Qt::ItemFlags NoteModel::flags(const QModelIndex &index) const {
     if (!index.isValid())
         return Qt::ItemIsEnabled;
 
@@ -174,24 +173,58 @@ Qt::ItemFlags NoteModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
+// original underlying data
+QVariant NoteModel::sourceData(const QModelIndex &index, int role) const {
+    return QSqlTableModel::data(index, role);
+}
 
+// see "technical-notes" for docs regarding "role"
 
-QVariant NoteModel::data (const QModelIndex & index, int role) const {
-    if (role == Qt::ForegroundRole) {
-        QString color = index.sibling(index.row(), NOTE_TABLE_COLOR_POSITION).data().toString();
-        if (color != "") {
-            if (color == "blue" || color == "black")
-                return QColor("white");
+// data which we get out of the model
+QVariant NoteModel::data(const QModelIndex &index, int role) const {
+    int row = index.row();
+    int column = index.column();
+    //QLOG_DEBUG() << "Request for note data at row=" << row << " col=" << column << " role=" << role;
+
+    // title compound - later this can be made configurable; and we can also adjust painting
+    if ((role == Qt::DisplayRole) && (column == NOTE_TABLE_TITLE_POSITION)) {
+        bool isDirty = index.sibling(row, NOTE_TABLE_IS_DIRTY_POSITION).data(Qt::DisplayRole).toBool();
+        //QLOG_DEBUG() << "Request for note title at row=" << row << " dirty=" << isDirty;
+        if (isDirty) {
+            QString title = sourceData(index, role).toString();
+            return (isDirty ? QString("▲") : QString("")) + QString(" ") + title;
+        }
+    }
+    if ((role == Qt::FontRole) && (column == NOTE_TABLE_TITLE_POSITION)) {
+        int relevance = index.sibling(row, NOTE_TABLE_SEARCH_RELEVANCE_POSITION).data(Qt::DisplayRole).toInt();
+        if (relevance > 0) {
+            QFont font;
+            font.setBold(true);
+            return font;
         }
     }
 
+    // foreground color
+    if (role == Qt::ForegroundRole) {
+        QVariant colorValue = index.sibling(row, NOTE_TABLE_COLOR_POSITION).data(Qt::DisplayRole);
+        QString color = colorValue.toString();
+        if (color != "") {
+            // kind of hack to return inverted FG color on dark BG color
+            if (color == "blue" || color == "black") {
+                return QColor("white");
+            }
+        }
+    }
+
+    // background color - this is given by NOTE_TABLE_COLOR_POSITION
     if (role == Qt::BackgroundRole) {
-        QString color = index.sibling(index.row(), NOTE_TABLE_COLOR_POSITION).data().toString();
+        QVariant colorValue = index.sibling(row, NOTE_TABLE_COLOR_POSITION).data(Qt::DisplayRole);
+        QString color = colorValue.toString();
         if (color != "") {
             return QColor(color);
         }
     }
-    return QSqlTableModel::data(index,role);
+    return sourceData(index, role);
 }
 
 bool NoteModel::select() {

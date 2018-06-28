@@ -48,13 +48,13 @@ private:
     ImageDelegate *thumbnailDelegate;
     ReminderOrderDelegate *reminderOrderDelegate;
     QModelIndex dragStartIndex;
+    NoteModel *noteModel;
 
 
 public:
     explicit NTableView(QWidget *parent = 0);
     ~NTableView();
     NTableViewHeader *tableViewHeader;
-    NoteModel *noteModel;
     NoteModel *model();
     NoteSortFilterProxyModel *proxy;
     void mouseReleaseEvent(QMouseEvent *event);
@@ -68,9 +68,7 @@ public:
     QAction *addNoteAction;
     QAction *deleteNoteAction;
     QAction *restoreNoteAction;
-    QAction *openNoteAction;
     QAction *openNoteExternalWindowAction;
-    QAction *openNoteNewTabAction;
     QAction *copyNoteLinkAction;
     QAction *copyNoteAction;
     QAction *pinNoteAction;
@@ -113,13 +111,15 @@ signals:
     void newNote();
 
 public slots:
-    void refreshData();
     void contextMenuEvent(QContextMenuEvent *event);
     void deleteSelectedNotes();
     void restoreSelectedNotes();
-    void openNoteContextMenuTriggered();
+
+    // disabled as for now
+    //void openNoteContextMenuTriggered();
+    //void openNoteNewTabTriggered();
+
     void openNoteExternalWindowTriggered();
-    void openNoteNewTabTriggered();
     void copyNoteLink();
     void toggleColumnVisible(int position, bool visible);
     void copyNote();
@@ -129,7 +129,10 @@ public slots:
     void mergeNotes();
     void createTableOfContents();
     void showPropertiesDialog();
+
+    void refreshData();
     void refreshCell(qint32 lid, int cell, QVariant data);
+
     void dragMoveEvent(QDragMoveEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
