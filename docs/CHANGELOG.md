@@ -7,7 +7,7 @@
   (Sync is signalized by triangle at begin, if the note is found "more relevant" in search its displaed
   bold). May be later made configurable.
   Main aim is to be able to hide all other columns. Sorting is relevance+date update - so you may
-  just display title column & hide all others. See Preview
+  just display title column & hide all others. See: [compound title preview](https://www.dropbox.com/sh/62lnikzyf4r0sa2/AADMk-EHBwvBt7G5bOga9tyia?dl=0&preview=RS-6-compound-title.png)
 * Removed function of opening notes in new tabs - doesn't work stable and is only confusing. Could be 
   re-added back later (commit id 6149a745d014f55352b2e6cad8ff4637414861b7).
 * Improved logging in case there is problem with resources (and note is set to read only in nixnote).
