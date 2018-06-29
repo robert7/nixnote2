@@ -63,7 +63,6 @@ Makefile.Release
 
 build/
 cmake-build-debug/
-build/
 
 # idea
 .idea/workspace.xml
