@@ -27,8 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 AboutDialog::AboutDialog(QDialog *parent) :
-    QDialog(parent)
-{
+    QDialog(parent) {
     QVBoxLayout *mainLayout = new QVBoxLayout();
     this->setLayout(mainLayout);
     QWebView *page = new QWebView();
@@ -36,48 +35,48 @@ AboutDialog::AboutDialog(QDialog *parent) :
     okButton->setText(tr("OK"));
     mainLayout->addWidget(page);
     QHBoxLayout *buttonLayout = new QHBoxLayout();
-    QSpacerItem *spacer1 = new QSpacerItem(100000,1, QSizePolicy::Maximum);
-    QSpacerItem *spacer2 = new QSpacerItem(100000,1, QSizePolicy::Maximum);
+    QSpacerItem *spacer1 = new QSpacerItem(100000, 1, QSizePolicy::Maximum);
+    QSpacerItem *spacer2 = new QSpacerItem(100000, 1, QSizePolicy::Maximum);
     buttonLayout->addSpacerItem(spacer1);
     buttonLayout->addWidget(okButton);
     buttonLayout->addSpacerItem(spacer2);
     mainLayout->addLayout(buttonLayout);
     this->setLayout(mainLayout);
-    QString file = global.fileManager.getProgramDataDir() + "help/about.html";
+    const QString programDataDir = global.fileManager.getProgramDataDir();
+    QString file = programDataDir + "help/about.html";
+    QString versionStr = programDataDir + "version.txt";
+
     QFile f(file);
-    if(!f.open(QFile::ReadOnly))
+    if (!f.open(QFile::ReadOnly))
         return;
     QTextStream is(&f);
     QString data = is.readAll();
     QString translationInformation =
-            tr("Note to translators: For translation credit, change this message to your name & contact information and it will appear in the About dialog box. HTML Formatting is available.");
+        tr("Note to translators: For translation credit, change this message to your name & contact information and it will appear in the About dialog box. HTML Formatting is available.");
     QString translationStaticInformation =
-            "Note to translators: For translation credit, change this message to your name & contact information and it will appear in the About dialog box. HTML Formatting is available.";
+        "Note to translators: For translation credit, change this message to your name & contact information and it will appear in the About dialog box. HTML Formatting is available.";
     if (translationInformation == translationStaticInformation) {
         data.replace("__TRANSLATION__", "");
     } else {
         data = data.replace("__TRANSLATION__", translationInformation);
     }
 
-    // To provide git based version number, just replace the string in the html file during build process
-    // then this replacement will do nothing
-    QString version("Build at: ");
-    version.append(__DATE__);
-    version.append(" ");
-    version.append(__TIME__);
-    version.append(" Qt ");
-    version.append(QT_VERSION_STR);
+    // // To provide git based version number, just replace the string in the html file during build process
+    // // then this replacement will do nothing
+    // QString version("Build at: ");
+    // version.append(__DATE__);
+    // version.append(" ");
+    // version.append(__TIME__);
+    // version.append(" Qt ");
+    // version.append(QT_VERSION_STR);
 
-    data.replace("__VERSION__", version);
+    data.replace("__VERSION__", versionStr);
 
-#ifndef _WIN32
-    data = data.replace("__LOGO__", "file://"+global.fileManager.getImageDirPath("")+"splash_logo.png");
-#else
-    data = data.replace("__LOGO__", "file:///"+global.fileManager.getImageDirPath("").replace("\\","/")+"splash_logo.png");
-#endif
+    data = data.replace("__LOGO__", "file://" + global.fileManager.getImageDirPath("") + "splash_logo.png");
+
     page->setHtml(data);
     connect(okButton, SIGNAL(clicked()), this, SLOT(close()));
-    this->resize(600,500);
+    this->resize(600, 500);
     this->setFont(global.getGuiFont(font()));
 }
 

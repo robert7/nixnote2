@@ -1,6 +1,7 @@
 #!/bin/bash
 QT_DIR=${1}
 BUILD_TYPE=${2}
+PROG=nixnote2
 
 if [ -z ${QT_DIR} ]; then
     echo "Missing argument(s).."
@@ -13,9 +14,12 @@ fi
 if [ -z "${BUILD_TYPE}" ]; then
     BUILD_TYPE=debug
 fi
-
-
 BUILD_DIR=qmake-build-${BUILD_TYPE}
+VERSION="$(cat version.txt)-$(git rev-parse --short HEAD)"
+echo $VERSION >${BUILD_DIR}/build-version.txt
+echo "${BUILD_DIR}">_build_dir_.txt
+echo Building version: ${VERSION}
+
 APPDIR=appdir
 QMAKE_BINARY=${QT_DIR}/bin/qmake
 
@@ -24,19 +28,20 @@ if [ ! -f "${QMAKE_BINARY}" ]; then
     exit 1
 fi
 
-if [ -d "${BUILD_DIR}" ]; then
-  rm -rf ${BUILD_DIR}
-fi
+# maybe later add with "clean" parameter
+#if [ -d "${BUILD_DIR}" ]; then
+#  rm -rf ${BUILD_DIR}
+#fi
+
 if [ -d "${APPDIR}" ]; then
   rm -rf ${APPDIR}
 fi
 
 mkdir ${BUILD_DIR}
 
-
 ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr
 make
 
-#
+# this is a bit hack: we rerun qmake, to generated "install" incl. created binary
 ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr
 make install

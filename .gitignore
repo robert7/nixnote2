@@ -81,3 +81,6 @@ images/nixnote2.png
 # AppImage files
 *.AppImage
 appdir
+
+# build version file
+_build_dir_.txt

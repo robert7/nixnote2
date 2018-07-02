@@ -473,8 +473,7 @@ help.path = $${PREFIX}/share/$$TARGET/help
 help.files = help/*
 
 resources.path = $${PREFIX}/share/$$TARGET
-resources.files = shortcuts.txt themes.ini LICENSE colors.txt
-
+resources.files = shortcuts.txt themes.ini LICENSE colors.txt $${DESTDIR}/build-version.txt version.txt
 
 # compile the translation files:
 isEmpty(QMAKE_LRELEASE) {

@@ -123,9 +123,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     if (css != "")
         this->setStyleSheet(css);
 
-#if QT_VERSION < 0x050000
-    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-#endif
     // Load any plugins
     this->loadPlugins();
 

@@ -18,8 +18,6 @@ Tha app is mainly targeted at Linux, but it should compile quite easily on Windo
 also macOS config is already present (see more detailed info bellow). It could be,
 that minor adjustments are needed for the non linux builds.
 
-You'll need the same dependencies installed (including libtidy on MS Windows).
-
 ### Linux
 
 * Install development dependencies
@@ -33,34 +31,28 @@ You'll need the same dependencies installed (including libtidy on MS Windows).
   * ~Optional
     * ```sudo apt-get install -y libopencv-dev libhunspell-dev``` 
   * As alternative you can download qt5 directly from [qt.io/download](https://www.qt.io/download). 
-    Highest currently supported version is 5.5. Building against 5.6+ needs some 
-    source changes (and will probably break qt4 compatibility).
-* It should be possible to build against qt4 but its **deprecated** - will be removed soon
+    Currently Qt supported version is 5.5. Building against 5.6+ needs source changes 
+    (this is on TODO list).
 * Get latest source from github... 
   * I recommend using `master` branch. There maybe feature/* or release/* available, but this may 
     not be stable. Anyway there isn't any guarantee for `master` branch either :-)
 * Build
 
 ```bash
-> mkdir build
-> # although `release`, for now I recommend `debug` config
-
-> # important: make sure you are using qt5 qmake 
-> # version check: `qmake --version`
-> qmake --version
-> # check you get something like `Using Qt version 5.5.1` and NOT `Using Qt version 4.x.x'
-> # on Ubuntu 16.04 I need to use /usr/lib/x86_64-linux-gnu/qt5/bin/qmake as just default qmake is 4.x
-
-> # generate Makefile 
-> qmake CONFIG+=debug
-
-> # compile binaries
-> make
+> # replace path in 1st parameter with Qt root 
+> ./development/build-with-qmake.sh /d/dev/Qt/5.5/gcc_64 debug
+>
+> # Optional step: if all got well you may try to create AppImage package
+> # may be a bit tricky - recommended for advanced users 
+> ./development/create-AppImage.sh /d/dev/Qt/5.5/gcc_64
 ```
-If all got OK, you should have "nixnote2" binary available now.. if not... 
+If all got OK, you should have "qmake-build-debug/nixnote2" binary available now.. if not... 
 Go! install the missing dependency! :-)
 
 ### macOS
+
+Disclaimer: macOS build was added from [RJVB/nixnote2](https://github.com/RJVB/nixnote2). 
+I can't currently test if it works. It is quite probable, that it will need minor adjustments.
 
 ```bash
 > mkdir build
