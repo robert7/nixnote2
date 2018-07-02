@@ -149,8 +149,7 @@ int main(int argc, char *argv[])
     startupConfig.name = "NixNote";
     global.setup(startupConfig, guiAvailable);
     // this snippet is duplicated in aboutdialog.cpp => refactor
-    const QString programDataDir = global.fileManager.getProgramDataDir();
-    QString versionStr = programDataDir + "build-version.txt";
+    QString versionStr = global.fileManager.getProgramVersion();
     QLOG_INFO() << "Version: " << versionStr;
 
 
@@ -256,7 +255,7 @@ int main(int argc, char *argv[])
         signal(SIGHUP, sighup_handler);   // install our handler
 #endif
 
-    QLOG_DEBUG() << "Setting up NN";
+    QLOG_DEBUG() << "Setting up";
     w = new NixNote();
     w->setAttribute(Qt::WA_QuitOnClose);
 

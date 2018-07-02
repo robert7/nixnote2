@@ -37,6 +37,7 @@ that minor adjustments are needed for the non linux builds.
   * I recommend using `master` branch. There maybe feature/* or release/* available, but this may 
     not be stable. Anyway there isn't any guarantee for `master` branch either :-)
 * Build
+* Optional: create [AppImage package](https://appimage.org/)
 
 ```bash
 > # replace path in 1st parameter with Qt root 

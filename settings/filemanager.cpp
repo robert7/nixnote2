@@ -356,9 +356,21 @@ void FileManager::purgeResDirectory(bool exitOnFail) {
     this->deleteTopLevelFiles(tmpDir.dirName(), exitOnFail);
 }
 
+/** Read contents of the file in string
+ */
+QString FileManager::readFile(QString file) {
+    QFile f(file);
+    if (!f.open(QFile::ReadOnly))
+        return QString();
+    QTextStream is(&f);
+    return is.readAll();
+}
 
-
-
+QString FileManager::getProgramVersion() {
+    const QString programDataDir = getProgramDataDir();
+    QString versionFile = programDataDir + "build-version.txt";
+    return readFile(versionFile);
+}
 
 
 

@@ -43,15 +43,12 @@ AboutDialog::AboutDialog(QDialog *parent) :
     mainLayout->addLayout(buttonLayout);
     this->setLayout(mainLayout);
     const QString programDataDir = global.fileManager.getProgramDataDir();
-    QString file = programDataDir + "help/about.html";
-    // this snippet is duplicated in main.cpp => refactor
-    QString versionStr = programDataDir + "build-version.txt";
+    QString versionStr = global.fileManager.getProgramVersion();
 
-    QFile f(file);
-    if (!f.open(QFile::ReadOnly))
-        return;
-    QTextStream is(&f);
-    QString data = is.readAll();
+    QString aboutFileName = programDataDir + "help/about.html";
+    QString data = global.fileManager.readFile(aboutFileName);
+
+
     QString translationInformation =
         tr("Note to translators: For translation credit, change this message to your name & contact information and it will appear in the About dialog box. HTML Formatting is available.");
     QString translationStaticInformation =
@@ -62,17 +59,7 @@ AboutDialog::AboutDialog(QDialog *parent) :
         data = data.replace("__TRANSLATION__", translationInformation);
     }
 
-    // // To provide git based version number, just replace the string in the html file during build process
-    // // then this replacement will do nothing
-    // QString version("Build at: ");
-    // version.append(__DATE__);
-    // version.append(" ");
-    // version.append(__TIME__);
-    // version.append(" Qt ");
-    // version.append(QT_VERSION_STR);
-
     data.replace("__VERSION__", versionStr);
-
     data = data.replace("__LOGO__", "file://" + global.fileManager.getImageDirPath("") + "splash_logo.png");
 
     page->setHtml(data);

@@ -125,6 +125,8 @@ public:
     QString getTmpDirPathSpecialChar(QString relativePath);
     QString getTranslateFilePath(QString relativePath);
     void purgeResDirectory(bool exitOnFail);
+    QString readFile(QString file);
+    QString getProgramVersion();
 };
 
 #endif // FILEMANAGER_H
