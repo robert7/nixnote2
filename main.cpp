@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 
     // Show Qt version.  This is useful for debugging
     // initial log level is INFO - so this will be SHOWN per default
-    QLOG_INFO() << "Nixnote2 - build (" << __DATE__ << " at " << __TIME__
+    QLOG_INFO() << APP_DISPLAY_NAME " - build (" << __DATE__ << " at " << __TIME__
                 << ", with Qt" << QT_VERSION_STR << "running on" << qVersion() << ")";
     QLOG_INFO() << "To get more detailed startup logging use --logLevel=1";
 
@@ -143,10 +143,17 @@ int main(int argc, char *argv[])
     } else {
         a = new QCoreApplication(argc, argv);
     }
+    QCoreApplication::setApplicationName(APP_NAME);
     global.application = a;
 
     startupConfig.name = "NixNote";
     global.setup(startupConfig, guiAvailable);
+    // this snippet is duplicated in aboutdialog.cpp => refactor
+    const QString programDataDir = global.fileManager.getProgramDataDir();
+    QString versionStr = programDataDir + "build-version.txt";
+    QLOG_INFO() << "Version: " << versionStr;
+
+
     //    global.syncAndExit=startupConfig.syncAndExit;
 
     // We were passed a SQL command

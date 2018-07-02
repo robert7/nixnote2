@@ -131,7 +131,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     global.settings->beginGroup("Locale");
     translation = global.settings->value("translation", QLocale::system().name()).toString();
     global.settings->endGroup();
-    translation = global.fileManager.getTranslateFilePath("nixnote2_" + translation + ".qm");
+    translation = global.fileManager.getTranslateFilePath(APP_NAME "_" + translation + ".qm");
     QLOG_DEBUG() << "Looking for translations: " << translation;
     bool translationResult = nixnoteTranslator->load(translation);
     QLOG_DEBUG() << "Translation loaded:" << translationResult;
@@ -729,7 +729,7 @@ void NixNote::setupGui() {
     QList<int> ids = global.accountsManager->idList();
     for (int i = 0; i < ids.size(); i++) {
         if (ids[i] == global.accountsManager->currentId) {
-            setWindowTitle("NixNote2+ - " + accountNames[i]);
+            setWindowTitle(APP_DISPLAY_NAME " - " + accountNames[i]);
             i = ids.size();
         }
     }
@@ -3836,7 +3836,11 @@ void NixNote::presentationModeOff() {
 }
 
 
-// Check to see if plugins are avaialble and they match
+//
+// TODO REFACTOR !
+//
+
+// Check to see if plugins are available and they match
 // the correct version expected. Load them if possible.
 void NixNote::loadPlugins() {
     webcamPluginAvailable = false;

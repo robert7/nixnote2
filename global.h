@@ -105,6 +105,10 @@ class IndexRunner;
 #define SET_MESSAGE_TIMEOUT_LONGER 15000
 #define DEFAULT_THEME_NAME "Default"
 
+// app name for config paths
+#define APP_NAME "nixnote2"
+#define APP_DISPLAY_NAME "NixNote2+"
+
 
 class Global : public QObject {
     Q_OBJECT

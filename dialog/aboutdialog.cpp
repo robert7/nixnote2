@@ -44,7 +44,8 @@ AboutDialog::AboutDialog(QDialog *parent) :
     this->setLayout(mainLayout);
     const QString programDataDir = global.fileManager.getProgramDataDir();
     QString file = programDataDir + "help/about.html";
-    QString versionStr = programDataDir + "version.txt";
+    // this snippet is duplicated in main.cpp => refactor
+    QString versionStr = programDataDir + "build-version.txt";
 
     QFile f(file);
     if (!f.open(QFile::ReadOnly))

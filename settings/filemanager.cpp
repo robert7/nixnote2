@@ -33,10 +33,8 @@ using namespace std;
 FileManager::FileManager() {
 }
 
-// Return the path the program is executing under
-// If we are in /usr/bin, then we need to return /usr/share/nixnote2.
-// This is because we want to find other paths (like images).  This
-// allows for users to run it out of a non-path location.
+// Return the path the program data.
+//
 QString getDefaultProgramDirPath() {
 #ifdef Q_OS_MACOS
     QString appDirPath = QCoreApplication::applicationDirPath();
@@ -48,10 +46,12 @@ QString getDefaultProgramDirPath() {
 #endif
     QString path = QCoreApplication::applicationDirPath();
     if (path.endsWith("/bin")) {
+        // runs in std location
         path.chop(3); // remove 3 chars from end of string
-        return path + "share/nixnote2";
+        return path + "share/" + APP_NAME;
+    } else {
+        return QDir(path + "/..").absolutePath();
     }
-    return path;
 }
 
 

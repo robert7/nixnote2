@@ -323,7 +323,7 @@ void AppearancePreferences::saveValues() {
         // Ideally, we could use QSettings since it is ini format, but
         // it puts [Desktop Entry] as [Desktop%20Enry], which screws
         // things up.
-        QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/nixnote2.desktop";
+        QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/" APP_NAME ".desktop";
         QFile systemIni(systemFile);
         QStringList desktopData;
 
@@ -342,7 +342,7 @@ void AppearancePreferences::saveValues() {
 
         // Now, write it back out
         if (!desktopData.isEmpty()) {
-            QString userFile =  QDir::homePath()+"/.local/share/applications/nixnote2.desktop";
+            QString userFile =  QDir::homePath()+"/.local/share/applications/" APP_NAME ".desktop";
             QFile userIni(userFile);
             if (userIni.open(QIODevice::WriteOnly)) {
                 QTextStream data(&userIni);
@@ -362,7 +362,7 @@ void AppearancePreferences::saveValues() {
     QFile::remove(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
 #else
     QDir dir;
-    QString startFile =  QDir::homePath()+"/.config/autostart/nixnote2.desktop";
+    QString startFile =  QDir::homePath()+"/.config/autostart/" APP_NAME ".desktop";
     dir.remove(startFile);
 #endif
     if (autoStart->isChecked()) {
@@ -370,7 +370,7 @@ void AppearancePreferences::saveValues() {
         QFile::link(QCoreApplication::applicationFilePath(), QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
 #elif !defined(__APPLE__)
         //Copy the nixnote2.desktop to the ~/.config/autostart directory
-        QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/nixnote2.desktop";
+        QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/" APP_NAME ".desktop";
         QFile systemIni(systemFile);
         QStringList desktopData;
 
@@ -388,7 +388,7 @@ void AppearancePreferences::saveValues() {
         systemIni.close();
 
         // Now, write it back out
-        QString userFile =  QDir::homePath()+"/.config/autostart/nixnote2.desktop";
+        QString userFile =  QDir::homePath()+"/.config/autostart/" APP_NAME ".desktop";
         QFile userIni(userFile);
         if (userIni.open(QIODevice::WriteOnly)) {
             QTextStream data(&userIni);
