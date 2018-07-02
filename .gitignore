@@ -61,8 +61,9 @@ Makefile.Release
 .cproject
 .settings
 
-build/
 cmake-build-debug/
+qmake-build-debug/
+qmake-build-release/
 
 # idea
 .idea/workspace.xml
@@ -76,3 +77,7 @@ cmake-build-debug/
 
 # created during the build:
 images/nixnote2.png
+
+# AppImage files
+*.AppImage
+appdir
