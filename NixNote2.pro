@@ -513,5 +513,5 @@ mac {
 } else {
     translations.path = $${PREFIX}/share/$$TARGET/translations
     translations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
-    INSTALLS = binary desktop images java translations help resources
+    INSTALLS = binary desktop images java translations help
 }

@@ -124,9 +124,11 @@ void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, Q
     checkExistingReadableDir(javaDir);
     javaDirPath = slashTerminatePath(javaDir.path());
 
+    QDir spellDirUser;
     spellDirUser.setPath(programDataDir + "spell");
-    checkExistingReadableDir(spellDirUser);
     spellDirPathUser = slashTerminatePath(spellDirUser.path());
+    // TODO check after we fix the spellchecker
+    // checkExistingReadableDir(spellDirUser);
 
     translateDir.setPath(programDataDir + "translations");
     checkExistingReadableDir(translateDir);
@@ -278,9 +280,7 @@ void FileManager::checkExistingWriteableDir(QDir dir) {
     }
 }
 
-QDir FileManager::getSpellDirFileUser(QString relativePath) {
-    return spellDirPathUser + toPlatformPathSeparator(relativePath);
-}
+
 QString FileManager::getSpellDirPathUser() {
     return spellDirPathUser;
 }

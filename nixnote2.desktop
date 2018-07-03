@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=NixNote2
+Name=NixNote
 Comment=Use with Evernote to remember everything
 GenericName=Evernote-clone
 Exec=nixnote2
