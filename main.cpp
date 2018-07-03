@@ -125,28 +125,33 @@ int main(int argc, char *argv[])
     global.argv = argv;
 
     int retval = startupConfig.init(argc,argv, guiAvailable);
-    if (retval != 0)
+    if (retval != 0) {
         return retval;
+    }
 
     // Show Qt version.  This is useful for debugging
     // initial log level is INFO - so this will be SHOWN per default
-    QLOG_INFO() << "Nixnote2 - build (" << __DATE__ << " at " << __TIME__
+    QLOG_INFO() << APP_DISPLAY_NAME " - build (" << __DATE__ << " at " << __TIME__
                 << ", with Qt" << QT_VERSION_STR << "running on" << qVersion() << ")";
     QLOG_INFO() << "To get more detailed startup logging use --logLevel=1";
 
     // Setup the application. If we have a GUI, then we use Application.
     // If we don't, then we just use a derivative of QCoreApplication
-    QCoreApplication *a = NULL;
+    QCoreApplication *a = nullptr;
     if (guiAvailable) {
-        Application *app = new Application(argc, argv);
+        auto *app = new Application(argc, argv);
         a = app;
     } else {
         a = new QCoreApplication(argc, argv);
     }
+    QCoreApplication::setApplicationName(APP_NAME);
     global.application = a;
 
-    startupConfig.name = "NixNote";
     global.setup(startupConfig, guiAvailable);
+    QString versionStr = global.fileManager.getProgramVersion();
+    QLOG_INFO() << "Version: " << versionStr;
+
+
     //    global.syncAndExit=startupConfig.syncAndExit;
 
     // We were passed a SQL command
@@ -178,13 +183,13 @@ int main(int argc, char *argv[])
         global.purgeTemporaryFilesOnShutdown=startupConfig.purgeTemporaryFiles;
         CmdLineTool cmdline;
         startupConfig.purgeTemporaryFiles=false;
-        int retval = cmdline.run(startupConfig);
+        int retval1 = cmdline.run(startupConfig);
         if (global.sharedMemory->isAttached())
             global.sharedMemory->detach();
-        QLOG_INFO() << "Exit: retcode=" << retval;
-        if (a!=NULL)
-            delete a;
-        exit(retval);
+        QLOG_INFO() << "Exit: retcode=" << retval1;
+        delete a;
+
+        exit(retval1);
     }
 
     QString logPath = global.fileManager.getLogsDirPath("")+"messages.log";
@@ -207,16 +212,14 @@ int main(int argc, char *argv[])
                 global.sharedMemory->attach();
                 global.sharedMemory->write(QString("NEW_NOTE"));
                 global.sharedMemory->detach();
-                if (a!=NULL)
-                    delete a;
+                delete a;
                 exit(0);  // Exit this one
             }
             if (startupConfig.startupNoteLid > 0) {
                 global.sharedMemory->attach();
                 global.sharedMemory->write("OPEN_NOTE"+QString::number(startupConfig.startupNoteLid) + " ");
                 global.sharedMemory->detach();
-                if (a!=NULL)
-                    delete a;
+                delete a;
                 exit(0);  // Exit this one
             }
 
@@ -229,9 +232,8 @@ int main(int argc, char *argv[])
             if (startup == "SHOW_OTHER") {
                 global.sharedMemory->write(QString("SHOW_WINDOW"));
                 global.sharedMemory->detach();
-                if (a!=NULL)
-                    delete a;
-                 return 0;  // Exit this one
+                delete a;
+                return 0;  // Exit this one
             }
             if (startup == "STOP_OTHER") {
                 global.sharedMemory->write(QString("IMMEDIATE_SHUTDOWN"));
@@ -249,7 +251,7 @@ int main(int argc, char *argv[])
         signal(SIGHUP, sighup_handler);   // install our handler
 #endif
 
-    QLOG_DEBUG() << "Setting up NN";
+    QLOG_DEBUG() << "Setting up";
     w = new NixNote();
     w->setAttribute(Qt::WA_QuitOnClose);
 

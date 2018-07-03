@@ -30,65 +30,70 @@
 #include <QString>
 #include <typeinfo>
 
-namespace QsLogging
-{
-class Destination;
-enum Level
-{
-   TraceLevel = 0,
-   DebugLevel,
-   InfoLevel,
-   WarnLevel,
-   ErrorLevel,
-   FatalLevel
-};
+namespace QsLogging {
+    class Destination;
 
-class LoggerImpl; // d pointer
-class Logger
-{
-public:
-   static Logger& instance()
-   {
-      static Logger staticLog;
-      return staticLog;
-   }
+    enum Level {
+        TraceLevel = 0,
+        DebugLevel,
+        InfoLevel,
+        WarnLevel,
+        ErrorLevel,
+        FatalLevel
+    };
 
-   //! Adds a log message destination. Don't add null destinations.
-   void addDestination(Destination* destination);
-   //! Logging at a level < 'newLevel' will be ignored
-   void setLoggingLevel(Level newLevel);
-   //! The default level is INFO
-   Level loggingLevel() const;
+    class LoggerImpl; // d pointer
+    class Logger {
+    public:
+        static Logger &instance() {
+            static Logger staticLog;
+            return staticLog;
+        }
 
-   //! The helper forwards the streaming to QDebug and builds the final
-   //! log message.
-   class Helper
-   {
-   public:
-      explicit Helper(Level logLevel) :
-            level(logLevel),
-            qtDebug(&buffer) {}
-      ~Helper();
-      QDebug& stream(){ return qtDebug; }
+        //! Adds a log message destination. Don't add null destinations.
+        void addDestination(Destination *destination);
 
-   private:
-      void writeToLog();
+        //! Logging at a level < 'newLevel' will be ignored
+        void setLoggingLevel(Level newLevel);
 
-      Level level;
-      QString buffer;
-      QDebug qtDebug;
-   };
+        //! The default level is INFO
+        Level loggingLevel() const;
 
-private:
-   Logger();
-   Logger(const Logger&);
-   Logger& operator=(const Logger&);
-   ~Logger();
+        //! The helper forwards the streaming to QDebug and builds the final
+        //! log message.
+        class Helper {
+        public:
+            explicit Helper(Level logLevel) :
+                level(logLevel),
+                qtDebug(&buffer) {}
 
-   void write(const QString& message);
+            ~Helper();
 
-   LoggerImpl* d;
-};
+            QDebug &stream() { return qtDebug; }
+
+        private:
+            void writeToLog();
+
+            Level level;
+            QString buffer;
+            QDebug qtDebug;
+        };
+
+    private:
+        Logger();
+
+        Logger(const Logger &);
+
+        Logger &operator=(const Logger &);
+
+        ~Logger();
+
+        void write(const QString &message);
+
+        LoggerImpl *d;
+    };
+
+    void assertion_failed(const QString &message);
 
 } // end namespace
 
@@ -97,65 +102,61 @@ private:
 //! in the log output.
 #define QS_LOG_LINE_NUMBERS 1
 #ifndef QS_LOG_LINE_NUMBERS
-   #define QLOG_TRACE() \
+#define QLOG_TRACE() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::TraceLevel ){} \
       else QsLogging::Logger::Helper(QsLogging::TraceLevel).stream()
-   #define QLOG_DEBUG() \
+#define QLOG_DEBUG() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::DebugLevel ){} \
       else QsLogging::Logger::Helper(QsLogging::DebugLevel).stream()
-   #define QLOG_INFO()  \
+#define QLOG_INFO()  \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::InfoLevel ){} \
       else QsLogging::Logger::Helper(QsLogging::InfoLevel).stream()
-   #define QLOG_WARN()  \
+#define QLOG_WARN()  \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::WarnLevel ){} \
       else QsLogging::Logger::Helper(QsLogging::WarnLevel).stream()
-   #define QLOG_ERROR() \
+#define QLOG_ERROR() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::ErrorLevel ){} \
       else QsLogging::Logger::Helper(QsLogging::ErrorLevel).stream()
-   #define QLOG_FATAL() \
+#define QLOG_FATAL() \
       QsLogging::Logger::Helper(QsLogging::FatalLevel).stream()
 #else
 #define QLOG_TRACE_IN() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::TraceLevel ){} \
       else (QsLogging::Logger::Helper(QsLogging::TraceLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')' << "Entering" << __func__  << ":")
-   #define QLOG_TRACE_OUT() \
+#define QLOG_TRACE_OUT() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::TraceLevel ){} \
       else (QsLogging::Logger::Helper(QsLogging::TraceLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')' << "Exiting" << __func__ << ":")
-   #define QLOG_TRACE() \
+#define QLOG_TRACE() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::TraceLevel ){} \
       else (QsLogging::Logger::Helper(QsLogging::TraceLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')')
-   #define QLOG_DEBUG() \
+#define QLOG_DEBUG() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::DebugLevel ){} \
       else (QsLogging::Logger::Helper(QsLogging::DebugLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')')
-   #define QLOG_INFO()  \
+#define QLOG_INFO()  \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::InfoLevel ){} \
       else (QsLogging::Logger::Helper(QsLogging::InfoLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')')
-   #define QLOG_WARN()  \
+#define QLOG_WARN()  \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::WarnLevel ){} \
       else (QsLogging::Logger::Helper(QsLogging::WarnLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')')
-   #define QLOG_ERROR() \
+#define QLOG_ERROR() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::ErrorLevel ){} \
       else (QsLogging::Logger::Helper(QsLogging::ErrorLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')')
-   #define QLOG_FATAL() \
+#define QLOG_FATAL() \
       (QsLogging::Logger::Helper(QsLogging::FatalLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')')
 #endif
 
 namespace qevercloud {
-   template<typename T>
-   class Optional;
+    template<typename T>
+    class Optional;
 }
 
 template<typename T>
-QDebug operator<<(QDebug dbg, const qevercloud::Optional<T> &opt)
-{
-   if (opt.isSet())
-   {
-      return dbg << opt.ref();
-   }
-   else
-   {
-      return dbg << "(unset)";
-   }
+QDebug operator<<(QDebug dbg, const qevercloud::Optional<T> &opt) {
+    if (opt.isSet()) {
+        return dbg << opt.ref();
+    } else {
+        return dbg << "(unset)";
+    }
 }
 
 #endif // QSLOG_H

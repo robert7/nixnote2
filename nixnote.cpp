@@ -123,9 +123,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     if (css != "")
         this->setStyleSheet(css);
 
-#if QT_VERSION < 0x050000
-    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-#endif
     // Load any plugins
     this->loadPlugins();
 
@@ -134,7 +131,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     global.settings->beginGroup("Locale");
     translation = global.settings->value("translation", QLocale::system().name()).toString();
     global.settings->endGroup();
-    translation = global.fileManager.getTranslateFilePath("nixnote2_" + translation + ".qm");
+    translation = global.fileManager.getTranslateFilePath(APP_NAME "_" + translation + ".qm");
     QLOG_DEBUG() << "Looking for translations: " << translation;
     bool translationResult = nixnoteTranslator->load(translation);
     QLOG_DEBUG() << "Translation loaded:" << translationResult;
@@ -718,21 +715,20 @@ void NixNote::setupGui() {
         // If we have some filter criteria, save it.  Otherwise delete
         // the unused memory.
         if (criteriaFound) {
-            global.filterPosition++;
             global.appendFilter(criteria);
         } else
             delete criteria;
     }
 
     this->updateSelectionCriteria();
-    // Set default focuse to the editor window
+    // Set default focus to the editor window
     tabWindow->currentBrowser()->editor->setFocus();
 
     QStringList accountNames = global.accountsManager->nameList();
     QList<int> ids = global.accountsManager->idList();
     for (int i = 0; i < ids.size(); i++) {
         if (ids[i] == global.accountsManager->currentId) {
-            setWindowTitle("NixNote2+ - " + accountNames[i]);
+            setWindowTitle(APP_DISPLAY_NAME " - " + accountNames[i]);
             i = ids.size();
         }
     }
@@ -1648,6 +1644,12 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
     // focus search text after updating search criteria
     searchText->setFocus(Qt::OtherFocusReason);
 
+    int maxFilterPosition = global.filterCriteria.size() - 1;
+    if (global.filterPosition > maxFilterPosition) {
+        // kind of emergency fix; we should handle it at more central point
+        global.filterPosition = maxFilterPosition;
+    }
+
     favoritesTreeView->updateSelection();
     tagTreeView->updateSelection();
     notebookTreeView->updateSelection();
@@ -1658,7 +1660,6 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
 
     rightArrowButton->setEnabled(false);
     leftArrowButton->setEnabled(false);
-    int maxFilterPosition = global.filterCriteria.size() - 1;
     if (global.filterPosition < maxFilterPosition)
         rightArrowButton->setEnabled(true);
     if (global.filterPosition > 0)
@@ -3839,7 +3840,11 @@ void NixNote::presentationModeOff() {
 }
 
 
-// Check to see if plugins are avaialble and they match
+//
+// TODO REFACTOR !
+//
+
+// Check to see if plugins are available and they match
 // the correct version expected. Load them if possible.
 void NixNote::loadPlugins() {
     webcamPluginAvailable = false;

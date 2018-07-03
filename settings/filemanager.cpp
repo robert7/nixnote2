@@ -33,10 +33,8 @@ using namespace std;
 FileManager::FileManager() {
 }
 
-// Return the path the program is executing under
-// If we are in /usr/bin, then we need to return /usr/share/nixnote2.
-// This is because we want to find other paths (like images).  This
-// allows for users to run it out of a non-path location.
+// Return the path the program data.
+//
 QString getDefaultProgramDirPath() {
 #ifdef Q_OS_MACOS
     QString appDirPath = QCoreApplication::applicationDirPath();
@@ -48,10 +46,12 @@ QString getDefaultProgramDirPath() {
 #endif
     QString path = QCoreApplication::applicationDirPath();
     if (path.endsWith("/bin")) {
+        // runs in std location
         path.chop(3); // remove 3 chars from end of string
-        return path + "share/nixnote2";
+        return path + "share/" + APP_NAME;
+    } else {
+        return QDir(path + "/..").absolutePath();
     }
-    return path;
 }
 
 
@@ -124,9 +124,11 @@ void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, Q
     checkExistingReadableDir(javaDir);
     javaDirPath = slashTerminatePath(javaDir.path());
 
+    QDir spellDirUser;
     spellDirUser.setPath(programDataDir + "spell");
-    checkExistingReadableDir(spellDirUser);
     spellDirPathUser = slashTerminatePath(spellDirUser.path());
+    // TODO check after we fix the spellchecker
+    // checkExistingReadableDir(spellDirUser);
 
     translateDir.setPath(programDataDir + "translations");
     checkExistingReadableDir(translateDir);
@@ -278,9 +280,7 @@ void FileManager::checkExistingWriteableDir(QDir dir) {
     }
 }
 
-QDir FileManager::getSpellDirFileUser(QString relativePath) {
-    return spellDirPathUser + toPlatformPathSeparator(relativePath);
-}
+
 QString FileManager::getSpellDirPathUser() {
     return spellDirPathUser;
 }
@@ -356,9 +356,21 @@ void FileManager::purgeResDirectory(bool exitOnFail) {
     this->deleteTopLevelFiles(tmpDir.dirName(), exitOnFail);
 }
 
+/** Read contents of the file in string
+ */
+QString FileManager::readFile(QString file) {
+    QFile f(file);
+    if (!f.open(QFile::ReadOnly))
+        return QString();
+    QTextStream is(&f);
+    return is.readAll();
+}
 
-
-
+QString FileManager::getProgramVersion() {
+    const QString programDataDir = getProgramDataDir();
+    QString versionFile = programDataDir + "build-version.txt";
+    return readFile(versionFile);
+}
 
 
 

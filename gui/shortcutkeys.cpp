@@ -34,9 +34,9 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     QString userFileName = global.fileManager.getConfigDir() + QString("shortcuts.txt"); // user shortcuts
     QString systemFileName = global.fileManager.getProgramDataDir() + QString("shortcuts.txt"); // system shortcuts
 
-    QLOG_DEBUG() << "Loading system shortcuts from " << systemFileName;
+    QLOG_DEBUG() << "About to load system shortcuts from " << systemFileName;
     loadCustomKeys(systemFileName);
-    QLOG_DEBUG() << "Loading user shortcuts from " << userFileName;
+    QLOG_DEBUG() << "About to load user shortcuts from " << userFileName;
     loadCustomKeys(userFileName);
 }
 
@@ -45,6 +45,7 @@ void ShortcutKeys::loadCustomKeys(QString fileName) {
     QFile file(fileName);
     file.open(QFile::ReadOnly);
     if (file.isOpen()) {
+        QLOG_DEBUG() << "Loading " << fileName;
         while (!file.atEnd()) {
             QString line = file.readLine().simplified();
             QStringList list = line.split(" ");

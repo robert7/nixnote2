@@ -295,15 +295,18 @@ QString Global::tagBehavior() {
 
 // Append the filter criteria to the filterCriteria queue.
 void Global::appendFilter(FilterCriteria *criteria) {
-    // First, find out if we're already viewing history.  If we are we
+    // First, find out if we're already viewing history.  If we are, we
     // chop off the end of the history & start a new one
-    if (filterPosition + 1 < filterCriteria.size()) {
-        int position = filterPosition;
-        while (position + 1 < filterCriteria.size())
-            delete filterCriteria.takeAt(position);
+    QLOG_ASSERT(filterPosition >= 0);
+
+    while (filterPosition < filterCriteria.size() - 1) {
+        // takeAt() - removes the item at index position i and returns it. i must be a valid index position
+        // in the list (i.e., 0 <= i < size()).
+        delete filterCriteria.takeAt(filterCriteria.size() - 1);
     }
 
     filterCriteria.append(criteria);
+    filterPosition = filterCriteria.size() - 1;
 }
 
 
@@ -1135,11 +1138,8 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
 QStringList Global::getThemeNames() {
     QStringList values;
     values.empty();
-    QFile systemTheme(fileManager.getProgramDataDir() + THEME_FILE);
-    this->getThemeNamesFromFile(systemTheme, values);
-
-    QFile userTheme(fileManager.getConfigDir() + THEME_FILE); // user theme
-    this->getThemeNamesFromFile(userTheme, values);
+    this->getThemeNamesFromFile(fileManager.getProgramDataDir() + THEME_FILE, values);
+    this->getThemeNamesFromFile(fileManager.getConfigDir() + THEME_FILE, values);
 
     // leave in order how they were defined in the file (this makes sure DEFAULT theme will be first)
     //if (!nonAsciiSortBug)
@@ -1152,13 +1152,18 @@ QStringList Global::getThemeNames() {
     return values;
 }
 
+// Get all themes available in a given file
+void Global::getThemeNamesFromFile(QString fileName, QStringList &values) {
+    QLOG_DEBUG() << "About to load themes from " << fileName;
+    QFile file(fileName);
 
-// Get themes contained in a given file
-void Global::getThemeNamesFromFile(QFile &file, QStringList &values) {
-    if (!file.exists())
+    if (!file.exists()) {
         return;
-    if (!file.open(QIODevice::ReadOnly))
+    }
+    if (!file.open(QIODevice::ReadOnly)) {
         return;
+    }
+    QLOG_DEBUG() << "Loading themes from " << fileName;
 
     QTextStream in(&file);
     while (!in.atEnd()) {

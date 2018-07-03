@@ -1,33 +1,19 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2011-11-12T14:00:42
-#
-#-------------------------------------------------
 
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
-    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-    unix {
-        CONFIG += link_pkgconfig
-        PKGCONFIG += poppler-qt5 libcurl
-    }
+QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+unix {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += poppler-qt5 libcurl
+}
 #    unix:INCLUDEPATH += /usr/include/tidy
-    win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
-    win32:INCLUDEPATH+= "$$PWD/winlib/includes"
-    win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
-    unix:!mac:LIBS += -lpthread -g -rdynamic
-    win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5 -ltidy
-    win32:RC_ICONS += "$$PWD/images/windowIcon.ico"
-}
+unix:!mac:LIBS += -lpthread -g -rdynamic
 
+win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
+win32:INCLUDEPATH+= "$$PWD/winlib/includes"
+win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
+win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5 -ltidy
+win32:RC_ICONS += "$$PWD/images/windowIcon.ico"
 
-equals(QT_MAJOR_VERSION, 4) {
-    QT       += core gui webkit sql network xml script
-    INCLUDEPATH += /usr/include/poppler/qt4
-#    INCLUDEPATH += /usr/include/tidy
-    LIBS +=    -lcurl \
-               -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
-}
 
 mac {
     TARGET = NixNote2
@@ -40,11 +26,14 @@ RESOURCES = NixNote2.qrc
 UI_DIR = .
 
 CONFIG(debug, debug|release) {
-        OBJECTS_DIR = build/debug
-        MOC_DIR = build/debug
+    DESTDIR = qmake-build-debug
+    message(Debug build!)
+} else {
+    DESTDIR = qmake-build-release
+    message(Release build!)
 }
-
-# CONFIG += debug_and_release
+OBJECTS_DIR = $${DESTDIR}
+MOC_DIR = $${DESTDIR}
 
 TRANSLATIONS = \
     translations/nixnote2_cs_CZ.ts \
@@ -63,9 +52,9 @@ TRANSLATIONS = \
     translations/nixnote2_zh_CN.ts
 
 
-
-SOURCES += main.cpp\
-        nixnote.cpp \
+SOURCES += \
+    main.cpp \
+    nixnote.cpp \
     global.cpp \
     settings/filemanager.cpp \
     gui/nwebpage.cpp \
@@ -253,9 +242,8 @@ SOURCES += main.cpp\
     exits/exitmanager.cpp \
     dialog/preferences/exitpreferences.cpp
 
-
-
-HEADERS  += nixnote.h \
+HEADERS  += \
+    nixnote.h \
     global.h \
     settings/filemanager.h \
     gui/nwebpage.h \
@@ -457,8 +445,6 @@ HEADERS  += nixnote.h \
     exits/exitmanager.h \
     dialog/preferences/exitpreferences.h
 
-
-
 linux:QMAKE_CXXFLAGS += -std=c++11 -g -O2 -fstack-protector-strong -Wformat -Werror=format-security
 linux:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
 
@@ -467,20 +453,28 @@ win32:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions
 win32:DEFINES += SMTP_BUILD
 
 isEmpty(PREFIX) {
-    PREFIX = $$[QT_INSTALL_PREFIX]
+ PREFIX = /usr/local
 }
 
-binary.path = $$PREFIX/bin/
-binary.files = nixnote2
+binary.path = $${PREFIX}/bin
+binary.files = $${DESTDIR}/$${TARGET}
+message("Target binary: $${binary.files}")
 
-desktop.path = $$PREFIX/share/applications/
-desktop.files = nixnote2.desktop
+desktop.path = $${PREFIX}/share/applications
+desktop.files = $${TARGET}.desktop
 
-images.path = $$PREFIX/share/nixnote2/images
+images.path = $${PREFIX}/share/$$TARGET/images
 images.files = images/*
 
-java.path = $$PREFIX/share/nixnote2/java
+java.path = $${PREFIX}/share/$$TARGET/java
 java.files = java/*
+
+help.path = $${PREFIX}/share/$$TARGET/help
+help.files = help/*
+
+resources.path = $${PREFIX}/share/$$TARGET
+resources.files = $$PWD/shortcuts.txt $$PWD/themes.ini $$PWD/LICENSE $$PWD/colors.txt \
+                  $${DESTDIR}/build-version.txt $$PWD/version.txt
 
 # compile the translation files:
 isEmpty(QMAKE_LRELEASE) {
@@ -497,17 +491,10 @@ QMAKE_EXTRA_COMPILERS += langrel
 # this launches the actual work:
 PRE_TARGETDEPS += compiler_langrel_make_all
 
-#qss.path = $$PREFIX/share/nixnote2/qss
-#qss.files = qss/*
-
-pixmap.path = $$PREFIX/share/pixmaps/
-pixmap.extra = cp $$PWD/images/windowIcon.png $$PWD/images/nixnote2.png
-pixmap.files = images/nixnote2.png
-
-help.path = $$PREFIX/share/nixnote2/help
-help.files = help/*
 
 mac {
+    # TODO 6.2018 this will need minor adjustments
+
     ICON = images/NixNote2.icns
 
     # we go for an appbundle that contains all resources (except
@@ -519,14 +506,13 @@ mac {
     mactranslations.path = Contents/Resources/translations
     mactranslations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
     mactranslations.depends = compiler_langrel_make_all
-    #qss.path = Contents/Resources
-    #qss.files = qss
+
     help.path = Contents/Resources
     help.files = help
     QMAKE_BUNDLE_DATA += images java mactranslations help
     INSTALLS = binary
 } else {
-    translations.path = $$PREFIX/share/nixnote2/translations
+    translations.path = $${PREFIX}/share/$$TARGET/translations
     translations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
-    INSTALLS = binary desktop images java translations pixmap help
+    INSTALLS = binary desktop images java translations help resources
 }

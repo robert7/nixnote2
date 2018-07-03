@@ -105,9 +105,19 @@ class IndexRunner;
 #define SET_MESSAGE_TIMEOUT_LONGER 15000
 #define DEFAULT_THEME_NAME "Default"
 
+// app name for config paths
+#define APP_NAME "nixnote2"
+#define APP_DISPLAY_NAME "NixNote2+"
+
+#define QLOG_ASSERT(expr) if (expr) {} else { QLOG_FATAL() << "Assertion failed: " #expr; exit(16);}
+
 
 class Global : public QObject {
     Q_OBJECT
+
+private:
+    void getThemeNamesFromFile(QString fileName, QStringList &values);
+
 
 public:
     Global();           // Generic constructor
@@ -317,7 +327,6 @@ public:
     QStringList getThemeNames();                               // Get a list of all available theme names
     QString getResourceFileName(QHash<QString, QString> &resourceList, QString key);    // Get the actual file path for a given icon theme
     QString getResourcefileName(QString key);                  // Get the actual file path for a given icon theme
-    void getThemeNamesFromFile(QFile &file, QStringList &values);  // Get all themes available in a given file
     void stackDump(int max=0);                                 // Utility to dump the running stack
     bool getForceSearchLowerCase();                            // Get value to force search db in lower case from settings
     void setForceSearchLowerCase(bool value);                  // save forceSearchLowerCase

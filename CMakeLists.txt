@@ -1,40 +1,34 @@
 # trivial cmake project file to enable debugging in clion
-# currently it only does a shortcut to make/Makefile, so its quite suboptimal as Clion doesn't yet
-# recognise Qt classes :(
-# I try improve later
+# currently far from perfect and can't really be used to build the project (use qmake to build)
+# but it can be used as starting point for clion to recognise at least some parts of Qt
+# I'll improve later
 
-cmake_minimum_required(VERSION 3.5)
-project(nixnote2)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+cmake_minimum_required (VERSION 2.8.12)
+project (nixnote2)
 
-find_package(Qt4 REQUIRED QtGui QtXml QtWebkit QtSql QtNetwork QtXml QtScript)
-#target_link_libraries(nixnote2 Qt5::Widgets Qt5::Sql)
-#set(SOURCE_FILES main.cpp)
-#add_subdirectory("${PROJECT_SOURCE_DIR}")
+find_package (Qt5Widgets REQUIRED)
+find_package (Qt5Gui)
+find_package (Qt5Sql)
+find_package (Qt5Network)
 
-include_directories("${PROJECT_SOURCE_DIR}")
-#include_directories("${PROJECT_SOURCE_DIR}/settings")
+#find_package(Qt5 REQUIR Widgets Gui Xml Webkit Sql Network Xml Script)
 
-#include_directories(settings)
-#include_directories(cmdtools)
-#include_directories(communication)
-#include_directories(dialog)
-#include_directories(email)
-#include_directories(exits)
-#include_directories(filters)
-#include_directories(gui)
-#include_directories(html)
-#include_directories(logger)
-#include_directories(models)
-#include_directories(oauth)
-#include_directories(plugins)
-#include_directories(qevercloud)
-#include_directories(reminders)
-#include_directories(settings)
-#include_directories(sql)
-#include_directories(threads)
-#include_directories(utilities)
-#include_directories(watcher)
-#include_directories(xml)
 
-add_custom_target(nixnote2 ALL COMMAND make -C ${PROJECT_SOURCE_DIR})
+set (nixnote2_src
+        ${PROJECT_SOURCE_DIR}/main.cpp
+        ${PROJECT_SOURCE_DIR}/global.cpp
+)
+set (nixnote2_hdr
+        ${PROJECT_SOURCE_DIR}/global.h
+)
+
+qt5_wrap_cpp(nixnote2_hdr_moc ${nixnote2_hdr})
+
+include_directories (${PROJECT_SOURCE_DIR})
+include_directories (${PROJECT_BINARY_DIR})
+
+add_executable(nixnote2
+        ${nixnote2_src}
+        ${nixnote2_hdr_moc}
+        )
+target_link_libraries (nixnote2 Qt5::Widgets Qt5::Sql)

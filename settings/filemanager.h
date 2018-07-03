@@ -54,12 +54,6 @@ private:
     QDir javaDir;
 
     QString spellDirPathUser;
-    QDir spellDirUser;
-
-    //    QString qssDirPath;
-    //    QDir qssDir;
-    //    QString qssDirPathUser;
-    //    QDir qssDirUser;
 
     QString tmpDirPath;
     QDir tmpDir;
@@ -98,9 +92,6 @@ public:
     QString getUserDataDir() { return userDataDir; };
     // new global file path interface ------- -----------------------------------------------------------
 
-
-    QString getSpellDirPath();
-    QDir getSpellDirFileUser(QString relativePath);
     QString getSpellDirPathUser();
     QString getDbDirPath(QString relativePath);
     QString getDbaDirPath();
@@ -125,6 +116,8 @@ public:
     QString getTmpDirPathSpecialChar(QString relativePath);
     QString getTranslateFilePath(QString relativePath);
     void purgeResDirectory(bool exitOnFail);
+    QString readFile(QString file);
+    QString getProgramVersion();
 };
 
 #endif // FILEMANAGER_H
