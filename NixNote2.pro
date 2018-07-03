@@ -5,13 +5,16 @@ unix {
     CONFIG += link_pkgconfig
     PKGCONFIG += poppler-qt5 libcurl
 }
-#    unix:INCLUDEPATH += /usr/include/tidy
+
+# external manually compiled libraries
+INCLUDEPATH += $$PWD/../libs/include
+LIBS += -L"$$PWD/../libs/include" -ltidy
+
 unix:!mac:LIBS += -lpthread -g -rdynamic
 
-win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
-win32:INCLUDEPATH+= "$$PWD/winlib/includes"
+win32:INCLUDEPATH += "$$PWD/winlib/includes/poppler/qt5"
+win32:INCLUDEPATH += "$$PWD/winlib/includes"
 win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
-win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5 -ltidy
 win32:RC_ICONS += "$$PWD/images/windowIcon.ico"
 
 
