@@ -40,17 +40,17 @@ that minor adjustments are needed for the non linux builds.
 * Optional: create [AppImage package](https://appimage.org/) using [linuxdeployqt](https://github.com/probonopd/linuxdeployqt)
 
 ```bash
-> # replace path in 1st parameter with Qt root 
-> ./development/build-with-qmake.sh /d/dev/Qt/5.5/gcc_64 debug
+# replace path in 1st parameter with Qt root 
+./development/build-with-qmake.sh /d/dev/Qt/5.5/gcc_64 debug
 ```
 If all got OK, you should have "qmake-build-debug/nixnote2" binary available now 
 (and also a deployment copy in appdir). 
 I suggest running from "appdir" (./appdir/usr/appdir/nixnote2).
 
 ```bash
-> # Optional second step: if all got well you may try to create AppImage package
-> # may be a bit tricky - recommended for advanced users 
-> ./development/create-AppImage.sh
+# Optional second step: if all got well you may try to create AppImage package
+# may be a bit tricky - recommended for advanced users 
+./development/create-AppImage.sh
 ```
 
 
@@ -60,10 +60,10 @@ Disclaimer: macOS build was added from [RJVB/nixnote2](https://github.com/RJVB/n
 I can't currently test if it works. It is quite probable, that it will need minor adjustments.
 
 ```bash
-> mkdir build
-> cd build
-> qmake ../nixnote2/NixNote2.pro
-> make
+mkdir build
+cd build
+qmake ../nixnote2/NixNote2.pro
+make
 ```
 
 Upon successful completion you will have the NixNote2.app bundle in the build directory.

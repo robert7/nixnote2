@@ -1,7 +1,5 @@
 # TODO
 ## 1
-* AppImage build
-* move about.html
 * Update to newest libtidy and generally improve html cleanup (add "simplify html" if possible) 
 * Update to Qt 5.11 
 * Copying images from to note/note seems to destroy the note

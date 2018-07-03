@@ -1,6 +1,11 @@
 # CHANGELOG
 
 ## 2018-06
+### #7
+*  [AppImage packaging](https://appimage.org/) using [linuxdeployqt](https://github.com/probonopd/linuxdeployqt).
+   This should allow easy deployment "anywhere" no worry about missing dependencies
+   and later use newest libraries.
+
 ### #6
 * Focus on search box after "all notes"
 * **Title column in note table view now display compound information** - Title + sync needed + relevance hint.
@@ -12,9 +17,6 @@
   re-added back later (commit id 6149a745d014f55352b2e6cad8ff4637414861b7).
 * Improved logging in case there is problem with resources (and note is set to read only in nixnote).
   
-     
-  
-
 ### #5
 * Minor improvement in font color/background color (highlight selection). 
   Tooltip now shows how to use. Keyboard shortcuts possible (default Ctrl-d, Ctrl-Shift-H). Context
