@@ -473,7 +473,8 @@ help.path = $${PREFIX}/share/$$TARGET/help
 help.files = help/*
 
 resources.path = $${PREFIX}/share/$$TARGET
-resources.files = shortcuts.txt themes.ini LICENSE colors.txt $${DESTDIR}/build-version.txt version.txt
+resources.files = $$PWD/shortcuts.txt $$PWD/themes.ini $$PWD/LICENSE $$PWD/colors.txt \
+                  $${DESTDIR}/build-version.txt $$PWD/version.txt
 
 # compile the translation files:
 isEmpty(QMAKE_LRELEASE) {
@@ -513,5 +514,5 @@ mac {
 } else {
     translations.path = $${PREFIX}/share/$$TARGET/translations
     translations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
-    INSTALLS = binary desktop images java translations help
+    INSTALLS = binary desktop images java translations help resources
 }

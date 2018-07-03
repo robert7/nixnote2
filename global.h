@@ -115,6 +115,10 @@ class IndexRunner;
 class Global : public QObject {
     Q_OBJECT
 
+private:
+    void getThemeNamesFromFile(QString fileName, QStringList &values);
+
+
 public:
     Global();           // Generic constructor
     virtual ~Global() {};          // destructor
@@ -323,7 +327,6 @@ public:
     QStringList getThemeNames();                               // Get a list of all available theme names
     QString getResourceFileName(QHash<QString, QString> &resourceList, QString key);    // Get the actual file path for a given icon theme
     QString getResourcefileName(QString key);                  // Get the actual file path for a given icon theme
-    void getThemeNamesFromFile(QFile &file, QStringList &values);  // Get all themes available in a given file
     void stackDump(int max=0);                                 // Utility to dump the running stack
     bool getForceSearchLowerCase();                            // Get value to force search db in lower case from settings
     void setForceSearchLowerCase(bool value);                  // save forceSearchLowerCase

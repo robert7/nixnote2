@@ -1138,11 +1138,8 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
 QStringList Global::getThemeNames() {
     QStringList values;
     values.empty();
-    QFile systemTheme(fileManager.getProgramDataDir() + THEME_FILE);
-    this->getThemeNamesFromFile(systemTheme, values);
-
-    QFile userTheme(fileManager.getConfigDir() + THEME_FILE); // user theme
-    this->getThemeNamesFromFile(userTheme, values);
+    this->getThemeNamesFromFile(fileManager.getProgramDataDir() + THEME_FILE, values);
+    this->getThemeNamesFromFile(fileManager.getConfigDir() + THEME_FILE, values);
 
     // leave in order how they were defined in the file (this makes sure DEFAULT theme will be first)
     //if (!nonAsciiSortBug)
@@ -1155,13 +1152,18 @@ QStringList Global::getThemeNames() {
     return values;
 }
 
+// Get all themes available in a given file
+void Global::getThemeNamesFromFile(QString fileName, QStringList &values) {
+    QLOG_DEBUG() << "About to load themes from " << fileName;
+    QFile file(fileName);
 
-// Get themes contained in a given file
-void Global::getThemeNamesFromFile(QFile &file, QStringList &values) {
-    if (!file.exists())
+    if (!file.exists()) {
         return;
-    if (!file.open(QIODevice::ReadOnly))
+    }
+    if (!file.open(QIODevice::ReadOnly)) {
         return;
+    }
+    QLOG_DEBUG() << "Loading themes from " << fileName;
 
     QTextStream in(&file);
     while (!in.atEnd()) {

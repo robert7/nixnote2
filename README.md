@@ -42,13 +42,17 @@ that minor adjustments are needed for the non linux builds.
 ```bash
 > # replace path in 1st parameter with Qt root 
 > ./development/build-with-qmake.sh /d/dev/Qt/5.5/gcc_64 debug
->
+```
+If all got OK, you should have "qmake-build-debug/nixnote2" binary available now 
+(and also a deployment copy in appdir). 
+I suggest running from "appdir" (./appdir/usr/appdir/nixnote2).
+
+```bash
 > # Optional second step: if all got well you may try to create AppImage package
 > # may be a bit tricky - recommended for advanced users 
 > ./development/create-AppImage.sh
 ```
-If all got OK, you should have "qmake-build-debug/nixnote2" binary available now.. if not... 
-Go! install the missing dependency! :-)
+
 
 ### macOS
 

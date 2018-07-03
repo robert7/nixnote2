@@ -93,6 +93,10 @@ extern Global global;
  //*************************************************************
  void LineEdit::updateSelection() {
      blockSignals(true);
+
+     int maxFilterIndex = global.filterCriteria.size() - 1;
+     QLOG_ASSERT(global.filterPosition <= maxFilterIndex);
+     
      FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
      if (global.filterPosition != filterPosition) {
          if (criteria->isSearchStringSet()) {
