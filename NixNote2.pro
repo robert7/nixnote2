@@ -1,14 +1,13 @@
+# currently additionaly  PKG_CONFIG_PATH=$$PWD/../libs/lib/pkgconfig is needed
+
 
 QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 unix {
     CONFIG += link_pkgconfig
-    PKGCONFIG += poppler-qt5 libcurl
+    PKGCONFIG += poppler-qt5 libcurl tidy
+    QMAKE_RPATHDIR += $$PWD/../libs/lib
 }
-
-# external manually compiled libraries
-INCLUDEPATH += $$PWD/../libs/include
-LIBS += -L"$$PWD/../libs/include" -ltidy
 
 unix:!mac:LIBS += -lpthread -g -rdynamic
 

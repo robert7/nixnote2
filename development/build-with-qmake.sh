@@ -3,6 +3,15 @@ QT_DIR=${1}
 BUILD_TYPE=${2}
 PROG=nixnote2
 
+function error_exit {
+    echo "***********error_exit***********"
+    echo "***********" 1>&2
+    echo "*********** Failed: $1" 1>&2
+    echo "***********" 1>&2
+    #cd ${CDIR}
+    exit 1
+}
+
 if [ -z ${QT_DIR} ]; then
     echo "Missing argument(s).."
     echo "1st argument need to be the Qr root directory."
@@ -42,9 +51,9 @@ if [ ! -d "${BUILD_DIR}" ]; then
   mkdir ${BUILD_DIR}
 fi
 
-${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr
-make
+${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr || error_exit "qmake"
+make || error_exit "make"
 
 # this is a bit hack: we rerun qmake, to generated "install" incl. created binary
-${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr
-make install
+${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr || error_exit "qmake (2nd)"
+make install || error_exit "make install"
