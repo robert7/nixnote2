@@ -3,14 +3,13 @@
 PROG=nixnote2
 DESKTOP_FILE=appdir/usr/share/applications/${PROG}.desktop
 
-QT_DIR=${1}
+BUILD_DIR=$(cat _build_dir_.txt)
+echo Build dir: ${BUILD_DIR}
+
+QT_DIR=$(cat ${BUILD_DIR}/qt-dir.txt)
 QMAKE_BINARY=${QT_DIR}/bin/qmake
 
-if [ -z ${QT_DIR} ]; then
-    echo "1st argument need to be the Qr root directory. Example: $0 /d/dev/Qt/5.5/gcc_64"
-    echo "Note: Qt root is where './bin/qmake' is.."
-    exit 1
-fi
+echo QT_DIR=${QT_DIR}, QMAKE_BINARY=${QMAKE_BINARY}
 
 
 if [ ! -f "$DESKTOP_FILE" ]; then
@@ -18,7 +17,8 @@ if [ ! -f "$DESKTOP_FILE" ]; then
     exit 1
 fi
 
-export VERSION=$(cat build-version.txt)
+export VERSION=$(cat version.txt)
+echo Version: ${VERSION}
 
 CMD="linuxdeployqt $DESKTOP_FILE -qmake=${QMAKE_BINARY} -bundle-non-qt-libs"
 echo About to run: $CMD

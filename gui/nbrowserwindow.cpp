@@ -423,7 +423,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     }
 
     // If we are already updating this note, we don't do anything
-    QLOG_DEBUG() << "Currrent editor lid=" << this->lid << ", changing to lid=" << lid;
+    QLOG_DEBUG() << "Current editor lid=" << this->lid << ", changing to lid=" << lid;
     if (lid == this->lid) {
         QLOG_DEBUG() << "no change => exit";
         return;

@@ -17,6 +17,7 @@ fi
 BUILD_DIR=qmake-build-${BUILD_TYPE}
 VERSION="$(cat version.txt)-$(git rev-parse --short HEAD)"
 echo $VERSION >${BUILD_DIR}/build-version.txt
+echo $QT_DIR >${BUILD_DIR}/qt-dir.txt
 echo "${BUILD_DIR}">_build_dir_.txt
 echo Building version: ${VERSION}
 
@@ -37,7 +38,9 @@ if [ -d "${APPDIR}" ]; then
   rm -rf ${APPDIR}
 fi
 
-mkdir ${BUILD_DIR}
+if [ ! -d "${BUILD_DIR}" ]; then
+  mkdir ${BUILD_DIR}
+fi
 
 ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr
 make
