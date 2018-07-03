@@ -295,15 +295,18 @@ QString Global::tagBehavior() {
 
 // Append the filter criteria to the filterCriteria queue.
 void Global::appendFilter(FilterCriteria *criteria) {
-    // First, find out if we're already viewing history.  If we are we
+    // First, find out if we're already viewing history.  If we are, we
     // chop off the end of the history & start a new one
-    if (filterPosition + 1 < filterCriteria.size()) {
-        int position = filterPosition;
-        while (position + 1 < filterCriteria.size())
-            delete filterCriteria.takeAt(position);
+    QLOG_ASSERT(filterPosition >= 0);
+
+    while (filterPosition < filterCriteria.size() - 1) {
+        // takeAt() - removes the item at index position i and returns it. i must be a valid index position
+        // in the list (i.e., 0 <= i < size()).
+        delete filterCriteria.takeAt(filterCriteria.size() - 1);
     }
 
     filterCriteria.append(criteria);
+    filterPosition = filterCriteria.size() - 1;
 }
 
 

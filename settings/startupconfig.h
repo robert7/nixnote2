@@ -69,13 +69,10 @@ private:
     // command line set log level
     // this is used to check: if log leven was set on command line, then it overrides the conf file value
     int logLevel;
-
     int accountId;
 
 public:
     StartupConfig();
-
-    QString name;
 
     QString getConfigDir() { return configDir; }
     QString getProgramDataDir() { return programDataDir; }

@@ -5,7 +5,10 @@
 
 cmake_minimum_required (VERSION 2.8.12)
 project (nixnote2)
-find_package (Qt5Widgets)
+
+//set(CMAKE_PREFIX_PATH "/d/dev/Qt/5.5/gcc_64")
+
+find_package (Qt5Widgets REQUIRED)
 find_package (Qt5Gui)
 find_package (Qt5Sql)
 find_package (Qt5Network)

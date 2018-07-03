@@ -715,14 +715,13 @@ void NixNote::setupGui() {
         // If we have some filter criteria, save it.  Otherwise delete
         // the unused memory.
         if (criteriaFound) {
-            global.filterPosition++;
             global.appendFilter(criteria);
         } else
             delete criteria;
     }
 
     this->updateSelectionCriteria();
-    // Set default focuse to the editor window
+    // Set default focus to the editor window
     tabWindow->currentBrowser()->editor->setFocus();
 
     QStringList accountNames = global.accountsManager->nameList();
@@ -1645,6 +1644,12 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
     // focus search text after updating search criteria
     searchText->setFocus(Qt::OtherFocusReason);
 
+    int maxFilterPosition = global.filterCriteria.size() - 1;
+    if (global.filterPosition > maxFilterPosition) {
+        // kind of emergency fix; we should handle it at more central point
+        global.filterPosition = maxFilterPosition;
+    }
+
     favoritesTreeView->updateSelection();
     tagTreeView->updateSelection();
     notebookTreeView->updateSelection();
@@ -1655,7 +1660,6 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
 
     rightArrowButton->setEnabled(false);
     leftArrowButton->setEnabled(false);
-    int maxFilterPosition = global.filterCriteria.size() - 1;
     if (global.filterPosition < maxFilterPosition)
         rightArrowButton->setEnabled(true);
     if (global.filterPosition > 0)

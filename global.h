@@ -109,6 +109,8 @@ class IndexRunner;
 #define APP_NAME "nixnote2"
 #define APP_DISPLAY_NAME "NixNote2+"
 
+#define QLOG_ASSERT(expr) if (expr) {} else { QLOG_FATAL() << "Assertion failed: " #expr; exit(16);}
+
 
 class Global : public QObject {
     Q_OBJECT
