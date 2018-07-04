@@ -37,7 +37,6 @@ using namespace std;
 extern Global global;
 
 
-
 /* Constructor. */
 EnmlFormatter::EnmlFormatter(QObject *parent) :
     QObject(parent) {
@@ -184,77 +183,6 @@ void EnmlFormatter::setHtml(QString h) {
     content.append(h);
 }
 
-
-// Run it through "tidy".  It is a program which will fix any invalid HTML
-// // and give us the results back through stdout.  In a perfect world this
-// // wouldn't be needed, but WebKit doesn't always give back good HTML.
-// bool useLegacyTidy = false;
-//
-//     TidyBuffer output;
-//     memset(&output, 0, sizeof(output));
-//     TidyBuffer errout;
-//     memset(&errout, 0, sizeof(errout));
-//
-//     int tidyRc;
-//     bool ok;
-//
-//     TidyDoc tdoc = tidyCreate();
-//     ok = tidyOptSetBool(tdoc, TidyXmlOut, yes);
-//     if (!ok) {
-//         QLOG_ERROR() << "Error using tidyOptSetBool: " << ok;
-//         useLegacyTidy=true;
-//     } else {
-//         tidyRc = tidySetInCharEncoding(tdoc,"utf8");
-//         if (tidyRc>=2 || tidyRc < 0) {
-//             QLOG_ERROR() << "Error using tidySetInCharEncoding: " << tidyRc;
-//             useLegacyTidy=true;
-//         } else {
-//             tidyRc = tidySetOutCharEncoding(tdoc, "utf8");
-//             if (tidyRc>=2 || tidyRc < 0) {
-//                 QLOG_ERROR() << "Error using tidyOutInCharEncoding: " << tidyRc;
-//                 useLegacyTidy=true;
-//             } else {
-//                 tidyRc = tidySetErrorBuffer(tdoc, &errout);
-//                 if (tidyRc>=2 || tidyRc < 0) {
-//                     QLOG_ERROR() << "Error using tidySetErrorBuffer: " << tidyRc;
-//                     useLegacyTidy=true;
-//                 } else {
-//                     QByteArray tarray = content;
-//                     char * buffer;
-//                     buffer = new char[tarray.size()+1];
-//                     strcpy(buffer, tarray.data());
-//                     buffer[tarray.size()] = '\0';
-//                     tidyRc = tidyParseString(tdoc, buffer);
-//                     delete buffer;
-//                     if (tidyRc>=2 || tidyRc < 0) {
-//                         QLOG_ERROR() << "Error using tidyParseString: " << tidyRc;
-//                         useLegacyTidy=true;
-//                     } else {
-//                         tidyRc = tidyCleanAndRepair(tdoc);
-//                         if (tidyRc>=2 || tidyRc < 0) {
-//                             QLOG_ERROR() << "Error using tidyCleanAndRepair: " << tidyRc;
-//                             useLegacyTidy=true;
-//                         } else {
-//                             tidyRc = tidySaveBuffer(tdoc, &output);
-//                             if (tidyRc>=2 || tidyRc < 0) {
-//                                 QLOG_ERROR() << "Error using tidySaveBuffer: " << tidyRc;
-//                                 useLegacyTidy=true;
-//                             } else {
-//                                 content.clear();
-//                                 content.append((const char*)output.bp, output.size);
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     if (output.allocated)
-//        tidyBufFree(&output);
-//     if (errout.allocated)
-//         tidyBufFree(&errout);
-//     tidyRelease(tdoc);
-
 QByteArray EnmlFormatter::tidyHtml(QByteArray content) {
     // addapted from example at http://www.html-tidy.org/developer/
 
@@ -265,36 +193,45 @@ QByteArray EnmlFormatter::tidyHtml(QByteArray content) {
     TidyDoc tdoc = tidyCreate();                     // Initialize "document"
 
     Bool ok = tidyOptSetBool(tdoc, TidyXhtmlOut, yes);  // Convert to XHTML
+
     if (ok) {
-        rc = tidySetErrorBuffer(tdoc, &errbuf);      // Capture diagnostics
+        rc = tidySetCharEncoding(tdoc, "utf8");
+    }
+    if (ok) {
+        // Capture diagnostics
+        rc = tidySetErrorBuffer(tdoc, &errbuf);
     }
     if (rc >= 0) {
-        rc = tidyParseString(tdoc, content.constData());           // Parse the input
+        // Parse the input
+        rc = tidyParseString(tdoc, content.constData());
     }
     if (rc >= 0) {
-        rc = tidyCleanAndRepair(tdoc);               // Tidy it up!
+        // Tidy it up!
+        rc = tidyCleanAndRepair(tdoc);
     }
     if (rc >= 0) {
-        rc = tidyRunDiagnostics(tdoc);               // Kvetch
+        // Kvetch
+        rc = tidyRunDiagnostics(tdoc);
     }
-    // If error, force output.
+    // if error, force output.
     if (rc > 1) {
         rc = (tidyOptSetBool(tdoc, TidyForceOutput, yes) ? rc : -1);
     }
-    // pretty Print
+
     if (rc >= 0) {
+        // pretty print
         rc = tidySaveBuffer(tdoc, &output);
     }
 
     if (rc >= 0) {
         if (rc > 0) {
-            QLOG_INFO() << "Diagnostics: "<<  ((char*)errbuf.bp);
+            QLOG_INFO() << "Tidy: diagnostics: " << ((char *) errbuf.bp);
         }
         //printf("\nAnd here is the result:\n\n%s", output.bp);
         content.clear();
         content.append((char *) output.bp);
     } else {
-        QLOG_WARN() << "A severe error occurred: "<<  rc;
+        QLOG_WARN() << "Tidy: severe error occurred, code=" << rc;
     }
 
     tidyBufFree(&output);
@@ -388,26 +325,26 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         for (int i = 0; i < tags.size(); i++) {
             QString tag = tags[i];
             QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
-            foreach(QWebElement
-            element, anchors) {
-                //QLOG_DEBUG() << "Processing tag name: " << element.tagName();
-                if (element.tagName().toLower() == "input") {
-                    processTodo(element);
-                } else if (element.tagName().toLower() == "a") {
-                    fixLinkNode(element);
-                } else if (element.tagName().toLower() == "object") {
-                    fixObjectNode(element);
-                } else if (element.tagName().toLower() == "img") {
-                    fixImgNode(element);
-                } else if (element.tagName().toLower() == "span") {
-                    fixSpanNode(element);
-                } else if (element.tagName().toLower() == "div") {
-                    fixDivNode(element);
-                } else if (element.tagName().toLower() == "pre") {
-                    fixPreNode(element);
-                } else if (!isElementValid(element))
-                    element.removeFromDocument();
-            }
+                foreach(QWebElement
+                            element, anchors) {
+                    //QLOG_DEBUG() << "Processing tag name: " << element.tagName();
+                    if (element.tagName().toLower() == "input") {
+                        processTodo(element);
+                    } else if (element.tagName().toLower() == "a") {
+                        fixLinkNode(element);
+                    } else if (element.tagName().toLower() == "object") {
+                        fixObjectNode(element);
+                    } else if (element.tagName().toLower() == "img") {
+                        fixImgNode(element);
+                    } else if (element.tagName().toLower() == "span") {
+                        fixSpanNode(element);
+                    } else if (element.tagName().toLower() == "div") {
+                        fixDivNode(element);
+                    } else if (element.tagName().toLower() == "pre") {
+                        fixPreNode(element);
+                    } else if (!isElementValid(element))
+                        element.removeFromDocument();
+                }
         }
         content.clear();
         content.append(element.toOuterXml());
@@ -956,7 +893,7 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
         endPos = newContent.indexOf("</table>", i + 1) + 8;
 
         // Encrypt the text
-        QPair <QString, QString> pair = global.passwordSafe.value(slot);
+        QPair<QString, QString> pair = global.passwordSafe.value(slot);
         QString password = pair.first;
         QString hint = pair.second;
         EnCrypt crypt;
