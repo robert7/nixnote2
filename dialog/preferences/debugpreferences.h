@@ -39,11 +39,9 @@ private:
     QCheckBox *nonAsciiSortBug;
     QCheckBox *disableImageHighlight;
     QCheckBox *strictDTD;
-    QCheckBox *bypassTidy;
     QCheckBox *forceUTF8;
     QCheckBox *interceptSigHup;
     QCheckBox *multiThreadSave;
-    QCheckBox *useLibTidy;
     QSpinBox *autoSaveInterval;
     QLabel *debugLevelLabel;
     int getMessageLevel();

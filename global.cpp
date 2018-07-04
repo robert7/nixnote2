@@ -247,7 +247,6 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     indexPDFLocally = getIndexPDFLocally();
     forceSearchLowerCase = getForceSearchLowerCase();
     strictDTD = getStrictDTD();
-    bypassTidy = getBypassTidy();
     forceUTF8 = getForceUTF8();
 
 
@@ -265,8 +264,6 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     autoSaveInterval = getAutoSaveInterval() * 1000;
 
     multiThreadSaveEnabled = this->getMultiThreadSave();
-    useLibTidy = this->getUseLibTidy();
-
     exitManager = new ExitManager();
     exitManager->loadExits();
 }
@@ -548,24 +545,6 @@ bool Global::getStrictDTD() {
     strictDTD = value;
     return value;
 }
-
-
-void Global::setBypassTidy(bool value) {
-    settings->beginGroup("Debugging");
-    settings->setValue("bypassTidy", value);
-    settings->endGroup();
-    bypassTidy = value;
-}
-
-
-bool Global::getBypassTidy() {
-    settings->beginGroup("Debugging");
-    bool value = settings->value("bypassTidy", true).toBool();
-    settings->endGroup();
-    bypassTidy = value;
-    return value;
-}
-
 
 bool Global::getForceUTF8() {
     settings->beginGroup("Debugging");
@@ -1533,24 +1512,6 @@ void Global::setMultiThreadSave(bool value) {
     this->multiThreadSaveEnabled = value;
 }
 
-
-// Should we use multiple threads to do note saving
-bool Global::getUseLibTidy() {
-    global.settings->beginGroup("Appearance");
-    bool value = global.settings->value("useLibTidy", false).toBool();
-    global.settings->endGroup();
-    return value;
-}
-
-void Global::setUseLibTidy(bool value) {
-    global.settings->beginGroup("Appearance");
-    global.settings->setValue("useLibTidy", value);
-    global.settings->endGroup();
-    this->useLibTidy = value;
-#ifndef _WIN32
-    this->useLibTidy = false;  // Removing obsolete setting.
-#endif
-}
 
 QString Global::formatShortcutKeyString(QString shortcutKeyString) {
     return shortcutKeyString.toUpper()

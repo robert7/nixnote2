@@ -105,7 +105,7 @@ public:
     void setHtml(QString html);
     QString getEnml();
     QByteArray rebuildNoteEnml();
-
+    QByteArray tidyHtml(QByteArray content);
 
 signals:
 

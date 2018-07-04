@@ -283,9 +283,6 @@ public:
     bool strictDTD;                                         // Should we do strict enml checking?
     bool getStrictDTD();                                    // Should we do strict enml checking? (read from settings)
     void setStrictDTD(bool value);                          // save strict enml checking
-    bool bypassTidy;                                        // Bypass HTML Tidy
-    bool getBypassTidy();                                   // should we bypass HTML tidy?
-    void setBypassTidy(bool value);                         // Set if we should bypass HTML tidy.
     QString getEditorStyle(bool colorOnly);                 // Get note editor style overrides
     QString getEditorFontColor();                           // Get the editor font color from the theme
     QString getEditorBackgroundColor();                     // Get the editor background color from the theme
@@ -347,10 +344,6 @@ public:
     void setMultiThreadSave(bool value);                        // Should we use multiple theads in the browser window to save
     bool getMultiThreadSave();
     bool multiThreadSaveEnabled;
-
-    void setUseLibTidy(bool value);                            // Should we use new tidy or classic
-    bool getUseLibTidy();
-    bool useLibTidy;
 
     ExitManager *exitManager;                                  // Utility to manage exit points.
     QString getProgramDataDir() { return fileManager.getProgramDataDir(); }

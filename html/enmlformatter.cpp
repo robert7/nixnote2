@@ -28,18 +28,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QWebFrame>
 #include <QIcon>
 #include <QMessageBox>
-
-
-#ifdef _WIN32
-#include <tidy/tidybuffio.h>
-#endif
-
-
 #include <iostream>
+#include <tidy.h>
+#include <tidybuffio.h>
 
 using namespace std;
 
 extern Global global;
+
+
 
 /* Constructor. */
 EnmlFormatter::EnmlFormatter(QObject *parent) :
@@ -174,8 +171,6 @@ EnmlFormatter::EnmlFormatter(QObject *parent) :
 
     ul.append("type");
     ul.append("compact");
-
-
 }
 
 /* Return the formatted content */
@@ -188,6 +183,127 @@ void EnmlFormatter::setHtml(QString h) {
     content.clear();
     content.append(h);
 }
+
+
+// Run it through "tidy".  It is a program which will fix any invalid HTML
+// // and give us the results back through stdout.  In a perfect world this
+// // wouldn't be needed, but WebKit doesn't always give back good HTML.
+// bool useLegacyTidy = false;
+//
+//     TidyBuffer output;
+//     memset(&output, 0, sizeof(output));
+//     TidyBuffer errout;
+//     memset(&errout, 0, sizeof(errout));
+//
+//     int tidyRc;
+//     bool ok;
+//
+//     TidyDoc tdoc = tidyCreate();
+//     ok = tidyOptSetBool(tdoc, TidyXmlOut, yes);
+//     if (!ok) {
+//         QLOG_ERROR() << "Error using tidyOptSetBool: " << ok;
+//         useLegacyTidy=true;
+//     } else {
+//         tidyRc = tidySetInCharEncoding(tdoc,"utf8");
+//         if (tidyRc>=2 || tidyRc < 0) {
+//             QLOG_ERROR() << "Error using tidySetInCharEncoding: " << tidyRc;
+//             useLegacyTidy=true;
+//         } else {
+//             tidyRc = tidySetOutCharEncoding(tdoc, "utf8");
+//             if (tidyRc>=2 || tidyRc < 0) {
+//                 QLOG_ERROR() << "Error using tidyOutInCharEncoding: " << tidyRc;
+//                 useLegacyTidy=true;
+//             } else {
+//                 tidyRc = tidySetErrorBuffer(tdoc, &errout);
+//                 if (tidyRc>=2 || tidyRc < 0) {
+//                     QLOG_ERROR() << "Error using tidySetErrorBuffer: " << tidyRc;
+//                     useLegacyTidy=true;
+//                 } else {
+//                     QByteArray tarray = content;
+//                     char * buffer;
+//                     buffer = new char[tarray.size()+1];
+//                     strcpy(buffer, tarray.data());
+//                     buffer[tarray.size()] = '\0';
+//                     tidyRc = tidyParseString(tdoc, buffer);
+//                     delete buffer;
+//                     if (tidyRc>=2 || tidyRc < 0) {
+//                         QLOG_ERROR() << "Error using tidyParseString: " << tidyRc;
+//                         useLegacyTidy=true;
+//                     } else {
+//                         tidyRc = tidyCleanAndRepair(tdoc);
+//                         if (tidyRc>=2 || tidyRc < 0) {
+//                             QLOG_ERROR() << "Error using tidyCleanAndRepair: " << tidyRc;
+//                             useLegacyTidy=true;
+//                         } else {
+//                             tidyRc = tidySaveBuffer(tdoc, &output);
+//                             if (tidyRc>=2 || tidyRc < 0) {
+//                                 QLOG_ERROR() << "Error using tidySaveBuffer: " << tidyRc;
+//                                 useLegacyTidy=true;
+//                             } else {
+//                                 content.clear();
+//                                 content.append((const char*)output.bp, output.size);
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+//     if (output.allocated)
+//        tidyBufFree(&output);
+//     if (errout.allocated)
+//         tidyBufFree(&errout);
+//     tidyRelease(tdoc);
+
+QByteArray EnmlFormatter::tidyHtml(QByteArray content) {
+    // addapted from example at http://www.html-tidy.org/developer/
+
+    TidyBuffer output = {nullptr};
+    TidyBuffer errbuf = {nullptr};
+    int rc = -1;
+
+    TidyDoc tdoc = tidyCreate();                     // Initialize "document"
+
+    Bool ok = tidyOptSetBool(tdoc, TidyXhtmlOut, yes);  // Convert to XHTML
+    if (ok) {
+        rc = tidySetErrorBuffer(tdoc, &errbuf);      // Capture diagnostics
+    }
+    if (rc >= 0) {
+        rc = tidyParseString(tdoc, content.constData());           // Parse the input
+    }
+    if (rc >= 0) {
+        rc = tidyCleanAndRepair(tdoc);               // Tidy it up!
+    }
+    if (rc >= 0) {
+        rc = tidyRunDiagnostics(tdoc);               // Kvetch
+    }
+    // If error, force output.
+    if (rc > 1) {
+        rc = (tidyOptSetBool(tdoc, TidyForceOutput, yes) ? rc : -1);
+    }
+    // pretty Print
+    if (rc >= 0) {
+        rc = tidySaveBuffer(tdoc, &output);
+    }
+
+    if (rc >= 0) {
+        if (rc > 0) {
+            QLOG_INFO() << "Diagnostics: "<<  ((char*)errbuf.bp);
+        }
+        //printf("\nAnd here is the result:\n\n%s", output.bp);
+        content.clear();
+        content.append((char *) output.bp);
+    } else {
+        QLOG_WARN() << "A severe error occurred: "<<  rc;
+    }
+
+    tidyBufFree(&output);
+    tidyBufFree(&errbuf);
+    tidyRelease(tdoc);
+
+    return content;
+}
+
 
 /* Take the ENML note and transform it into HTML that WebKit will
   not complain about */
@@ -235,127 +351,11 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content = content.replace("<o:p>", "");
     content = content.replace("</o:p>", "");
     content = content.replace("<o:p/>", "");
-
     // Remove auto-complete tags
     content = content.replace("<ac:rich-text-body", "<div");
     content = content.replace("</ac:rich-text-body", "</div");
 
-
-#ifndef _WIN32
-    bool useLegacyTidy = true;
-#else
-    // Run it through "tidy".  It is a program which will fix any invalid HTML
-    // and give us the results back through stdout.  In a perfect world this
-    // wouldn't be needed, but WebKit doesn't always give back good HTML.
-    bool useLegacyTidy = false;
-
-    if (global.useLibTidy && !global.bypassTidy) {
-        TidyBuffer output;
-        memset(&output, 0, sizeof(output));
-        TidyBuffer errout;
-        memset(&errout, 0, sizeof(errout));
-
-        int tidyRc;
-        bool ok;
-
-        TidyDoc tdoc = tidyCreate();
-        ok = tidyOptSetBool(tdoc, TidyXmlOut, yes);
-        if (!ok) {
-            QLOG_ERROR() << "Error using tidyOptSetBool: " << ok;
-            useLegacyTidy=true;
-        } else {
-            tidyRc = tidySetInCharEncoding(tdoc,"utf8");
-            if (tidyRc>=2 || tidyRc < 0) {
-                QLOG_ERROR() << "Error using tidySetInCharEncoding: " << tidyRc;
-                useLegacyTidy=true;
-            } else {
-                tidyRc = tidySetOutCharEncoding(tdoc, "utf8");
-                if (tidyRc>=2 || tidyRc < 0) {
-                    QLOG_ERROR() << "Error using tidyOutInCharEncoding: " << tidyRc;
-                    useLegacyTidy=true;
-                } else {
-                    tidyRc = tidySetErrorBuffer(tdoc, &errout);
-                    if (tidyRc>=2 || tidyRc < 0) {
-                        QLOG_ERROR() << "Error using tidySetErrorBuffer: " << tidyRc;
-                        useLegacyTidy=true;
-                    } else {
-                        QByteArray tarray = content;
-                        char * buffer;
-                        buffer = new char[tarray.size()+1];
-                        strcpy(buffer, tarray.data());
-                        buffer[tarray.size()] = '\0';
-                        tidyRc = tidyParseString(tdoc, buffer);
-                        delete buffer;
-                        if (tidyRc>=2 || tidyRc < 0) {
-                            QLOG_ERROR() << "Error using tidyParseString: " << tidyRc;
-                            useLegacyTidy=true;
-                        } else {
-                            tidyRc = tidyCleanAndRepair(tdoc);
-                            if (tidyRc>=2 || tidyRc < 0) {
-                                QLOG_ERROR() << "Error using tidyCleanAndRepair: " << tidyRc;
-                                useLegacyTidy=true;
-                            } else {
-                                tidyRc = tidySaveBuffer(tdoc, &output);
-                                if (tidyRc>=2 || tidyRc < 0) {
-                                    QLOG_ERROR() << "Error using tidySaveBuffer: " << tidyRc;
-                                    useLegacyTidy=true;
-                                } else {
-                                    content.clear();
-                                    content.append((const char*)output.bp, output.size);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (output.allocated)
-           tidyBufFree(&output);
-        if (errout.allocated)
-            tidyBufFree(&errout);
-        tidyRelease(tdoc);
-    }
-#endif
-    QLOG_INFO() << "Tidy check useLegacyTidy=" << useLegacyTidy
-                << ", useLibTidy=" << global.useLibTidy
-                << ", bypassTidy=" << global.bypassTidy;
-
-    // IF the new tidy had an error, or we choose to use the old method
-    if ((useLegacyTidy || !global.useLibTidy) && !global.bypassTidy) {
-        QProcess tidyProcess;
-        QString command("tidy -raw -asxhtml -q -m -u -utf8 ");
-        QLOG_INFO() << "About to call tidy as process: " << command;
-        tidyProcess.start(command, QIODevice::ReadWrite | QIODevice::Unbuffered);
-        QLOG_INFO() << "Starting tidy " << tidyProcess.waitForStarted();
-
-        tidyProcess.waitForStarted();
-        tidyProcess.write(content);
-        tidyProcess.closeWriteChannel();
-        tidyProcess.waitForFinished();
-        QLOG_INFO() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
-
-        QString errors(tidyProcess.readAllStandardError());
-        QStringList errorList = errors.split("\n");
-        for (int e = 0; e < errorList.size(); e++) {
-            if (not errorList[e].contains("<img> proprietary attribute \"type\"") &&
-                not errorList[e].contains("<img> proprietary attribute \"oncontextmenu\"") &&
-                not errorList[e].contains("<img> proprietary attribute \"hash\"") &&
-                not errorList[e].contains("<img> proprietary attribute \"en-tag\"") &&
-                not errorList[e].contains("<img> proprietary attribute \"lid\"") &&
-                not errorList[e].contains("<img> proprietary attribute \"oncontextmenu\"") &&
-                not errorList[e].contains("<img> lacks \"alt\" attribute")
-                ) {
-                QLOG_INFO() << "Tidy error:" << errorList[e];
-            }
-        }
-
-
-        QLOG_INFO() << "After tidy";
-        content.clear();
-        content.append(tidyProcess.readAllStandardOutput());
-        tidyProcess.close();
-    }
-
+    content = tidyHtml(content);
 
     if (content == "") {
         QLOG_ERROR() << "Got no output from tidy - cleanup failed";
@@ -520,7 +520,7 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         e.setOuterXml("<en-crypt cipher=\"" + cipher + "\" length=\"" +
                       length + "\" hint=\"" + hint
                       + "\">" + encrypted + "</en-crypt>");
-//        e.setOuterXml(e.toOuterXml().replace("<img", "<en-crypt").replace("</img", "</en-crypt"));
+        //        e.setOuterXml(e.toOuterXml().replace("<img", "<en-crypt").replace("</img", "</en-crypt"));
         return;
     }
 
@@ -533,10 +533,10 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 
     // Latex images are really just img tags, so we now handle them later
     // Check if we have a LaTeX image.  Remove the parent link tag
-//    if (enType.toLower() ==  "en-latex") {
-//        enType = "en-media";
-//        parent.parentNode().replaceChild(e, parent);
-//    }
+    //    if (enType.toLower() ==  "en-latex") {
+    //        enType = "en-media";
+    //        parent.parentNode().replaceChild(e, parent);
+    //    }
 
 
     // If we've gotten this far, we have an en-media tag
@@ -597,8 +597,6 @@ bool EnmlFormatter::isAttributeValid(QString attribute) {
 
 
 bool EnmlFormatter::isElementValid(QWebElement e) {
-    if (global.bypassTidy)
-        return true;
     QString element = e.tagName().toLower();
     //QLOG_DEBUG() << "Checking tag " << element;
     if (element == "a") {
