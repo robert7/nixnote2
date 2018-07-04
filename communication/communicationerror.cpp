@@ -56,13 +56,13 @@ void CommunicationError::resetTo(CommunicationErrorType type, int code, QString 
     QString msg(communicationErrorTypeToString(type));
     // followed by code
     if (code != 0) {
-        msg.append("[").append(code);
+        msg.append("[");
         // for some type we have text table for codes
         if (type == CommunicationError::EDAMUserException) {
-            msg.append("-");
             msg.append(edamErrorCodeToString(code));
+        } else {
+            msg.append(QString::number(code));
         }
-
         msg.append("]");
     }
     // then by message
