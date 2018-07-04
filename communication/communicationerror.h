@@ -29,9 +29,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //* about any errors when doing a sync.
 //************************************************
 
-class CommunicationError : public QObject
-{
-    Q_OBJECT
+class CommunicationError : public QObject {
+Q_OBJECT
 public:
 
     // The type of errors possible
@@ -49,19 +48,26 @@ public:
         ThriftException = 10
     };
 
-    explicit CommunicationError(QObject *parent = 0);    // Constructor
-    CommunicationErrorType type;  // The last error type we encountered
-    QString message;              // The last error message from Evernote
+
+    explicit CommunicationError(QObject *parent = 0);
+
+    void reset();
+
+    void resetTo(CommunicationErrorType type, int code, QString message);
+
+    bool retry();
+
+private:
+    // ?? std::exception e
+
+    // internal type
+    CommunicationErrorType type;
+    // message
+    QString message;
+
     int code;                     // The EDAM error code
-    void reset();                 // Reset all values
-    bool retry();                 // Retry after the last error
     int retryCount;               // Current retry count
     int maxRetryCount;            // Maximum number of times to retry
-    
-signals:
-    
-public slots:
-    
 };
 
 #endif // COMMUNICATIONERROR_H

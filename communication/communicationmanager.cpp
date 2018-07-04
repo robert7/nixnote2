@@ -24,7 +24,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // Windows Check
 #ifndef _WIN32
+
 #include <execinfo.h>
+
 #endif  // end windows check
 
 #include <QNetworkAccessManager>
@@ -43,6 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // Windows Check
 #ifndef _WIN32
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -50,6 +53,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <curl/curl.h>
 #include <curl/easy.h>
+
 #endif // End windows check
 
 #include "utilities/debugtool.h"
@@ -58,16 +62,15 @@ extern Global global;
 
 
 // Generic constructor
-CommunicationManager::CommunicationManager(DatabaseConnection *db)
-{
+CommunicationManager::CommunicationManager(DatabaseConnection *db) {
     this->db = db;
     evernoteHost = global.server;
     userStorePath = "/edam/user";
     clientName = "NixNote/Linux";
-    inkNoteList = new QList< QPair<QString, QImage*>* >();
-    thumbnailList = new QList< QPair<QString, QImage*>* >();
+    inkNoteList = new QList<QPair<QString, QImage *> *>();
+    thumbnailList = new QList<QPair<QString, QImage *> *>();
     postData = new QUrl();
-    tagGuidMap = new QHash<QString,QString>;
+    tagGuidMap = new QHash<QString, QString>;
     initComplete = false;
     noteStore = NULL;
     myNoteStore = NULL;
@@ -78,7 +81,6 @@ CommunicationManager::CommunicationManager(DatabaseConnection *db)
 //        connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(inkNoteFinished(QNetworkReply*)));
     }
 }
-
 
 
 // Destructor
@@ -109,9 +111,6 @@ bool CommunicationManager::enConnect() {
 }
 
 
-
-
-
 // start the communication session
 bool CommunicationManager::init() {
     if (initComplete)
@@ -123,7 +122,6 @@ bool CommunicationManager::init() {
 }
 
 
-
 // Initialize the note store
 bool CommunicationManager::initNoteStore() {
     using namespace qevercloud;
@@ -132,14 +130,13 @@ bool CommunicationManager::initNoteStore() {
     User user;
     if (!getUserInfo(user))
         return false;
-    noteStorePath = "/edam/note/" +user.shardId;
+    noteStorePath = "/edam/note/" + user.shardId;
 
-    QString noteStoreUrl = QString("https://")+evernoteHost+noteStorePath;
+    QString noteStoreUrl = QString("https://") + evernoteHost + noteStorePath;
     myNoteStore = new NoteStore(noteStoreUrl, authToken, this);
     noteStore = myNoteStore;
     return true;
 }
-
 
 
 // Disconnect from Evernote's servers (for private notebooks)
@@ -153,8 +150,6 @@ void CommunicationManager::enDisconnect() {
 }
 
 
-
-
 // Get a user's information
 bool CommunicationManager::getUserInfo(User &user) {
     QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo";
@@ -166,14 +161,11 @@ bool CommunicationManager::getUserInfo(User &user) {
         QLOG_ERROR() << "ThriftException:";
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+        error.resetTo(CommunicationError::ThriftException, 0, e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.type = CommunicationError::EDAMUserException;
-        error.code = e.errorCode;
-        error.message = errorWhat(e.what());
+        error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
@@ -239,13 +231,14 @@ bool CommunicationManager::getSyncState(QString token, SyncState &syncState) {
 
 
 // Get a sync chunk
-bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, int type, bool fullSync, QString token) {
+bool
+CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, int type, bool fullSync, QString token) {
     if (token == "")
         token = authToken;
     noteStore = myNoteStore;
     // Get rid of old stuff from last chunk
-    while(inkNoteList->size() > 0) {
-        QPair<QString, QImage*> *pair = inkNoteList->takeLast();
+    while (inkNoteList->size() > 0) {
+        QPair<QString, QImage *> *pair = inkNoteList->takeLast();
         delete pair->second;
         delete pair;
     }
@@ -259,13 +252,13 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
     bool resources = false;
     bool expunged = false;
 
-    notebooks = ((type & SYNC_CHUNK_NOTEBOOKS)>0);
-    searches = ((type & SYNC_CHUNK_SEARCHES)>0);
-    tags = ((type & SYNC_CHUNK_TAGS)>0);
-    linkedNotebooks = ((type & SYNC_CHUNK_LINKED_NOTEBOOKS)>0);
-    notes = ((type & SYNC_CHUNK_NOTES)>0);
-    expunged = ((type & SYNC_CHUNK_NOTES) && (!fullSync)>0) | (SYNC_CHUNK_EXPUNGED && (!fullSync));
-    resources = ((type & SYNC_CHUNK_RESOURCES) && (!fullSync)>0);
+    notebooks = ((type & SYNC_CHUNK_NOTEBOOKS) > 0);
+    searches = ((type & SYNC_CHUNK_SEARCHES) > 0);
+    tags = ((type & SYNC_CHUNK_TAGS) > 0);
+    linkedNotebooks = ((type & SYNC_CHUNK_LINKED_NOTEBOOKS) > 0);
+    notes = ((type & SYNC_CHUNK_NOTES) > 0);
+    expunged = ((type & SYNC_CHUNK_NOTES) && (!fullSync) > 0) | (SYNC_CHUNK_EXPUNGED && (!fullSync));
+    resources = ((type & SYNC_CHUNK_RESOURCES) && (!fullSync) > 0);
 
     // Try to get the chunk
     SyncChunkFilter filter;
@@ -314,9 +307,6 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
 }
 
 
-
-
-
 // Upload a new/changed saved search
 qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search) {
     try {
@@ -358,7 +348,6 @@ qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search) {
 }
 
 
-
 // Permanently delete a saved search
 qint32 CommunicationManager::expungeSavedSearch(Guid guid) {
     try {
@@ -386,7 +375,6 @@ qint32 CommunicationManager::expungeSavedSearch(Guid guid) {
 }
 
 
-
 // Upload a new/changed tag to Evernote
 qint32 CommunicationManager::uploadTag(Tag &tag) {
     QLOG_TRACE_IN();
@@ -394,7 +382,7 @@ qint32 CommunicationManager::uploadTag(Tag &tag) {
         if (tag.updateSequenceNum > 0) {
             QLOG_TRACE_OUT();
             return myNoteStore->updateTag(tag, authToken);
-       } else {
+        } else {
             tag = myNoteStore->createTag(tag, authToken);
             QLOG_TRACE_OUT();
             return tag.updateSequenceNum;
@@ -463,7 +451,6 @@ qint32 CommunicationManager::expungeTag(Guid guid) {
 }
 
 
-
 // Upload a notebook to Evernote
 qint32 CommunicationManager::uploadNotebook(Notebook &notebook) {
     try {
@@ -517,7 +504,7 @@ qint32 CommunicationManager::expungeNotebook(Guid guid) {
         error.type = CommunicationError::ThriftException;
         error.message = errorWhat(e.what());
         return 0;
-    }  catch (EDAMNotFoundException) {
+    } catch (EDAMNotFoundException) {
         return 1;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -531,7 +518,6 @@ qint32 CommunicationManager::expungeNotebook(Guid guid) {
         return 0;
     }
 }
-
 
 
 // Upload a note to Evernote
@@ -559,6 +545,9 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
         error.type = CommunicationError::ThriftException;
         return 0;
     } catch (EDAMUserException e) {
+
+        //https://dev.evernote.com/doc/reference/javadoc/com/evernote/edam/error/EDAMErrorCode.html
+
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode;
         DebugTool d;
         d.dumpNote(note);
@@ -582,7 +571,6 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
         return false;
     }
 }
-
 
 
 // delete a note in Evernote
@@ -631,16 +619,14 @@ qint32 CommunicationManager::deleteNote(Guid note, QString token) {
 
 // delete a note in Evernote
 qint32 CommunicationManager::deleteLinkedNote(Guid note) {
-  return deleteNote(note, linkedAuthToken);
+    return deleteNote(note, linkedAuthToken);
 }
-
 
 
 // Upload a note to Evernote
 qint32 CommunicationManager::uploadLinkedNote(Note &note) {
     return uploadNote(note, linkedAuthToken);
 }
-
 
 
 // Get a shared notebook by authentication token
@@ -664,7 +650,7 @@ bool CommunicationManager::getSharedNotebookByAuth(SharedNotebook &sharedNoteboo
         QLOG_ERROR() << "EDAMSystemException";
         handleEDAMSystemException(e);
         return false;
-    }  catch (EDAMNotFoundException e) {
+    } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException";
         handleEDAMNotFoundException(e);
         return false;
@@ -727,7 +713,6 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook &boo
 }
 
 
-
 // Get a linked notebook's sync state
 bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook &linkedNotebook) {
     try {
@@ -758,9 +743,9 @@ bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, Link
 }
 
 
-
 // Get a linked notebook's sync chunk
-bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook &book, int start, int chunkSize, bool fullSync) {
+bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook &book, int start, int chunkSize,
+                                                      bool fullSync) {
     try {
         chunk = linkedNoteStore->getLinkedNotebookSyncChunk(book, start, chunkSize, fullSync, authToken);
         processSyncChunk(chunk, linkedAuthToken);
@@ -834,12 +819,13 @@ bool CommunicationManager::listNoteVersions(QList<NoteVersionId> &list, QString 
 }
 
 
-
 // Get a prior version of a notebook
-bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, bool withResourceData, bool withResourceRecognition, bool withResourceAlternateData) {
+bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, bool withResourceData,
+                                          bool withResourceRecognition, bool withResourceAlternateData) {
     try {
         note = noteStore->getNoteVersion(guid, usn,
-                withResourceData, withResourceRecognition, withResourceAlternateData, authToken);
+                                         withResourceData, withResourceRecognition, withResourceAlternateData,
+                                         authToken);
         return true;
     } catch (ThriftException e) {
         QLOG_ERROR() << "ThriftException:";
@@ -866,11 +852,12 @@ bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, 
 }
 
 
-
 // Get a prior version of a notebook
-bool CommunicationManager::getNote(Note &note, QString guid, bool withResource, bool withResourceRecognition, bool withResourceAlternateData) {
+bool CommunicationManager::getNote(Note &note, QString guid, bool withResource, bool withResourceRecognition,
+                                   bool withResourceAlternateData) {
     try {
-        note = noteStore->getNote(guid,true,withResource,withResourceRecognition,withResourceAlternateData,authToken);
+        note = noteStore->getNote(guid, true, withResource, withResourceRecognition, withResourceAlternateData,
+                                  authToken);
         return true;
     } catch (ThriftException e) {
         QLOG_ERROR() << "ThriftException:";
@@ -941,9 +928,6 @@ bool CommunicationManager::getNotebookList(QList<Notebook> &list) {
 }
 
 
-
-
-
 // get a list of all Tags
 bool CommunicationManager::getTagList(QList<Tag> &list) {
     QList<Tag> retval;
@@ -987,7 +971,7 @@ bool CommunicationManager::getTagList(QList<Tag> &list) {
 
 // See if there are any ink notes in this list of resources
 void CommunicationManager::checkForInkNotes(QList<Resource> &resources, QString shard, QString authToken) {
-    for (int i=0; i<resources.size(); i++) {
+    for (int i = 0; i < resources.size(); i++) {
         Resource *r = &resources[i];
         QString mime = "";
         if (r->mime.isSet())
@@ -999,14 +983,12 @@ void CommunicationManager::checkForInkNotes(QList<Resource> &resources, QString 
 }
 
 
-
 // Writer function called when curl has an image ready
 size_t curlWriter(void *ptr, size_t size, size_t nmemb, FILE *stream) {
     size_t written;
     written = fwrite(ptr, size, nmemb, stream);
     return written;
 }
-
 
 
 // Download an ink note image
@@ -1024,12 +1006,12 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
     userTable.getUser(u);
     if (shard == "")
         shard = u.shardId;
-    QString urlBase = QString("https://")+evernoteHost
-            +QString("/shard/")
-            +shard
-            +QString("/res/")
-            +guid +QString(".ink?slice=");
-    int sliceCount = 1+((r->height-1)/600);
+    QString urlBase = QString("https://") + evernoteHost
+                      + QString("/shard/")
+                      + shard
+                      + QString("/res/")
+                      + guid + QString(".ink?slice=");
+    int sliceCount = 1 + ((r->height - 1) / 600);
 
     QSize size;
     size.setHeight(r->height);
@@ -1050,7 +1032,7 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
     curl = curl_easy_init();
     if (curl) {
         int position = 0;
-        for (int i=0; i<sliceCount && position >=0; i++) {
+        for (int i = 0; i < sliceCount && position >= 0; i++) {
 
             QTemporaryFile tempFile;
             tempFile.open();
@@ -1063,7 +1045,7 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
 #if QT_VERSION < 0x050000
             QString url = urlBase+QString::number(i+1)+"&"+postData.encodedQuery();
 #else
-            QString url = urlBase+QString::number(i+1)+"&"+postData.query();
+            QString url = urlBase + QString::number(i + 1) + "&" + postData.query();
 #endif
             curl_easy_setopt(curl, CURLOPT_URL, url.toStdString().c_str());
             res = curl_easy_perform(curl);
@@ -1085,7 +1067,7 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
 
 
         // Start writing the resource
-        QPair<QString, QImage*> *newPair = new QPair<QString, QImage*>();
+        QPair<QString, QImage *> *newPair = new QPair<QString, QImage *>();
         newPair->first = guid;
         newPair->second = newImage;
         inkNoteList->append(newPair);
@@ -1097,11 +1079,11 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
 // An ink note image is ready for retrieval
 int CommunicationManager::inkNoteReady(QImage *img, QImage *replyImage, int position) {
     int priorPosition = position;
-    position = position+replyImage->height();
+    position = position + replyImage->height();
     if (!replyImage->isNull()) {
         QPainter p(img);
 //        p.drawImage(QRect(0,priorPosition, replyImage->width(), position), *replyImage);
-        p.drawImage(QRect(0,priorPosition, replyImage->width(), replyImage->height()), *replyImage);
+        p.drawImage(QRect(0, priorPosition, replyImage->width(), replyImage->height()), *replyImage);
         p.end();
         return position;
     }
@@ -1115,14 +1097,14 @@ int CommunicationManager::inkNoteReady(QImage *img, QImage *replyImage, int posi
 //***********************************************************************
 //***********************************************************************
 void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
-    QHash<QString,QString> noteList;
+    QHash<QString, QString> noteList;
     QList<Note> notes;
     if (chunk.notes.isSet())
         notes = chunk.notes;
-    for (int i=0; i<notes.size(); i++) {
+    for (int i = 0; i < notes.size(); i++) {
         QLOG_TRACE() << "Fetching chunk item: " << i << ": " << notes[i].title;
         Note n = notes[i];
-        noteList.insert(n.guid,"");
+        noteList.insert(n.guid, "");
         n = noteStore->getNote(notes[i].guid, true, true, true, true, token);
         QLOG_TRACE() << "Note Retrieved";
 
@@ -1131,7 +1113,7 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
         QList<QString> tagGuids;
         if (n.tagGuids.isSet())
             tagGuids = n.tagGuids;
-        for (int j=0; j<tagGuids.size(); j++) {
+        for (int j = 0; j < tagGuids.size(); j++) {
             QString tagGuid = tagGuids[j];
             if (tagGuidMap->contains(tagGuid)) {
                 QString tagName = tagGuidMap->value(tagGuid);
@@ -1156,7 +1138,7 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
     QList<Resource> resources;
     if (chunk.resources.isSet())
         resources = chunk.resources;
-    for (int i=0; i<resources.size(); i++) {
+    for (int i = 0; i < resources.size(); i++) {
         QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << resources[i].guid;
         Resource r;
         r = noteStore->getResource(resources[i].guid, true, true, true, true, token);
@@ -1164,11 +1146,11 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
         resourceData.append(r);
     }
     if (chunk.resources.isSet())
-        chunk.resources  = resourceData;
+        chunk.resources = resourceData;
     QLOG_DEBUG() << "Getting ink notes";
-    if (resources.size()>0) {
+    if (resources.size() > 0) {
         QLOG_TRACE() << "Checking for ink notes";
-        checkForInkNotes(resources,"", token);
+        checkForInkNotes(resources, "", token);
     }
 }
 
@@ -1204,8 +1186,8 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException Rate Limit:" << e.rateLimitDuration << endl;
     }
     if (e.errorCode == EDAMErrorCode::RATE_LIMIT_REACHED) {
-        this->minutesToNextSync = e.rateLimitDuration/60+1;
-        error.type = CommunicationError::RateLimitExceeded;
+        this->minutesToNextSync = e.rateLimitDuration / 60 + 1;
+
 
         string endOfText = "minute";
         if (this->minutesToNextSync > 1)
@@ -1216,10 +1198,14 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
         global.settings->endGroup();
 
         string startText = "Enable 'Sync' > 'Restart sync on API limit' or try again in";
-        if(apiRateLimitAutoRestart)
+        if (apiRateLimitAutoRestart)
             startText = "Application will continue to sync in";
 
-        error.message = tr("API rate limit exceeded.") + QString(" ") + tr(startText.c_str()) + QString(" ") + QString::number(this->minutesToNextSync)+ " " + tr(endOfText.c_str());
+        QString msg(
+            tr("API rate limit exceeded.") + QString(" ")
+            + tr(startText.c_str()) + QString(" ") + QString::number(this->minutesToNextSync)
+            + " " + tr(endOfText.c_str()));
+        error.resetTo(CommunicationError::RateLimitExceeded, 0, msg);
 
         return;
     }
@@ -1230,7 +1216,6 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
     error.type = CommunicationError::EDAMSystemException;
     error.code = e.errorCode;
 }
-
 
 
 void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) {
@@ -1256,7 +1241,6 @@ void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) 
 }
 
 
-
 void CommunicationManager::handleStdException(const std::exception &ex) {
     error.message = QString(ex.what());
     error.type = CommunicationError::StdException;
@@ -1277,8 +1261,7 @@ QString CommunicationManager::errorWhat(QString what) {
     return "";
 }
 
-qint32 CommunicationManager::getMinutesToNextSync()
-{
+qint32 CommunicationManager::getMinutesToNextSync() {
     return this->minutesToNextSync;
 }
 
