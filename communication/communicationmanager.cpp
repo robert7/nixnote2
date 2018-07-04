@@ -78,7 +78,7 @@ CommunicationManager::CommunicationManager(DatabaseConnection *db) {
     minutesToNextSync = 0;
     if (networkAccessManager == NULL) {
         networkAccessManager = new QNetworkAccessManager(this);
-//        connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(inkNoteFinished(QNetworkReply*)));
+        //        connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(inkNoteFinished(QNetworkReply*)));
     }
 }
 
@@ -143,9 +143,9 @@ bool CommunicationManager::initNoteStore() {
 void CommunicationManager::enDisconnect() {
     //noteStore->disconnect();
     userStore->disconnect();
-    if (linkedNoteStore != NULL)
+    if (linkedNoteStore != nullptr)
         linkedNoteStore->disconnect();
-    if (myNoteStore != NULL)
+    if (myNoteStore != nullptr)
         myNoteStore->disconnect();
 }
 
@@ -157,29 +157,23 @@ bool CommunicationManager::getUserInfo(User &user) {
     try {
         User u = userStore->getUser();
         user = u;
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.resetTo(CommunicationError::ThriftException, 0, e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return false;
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+    } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
+    } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
         return false;
     } catch (const std::exception &e) {
-        QLOG_DEBUG() << "Std exception: " << e.what();
-        handleStdException(e);
+        error.resetTo(CommunicationError::StdException, 16, e.what());
         return false;
     }
+
     QLOG_TRACE_OUT();
     return true;
 }
@@ -208,21 +202,13 @@ bool CommunicationManager::getSyncState(QString token, SyncState &syncState) {
         else
             noteStore = linkedNoteStore;
         syncState = noteStore->getSyncState(authToken);
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return false;
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.type = CommunicationError::EDAMUserException;
-        error.code = e.errorCode;
-        error.message = errorWhat(e.what());
+    } catch (EDAMUserException &e) {
+        error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return false;
     }
@@ -1166,8 +1152,9 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
 
 void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
 
-// Windows Check
 #ifndef _WIN32
+    // non Windows only
+
     void *array[30];
     size_t size;
     // get void*'s for all entries on the stack
@@ -1178,13 +1165,12 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
     backtrace_symbols_fd(array, size, 2);
 #endif // End windows check
 
+    QString msg;
+    msg.append(e.what());
     if (e.message.isSet()) {
-        QLOG_ERROR() << "EDAMSystemException:" << e.message << endl;
+        msg.append(" # ").append(e.message.ref());
     }
-    QLOG_ERROR() << "EDAMSystemException Error Code:" << e.errorCode << endl;
-    if (e.rateLimitDuration.isSet()) {
-        QLOG_ERROR() << "EDAMSystemException Rate Limit:" << e.rateLimitDuration << endl;
-    }
+
     if (e.errorCode == EDAMErrorCode::RATE_LIMIT_REACHED) {
         this->minutesToNextSync = e.rateLimitDuration / 60 + 1;
 
@@ -1201,20 +1187,18 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
         if (apiRateLimitAutoRestart)
             startText = "Application will continue to sync in";
 
-        QString msg(
+        QString userMessage(
             tr("API rate limit exceeded.") + QString(" ")
             + tr(startText.c_str()) + QString(" ") + QString::number(this->minutesToNextSync)
             + " " + tr(endOfText.c_str()));
-        error.resetTo(CommunicationError::RateLimitExceeded, 0, msg);
-
+        if (e.rateLimitDuration.isSet()) {
+            msg.append(" # rateLimitDuration=").append(e.rateLimitDuration.ref());
+        }
+        error.resetTo(CommunicationError::RateLimitExceeded, e.errorCode, userMessage, msg);
         return;
     }
-    if (e.message.isSet())
-        error.message = tr("EDAMSystemException ") + e.message + errorWhat(e.what());
-    else
-        error.message = tr("EDAMSystemException: Unknown error") + errorWhat(e.what());
-    error.type = CommunicationError::EDAMSystemException;
-    error.code = e.errorCode;
+
+    error.resetTo(CommunicationError::EDAMSystemException, e.errorCode, msg);
 }
 
 
@@ -1233,19 +1217,11 @@ void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) 
     backtrace_symbols_fd(array, size, 2);
 #endif
 
-    QLOG_ERROR() << "EDAMNotFoundException:" << endl;
-
-    error.message = tr("EDAMNotFoundException: Note not found") + errorWhat(e.what());
-    error.type = CommunicationError::EDAMNotFoundException;
-    error.code = 16;
+    error.resetTo(CommunicationError::EDAMNotFoundException, 16, e.what());
 }
 
 
-void CommunicationManager::handleStdException(const std::exception &ex) {
-    error.message = QString(ex.what());
-    error.type = CommunicationError::StdException;
-    error.code = 16;
-}
+
 
 
 void CommunicationManager::loadTagGuidMap() {

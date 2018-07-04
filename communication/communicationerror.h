@@ -31,8 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class CommunicationError : public QObject {
 Q_OBJECT
-public:
 
+public:
     // The type of errors possible
     enum CommunicationErrorType {
         None = 0,
@@ -53,21 +53,24 @@ public:
 
     void reset();
 
-    void resetTo(CommunicationErrorType type, int code, QString message);
+    void resetTo(CommunicationErrorType type, int code, QString message, QString internalMessage = QString());
 
     bool retry();
+    inline CommunicationErrorType getType() { return type; };
+    inline QString getMessage() { return message; };
 
 private:
-    // ?? std::exception e
-
     // internal type
     CommunicationErrorType type;
     // message
     QString message;
+    QString internalMessage;
 
     int code;                     // The EDAM error code
     int retryCount;               // Current retry count
     int maxRetryCount;            // Maximum number of times to retry
+
+    QString communicationErrorTypeToString(CommunicationErrorType v);
 };
 
 #endif // COMMUNICATIONERROR_H

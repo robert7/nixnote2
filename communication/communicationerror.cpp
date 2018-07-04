@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 #include "communicationerror.h"
+#include "logger/qslog.h"
 
 
 // Default constructor
@@ -33,7 +34,8 @@ void CommunicationError::reset() {
     retryCount = 0;
     maxRetryCount = 3;
     code = 0;
-    message = "";
+    message = QString();
+    internalMessage = QString();
     type = None;
 }
 
@@ -44,9 +46,58 @@ bool CommunicationError::retry() {
 }
 
 // reset class to given exception/error info
-void CommunicationError::resetTo(CommunicationErrorType type, int code, QString message) {
+void CommunicationError::resetTo(CommunicationErrorType type, int code, QString message, QString internalMessage) {
     reset();
     this->type = type;
     this->code = code;
-    this->message = message;
+    this->internalMessage = internalMessage;
+
+    // render exception name
+    QString msg(communicationErrorTypeToString(type));
+    // followed by code
+    if (code != 0) {
+        msg.append("[").append(code).append("]");
+    }
+    // then by message
+    msg.append(": ");
+    msg.append(message);
+    // save like this
+    this->message = msg;
+    // then append internal message
+    if (!internalMessage.isEmpty()) {
+        msg.append(" ## " + internalMessage);
+    }
+
+    // check if this is the right point to print, or we hant to have dedicated method
+    QLOG_ERROR() << msg;
+}
+
+QString CommunicationError::communicationErrorTypeToString(CommunicationErrorType v) {
+    switch (v) {
+        case None:
+            return "None";
+        case Unknown:
+            return "Unknown";
+        case EDAMSystemException:
+            return "EDAMSystemException";
+        case EDAMUserException:
+            return "EDAMUserException";
+        case TTransportException:
+            return "TTransportException";
+        case EDAMNotFoundException:
+            return "EDAMNotFoundException";
+        case StdException:
+            return "StdException";
+        case TSSLException:
+            return "TSSLException";
+        case TException:
+            return "TException";
+        case RateLimitExceeded:
+            return "RateLimitExceeded";
+        case ThriftException:
+            return "ThriftException";
+
+        default:
+            return QString("enum:") + QString::number(v);
+    }
 }
