@@ -44,6 +44,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "application.h"
 
+#include <tidy.h>
+#include <tidybuffio.h>
+
 
 NixNote *w;
 
@@ -90,7 +93,6 @@ void sighup_handler(int sig) {
 
 
 #endif // End Windows check
-
 
 
 
