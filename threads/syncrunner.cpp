@@ -1227,60 +1227,13 @@ void SyncRunner::communicationErrorHandler() {
     }
 
     if (type == CommunicationError::EDAMUserException) {
-        CommunicationError *e = &error;
-
-        if (e->code == EDAMErrorCode::UNKNOWN)
-            emitMsg = "An unknown error has occurred" + e->message;
-
-        if (e->code == EDAMErrorCode::BAD_DATA_FORMAT)
-            emitMsg = "Unable to sync. Bad data format : " + e->message;
-
-        if (e->code == EDAMErrorCode::PERMISSION_DENIED)
-            emitMsg = "Unable to sync. Permission denied : " + e->message;
-
-        if (e->code == EDAMErrorCode::INTERNAL_ERROR)
-            emitMsg = "Internal Evernote error : " + e->message + " Please try again later.";
-
-        if (e->code == EDAMErrorCode::DATA_REQUIRED)
-            emitMsg = "Communication Error - Data required : " + e->message;
-
-        if (e->code == EDAMErrorCode::INVALID_AUTH)
-            emitMsg = "Invalid authorization : " + e->message;
-
-        if (e->code == EDAMErrorCode::AUTH_EXPIRED) {
-            emitMsg = "Authorization token has expired or been revoked.";
+        int errorCode = error.code;
+        if (errorCode == EDAMErrorCode::AUTH_EXPIRED) {
             global.accountsManager->setOAuthToken("");
         }
 
-        if (e->code == EDAMErrorCode::DATA_CONFLICT)
-            emitMsg = "Communication Error - Data conflict : " + e->message;
 
-        if (e->code == EDAMErrorCode::ENML_VALIDATION)
-            emitMsg = "Unable to update note.  Invalid note structure : " + e->message;
 
-        if (e->code == EDAMErrorCode::LIMIT_REACHED)
-            emitMsg = "Communication Error - limit reached : " + e->message;
-
-        if (e->code == EDAMErrorCode::QUOTA_REACHED)
-            emitMsg = "Communication Error - User quota exceeded : " + e->message;
-
-        if (e->code == EDAMErrorCode::SHARD_UNAVAILABLE)
-            emitMsg = "Communication Error - Shard unavailable.  Please try again later. " + e->message;
-
-        if (e->code == EDAMErrorCode::LEN_TOO_SHORT)
-            emitMsg = "Communication Error - Length too short : " + e->message;
-
-        if (e->code == EDAMErrorCode::LEN_TOO_LONG)
-            emitMsg = "Communication Error - Length too long : " + e->message;
-
-        if (e->code == EDAMErrorCode::TOO_FEW)
-            emitMsg = "Communication Error - Length \"too few\" error : " + e->message;
-
-        if (e->code == EDAMErrorCode::TOO_MANY)
-            emitMsg = "Communication Error - \"too many\" error : " + e->message;
-
-        if (e->code == EDAMErrorCode::UNSUPPORTED_OPERATION)
-            emitMsg = "Communication Error - Unsupported operation " + e->message;
 
         emit(setMessage(emitMsg, defaultMsgTimeout));
         return;

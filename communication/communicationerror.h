@@ -70,7 +70,8 @@ private:
     int retryCount;               // Current retry count
     int maxRetryCount;            // Maximum number of times to retry
 
-    QString communicationErrorTypeToString(CommunicationErrorType v);
+    QString communicationErrorTypeToString(CommunicationErrorType type);
+    QString edamErrorCodeToString(int code);
 };
 
 #endif // COMMUNICATIONERROR_H
