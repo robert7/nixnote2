@@ -192,8 +192,13 @@ QByteArray EnmlFormatter::tidyHtml(QByteArray content) {
 
     TidyDoc tdoc = tidyCreate();                     // Initialize "document"
 
-    Bool ok = tidyOptSetBool(tdoc, TidyXhtmlOut, yes);  // Convert to XHTML
-
+    // Convert to XHTML
+    Bool ok = tidyOptSetBool(tdoc, TidyXhtmlOut, yes);
+    if (ok) {
+        // dispite "Warning: An XML declaration was detected. Did you mean to use input-xml"
+        // I think we should not use xml parser
+        rc = tidyOptSetBool(tdoc, TidyXmlTags, yes);
+    }
     if (ok) {
         rc = tidySetCharEncoding(tdoc, "utf8");
     }
@@ -223,15 +228,17 @@ QByteArray EnmlFormatter::tidyHtml(QByteArray content) {
         rc = tidySaveBuffer(tdoc, &output);
     }
 
+    // delete content in both cases
+    content.clear();
+
     if (rc >= 0) {
         if (rc > 0) {
-            QLOG_INFO() << "Tidy: diagnostics: " << ((char *) errbuf.bp);
+            QLOG_INFO() << "Tidy DONE: diagnostics: " << ((char *) errbuf.bp);
         }
         //printf("\nAnd here is the result:\n\n%s", output.bp);
-        content.clear();
         content.append((char *) output.bp);
     } else {
-        QLOG_WARN() << "Tidy: severe error occurred, code=" << rc;
+        QLOG_ERROR() << "Tidy FAILED: severe error occurred, code=" << rc;
     }
 
     tidyBufFree(&output);
@@ -247,7 +254,6 @@ QByteArray EnmlFormatter::tidyHtml(QByteArray content) {
 QByteArray EnmlFormatter::rebuildNoteEnml() {
     QLOG_INFO() << "rebuildNoteEnml";
     resources.clear();
-    QByteArray b;
     qint32 index;
 
     // Remove invalid stuff
@@ -270,11 +276,23 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content = c1;
     content.append(newHeader).append(c2);
 
+    QLOG_INFO() << "********BEFORE tidy: " << content;
+
+    content = tidyHtml(content);
+    if (content == "") {
+        QLOG_ERROR() << "Got no output from tidy - cleanup failed";
+        formattingError = true;
+        return "";
+    }
+    QLOG_INFO() << "********AFTER tidy: " << content;
+
+
     // Start transforming the header
     index = content.indexOf("<body");
     content.remove(0, index);
     index = content.indexOf("</body");
     content.truncate(index);
+    QByteArray b;
     b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>\n");
     b.append("<html><head><title></title></head>");
@@ -284,25 +302,13 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.clear();
     content = b;
 
-    // Remove <o:p> tags in case pasting from MicroSoft products.
-    content = content.replace("<o:p>", "");
-    content = content.replace("</o:p>", "");
-    content = content.replace("<o:p/>", "");
-    // Remove auto-complete tags
-    content = content.replace("<ac:rich-text-body", "<div");
-    content = content.replace("</ac:rich-text-body", "</div");
-
-    content = tidyHtml(content);
-
-    if (content == "") {
-        QLOG_ERROR() << "Got no output from tidy - cleanup failed";
-        formattingError = true;
-        return "";
-    }
-
     // Tidy puts this in place, but we don't really need it.
     content.replace("<form>", "");
     content.replace("</form>", "");
+
+    QLOG_INFO() << "********AFTER FIX #1 : " << content;
+
+
 
     index = content.indexOf("<body");
     content.remove(0, index);
@@ -311,6 +317,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.prepend("<html>");
     content.append("</html>");
     content = fixEncryptionTags(content);
+    QLOG_INFO() << "********AFTER FIX #2 : " << content;
 
     if (global.guiAvailable) {
         QWebPage page;
@@ -349,6 +356,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         content.clear();
         content.append(element.toOuterXml());
     }
+    QLOG_INFO() << "********AFTER FIX #3 : " << content;
 
     // Strip off HTML header
     index = content.indexOf("<body");
@@ -366,6 +374,9 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content = b.replace("<body", "<en-note");
 
     postXmlFix();
+
+    QLOG_INFO() << "********AFTER FINISH  : " << content;
+
     return content;
 }
 
