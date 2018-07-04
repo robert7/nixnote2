@@ -267,12 +267,8 @@ CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, i
     try {
         chunk = myNoteStore->getFilteredSyncChunk(start, chunkSize, filter, token);
         processSyncChunk(chunk, token);
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -301,12 +297,8 @@ qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search) {
         else
             search = myNoteStore->createSearch(search, authToken);
         return search.updateSequenceNum;
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         DebugTool d;
         d.dumpSavedSearch(search);
         return 0;
@@ -338,12 +330,8 @@ qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search) {
 qint32 CommunicationManager::expungeSavedSearch(Guid guid) {
     try {
         return myNoteStore->expungeSearch(guid, authToken);
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return 0;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -373,15 +361,13 @@ qint32 CommunicationManager::uploadTag(Tag &tag) {
             QLOG_TRACE_OUT();
             return tag.updateSequenceNum;
         }
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR().maybeSpace() << "Exception Type:" << e.type();
-        QLOG_ERROR().maybeSpace() << "Exception Msg:" << e.what() << endl;
-        QLOG_ERROR() << "Tag name: " << tag.name << endl;
+    } catch (ThriftException &e) {
+        QString msg(e.what());
+        msg.append(" # Tag name: ").append(tag.name);
+        error.resetTo(CommunicationError::ThriftException, e.type(), msg);
         DebugTool d;
         d.dumpTag(tag);
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+
         return 0;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -414,12 +400,8 @@ qint32 CommunicationManager::uploadTag(Tag &tag) {
 qint32 CommunicationManager::expungeTag(Guid guid) {
     try {
         return myNoteStore->expungeTag(guid, authToken);
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return 0;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -446,12 +428,8 @@ qint32 CommunicationManager::uploadNotebook(Notebook &notebook) {
             notebook = myNoteStore->createNotebook(notebook, authToken);
             return notebook.updateSequenceNum;
         }
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         DebugTool d;
         d.dumpNotebook(notebook);
         return 0;
@@ -483,12 +461,8 @@ qint32 CommunicationManager::uploadNotebook(Notebook &notebook) {
 qint32 CommunicationManager::expungeNotebook(Guid guid) {
     try {
         return myNoteStore->expungeNotebook(guid, authToken);
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return 0;
     } catch (EDAMNotFoundException) {
         return 1;
@@ -521,19 +495,12 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
             note = noteStore->createNote(note, token);
         return note.updateSequenceNum;
 
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR().maybeSpace() << "Exception Type:" << e.type();
-        QLOG_ERROR().maybeSpace() << "Exception Msg:" << e.what() << endl;
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         DebugTool d;
         d.dumpNote(note);
-        error.message = errorWhat(e.what());
-        error.type = CommunicationError::ThriftException;
         return 0;
     } catch (EDAMUserException e) {
-
-        //https://dev.evernote.com/doc/reference/javadoc/com/evernote/edam/error/EDAMErrorCode.html
-
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode;
         DebugTool d;
         d.dumpNote(note);
@@ -570,12 +537,8 @@ qint32 CommunicationManager::deleteNote(Guid note, QString token) {
 
     try {
         return noteStore->deleteNote(note, token);
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.message = errorWhat(e.what());
-        error.type = CommunicationError::ThriftException;
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return 0;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -619,12 +582,8 @@ qint32 CommunicationManager::uploadLinkedNote(Note &note) {
 bool CommunicationManager::getSharedNotebookByAuth(SharedNotebook &sharedNotebook) {
     try {
         sharedNotebook = noteStore->getSharedNotebookByAuth(linkedAuthToken);
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -671,12 +630,8 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook &boo
         // We have a share key, so authenticate
         linkedAuth = noteStore->authenticateToSharedNotebook(book.shareKey, authToken);
         linkedAuthToken = linkedAuth.authenticationToken;
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.message = errorWhat(e.what());
-        error.type = CommunicationError::ThriftException;
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -703,12 +658,8 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook &boo
 bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook &linkedNotebook) {
     try {
         syncState = linkedNoteStore->getLinkedNotebookSyncState(linkedNotebook, linkedAuthToken);
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -735,12 +686,8 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
     try {
         chunk = linkedNoteStore->getLinkedNotebookSyncChunk(book, start, chunkSize, fullSync, authToken);
         processSyncChunk(chunk, linkedAuthToken);
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.message = errorWhat(e.what());
-        error.type = CommunicationError::ThriftException;
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -780,12 +727,8 @@ bool CommunicationManager::listNoteVersions(QList<NoteVersionId> &list, QString 
     try {
         list = noteStore->listNoteVersions(guid, authToken);
         return true;
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -813,12 +756,8 @@ bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, 
                                          withResourceData, withResourceRecognition, withResourceAlternateData,
                                          authToken);
         return true;
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -845,12 +784,8 @@ bool CommunicationManager::getNote(Note &note, QString guid, bool withResource, 
         note = noteStore->getNote(guid, true, withResource, withResourceRecognition, withResourceAlternateData,
                                   authToken);
         return true;
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -888,12 +823,8 @@ bool CommunicationManager::getNotebookList(QList<Notebook> &list) {
     try {
         retval = noteStore->listNotebooks(authToken);
         list = retval;
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -920,12 +851,8 @@ bool CommunicationManager::getTagList(QList<Tag> &list) {
     try {
         retval = noteStore->listTags(authToken);
         list = retval;
-    } catch (ThriftException e) {
-        QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
-        error.type = CommunicationError::ThriftException;
-        error.message = errorWhat(e.what());
+    } catch (ThriftException &e) {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
