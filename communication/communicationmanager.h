@@ -97,7 +97,7 @@ private:
     QString authToken;                        // Authorization token.
     bool init();                              // Init function.  Run after the thread has started & after first call.
     QNetworkAccessManager *networkAccessManager;              // Network connection to download inknotes
-    void handleEDAMSystemException(EDAMSystemException e);    // Error handler EDAM System Exception
+    void handleEDAMSystemException(EDAMSystemException e, QString additionalInfo = "");
     void handleEDAMNotFoundException(EDAMNotFoundException e);  // Error handler EDAM Not Found exception.
     void handleStdException(const exception &ex);               // Handle std exception messages
     UserStore *userStore;                                     // UserStore class
