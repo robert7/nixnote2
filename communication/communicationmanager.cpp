@@ -273,12 +273,10 @@ CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, i
     } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
+    } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
         return false;
     }
@@ -304,14 +302,12 @@ qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search) {
         DebugTool d;
         d.dumpSavedSearch(search);
         return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         DebugTool d;
         d.dumpSavedSearch(search);
         return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
+    } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
         DebugTool d;
         d.dumpSavedSearch(search);
@@ -330,11 +326,10 @@ qint32 CommunicationManager::expungeSavedSearch(Guid guid) {
     } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return 0;
-    } catch (EDAMNotFoundException) {
+    } catch (EDAMNotFoundException &e) {
         return 1;
     }
 }
@@ -343,6 +338,9 @@ qint32 CommunicationManager::expungeSavedSearch(Guid guid) {
 // Upload a new/changed tag to Evernote
 qint32 CommunicationManager::uploadTag(Tag &tag) {
     QLOG_TRACE_IN();
+
+    QString additionalInfo("Tag name: ");
+    additionalInfo.append(tag.name);
     try {
         if (tag.updateSequenceNum > 0) {
             QLOG_TRACE_OUT();
@@ -354,29 +352,27 @@ qint32 CommunicationManager::uploadTag(Tag &tag) {
         }
     } catch (ThriftException &e) {
         QString msg(e.what());
-        msg.append(" # Tag name: ").append(tag.name);
+        msg.append(" # ").append(additionalInfo);
         error.resetTo(CommunicationError::ThriftException, e.type(), msg);
         DebugTool d;
         d.dumpTag(tag);
         return 0;
     } catch (EDAMUserException &e) {
-        error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
+        QString msg(e.what());
+        msg.append(" # ").append(additionalInfo);
+        error.resetTo(CommunicationError::EDAMUserException, e.errorCode, msg));
         DebugTool d;
         d.dumpTag(tag);
         return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        QLOG_ERROR().maybeSpace() << "Tag name: " << tag.name << endl;
+    } catch (EDAMSystemException &e) {
         DebugTool d;
         d.dumpTag(tag);
-        handleEDAMSystemException(e);
+        handleEDAMSystemException(e, additionalInfo);
         return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
-        QLOG_ERROR().maybeSpace() << "Tag name: " << tag.name << endl;
+    } catch (EDAMNotFoundException &e) {
+        handleEDAMNotFoundException(e, additionalInfo);
         DebugTool d;
         d.dumpTag(tag);
-        handleEDAMNotFoundException(e);
         return 0;
     }
 }
@@ -392,8 +388,7 @@ qint32 CommunicationManager::expungeTag(Guid guid) {
     } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException) {
@@ -421,17 +416,15 @@ qint32 CommunicationManager::uploadNotebook(Notebook &notebook) {
         DebugTool d;
         d.dumpNotebook(notebook);
         return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         DebugTool d;
         d.dumpNotebook(notebook);
         return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
+    } catch (EDAMNotFoundException &e) {
+        handleEDAMNotFoundException(e);
         DebugTool d;
         d.dumpNotebook(notebook);
-        handleEDAMNotFoundException(e);
         return false;
     }
 }
@@ -449,8 +442,7 @@ qint32 CommunicationManager::expungeNotebook(Guid guid) {
     } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return 0;
-    }  catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return 0;
     }
@@ -482,19 +474,15 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
         DebugTool d;
         d.dumpNote(note);
         return 0;
-    }  catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        QLOG_ERROR().maybeSpace() << "Note title: " << note.title << endl;
+    } catch (EDAMSystemException &e) {
         DebugTool d;
         d.dumpNote(note);
-        handleEDAMSystemException(e);
+        handleEDAMSystemException(e, note.title);
         return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
-        QLOG_ERROR().maybeSpace() << "Note title: " << note.title << endl;
+    } catch (EDAMNotFoundException &e) {
+        handleEDAMNotFoundException(e, note.title);
         DebugTool d;
         d.dumpNote(note);
-        handleEDAMNotFoundException(e);
         return false;
     }
 }
@@ -519,8 +507,7 @@ qint32 CommunicationManager::deleteNote(Guid note, QString token) {
         return 0;
     } catch (EDAMNotFoundException) {
         return 1;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return 0;
     }
@@ -559,12 +546,10 @@ bool CommunicationManager::getSharedNotebookByAuth(SharedNotebook &sharedNoteboo
     } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
+    } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
         return false;
     }
@@ -604,15 +589,11 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook &boo
     } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
+    } catch (EDAMNotFoundException) {
         // If it is a linked noteboook & it isn't found, then we can just expunge it
-        return false;
-        //handleEDAMNotFoundException(e);
         return false;
     }
     return true;
@@ -629,12 +610,10 @@ bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, Link
     } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
+    } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
         return false;
     }
@@ -654,12 +633,10 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
     } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
+    } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
         return false;
     }
@@ -692,12 +669,10 @@ bool CommunicationManager::listNoteVersions(QList<NoteVersionId> &list, QString 
     } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
+    } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
         return false;
     }
@@ -718,12 +693,10 @@ bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, 
     } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
+    } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
         return false;
     }
@@ -743,12 +716,10 @@ bool CommunicationManager::getNote(Note &note, QString guid, bool withResource, 
     } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return false;
-    }catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
+    } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
         return false;
     }
@@ -779,12 +750,10 @@ bool CommunicationManager::getNotebookList(QList<Notebook> &list) {
     } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
+    } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
         return false;
     }
@@ -804,12 +773,10 @@ bool CommunicationManager::getTagList(QList<Tag> &list) {
     } catch (EDAMUserException &e) {
         error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
         return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
+    } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
         return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
+    } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
         return false;
     }
@@ -1020,8 +987,8 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
 //***********************************************************************
 //***********************************************************************
 
-
-void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
+// Error handler EDAM System Exception
+void CommunicationManager::handleEDAMSystemException(EDAMSystemException e, QString additionalInfo) {
 
 #ifndef _WIN32
     // non Windows only
@@ -1040,6 +1007,9 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
     msg.append(e.what());
     if (e.message.isSet()) {
         msg.append(" # ").append(e.message.ref());
+    }
+    if (!additionalInfo.isEmpty()) {
+        msg.append(" # ").append(additionalInfo);
     }
 
     if (e.errorCode == EDAMErrorCode::RATE_LIMIT_REACHED) {
@@ -1072,8 +1042,8 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
     error.resetTo(CommunicationError::EDAMSystemException, e.errorCode, msg);
 }
 
-
-void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) {
+// Error handler EDAM Not Found exception.
+void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e, QString additionalInfo) {
     Q_UNUSED(e);   // suppress unused variable message
 
 // Windows Check
@@ -1088,7 +1058,12 @@ void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) 
     backtrace_symbols_fd(array, size, 2);
 #endif
 
-    error.resetTo(CommunicationError::EDAMNotFoundException, 16, e.what());
+    QString msg(e.what());
+    if (!additionalInfo.isEmpty()) {
+        msg.append(" # ");
+        msg.append(additionalInfo);
+    }
+    error.resetTo(CommunicationError::EDAMNotFoundException, 16, msg);
 }
 
 
