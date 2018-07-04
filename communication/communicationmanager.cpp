@@ -360,7 +360,7 @@ qint32 CommunicationManager::uploadTag(Tag &tag) {
     } catch (EDAMUserException &e) {
         QString msg(e.what());
         msg.append(" # ").append(additionalInfo);
-        error.resetTo(CommunicationError::EDAMUserException, e.errorCode, msg));
+        error.resetTo(CommunicationError::EDAMUserException, e.errorCode, msg);
         DebugTool d;
         d.dumpTag(tag);
         return 0;

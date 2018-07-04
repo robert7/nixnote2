@@ -113,7 +113,7 @@ QString CommunicationError::edamErrorCodeToString(int code) {
             return "LEN_TOO_SHORT";
         case qevercloud::EDAMErrorCode::LEN_TOO_LONG:
             return "LEN_TOO_LONG";
-        case qevercloud::EDAMErrorCode::LEN_TOO_FEW:
+        case qevercloud::EDAMErrorCode::TOO_FEW:
             return "TOO_FEW";
             // #16
         case qevercloud::EDAMErrorCode::TOO_MANY:
