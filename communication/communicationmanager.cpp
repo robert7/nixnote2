@@ -1068,7 +1068,7 @@ int CommunicationManager::inkNoteReady(QImage *img, QImage *replyImage, int posi
     position = position + replyImage->height();
     if (!replyImage->isNull()) {
         QPainter p(img);
-//        p.drawImage(QRect(0,priorPosition, replyImage->width(), position), *replyImage);
+        //        p.drawImage(QRect(0,priorPosition, replyImage->width(), position), *replyImage);
         p.drawImage(QRect(0, priorPosition, replyImage->width(), replyImage->height()), *replyImage);
         p.end();
         return position;
@@ -1219,9 +1219,6 @@ void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) 
 
     error.resetTo(CommunicationError::EDAMNotFoundException, 16, e.what());
 }
-
-
-
 
 
 void CommunicationManager::loadTagGuidMap() {

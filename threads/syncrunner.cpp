@@ -681,7 +681,7 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
             SyncChunk chunk;
             if (!comm->getLinkedNotebookSyncChunk(chunk, book, usn, chunkSize, fs)) {
                 more = false;
-                if (comm->error.type == CommunicationError::EDAMNotFoundException) {
+                if (comm->error.getType() == CommunicationError::EDAMNotFoundException) {
                     ltable.expunge(lids[i]);
                     if (!finalSync)
                         emit(notebookExpunged(lids[i]));
@@ -724,7 +724,7 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
             SyncChunk chunk;
             if (!comm->getLinkedNotebookSyncChunk(chunk, book, usn, chunkSize, fs)) {
                 more = false;
-                if (comm->error.type == CommunicationError::EDAMNotFoundException) {
+                if (comm->error.getType() == CommunicationError::EDAMNotFoundException) {
                     ltable.expunge(lids[i]);
                     if (!finalSync)
                         emit(notebookExpunged(lids[i]));
@@ -1200,63 +1200,22 @@ CommunicationError *SyncRunner::getError() {
 // If a communication error happened, try to determine what the error is and
 // notify the user
 void SyncRunner::communicationErrorHandler() {
-    QString emitMsg;
-
     CommunicationError &error = comm->error;
     CommunicationError::CommunicationErrorType type = error.getType();
-    const QString &message = error.getMessage();
 
-    if ((type == CommunicationError::ThriftException) ||
-        (type == CommunicationError::TTransportException) ||
-        (type == CommunicationError::EDAMSystemException)
-        ) {
-        emit(setMessage(message, defaultMsgTimeout));
+    if (type == CommunicationError::None) {
         return;
     }
 
     if (type == CommunicationError::RateLimitExceeded) {
-        emit(setMessage(message, 0));
         minutesToNextSync = comm->getMinutesToNextSync();
         apiRateLimitExceeded = true;
-        return;
     }
-
-    if (type == CommunicationError::EDAMNotFoundException) {
-        emit(setMessage(message, 0));
-        return;
-    }
-
     if (type == CommunicationError::EDAMUserException) {
-        int errorCode = error.code;
-        if (errorCode == EDAMErrorCode::AUTH_EXPIRED) {
+        if (error.getCode() == EDAMErrorCode::AUTH_EXPIRED) {
             global.accountsManager->setOAuthToken("");
         }
-
-
-
-
-        emit(setMessage(emitMsg, defaultMsgTimeout));
-        return;
     }
-
-    if (error.type == CommunicationError::TSSLException) {
-        CommunicationError *e = &error;
-        emitMsg = "Communication Error - SSL Exception: " + e->message;
-        emit(setMessage(emitMsg, 0));
-        return;
-    }
-
-    if (error.type == CommunicationError::TException) {
-        CommunicationError *e = &error;
-        emitMsg = "TException: " + e->message;
-        emit(setMessage(emitMsg, 0));
-        return;
-    }
-
-    if (error.type == CommunicationError::StdException) {
-        CommunicationError *e = &error;
-        emitMsg = "Internal Error: " + e->message;
-        emit(setMessage(emitMsg, 0));
-        return;
-    }
+    emit(setMessage(error.getMessage(), 0));
 }
+

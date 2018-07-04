@@ -58,6 +58,7 @@ public:
     bool retry();
     inline CommunicationErrorType getType() { return type; };
     inline QString getMessage() { return message; };
+    inline int getCode() { return code; };
 
 private:
     // internal type

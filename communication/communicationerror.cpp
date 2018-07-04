@@ -82,47 +82,47 @@ void CommunicationError::resetTo(CommunicationErrorType type, int code, QString 
 
 QString CommunicationError::edamErrorCodeToString(int code) {
     switch (code) {
-        case EDAMErrorCode::UNKNOWN:
+        case qevercloud::EDAMErrorCode::UNKNOWN:
             return "UNKNOWN";
-        case EDAMErrorCode::BAD_DATA_FORMAT:
+        case qevercloud::EDAMErrorCode::BAD_DATA_FORMAT:
             return "BAD_DATA_FORMAT";
-        case EDAMErrorCode::PERMISSION_DENIED:
+        case qevercloud::EDAMErrorCode::PERMISSION_DENIED:
             return "PERMISSION_DENIED";
-        case EDAMErrorCode::INTERNAL_ERROR:
+        case qevercloud::EDAMErrorCode::INTERNAL_ERROR:
             return "INTERNAL_ERROR";
-        case EDAMErrorCode::DATA_REQUIRED:
+        case qevercloud::EDAMErrorCode::DATA_REQUIRED:
             return "DATA_REQUIRED";
             // #6
-        case EDAMErrorCode::LIMIT_REACHED:
+        case qevercloud::EDAMErrorCode::LIMIT_REACHED:
             return "LIMIT_REACHED";
-        case EDAMErrorCode::QUOTA_REACHED:
+        case qevercloud::EDAMErrorCode::QUOTA_REACHED:
             return "QUOTA_REACHED";
-        case EDAMErrorCode::INVALID_AUTH:
+        case qevercloud::EDAMErrorCode::INVALID_AUTH:
             return "INVALID_AUTH";
-        case EDAMErrorCode::AUTH_EXPIRED:
+        case qevercloud::EDAMErrorCode::AUTH_EXPIRED:
             return "AUTH_EXPIRED";
-        case EDAMErrorCode::DATA_CONFLICT:
+        case qevercloud::EDAMErrorCode::DATA_CONFLICT:
             return "DATA_CONFLICT";
 
             // #11
-        case EDAMErrorCode::ENML_VALIDATION:
+        case qevercloud::EDAMErrorCode::ENML_VALIDATION:
             return "ENML_VALIDATION";
-        case EDAMErrorCode::SHARD_UNAVAILABLE:
+        case qevercloud::EDAMErrorCode::SHARD_UNAVAILABLE:
             return "SHARD_UNAVAILABLE";
-        case EDAMErrorCode::LEN_TOO_SHORT:
+        case qevercloud::EDAMErrorCode::LEN_TOO_SHORT:
             return "LEN_TOO_SHORT";
-        case EDAMErrorCode::LEN_TOO_LONG:
+        case qevercloud::EDAMErrorCode::LEN_TOO_LONG:
             return "LEN_TOO_LONG";
-        case EDAMErrorCode::LEN_TOO_FEW:
+        case qevercloud::EDAMErrorCode::LEN_TOO_FEW:
             return "TOO_FEW";
             // #16
-        case EDAMErrorCode::TOO_MANY:
+        case qevercloud::EDAMErrorCode::TOO_MANY:
             return "TOO_MANY";
-        case EDAMErrorCode::UNSUPPORTED_OPERATION:
+        case qevercloud::EDAMErrorCode::UNSUPPORTED_OPERATION:
             return "UNSUPPORTED_OPERATION";
-        case EDAMErrorCode::TAKEN_DOWN:
+        case qevercloud::EDAMErrorCode::TAKEN_DOWN:
             return "TAKEN_DOWN";
-        case EDAMErrorCode::RATE_LIMIT_REACHED:
+        case qevercloud::EDAMErrorCode::RATE_LIMIT_REACHED:
             return "RATE_LIMIT_REACHED";
 
         default:
