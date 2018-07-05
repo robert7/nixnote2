@@ -103,8 +103,7 @@ public:
     bool formattingError;
     QList<qint32> resources;
 
-    explicit EnmlFormatter(QObject *parent = 0);
-    void setHtml(QString html);
+    explicit EnmlFormatter(QString html);
     QString getEnml();
     QByteArray rebuildNoteEnml();
 };

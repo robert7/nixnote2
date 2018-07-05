@@ -120,7 +120,7 @@ public:
     QString getTranslateFilePath(QString relativePath);
     QString readFile(QString file);
     QString getProgramVersion();
-    void setupLoggingToFile();
+    void setupFileAttachmentLogging();
     void deleteTopLevelFiles(QDir dir, bool exitOnFail);
 };
 

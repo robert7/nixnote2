@@ -811,8 +811,8 @@ void NBrowserWindow::saveNoteContent() {
 
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
 
-        EnmlFormatter formatter;
-        formatter.setHtml(contents);
+        EnmlFormatter formatter(contents);
+
         formatter.rebuildNoteEnml();
         if (formatter.formattingError) {
             QMessageBox::information(

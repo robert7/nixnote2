@@ -40,8 +40,12 @@ using namespace std;
 extern Global global;
 
 /* Constructor. */
-EnmlFormatter::EnmlFormatter(QObject *parent) :
-    QObject(parent) {
+EnmlFormatter::EnmlFormatter(QString html) :
+    QObject(nullptr) {
+
+    this->content.clear();
+    this->content.append(content);
+
     //doc = new QDomDocument();
     formattingError = false;
 
@@ -182,10 +186,7 @@ QString EnmlFormatter::getEnml() {
 }
 
 
-void EnmlFormatter::setHtml(QString h) {
-    content.clear();
-    content.append(h);
-}
+
 
 
 
