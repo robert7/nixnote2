@@ -178,7 +178,7 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList <qint32> *results) 
 
 
     FilterCriteria *criteria = newCriteria;
-    if (criteria == NULL)
+    if (criteria == nullptr)
         criteria = global.filterCriteria[global.filterPosition];
     else
         internalSearch = false;
@@ -2404,14 +2404,14 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAny(QString string) 
 
 
 // Check if a resource contains a specific search string.  Used in highlighting PDFs & attachments
-// This function is used in two different ways.  If the *returnHits pointer is NULL, it searches
+// This function is used in two different ways.  If the *returnHits pointer is nullptr, it searches
 // for the first match in a PDF and exits with true/false if a match is found.  If the pointer is
 // not null, it will return a list of all of the searchString terms that are found.  This is useful
 // in knowing what to highlight in a PDF.
 bool FilterEngine::resourceContains(qint32 resourceLid, QString searchString, QStringList *returnHits) {
     QLOG_TRACE_IN();
     bool returnValue = false;
-    if (returnHits != NULL)
+    if (returnHits != nullptr)
         returnHits->empty();
     NSqlQuery query(global.db);
     NSqlQuery query2(global.db);
@@ -2469,7 +2469,7 @@ bool FilterEngine::resourceContains(qint32 resourceLid, QString searchString, QS
                 query2.exec();
                 if (query2.next()) {
                     returnValue = true;
-                    if (returnHits != NULL)
+                    if (returnHits != nullptr)
                         returnHits->append(term);
                     else
                         return true;
@@ -2481,7 +2481,7 @@ bool FilterEngine::resourceContains(qint32 resourceLid, QString searchString, QS
                 query.exec();
                 if (query.next()) {
                     returnValue = true;
-                    if (returnHits != NULL)
+                    if (returnHits != nullptr)
                         returnHits->append(term);
                     else
                         return true;

@@ -141,14 +141,14 @@ void FavoritesView::loadData() {
     // second time is to remove items at a root level.
     while(i.hasNext()) {
         i.next();
-        if (i.value() != NULL && i.value()->parent() != root) {
+        if (i.value() != nullptr && i.value()->parent() != root) {
             i.value()->parent()->removeChild(i.value());
         }
     }
     i.toFront();
     while(i.hasNext()) {
         i.next();
-        if (i.value() != NULL) {
+        if (i.value() != nullptr) {
             i.value()->setHidden(true);
             root->removeChild(i.value());
             delete i.value();
@@ -189,7 +189,7 @@ void FavoritesView::loadData() {
         FavoritesRecord record;
         if (ftable.get(record, children[i])) {
             FavoritesViewItem *parent = dataStore[record.parent];
-            if (parent != NULL)
+            if (parent != nullptr)
                 buildTreeEntry(parent, &record);
         }
     }
@@ -480,7 +480,7 @@ void FavoritesView::addRecord(qint32 lid, FavoritesRecord::FavoritesRecordType t
 
 void FavoritesView::mouseMoveEvent(QMouseEvent *event)
 {
-    if (currentItem() == NULL)
+    if (currentItem() == nullptr)
         return;
 
     if (!(event->buttons() & Qt::LeftButton))
@@ -586,7 +586,7 @@ void FavoritesView::deleteRequested() {
         child->setHidden(true);
         child->parent()->removeChild(child);
         child = dataStore.take(child->record.lid);
-        if (child != NULL) {
+        if (child != nullptr) {
             targetStore.remove(child->record.target.toInt());
             delete child;
         }
@@ -594,7 +594,7 @@ void FavoritesView::deleteRequested() {
     FavoritesViewItem *parent = (FavoritesViewItem*)items[0]->parent();
     parent->removeChild(items[0]);
     FavoritesViewItem *item = dataStore.take(lid);
-    if (item != NULL) {
+    if (item != nullptr) {
         targetStore.remove(item->record.target.toInt());
         delete item;
      }
@@ -602,7 +602,7 @@ void FavoritesView::deleteRequested() {
         if (parent->childCount() == 0) {
             root->removeChild(parent);
             parent = dataStore.take(parent->record.lid);
-            if (parent != NULL) {
+            if (parent != nullptr) {
                 targetStore.remove(parent->record.target.toInt());
                 delete parent;
             }
@@ -720,7 +720,7 @@ void FavoritesView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
 
     if (targetStore.contains(lid)) {
         FavoritesViewItem *item = targetStore[lid];
-        if (item == NULL)
+        if (item == nullptr)
             return;
         item->subTotal = subTotal;
         item->total = total;
@@ -739,7 +739,7 @@ void FavoritesView::itemExpunged(qint32 lid, QString name) {
 
 void FavoritesView::itemExpunged(qint32 lid) {
 
-    if (dataStore[lid] == NULL)
+    if (dataStore[lid] == nullptr)
         return;
 
     FavoritesTable s(global.db);
@@ -750,7 +750,7 @@ void FavoritesView::itemExpunged(qint32 lid) {
         child->setHidden(true);
         child->parent()->removeChild(child);
         child = dataStore.take(child->record.lid);
-        if (child != NULL) {
+        if (child != nullptr) {
             targetStore.remove(child->record.target.toInt());
             delete child;
         }
@@ -758,13 +758,13 @@ void FavoritesView::itemExpunged(qint32 lid) {
     FavoritesViewItem *parent = (FavoritesViewItem*)dataStore[lid]->parent();
     parent->removeChild(dataStore[lid]);
     FavoritesViewItem *item = dataStore.take(lid);
-    if (item != NULL)
+    if (item != nullptr)
         delete item;
     if (parent != root) {
         if (parent->childCount() == 0) {
             root->removeChild(parent);
             parent = dataStore.take(parent->record.lid);
-            if (parent != NULL) {
+            if (parent != nullptr) {
                 targetStore.remove(parent->record.target.toInt());
                 delete parent;
             }
@@ -819,9 +819,9 @@ void FavoritesView::reloadIcons() {
     QHash<qint32, FavoritesViewItem*>::iterator i;
     for (i=dataStore.begin(); i!=dataStore.end(); ++i) {
         FavoritesViewItem *record = i.value();
-        if (record != NULL) {
+        if (record != nullptr) {
             FavoritesRecord *r = &record->record;
-            if (r != NULL) {
+            if (r != nullptr) {
                 switch (r->type) {
                 case FavoritesRecord::Tag :
                     record->setIcon(NAME_POSITION, global.getIconResource(":tagIcon"));

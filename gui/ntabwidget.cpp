@@ -35,7 +35,7 @@ NTabWidget::NTabWidget(NixNote *p, SyncRunner *s, NNotebookView *n, NTagView *t)
     syncThread = s;
     notebookTreeView = n;
     tagTreeView = t;
-    this->lastExternal = NULL;
+    this->lastExternal = nullptr;
 
     this->setFont(global.getGuiFont(font()));
 
@@ -526,7 +526,7 @@ void NTabWidget::noteContentEdited(QString uuid, qint32 lid, QString content) {
     // Invalidate the cache (if needed)
     if (global.cache.contains(lid)) {
         NoteCache *cache = global.cache[lid];
-        if (cache != NULL)
+        if (cache != nullptr)
             cache->noteContent = content.toUtf8();
         else
             global.cache.remove(lid);
@@ -566,7 +566,7 @@ void NTabWidget::noteDateEdited(QString uuid, qint32 lid, int dateType, QDateTim
     for (int i=0; i<browserList->size(); i++) {
         if (lid == browserList->at(i)->lid &&
                 browserList->at(i)->uuid != uuid) {
-            DateTimeEditor *dte=NULL;
+            DateTimeEditor *dte=nullptr;
             switch(dateType) {
             case NOTE_CREATED_DATE:
                 dte = &browserList->at(i)->dateEditor.createdDate;
@@ -587,7 +587,7 @@ void NTabWidget::noteDateEdited(QString uuid, qint32 lid, int dateType, QDateTim
     for (int i=0; i<externalList->size(); i++) {
         if (lid == externalList->at(i)->browser->lid &&
                 externalList->at(i)->browser->uuid != uuid) {
-            DateTimeEditor *dte=NULL;
+            DateTimeEditor *dte=nullptr;
             switch(dateType) {
             case NOTE_CREATED_DATE:
                 dte = &externalList->at(i)->browser->dateEditor.createdDate;

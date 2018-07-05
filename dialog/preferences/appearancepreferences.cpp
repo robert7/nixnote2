@@ -115,8 +115,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     confirmDeletes->setChecked(global.confirmDeletes());
 
     int row=0;
-    minimizeToTray = NULL;
-    closeToTray = NULL;
+    minimizeToTray = nullptr;
+    closeToTray = nullptr;
     mainLayout->addWidget(showTrayIcon,row,0);
     mainLayout->addWidget(showSplashScreen, row++,1);
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
@@ -208,12 +208,12 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 
     connect(showTrayIcon, SIGNAL(clicked(bool)), this, SLOT(showTrayIconChanged(bool)));
 
-    if (minimizeToTray != NULL) {
+    if (minimizeToTray != nullptr) {
         minimizeToTray->setChecked(global.minimizeToTray());
         if (!showTrayIcon->isChecked())
             minimizeToTray->setEnabled(false);
     }
-    if (closeToTray != NULL) {
+    if (closeToTray != nullptr) {
         closeToTray->setChecked(global.closeToTray());
         if (!showTrayIcon->isChecked())
             closeToTray->setEnabled(false);
@@ -266,11 +266,11 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("showNoteListGrid", showNoteListGrid->isChecked());
     global.settings->setValue("alternateNoteListColors", alternateNoteListColors->isChecked());
     global.pdfPreview = showPDFs->isChecked();
-    if (minimizeToTray!= NULL)
+    if (minimizeToTray!= nullptr)
         global.settings->setValue("minimizeToTray", minimizeToTray->isChecked());
     else
         global.settings->remove("minimizeToTray");
-    if (closeToTray != NULL)
+    if (closeToTray != nullptr)
         global.settings->setValue("closeToTray", closeToTray->isChecked());
     else
         global.settings->remove("closeToTray");

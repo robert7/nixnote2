@@ -51,7 +51,7 @@ Global::Global() {
     filterCriteria.push_back(criteria);
     filterPosition = 0;
 
-    this->argv = NULL;
+    this->argv = nullptr;
     this->argc = 0;
     criteria->resetNotebook = true;
     criteria->resetTags = true;
@@ -61,9 +61,9 @@ Global::Global() {
     criteria->resetDeletedOnly = true;
     criteria->setDeletedOnly(false);
     criteria->resetLid = true;
-    this->accountsManager = NULL;
+    this->accountsManager = nullptr;
     criteria->resetSearchString = true;
-    this->application = NULL;
+    this->application = nullptr;
     this->autoHideEditorToolbar = false;
     this->showGoodSyncMessagesInTray = false;
     this->batchThumbnailCount = 4;
@@ -72,26 +72,26 @@ Global::Global() {
     this->countBehavior = Global::CountAll;
     password = "";
     javaFound = false;
-    reminderManager = NULL;
-    settings = NULL;
+    reminderManager = nullptr;
+    settings = nullptr;
     startupNewNote = false;
-    this->sharedMemory = NULL;
+    this->sharedMemory = nullptr;
     this->forceSystemTrayAvailable = false;
     this->guiAvailable = true;
     strictDTD = true;
     forceUTF8 = false;
     startupNote = 0;
-    db = NULL;
+    db = nullptr;
     this->forceWebFonts = false;
     this->indexPDFLocally = true;
-    this->indexRunner = NULL;
+    this->indexRunner = nullptr;
     this->isFullscreen = false;
     this->indexNoteCountPause = -1;
     this->maxIndexInterval = 500;
     this->forceNoStartMimized = false;
     this->forceSearchLowerCase = false;
     this->forceStartMinimized = false;
-    this->globalSettings = NULL;
+    this->globalSettings = nullptr;
     this->disableUploads = false;
     this->enableIndexing = false;
     this->disableThumbnails = false;
@@ -106,7 +106,7 @@ Global::Global() {
     this->nonAsciiSortBug = false;
     this->startMinimized = false;
     this->pdfPreview = true;
-    this->shortcutKeys = NULL;
+    this->shortcutKeys = nullptr;
     this->cryptCounter = 0;
     this->connected = false;
 }
@@ -117,7 +117,7 @@ Global::Global() {
 //    FilterCriteria *criteria;
 //    for (int i=0; i<filterCriteria.size(); i++) {
 //        criteria = filterCriteria[i];
-//        if (criteria != NULL)
+//        if (criteria != nullptr)
 //            delete criteria;
 //    }
 //}
@@ -1348,7 +1348,7 @@ void Global::stackDump(int max) {
 
     if (max > 0)
         size = max + 1;  // We add one here because we always skip the first thing on the stack (this function).
-    for (size_t i = 1; i < size && messages != NULL; ++i) {
+    for (size_t i = 1; i < size && messages != nullptr; ++i) {
         char *mangled_name = 0, *offset_begin = 0, *offset_end = 0;
 
         // find parantheses and +address offset surrounding mangled name

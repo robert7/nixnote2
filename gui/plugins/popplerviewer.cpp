@@ -43,7 +43,7 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
     printImageFile = global.fileManager.getTmpDirPath() + QString::number(lid) +QString("-print.png");
     QString file = global.fileManager.getDbaDirPath() + reslid +".pdf";
     doc = Poppler::Document::load(file);
-    if (doc == NULL || doc->isLocked())
+    if (doc == nullptr || doc->isLocked())
         return;
 
     currentPage = 0;
@@ -106,11 +106,11 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
 void PopplerViewer::pageRightPressed() {
     if (currentPage+1 < totalPages) {
         currentPage++;
-        if (image != NULL)
+        if (image != nullptr)
             delete image;
         image = new QImage(doc->page(currentPage)->renderToImage());
         image->save(printImageFile);
-        if (item != NULL)
+        if (item != nullptr)
             delete item;
         QPixmap finalPix = highlightImage();
         item = new QGraphicsPixmapItem(finalPix);
@@ -128,10 +128,10 @@ void PopplerViewer::pageRightPressed() {
 void PopplerViewer::pageLeftPressed() {
     if (currentPage>0) {
         currentPage--;
-        if (image != NULL)
+        if (image != nullptr)
             delete image;
         image = new QImage(doc->page(currentPage)->renderToImage());
-        if (item != NULL)
+        if (item != nullptr)
             delete item;
 
         QPixmap finalPix = highlightImage();

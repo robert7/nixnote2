@@ -56,8 +56,8 @@ void FavoritesViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     if (test == "stack")
         return;
 
-    FavoritesView *tree = NULL;
-    FavoritesViewItem *item = NULL;
+    FavoritesView *tree = nullptr;
+    FavoritesViewItem *item = nullptr;
 
     if (lid > 0) {
         tree = (FavoritesView*)options.widget;

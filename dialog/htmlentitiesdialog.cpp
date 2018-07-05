@@ -101,7 +101,7 @@ HtmlEntitiesDialog::HtmlEntitiesDialog(QWidget *parent) :
     buttonLayout->addStretch();
     grid->addLayout(buttonLayout,3,1);
     setWindowFlags(Qt::WindowStaysOnTopHint);
-    textEdit = NULL;
+    textEdit = nullptr;
     scrollArea->setWidgetResizable(false);
     //layout()->setSizeConstraint( QLayout::SetFixedSize);
     //saveSize = this->size();
@@ -202,7 +202,7 @@ void HtmlEntitiesDialog::editClicked() {
         initEntitiesButtons();
 
     } else {
-        if (textEdit == NULL) {
+        if (textEdit == nullptr) {
             textEdit = new QTextEdit(tr("Comma separated list of HTML entities.\nSee http://www.w3schools.com/charsets/ for list."));
         }
         textEdit->setText(getEntities(true));

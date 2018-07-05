@@ -230,13 +230,13 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     //this->openNote(false);
 
     // Init OAuth winwod
-    //oauthWindow = NULL;
+    //oauthWindow = nullptr;
 
     //QDesktopServices::setUrlHandler("evernote", this, "showDesktopUrl");
     remoteQuery = new RemoteQuery();
 
     // Initialize pdfExportWindow to null. We don't fully set this up in case the person requests it.
-    pdfExportWindow = NULL;
+    pdfExportWindow = nullptr;
 
     // Setup file watcher
     importManager = new FileWatcherManager(this);
@@ -661,12 +661,12 @@ void NixNote::setupGui() {
 
             global.settings->beginGroup("SaveState");
             qint32 notebookLid = global.settings->value("selectedNotebook", 0).toInt();
-            if (notebookLid > 0 && notebookTreeView->dataStore[notebookLid] != NULL) {
+            if (notebookLid > 0 && notebookTreeView->dataStore[notebookLid] != nullptr) {
                 criteria->setNotebook(*notebookTreeView->dataStore[notebookLid]);
                 criteriaFound = true;
             } else {
                 QString selectedStack = global.settings->value("selectedStack", "").toString();
-                if (selectedStack != "" && notebookTreeView->stackStore[selectedStack] != NULL) {
+                if (selectedStack != "" && notebookTreeView->stackStore[selectedStack] != nullptr) {
                     criteria->setNotebook(*notebookTreeView->stackStore[selectedStack]);
                     criteriaFound = true;
                 }
@@ -680,7 +680,7 @@ void NixNote::setupGui() {
             }
 
             qint32 searchLid = global.settings->value("selectedSearch", 0).toInt();
-            if (searchLid > 0 && searchTreeView->dataStore[searchLid] != NULL) {
+            if (searchLid > 0 && searchTreeView->dataStore[searchLid] != nullptr) {
                 criteria->setSavedSearch(*searchTreeView->dataStore[searchLid]);
                 criteriaFound = true;
             }
@@ -690,7 +690,7 @@ void NixNote::setupGui() {
                 QStringList tags = selectedTags.split(" ");
                 QList<QTreeWidgetItem *> items;
                 for (int i = 0; i < tags.size(); i++) {
-                    if (tagTreeView->dataStore[tags[i].toInt()] != NULL)
+                    if (tagTreeView->dataStore[tags[i].toInt()] != nullptr)
                         items.append(tagTreeView->dataStore[tags[i].toInt()]);
                 }
                 criteriaFound = true;
@@ -704,7 +704,7 @@ void NixNote::setupGui() {
         if (selectionBehavior == AppearancePreferences::UseDefaultNotebook) {
             NotebookTable ntable(global.db);
             qint32 lid = ntable.getDefaultNotebookLid();
-            if (notebookTreeView->dataStore[lid] != NULL) {
+            if (notebookTreeView->dataStore[lid] != nullptr) {
                 criteria->setNotebook(*notebookTreeView->dataStore[lid]);
                 criteriaFound = true;
             }
@@ -755,7 +755,7 @@ void NixNote::setupGui() {
         for (int i = 0; i < tags.size(); i++) {
             NTagViewItem *item;
             item = tagTreeView->dataStore[tags[i].toInt()];
-            if (item != NULL)
+            if (item != nullptr)
                 item->setExpanded(true);
         }
     }
@@ -765,7 +765,7 @@ void NixNote::setupGui() {
         for (int i = 0; i < books.size(); i++) {
             NNotebookViewItem *item;
             item = notebookTreeView->dataStore[books[i].toInt()];
-            if (item != NULL && item->stack != "" && item->parent() != NULL) {
+            if (item != nullptr && item->stack != "" && item->parent() != nullptr) {
                 item->parent()->setExpanded(true);
                 //QLOG_DEBUG() << "Parent of " << books[i] << " expanded.";
             }
@@ -1245,7 +1245,7 @@ void NixNote::saveOnExit() {
     QHash<qint32, NTagViewItem *>::iterator iterator;
     savedLids = "";
     for (iterator = tagTreeView->dataStore.begin(); iterator != tagTreeView->dataStore.end(); ++iterator) {
-        if (iterator.value() != NULL) {
+        if (iterator.value() != nullptr) {
             qint32 saveLid = iterator.value()->data(0, Qt::UserRole).toInt();
             if (iterator.value()->isExpanded()) {
                 savedLids = savedLids + QString::number(saveLid) + " ";
@@ -1271,7 +1271,7 @@ void NixNote::saveOnExit() {
     QHash<qint32, NNotebookViewItem *>::iterator books;
     savedLids = "";
     for (books = notebookTreeView->dataStore.begin(); books != notebookTreeView->dataStore.end(); ++books) {
-        if (books.value() != NULL) {
+        if (books.value() != nullptr) {
             qint32 saveLid = books.value()->data(0, Qt::UserRole).toInt();
             if (books.value()->stack != "" && books.value()->parent()->isExpanded()) {
                 savedLids = savedLids + QString::number(saveLid) + " ";
@@ -1321,11 +1321,11 @@ void NixNote::closeEvent(QCloseEvent *event) {
     syncRunner.keepRunning = false;
     syncThread.quit();
 
-    if (trayIcon != NULL) {
+    if (trayIcon != nullptr) {
         if (trayIcon->isVisible())
             trayIcon->hide();
         delete trayIcon;
-        trayIcon = NULL;
+        trayIcon = nullptr;
     }
 
     QMainWindow::closeEvent(event);
@@ -1673,9 +1673,9 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
     }
     if (selectedNotes.size() > 0 && !afterSync) {
         //tabWindow->currentBrowser()->setContent(selectedNotes.at(0));  // <<<<<< This causes problems with multiple tabs after sync
-        NBrowserWindow *window = NULL;
+        NBrowserWindow *window = nullptr;
         tabWindow->findBrowser(window, selectedNotes.at(0));
-        if (window != NULL)
+        if (window != nullptr)
             window->setContent(selectedNotes.at(0));
         if (!afterSync)
             openNote(false);
@@ -2722,7 +2722,7 @@ void NixNote::heartbeatTimerTriggered() {
             this->newExternalNote();
             this->raise();
             this->activateWindow();
-            if (tabWindow->lastExternal != NULL) {
+            if (tabWindow->lastExternal != nullptr) {
                 tabWindow->lastExternal->activateWindow();
                 tabWindow->lastExternal->showNormal();
                 tabWindow->lastExternal->browser->editor->setFocus();
@@ -2732,7 +2732,7 @@ void NixNote::heartbeatTimerTriggered() {
             cmd = cmd.mid(18);
             qint32 lid = cmd.toInt();
             this->openExternalNote(lid);
-            if (tabWindow->lastExternal != NULL) {
+            if (tabWindow->lastExternal != nullptr) {
                 tabWindow->lastExternal->activateWindow();
                 tabWindow->lastExternal->showNormal();
                 tabWindow->lastExternal->browser->editor->setFocus();
@@ -3900,7 +3900,7 @@ void NixNote::loadPlugins() {
                 if (plugin) {
                     HunspellInterface * hunspellInterface;
                     hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                    if (hunspellInterface != NULL) {
+                    if (hunspellInterface != nullptr) {
                         hunspellPluginAvailable = true;
                     }
                     delete hunspellInterface;
@@ -3920,7 +3920,7 @@ void NixNote::exportAsPdf() {
     QList<qint32> lids;
     noteTableView->getSelectedLids(lids);
 
-    if (pdfExportWindow == NULL) {
+    if (pdfExportWindow == nullptr) {
         pdfExportWindow = new QWebView();
         connect(pdfExportWindow, SIGNAL(loadFinished(bool)), this, SLOT(exportAsPdfReady(bool)));
     }

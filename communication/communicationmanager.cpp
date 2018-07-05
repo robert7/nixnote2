@@ -72,11 +72,11 @@ CommunicationManager::CommunicationManager(DatabaseConnection *db) {
     postData = new QUrl();
     tagGuidMap = new QHash<QString, QString>;
     initComplete = false;
-    noteStore = NULL;
-    myNoteStore = NULL;
-    linkedNoteStore = NULL;
+    noteStore = nullptr;
+    myNoteStore = nullptr;
+    linkedNoteStore = nullptr;
     minutesToNextSync = 0;
-    if (networkAccessManager == NULL) {
+    if (networkAccessManager == nullptr) {
         networkAccessManager = new QNetworkAccessManager(this);
         //        connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(inkNoteFinished(QNetworkReply*)));
     }
@@ -566,7 +566,7 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook &boo
     }
 
     try {
-        if (linkedNoteStore != NULL)
+        if (linkedNoteStore != nullptr)
             delete linkedNoteStore;
 
         // Connect to the proper shard
@@ -825,7 +825,7 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
     Q_UNUSED(authToken)
 #else
     UserTable userTable(db);
-    QImage *newImage = NULL;
+    QImage *newImage = nullptr;
     User u;
     userTable.getUser(u);
     if (shard == "")
@@ -880,7 +880,7 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
             QImage replyImage;
             replyImage.load(tempFile.fileName(), "PNG");
             tempFile.remove();
-            if (newImage == NULL) {
+            if (newImage == nullptr) {
                 newImage = new QImage(size, replyImage.format());
             }
             position = inkNoteReady(newImage, &replyImage, position);

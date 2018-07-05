@@ -142,7 +142,7 @@ int EnCrypt::runner(QString &result, QString text, QString passphrase, QString m
 //    char cypher[] = "rc2";
 //    char block[] = "ecb";
 
-//    td = mcrypt_module_open(cypher, NULL, block, NULL);
+//    td = mcrypt_module_open(cypher, nullptr, block, nullptr);
 //    if (td == MCRYPT_FAILED)
 //        return "";
 
@@ -155,7 +155,7 @@ int EnCrypt::runner(QString &result, QString text, QString passphrase, QString m
 //      memcpy(block_buffer, ba.data(), ba.length());
 //      qDebug() << block_buffer;
 
-//      i=mcrypt_generic_init(td, key, keysize, NULL);
+//      i=mcrypt_generic_init(td, key, keysize, nullptr);
 //      if (i<0) {
 //         mcrypt_perror(i);
 //         return "";

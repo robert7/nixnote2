@@ -1083,7 +1083,7 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32
     query.exec();
     hashMap.clear();
     resourceMap.clear();
-    Resource *r = NULL;
+    Resource *r = nullptr;
     QString hash;
     while (query.next()) {
         qint32 lid = query.value(2).toInt();
@@ -1103,7 +1103,7 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32
             if (prevLid > 0) {
                 if (hash != "") {
                     hashMap.insert(hash, prevLid);
-                    if (r == NULL)
+                    if (r == nullptr)
                         r = new Resource();
                     if (!r->noteGuid.isSet()) {
                         r->noteGuid = noteGuid;
@@ -1125,7 +1125,7 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32
     db->unlock();
     query.finish();
 
-    if (r != NULL)
+    if (r != nullptr)
         delete r;
 }
 
@@ -1147,7 +1147,7 @@ void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool 
         query.bindValue(":key2", RESOURCE_NOTE_LID);
         query.bindValue(":noteLid", noteLid);
     }
-    Resource *r = NULL;
+    Resource *r = nullptr;
     query.exec();
     while (query.next()) {
         qint32 lid = query.value(2).toInt();

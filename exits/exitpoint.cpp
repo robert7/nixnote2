@@ -177,7 +177,7 @@ void ExitPoint_NoteEdit::setNotebook(QString notebook) {
     if (exitReady)
         notebook_isModified = true;
     notebook_isSet = true;
-    if (this->notebook != NULL)
+    if (this->notebook != nullptr)
         delete this->notebook;
     this->notebook = new QString(notebook);
 }

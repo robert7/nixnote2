@@ -230,7 +230,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     hammer = new Thumbnailer(global.db);
     lid = -1;
-    thumbnailer = NULL;
+    thumbnailer = nullptr;
 
 
     //Setup shortcuts for context menu
@@ -288,7 +288,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     saveTimer.setInterval(global.autoSaveInterval);
     saveTimer.start();
 
-    hunspellInterface = NULL;
+    hunspellInterface = nullptr;
 
     QString css = global.getThemeCss("browserWindowCss");
     if (css!="")
@@ -468,7 +468,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     if (global.cache.contains(lid)) {
         QLOG_DEBUG() << "Fetching from cache, lid=" << this->lid;
         NoteCache *c = global.cache[lid];
-        if (c == NULL || c->noteContent == (char*)NULL) {
+        if (c == nullptr || c->noteContent == (char*)nullptr) {
             QLOG_DEBUG() << "Invalid note found in cache.  Removing it.";
             global.cache.remove(lid);
         } else {
@@ -517,7 +517,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     points = global.exitManager->exitPoints;
 
     if (points->contains("ExitPoint_LoadNote") &&
-        points->value("ExitPoint_LoadNote") != NULL &&
+        points->value("ExitPoint_LoadNote") != nullptr &&
         points->value("ExitPoint_LoadNote")->getEnabled()) {
         exitPoint(points->value("ExitPoint_LoadNote"));
     }
@@ -804,7 +804,7 @@ void NBrowserWindow::saveNoteContent() {
         QHash<QString, ExitPoint*> *points;
         points = global.exitManager->exitPoints;
         if (points->contains("ExitPoint_SaveNote") &&
-                points->value("ExitPoint_SaveNote") != NULL &&
+                points->value("ExitPoint_SaveNote") != nullptr &&
                 points->value("ExitPoint_SaveNote")->getEnabled())
             exitPoint(points->value("ExitPoint_SaveNote"));
         // END EXIT POINT
@@ -853,14 +853,14 @@ void NBrowserWindow::saveNoteContent() {
             emit requestNoteContentUpdate(lid, formatter.getEnml(), true);
         editor->isDirty = false;
 
-        if (thumbnailer == NULL)
+        if (thumbnailer == nullptr)
             thumbnailer = new Thumbnailer(global.db);
         QLOG_DEBUG() << "Beginning thumbnail";
         thumbnailer->render(lid);
         QLOG_DEBUG() << "Thumbnail completed";
 
         NoteCache* cache = global.cache[lid];
-        if (cache != NULL) {
+        if (cache != nullptr) {
             QLOG_DEBUG() << "Updating cache";
             QByteArray b;
             b.append(contents);
@@ -1421,7 +1421,7 @@ void NBrowserWindow::insertLinkButtonPressed() {
         dialog.setUrl(text);
     }
 
-    if (currentHyperlink != NULL && currentHyperlink != "") {
+    if (currentHyperlink != nullptr && currentHyperlink != "") {
         dialog.setUrl(currentHyperlink);
     }
     dialog.exec();

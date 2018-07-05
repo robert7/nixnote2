@@ -42,12 +42,12 @@ IndexRunner::IndexRunner()
     init = false;
     officeFound = false;  // temporarily disabled to test performance impact
     this->pauseIndexing = false;
-    this->textDocument = NULL;
+    this->textDocument = nullptr;
     this->enableIndexing = true;
-    this->indexHash = NULL;
+    this->indexHash = nullptr;
     this->keepRunning = true;
-    this->db = NULL;
-    //this->indexTimer = NULL;
+    this->db = nullptr;
+    //this->indexTimer = nullptr;
     this->iAmBusy = false;
 }
 
@@ -348,7 +348,7 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
 
     QString text = "";
     Poppler::Document *doc = Poppler::Document::load(file);
-    if (doc == NULL || doc->isEncrypted() || doc->isLocked()) {
+    if (doc == nullptr || doc->isEncrypted() || doc->isLocked()) {
         //indexTimer->start();
         return;
     }

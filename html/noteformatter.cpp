@@ -557,7 +557,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
         if (mimetype == "application/pdf") {
             QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) + ".pdf";
             Poppler::Document *doc = Poppler::Document::load(file);
-            if (doc != NULL && doc->isLocked())
+            if (doc != nullptr && doc->isLocked())
                 pdfPreview = false;
         }
 
@@ -574,7 +574,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
             QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) + ".pdf";
             Poppler::Document *doc;
             doc = Poppler::Document::load(file);
-            if (doc == NULL)
+            if (doc == nullptr)
                 return;
 
             QImage *image = new QImage(doc->page(0)->renderToImage());
@@ -646,7 +646,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     resourceHighlight = false;
     if (criteria->isSearchStringSet() && criteria->getSearchString() != "") {
         FilterEngine engine;
-        resourceHighlight = engine.resourceContains(lid, criteria->getSearchString(), NULL);
+        resourceHighlight = engine.resourceContains(lid, criteria->getSearchString(), nullptr);
     }
 
     QString fileName = global.fileManager.getDbaDirPath(QString::number(lid) + appl);

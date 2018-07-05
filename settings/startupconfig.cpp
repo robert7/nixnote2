@@ -45,16 +45,16 @@ StartupConfig::StartupConfig() {
 
     command = new QBitArray(STARTUP_OPTION_COUNT);
     command->fill(false);
-    newNote = NULL;
-    queryNotes = NULL;
+    newNote = nullptr;
+    queryNotes = nullptr;
     purgeTemporaryFiles = true;
-    delNote = NULL;
-    email = NULL;
-    extractText = NULL;
-    exportNotes = NULL;
-    importNotes = NULL;
-    alter = NULL;
-    signalGui = NULL;
+    delNote = nullptr;
+    email = nullptr;
+    extractText = nullptr;
+    exportNotes = nullptr;
+    importNotes = nullptr;
+    alter = nullptr;
+    signalGui = nullptr;
 }
 
 
@@ -339,57 +339,57 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
 
         if (parm.startsWith("addNote")) {
             command->setBit(STARTUP_ADDNOTE, true);
-            if (newNote == NULL)
+            if (newNote == nullptr)
                 newNote = new AddNote();
             guiAvailable = false;
         }
         if (parm.startsWith("appendNote")) {
             command->setBit(STARTUP_APPENDNOTE, true);
-            if (newNote == NULL)
+            if (newNote == nullptr)
                 newNote = new AddNote();
             guiAvailable = false;
         }
         if (parm.startsWith("emailNote")) {
             command->setBit(STARTUP_EMAILNOTE, true);
-            if (email == NULL)
+            if (email == nullptr)
                 email = new EmailNote();
             guiAvailable = false;
         }
         if (parm.startsWith("export")) {
             command->setBit(STARTUP_EXPORT, true);
-            if (exportNotes == NULL)
+            if (exportNotes == nullptr)
                 exportNotes = new ExtractNotes();
             guiAvailable = false;
             exportNotes->backup = false;
         }
         if (parm.startsWith("import")) {
             command->setBit(STARTUP_IMPORT, true);
-            if (importNotes == NULL)
+            if (importNotes == nullptr)
                 importNotes = new ImportNotes();
             guiAvailable = false;
         }
         if (parm.startsWith("backup")) {
             command->setBit(STARTUP_BACKUP, true);
-            if (exportNotes == NULL)
+            if (exportNotes == nullptr)
                 exportNotes = new ExtractNotes();
             exportNotes->backup = true;
             guiAvailable = false;
         }
         if (parm.startsWith("query")) {
             command->setBit(STARTUP_QUERY);
-            if (queryNotes == NULL)
+            if (queryNotes == nullptr)
                 queryNotes = new CmdLineQuery();
             guiAvailable = false;
         }
         if (parm.startsWith("readNote")) {
             command->setBit(STARTUP_READNOTE);
-            if (extractText == NULL)
+            if (extractText == nullptr)
                 extractText = new ExtractNoteText();
             guiAvailable = false;
         }
         if (parm.startsWith("deleteNote")) {
             command->setBit(STARTUP_DELETENOTE);
-            if (delNote == NULL)
+            if (delNote == nullptr)
                 delNote = new DeleteNote();
             guiAvailable = false;
         }
@@ -405,7 +405,7 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
         }
         if (parm.startsWith("alterNote")) {
             command->setBit(STARTUP_ALTERNOTE, true);
-            if (alter == NULL)
+            if (alter == nullptr)
                 alter = new AlterNote();
         }
         if (parm.startsWith("openNotebook")) {
@@ -422,7 +422,7 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
         }
         if (parm.startsWith("signalGui")) {
             command->setBit(STARTUP_SIGNALGUI, true);
-            if (signalGui == NULL)
+            if (signalGui == nullptr)
                 signalGui = new SignalGui();
             guiAvailable = false;
         }

@@ -369,7 +369,7 @@ void NWebView::decryptText(QString id, QString text, QString hint) {
 
 
 void NWebView::contextMenuEvent(QContextMenuEvent *event) {
-    if (event != NULL)
+    if (event != nullptr)
         contextMenu->exec(event->globalPos());
     downloadAttachmentAction()->setEnabled(false);
     rotateImageRightAction->setEnabled(false);
@@ -470,7 +470,7 @@ void NWebView::printNodeName(QString s) {
 
 void NWebView::setTitleEditor(NTitleEditor *editor) {
     titleEditor = editor;
-    if (editor == NULL)
+    if (editor == nullptr)
         return;
     connect(page(), SIGNAL(contentsChanged()), this, SLOT(setDefaultTitle()));
 }
