@@ -84,3 +84,4 @@ appdir
 
 # build version file
 _build_dir_.txt
+build-version.txt
