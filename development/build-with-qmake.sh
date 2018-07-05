@@ -20,10 +20,27 @@ if [ -z ${QT_DIR} ]; then
     echo "Example: $0 /d/dev/Qt/5.5/gcc_64 debug"
     exit 1
 fi
+if [ ! -f main.cpp ]; then
+  echo "You seem to be in wrong directory. script MUST be run from the project directory."
+  exit 1
+fi
+
+
+
 if [ -z "${BUILD_TYPE}" ]; then
     BUILD_TYPE=debug
 fi
 BUILD_DIR=qmake-build-${BUILD_TYPE}
+if [ ! -d "${BUILD_DIR}" ]; then
+  mkdir ${BUILD_DIR}
+fi
+
+
+# maybe later add with "clean" parameter
+#if [ -d "${BUILD_DIR}" ]; then
+#  rm -rf ${BUILD_DIR}
+#fi
+
 VERSION="$(cat version.txt)-$(git rev-parse --short HEAD)"
 # for simplicity now create in both dirs
 echo $VERSION >${BUILD_DIR}/build-version.txt
@@ -35,6 +52,11 @@ echo "${BUILD_DIR}">_build_dir_.txt
 echo Building version: ${VERSION}
 
 APPDIR=appdir
+if [ -d "${APPDIR}" ]; then
+  rm -rf ${APPDIR}
+fi
+
+
 QMAKE_BINARY=${QT_DIR}/bin/qmake
 
 if [ ! -f "${QMAKE_BINARY}" ]; then
@@ -42,18 +64,6 @@ if [ ! -f "${QMAKE_BINARY}" ]; then
     exit 1
 fi
 
-# maybe later add with "clean" parameter
-#if [ -d "${BUILD_DIR}" ]; then
-#  rm -rf ${BUILD_DIR}
-#fi
-
-if [ -d "${APPDIR}" ]; then
-  rm -rf ${APPDIR}
-fi
-
-if [ ! -d "${BUILD_DIR}" ]; then
-  mkdir ${BUILD_DIR}
-fi
 
 ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr || error_exit "qmake"
 make || error_exit "make"
