@@ -253,8 +253,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     QLOG_DEBUG_FILE("fmt-html-input", QString(content.constData()));
 
     resources.clear();
-    QByteArray b;
-    qint32 index;
+
 
     // Remove invalid stuff
     content.replace("</input>", "");
@@ -262,33 +261,46 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 
     // Strip off HTML header & remove the background & default font color
     // if they match the theme default.
-    index = content.indexOf("<body");
-    QString header = content.mid(0, index);
-    QByteArray c1 = content.mid(index);
-    index = header.indexOf(">");
-    header = header.mid(0, index);
-    QByteArray c2 = content.mid(content.indexOf(">", index));
-    QString newHeader = header;
-    QString bgColor = "background-color: " + global.getEditorBackgroundColor() + ";";
-    QString fgColor = "color: " + global.getEditorFontColor() + ";";
-    newHeader = newHeader.replace(bgColor, "");
-    newHeader = newHeader.replace(fgColor, "");
-    content = c1;
-    content.append(newHeader).append(c2);
+    // mid() Returns a string that contains n characters of this string, starting at the specified position index.
+    {
+        qint32 index = content.indexOf("<body");
+        QString header = content.mid(0, index);
+        QByteArray c1 = content.mid(index);
+        index = header.indexOf(">");
+        header = header.mid(0, index);
+        QByteArray c2 = content.mid(content.indexOf(">", index));
+        QString newHeader = header;
+        QString bgColor = "background-color: " + global.getEditorBackgroundColor() + ";";
+        QString fgColor = "color: " + global.getEditorFontColor() + ";";
+        newHeader = newHeader.replace(bgColor, "");
+        newHeader = newHeader.replace(fgColor, "");
+        content = c1;
+        content.append(newHeader).append(c2);
+    }
 
-    // Start transforming the header
-    index = content.indexOf("<body");
-    content.remove(0, index);
-    index = content.indexOf("</body");
-    content.truncate(index);
-    b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>\n");
-    b.append("<html><head><title></title></head>");
-    //b.append("<body style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
-    b.append(content);
-    b.append("</body></html>");
-    content.clear();
-    content = b;
+    {
+        // remove all before body
+        qint32 index = content.indexOf("<body");
+        content.remove(0, index);
+        // remove all after body
+        index = content.indexOf("</body");
+        content.truncate(index);
+        content.append("</body>");
+    }
+
+    QLOG_DEBUG_FILE("fmt-point1", QString(content.constData()));
+
+    {
+        QByteArray b;
+        b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>\n");
+        b.append("<html><head><title></title></head>");
+        //b.append("<body style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
+        b.append(content);
+        b.append("</html>");
+        content.clear();
+        content = b;
+    }
 
     // Remove <o:p> tags in case pasting from MicroSoft products.
     content = content.replace("<o:p>", "");
@@ -314,13 +326,15 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.replace("<form>", "");
     content.replace("</form>", "");
 
-    index = content.indexOf("<body");
-    content.remove(0, index);
-    content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
-    content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
-    content.prepend("<html>");
-    content.append("</html>");
-    content = fixEncryptionTags(content);
+    {
+        qint32 index = content.indexOf("<body");
+        content.remove(0, index);
+        content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
+        content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
+        content.prepend("<html>");
+        content.append("</html>");
+        content = fixEncryptionTags(content);
+    }
 
     if (global.guiAvailable) {
         QWebPage page;
@@ -361,19 +375,25 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     }
 
     // Strip off HTML header
-    index = content.indexOf("<body");
-    //index = content.indexOf(">", index)+1;
-    content.remove(0, index);
-    index = content.indexOf("</body");
-    content.truncate(index);
-    b.clear();
-    b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>");
-    //b.append("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
-    b.append(content);
-    b.append("</en-note>");
-    content.clear();
-    content = b.replace("<body", "<en-note");
+    {
+        qint32 index = content.indexOf("<body");
+        //index = content.indexOf(">", index)+1;
+        content.remove(0, index);
+        index = content.indexOf("</body");
+        content.truncate(index);
+    }
+
+    {
+        QByteArray b;
+        b.clear();
+        b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>");
+        //b.append("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
+        b.append(content);
+        b.append("</en-note>");
+        content.clear();
+        content = b.replace("<body", "<en-note");
+    }
 
     postXmlFix();
     return content;
@@ -439,12 +459,12 @@ void EnmlFormatter::fixObjectNode(QWebElement &e) {
 }
 
 
-void EnmlFormatter::fixEnCryptNode(QWebElement &e) {
-    QString crypt = e.attribute("value");
-    e.removeAttribute("value");
-    QDomText cryptValue = doc.createTextNode(crypt);
-    //e.appendChild(cryptValue);
-}
+// void EnmlFormatter::fixEnCryptNode(QWebElement &e) {
+//     QString crypt = e.attribute("value");
+//     e.removeAttribute("value");
+//     QDomText cryptValue = doc.createTextNode(crypt);
+//     //e.appendChild(cryptValue);
+// }
 
 
 void EnmlFormatter::fixImgNode(QWebElement &e) {
