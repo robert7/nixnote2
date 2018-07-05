@@ -150,6 +150,12 @@ int main(int argc, char *argv[])
     global.application = a;
 
 
+    global.fileManager.setup(
+        startupConfig.getConfigDir(),
+        startupConfig.getUserDataDir(),
+        startupConfig.getProgramDataDir(),
+        startupConfig.getAccountId());
+
     int accountId = startupConfig.getAccountId();
     global.initializeSettings(accountId);
     global.initializeSharedMemoryMapper(accountId);

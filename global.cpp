@@ -127,14 +127,10 @@ Global::Global() {
 // Initial global settings setup
 void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     QLOG_ASSERT(globalSettings != nullptr);
+    QLOG_ASSERT(!fileManager.getProgramDataDir().isEmpty());
+    
 
     this->guiAvailable = guiAvailable;
-
-    fileManager.setup(
-        startupConfig.getConfigDir(),
-        startupConfig.getUserDataDir(),
-        startupConfig.getProgramDataDir(),
-        startupConfig.getAccountId());
 
     shortcutKeys = new ShortcutKeys();
 
@@ -272,12 +268,15 @@ void Global::initializeSharedMemoryMapper(int accountId) {
 void Global::initializeSettings(int accountId) {
     QLOG_ASSERT(globalSettings == nullptr);
     QLOG_ASSERT(settings == nullptr);
+    QLOG_ASSERT(!fileManager.getProgramDataDir().isEmpty());
+    const QString &configDir = fileManager.getConfigDir();
+    QLOG_ASSERT(!configDir.isEmpty());
 
-    QString settingsFile = fileManager.getConfigDir() + "nixnote.conf";
+    QString settingsFile = configDir + "nixnote.conf";
     QLOG_DEBUG() << "Opening INI file " << settingsFile;
     globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
 
-    settingsFile = fileManager.getConfigDir() + "nixnote-" + QString::number(accountId) + ".conf";
+    settingsFile = configDir + "nixnote-" + QString::number(accountId) + ".conf";
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 }
 
