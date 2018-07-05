@@ -153,12 +153,6 @@ int main(int argc, char *argv[])
         startupConfig.getAccountId());
     QString versionStr = global.fileManager.getProgramVersion();
 
-    QLOG_INFO().noquote() << APP_DISPLAY_NAME " " << versionStr << "- build at " << __DATE__ << " at " << __TIME__
-                << ", with Qt" << QT_VERSION_STR << " running on " << qVersion();
-    if (logger.loggingLevel() > 1) {
-        QLOG_INFO() << "To get more detailed startup logging use --logLevel=1";
-    }
-
     int accountId = startupConfig.getAccountId();
     global.initializeSettings(accountId);
     global.initializeSharedMemoryMapper(accountId);
@@ -207,6 +201,13 @@ int main(int argc, char *argv[])
                  QsLogging::DestinationFactory::MakeFileDestination(logPath) ) ;
     logger.addDestination(fileDestination.get());
 
+    // from now on logging goes also to log file (up to here only to terminal)
+
+    QLOG_INFO().noquote() << APP_DISPLAY_NAME " " << versionStr << "- build at " << __DATE__ << " at " << __TIME__
+                          << ", with Qt" << QT_VERSION_STR << " running on " << qVersion();
+    if (logger.loggingLevel() > 1) {
+        QLOG_INFO() << "To get more detailed startup logging use --logLevel=1";
+    }
 
     // Create a shared memory region.  We use this to communicate
     // with any other instance that may be running.  If another instance
@@ -255,6 +256,8 @@ int main(int argc, char *argv[])
     if (memInitNeeded) {
         global.sharedMemory->clearMemory();
     }
+
+    global.fileManager.setupFileAttachmentLogging();
 
 #ifndef _WIN32
     if (global.getInterceptSigHup())
