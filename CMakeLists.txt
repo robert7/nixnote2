@@ -42,4 +42,4 @@ add_executable(nixnote2
         ${nixnote2_src}
         ${nixnote2_hdr_moc}
         )
-target_link_libraries (nixnote2 Qt5::Widgets Qt5::Sql)
+target_link_libraries (nixnote2 Qt5::Widgets Qt5::Sql Qt5::Gui Qt5::Network)
