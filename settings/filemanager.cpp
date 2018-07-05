@@ -209,19 +209,21 @@ QString FileManager::slashTerminatePath(QString path) {
 /*************************************************/
 void FileManager::deleteTopLevelFiles(QDir dir, bool exitOnFail) {
     QLOG_DEBUG() << "About to delete all files in directory: " << dir.absolutePath();
-    // dir.setFilter(QDir::Files);
-    // QStringList list = dir.entryList();
-    // for (qint32 i = 0; i < list.size(); i++) {
-    //     const QString &fileName = list.at(i);
-    //     const QString &fileNameWithPath = dir.filePath(fileName);
-    //
-    //     QFile f(fileNameWithPath);
-    //     if (!f.remove() && exitOnFail) {
-    //         QLOG_FATAL() << "Error deleting file '" << fileNameWithPath
-    //                      << "'. Aborting program";
-    //         exit(16);
-    //     }
-    // }
+    dir.setFilter(QDir::Files);
+    QStringList list = dir.entryList();
+    for (qint32 i = 0; i < list.size(); i++) {
+        const QString &fileName = list.at(i);
+        const QString &fileNameWithPath = dir.filePath(fileName);
+
+        QLOG_DEBUG() << "About to delete file: " << fileNameWithPath;
+        QFile f(fileNameWithPath);
+
+        // if (!f.remove() && exitOnFail) {
+        //     QLOG_FATAL() << "Error deleting file '" << fileNameWithPath
+        //                  << "'. Aborting program";
+        //     exit(16);
+        // }
+    }
 }
 
 
@@ -396,7 +398,10 @@ QString FileManager::getProgramVersion() {
     return readFile(versionFile).replace("\n", "");
 }
 
-void FileManager::setupLoggingToFile() {
+/**
+ * Setup logging with QLOG_DEBUG_FILE.
+ */
+void FileManager::setupFileAttachmentLogging() {
     QsLogging::Logger &logger = QsLogging::Logger::instance();
 
     // 4 configure file logging (until now logging was only to terminal)
