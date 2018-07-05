@@ -44,9 +44,8 @@ EnmlFormatter::EnmlFormatter(QString html) :
     QObject(nullptr) {
 
     this->content.clear();
-    this->content.append(content);
+    this->content.append(html);
 
-    //doc = new QDomDocument();
     formattingError = false;
 
     coreattrs.append("style");
@@ -176,18 +175,12 @@ EnmlFormatter::EnmlFormatter(QString html) :
 
     ul.append("type");
     ul.append("compact");
-
-
 }
 
 /* Return the formatted content */
 QString EnmlFormatter::getEnml() {
     return this->content;
 }
-
-
-
-
 
 
 void EnmlFormatter::tidyHtml(QByteArray &content) {
@@ -257,6 +250,8 @@ void EnmlFormatter::tidyHtml(QByteArray &content) {
   not complain about */
 QByteArray EnmlFormatter::rebuildNoteEnml() {
     QLOG_INFO() << "rebuildNoteEnml";
+    QLOG_DEBUG_FILE("fmt-html-input", QString(content.constData()));
+
     resources.clear();
     QByteArray b;
     qint32 index;
@@ -304,7 +299,9 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content = content.replace("<ac:rich-text-body", "<div");
     content = content.replace("</ac:rich-text-body", "</div");
 
+    QLOG_DEBUG_FILE("fmt-tidy-input", QString(content.constData()));
     //tidyHtml(content);
+    QLOG_DEBUG_FILE("fmt-tidy-output", QString(content.constData()));
 
 
     if (content == "") {
@@ -338,26 +335,26 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         for (int i = 0; i < tags.size(); i++) {
             QString tag = tags[i];
             QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
-            foreach(QWebElement
-            element, anchors) {
-                //QLOG_DEBUG() << "Processing tag name: " << element.tagName();
-                if (element.tagName().toLower() == "input") {
-                    processTodo(element);
-                } else if (element.tagName().toLower() == "a") {
-                    fixLinkNode(element);
-                } else if (element.tagName().toLower() == "object") {
-                    fixObjectNode(element);
-                } else if (element.tagName().toLower() == "img") {
-                    fixImgNode(element);
-                } else if (element.tagName().toLower() == "span") {
-                    fixSpanNode(element);
-                } else if (element.tagName().toLower() == "div") {
-                    fixDivNode(element);
-                } else if (element.tagName().toLower() == "pre") {
-                    fixPreNode(element);
-                } else if (!isElementValid(element))
-                    element.removeFromDocument();
-            }
+                foreach(QWebElement
+                            element, anchors) {
+                    //QLOG_DEBUG() << "Processing tag name: " << element.tagName();
+                    if (element.tagName().toLower() == "input") {
+                        processTodo(element);
+                    } else if (element.tagName().toLower() == "a") {
+                        fixLinkNode(element);
+                    } else if (element.tagName().toLower() == "object") {
+                        fixObjectNode(element);
+                    } else if (element.tagName().toLower() == "img") {
+                        fixImgNode(element);
+                    } else if (element.tagName().toLower() == "span") {
+                        fixSpanNode(element);
+                    } else if (element.tagName().toLower() == "div") {
+                        fixDivNode(element);
+                    } else if (element.tagName().toLower() == "pre") {
+                        fixPreNode(element);
+                    } else if (!isElementValid(element))
+                        element.removeFromDocument();
+                }
         }
         content.clear();
         content.append(element.toOuterXml());
@@ -906,7 +903,7 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
         endPos = newContent.indexOf("</table>", i + 1) + 8;
 
         // Encrypt the text
-        QPair <QString, QString> pair = global.passwordSafe.value(slot);
+        QPair<QString, QString> pair = global.passwordSafe.value(slot);
         QString password = pair.first;
         QString hint = pair.second;
         EnCrypt crypt;
