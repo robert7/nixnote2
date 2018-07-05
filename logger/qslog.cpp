@@ -110,9 +110,9 @@ namespace QsLogging {
     void Logger::Helper::writeToLog() {
         const char *const levelName = LevelToText(level);
         Logger &logger = Logger::instance();
-        QString completeMessage(QString(levelName).leftJustified(5));
+        QString completeMessage(QString(levelName).leftJustified(5).append(" "));
         if (logger.isDisplayTimestamp()) {
-            completeMessage.append(QDateTime::currentDateTime().toString(fmtDateTime));
+            completeMessage.append(QDateTime::currentDateTime().toString(fmtDateTime)).append(" ");
         }
         completeMessage.append(buffer);
 

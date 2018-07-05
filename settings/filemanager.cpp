@@ -218,11 +218,11 @@ void FileManager::deleteTopLevelFiles(QDir dir, bool exitOnFail) {
         QLOG_DEBUG() << "About to delete file: " << fileNameWithPath;
         QFile f(fileNameWithPath);
 
-        // if (!f.remove() && exitOnFail) {
-        //     QLOG_FATAL() << "Error deleting file '" << fileNameWithPath
-        //                  << "'. Aborting program";
-        //     exit(16);
-        // }
+        if (!f.remove() && exitOnFail) {
+            QLOG_FATAL() << "Error deleting file '" << fileNameWithPath
+                         << "'. Aborting program";
+            exit(16);
+        }
     }
 }
 
