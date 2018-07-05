@@ -130,6 +130,12 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 
     this->guiAvailable = guiAvailable;
 
+    fileManager.setup(
+        startupConfig.getConfigDir(),
+        startupConfig.getUserDataDir(),
+        startupConfig.getProgramDataDir(),
+        startupConfig.getAccountId());
+
     shortcutKeys = new ShortcutKeys();
 
     int accountId = startupConfig.getAccountId();
@@ -161,14 +167,17 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     server = accountsManager->getServer();
 
     // Cleanup any temporary files from the last time
+
     QDir myDir(fileManager.getTmpDirPath());
-    QStringList list = myDir.entryList();
-    for (int i = 0; i < list.size(); i++) {
-        if (list[i] != "." && list[i] != "..") {
-            QString file = fileManager.getTmpDirPath() + list[i];
-            myDir.remove(file);
-        }
-    }
+    // QStringList list = myDir.entryList();
+    // for (int i = 0; i < list.size(); i++) {
+    //     if (list[i] != "." && list[i] != "..") {
+    //         QString file = fileManager.getTmpDirPath() + list[i];
+    //         myDir.remove(file);
+    //     }
+    // }
+    fileManager.deleteTopLevelFiles(fileManager.getTmpDirPath(), true);
+
 
     settings->beginGroup("Debugging");
     disableUploads = settings->value("disableUploads", false).toBool();
@@ -968,36 +977,6 @@ QString Global::getDateTimeEditorInactiveStyle() {
 QString Global::getEditorCss() {
     return this->getThemeCss("editorCss");
 }
-
-
-//
-//obsolete - remove
-//QString Global::getGenricStyle(QString key) {
-//    QFile file(getGenricCss(key));
-//    if (file.exists()) {
-//        if (file.open(QFile::ReadOnly | QFile::Text)) {
-//            QTextStream in(&file);
-//            return in.readAll();
-//        }
-//    }
-//
-//    return "";
-//}
-
-//obsolete - remove
-//QString Global::getGenricCss(QString key) {
-//    QString css = fileManager.getQssDirPath("") + key + ".css";
-//    if (colorList.contains(key)) {
-//        css = fileManager.getQssDirPathUser("") + colorList[key].trimmed();
-//        if (QFile(css).exists())
-//            return css;
-//        css = fileManager.getQssDirPath("") + colorList[key].trimmed();
-//        if (QFile(css).exists())
-//            return css;
-//    }
-//    return css;
-//}
-
 
 // Get a QIcon in an icon theme
 QIcon Global::getIconResource(QString key) {

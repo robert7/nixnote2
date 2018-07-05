@@ -78,7 +78,6 @@ private:
     QString slashTerminatePath(QString path);
     void checkExistingReadableDir(QDir dir);
     void checkExistingWriteableDir(QDir dir);
-    void deleteTopLevelFiles(QDir dir, bool exitOnFail);
     void createDirOrCheckWriteable(QDir dir);
 
 public:
@@ -119,10 +118,10 @@ public:
     QString getTmpDirPath(QString relativePath);
     QString getTmpDirPathSpecialChar(QString relativePath);
     QString getTranslateFilePath(QString relativePath);
-    void purgeResDirectory(bool exitOnFail);
     QString readFile(QString file);
     QString getProgramVersion();
     void setupLoggingToFile();
+    void deleteTopLevelFiles(QDir dir, bool exitOnFail);
 };
 
 #endif // FILEMANAGER_H

@@ -377,10 +377,6 @@ QString FileManager::getTranslateFilePath(QString relativePath) {
     return translateDirPath + toPlatformPathSeparator(relativePath);
 }
 
-void FileManager::purgeResDirectory(bool exitOnFail) {
-    this->deleteTopLevelFiles(tmpDir.dirName(), exitOnFail);
-}
-
 /**
  * Read contents of the file in string
  */
