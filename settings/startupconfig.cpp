@@ -313,6 +313,11 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             QLOG_INFO() << "Changed logLevel via command line option to " << level;
             setDebugLevel(level);
         }
+        if (parm.startsWith("--noLogTimestamps", Qt::CaseSensitive)) {
+            QLOG_INFO() << "Log timestamps turned off";
+            QsLogging::Logger &logger = QsLogging::Logger::instance();
+            logger.setDisplayTimestamp(false);
+        }
         if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1);
             accountId = parm.toInt();

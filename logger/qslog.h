@@ -99,6 +99,10 @@ namespace QsLogging {
         // used with writeToFile
         int filenameCounter;
         QString fileLoggingPath;
+        bool displayTimestamp;
+    public:
+        bool isDisplayTimestamp() const;
+        void setDisplayTimestamp(bool displayTimestamp);
     };
 
     void assertion_failed(const QString &message);

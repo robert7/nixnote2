@@ -86,6 +86,7 @@ namespace QsLogging {
     Logger::Logger() :
         d(new LoggerImpl) {
         this->filenameCounter = 0;
+        this->displayTimestamp = true;
     }
 
     Logger::~Logger() {
@@ -108,13 +109,13 @@ namespace QsLogging {
     // creates the complete log message and passes it to the logger
     void Logger::Helper::writeToLog() {
         const char *const levelName = LevelToText(level);
-        const QString completeMessage(QString("%1 %2 %3")
-                                          .arg(levelName, 5)
-                                          .arg(QDateTime::currentDateTime().toString(fmtDateTime))
-                                          .arg(buffer)
-        );
-
         Logger &logger = Logger::instance();
+        QString completeMessage(QString(levelName).leftJustified(5));
+        if (logger.isDisplayTimestamp()) {
+            completeMessage.append(QDateTime::currentDateTime().toString(fmtDateTime));
+        }
+        completeMessage.append(buffer);
+
         QMutexLocker lock(&logger.d->logMutex);
         logger.write(completeMessage);
     }
@@ -178,6 +179,18 @@ namespace QsLogging {
             stream << message;
         }
         QLOGINFO() << "Writing attachment data to " << filename;
+    }
+
+    /**
+     * Can be used to turn of timestamp display.
+     * May be useful while debugging (e.g. in IDE).
+     */
+    void Logger::setDisplayTimestamp(bool displayTimestamp) {
+        Logger::displayTimestamp = displayTimestamp;
+    }
+
+    bool Logger::isDisplayTimestamp() const {
+        return displayTimestamp;
     }
 
 } // end namespace
