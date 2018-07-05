@@ -33,7 +33,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // Windows Check
 #ifndef _WIN32
+
 #include <execinfo.h>
+
 #endif
 
 #include <signal.h>
@@ -64,56 +66,51 @@ extern Global global;
 #ifndef _WIN32
 
 void fault_handler(int sig) {
-  void *array[30];
-  size_t size;
+    void *array[30];
+    size_t size;
 
-  // get void*'s for all entries on the stack
-  size = backtrace(array, 30);
+    // get void*'s for all entries on the stack
+    size = backtrace(array, 30);
 
-  // print out all the frames to stderr
-  fprintf(stderr, "Error: signal %d:\n", sig);
-  backtrace_symbols_fd(array, size, 2);  
-  if (w!=NULL) {
-      fprintf(stderr, "Forcing save\n");
-      w->saveState();
-  }
-  exit(1);
+    // print out all the frames to stderr
+    fprintf(stderr, "Error: signal %d:\n", sig);
+    backtrace_symbols_fd(array, size, 2);
+    if (w != NULL) {
+        fprintf(stderr, "Forcing save\n");
+        w->saveState();
+    }
+    exit(1);
 }
 
 
-
 void sighup_handler(int sig) {
-  // print out all the frames to stderr
-  fprintf(stderr, "Error: signal %d:\n", sig);
-  if (w!=NULL) {
-      fprintf(stderr, "Forcing save\n");
-      w->saveState();
-  }
+    // print out all the frames to stderr
+    fprintf(stderr, "Error: signal %d:\n", sig);
+    if (w != NULL) {
+        fprintf(stderr, "Forcing save\n");
+        w->saveState();
+    }
 }
 
 
 #endif // End Windows check
 
 
-
 //using namespace cv;
 //*********************************************************************
 //* Main entry point to the program.
 //*********************************************************************
-int main(int argc, char *argv[])
-{
-    w = NULL;
+int main(int argc, char *argv[]) {
+    w = nullptr;
     bool guiAvailable = true;
 
-    // Setup the QLOG functions for debugging & messages
+    // at startup logging to terminal only (as we don't yet know where to put log file)
     // we need to do it at very beginning, else we lose the startup messages
-    QsLogging::Logger& logger = QsLogging::Logger::instance();
+    QsLogging::Logger &logger = QsLogging::Logger::instance();
     // at very beginning we starting with info level to get basic startup info
     // log level is later adjusted by settings
     logger.setLoggingLevel(QsLogging::InfoLevel);
-
-    QsLogging::DestinationPtr debugDestination(
-        QsLogging::DestinationFactory::MakeDebugOutputDestination() );
+    QsLogging::DestinationPtr debugDestination(QsLogging::DestinationFactory::MakeDebugOutputDestination());
     logger.addDestination(debugDestination.get());
 
 // Windows Check
@@ -121,22 +118,17 @@ int main(int argc, char *argv[])
     signal(SIGSEGV, fault_handler);   // install our handler
 #endif
 
+    // #1 parse command line options
     // Begin setting up the environment
     StartupConfig startupConfig;
     global.argc = argc;
     global.argv = argv;
-
-    int retval = startupConfig.init(argc,argv, guiAvailable);
+    int retval = startupConfig.init(argc, argv, guiAvailable);
     if (retval != 0) {
         return retval;
     }
 
-    // Show Qt version.  This is useful for debugging
-    // initial log level is INFO - so this will be SHOWN per default
-    QLOG_INFO() << APP_DISPLAY_NAME " - build (" << __DATE__ << " at " << __TIME__
-                << ", with Qt" << QT_VERSION_STR << "running on" << qVersion() << ")";
-    QLOG_INFO() << "To get more detailed startup logging use --logLevel=1";
-
+    // #2 create Qt app
     // Setup the application. If we have a GUI, then we use Application.
     // If we don't, then we just use a derivative of QCoreApplication
     QCoreApplication *a = nullptr;
@@ -149,12 +141,36 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName(APP_NAME);
     global.application = a;
 
-    global.setup(startupConfig, guiAvailable);
+    // #3 setup file paths
+    // setup directory paths as soon as possible
+    global.fileManager.setup(
+        startupConfig.getConfigDir(),
+        startupConfig.getUserDataDir(),
+        startupConfig.getProgramDataDir(),
+        startupConfig.getAccountId());
+
+    // #4 configure file logging (until now logging was only to terminal)
+    const QString loggingPath = global.fileManager.getLogsDirPath("");
+    QString logPath = loggingPath + "messages.log";
+    QsLogging::DestinationPtr fileDestination(QsLogging::DestinationFactory::MakeFileDestination(logPath));
+    logger.addDestination(fileDestination.get());
+    logger.setFileLoggingPath(loggingPath);
+    logger.writeToFile("test","tralala11111");
+    logger.writeToFile("aa","1tralala11111");
+    logger.writeToFile("bb","2tralala11111");
+
+    // #5 show version info
+    // initial log level is INFO - so this will be SHOWN per default
     QString versionStr = global.fileManager.getProgramVersion();
-    QLOG_INFO() << "Version: " << versionStr;
+    QLOG_INFO() << APP_DISPLAY_NAME << versionStr
+                << " - build at (" << __DATE__ << " at " << __TIME__
+                << ", with Qt" << QT_VERSION_STR << "running on" << qVersion() << ")";
+    if (logger.loggingLevel() > 1) {
+        QLOG_INFO() << "To get more detailed logging, start program with parameter --logLevel=1";
+    }
 
-
-    //    global.syncAndExit=startupConfig.syncAndExit;
+    // #6 global setup
+    global.setup(startupConfig, guiAvailable);
 
     // We were passed a SQL command
     if (startupConfig.sqlExec) {
@@ -169,7 +185,7 @@ int main(int argc, char *argv[])
         }
         while (query.next()) {
             QString result = "";
-            for (int i=0; i<query.record().count(); i++) {
+            for (int i = 0; i < query.record().count(); i++) {
                 result = result + query.value(i).toString() + " | ";
             }
             QLOG_INFO() << result;
@@ -182,33 +198,29 @@ int main(int argc, char *argv[])
 
     // If we want something other than the GUI, try let the CmdLineTool deal with it.
     if (!startupConfig.gui()) {
-        global.purgeTemporaryFilesOnShutdown=startupConfig.purgeTemporaryFiles;
+        global.purgeTemporaryFilesOnShutdown = startupConfig.purgeTemporaryFiles;
         CmdLineTool cmdline;
-        startupConfig.purgeTemporaryFiles=false;
+        startupConfig.purgeTemporaryFiles = false;
         int retval1 = cmdline.run(startupConfig);
         if (global.sharedMemory->isAttached())
             global.sharedMemory->detach();
         QLOG_INFO() << "Exit: retcode=" << retval1;
         delete a;
-
         exit(retval1);
     }
 
-    QString logPath = global.fileManager.getLogsDirPath("")+"messages.log";
-    QsLogging::DestinationPtr fileDestination(
-                 QsLogging::DestinationFactory::MakeFileDestination(logPath) ) ;
-    logger.addDestination(fileDestination.get());
+
 
 
     // Create a shared memory region.  We use this to communicate
     // with any other instance that may be running.  If another instance
     // is found we need to either show that one or kill this one.
     bool memInitNeeded = true;
-    if( !global.sharedMemory->allocate(512*1024) ) {
+    if (!global.sharedMemory->allocate(512 * 1024)) {
         // Attach to it and detach.  This is done in case it crashed.
         global.sharedMemory->attach();
         global.sharedMemory->detach();
-        if( !global.sharedMemory->allocate(512*1024) ) {
+        if (!global.sharedMemory->allocate(512 * 1024)) {
             QLOG_DEBUG() << "segment created";
             if (startupConfig.startupNewNote) {
                 global.sharedMemory->attach();
@@ -219,7 +231,7 @@ int main(int argc, char *argv[])
             }
             if (startupConfig.startupNoteLid > 0) {
                 global.sharedMemory->attach();
-                global.sharedMemory->write("OPEN_NOTE"+QString::number(startupConfig.startupNoteLid) + " ");
+                global.sharedMemory->write("OPEN_NOTE" + QString::number(startupConfig.startupNoteLid) + " ");
                 global.sharedMemory->detach();
                 delete a;
                 exit(0);  // Exit this one
@@ -258,7 +270,7 @@ int main(int argc, char *argv[])
     w->setAttribute(Qt::WA_QuitOnClose);
 
     // this is bit dirty, maybe improve later
-    QObject::connect(&global, SIGNAL(setMessageSignal(QString, int)), w, SLOT(setMessage(QString,int)));
+    QObject::connect(&global, SIGNAL(setMessageSignal(QString, int)), w, SLOT(setMessage(QString, int)));
 
     bool show = true;
     if (global.minimizeToTray() && global.startMinimized)

@@ -29,6 +29,10 @@
 #include <QList>
 #include <QDateTime>
 #include <QtGlobal>
+#include <QFile>
+#include <QDir>
+
+
 #include <cassert>
 #include <cstdlib>
 #include <stdexcept>
@@ -81,6 +85,7 @@ namespace QsLogging {
 
     Logger::Logger() :
         d(new LoggerImpl) {
+        this->filenameCounter = 0;
     }
 
     Logger::~Logger() {
@@ -137,5 +142,41 @@ namespace QsLogging {
             (*it)->write(message);
         }
     }
+
+    /**
+     * Write a string to log file - one file per call (to be used for logging of long strings e.g. note html)
+     *
+     * @param logid - some short string for easy identification
+     *                we will construct filename with seq.number and use this as part of filename
+     * @param message - obviously the content to write
+     */
+    void Logger::writeToFile(const QString &logid, const QString &message) {
+        QDebug &s = QsLogging::Logger::Helper(QsLogging::InfoLevel).stream();
+        if (fileLoggingPath.isEmpty()) {
+            s << "fileLoggingPath not set writeToFile not disabled";
+        }
+
+        QString filename(fileLoggingPath);
+        if (!filename.endsWith(QDir::separator())) {
+            filename.append( QDir::separator());
+        }
+        // not multithread safe, but should not be needed
+        filenameCounter++;
+        // format with 4 leading zeros; 10 is radix
+        QString number = QString("%1").arg(filenameCounter, 4, 10, QChar('0'));
+        filename.append( number);
+        if (!logid.isEmpty()) {
+            filename.append("-").append(logid);
+        }
+        filename.append(".log");
+
+        QFile file(filename);
+
+        if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+            QTextStream stream(&file);
+            stream << message;
+        }
+    }
+
 
 } // end namespace

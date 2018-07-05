@@ -59,6 +59,9 @@ namespace QsLogging {
         //! The default level is INFO
         Level loggingLevel() const;
 
+        void writeToFile(const QString &logid, const QString &message);
+        void setFileLoggingPath(const QString &fileLoggingPath) { this->fileLoggingPath=fileLoggingPath; }
+
         //! The helper forwards the streaming to QDebug and builds the final
         //! log message.
         class Helper {
@@ -91,6 +94,10 @@ namespace QsLogging {
         void write(const QString &message);
 
         LoggerImpl *d;
+
+        // used with writeToFile
+        int filenameCounter;
+        QString fileLoggingPath;
     };
 
     void assertion_failed(const QString &message);

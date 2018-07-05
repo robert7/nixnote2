@@ -127,11 +127,6 @@ Global::Global() {
 // Initial global settings setup
 void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     this->guiAvailable = guiAvailable;
-    fileManager.setup(
-        startupConfig.getConfigDir(),
-        startupConfig.getUserDataDir(),
-        startupConfig.getProgramDataDir(),
-        startupConfig.getAccountId());
 
     shortcutKeys = new ShortcutKeys();
     QString settingsFile = fileManager.getConfigDir() + "nixnote.conf";
