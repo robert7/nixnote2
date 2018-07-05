@@ -28,14 +28,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QWebFrame>
 #include <QIcon>
 #include <QMessageBox>
-#include <iostream>
+
 #include <tidy.h>
 #include <tidybuffio.h>
+
+
+#include <iostream>
 
 using namespace std;
 
 extern Global global;
-
 
 /* Constructor. */
 EnmlFormatter::EnmlFormatter(QObject *parent) :
@@ -170,6 +172,8 @@ EnmlFormatter::EnmlFormatter(QObject *parent) :
 
     ul.append("type");
     ul.append("compact");
+
+
 }
 
 /* Return the formatted content */
@@ -183,7 +187,9 @@ void EnmlFormatter::setHtml(QString h) {
     content.append(h);
 }
 
-QByteArray EnmlFormatter::tidyHtml(QByteArray content) {
+
+
+void EnmlFormatter::tidyHtml(QByteArray &content) {
     // addapted from example at http://www.html-tidy.org/developer/
 
     TidyBuffer output = {nullptr};
@@ -244,16 +250,14 @@ QByteArray EnmlFormatter::tidyHtml(QByteArray content) {
     tidyBufFree(&output);
     tidyBufFree(&errbuf);
     tidyRelease(tdoc);
-
-    return content;
 }
-
 
 /* Take the ENML note and transform it into HTML that WebKit will
   not complain about */
 QByteArray EnmlFormatter::rebuildNoteEnml() {
     QLOG_INFO() << "rebuildNoteEnml";
     resources.clear();
+    QByteArray b;
     qint32 index;
 
     // Remove invalid stuff
@@ -276,23 +280,11 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content = c1;
     content.append(newHeader).append(c2);
 
-    QLOG_INFO() << "********BEFORE tidy: " << content;
-
-    content = tidyHtml(content);
-    if (content == "") {
-        QLOG_ERROR() << "Got no output from tidy - cleanup failed";
-        formattingError = true;
-        return "";
-    }
-    QLOG_INFO() << "********AFTER tidy: " << content;
-
-
     // Start transforming the header
     index = content.indexOf("<body");
     content.remove(0, index);
     index = content.indexOf("</body");
     content.truncate(index);
-    QByteArray b;
     b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>\n");
     b.append("<html><head><title></title></head>");
@@ -302,13 +294,27 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.clear();
     content = b;
 
+    // Remove <o:p> tags in case pasting from MicroSoft products.
+    content = content.replace("<o:p>", "");
+    content = content.replace("</o:p>", "");
+    content = content.replace("<o:p/>", "");
+
+    // Remove auto-complete tags
+    content = content.replace("<ac:rich-text-body", "<div");
+    content = content.replace("</ac:rich-text-body", "</div");
+
+    //tidyHtml(content);
+
+
+    if (content == "") {
+        QLOG_ERROR() << "Got no output from tidy - cleanup failed";
+        formattingError = true;
+        return "";
+    }
+
     // Tidy puts this in place, but we don't really need it.
     content.replace("<form>", "");
     content.replace("</form>", "");
-
-    QLOG_INFO() << "********AFTER FIX #1 : " << content;
-
-
 
     index = content.indexOf("<body");
     content.remove(0, index);
@@ -317,7 +323,6 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.prepend("<html>");
     content.append("</html>");
     content = fixEncryptionTags(content);
-    QLOG_INFO() << "********AFTER FIX #2 : " << content;
 
     if (global.guiAvailable) {
         QWebPage page;
@@ -332,31 +337,30 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         for (int i = 0; i < tags.size(); i++) {
             QString tag = tags[i];
             QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
-                foreach(QWebElement
-                            element, anchors) {
-                    //QLOG_DEBUG() << "Processing tag name: " << element.tagName();
-                    if (element.tagName().toLower() == "input") {
-                        processTodo(element);
-                    } else if (element.tagName().toLower() == "a") {
-                        fixLinkNode(element);
-                    } else if (element.tagName().toLower() == "object") {
-                        fixObjectNode(element);
-                    } else if (element.tagName().toLower() == "img") {
-                        fixImgNode(element);
-                    } else if (element.tagName().toLower() == "span") {
-                        fixSpanNode(element);
-                    } else if (element.tagName().toLower() == "div") {
-                        fixDivNode(element);
-                    } else if (element.tagName().toLower() == "pre") {
-                        fixPreNode(element);
-                    } else if (!isElementValid(element))
-                        element.removeFromDocument();
-                }
+            foreach(QWebElement
+            element, anchors) {
+                //QLOG_DEBUG() << "Processing tag name: " << element.tagName();
+                if (element.tagName().toLower() == "input") {
+                    processTodo(element);
+                } else if (element.tagName().toLower() == "a") {
+                    fixLinkNode(element);
+                } else if (element.tagName().toLower() == "object") {
+                    fixObjectNode(element);
+                } else if (element.tagName().toLower() == "img") {
+                    fixImgNode(element);
+                } else if (element.tagName().toLower() == "span") {
+                    fixSpanNode(element);
+                } else if (element.tagName().toLower() == "div") {
+                    fixDivNode(element);
+                } else if (element.tagName().toLower() == "pre") {
+                    fixPreNode(element);
+                } else if (!isElementValid(element))
+                    element.removeFromDocument();
+            }
         }
         content.clear();
         content.append(element.toOuterXml());
     }
-    QLOG_INFO() << "********AFTER FIX #3 : " << content;
 
     // Strip off HTML header
     index = content.indexOf("<body");
@@ -374,9 +378,6 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content = b.replace("<body", "<en-note");
 
     postXmlFix();
-
-    QLOG_INFO() << "********AFTER FINISH  : " << content;
-
     return content;
 }
 
@@ -468,7 +469,7 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         e.setOuterXml("<en-crypt cipher=\"" + cipher + "\" length=\"" +
                       length + "\" hint=\"" + hint
                       + "\">" + encrypted + "</en-crypt>");
-        //        e.setOuterXml(e.toOuterXml().replace("<img", "<en-crypt").replace("</img", "</en-crypt"));
+//        e.setOuterXml(e.toOuterXml().replace("<img", "<en-crypt").replace("</img", "</en-crypt"));
         return;
     }
 
@@ -481,10 +482,10 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 
     // Latex images are really just img tags, so we now handle them later
     // Check if we have a LaTeX image.  Remove the parent link tag
-    //    if (enType.toLower() ==  "en-latex") {
-    //        enType = "en-media";
-    //        parent.parentNode().replaceChild(e, parent);
-    //    }
+//    if (enType.toLower() ==  "en-latex") {
+//        enType = "en-media";
+//        parent.parentNode().replaceChild(e, parent);
+//    }
 
 
     // If we've gotten this far, we have an en-media tag
@@ -904,7 +905,7 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
         endPos = newContent.indexOf("</table>", i + 1) + 8;
 
         // Encrypt the text
-        QPair<QString, QString> pair = global.passwordSafe.value(slot);
+        QPair <QString, QString> pair = global.passwordSafe.value(slot);
         QString password = pair.first;
         QString hint = pair.second;
         EnCrypt crypt;

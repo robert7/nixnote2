@@ -97,6 +97,8 @@ private:
 
     void checkAttributes(QWebElement &e, QStringList valid);
 
+    void tidyHtml(QByteArray &content);
+
 public:
     bool formattingError;
     QList<qint32> resources;
@@ -105,12 +107,6 @@ public:
     void setHtml(QString html);
     QString getEnml();
     QByteArray rebuildNoteEnml();
-    QByteArray tidyHtml(QByteArray content);
-
-signals:
-
-public slots:
-
 };
 
 
