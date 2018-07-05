@@ -368,9 +368,15 @@ public:
     // update status bar with given string
     void setMessage(QString msg, int timeout=SET_MESSAGE_TIMEOUT_LONGER);
 
+    void initializeGlobalSettings();
+
+
+
 signals:
     // global can send signal about updating status bar
     void setMessageSignal(QString msg, int timeout);
+
+    void initializeSharedMemoryMapper(int accountId);
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

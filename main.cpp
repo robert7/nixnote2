@@ -38,9 +38,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #endif
 
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <csignal>
+#include <cstdio>
+#include <cstdlib>
 #include <QNetworkProxy>
 
 
@@ -54,11 +54,6 @@ NixNote *w;
 
 using namespace std;
 
-//*********************************************
-//* This is the main entry point for NixNote.
-//*********************************************
-extern Global global;
-
 //*********************************************************************
 //* Segmentation fault.  This is triggered to print a stack trace.
 //*********************************************************************
@@ -67,15 +62,13 @@ extern Global global;
 
 void fault_handler(int sig) {
     void *array[30];
-    size_t size;
-
     // get void*'s for all entries on the stack
-    size = backtrace(array, 30);
-
+    int size = backtrace(array, 30);
     // print out all the frames to stderr
     fprintf(stderr, "Error: signal %d:\n", sig);
     backtrace_symbols_fd(array, size, 2);
-    if (w != NULL) {
+
+    if (w != nullptr) {
         fprintf(stderr, "Forcing save\n");
         w->saveState();
     }
@@ -191,14 +184,7 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setApplicationName(APP_NAME);
     global.application = a;
 
-    // this part needs to come after Qt App is created
-    // but before file logging, as at start we delete old log files, and don't want to disturb the other instance
-    if (handleInterInstanceCommunication(startupConfig)) {
-        // there is other instance over there and we already did what we could => quit
-        delete a;
-        // Exit this instance
-        exit(0);
-    }
+
 
 
     // #3 setup file paths
@@ -210,6 +196,22 @@ int main(int argc, char *argv[]) {
         startupConfig.getUserDataDir(),
         startupConfig.getProgramDataDir(),
         startupConfig.getAccountId());
+
+    // get access to global settings file (need file paths to find init file)
+    global.initializeGlobalSettings();
+
+    // initialize shared memory (we need settings to get key and account id)
+    global.initializeSharedMemoryMapper(startupConfig.getAccountId());
+
+    // this part needs to come after Qt App is created and after we have settings access
+    // we need settings for shared memory key
+    // but before file logging, as at start we delete old log files, and don't want to disturb the other instance
+    if (handleInterInstanceCommunication(startupConfig)) {
+        // there is other instance over there and we already did what we could => quit
+        delete a;
+        // Exit this instance
+        exit(0);
+    }
 
     // show version info
     // initial log level is INFO - so this will be SHOWN per default

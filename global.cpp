@@ -126,30 +126,18 @@ Global::Global() {
 
 // Initial global settings setup
 void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
+    QLOG_ASSERT(globalSettings != nullptr);
+
     this->guiAvailable = guiAvailable;
 
     shortcutKeys = new ShortcutKeys();
-    QString settingsFile = fileManager.getConfigDir() + "nixnote.conf";
-    QLOG_DEBUG() << "Global::setup settingsFile: " << settingsFile;
 
-    globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
     int accountId = startupConfig.getAccountId();
     if (accountId <= 0) {
         globalSettings->beginGroup("SaveState");
         accountId = globalSettings->value("lastAccessedAccount", 1).toInt();
         globalSettings->endGroup();
     }
-
-    globalSettings->beginGroup("MemoryKey");
-    QString key = globalSettings->value("key", "").toString();
-    if (key == "") {
-        key = QUuid::createUuid().toString().replace("}", "").replace("{", "");
-        globalSettings->setValue("key", key);
-    }
-    globalSettings->endGroup();
-
-    key = key + QString::number(accountId);
-    sharedMemory = new CrossMemoryMapper(key);
 
     settingsFile = fileManager.getConfigDir() + "nixnote-" + QString::number(accountId) + ".conf";
     settings = new QSettings(settingsFile, QSettings::IniFormat);
@@ -256,6 +244,31 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     multiThreadSaveEnabled = this->getMultiThreadSave();
     exitManager = new ExitManager();
     exitManager->loadExits();
+}
+
+void Global::initializeSharedMemoryMapper(int accountId) {
+    QLOG_ASSERT(globalSettings != nullptr);
+
+    globalSettings->beginGroup("MemoryKey");
+    QString key = globalSettings->value("key", "").toString();
+    if (key == "") {
+        key = QUuid::createUuid().toString().replace("}", "").replace("{", "");
+        globalSettings->setValue("key", key);
+    }
+    globalSettings->endGroup();
+
+    key = key + QString::number(accountId);
+    QLOG_ASSERT(sharedMemory == nullptr);
+
+    sharedMemory = new CrossMemoryMapper(key);
+}
+
+void Global::initializeGlobalSettings() {
+    QLOG_ASSERT(globalSettings == nullptr);
+
+    QString settingsFile = fileManager.getConfigDir() + "nixnote.conf";
+    QLOG_DEBUG() << "Global::setup settingsFile: " << settingsFile;
+    globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
 }
 
 void Global::setDeleteConfirmation(bool value) {
@@ -798,7 +811,7 @@ QFont Global::getGuiFont(QFont f) {
 
 
 // Get a QIcon of in an icon theme
-QIcon Global::getIconResource(QHash <QString, QString> &resourceList, QString key) {
+QIcon Global::getIconResource(QHash<QString, QString> &resourceList, QString key) {
     if (resourceList.contains(key) && resourceList[key].trimmed() != "")
         return QIcon(resourceList[key]);
     return QIcon(key);
@@ -998,7 +1011,7 @@ QPixmap Global::getPixmapResource(QString key) {
 
 
 // Get a QPixmap from an icon theme
-QPixmap Global::getPixmapResource(QHash <QString, QString> &resourceList, QString key) {
+QPixmap Global::getPixmapResource(QHash<QString, QString> &resourceList, QString key) {
     if (resourceList.contains(key) && resourceList[key] != "")
         return QPixmap(resourceList[key]);
     return QPixmap(key);
@@ -1009,7 +1022,7 @@ QPixmap Global::getPixmapResource(QHash <QString, QString> &resourceList, QStrin
 
 
 // Load a theme into a resourceList.
-void Global::loadTheme(QHash <QString, QString> &resourceList, QHash <QString, QString> &colorList, QString theme) {
+void Global::loadTheme(QHash<QString, QString> &resourceList, QHash<QString, QString> &colorList, QString theme) {
     QLOG_DEBUG() << "Loading theme " << theme;
 
     resourceList.clear();
@@ -1033,7 +1046,7 @@ void Global::loadThemeFile(QFile &file, QString themeName) {
 
 
 // Load a theme from a given file
-void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QString, QString> &colorList, QFile &file,
+void Global::loadThemeFile(QHash<QString, QString> &resourceList, QHash<QString, QString> &colorList, QFile &file,
                            QString themeName) {
     if (!file.exists())
         return;
@@ -1089,7 +1102,8 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
                     QString filePath = fileManager.getImageDirPath("").append(value);
                     QFile f(filePath);
                     if (f.exists()) {
-                        QLOG_TRACE() << "Theme " << wantedThemeHeader << ": added image key=" << key << "path=" << filePath;
+                        QLOG_TRACE() << "Theme " << wantedThemeHeader << ": added image key=" << key << "path="
+                                     << filePath;
                         resourceList.insert(":" + key, filePath);
                     } else {
                         QLOG_WARN() << "Theme image file for key=" << key << "not found: " + filePath;
@@ -1153,7 +1167,7 @@ void Global::getThemeNamesFromFile(QString fileName, QStringList &values) {
 
 
 // Get the full path of a resource in a theme file
-QString Global::getResourceFileName(QHash <QString, QString> &resourceList, QString key) {
+QString Global::getResourceFileName(QHash<QString, QString> &resourceList, QString key) {
     if (resourceList.contains(key) && resourceList[key].trimmed() != "")
         return resourceList[key];
 

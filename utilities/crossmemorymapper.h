@@ -35,10 +35,11 @@ private:
     size_t getSharedMemorySize() const;
 
 public:
-    explicit CrossMemoryMapper(QObject *parent = 0);
-    explicit CrossMemoryMapper(QString key, QObject *parent = 0);
+    explicit CrossMemoryMapper(QObject *parent = nullptr);
+    explicit CrossMemoryMapper(QString &key, QObject *parent = nullptr);
     ~CrossMemoryMapper();
-    void setKey(QString key);
+
+    void setKey(QString &key);
 
     bool allocate(int size);
     bool detach();
