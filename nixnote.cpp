@@ -728,7 +728,7 @@ void NixNote::setupGui() {
     QList<int> ids = global.accountsManager->idList();
     for (int i = 0; i < ids.size(); i++) {
         if (ids[i] == global.accountsManager->currentId) {
-            setWindowTitle(APP_DISPLAY_NAME " - " + accountNames[i]);
+            setWindowTitle(APP_DISPLAY_NAME_GUI " - " + accountNames[i]);
             i = ids.size();
         }
     }

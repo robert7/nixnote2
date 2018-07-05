@@ -131,11 +131,7 @@ int main(int argc, char *argv[])
         return retval;
     }
 
-    // Show Qt version.  This is useful for debugging
-    // initial log level is INFO - so this will be SHOWN per default
-    QLOG_INFO() << APP_DISPLAY_NAME " - build (" << __DATE__ << " at " << __TIME__
-                << ", with Qt" << QT_VERSION_STR << "running on" << qVersion() << ")";
-    QLOG_INFO() << "To get more detailed startup logging use --logLevel=1";
+
 
     // Setup the application. If we have a GUI, then we use Application.
     // If we don't, then we just use a derivative of QCoreApplication
@@ -155,13 +151,19 @@ int main(int argc, char *argv[])
         startupConfig.getUserDataDir(),
         startupConfig.getProgramDataDir(),
         startupConfig.getAccountId());
+    QString versionStr = global.fileManager.getProgramVersion();
+
+    QLOG_INFO().noquote() << APP_DISPLAY_NAME " " << versionStr << "- build at " << __DATE__ << " at " << __TIME__
+                << ", with Qt" << QT_VERSION_STR << " running on " << qVersion();
+    if (logger.loggingLevel() > 1) {
+        QLOG_INFO() << "To get more detailed startup logging use --logLevel=1";
+    }
 
     int accountId = startupConfig.getAccountId();
     global.initializeSettings(accountId);
     global.initializeSharedMemoryMapper(accountId);
     global.setup(startupConfig, guiAvailable);
-    QString versionStr = global.fileManager.getProgramVersion();
-    QLOG_INFO() << "Version: " << versionStr;
+
     // We were passed a SQL command
     if (startupConfig.sqlExec) {
         DatabaseConnection *db = new DatabaseConnection("nixnote");  // Startup the database

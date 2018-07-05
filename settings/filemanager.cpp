@@ -393,7 +393,7 @@ QString FileManager::readFile(QString file) {
 QString FileManager::getProgramVersion() {
     const QString programDataDir = getProgramDataDir();
     QString versionFile = programDataDir + "build-version.txt";
-    return readFile(versionFile);
+    return readFile(versionFile).replace("\n", "");
 }
 
 void FileManager::setupLoggingToFile() {

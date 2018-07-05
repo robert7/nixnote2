@@ -107,7 +107,10 @@ class IndexRunner;
 
 // app name for config paths
 #define APP_NAME "nixnote2"
-#define APP_DISPLAY_NAME "NixNote2+"
+// string to be displayed with program version
+#define APP_DISPLAY_NAME "NixNote"
+// string to be displayed without program version
+#define APP_DISPLAY_NAME_GUI "NixNote2"
 
 #define QLOG_ASSERT(expr) if (expr) {} else { QLOG_FATAL() << "Assertion failed: " #expr; exit(16);}
 
