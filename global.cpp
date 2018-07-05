@@ -139,9 +139,6 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
         globalSettings->endGroup();
     }
 
-    settingsFile = fileManager.getConfigDir() + "nixnote-" + QString::number(accountId) + ".conf";
-    settings = new QSettings(settingsFile, QSettings::IniFormat);
-
     this->forceNoStartMimized = startupConfig.forceNoStartMinimized;
     this->forceSystemTrayAvailable = startupConfig.forceSystemTrayAvailable;
     this->startupNewNote = startupConfig.startupNewNote;
@@ -263,12 +260,16 @@ void Global::initializeSharedMemoryMapper(int accountId) {
     sharedMemory = new CrossMemoryMapper(key);
 }
 
-void Global::initializeGlobalSettings() {
+void Global::initializeSettings(int accountId) {
     QLOG_ASSERT(globalSettings == nullptr);
+    QLOG_ASSERT(settings == nullptr);
 
     QString settingsFile = fileManager.getConfigDir() + "nixnote.conf";
-    QLOG_DEBUG() << "Global::setup settingsFile: " << settingsFile;
+    QLOG_DEBUG() << "Opening INI file " << settingsFile;
     globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
+
+    settingsFile = fileManager.getConfigDir() + "nixnote-" + QString::number(accountId) + ".conf";
+    settings = new QSettings(settingsFile, QSettings::IniFormat);
 }
 
 void Global::setDeleteConfirmation(bool value) {

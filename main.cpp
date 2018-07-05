@@ -52,6 +52,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 NixNote *w;
 
+
+void setupFaultHandler();
+
+void createQtApp(int argc, char *const *argv, bool guiAvailable);
+
+void showProgramVersion();
+
 using namespace std;
 
 //*********************************************************************
@@ -138,6 +145,69 @@ bool handleInterInstanceCommunication(StartupConfig &startupConfig) {
     return false;
 }
 
+// at startup logging to terminal only (as we don't yet know where to put log file)
+void setupTerminalLogging(QsLogging::DestinationPtr &debugDestination) {
+    // we need to do it at very beginning, else we lose the startup messages
+    QsLogging::Logger &logger = QsLogging::Logger::instance();
+
+    // at very beginning we starting with info level to get basic startup info
+    // log level is later adjusted by settings
+    logger.setLoggingLevel(QsLogging::InfoLevel);
+    
+    QsLogging::Destination *destination = debugDestination.get();
+    logger.addDestination(destination);
+}
+
+void setupFaultHandler() {
+    // Windows Check
+#ifndef _WIN32
+    signal(SIGSEGV, fault_handler);   // install our handler
+#endif
+}
+
+void loadStartupConfig(StartupConfig &startupConfig, int argc, char *argv[], bool guiAvailable) {
+    // #1 parse command line options
+    // Begin setting up the environment
+    global.argc = argc;
+    global.argv = argv;
+    int retval = startupConfig.init(argc, argv, guiAvailable);
+    if (retval != 0) {
+        exit(retval);
+    }
+}
+
+// create Qt app
+void createQtApp(int argc, char *argv[], bool guiAvailable) {
+    QLOG_ASSERT(global.application== nullptr);
+
+    // Setup the application. If we have a GUI, then we use Application.
+    // If we don't, then we just use a derivative of QCoreApplication
+    if (guiAvailable) {
+        global.application = new Application(argc, argv);
+    } else {
+        global.application = new QCoreApplication(argc, argv);
+    }
+    QCoreApplication::setApplicationName(APP_NAME);
+}
+
+void destroyQtApp() {
+    QLOG_ASSERT(global.application != nullptr);
+    delete global.application;
+    global.application= nullptr;
+}
+
+void showProgramVersion() {// show version info
+    QsLogging::Logger &logger = QsLogging::Logger::instance();
+
+    // initial log level is INFO - so this will be SHOWN per default
+    QString versionStr = global.fileManager.getProgramVersion();
+    QLOG_INFO() << APP_DISPLAY_NAME << versionStr
+                << " - build at (" << __DATE__ << " at " << __TIME__
+                << ", with Qt" << QT_VERSION_STR << "running on" << qVersion() << ")";
+    if (logger.loggingLevel() > 1) {
+        QLOG_INFO() << "To get more detailed logging, start program with parameter --logLevel=1";
+    }
+}
 
 //using namespace cv;
 //*********************************************************************
@@ -147,47 +217,18 @@ int main(int argc, char *argv[]) {
     w = nullptr;
     bool guiAvailable = true;
 
-    // at startup logging to terminal only (as we don't yet know where to put log file)
-    // we need to do it at very beginning, else we lose the startup messages
-    QsLogging::Logger &logger = QsLogging::Logger::instance();
-    // at very beginning we starting with info level to get basic startup info
-    // log level is later adjusted by settings
-    logger.setLoggingLevel(QsLogging::InfoLevel);
+    // create loggin destinatin (and holt it in global scope)
     QsLogging::DestinationPtr debugDestination(QsLogging::DestinationFactory::MakeDebugOutputDestination());
-    logger.addDestination(debugDestination.get());
+    // setup the destination into lo logger
+    setupTerminalLogging(debugDestination);
+    setupFaultHandler();
 
-// Windows Check
-#ifndef _WIN32
-    signal(SIGSEGV, fault_handler);   // install our handler
-#endif
-
-    // #1 parse command line options
-    // Begin setting up the environment
     StartupConfig startupConfig;
-    global.argc = argc;
-    global.argv = argv;
-    int retval = startupConfig.init(argc, argv, guiAvailable);
-    if (retval != 0) {
-        return retval;
-    }
-
-    // #2 create Qt app
-    // Setup the application. If we have a GUI, then we use Application.
-    // If we don't, then we just use a derivative of QCoreApplication
-    QCoreApplication *a = nullptr;
-    if (guiAvailable) {
-        auto *app = new Application(argc, argv);
-        a = app;
-    } else {
-        a = new QCoreApplication(argc, argv);
-    }
-    QCoreApplication::setApplicationName(APP_NAME);
-    global.application = a;
+    loadStartupConfig(startupConfig, argc, argv, guiAvailable);
+    createQtApp(argc, argv, guiAvailable);
 
 
-
-
-    // #3 setup file paths
+    // setup file paths
     // setup directory paths as soon as possible
     // at the end of setup() logging in files is activate
     // this step will work only, if the Qt App is already created
@@ -197,8 +238,8 @@ int main(int argc, char *argv[]) {
         startupConfig.getProgramDataDir(),
         startupConfig.getAccountId());
 
-    // get access to global settings file (need file paths to find init file)
-    global.initializeGlobalSettings();
+    // get access to global settings file (need file paths to find ini files)
+    global.initializeSettings(startupConfig.getAccountId());
 
     // initialize shared memory (we need settings to get key and account id)
     global.initializeSharedMemoryMapper(startupConfig.getAccountId());
@@ -208,20 +249,12 @@ int main(int argc, char *argv[]) {
     // but before file logging, as at start we delete old log files, and don't want to disturb the other instance
     if (handleInterInstanceCommunication(startupConfig)) {
         // there is other instance over there and we already did what we could => quit
-        delete a;
+        destroyQtApp();
         // Exit this instance
         exit(0);
     }
 
-    // show version info
-    // initial log level is INFO - so this will be SHOWN per default
-    QString versionStr = global.fileManager.getProgramVersion();
-    QLOG_INFO() << APP_DISPLAY_NAME << versionStr
-                << " - build at (" << __DATE__ << " at " << __TIME__
-                << ", with Qt" << QT_VERSION_STR << "running on" << qVersion() << ")";
-    if (logger.loggingLevel() > 1) {
-        QLOG_INFO() << "To get more detailed logging, start program with parameter --logLevel=1";
-    }
+    showProgramVersion();
 
     // global setup
     global.setup(startupConfig, guiAvailable);
@@ -259,7 +292,7 @@ int main(int argc, char *argv[]) {
         if (global.sharedMemory->isAttached())
             global.sharedMemory->detach();
         QLOG_INFO() << "Exit: retcode=" << retval1;
-        delete a;
+        destroyQtApp();
         exit(retval1);
     }
 
@@ -312,19 +345,29 @@ int main(int argc, char *argv[]) {
 
     QLOG_DEBUG() << "Setting up exit signal";
 
-    QObject::connect(a, SIGNAL(aboutToQuit()), w, SLOT(saveOnExit()));
+    QObject::connect(global.application, SIGNAL(aboutToQuit()), w, SLOT(saveOnExit()));
 
     QLOG_DEBUG() << "Launching";
-    int rc = a->exec();
+    int rc = global.application->exec();
     if (global.sharedMemory->isAttached())
         global.sharedMemory->detach();
+
     QLOG_DEBUG() << "Deleting NixNote instance";
     delete w;
+    w= nullptr;
+
     QLOG_DEBUG() << "Quitting application instance";
-    a->exit(rc);
+    global.application->exit(rc);
     QLOG_DEBUG() << "Deleting application instance";
-    delete a;
+    destroyQtApp();
+
     QLOG_INFO() << "Exit: retcode=" << rc;
     exit(rc);
-    return rc;
 }
+
+
+
+
+
+
+
