@@ -22,29 +22,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <iostream>
 
 CrossMemoryMapper::CrossMemoryMapper(QObject *parent) :
-    QObject(parent)
-{
+    QObject(parent) {
 }
 
-CrossMemoryMapper::CrossMemoryMapper(QString key, QObject *parent) :
-    QObject(parent)
-{
+CrossMemoryMapper::CrossMemoryMapper(QString &key, QObject *parent) :
+    QObject(parent) {
     this->setKey(key);
-    buffer = NULL;
+    buffer = nullptr;
 }
 
 
-void CrossMemoryMapper::setKey(QString key) {
+void CrossMemoryMapper::setKey(QString &key) {
     this->key = key;
     sharedMemory = new QSharedMemory(key, this);
 }
 
 
 CrossMemoryMapper::~CrossMemoryMapper() {
-    if (buffer != NULL)
+    if (buffer != nullptr)
         free(buffer);
     if (key != "" && sharedMemory->isAttached())
-         sharedMemory->detach();
+        sharedMemory->detach();
 }
 
 bool CrossMemoryMapper::allocate(int size) {
@@ -53,28 +51,27 @@ bool CrossMemoryMapper::allocate(int size) {
     if (!sharedMemory->create(size, QSharedMemory::ReadWrite)) {
         return false;
     }
-    buffer = (char*)malloc(sharedMemory->size());
+    buffer = (char *) malloc(static_cast<size_t>(getSharedMemorySize()));
     return true;
 }
 
 
 void CrossMemoryMapper::clearMemory() {
     lock();
-    memset(sharedMemory->data(), 0, sharedMemory->size());
+    memset(sharedMemory->data(), 0, static_cast<size_t>(getSharedMemorySize()));
     unlock();
 }
 
 
-
 bool CrossMemoryMapper::lock() {
-    if (sharedMemory == NULL)
+    if (sharedMemory == nullptr)
         return false;
     return sharedMemory->lock();
 }
 
 
 bool CrossMemoryMapper::unlock() {
-    if (sharedMemory == NULL)
+    if (sharedMemory == nullptr)
         return false;
     return sharedMemory->unlock();
 }
@@ -83,10 +80,10 @@ bool CrossMemoryMapper::unlock() {
 bool CrossMemoryMapper::attach() {
     if (key == "")
         return false;
-    if (sharedMemory == NULL)
+    if (sharedMemory == nullptr)
         return false;
-    if (buffer == NULL)
-        buffer = (char*)malloc(sharedMemory->size());
+    if (buffer == nullptr)
+        buffer = (char *) malloc(getSharedMemorySize());
     return sharedMemory->attach();
 }
 
@@ -100,18 +97,22 @@ bool CrossMemoryMapper::detach() {
 QByteArray CrossMemoryMapper::read() {
     if (!isAttached())
         attach();
-    if (sharedMemory == NULL || !sharedMemory->isAttached() || buffer == NULL)
+    if (sharedMemory == nullptr || !sharedMemory->isAttached() || buffer == nullptr)
         return QByteArray();
 
-    if (buffer != NULL)
+    if (buffer != nullptr)
         free(buffer);
-    buffer = (char*)malloc(sharedMemory->size());
+    buffer = (char *) malloc(getSharedMemorySize());
 
-    memcpy(buffer, sharedMemory->data(), sharedMemory->size());
+    memcpy(buffer, sharedMemory->data(), getSharedMemorySize());
     this->unlock();
     clearMemory();
-    QByteArray data = QByteArray(QByteArray::fromRawData(buffer, sharedMemory->size()));
+    QByteArray data = QByteArray(QByteArray::fromRawData(buffer, (int)getSharedMemorySize()));
     return data;
+}
+
+size_t CrossMemoryMapper::getSharedMemorySize() const {
+    return (size_t) sharedMemory->size();
 }
 
 void CrossMemoryMapper::write(QString value) {
@@ -122,13 +123,13 @@ void CrossMemoryMapper::write(QByteArray data) {
     QString svalue(data);
     this->lock();
     void *memptr = sharedMemory->data();
-    memcpy(memptr, svalue.toStdString().c_str(), data.size());
+    memcpy(memptr, svalue.toStdString().c_str(), static_cast<size_t>(data.size()));
     this->unlock();
 }
 
 
 bool CrossMemoryMapper::isAttached() {
-    if (sharedMemory == NULL)
+    if (sharedMemory == nullptr)
         return false;
     return sharedMemory->isAttached();
 }

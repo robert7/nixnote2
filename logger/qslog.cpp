@@ -143,6 +143,8 @@ namespace QsLogging {
         }
     }
 
+#define QLOGINFO QsLogging::Logger::Helper(QsLogging::InfoLevel).stream
+
     /**
      * Write a string to log file - one file per call (to be used for logging of long strings e.g. note html)
      *
@@ -151,32 +153,33 @@ namespace QsLogging {
      * @param message - obviously the content to write
      */
     void Logger::writeToFile(const QString &logid, const QString &message) {
-        QDebug &s = QsLogging::Logger::Helper(QsLogging::InfoLevel).stream();
+
         if (fileLoggingPath.isEmpty()) {
-            s << "fileLoggingPath not set writeToFile not disabled";
+            QLOGINFO() << "fileLoggingPath not set writeToFile not disabled";
         }
 
-        QString filename(fileLoggingPath);
-        if (!filename.endsWith(QDir::separator())) {
-            filename.append( QDir::separator());
+        if (!fileLoggingPath.endsWith(QDir::separator())) {
+            fileLoggingPath.append(QDir::separator());
         }
+
+
+
         // not multithread safe, but should not be needed
         filenameCounter++;
         // format with 4 leading zeros; 10 is radix
-        QString number = QString("%1").arg(filenameCounter, 4, 10, QChar('0'));
-        filename.append( number);
+        QString filename = QString("%1").arg(filenameCounter, 4, 10, QChar('0'));
         if (!logid.isEmpty()) {
             filename.append("-").append(logid);
         }
         filename.append(".log");
 
-        QFile file(filename);
+        QFile file(fileLoggingPath + filename);
 
         if (file.open(QFile::WriteOnly | QFile::Truncate)) {
             QTextStream stream(&file);
             stream << message;
         }
+        QLOGINFO() << "Writing attachment data to " << filename;
     }
-
 
 } // end namespace

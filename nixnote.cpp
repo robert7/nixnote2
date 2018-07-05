@@ -2763,7 +2763,7 @@ void NixNote::heartbeatTimerTriggered() {
                     delete global.filterCriteria.takeAt(global.filterCriteria.size() - 1);
             }
 
-            FilterCriteria *newFilter = new FilterCriteria();
+            auto *newFilter = new FilterCriteria();
             global.filterCriteria.at(global.filterPosition)->duplicate(*newFilter);
 
             newFilter->setSelectedNotes(lids);

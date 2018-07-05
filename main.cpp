@@ -86,14 +86,64 @@ void fault_handler(int sig) {
 void sighup_handler(int sig) {
     // print out all the frames to stderr
     fprintf(stderr, "Error: signal %d:\n", sig);
-    if (w != NULL) {
+    if (w != nullptr) {
         fprintf(stderr, "Forcing save\n");
         w->saveState();
     }
 }
 
-
 #endif // End Windows check
+
+#define SHARED_MEM_SIZE (512 * 1024)
+
+
+/**
+ * Create a shared memory segment to check whenewer another instance is running.
+ * If yes, we try to communicate with it.
+ * Returns true, if the main program should exit itself.
+ */
+bool handleInterInstanceCommunication(StartupConfig &startupConfig) {
+    // Create a shared memory region.  We use this to communicate
+    // with any other instance that may be running.  If another instance
+    // is found we need to either show that one or kill this one.
+    CrossMemoryMapper *mapper = global.sharedMemory;
+
+    bool allocated = mapper->allocate(SHARED_MEM_SIZE);
+    if (!allocated) {
+        // Attach to it and detach.  This is done in case it crashed.
+        mapper->attach();
+        mapper->detach();
+
+        // Retry
+        allocated = mapper->allocate(SHARED_MEM_SIZE);
+
+        if (!allocated) {
+            QLOG_DEBUG() << "Shared memory already exists";
+            if (startupConfig.startupNewNote) {
+                mapper->attach();
+                mapper->write(QString("NEW_NOTE"));
+                mapper->detach();
+                return true;
+            }
+            if (startupConfig.startupNoteLid > 0) {
+                mapper->attach();
+                mapper->write("OPEN_NOTE" + QString::number(startupConfig.startupNoteLid) + " ");
+                mapper->detach();
+                return true;
+            }
+
+            // If we've gotten this far, we need to either stop this instance or stop the other
+            QLOG_DEBUG() << "Another running instance found- trying to activate it";
+            mapper->attach();
+            mapper->write(QString("SHOW_WINDOW"));
+            mapper->detach();
+            return true;
+        }
+    }
+
+    mapper->clearMemory();
+    return false;
+}
 
 
 //using namespace cv;
@@ -141,25 +191,27 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setApplicationName(APP_NAME);
     global.application = a;
 
+    // this part needs to come after Qt App is created
+    // but before file logging, as at start we delete old log files, and don't want to disturb the other instance
+    if (handleInterInstanceCommunication(startupConfig)) {
+        // there is other instance over there and we already did what we could => quit
+        delete a;
+        // Exit this instance
+        exit(0);
+    }
+
+
     // #3 setup file paths
     // setup directory paths as soon as possible
+    // at the end of setup() logging in files is activate
+    // this step will work only, if the Qt App is already created
     global.fileManager.setup(
         startupConfig.getConfigDir(),
         startupConfig.getUserDataDir(),
         startupConfig.getProgramDataDir(),
         startupConfig.getAccountId());
 
-    // #4 configure file logging (until now logging was only to terminal)
-    const QString loggingPath = global.fileManager.getLogsDirPath("");
-    QString logPath = loggingPath + "messages.log";
-    QsLogging::DestinationPtr fileDestination(QsLogging::DestinationFactory::MakeFileDestination(logPath));
-    logger.addDestination(fileDestination.get());
-    logger.setFileLoggingPath(loggingPath);
-    logger.writeToFile("test","tralala11111");
-    logger.writeToFile("aa","1tralala11111");
-    logger.writeToFile("bb","2tralala11111");
-
-    // #5 show version info
+    // show version info
     // initial log level is INFO - so this will be SHOWN per default
     QString versionStr = global.fileManager.getProgramVersion();
     QLOG_INFO() << APP_DISPLAY_NAME << versionStr
@@ -169,7 +221,7 @@ int main(int argc, char *argv[]) {
         QLOG_INFO() << "To get more detailed logging, start program with parameter --logLevel=1";
     }
 
-    // #6 global setup
+    // global setup
     global.setup(startupConfig, guiAvailable);
 
     // We were passed a SQL command
@@ -209,56 +261,6 @@ int main(int argc, char *argv[]) {
         exit(retval1);
     }
 
-
-
-
-    // Create a shared memory region.  We use this to communicate
-    // with any other instance that may be running.  If another instance
-    // is found we need to either show that one or kill this one.
-    bool memInitNeeded = true;
-    if (!global.sharedMemory->allocate(512 * 1024)) {
-        // Attach to it and detach.  This is done in case it crashed.
-        global.sharedMemory->attach();
-        global.sharedMemory->detach();
-        if (!global.sharedMemory->allocate(512 * 1024)) {
-            QLOG_DEBUG() << "segment created";
-            if (startupConfig.startupNewNote) {
-                global.sharedMemory->attach();
-                global.sharedMemory->write(QString("NEW_NOTE"));
-                global.sharedMemory->detach();
-                delete a;
-                exit(0);  // Exit this one
-            }
-            if (startupConfig.startupNoteLid > 0) {
-                global.sharedMemory->attach();
-                global.sharedMemory->write("OPEN_NOTE" + QString::number(startupConfig.startupNoteLid) + " ");
-                global.sharedMemory->detach();
-                delete a;
-                exit(0);  // Exit this one
-            }
-
-            // If we've gotten this far, we need to either stop this instance or stop the other
-            QLOG_DEBUG() << "Multiple instance found";
-            global.settings->beginGroup("Debugging");
-            QString startup = global.settings->value("onMultipleInstances", "SHOW_OTHER").toString();
-            global.settings->endGroup();
-            global.sharedMemory->attach();
-            if (startup == "SHOW_OTHER") {
-                global.sharedMemory->write(QString("SHOW_WINDOW"));
-                global.sharedMemory->detach();
-                delete a;
-                return 0;  // Exit this one
-            }
-            if (startup == "STOP_OTHER") {
-                global.sharedMemory->write(QString("IMMEDIATE_SHUTDOWN"));
-                memInitNeeded = false;
-            }
-        }
-    }
-
-    if (memInitNeeded) {
-        global.sharedMemory->clearMemory();
-    }
 
 #ifndef _WIN32
     if (global.getInterceptSigHup())

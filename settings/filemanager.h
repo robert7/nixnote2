@@ -72,10 +72,11 @@ private:
 
     QString toPlatformPathSeparator(QString relativePath);
     QString slashTerminatePath(QString path);
-    void deleteTopLevelFiles(QDir dir, bool exitOnFail);
-    void createDirOrCheckWriteable(QDir dir);
     void checkExistingReadableDir(QDir dir);
     void checkExistingWriteableDir(QDir dir);
+    void deleteTopLevelFiles(QDir dir, bool exitOnFail);
+    void createDirOrCheckWriteable(QDir dir);
+    void setupLoggingToFile();
 
 public:
     FileManager();

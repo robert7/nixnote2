@@ -32,12 +32,14 @@ private:
     QString key;
     QSharedMemory *sharedMemory;
     char *buffer;
+    size_t getSharedMemorySize() const;
 
 public:
     explicit CrossMemoryMapper(QObject *parent = 0);
     explicit CrossMemoryMapper(QString key, QObject *parent = 0);
     ~CrossMemoryMapper();
     void setKey(QString key);
+
     bool allocate(int size);
     bool detach();
     bool attach();
@@ -48,10 +50,6 @@ public:
     QByteArray read();
     void write(QByteArray data);
     void write(QString data);
-
-signals:
-
-public slots:
 
 };
 

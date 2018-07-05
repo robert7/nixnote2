@@ -66,10 +66,10 @@ void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, Q
         startupUserDataDir = slashTerminatePath(startupUserDataDir);
     }
 
-    QLOG_DEBUG() << "FileManager::setup"
-                 << " startupConfigDirPath: " << startupConfigDir
-                 << ", startupUserDataDir: " << startupUserDataDir
-                 << ", startupProgramDirPath: " << startupProgramDataDir;
+    QLOG_DEBUG() << "Setting up file paths: "
+                 << " startupConfigDirPath=" << startupConfigDir
+                 << ", startupUserDataDir=" << startupUserDataDir
+                 << ", startupProgramDirPath=" << startupProgramDataDir;
 
     this->configDir = startupConfigDir;
     this->userDataDir = startupUserDataDir;
@@ -81,11 +81,11 @@ void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, Q
         QDir legacyConfigDir;
         QString legacyConfigDirPath(QDir().homePath() + QString("/.nixnote"));
         legacyConfigDir.setPath(legacyConfigDirPath);
-        QLOG_DEBUG() << "FileManager::setup checking whenever legacy config dir exists: " << legacyConfigDirPath;
+        QLOG_DEBUG() << "Checking whenever legacy config dir exists: " << legacyConfigDirPath;
         if (legacyConfigDir.exists()) {
             this->configDir = slashTerminatePath(legacyConfigDirPath);
             this->userDataDir = this->configDir;
-            QLOG_DEBUG() << "FileManager::setup legacy config/data dir found. falling back to that: "
+            QLOG_DEBUG() << "Legacy config/data dir found. falling back to that: "
                          << this->configDir;
         }
     }
@@ -93,14 +93,14 @@ void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, Q
     if (this->configDir.isEmpty()) {
         // default config path
         this->configDir = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
-        QLOG_DEBUG() << "FileManager::setup setting up standard config path: " << this->configDir;
+        QLOG_DEBUG() << "Setting up standard config path: " << this->configDir;
     }
     createDirOrCheckWriteable(this->configDir);
 
     if (this->userDataDir.isEmpty()) {
         // default config path
         this->userDataDir = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-        QLOG_DEBUG() << "FileManager::setup setting up standard user data path: " << this->userDataDir;
+        QLOG_DEBUG() << "Setting up standard user data path: " << this->userDataDir;
     }
     createDirOrCheckWriteable(this->userDataDir);
 
@@ -110,10 +110,10 @@ void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, Q
         this->programDataDir = slashTerminatePath(getDefaultProgramDirPath());
     }
 
-    QLOG_DEBUG() << "FileManager::setup "
-                 << "configDir: " << this->configDir
-                 << ", userDataDir: " << this->userDataDir
-                 << ", programDataDir: " << this->programDataDir;
+    QLOG_DEBUG() << "Resulting file paths: "
+                 << "configDir=" << this->configDir
+                 << ", userDataDir=" << this->userDataDir
+                 << ", programDataDir=" << this->programDataDir;
 
     // Read only files that everyone uses
     imagesDir.setPath(programDataDir + "images");
@@ -180,6 +180,8 @@ void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, Q
     thumbnailDir.setPath(dbDirPath + "tdba");
     createDirOrCheckWriteable(thumbnailDir);
     thumbnailDirPath = slashTerminatePath(thumbnailDir.path());
+
+    setupLoggingToFile();
 }
 
 
@@ -370,6 +372,27 @@ QString FileManager::getProgramVersion() {
     const QString programDataDir = getProgramDataDir();
     QString versionFile = programDataDir + "build-version.txt";
     return readFile(versionFile);
+}
+
+void FileManager::setupLoggingToFile() {
+    QsLogging::Logger &logger = QsLogging::Logger::instance();
+
+    // #4 configure file logging (until now logging was only to terminal)
+    const QString loggingPath = getLogsDirPath("");
+
+    QString logPath = loggingPath + "messages.log";
+    QsLogging::DestinationPtr fileDestination(QsLogging::DestinationFactory::MakeFileDestination(logPath));
+    logger.addDestination(fileDestination.get());
+
+    QString loggingAttachmentsPath = loggingPath+QDir::separator()+"files";
+    QDir loggingAttachmentsPathQD(loggingAttachmentsPath);
+    createDirOrCheckWriteable(loggingAttachmentsPathQD);
+    deleteTopLevelFiles(loggingAttachmentsPathQD, true);
+
+    logger.setFileLoggingPath(loggingAttachmentsPath);
+    logger.writeToFile("test","tralala11111");
+    logger.writeToFile("aa","1tralala11111");
+    logger.writeToFile("bb","2tralala11111");
 }
 
 
