@@ -2995,7 +2995,6 @@ void NixNote::openPreferences() {
 //        QApplication::instance()->installTranslator(nixnoteTranslator);
 
     }
-    global.setDebugLevelBySetting();
 }
 
 

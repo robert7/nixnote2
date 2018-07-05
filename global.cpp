@@ -154,11 +154,6 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     settingsFile = fileManager.getConfigDir() + "nixnote-" + QString::number(accountId) + ".conf";
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 
-    if (startupConfig.getLogLevel() < 0) {
-        // set log level from conf file, but only if it was not already se on command line
-        setDebugLevelBySetting();
-    }
-
     this->forceNoStartMimized = startupConfig.forceNoStartMinimized;
     this->forceSystemTrayAvailable = startupConfig.forceSystemTrayAvailable;
     this->startupNewNote = startupConfig.startupNewNote;
@@ -1389,40 +1384,6 @@ void Global::stackDump(int max) {
     Q_UNUSED(max)
 #endif // End windows check
 }
-
-void Global::setDebugLevelBySetting() {
-    settings->beginGroup("Debugging");
-    int level = settings->value("messageLevel", -1).toInt();
-    settings->endGroup();
-    QLOG_INFO() << "Changed logLevel via settings to " << level;
-    setDebugLevel(level);
-}
-
-
-//************************************************
-//* Set the user debug level.
-//************************************************
-void Global::setDebugLevel(int level) {
-    // Setup the QLOG functions for debugging & messages
-    QsLogging::Logger &logger = QsLogging::Logger::instance();
-    if (level == QsLogging::TraceLevel)
-        logger.setLoggingLevel(QsLogging::TraceLevel);
-    else if (level == QsLogging::DebugLevel)
-        logger.setLoggingLevel(QsLogging::DebugLevel);
-    else if (level == QsLogging::InfoLevel || level == -1)
-        logger.setLoggingLevel(QsLogging::InfoLevel);
-    else if (level == QsLogging::WarnLevel)
-        logger.setLoggingLevel(QsLogging::WarnLevel);
-    else if (level == QsLogging::ErrorLevel)
-        logger.setLoggingLevel(QsLogging::ErrorLevel);
-    else if (level == QsLogging::FatalLevel)
-        logger.setLoggingLevel(QsLogging::FatalLevel);
-    else {
-        logger.setLoggingLevel(QsLogging::InfoLevel);
-        QLOG_WARN() << "Invalid message logging level " << level;
-    }
-}
-
 
 Global global;
 

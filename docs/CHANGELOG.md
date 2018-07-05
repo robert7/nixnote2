@@ -1,11 +1,18 @@
 # CHANGELOG
 
-## 2018-06
-### #7
-*  [AppImage packaging](https://appimage.org/) using [linuxdeployqt](https://github.com/probonopd/linuxdeployqt).
-   This should allow easy deployment "anywhere" no worry about missing dependencies
-   and later use newest libraries.
+## 2018-07
+### #8
+* **Redesigned html cleanup**. Now newest html tidy libray is used (currently v.5.6). Before system level
+  tidy executable was used, which could be like 9 years old.
+* Improved exception handling and logging. Removed log level setting in gui. Log level may now be set
+  from command line using e.g. --logLevel=1 for debug level.   
 
+### #7
+* [AppImage packaging](https://appimage.org/) using [linuxdeployqt](https://github.com/probonopd/linuxdeployqt).
+  This should allow easy deployment "anywhere" no worry about missing dependencies
+  and later use newest libraries.
+
+## 2018-06
 ### #6
 * Focus on search box after "all notes"
 * **Title column in note table view now display compound information** - Title + sync needed + relevance hint.
