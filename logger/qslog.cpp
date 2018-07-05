@@ -162,9 +162,7 @@ namespace QsLogging {
             fileLoggingPath.append(QDir::separator());
         }
 
-
-
-        // not multithread safe, but should not be needed
+        // not multi-thread safe, but should not be needed
         filenameCounter++;
         // format with 4 leading zeros; 10 is radix
         QString filename = QString("%1").arg(filenameCounter, 4, 10, QChar('0'));

@@ -25,7 +25,11 @@ if [ -z "${BUILD_TYPE}" ]; then
 fi
 BUILD_DIR=qmake-build-${BUILD_TYPE}
 VERSION="$(cat version.txt)-$(git rev-parse --short HEAD)"
+# for simplicity now create in both dirs
 echo $VERSION >${BUILD_DIR}/build-version.txt
+# this may not be needed, if we run from "appdir" during development
+echo $VERSION >build-version.txt
+
 echo $QT_DIR >${BUILD_DIR}/qt-dir.txt
 echo "${BUILD_DIR}">_build_dir_.txt
 echo Building version: ${VERSION}

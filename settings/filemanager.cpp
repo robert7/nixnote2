@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <iostream>
 #include <cstdlib>
 #include <QLibraryInfo>
+#include "logger/qslog.h"
+#include "logger/qslogdest.h"
 
 //*******************************************
 //* This class is used to find the location
@@ -30,8 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 using namespace std;
 
-FileManager::FileManager() {
-}
+FileManager::FileManager() = default;
 
 // Return the path the program data.
 //
@@ -55,7 +56,8 @@ QString getDefaultProgramDirPath() {
 }
 
 
-void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir, int accountId) {
+void
+FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir, int accountId) {
     if (!startupConfigDir.isEmpty()) {
         startupConfigDir = slashTerminatePath(startupConfigDir);
     }
@@ -180,10 +182,7 @@ void  FileManager::setup(QString startupConfigDir, QString startupUserDataDir, Q
     thumbnailDir.setPath(dbDirPath + "tdba");
     createDirOrCheckWriteable(thumbnailDir);
     thumbnailDirPath = slashTerminatePath(thumbnailDir.path());
-
-    setupLoggingToFile();
 }
-
 
 
 QString FileManager::toPlatformPathSeparator(QString relativePath) {
@@ -209,12 +208,16 @@ QString FileManager::slashTerminatePath(QString path) {
 /* to cleanup temporary files.                   */
 /*************************************************/
 void FileManager::deleteTopLevelFiles(QDir dir, bool exitOnFail) {
+    QLOG_DEBUG() << "About to delete all files in directory: " << dir.absolutePath();
     dir.setFilter(QDir::Files);
     QStringList list = dir.entryList();
-    for (qint32 i=0; i<list.size(); i++) {
-        QFile f(list.at(i));
+    for (qint32 i = 0; i < list.size(); i++) {
+        const QString &fileName = list.at(i);
+        const QString &fileNameWithPath = dir.filePath(fileName);
+
+        QFile f(fileNameWithPath);
         if (!f.remove() && exitOnFail) {
-            QLOG_FATAL() << "Error deleting file '" << f.fileName()
+            QLOG_FATAL() << "Error deleting file '" << fileNameWithPath
                          << "'. Aborting program";
             exit(16);
         }
@@ -243,17 +246,17 @@ void FileManager::createDirOrCheckWriteable(QDir dir) {
 void FileManager::checkExistingReadableDir(QDir dir) {
     QString path = dir.path();
     // Windows Check
-    #ifndef _WIN32
+#ifndef _WIN32
     QLOG_DEBUG() << "Checking read access for directory " << path;
     if (!dir.isReadable()) {
-            QLOG_FATAL() << "Directory '" + path + "' does not have read permission.  Aborting program.";
-            exit(16);
+        QLOG_FATAL() << "Directory '" + path + "' does not have read permission.  Aborting program.";
+        exit(16);
     }
-    #endif  // end windows check
+#endif  // end windows check
 
     if (!dir.exists()) {
-         QLOG_FATAL() << "Directory '" + path + "' does not exist.  Aborting program";
-         exit(16);
+        QLOG_FATAL() << "Directory '" + path + "' does not exist.  Aborting program";
+        exit(16);
     }
 }
 
@@ -286,24 +289,31 @@ void FileManager::checkExistingWriteableDir(QDir dir) {
 QString FileManager::getSpellDirPathUser() {
     return spellDirPathUser;
 }
+
 QString FileManager::getDbDirPath(QString relativePath) {
     return dbDirPath + toPlatformPathSeparator(relativePath);
 }
+
 QDir FileManager::getImageDirFile(QString relativePath) {
-    return QDir(imagesDir.dirName()+ toPlatformPathSeparator(relativePath));
+    return QDir(imagesDir.dirName() + toPlatformPathSeparator(relativePath));
 }
+
 QString FileManager::getImageDirPath(QString relativePath) {
     return imagesDirPath + toPlatformPathSeparator(relativePath);
 }
+
 QDir FileManager::getJavaDirFile(QString relativePath) {
-    return QDir(javaDir.dirName()+ toPlatformPathSeparator(relativePath));
+    return QDir(javaDir.dirName() + toPlatformPathSeparator(relativePath));
 }
+
 QString FileManager::getJavaDirPath(QString relativePath) {
     return javaDirPath + toPlatformPathSeparator(relativePath);
 }
+
 QDir FileManager::getLogsDirFile(QString relativePath) {
     return QDir(logsDir.dirName() + toPlatformPathSeparator(relativePath));
 }
+
 QString FileManager::getLogsDirPath(QString relativePath) {
     return logsDirPath + toPlatformPathSeparator(relativePath);
 }
@@ -318,52 +328,68 @@ QString FileManager::getLogsDirPath(QString relativePath) {
 QString FileManager::getTmpDirPath() {
     return tmpDirPath;
 }
+
 QString FileManager::getTmpDirPath(QString relativePath) {
     return tmpDirPath + toPlatformPathSeparator(relativePath);
 }
+
 QString FileManager::getTmpDirPathSpecialChar(QString relativePath) {
     return tmpDirPath + toPlatformPathSeparator(relativePath).replace("#", "%23");
 }
+
 QString FileManager::getDbaDirPath() {
     return dbaDirPath.replace("\\", "/");
 }
+
 QString FileManager::getDbaDirPath(QString relativePath) {
     return dbaDirPath + toPlatformPathSeparator(relativePath);
 }
+
 QString FileManager::getDbaDirPathSpecialChar(QString relativePath) {
     return dbaDirPath + toPlatformPathSeparator(relativePath).replace("#", "%23");
 }
+
 QString FileManager::getDbiDirPath() {
     return dbiDirPath;
 }
+
 QString FileManager::getDbiDirPath(QString relativePath) {
     return dbiDirPath + toPlatformPathSeparator(relativePath);
 }
+
 QString FileManager::getDbiDirPathSpecialChar(QString relativePath) {
     return dbiDirPath + toPlatformPathSeparator(relativePath).replace("#", "%23");
 }
+
 QString FileManager::getThumbnailDirPath() {
     return thumbnailDirPath;
 }
+
 QString FileManager::getThumbnailDirPath(QString relativePath) {
     return thumbnailDirPath + toPlatformPathSeparator(relativePath);
 }
+
 QString FileManager::getThumbnailDirPathSpecialChar(QString relativePath) {
     return thumbnailDirPath + toPlatformPathSeparator(relativePath).replace("#", "%23");
 }
+
 QString FileManager::getTranslateFilePath(QString relativePath) {
     return translateDirPath + toPlatformPathSeparator(relativePath);
 }
+
 void FileManager::purgeResDirectory(bool exitOnFail) {
     this->deleteTopLevelFiles(tmpDir.dirName(), exitOnFail);
 }
 
-/** Read contents of the file in string
+/**
+ * Read contents of the file in string
  */
 QString FileManager::readFile(QString file) {
     QFile f(file);
-    if (!f.open(QFile::ReadOnly))
+    if (!f.open(QFile::ReadOnly)) {
+        QLOG_DEBUG() << "Error opening file " << file;
         return QString();
+    }
     QTextStream is(&f);
     return is.readAll();
 }
@@ -377,22 +403,15 @@ QString FileManager::getProgramVersion() {
 void FileManager::setupLoggingToFile() {
     QsLogging::Logger &logger = QsLogging::Logger::instance();
 
-    // #4 configure file logging (until now logging was only to terminal)
+    // 4 configure file logging (until now logging was only to terminal)
     const QString loggingPath = getLogsDirPath("");
 
-    QString logPath = loggingPath + "messages.log";
-    QsLogging::DestinationPtr fileDestination(QsLogging::DestinationFactory::MakeFileDestination(logPath));
-    logger.addDestination(fileDestination.get());
-
-    QString loggingAttachmentsPath = loggingPath+QDir::separator()+"files";
+    QString loggingAttachmentsPath = loggingPath + "files";
     QDir loggingAttachmentsPathQD(loggingAttachmentsPath);
     createDirOrCheckWriteable(loggingAttachmentsPathQD);
     deleteTopLevelFiles(loggingAttachmentsPathQD, true);
 
     logger.setFileLoggingPath(loggingAttachmentsPath);
-    logger.writeToFile("test","tralala11111");
-    logger.writeToFile("aa","1tralala11111");
-    logger.writeToFile("bb","2tralala11111");
 }
 
 

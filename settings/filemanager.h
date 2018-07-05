@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDir>
 #include <exception>
 #include <QStandardPaths>
+#include "logger/qslog.h"
+#include "logger/qslogdest.h"
 
 //************************************************
 //* This class is used to retrieve the
@@ -70,13 +72,14 @@ private:
     QString translateDirPath;
     QDir translateDir;
 
+    QsLogging::DestinationPtr fileLoggingDestination;
+
     QString toPlatformPathSeparator(QString relativePath);
     QString slashTerminatePath(QString path);
     void checkExistingReadableDir(QDir dir);
     void checkExistingWriteableDir(QDir dir);
     void deleteTopLevelFiles(QDir dir, bool exitOnFail);
     void createDirOrCheckWriteable(QDir dir);
-    void setupLoggingToFile();
 
 public:
     FileManager();
@@ -119,6 +122,7 @@ public:
     void purgeResDirectory(bool exitOnFail);
     QString readFile(QString file);
     QString getProgramVersion();
+    void setupLoggingToFile();
 };
 
 #endif // FILEMANAGER_H
