@@ -209,19 +209,19 @@ QString FileManager::slashTerminatePath(QString path) {
 /*************************************************/
 void FileManager::deleteTopLevelFiles(QDir dir, bool exitOnFail) {
     QLOG_DEBUG() << "About to delete all files in directory: " << dir.absolutePath();
-    dir.setFilter(QDir::Files);
-    QStringList list = dir.entryList();
-    for (qint32 i = 0; i < list.size(); i++) {
-        const QString &fileName = list.at(i);
-        const QString &fileNameWithPath = dir.filePath(fileName);
-
-        QFile f(fileNameWithPath);
-        if (!f.remove() && exitOnFail) {
-            QLOG_FATAL() << "Error deleting file '" << fileNameWithPath
-                         << "'. Aborting program";
-            exit(16);
-        }
-    }
+    // dir.setFilter(QDir::Files);
+    // QStringList list = dir.entryList();
+    // for (qint32 i = 0; i < list.size(); i++) {
+    //     const QString &fileName = list.at(i);
+    //     const QString &fileNameWithPath = dir.filePath(fileName);
+    //
+    //     QFile f(fileNameWithPath);
+    //     if (!f.remove() && exitOnFail) {
+    //         QLOG_FATAL() << "Error deleting file '" << fileNameWithPath
+    //                      << "'. Aborting program";
+    //         exit(16);
+    //     }
+    // }
 }
 
 
