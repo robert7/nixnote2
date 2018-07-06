@@ -95,7 +95,7 @@ private:
     QStringList tr_;
     QStringList ul;
 
-    void checkAttributes(QWebElement &e, QStringList valid);
+    void checkAttributes(QWebElement &element, QStringList valid);
 
     void tidyHtml(QByteArray &content);
 

@@ -356,7 +356,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
             QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
                 foreach(QWebElement
                             element, anchors) {
-                    QLOG_DEBUG() << "Processing tag name: " << element.tagName();
+                    //QLOG_DEBUG() << "Processing tag name: " << element.tagName();
                     if (element.tagName().toLower() == "input") {
                         processTodo(element);
                     } else if (element.tagName().toLower() == "a") {
@@ -965,12 +965,12 @@ QByteArray EnmlFormatter::removeInvalidUnicode(QByteArray content) {
 
 // Look through all attributes of the node.  If it isn't in the list of
 // valid attributes, we remove it.
-void EnmlFormatter::checkAttributes(QWebElement &e, QStringList valid) {
-    QStringList attrs = e.attributeNames();
+void EnmlFormatter::checkAttributes(QWebElement &element, QStringList valid) {
+    QStringList attrs = element.attributeNames();
     for (int i = 0; i < attrs.size(); i++) {
         if (!valid.contains(attrs[i])) {
-            QLOG_DEBUG() << "Removing invalid attribute: " << attrs[i];
-            e.removeAttribute(attrs[i]);
+            QLOG_DEBUG() << "Removing invalid attribute " << element.tagName() << " " << attrs[i];
+            element.removeAttribute(attrs[i]);
         }
     }
 }

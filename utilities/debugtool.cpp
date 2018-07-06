@@ -211,8 +211,16 @@ void DebugTool::dumpNotebook(Notebook n) {
 //*******************************************************
 
 void DebugTool::dumpField(Optional<QString> field, QString name) {
-    if (field.isSet())
-        QLOG_DEBUG() << name << ":" << field << ":";
+    
+    
+    if (field.isSet()) {
+        QString &fieldValue = field.ref();
+        if (fieldValue.length() > 100) {
+           QLOG_DEBUG_FILE(QString("attr-").append(name),field);
+        } else {
+            QLOG_DEBUG() << name << ":" << fieldValue << ":";
+        }
+    }
     else
         QLOG_DEBUG() << name << " is not set.";
 }
