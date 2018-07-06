@@ -794,12 +794,5 @@ bool StartupConfig::signalOtherGui() {
     return command->at(STARTUP_SIGNALGUI);
 }
 
-void StartupConfig::setAccountId(int accountId) {
-    if (this->accountId == accountId) {
-        return;
-    }
-    QLOG_DEBUG() << "StartupConfig: updating accountId to " << accountId;
-    this->accountId = accountId;
-}
 
 

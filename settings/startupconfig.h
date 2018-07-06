@@ -79,9 +79,6 @@ public:
 
     int getAccountId() { return accountId; }
 
-    // TODO refactor its not very clean to set the account id here from "global"
-    void setAccountId(int accountId);
-
     QString queryString;
     bool forceNoStartMinimized;
     bool startupNewNote;

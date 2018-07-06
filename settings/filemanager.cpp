@@ -57,7 +57,7 @@ QString getDefaultProgramDirPath() {
 
 
 void
-FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir, int accountId) {
+FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir) {
     if (!startupConfigDir.isEmpty()) {
         startupConfigDir = slashTerminatePath(startupConfigDir);
     }
@@ -139,19 +139,11 @@ FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString
     //    qssDir.setPath(programDataDir + "qss");
     //    checkExistingReadableDir(qssDir);
     //    qssDirPath = slashTerminatePath(qssDir.path());
+}
 
-    // Read/write directories that only we use
-    QString globalSettingsFileName = configDir + NN_CONFIG_FILE_PREFIX + ".conf";
-    QLOG_DEBUG() << "Global settings file name: " << globalSettingsFileName;
-    QSettings globalSettings(globalSettingsFileName, QSettings::IniFormat);
 
-    if (accountId <= 0) {
-        // not given on command line: get from conf file
-        globalSettings.beginGroup("SaveState");
-        int accountIdFromSettings = globalSettings.value("lastAccessedAccount", 1).toInt();
-        globalSettings.endGroup();
-        accountId = accountIdFromSettings;
-    }
+void FileManager::setupUserDirectories(int accountId) {
+    QLOG_ASSERT(accountId > 0);
 
     logsDir.setPath(userDataDir + NN_LOGS_DIR_PREFIX + "-" + QString::number(accountId));
     createDirOrCheckWriteable(logsDir);

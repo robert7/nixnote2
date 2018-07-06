@@ -54,6 +54,7 @@ echo Building version: ${VERSION}
 APPDIR=appdir
 if [ -d "${APPDIR}" ]; then
   rm -rf ${APPDIR}
+  rm *.AppImage 2>/dev/null
 fi
 
 

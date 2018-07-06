@@ -111,7 +111,6 @@ Global::Global() {
 }
 
 
-
 // Initial global settings setup
 void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     QLOG_ASSERT(globalSettings != nullptr);
@@ -128,8 +127,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     //this->syncAndExit = startupConfig.syncAndExit;
     this->forceStartMinimized = startupConfig.forceStartMinimized;
     this->startupNote = startupConfig.startupNoteLid;
-    startupConfig.setAccountId(accountId);
-    accountsManager = new AccountsManager(startupConfig.getAccountId());
+    accountsManager = new AccountsManager(getAccountId());
     if (startupConfig.enableIndexing || getBackgroundIndexing())
         enableIndexing = true;
 
@@ -249,7 +247,7 @@ void Global::initializeSharedMemoryMapper(int accountId) {
  * Configure global settings.
  */
 void Global::initializeGlobalSettings() {
-   QLOG_ASSERT(globalSettings == nullptr);
+    QLOG_ASSERT(globalSettings == nullptr);
     QLOG_ASSERT(!fileManager.getProgramDataDir().isEmpty());
     const QString &configDir = fileManager.getConfigDir();
     QLOG_ASSERT(!configDir.isEmpty());
@@ -269,6 +267,7 @@ void Global::initializeUserSettings(int accountId) {
     if (accountId <= 0) {
         globalSettings->beginGroup("SaveState");
         accountId = globalSettings->value("lastAccessedAccount", 1).toInt();
+        QLOG_DEBUG() << "Last accessed accountId is " << accountId;
         globalSettings->endGroup();
     }
     QLOG_ASSERT(accountId > 0);

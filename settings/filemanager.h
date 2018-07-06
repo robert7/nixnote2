@@ -82,7 +82,8 @@ private:
 
 public:
     FileManager();
-    void setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir, int accountId);
+    void setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir);
+    void setupUserDirectories( int accountId);
 
     // new global file path interface ------- -----------------------------------------------------------
     // where main config file is stored (but NOT database, logs etc.)

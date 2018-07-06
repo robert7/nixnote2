@@ -33,7 +33,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // Windows Check
 #ifndef _WIN32
+
 #include <execinfo.h>
+
 #endif
 
 #include <csignal>
@@ -64,50 +66,47 @@ extern Global global;
 #ifndef _WIN32
 
 void fault_handler(int sig) {
-  void *array[30];
-  size_t size;
+    void *array[30];
+    size_t size;
 
-  // get void*'s for all entries on the stack
-  size = backtrace(array, 30);
+    // get void*'s for all entries on the stack
+    size = backtrace(array, 30);
 
-  // print out all the frames to stderr
-  fprintf(stderr, "Error: signal %d:\n", sig);
-  backtrace_symbols_fd(array, size, 2);  
-  if (w!=NULL) {
-      fprintf(stderr, "Forcing save\n");
-      w->saveState();
-  }
-  exit(1);
+    // print out all the frames to stderr
+    fprintf(stderr, "Error: signal %d:\n", sig);
+    backtrace_symbols_fd(array, size, 2);
+    if (w != NULL) {
+        fprintf(stderr, "Forcing save\n");
+        w->saveState();
+    }
+    exit(1);
 }
 
 
-
 void sighup_handler(int sig) {
-  // print out all the frames to stderr
-  fprintf(stderr, "Error: signal %d:\n", sig);
-  if (w!=NULL) {
-      fprintf(stderr, "Forcing save\n");
-      w->saveState();
-  }
+    // print out all the frames to stderr
+    fprintf(stderr, "Error: signal %d:\n", sig);
+    if (w != NULL) {
+        fprintf(stderr, "Forcing save\n");
+        w->saveState();
+    }
 }
 
 
 #endif // End Windows check
 
 
-
 //using namespace cv;
 //*********************************************************************
 //* Main entry point to the program.
 //*********************************************************************
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     w = NULL;
     bool guiAvailable = true;
 
     // Setup the QLOG functions for debugging & messages
     // we need to do it at very beginning, else we lose the startup messages
-    QsLogging::Logger& logger = QsLogging::Logger::instance();
+    QsLogging::Logger &logger = QsLogging::Logger::instance();
     // at very beginning we starting with info level to get basic startup info
     // log level is later adjusted by settings
 
@@ -115,7 +114,7 @@ int main(int argc, char *argv[])
     logger.setLoggingLevel(QsLogging::DebugLevel);
 
     QsLogging::DestinationPtr debugDestination(
-        QsLogging::DestinationFactory::MakeDebugOutputDestination() );
+        QsLogging::DestinationFactory::MakeDebugOutputDestination());
     logger.addDestination(debugDestination.get());
 
 // Windows Check
@@ -128,7 +127,7 @@ int main(int argc, char *argv[])
     global.argc = argc;
     global.argv = argv;
 
-    int retval = startupConfig.init(argc,argv, guiAvailable);
+    int retval = startupConfig.init(argc, argv, guiAvailable);
     if (retval != 0) {
         return retval;
     }
@@ -148,16 +147,20 @@ int main(int argc, char *argv[])
     global.application = a;
 
 
-    global.fileManager.setup(
-        startupConfig.getConfigDir(),
-        startupConfig.getUserDataDir(),
-        startupConfig.getProgramDataDir(),
-        startupConfig.getAccountId());
+    global.fileManager.setup(startupConfig.getConfigDir(), startupConfig.getUserDataDir(),
+                             startupConfig.getProgramDataDir());
     QString versionStr = global.fileManager.getProgramVersion();
 
+    // first configure global settings file
     global.initializeGlobalSettings();
+    // then we configure user config file - accountId may be set on command line (then it comes via startupConfig)
+    // but if it is not, then we get it from main config (and set to global.accountId)
     global.initializeUserSettings(startupConfig.getAccountId());
+    // now we can set up user data directories
+    global.fileManager.setupUserDirectories(global.getAccountId());
+    // and not instance sync memory mapper
     global.initializeSharedMemoryMapper(global.getAccountId());
+    // now all other..
     global.setup(startupConfig, guiAvailable);
 
     // We were passed a SQL command
@@ -173,7 +176,7 @@ int main(int argc, char *argv[])
         }
         while (query.next()) {
             QString result = "";
-            for (int i=0; i<query.record().count(); i++) {
+            for (int i = 0; i < query.record().count(); i++) {
                 result = result + query.value(i).toString() + " | ";
             }
             QLOG_INFO() << result;
@@ -186,9 +189,9 @@ int main(int argc, char *argv[])
 
     // If we want something other than the GUI, try let the CmdLineTool deal with it.
     if (!startupConfig.gui()) {
-        global.purgeTemporaryFilesOnShutdown=startupConfig.purgeTemporaryFiles;
+        global.purgeTemporaryFilesOnShutdown = startupConfig.purgeTemporaryFiles;
         CmdLineTool cmdline;
-        startupConfig.purgeTemporaryFiles=false;
+        startupConfig.purgeTemporaryFiles = false;
         int retval1 = cmdline.run(startupConfig);
         if (global.sharedMemory->isAttached())
             global.sharedMemory->detach();
@@ -198,9 +201,9 @@ int main(int argc, char *argv[])
         exit(retval1);
     }
 
-    QString logPath = global.fileManager.getLogsDirPath("")+"messages.log";
+    QString logPath = global.fileManager.getLogsDirPath("") + "messages.log";
     QsLogging::DestinationPtr fileDestination(
-                 QsLogging::DestinationFactory::MakeFileDestination(logPath) ) ;
+        QsLogging::DestinationFactory::MakeFileDestination(logPath));
     logger.addDestination(fileDestination.get());
 
     // from now on logging goes also to log file (up to here only to terminal)
@@ -215,11 +218,11 @@ int main(int argc, char *argv[])
     // with any other instance that may be running.  If another instance
     // is found we need to either show that one or kill this one.
     bool memInitNeeded = true;
-    if( !global.sharedMemory->allocate(512*1024) ) {
+    if (!global.sharedMemory->allocate(512 * 1024)) {
         // Attach to it and detach.  This is done in case it crashed.
         global.sharedMemory->attach();
         global.sharedMemory->detach();
-        if( !global.sharedMemory->allocate(512*1024) ) {
+        if (!global.sharedMemory->allocate(512 * 1024)) {
             QLOG_DEBUG() << "segment created";
             if (startupConfig.startupNewNote) {
                 global.sharedMemory->attach();
@@ -230,7 +233,7 @@ int main(int argc, char *argv[])
             }
             if (startupConfig.startupNoteLid > 0) {
                 global.sharedMemory->attach();
-                global.sharedMemory->write("OPEN_NOTE"+QString::number(startupConfig.startupNoteLid) + " ");
+                global.sharedMemory->write("OPEN_NOTE" + QString::number(startupConfig.startupNoteLid) + " ");
                 global.sharedMemory->detach();
                 delete a;
                 exit(0);  // Exit this one
@@ -271,7 +274,7 @@ int main(int argc, char *argv[])
     w->setAttribute(Qt::WA_QuitOnClose);
 
     // this is bit dirty, maybe improve later
-    QObject::connect(&global, SIGNAL(setMessageSignal(QString, int)), w, SLOT(setMessage(QString,int)));
+    QObject::connect(&global, SIGNAL(setMessageSignal(QString, int)), w, SLOT(setMessage(QString, int)));
 
     bool show = true;
     if (global.minimizeToTray() && global.startMinimized)

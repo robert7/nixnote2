@@ -143,12 +143,6 @@ private:
     void getThemeNamesFromFile(QString fileName, QStringList &values);
     int accountId;
 public:
-    int getAccountId() const;
-
-    void setAccountId(int accountId);
-
-
-public:
     Global();           // Generic constructor
     virtual ~Global() {};          // destructor
 
@@ -398,7 +392,8 @@ public:
     void initializeUserSettings(int accountId);
     void initializeSharedMemoryMapper(int accountId);
 
-
+    int getAccountId() { return accountId; };
+    void setAccountId(int accountId)  {this->accountId = accountId; };
 
 signals:
     // global can send signal about updating status bar
