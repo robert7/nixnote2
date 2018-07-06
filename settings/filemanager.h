@@ -85,7 +85,7 @@ public:
     void setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir, int accountId);
 
     // new global file path interface ------- -----------------------------------------------------------
-    // where "nixnote.conf" is stored (but NOT database, logs etc.)
+    // where main config file is stored (but NOT database, logs etc.)
     QString getConfigDir() { return configDir; };
 
     // where additional resources are stored e.g. "help/*", "images/*" etc.

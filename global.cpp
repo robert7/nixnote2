@@ -127,7 +127,7 @@ Global::Global() {
 void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     QLOG_ASSERT(globalSettings != nullptr);
     QLOG_ASSERT(!fileManager.getProgramDataDir().isEmpty());
-    
+
 
     this->guiAvailable = guiAvailable;
 
@@ -270,11 +270,11 @@ void Global::initializeSettings(int accountId) {
     const QString &configDir = fileManager.getConfigDir();
     QLOG_ASSERT(!configDir.isEmpty());
 
-    QString settingsFile = configDir + "nixnote.conf";
+    QString settingsFile = configDir + CONFIG_FILE_PREFIX + ".conf";
     QLOG_DEBUG() << "Opening INI file " << settingsFile;
     globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
 
-    settingsFile = configDir + "nixnote-" + QString::number(accountId) + ".conf";
+    settingsFile = configDir + CONFIG_FILE_PREFIX + "-" + QString::number(accountId) + ".conf";
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 }
 

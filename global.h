@@ -112,6 +112,17 @@ class IndexRunner;
 // string to be displayed without program version
 #define APP_DISPLAY_NAME_GUI "NixNote2"
 
+// name of the config file (main config and user configs)
+#define CONFIG_FILE_PREFIX "nixnote"
+#define ACCOUNTS_CONFIG_FILE_PREFIX "accounts"
+#define DB_DIR_PREFIX "db"
+#define LOG_DIR_PREFIX "log"
+#define TMP_DIR_PREFIX "log"
+// subdirectory in log directory for file attachments
+#define LOG_DIR_FILES "files"
+
+
+
 #define QLOG_ASSERT(expr) if (expr) {} else { QLOG_FATAL() << "Assertion failed: " #expr; exit(16);}
 
 

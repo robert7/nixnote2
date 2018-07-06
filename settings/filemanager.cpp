@@ -141,7 +141,7 @@ FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString
     //    qssDirPath = slashTerminatePath(qssDir.path());
 
     // Read/write directories that only we use
-    QString globalSettingsFileName = configDir + "nixnote.conf";
+    QString globalSettingsFileName = configDir + CONFIG_FILE_PREFIX + ".conf";
     QLOG_DEBUG() << "FileManager::setup globalSettingsFileName: " << globalSettingsFileName;
     QSettings globalSettings(globalSettingsFileName, QSettings::IniFormat);
 
