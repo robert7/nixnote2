@@ -83,7 +83,7 @@ NTagView::NTagView(QWidget *parent) :
     setAcceptDrops(true);
     setDragEnabled(true);
 
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     hideUnassigned = global.settings->value("hideUnassigned", false).toBool();
     global.settings->endGroup();
 
@@ -878,7 +878,7 @@ void NTagView::hideUnassignedTags() {
         hideUnassigned = false;
 
     // Save this option
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("hideUnassigned", hideUnassigned);
     global.settings->endGroup();
     QList<qint32> keys = dataStore.keys();

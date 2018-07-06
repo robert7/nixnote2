@@ -104,7 +104,7 @@ NTableView::NTableView(QWidget *parent) :
     this->setItemDelegateForColumn(NOTE_TABLE_SEARCH_RELEVANCE_POSITION, blankNumber);
 
     QLOG_TRACE() << "Setting up column headers";
-    global.settings->beginGroup("Debugging");
+    global.settings->beginGroup(INI_GROUP_DEBUGGING);
     this->setColumnHidden(NOTE_TABLE_LID_POSITION, !global.settings->value("showLids", false).toBool());
     global.settings->endGroup();
     this->setColumnHidden(NOTE_TABLE_NOTEBOOK_LID_POSITION, true);
@@ -939,9 +939,9 @@ void NTableView::toggleColumnVisible(int position, bool visible) {
 // Save which columns are visible so it can be restored on the next stat
 void NTableView::saveColumnsVisible() {
     if (global.listView == Global::ListViewWide)
-        global.settings->beginGroup("ColumnHidden-Wide");
+        global.settings->beginGroup(INI_GROUP_COL_HIDDEN_WIDE);
     else
-        global.settings->beginGroup("ColumnHidden-Narrow");
+        global.settings->beginGroup(INI_GROUP_COL_HIDDEN_NARROW);
 
     bool value = isColumnHidden(NOTE_TABLE_ALTITUDE_POSITION);
     global.settings->setValue("altitude", value);
@@ -1031,9 +1031,9 @@ void NTableView::saveColumnsVisible() {
 // Set which columns are visible (used after restarting)
 void NTableView::setColumnsVisible() {
     if (global.listView == Global::ListViewWide)
-        global.settings->beginGroup("ColumnHidden-Wide");
+        global.settings->beginGroup(INI_GROUP_COL_HIDDEN_WIDE);
     else
-        global.settings->beginGroup("ColumnHidden-Narrow");
+        global.settings->beginGroup(INI_GROUP_COL_HIDDEN_NARROW);
 
     bool value = global.settings->value("dateCreated", false).toBool();
     tableViewHeader->createdDateAction->setChecked(!value);

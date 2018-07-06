@@ -187,7 +187,7 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
 
 
 void NTableViewHeader::saveSort(int logicalIndex, Qt::SortOrder order) {
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("sortOrder", order);
     global.settings->setValue("sortColumn", logicalIndex);
     global.settings->endGroup();
@@ -197,7 +197,7 @@ void NTableViewHeader::saveSort(int logicalIndex, Qt::SortOrder order) {
 void NTableViewHeader::saveHeader() {
     QByteArray state = this->saveState();
     QByteArray geometry = this->saveGeometry();
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("listViewWideHeaderState", state);
     global.settings->setValue("listViewWideHeaderGeometry", geometry);
     global.settings->endGroup();

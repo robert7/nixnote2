@@ -247,7 +247,7 @@ QString EmailNote::stripContentsForPrint(QString contents) {
 
 
 int EmailNote::sendEmail() {
-    global.settings->beginGroup("Email");
+    global.settings->beginGroup(INI_GROUP_EMAIL);
     QString server = global.settings->value("smtpServer", "").toString();
     int port = global.settings->value("smtpPort", 25).toInt();
     QString smtpConnectionType = global.settings->value("smtpConnectionType", "TcpConnection").toString();

@@ -355,7 +355,7 @@ void EditorButtonBar::contextMenuEvent(QContextMenuEvent *event) {
 
 void EditorButtonBar::saveButtonbarState() {
     QLOG_DEBUG() << "Buttonbar state save";
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
 
     bool value;
     value = undoButtonAction->isVisible();
@@ -461,7 +461,7 @@ void EditorButtonBar::saveButtonbarState() {
 
 
 void EditorButtonBar::getButtonbarState() {
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
 
     undoButtonAction->setVisible(global.settings->value("undoButtonVisible", true).toBool());
     undoVisible->setChecked(undoButtonAction->isVisible());
@@ -562,7 +562,7 @@ void EditorButtonBar::getButtonbarState() {
 
 // we can't easily call getButtonbarState, as the buttons are not yet ready at creation time
 void EditorButtonBar::getButtonbarColorState() {
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     fontColor = global.settings->value("fontColor", "red").toString();
     fontHighlightColor = global.settings->value("fontHighlightColor", "yellow").toString();
     global.settings->endGroup();

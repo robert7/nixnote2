@@ -132,6 +132,27 @@ class IndexRunner;
 // as the upstream is currently defunct main page is the fork
 #define NN_GITHUB_PAGE "https://www.github.com/robert7/nixnote2"
 
+#define INI_GROUP_APPEARANCE "Appearance"
+#define INI_GROUP_COL_HIDDEN_WIDE "ColumnHidden-Wide"
+#define INI_GROUP_COL_POS_WIDE "ColumnPosition-Wide"
+#define INI_GROUP_COL_WIDTH_WIDE "ColumnWidth-Wide"
+//
+#define INI_GROUP_COL_HIDDEN_NARROW "ColumnHidden-Narrow"
+#define INI_GROUP_COL_POS_NARROW "ColumnPosition-Narrow"
+#define INI_GROUP_COL_WIDTH_NARROW "ColumnWidth-Narrow"
+//
+#define INI_GROUP_SAVE_STATE "SaveState"
+#define INI_GROUP_REMINDERS "Reminders"
+#define INI_GROUP_DEBUGGING "Debugging"
+#define INI_GROUP_SEARCH "Search"
+#define INI_GROUP_PROXY "Proxy"
+#define INI_GROUP_EMAIL "Email"
+#define INI_GROUP_PRINTER "Printer"
+#define INI_GROUP_SYNC "Sync"
+#define INI_GROUP_THUMBNAIL "Thumbnail"
+#define INI_GROUP_LOCALE "Locale"
+
+
 
 #define QLOG_ASSERT(expr) if (expr) {} else { QLOG_FATAL() << "Assertion failed: " #expr; exit(16);}
 

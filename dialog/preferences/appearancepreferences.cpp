@@ -174,7 +174,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(new QLabel(tr("* May require restart on some systems.")), row++, 0);
     mainLayout->addWidget(new QLabel(tr("** Can crash on Gnome systems.")), row++, 0);
 
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
 
     disableEditingOnStartup->setChecked(global.settings->value("disableEditingOnStartup",false).toBool());
 
@@ -250,7 +250,7 @@ void AppearancePreferences::saveValues() {
     global.setAutosetUsername(autosetUserid->isChecked());
     if (!autosetUserid->isChecked())
         global.full_username="";
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     global.settings->setValue("disableEditingOnStartup", disableEditingOnStartup->isChecked());
     global.settings->setValue("forceWebFonts", forceWebFonts->isChecked());
     global.settings->setValue("showTrayIcon", showTrayIcon->isChecked());

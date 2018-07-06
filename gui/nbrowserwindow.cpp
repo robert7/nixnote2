@@ -278,7 +278,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
 
     // Restore the expand/collapse state
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     int expandButton = global.settings->value("ExpandButton", EXPANDBUTTON_1).toInt();
     global.settings->endGroup();
     this->expandButton.setState(expandButton);
@@ -671,7 +671,7 @@ void NBrowserWindow::changeExpandState(int value) {
             dateEditor.show();
             break;
     }
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("ExpandButton", value);
     global.settings->endGroup();
 }
@@ -2686,7 +2686,7 @@ void NBrowserWindow::prepareEmailMessage(MimeMessage *message, QString note) {
 
 // Email current note.
 void NBrowserWindow::emailNote() {
-    global.settings->beginGroup("Email");
+    global.settings->beginGroup(INI_GROUP_EMAIL);
     QString server = global.settings->value("smtpServer", "").toString();
     int port = global.settings->value("smtpPort", 25).toInt();
     QString smtpConnectionType = global.settings->value("smtpConnectionType", "TcpConnection").toString();
@@ -2852,7 +2852,7 @@ void NBrowserWindow::printNote() {
 
     QPrinter *printer;
 
-    global.settings->beginGroup("Printer");
+    global.settings->beginGroup(INI_GROUP_PRINTER);
     QPrinter::Orientation orientation = static_cast<QPrinter::Orientation>(global.settings->value(
         "orientation").toUInt());
     QString name = global.settings->value("printerName", "").toString();
@@ -2902,7 +2902,7 @@ void NBrowserWindow::printNote() {
         QPrintDialog dialog(printer);
         if (dialog.exec() == QDialog::Accepted) {
             printer = dialog.printer();
-            global.settings->beginGroup("Printer");
+            global.settings->beginGroup(INI_GROUP_PRINTER);
             global.settings->setValue("orientation", printer->orientation());
             global.settings->setValue("printerName", printer->printerName());
             global.settings->setValue("outputFormat", printer->outputFormat());
@@ -3488,7 +3488,7 @@ void NBrowserWindow::spellCheckPressed() {
     QStringList rwords;
     bool finished = false;
 
-    global.settings->beginGroup("Locale");
+    global.settings->beginGroup(INI_GROUP_LOCALE);
     QString dict = global.settings->value("translation").toString();
     global.settings->endGroup();
 
@@ -3792,7 +3792,7 @@ void NBrowserWindow::loadPlugins() {
                         hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
                         if (hunspellInterface) {
                             QString errMsg;
-                            global.settings->beginGroup("Locale");
+                            global.settings->beginGroup(INI_GROUP_LOCALE);
                             QString dict = global.settings->value("translation").toString();
                             global.settings->endGroup();
                             hunspellPluginAvailable = hunspellInterface->initialize(

@@ -112,7 +112,7 @@ class SyncRunner;
 //*************************************************
 NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImage"));
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     if (global.settings->value("showSplashScreen", false).toBool()) {
         splashScreen->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::SplashScreen | Qt::FramelessWindowHint);
         splashScreen->show();
@@ -128,7 +128,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
 
     nixnoteTranslator = new QTranslator();
     QString translation;
-    global.settings->beginGroup("Locale");
+    global.settings->beginGroup(INI_GROUP_LOCALE);
     translation = global.settings->value("translation", QLocale::system().name()).toString();
     global.settings->endGroup();
     translation = global.fileManager.getTranslateFilePath(NN_APP_NAME "_" + translation + ".qm");
@@ -192,7 +192,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
             SLOT(showMessage(QString, QString, int)));
     global.reminderManager->reloadTimers();
 
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     bool showMissed = global.settings->value("showMissedReminders", false).toBool();
     global.settings->endGroup();
     if (showMissed)
@@ -435,13 +435,13 @@ void NixNote::setupGui() {
     // Restore the window state
     global.startMinimized = false;
     QLOG_TRACE() << "Restoring window state";
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     int selectionBehavior = global.settings->value("startupNotebook",
                                                    AppearancePreferences::UseLastViewedNotebook).toInt();
     global.startMinimized = global.settings->value("startMinimized", false).toBool();
     global.settings->endGroup();
 
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     bool showStatusbar = global.settings->value("statusBar", true).toBool();
     if (showStatusbar) {
         menuBar->viewStatusbar->setChecked(showStatusbar);
@@ -642,7 +642,7 @@ void NixNote::setupGui() {
         // Restore whatever they were looking at in the past
         if (selectionBehavior == AppearancePreferences::UseLastViewedNotebook) {
 
-            global.settings->beginGroup("SaveState");
+            global.settings->beginGroup(INI_GROUP_SAVE_STATE);
             qint32 notebookLid = global.settings->value("selectedNotebook", 0).toInt();
             if (notebookLid > 0 && notebookTreeView->dataStore[notebookLid] != nullptr) {
                 criteria->setNotebook(*notebookTreeView->dataStore[notebookLid]);
@@ -731,7 +731,7 @@ void NixNote::setupGui() {
     }
 
     // Restore expanded tags & stacks
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     QString expandedTags = global.settings->value("expandedTags", "").toString();
     if (expandedTags != "") {
         QStringList tags = expandedTags.split(" ");
@@ -899,7 +899,7 @@ void NixNote::counterThreadStarted() {
 //***************************************************************
 void NixNote::syncThreadStarted() {
     syncRunner.moveToThread(&syncThread);
-    global.settings->beginGroup("Sync");
+    global.settings->beginGroup(INI_GROUP_SYNC);
     bool syncOnStartup = global.settings->value("syncOnStartup", false).toBool();
     global.showGoodSyncMessagesInTray = global.settings->value("showGoodSyncMessagesInTray", true).toBool();
     global.settings->endGroup();
@@ -1170,7 +1170,7 @@ void NixNote::saveOnExit() {
         lidList = lidList + QString::number(browsers->at(i)->lid) + QString(" ");
     }
 
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("WindowState", saveState());
     global.settings->setValue("WindowGeometry", saveGeometry());
     global.settings->setValue("isMaximized", isMaximized());
@@ -1288,7 +1288,7 @@ void NixNote::closeEvent(QCloseEvent *event) {
 
     saveOnExit();
 
-    global.settings->beginGroup("Sync");
+    global.settings->beginGroup(INI_GROUP_SYNC);
     bool syncOnShutdown = global.settings->value("syncOnShutdown", false).toBool();
     global.settings->endGroup();
     if (syncOnShutdown && !finalSync && global.accountsManager->oauthTokenFound()) {
@@ -1512,7 +1512,7 @@ void NixNote::syncButtonReset() {
 
     // If we had an API rate limit exceeded, restart at the top of the hour.
     if (syncRunner.apiRateLimitExceeded) {
-        global.settings->beginGroup("Sync");
+        global.settings->beginGroup(INI_GROUP_SYNC);
         bool restart = global.settings->value("apiRateLimitAutoRestart", false).toBool();
         global.settings->endGroup();
         if (restart) {
@@ -1935,7 +1935,7 @@ void NixNote::setMessage(QString text, int timeout) {
 void NixNote::notifySyncComplete() {
     updateSelectionCriteria(true);
     bool show;
-    global.settings->beginGroup("Sync");
+    global.settings->beginGroup(INI_GROUP_SYNC);
     show = global.settings->value("enableNotification", false).toBool();
     global.settings->endGroup();
     if (!show)
@@ -1943,7 +1943,7 @@ void NixNote::notifySyncComplete() {
     if (syncRunner.error) {
         showMessage(tr("Sync Error"), tr("Sync completed with errors."));
 
-        global.settings->beginGroup("Sync");
+        global.settings->beginGroup(INI_GROUP_SYNC);
         bool isAutoRestartEnabled = global.settings->value("apiRateLimitAutoRestart", false).toBool();
         global.settings->endGroup();
 
@@ -2285,7 +2285,7 @@ void NixNote::toggleLeftPanel() {
         visible = true;
         leftScroll->show();
     }
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("leftPanelVisible", visible);
     global.settings->endGroup();
 }
@@ -2303,7 +2303,7 @@ void NixNote::toggleNoteList() {
         value = true;
         topRightWidget->show();
     }
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("noteListVisible", value);
     global.settings->endGroup();
 }
@@ -2321,7 +2321,7 @@ void NixNote::toggleTabWindow() {
         tabWindow->show();
         value = true;
     }
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("tabWindowVisible", value);
     global.settings->endGroup();
 
@@ -2851,7 +2851,7 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
     int screenCapture = 4;
 
     if (reason == QSystemTrayIcon::DoubleClick) {
-        global.settings->beginGroup("Appearance");
+        global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("trayDoubleClickAction", -1).toInt();
         global.settings->endGroup();
         if (value == doNothing)
@@ -2869,7 +2869,7 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
             this->screenCapture();
     }
     if (reason == QSystemTrayIcon::MiddleClick) {
-        global.settings->beginGroup("Appearance");
+        global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("trayMiddleClickAction", -1).toInt();
         global.settings->endGroup();
         if (value == doNothing)
@@ -2887,7 +2887,7 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
             this->screenCapture();
     }
     if (reason == QSystemTrayIcon::Trigger) {
-        global.settings->beginGroup("Appearance");
+        global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("traySingleClickAction", -1).toInt();
         global.settings->endGroup();
         if (value == doNothing)
@@ -2965,7 +2965,7 @@ void NixNote::openPreferences() {
         }
         indexRunner.officeFound = global.synchronizeAttachments();
 
-        //        global.settings->beginGroup("Locale");
+        //        global.settings->beginGroup(INI_GROUP_LOCALE);
         //        QString translation;
         //        translation = global.settings->value("translation", QLocale::system().name()).toString();
         //        global.settings->endGroup();
@@ -2984,7 +2984,7 @@ void NixNote::openPreferences() {
 //* Set the automatic sync timer interval.
 //**************************************************************
 void NixNote::setSyncTimer() {
-    global.settings->beginGroup("Sync");
+    global.settings->beginGroup(INI_GROUP_SYNC);
     bool automaticSync = global.settings->value("syncAutomatically", false).toBool();
     int interval = global.settings->value("syncInterval", 15).toInt();
     if (interval < 15)
@@ -3036,7 +3036,7 @@ void NixNote::switchUser() {
         menuBar->userAccountActions[currentAcctPos]->setChecked(false);
         menuBar->blockSignals(false);
         global.accountsManager->currentId = menuBar->userAccountActions[newAcctPos]->data().toInt();
-        global.globalSettings->beginGroup("SaveState");
+        global.globalSettings->beginGroup(INI_GROUP_SAVE_STATE);
         global.globalSettings->setValue("lastAccessedAccount", global.accountsManager->currentId);
         global.globalSettings->endGroup();
         closeAction->trigger();
@@ -3569,7 +3569,7 @@ void NixNote::showDesktopUrl(const QUrl &url) {
 // Reload the icons after a theme switch
 void NixNote::reloadIcons() {
     QString newThemeName = "";
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     QString currentTheme = global.settings->value("themeName", "").toString();
     global.settings->endGroup();
 
@@ -3602,7 +3602,7 @@ void NixNote::reloadIcons() {
         menuBar->blockSignals(true);
         menuBar->themeActions[currentThemePos]->setChecked(false);
         menuBar->blockSignals(false);
-        global.settings->beginGroup("Appearance");
+        global.settings->beginGroup(INI_GROUP_APPEARANCE);
         newThemeName = menuBar->themeActions[newThemePos]->data().toString();
         if (newThemeName != "")
             global.settings->setValue("themeName", newThemeName);
@@ -3656,7 +3656,7 @@ void NixNote::toggleFavoritesTree() {
     bool visible = true;
     if (favoritesTreeView->isVisible())
         visible = false;
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("favoritesTreeVisible", visible);
     global.settings->endGroup();
     favoritesTreeView->setVisible(visible);
@@ -3669,7 +3669,7 @@ void NixNote::toggleNotebookTree() {
     bool visible = true;
     if (notebookTreeView->isVisible())
         visible = false;
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("notebookTreeVisible", visible);
     global.settings->endGroup();
     notebookTreeView->setVisible(visible);
@@ -3682,7 +3682,7 @@ void NixNote::toggleTagTree() {
     bool visible = true;
     if (tagTreeView->isVisible())
         visible = false;
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("tagTreeVisible", visible);
     global.settings->endGroup();
     tagTreeView->setVisible(visible);
@@ -3695,7 +3695,7 @@ void NixNote::toggleSavedSearchTree() {
     bool visible = true;
     if (searchTreeView->isVisible())
         visible = false;
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("savedSearchTreeVisible", visible);
     global.settings->endGroup();
     searchTreeView->setVisible(visible);
@@ -3708,7 +3708,7 @@ void NixNote::toggleAttributesTree() {
     bool visible = true;
     if (attributeTree->isVisible())
         visible = false;
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("attributeTreeVisible", visible);
     global.settings->endGroup();
     attributeTree->setVisible(visible);
@@ -3720,7 +3720,7 @@ void NixNote::toggleTrashTree() {
     bool visible = true;
     if (trashTree->isVisible())
         visible = false;
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("trashTreeVisible", visible);
     global.settings->endGroup();
     trashTree->setVisible(visible);
@@ -3744,7 +3744,7 @@ void NixNote::checkLeftPanelSeparators() {
     bool attributes;
     bool trash;
 
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     favorites = global.settings->value("favoritesTreeVisible", true).toBool();
     notebooks = global.settings->value("notebookTreeVisible", true).toBool();
     tags = global.settings->value("tagTreeVisible", true).toBool();

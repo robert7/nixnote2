@@ -241,7 +241,7 @@ int main(int argc, char *argv[]) {
 
             // If we've gotten this far, we need to either stop this instance or stop the other
             QLOG_DEBUG() << "Multiple instance found";
-            global.settings->beginGroup("Debugging");
+            global.settings->beginGroup(INI_GROUP_DEBUGGING);
             QString startup = global.settings->value("onMultipleInstances", "SHOW_OTHER").toString();
             global.settings->endGroup();
             global.sharedMemory->attach();

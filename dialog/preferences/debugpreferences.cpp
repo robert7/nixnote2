@@ -38,7 +38,7 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     forceUTF8 = new QCheckBox(tr("Force UTF8 Encoding."));
     nonAsciiSortBug->setChecked(global.nonAsciiSortBug);
     forceUTF8->setChecked(global.getForceUTF8());
-    global.settings->beginGroup("Debugging");
+    global.settings->beginGroup(INI_GROUP_DEBUGGING);
     disableUploads->setChecked(global.disableUploads);
     showLidColumn->setChecked(global.settings->value("showLids", false).toBool());
     global.settings->endGroup();
@@ -82,7 +82,7 @@ DebugPreferences::~DebugPreferences() {
 
 void DebugPreferences::saveValues() {
     global.setForceUTF8(forceUTF8->isChecked());
-    global.settings->beginGroup("Debugging");
+    global.settings->beginGroup(INI_GROUP_DEBUGGING);
     global.settings->setValue("showLids", showLidColumn->isChecked());
     global.settings->setValue("nonAsciiSortBug", nonAsciiSortBug->isChecked());
     global.settings->setValue("disableImageHighlight", disableImageHighlight->isChecked());

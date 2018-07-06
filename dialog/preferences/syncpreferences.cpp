@@ -95,7 +95,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     mainLayout->addWidget(restartLabel,10,0);
     mainLayout->setAlignment(Qt::AlignTop);
 
-    global.settings->beginGroup("Sync");
+    global.settings->beginGroup(INI_GROUP_SYNC);
     int interval = global.settings->value("syncInterval", 15).toInt();
     int index = syncInterval->findData(interval);
     syncInterval->setCurrentIndex(index);
@@ -151,7 +151,7 @@ int SyncPreferences::getSyncInterval() {
 
 
 void SyncPreferences::saveValues() {
-    global.settings->beginGroup("Sync");
+    global.settings->beginGroup(INI_GROUP_SYNC);
     global.settings->setValue("syncAutomatically", syncAutomatically->isChecked());
     global.settings->setValue("syncOnShutdown", syncOnShutdown->isChecked());
     global.settings->setValue("syncOnStartup", syncOnStartup->isChecked());

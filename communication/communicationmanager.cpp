@@ -1020,7 +1020,7 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e, QStr
         if (this->minutesToNextSync > 1)
             endOfText = "minutes";
 
-        global.settings->beginGroup("Sync");
+        global.settings->beginGroup(INI_GROUP_SYNC);
         bool apiRateLimitAutoRestart = global.settings->value("apiRateLimitAutoRestart", false).toBool();
         global.settings->endGroup();
 
