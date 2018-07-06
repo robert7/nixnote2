@@ -16,9 +16,11 @@ cmake_minimum_required (VERSION 3.0.2)
 project (nixnote2)
 
 find_package (Qt5Widgets REQUIRED)
-find_package (Qt5Gui)
-find_package (Qt5Sql)
-find_package (Qt5Network)
+find_package (Qt5Gui REQUIRED)
+find_package (Qt5Sql REQUIRED)
+find_package (Qt5Network REQUIRED)
+find_package (Qt5WebKit REQUIRED)
+find_package (Qt5WebKitWidgets REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(TIDY REQUIRED tidy)
@@ -42,4 +44,4 @@ add_executable(nixnote2
         ${nixnote2_src}
         ${nixnote2_hdr_moc}
         )
-target_link_libraries (nixnote2 Qt5::Widgets Qt5::Sql Qt5::Gui Qt5::Network)
+target_link_libraries (nixnote2 Qt5::Widgets Qt5::Sql Qt5::Gui Qt5::Network Qt5:WebKit Qt5:WebKitWidgets)
