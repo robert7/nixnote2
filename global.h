@@ -129,6 +129,9 @@ class IndexRunner;
 
 #define NN_DB_CONNECTION_NAME "nixnote"
 
+// as the upstream is currently defunct main page is the fork
+#define NN_GITHUB_PAGE "https://www.github.com/robert7/nixnote2"
+
 
 #define QLOG_ASSERT(expr) if (expr) {} else { QLOG_FATAL() << "Assertion failed: " #expr; exit(16);}
 
@@ -138,6 +141,11 @@ class Global : public QObject {
 
 private:
     void getThemeNamesFromFile(QString fileName, QStringList &values);
+    int accountId;
+public:
+    int getAccountId() const;
+
+    void setAccountId(int accountId);
 
 
 public:
@@ -386,7 +394,8 @@ public:
     // update status bar with given string
     void setMessage(QString msg, int timeout=SET_MESSAGE_TIMEOUT_LONGER);
 
-    void initializeSettings(int accountId);
+    void initializeGlobalSettings();
+    void initializeUserSettings(int accountId);
     void initializeSharedMemoryMapper(int accountId);
 
 

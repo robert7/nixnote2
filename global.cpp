@@ -111,17 +111,6 @@ Global::Global() {
 }
 
 
-// Destructor
-//Global::~Global() {
-//    FilterCriteria *criteria;
-//    for (int i=0; i<filterCriteria.size(); i++) {
-//        criteria = filterCriteria[i];
-//        if (criteria != nullptr)
-//            delete criteria;
-//    }
-//}
-
-
 
 // Initial global settings setup
 void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
@@ -132,13 +121,6 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     this->guiAvailable = guiAvailable;
 
     shortcutKeys = new ShortcutKeys();
-
-    int accountId = startupConfig.getAccountId();
-    if (accountId <= 0) {
-        globalSettings->beginGroup("SaveState");
-        accountId = globalSettings->value("lastAccessedAccount", 1).toInt();
-        globalSettings->endGroup();
-    }
 
     this->forceNoStartMimized = startupConfig.forceNoStartMinimized;
     this->forceSystemTrayAvailable = startupConfig.forceSystemTrayAvailable;
@@ -263,18 +245,38 @@ void Global::initializeSharedMemoryMapper(int accountId) {
     sharedMemory = new CrossMemoryMapper(key);
 }
 
-void Global::initializeSettings(int accountId) {
-    QLOG_ASSERT(globalSettings == nullptr);
-    QLOG_ASSERT(settings == nullptr);
+/**
+ * Configure global settings.
+ */
+void Global::initializeGlobalSettings() {
+   QLOG_ASSERT(globalSettings == nullptr);
     QLOG_ASSERT(!fileManager.getProgramDataDir().isEmpty());
     const QString &configDir = fileManager.getConfigDir();
     QLOG_ASSERT(!configDir.isEmpty());
 
     QString settingsFile = configDir + NN_CONFIG_FILE_PREFIX + ".conf";
-    QLOG_DEBUG() << "Opening INI file " << settingsFile;
+    QLOG_DEBUG() << "Configuring global config file " << settingsFile;
     globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
+}
 
-    settingsFile = configDir + NN_CONFIG_FILE_PREFIX + "-" + QString::number(accountId) + ".conf";
+/**
+ * Configure user settings (accountId may come from command line
+ * or its taken from global config.
+ */
+void Global::initializeUserSettings(int accountId) {
+    QLOG_ASSERT(settings == nullptr);
+
+    if (accountId <= 0) {
+        globalSettings->beginGroup("SaveState");
+        accountId = globalSettings->value("lastAccessedAccount", 1).toInt();
+        globalSettings->endGroup();
+    }
+    QLOG_ASSERT(accountId > 0);
+    setAccountId(accountId);
+    const QString &configDir = fileManager.getConfigDir();
+
+    QString settingsFile = configDir + NN_CONFIG_FILE_PREFIX + "-" + QString::number(accountId) + ".conf";
+    QLOG_DEBUG() << "Configuring user config file " << settingsFile;
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 }
 

@@ -110,7 +110,9 @@ int main(int argc, char *argv[])
     QsLogging::Logger& logger = QsLogging::Logger::instance();
     // at very beginning we starting with info level to get basic startup info
     // log level is later adjusted by settings
-    logger.setLoggingLevel(QsLogging::InfoLevel);
+
+    // FOR ALFA VERSION TEMPORARY DEFAULT LOG LEVEL IS DEBUG
+    logger.setLoggingLevel(QsLogging::DebugLevel);
 
     QsLogging::DestinationPtr debugDestination(
         QsLogging::DestinationFactory::MakeDebugOutputDestination() );
@@ -153,9 +155,9 @@ int main(int argc, char *argv[])
         startupConfig.getAccountId());
     QString versionStr = global.fileManager.getProgramVersion();
 
-    int accountId = startupConfig.getAccountId();
-    global.initializeSettings(accountId);
-    global.initializeSharedMemoryMapper(accountId);
+    global.initializeGlobalSettings();
+    global.initializeUserSettings(startupConfig.getAccountId());
+    global.initializeSharedMemoryMapper(global.getAccountId());
     global.setup(startupConfig, guiAvailable);
 
     // We were passed a SQL command

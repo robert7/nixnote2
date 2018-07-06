@@ -142,7 +142,7 @@ FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString
 
     // Read/write directories that only we use
     QString globalSettingsFileName = configDir + NN_CONFIG_FILE_PREFIX + ".conf";
-    QLOG_DEBUG() << "FileManager::setup globalSettingsFileName: " << globalSettingsFileName;
+    QLOG_DEBUG() << "Global settings file name: " << globalSettingsFileName;
     QSettings globalSettings(globalSettingsFileName, QSettings::IniFormat);
 
     if (accountId <= 0) {
@@ -152,10 +152,6 @@ FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString
         globalSettings.endGroup();
         accountId = accountIdFromSettings;
     }
-
-    //    qssDirUser.setPath(configDir + "qss");
-    //    createDirOrCheckWriteable(qssDirUser);
-    //    qssDirPathUser = slashTerminatePath(qssDirUser.path());
 
     logsDir.setPath(userDataDir + NN_LOGS_DIR_PREFIX + "-" + QString::number(accountId));
     createDirOrCheckWriteable(logsDir);
