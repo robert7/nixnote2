@@ -458,28 +458,23 @@ void EnmlFormatter::fixObjectNode(QWebElement &e) {
         e.removeAttribute("border");
         if (lid > 0) {
             resources.append(lid);
-            e.setOuterXml(e.toOuterXml().replace("<object", "<en-media").replace("</object", "</en-media"));
+            const QString xml = e.toOuterXml().replace("<object", "<en-media").replace("</object", "</en-media");
+            QLOG_DEBUG() << "Fixed object node holding pdf to " << xml;
+            e.setOuterXml(xml);
         }
         removeInvalidAttributes(e);
     } else {
+        QLOG_DEBUG() << "Fixed unknown object node by removing it";
         e.removeFromDocument();
     }
 }
 
 
-// void EnmlFormatter::fixEnCryptNode(QWebElement &e) {
-//     QString crypt = e.attribute("value");
-//     e.removeAttribute("value");
-//     QDomText cryptValue = doc.createTextNode(crypt);
-//     //e.appendChild(cryptValue);
-// }
-
-
 void EnmlFormatter::fixImgNode(QWebElement &e) {
-    QString enType = e.attribute("en-tag", "");
+    QString enType = e.attribute("en-tag", "").toLower();
 
     // Check if we have an en-crypt tag.  Change it from an img to en-crypt
-    if (enType.toLower() == "en-crypt") {
+    if (enType == "en-crypt") {
         QString encrypted = e.attribute("alt");
         QString cipher = e.attribute("cipher", "RC2");
         QString hint = e.attribute("hint", "");
@@ -492,60 +487,64 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         e.removeAttribute("style");
         removeInvalidAttributes(e);
         e.setInnerXml(encrypted);
-        e.setOuterXml("<en-crypt cipher=\"" + cipher + "\" length=\"" +
-                      length + "\" hint=\"" + hint
-                      + "\">" + encrypted + "</en-crypt>");
-//        e.setOuterXml(e.toOuterXml().replace("<img", "<en-crypt").replace("</img", "</en-crypt"));
-        return;
-    }
-
-    // Check if we have a temporary image.  If so, remove it
-    if (enType.toLower() == "temporary") { ;
+        const QString xml = "<en-crypt cipher=\"" + cipher + "\" length=\"" +
+                            length + "\" hint=\"" + hint
+                            + "\">" + encrypted + "</en-crypt>";
+        e.setOuterXml(xml);
+        QLOG_DEBUG() << "Fixed img node to " << xml;
+    } else if (enType == "temporary") { ;
+        // Temporary image.  If so, remove it
         e.removeFromDocument();
-        return;
+        QLOG_DEBUG() << "Fixed temporary img node by deleting it";
+    } else {
+        // Latex images are really just img tags, so we now handle them later
+        // Check if we have a LaTeX image.  Remove the parent link tag
+        //    if (enType.toLower() ==  "en-latex") {
+        //        enType = "en-media";
+        //        parent.parentNode().replaceChild(e, parent);
+        //    }
+
+
+        // If we've gotten this far, we have an en-media tag
+        e.removeAttribute("en-tag");
+        int lid = e.attribute("lid").toInt();
+        resources.append(lid);
+        removeInvalidAttributes(e);
+        const QString xml = e.toOuterXml().replace("<img", "<en-media").replace("</img", "</en-media");
+        e.setOuterXml(xml);
+        QLOG_DEBUG() << "Fixed img node to: " << xml;
+        checkAttributes(e, attrs + img);
     }
-
-
-    // Latex images are really just img tags, so we now handle them later
-    // Check if we have a LaTeX image.  Remove the parent link tag
-//    if (enType.toLower() ==  "en-latex") {
-//        enType = "en-media";
-//        parent.parentNode().replaceChild(e, parent);
-//    }
-
-
-    // If we've gotten this far, we have an en-media tag
-    e.removeAttribute("en-tag");
-    int lid = e.attribute("lid").toInt();
-    resources.append(lid);
-    removeInvalidAttributes(e);
-    e.setOuterXml(e.toOuterXml().replace("<img", "<en-media").replace("</img", "</en-media"));
-    checkAttributes(e, attrs + img);
 }
 
 
 void EnmlFormatter::fixLinkNode(QWebElement e) {
-    QString enTag = e.attribute("en-tag", "");
-    if (enTag.toLower() == "en-media") {
+    QString enTag = e.attribute("en-tag", "").toLower();
+    if (enTag == "en-media") {
         resources.append(e.attribute("lid").toInt());
         e.removeAttribute("style");
         e.removeAttribute("href");
         e.removeAttribute("title");
         e.removeAttribute("data-saferedirecturl");
         removeInvalidAttributes(e);
+
         e.removeAllChildren();
-        QString newXml = e.toOuterXml();
-        newXml.replace("<a", "<en-media");
-        newXml.replace("</a>", "</en-media>");
-        e.setOuterXml(newXml);
+        QString xml = e.toOuterXml();
+        xml.replace("<a", "<en-media");
+        xml.replace("</a>", "</en-media>");
+        QLOG_DEBUG() << "Fixed link node to " << xml;
+        e.setOuterXml(xml);
     }
+
     QString latex = e.attribute("href", "");
     if (latex.toLower().startsWith("latex:///")) {
         removeInvalidAttributes(e);
         QString formula = e.attribute("title");
-        e.setAttribute("href", QString("http://latex.codecogs.com/gif.latex?%1").arg(formula));
-        //e.setOuterXml(e.toInnerXml());
+        const QString attr = QString("http://latex.codecogs.com/gif.latex?%1").arg(formula);
+        QLOG_DEBUG() << "Fixed latex attr to " << attr;
+        e.setAttribute("href", attr);
     }
+
     removeInvalidAttributes(e);
     checkAttributes(e, attrs + focus + a);
 }
@@ -861,7 +860,7 @@ void EnmlFormatter::postXmlFix() {
     content = content.replace("<br clear=\"none\">", "<br/>");
     pos = content.indexOf("<br");
     if (pos != -1) {
-        QLOG_DEBUG() << "<br found.  Beginning fix";
+        QLOG_DEBUG() << "postXmlFix: 'br' found.  Beginning fix";
     }
     while (pos != -1) {
         int endPos = content.indexOf(">", pos);
@@ -877,11 +876,11 @@ void EnmlFormatter::postXmlFix() {
     }
 
 
-    // Fix the <en-todo> tags
+    // Fix <en-todo> tags
     content = content.replace("</en-todo>", "");
     pos = content.indexOf("<en-todo");
     if (pos != -1) {
-        QLOG_DEBUG() << "<en-todo found.  Beginning fix";
+        QLOG_DEBUG() << "postXmlFix: 'en-todo'.  Beginning fix";
     }
     while (pos != -1) {
         int endPos = content.indexOf(">", pos);
@@ -896,11 +895,11 @@ void EnmlFormatter::postXmlFix() {
         pos = content.indexOf("<en-todo", pos + 1);
     }
 
-    // Fix any <img> tags
+    // Fix <en-media> tags
     content = content.replace("</en-media>", "");
     pos = content.indexOf("<en-media");
     if (pos != -1) {
-        QLOG_DEBUG() << "<en-media found.  Beginning fix";
+        QLOG_DEBUG() << "postXmlFix: 'en-media'.  Beginning fix";
     }
     while (pos != -1) {
         int endPos = content.indexOf(">", pos);
