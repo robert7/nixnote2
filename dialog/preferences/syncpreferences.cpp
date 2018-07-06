@@ -99,12 +99,12 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     int interval = global.settings->value("syncInterval", 15).toInt();
     int index = syncInterval->findData(interval);
     syncInterval->setCurrentIndex(index);
-    syncAutomatically->setChecked(global.settings->value("syncAutomatically", false).toBool());
+    syncAutomatically->setChecked(global.settings->value("syncAutomatically", true).toBool());
     syncOnShutdown->setChecked(global.settings->value("syncOnShutdown", false).toBool());
-    syncOnStartup->setChecked(global.settings->value("syncOnStartup", false).toBool());
+    syncOnStartup->setChecked(global.settings->value("syncOnStartup", true).toBool());
     enableSyncNotifications->setChecked(global.settings->value("enableNotification", true).toBool());
     showGoodSyncMessagesInTray->setChecked(global.showGoodSyncMessagesInTray);
-    apiRateRestart->setChecked(global.settings->value("apiRateLimitAutoRestart", false).toBool());
+    apiRateRestart->setChecked(global.settings->value("apiRateLimitAutoRestart", true).toBool());
     global.settings->endGroup();
     global.showGoodSyncMessagesInTray = showGoodSyncMessagesInTray->isChecked();
 

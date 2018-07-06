@@ -191,7 +191,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     trayDoubleClickAction->setCurrentIndex(idx);
 
     showTrayIcon->setChecked(global.settings->value("showTrayIcon", false).toBool());
-    showPDFs->setChecked(global.settings->value("showPDFs", true).toBool());
+    showPDFs->setChecked(global.settings->value("showPDFs", false).toBool());
     showSplashScreen->setChecked(global.settings->value("showSplashScreen", false).toBool());
     showMissedReminders->setChecked(global.settings->value("showMissedReminders", false).toBool());
     startMinimized->setChecked(global.settings->value("startMinimized", false).toBool());
