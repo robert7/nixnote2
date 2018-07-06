@@ -804,14 +804,12 @@ void NBrowserWindow::saveNoteContent() {
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
 
         EnmlFormatter formatter(contents);
-
         formatter.rebuildNoteEnml();
         if (formatter.formattingError) {
             QMessageBox::information(
                 this,
-                tr("Unable to Save"),
-                QString(
-                    tr("Unable to save this note.  Either tidy isn't installed or the note is too complex to save."))
+                tr("Unable to reformat"),
+                QString(tr("Nixnote was unable to reformat the note in ENML. Note could not be saved."))
             );
             return;
         }
@@ -848,6 +846,7 @@ void NBrowserWindow::saveNoteContent() {
 
         if (thumbnailer == nullptr)
             thumbnailer = new Thumbnailer(global.db);
+
         QLOG_DEBUG() << "Beginning thumbnail";
         thumbnailer->render(lid);
         QLOG_DEBUG() << "Thumbnail completed";
@@ -952,12 +951,7 @@ void NBrowserWindow::pasteButtonPressed() {
         for (int i = 0; i < urls.size(); i++) {
             QLOG_DEBUG() << urls[i].toString();
             if (urls[i].toString().startsWith("file://")) {
-                // Windows Check
-#ifndef _WIN32
                 QString fileName = urls[i].toString().mid(7);
-#else
-                QString fileName = urls[i].toString().mid(8);
-#endif  // End windows check
                 attachFileSelected(fileName);
                 this->editor->triggerPageAction(QWebPage::InsertParagraphSeparator);
             }
@@ -978,50 +972,55 @@ void NBrowserWindow::pasteButtonPressed() {
         return;
     }
 
-    QString mimeHtml = mime->html();
+    QString pastedHtml = mime->html();
     if (mime->hasHtml()) {
-        if (mimeHtml.length() > 50) {
-            QLOG_DEBUG_FILE("pasted-html", mimeHtml);
+        if (pastedHtml.length() > 50) {
+            QLOG_DEBUG_FILE("pasted.html", pastedHtml);
         } else {
-            QLOG_DEBUG() << "Pasted html: " << mimeHtml;
+            QLOG_DEBUG() << "Pasted html: " << pastedHtml;
         }
     }
     QLOG_DEBUG() << "Has Color:" << mime->hasColor();
     QLOG_DEBUG() << "Has Url:" << mime->hasUrls();
 
     if (mime->hasText()) {
-        QString urltext = mime->text();
-        QLOG_DEBUG() << "Url:" << urltext;
+        // note: pasted text - ist text only version withou html tags
+        QString pastedText = mime->text();
+        if (pastedText.length() > 50) {
+            QLOG_DEBUG_FILE("pasted.txt", pastedText);
+        } else {
+            QLOG_DEBUG() << "Pasted txt: " << pastedText;
+        }
 
-        if (urltext.toLower().startsWith("https://") ||
-            urltext.toLower().startsWith("http://") ||
-            urltext.toLower().startsWith("ftp://") || \
-            urltext.toLower().startsWith("mailto:")) {
-            QString url = this->buildPasteUrl(urltext);
+        if (pastedText.toLower().startsWith("https://") ||
+            pastedText.toLower().startsWith("http://") ||
+            pastedText.toLower().startsWith("ftp://") || \
+            pastedText.toLower().startsWith("mailto:")) {
+            QString url = this->buildPasteUrl(pastedText);
             QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
             editor->page()->mainFrame()->evaluateJavaScript(script);
             return;
         }
 
 
-        if (urltext.toLower().mid(0, 17) == "evernote:///view/") {
-            QStringList urlList = urltext.split(" ");
+        if (pastedText.toLower().mid(0, 17) == "evernote:///view/") {
+            QStringList urlList = pastedText.split(" ");
             QString url = "";
             for (int i = 0; i < urlList.size(); i++) {
                 QLOG_DEBUG() << urlList[i];
-                urltext = urlList[i];
-                urltext = urltext.mid(17);
-                int pos = urltext.indexOf("/");
-                urltext = urltext.mid(pos + 1);
-                pos = urltext.indexOf("/");
-                urltext = urltext.mid(pos + 1);
-                pos = urltext.indexOf("/");
-                urltext = urltext.mid(pos + 1);
-                pos = urltext.indexOf("/");
-                QString guid = urltext.mid(0, pos);
-                urltext = urltext.mid(pos);
-                pos = urltext.indexOf("/");
-                QString locguid = urltext.mid(pos);
+                pastedText = urlList[i];
+                pastedText = pastedText.mid(17);
+                int pos = pastedText.indexOf("/");
+                pastedText = pastedText.mid(pos + 1);
+                pos = pastedText.indexOf("/");
+                pastedText = pastedText.mid(pos + 1);
+                pos = pastedText.indexOf("/");
+                pastedText = pastedText.mid(pos + 1);
+                pos = pastedText.indexOf("/");
+                QString guid = pastedText.mid(0, pos);
+                pastedText = pastedText.mid(pos);
+                pos = pastedText.indexOf("/");
+                QString locguid = pastedText.mid(pos);
 
                 Note n;
                 bool goodrc = false;
@@ -1038,11 +1037,12 @@ void NBrowserWindow::pasteButtonPressed() {
                     if (i + 1 < urlList.size())
                         url = url + " <br> ";
                 } else {
-                    if (urltext != "") {
-                        QLOG_ERROR() << "Error retrieving note: " << urlList[i];
+                    if (pastedText != "") {
+                        QLOG_ERROR() << "Error retrieving note after paste: " << urlList[i];
                     }
                 }
             }
+
             QLOG_DEBUG() << url;
             QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
             editor->page()->mainFrame()->evaluateJavaScript(script);
@@ -1840,8 +1840,9 @@ void NBrowserWindow::attachFile() {
     //connect(&fileDialog, SIGNAL(fileSelected(QString)), this, SLOT(attachFileSelected(QString)));
     //fileDialog.exec();
     QStringList list = fileDialog.getOpenFileNames();
-    for (int i = 0; i < list.size(); i++)
+    for (int i = 0; i < list.size(); i++) {
         attachFileSelected(list[i]);
+    }
 }
 
 
@@ -3001,6 +3002,8 @@ void NBrowserWindow::updateResourceHash(qint32 noteLid, QByteArray oldHash, QByt
 
 
 void NBrowserWindow::attachFileSelected(QString filename) {
+    QLOG_INFO() << "Attaching file: " << filename;
+
     // Read in the file
     QFile file(filename);
 
@@ -3025,6 +3028,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
     bool attachment = true;
     if (mime == "application/pdf" || mime.startsWith("image/"))
         attachment = false;
+
     qint32 rlid = createResource(newRes, 0, ba, mime, attachment, QFileInfo(filename).fileName());
     QByteArray hash;
     if (newRes.data.isSet()) {
@@ -3095,8 +3099,6 @@ void NBrowserWindow::attachFileSelected(QString filename) {
         // Insert the actual image
         editor->page()->mainFrame()->evaluateJavaScript(
             script_start + buffer + script_end);
-        return;
-
     }
 
     // If we have something other than an image or PDF
@@ -3547,11 +3549,8 @@ void NBrowserWindow::handleUrls(const QMimeData *mime) {
     for (int i = 0; i < urlList.size(); i++) {
         QString file = urlList[i].toString();
         if (file.toLower().startsWith("file://") && !ctrlModifier) {
-#ifndef _WIN32
             attachFileSelected(file.mid(7));
-#else
-            attachFileSelected(file.mid(8));
-#endif
+
             if (i < urlList.size() - 1)
                 insertHtml("<div><br/></div>");
         } else if (file.toLower().startsWith("file://") && ctrlModifier) {
