@@ -38,7 +38,7 @@ DatabaseConnection::DatabaseConnection(QString connection)
     QLOG_TRACE() << "Adding database SQLITE";
     conn = QSqlDatabase::addDatabase("QSQLITE", connection);
     QLOG_TRACE() << "Setting DB name";
-    conn.setDatabaseName(global.fileManager.getDbDirPath("nixnote.db"));
+    conn.setDatabaseName(global.fileManager.getDbDirPath(NIXNOTE_DATABASE_NAME));
     QLOG_TRACE() << "Opening database";
     if (!conn.open()) {
         QLOG_FATAL() << "Error opening database: " << conn.lastError();

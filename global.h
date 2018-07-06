@@ -107,13 +107,19 @@ class IndexRunner;
 
 // app name for config paths
 #define APP_NAME "nixnote2"
-// string to be displayed with program version
+// string to be displayed with program version (current version will be appended)
 #define APP_DISPLAY_NAME "NixNote"
 // string to be displayed without program version
 #define APP_DISPLAY_NAME_GUI "NixNote2"
+// user agent name
+#define APP_CLIENT_NAME "NixNote2/Linux"
+
+// app name for NNEX format
+#define APP_NNEX_APP_NAME "NixNote"
 
 // name of the config file (main config and user configs)
 #define CONFIG_FILE_PREFIX "nixnote"
+#define NIXNOTE_DATABASE_NAME "nixnote.db"
 #define ACCOUNTS_CONFIG_FILE_PREFIX "accounts"
 #define DB_DIR_PREFIX "db"
 #define LOG_DIR_PREFIX "log"

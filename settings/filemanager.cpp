@@ -165,21 +165,21 @@ FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString
     createDirOrCheckWriteable(tmpDir);
     tmpDirPath = slashTerminatePath(tmpDir.path());
 
-    QString dbPath = userDataDir + "db-" + QString::number(accountId);
+    QString dbPath = userDataDir + DB_DIR_PREFIX + "-" + QString::number(accountId);
     dbDir.setPath(dbPath);
 
     createDirOrCheckWriteable(dbDir);
     dbDirPath = slashTerminatePath(dbDir.path());
 
-    dbaDir.setPath(dbDirPath + "dba");
+    dbaDir.setPath(dbDirPath + DB_DIR_PREFIX + "a");
     createDirOrCheckWriteable(dbaDir);
     dbaDirPath = slashTerminatePath(dbaDir.path());
 
-    dbiDir.setPath(dbDirPath + "dbi");
+    dbiDir.setPath(dbDirPath + DB_DIR_PREFIX + "i");
     createDirOrCheckWriteable(dbiDir);
     dbiDirPath = slashTerminatePath(dbiDir.path());
 
-    thumbnailDir.setPath(dbDirPath + "tdba");
+    thumbnailDir.setPath(dbDirPath + "t" + DB_DIR_PREFIX + "a");
     createDirOrCheckWriteable(thumbnailDir);
     thumbnailDirPath = slashTerminatePath(thumbnailDir.path());
 }

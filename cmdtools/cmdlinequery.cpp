@@ -286,7 +286,7 @@ QString CmdLineQuery::wrap() {
     writer->writeDTD("<!DOCTYPE NixNote-Query>");
     writer->writeStartElement("nixnote-query");
     writer->writeAttribute("version", "2");
-    writer->writeAttribute("application", "NixNote");
+    writer->writeAttribute("application", APP_NNEX_APP_NAME);
     writer->writeAttribute("applicationVersion", "2.x");
     writer->writeStartElement("Query");
     writer->writeTextElement("ReturnUuid", this->returnUuid);

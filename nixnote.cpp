@@ -282,7 +282,7 @@ NixNote::~NixNote() {
 void NixNote::setupGui() {
     // Setup the GUI
     //this->setStyleSheet("background-color: white;");
-    //statusBar();    setWindowTitle(tr("NixNote 2"));
+    //statusBar();    setWindowTitle(tr(APP_DISPLAY_NAME_GUI));
     const auto wIcon = QIcon(global.getIconResource(":windowIcon"));
     if (!wIcon.isNull()) {
         setWindowIcon(wIcon);
@@ -1182,7 +1182,7 @@ void NixNote::saveOnExit() {
     config.saveSetting(CONFIG_STORE_WINDOW_GEOMETRY, saveGeometry());
 
     QString lidList;
-    QList<NBrowserWindow *> * browsers = tabWindow->browserList;
+    QList<NBrowserWindow *> *browsers = tabWindow->browserList;
     for (int i = 0; i < browsers->size(); i++) {
         lidList = lidList + QString::number(browsers->at(i)->lid) + QString(" ");
     }
@@ -1482,7 +1482,7 @@ void NixNote::synchronize() {
         EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
         d.setWindowTitle(tr("Log in to Evernote"));
         if (d.exec() != QDialog::Accepted) {
-            QMessageBox::critical(0, tr("NixNote"), "Login failed.\n" + d.oauthError());
+            QMessageBox::critical(0, tr(APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
             return;
         }
         QString token = QString("oauth_token=") + d.oauthResult().authenticationToken +
@@ -1775,7 +1775,7 @@ void NixNote::databaseBackup(bool backup) {
     else
         directory = saveLastPath;
 
-    QFileDialog fd(0, caption, directory, tr("NixNote Export (*.nnex);;All Files (*.*)"));
+    QFileDialog fd(0, caption, directory, tr(APP_NNEX_APP_NAME " Export (*.nnex);;All Files (*.*)"));
     fd.setFileMode(QFileDialog::AnyFile);
     fd.setConfirmOverwrite(true);
     fd.setAcceptMode(QFileDialog::AcceptSave);
@@ -1859,10 +1859,10 @@ void NixNote::databaseRestore(bool fullRestore) {
 
     if (fullRestore) {
         caption = tr("Restore Database");
-        filter = tr("NixNote Export (*.nnex);;All Files (*.*)");
+        filter = tr(APP_NNEX_APP_NAME " Export (*.nnex);;All Files (*.*)");
     } else {
         caption = tr("Import Notes");
-        filter = tr("NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)");
+        filter = tr(APP_NNEX_APP_NAME " Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)");
     }
 
     if (saveLastPath == "")
@@ -2394,7 +2394,7 @@ void NixNote::viewNoteHistory() {
         EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
         d.setWindowTitle(tr("Log in to Evernote"));
         if (d.exec() != QDialog::Accepted) {
-            QMessageBox::critical(0, tr("NixNote"), "Login failed.\n" + d.oauthError());
+            QMessageBox::critical(0, tr(APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
             return;
         }
         QString token = QString("oauth_token=") + d.oauthResult().authenticationToken +
@@ -3879,36 +3879,36 @@ void NixNote::loadPlugins() {
         filter.append("libhunspellplugin.so");
         filter.append("libwebcamplugin.dylib");
         filter.append("libhunspellplugin.dylib");
-        foreach(QString
-        fileName, pluginsDir.entryList(filter)) {
-            QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-            QObject *plugin = pluginLoader.instance();
-            if (fileName == "libwebcamplugin.so" || fileName == "libwebcamplugin.dylib") {
-                if (plugin) {
-                    webcamInterface = qobject_cast<WebCamInterface *>(plugin);
-                    if (webcamInterface) {
-                        webcamPluginAvailable = true;
+            foreach(QString
+                        fileName, pluginsDir.entryList(filter)) {
+                QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+                QObject *plugin = pluginLoader.instance();
+                if (fileName == "libwebcamplugin.so" || fileName == "libwebcamplugin.dylib") {
+                    if (plugin) {
+                        webcamInterface = qobject_cast<WebCamInterface *>(plugin);
+                        if (webcamInterface) {
+                            webcamPluginAvailable = true;
+                        }
+                    } else {
+                        QLOG_ERROR() << tr("Error loading Webcam plugin: ") << pluginLoader.errorString();
                     }
-                } else {
-                    QLOG_ERROR() << tr("Error loading Webcam plugin: ") << pluginLoader.errorString();
                 }
-            }
 
-            // The Hunspell plugin isn't actually used here. We just use this as a
-            // check to be sure that the menu should be available.
-            if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
-                if (plugin) {
-                    HunspellInterface * hunspellInterface;
-                    hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                    if (hunspellInterface != nullptr) {
-                        hunspellPluginAvailable = true;
+                // The Hunspell plugin isn't actually used here. We just use this as a
+                // check to be sure that the menu should be available.
+                if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
+                    if (plugin) {
+                        HunspellInterface *hunspellInterface;
+                        hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
+                        if (hunspellInterface != nullptr) {
+                            hunspellPluginAvailable = true;
+                        }
+                        delete hunspellInterface;
+                    } else {
+                        QLOG_ERROR() << tr("Error loading Hunspell plugin: ") << pluginLoader.errorString();
                     }
-                    delete hunspellInterface;
-                } else {
-                    QLOG_ERROR() << tr("Error loading Hunspell plugin: ") << pluginLoader.errorString();
                 }
             }
-        }
     }
 }
 
@@ -3942,7 +3942,7 @@ void NixNote::exportAsPdf() {
 
         printer.setDocName(tabWindow->currentBrowser()->noteTitle.text());
         tabWindow->currentBrowser()->editor->print(&printer);
-        QMessageBox::information(0, tr("NixNote"), tr("Export complete"));
+        QMessageBox::information(0, tr(APP_DISPLAY_NAME_GUI), tr("Export complete"));
 
         return;
     }
@@ -3993,5 +3993,5 @@ void NixNote::exportAsPdfReady(bool) {
     printer.setPaperSize(QPrinter::A4);
     printer.setOutputFileName(file);
     pdfExportWindow->print(&printer);
-    QMessageBox::information(0, tr("NixNote"), tr("Export complete"));
+    QMessageBox::information(0, tr(APP_DISPLAY_NAME_GUI), tr("Export complete"));
 }

@@ -41,7 +41,7 @@ QString ExtractNoteText::wrap() {
     writer->writeDTD("<!DOCTYPE NixNote-NoteTextExtract>");
     writer->writeStartElement("nixnote-text-extract");
     writer->writeAttribute("version", "2");
-    writer->writeAttribute("application", "NixNote");
+    writer->writeAttribute("application", APP_NNEX_APP_NAME);
     writer->writeAttribute("applicationVersion", "2.x");
     writer->writeStartElement("NoteExtract");
     writer->writeTextElement("ReturnUuid", this->returnUuid);

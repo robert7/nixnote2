@@ -58,7 +58,7 @@ void SyncRunner::synchronize() {
         apiRateLimitExceeded = false;
 
         // Setup the user agent
-        userAgent = "NixNote2/Linux";
+        userAgent = APP_CLIENT_NAME;
 
         userStoreUrl = QString("http://" + global.server + "/edam/user").toStdString();
         updateSequenceNumber = 0;

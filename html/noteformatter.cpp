@@ -36,7 +36,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <poppler-qt4.h>
 
 #else
+
 #include <poppler-qt5.h>
+
 #endif
 
 #include <QIcon>
@@ -222,23 +224,23 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     QLOG_TRACE() << "Searching for all en-media tags;";
     QWebElementCollection anchors = doc.mainFrame()->findAllElements("en-media");
     QLOG_TRACE() << "Search complete: " << anchors.toList().size();
-    foreach(QWebElement
-    enmedia, anchors) {
-        if (enmedia.hasAttribute("type")) {
-            QString attr = enmedia.attribute("type");
-            QString hash = enmedia.attribute("hash");
-            QStringList type = attr.split("/");
-            if (type.size() >= 2) {
-                QString appl = type[1];
-                QLOG_TRACE() << "En-Media tag type: " << type[0];
-                if (type[0] == "image")
-                    modifyImageTags(enmedia, hash);
-                else
-                    modifyApplicationTags(enmedia, hash, appl);
-                QLOG_TRACE() << "Type modified";
+        foreach(QWebElement
+                    enmedia, anchors) {
+            if (enmedia.hasAttribute("type")) {
+                QString attr = enmedia.attribute("type");
+                QString hash = enmedia.attribute("hash");
+                QStringList type = attr.split("/");
+                if (type.size() >= 2) {
+                    QString appl = type[1];
+                    QLOG_TRACE() << "En-Media tag type: " << type[0];
+                    if (type[0] == "image")
+                        modifyImageTags(enmedia, hash);
+                    else
+                        modifyApplicationTags(enmedia, hash, appl);
+                    QLOG_TRACE() << "Type modified";
+                }
             }
         }
-    }
 
     // Modify todo tags
     anchors = doc.mainFrame()->findAllElements("en-todo");
@@ -359,7 +361,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
 #if QT_VERSION < 0x050000
     for (unsigned int i = 0; i < anchors.length(); i++) {
 #else
-        for (int i=0; i<anchors.length(); i++) {
+    for (int i = 0; i < anchors.length(); i++) {
 #endif
         QDomElement element = anchors.at(i).toElement();
         int x = element.attribute("x").toInt();
@@ -372,7 +374,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
 #if QT_VERSION < 0x050000
         for (unsigned int j = 0; j < children.length(); j++) {
 #else
-            for (int j=0; j<children.length(); j++) {
+        for (int j = 0; j < children.length(); j++) {
 #endif
             QDomElement child = children.at(j).toElement();
             if (child.nodeName().toLower() == "t") {
@@ -476,7 +478,8 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
 
         if (data.size.isSet() && data.size > 0) {
             QString imgfile =
-                "file:///" + global.fileManager.getDbDirPath(QString("dba/") + QString::number(resLid) + type);
+                "file:///" +
+                global.fileManager.getDbDirPath(QString(DB_DIR_PREFIX + "a/") + QString::number(resLid) + type);
 
             enMedia.setAttribute("src", imgfile);
             // Check if this is a LaTeX image
