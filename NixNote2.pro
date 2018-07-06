@@ -1,4 +1,4 @@
-# currently additionaly  PKG_CONFIG_PATH=$$PWD/../libs/lib/pkgconfig is needed
+# currently additionally  PKG_CONFIG_PATH=$$PWD/../libs/lib/pkgconfig is needed
 
 
 QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml

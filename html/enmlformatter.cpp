@@ -370,9 +370,10 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
                         fixDivNode(element);
                     } else if (element.tagName().toLower() == "pre") {
                         fixPreNode(element);
-                    } else if (!isElementValid(element))
+                    } else if (!isElementValid(element)) {
                         QLOG_DEBUG() << "Removing " << element.tagName();
                         element.removeFromDocument();
+                    }
                 }
         }
         content.clear();

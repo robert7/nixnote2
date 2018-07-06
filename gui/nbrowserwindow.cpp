@@ -986,7 +986,15 @@ void NBrowserWindow::pasteButtonPressed() {
         microFocusChanged();
         return;
     }
-    QLOG_DEBUG() << "Has HTML:" << mime->hasHtml() << " " << mime->html();
+
+    QString mimeHtml = mime->html();
+    if (mime->hasHtml()) {
+        if (mimeHtml.length()>50) {
+            QLOG_DEBUG_FILE("pasted-html",mimeHtml);
+        } else {
+            QLOG_DEBUG() << "Pasted html: "<<mimeHtml;
+        }
+    }
     QLOG_DEBUG() << "Has Color:" << mime->hasColor();
     QLOG_DEBUG() << "Has Url:" << mime->hasUrls();
 
