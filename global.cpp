@@ -78,7 +78,6 @@ Global::Global() {
     this->sharedMemory = nullptr;
     this->forceSystemTrayAvailable = false;
     this->guiAvailable = true;
-    strictDTD = true;
     forceUTF8 = false;
     startupNote = 0;
     db = nullptr;
@@ -226,7 +225,6 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     isFullscreen = false;
     indexPDFLocally = getIndexPDFLocally();
     forceSearchLowerCase = getForceSearchLowerCase();
-    strictDTD = getStrictDTD();
     forceUTF8 = getForceUTF8();
 
 
@@ -541,22 +539,6 @@ bool Global::getForceSearchLowerCase() {
     return value;
 }
 
-
-void Global::setStrictDTD(bool value) {
-    settings->beginGroup("Debugging");
-    settings->setValue("strictDTD", value);
-    settings->endGroup();
-    strictDTD = value;
-}
-
-
-bool Global::getStrictDTD() {
-    settings->beginGroup("Debugging");
-    bool value = settings->value("strictDTD", true).toBool();
-    settings->endGroup();
-    strictDTD = value;
-    return value;
-}
 
 bool Global::getForceUTF8() {
     settings->beginGroup("Debugging");

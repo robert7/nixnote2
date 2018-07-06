@@ -37,7 +37,6 @@ private:
     QCheckBox *showLidColumn;
     QCheckBox *nonAsciiSortBug;
     QCheckBox *disableImageHighlight;
-    QCheckBox *strictDTD;
     QCheckBox *forceUTF8;
     QCheckBox *interceptSigHup;
     QCheckBox *multiThreadSave;

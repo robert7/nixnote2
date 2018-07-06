@@ -957,9 +957,6 @@ QByteArray EnmlFormatter::removeInvalidUnicode(QByteArray content) {
 // Look through all attributes of the node.  If it isn't in the list of
 // valid attributes, we remove it.
 void EnmlFormatter::checkAttributes(QWebElement &e, QStringList valid) {
-    if (!global.strictDTD)
-        return;
-
     QStringList attrs = e.attributeNames();
     for (int i = 0; i < attrs.size(); i++) {
         if (!valid.contains(attrs[i])) {
