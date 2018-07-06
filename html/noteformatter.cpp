@@ -120,7 +120,7 @@ void NoteFormatter::setNoteHistory(bool value) {
 /* Take the ENML note and transform it into HTML that WebKit will
   not complain about */
 QByteArray NoteFormatter::rebuildNoteHTML() {
-    QLOG_DEBUG() << "Rebuilding note HTML for note guid=" << note.guid;
+    QLOG_DEBUG() << "Rebuilding note HTML, note guid=" << note.guid;
 
     formatError = false;
     readOnly = false;

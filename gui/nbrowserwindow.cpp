@@ -500,7 +500,7 @@ void NBrowserWindow::setContent(qint32 lid) {
             newCache->isReadOnly = formatter.readOnly;
             newCache->isInkNote = formatter.inkNote;
             newCache->noteContent = content;
-            QLOG_DEBUG() << "adding to cache";
+            QLOG_DEBUG() << "Adding to cache";
             global.cache.insert(lid, newCache);
         }
         readOnly = formatter.readOnly;
@@ -509,7 +509,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     setReadOnly(readOnly);
 
-    QLOG_DEBUG() << "Setting up note title";
+    QLOG_DEBUG() << "Setting note title";
     noteTitle.setTitle(lid, n.title, n.title);
     dateEditor.setNote(lid, n);
     QWebSettings::setMaximumPagesInCache(0);
@@ -623,7 +623,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
 
 void NBrowserWindow::setReadOnly(bool readOnly) {
-    QLOG_DEBUG() << "setReadOnly, lid=" << this->lid << " readOnly=" << readOnly;
+    QLOG_DEBUG() << "Setting read only flag to=" << readOnly << ", lid=" << this->lid;
 
     isReadOnly = readOnly;
     if (readOnly || global.disableEditing) {
