@@ -449,8 +449,7 @@ void EnmlFormatter::fixInputNode(QWebElement &node) {
 
 
 void EnmlFormatter::fixSpanNode(QWebElement &e) {
-    e.removeAttribute("id");
-    e.removeAttribute("class");
+    checkAttributes(e, attrs);
 }
 
 
@@ -510,6 +509,12 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         QString type = e.attribute("type");
         QString hash = e.attribute("hash");
         QLOG_DEBUG() << "Processing tag 'img', type=" << type << ", hash=" << hash;
+        if ((lid <= 0) || (hash.isEmpty())) {
+            QLOG_DEBUG() << "Deleting invalid 'img' tag";
+            e.removeFromDocument();
+            return;
+        }
+
         resources.append(lid);
         removeInvalidAttributes(e);
         const QString xml = e.toOuterXml().replace("<img", "<en-media").replace("</img", "</en-media");
@@ -552,7 +557,7 @@ void EnmlFormatter::fixANode(QWebElement e) {
     checkAttributes(e, attrs + focus + a);
 }
 
-
+// https://dev.evernote.com/doc/articles/enml.php#prohibited
 bool EnmlFormatter::isAttributeValid(QString attribute) {
     return !(attribute.startsWith("on")
              || (attribute == "id")
