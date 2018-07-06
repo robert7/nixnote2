@@ -252,31 +252,34 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     QLOG_INFO() << "rebuildNoteEnml";
     QLOG_DEBUG_FILE("fmt-html-input", QString(content.constData()));
 
+    // list of referenced LIDs
     resources.clear();
 
 
     // Remove invalid stuff
     content.replace("</input>", "");
+
+    // 1b is ascii 27 = escape character
     content = this->removeInvalidUnicode(content);
 
-    // Strip off HTML header & remove the background & default font color
-    // if they match the theme default.
-    // mid() Returns a string that contains n characters of this string, starting at the specified position index.
-    {
-        qint32 index = content.indexOf("<body");
-        QString header = content.mid(0, index);
-        QByteArray c1 = content.mid(index);
-        index = header.indexOf(">");
-        header = header.mid(0, index);
-        QByteArray c2 = content.mid(content.indexOf(">", index));
-        QString newHeader = header;
-        QString bgColor = "background-color: " + global.getEditorBackgroundColor() + ";";
-        QString fgColor = "color: " + global.getEditorFontColor() + ";";
-        newHeader = newHeader.replace(bgColor, "");
-        newHeader = newHeader.replace(fgColor, "");
-        content = c1;
-        content.append(newHeader).append(c2);
-    }
+    // // Strip off HTML header & remove the background & default font color
+    // // if they match the theme default.
+    // // mid() Returns a string that contains n characters of this string, starting at the specified position index.
+    // {
+    //     qint32 index = content.indexOf("<body");
+    //     QString header = content.mid(0, index);
+    //     QByteArray c1 = content.mid(index);
+    //     index = header.indexOf(">");
+    //     header = header.mid(0, index);
+    //     QByteArray c2 = content.mid(content.indexOf(">", index));
+    //     QString newHeader = header;
+    //     QString bgColor = "background-color: " + global.getEditorBackgroundColor() + ";";
+    //     QString fgColor = "color: " + global.getEditorFontColor() + ";";
+    //     newHeader = newHeader.replace(bgColor, "");
+    //     newHeader = newHeader.replace(fgColor, "");
+    //     content = c1;
+    //     content.append(newHeader).append(c2);
+    // }
 
     {
         // remove all before body
@@ -288,51 +291,53 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         content.append("</body>");
     }
 
-    QLOG_DEBUG_FILE("fmt-point1", QString(content.constData()));
-
-    {
-        QByteArray b;
-        b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>\n");
-        b.append("<html><head><title></title></head>");
-        //b.append("<body style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
-        b.append(content);
-        b.append("</html>");
-        content.clear();
-        content = b;
-    }
-
-    // Remove <o:p> tags in case pasting from MicroSoft products.
-    content = content.replace("<o:p>", "");
-    content = content.replace("</o:p>", "");
-    content = content.replace("<o:p/>", "");
-
-    // Remove auto-complete tags
-    content = content.replace("<ac:rich-text-body", "<div");
-    content = content.replace("</ac:rich-text-body", "</div");
-
-    QLOG_DEBUG_FILE("fmt-tidy-input", QString(content.constData()));
-    //tidyHtml(content);
-    QLOG_DEBUG_FILE("fmt-tidy-output", QString(content.constData()));
-
-
+    QLOG_DEBUG_FILE("fmt-pre-tidy", QString(content.constData()));
+    tidyHtml(content);
     if (content == "") {
         QLOG_ERROR() << "Got no output from tidy - cleanup failed";
         formattingError = true;
         return "";
     }
-
+    QLOG_DEBUG_FILE("fmt-post-tidy", QString(content.constData()));
     // Tidy puts this in place, but we don't really need it.
     content.replace("<form>", "");
     content.replace("</form>", "");
 
+    // {
+    //     QByteArray b;
+    //     b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    //     b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>\n");
+    //     b.append("<html><head><title></title></head>");
+    //     //b.append("<body style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
+    //     b.append(content);
+    //     b.append("</html>");
+    //     content.clear();
+    //     content = b;
+    // }
+
+    // // Remove <o:p> tags in case pasting from MicroSoft products.
+    // content = content.replace("<o:p>", "");
+    // content = content.replace("</o:p>", "");
+    // content = content.replace("<o:p/>", "");
+    //
+    // // Remove auto-complete tags
+    // content = content.replace("<ac:rich-text-body", "<div");
+    // content = content.replace("</ac:rich-text-body", "</div");
+
+
+
+
+
+
+
+
     {
-        qint32 index = content.indexOf("<body");
-        content.remove(0, index);
-        content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
-        content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
-        content.prepend("<html>");
-        content.append("</html>");
+        // qint32 index = content.indexOf("<body");
+        // content.remove(0, index);
+        // content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
+        // content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
+        // content.prepend("<html>");
+        // content.append("</html>");
         content = fixEncryptionTags(content);
     }
 
@@ -351,7 +356,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
             QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
                 foreach(QWebElement
                             element, anchors) {
-                    //QLOG_DEBUG() << "Processing tag name: " << element.tagName();
+                    QLOG_DEBUG() << "Processing tag name: " << element.tagName();
                     if (element.tagName().toLower() == "input") {
                         processTodo(element);
                     } else if (element.tagName().toLower() == "a") {
@@ -373,6 +378,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         content.clear();
         content.append(element.toOuterXml());
     }
+    QLOG_DEBUG_FILE("fmt-post-dt-check", QString(content.constData()));
 
     // Strip off HTML header
     {
@@ -394,8 +400,10 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         content.clear();
         content = b.replace("<body", "<en-note");
     }
+    QLOG_DEBUG_FILE("fmt-post-hdr-add", QString(content.constData()));
 
     postXmlFix();
+    QLOG_DEBUG_FILE("fmt-final", QString(content.constData()));
     return content;
 }
 
@@ -949,6 +957,7 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
 // Remove any invalid unicode characters to allow it to sync properly.
 QByteArray EnmlFormatter::removeInvalidUnicode(QByteArray content) {
     QString c(content);
+    // 1b is ascii 27 = escape character
     c = c.remove(QChar(0x1b), Qt::CaseInsensitive);
     return c.toUtf8();
 }
