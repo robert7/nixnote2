@@ -1,17 +1,19 @@
+# currently additionally  PKG_CONFIG_PATH=$$PWD/../libs/lib/pkgconfig is needed
+
 
 QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 unix {
     CONFIG += link_pkgconfig
-    PKGCONFIG += poppler-qt5 libcurl
+    PKGCONFIG += poppler-qt5 libcurl tidy
+    QMAKE_RPATHDIR += $$PWD/../libs/lib
 }
-#    unix:INCLUDEPATH += /usr/include/tidy
+
 unix:!mac:LIBS += -lpthread -g -rdynamic
 
-win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
-win32:INCLUDEPATH+= "$$PWD/winlib/includes"
+win32:INCLUDEPATH += "$$PWD/winlib/includes/poppler/qt5"
+win32:INCLUDEPATH += "$$PWD/winlib/includes"
 win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
-win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5 -ltidy
 win32:RC_ICONS += "$$PWD/images/windowIcon.ico"
 
 

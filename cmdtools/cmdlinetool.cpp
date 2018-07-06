@@ -140,7 +140,7 @@ int CmdLineTool::emailNote(StartupConfig config) {
     if (useCrossMemory) {
         global.sharedMemory->write("EMAIL_NOTE:" + config.email->wrap());
     } else {
-        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
         return config.email->sendEmail();
     }
     return 0;
@@ -171,7 +171,7 @@ int CmdLineTool::deleteNote(StartupConfig config) {
     if (useCrossMemory) {
         global.sharedMemory->write("DELETE_NOTE:" + QString::number(config.delNote->lid));
     } else {
-        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
         NoteTable noteTable(global.db);
         noteTable.deleteNote(config.delNote->lid,true);
     }
@@ -221,7 +221,7 @@ int CmdLineTool::queryNotes(StartupConfig config) {
             std::cout << QString(tr("No response received from NixNote.")).toStdString() << std::endl;
     } else {
         // The other NixNote isn't found, so we do the query ourself
-        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
         FilterCriteria *filter = new FilterCriteria();
         global.filterCriteria.append(filter);
         global.filterPosition = 0;
@@ -270,8 +270,7 @@ int CmdLineTool::addNote(StartupConfig config) {
     }
 
 
-    EnmlFormatter formatter;
-    formatter.setHtml(config.newNote->content);
+    EnmlFormatter formatter(config.newNote->content);
     config.newNote->content = formatter.rebuildNoteEnml();
 
     bool expectResponse = true;
@@ -319,7 +318,7 @@ int CmdLineTool::addNote(StartupConfig config) {
         }
     } else {
        // Another NN isn't found, so we do this ourself
-        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
         NUuid uuid;
         Note newNote;
         newNote.content = config.newNote->content;
@@ -490,8 +489,7 @@ int CmdLineTool::appendNote(StartupConfig config) {
     }
 
 
-    EnmlFormatter formatter;
-    formatter.setHtml(config.newNote->content);
+    EnmlFormatter formatter(config.newNote->content);
     config.newNote->content = formatter.rebuildNoteEnml();
 
     bool expectResponse = true;
@@ -543,7 +541,7 @@ int CmdLineTool::appendNote(StartupConfig config) {
         }
     } else {
        // Another NN isn't found, so we do this ourself
-        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
         Note newNote;
 
         // Fetch the existing note
@@ -653,7 +651,7 @@ int CmdLineTool::readNote(StartupConfig config) {
         else
             std::cout << tr("No response received from NixNote.").toStdString();
     } else {
-        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
         NoteTable noteTable(global.db);
         Note n;
         QString text;
@@ -674,7 +672,7 @@ int CmdLineTool::exportNotes(StartupConfig config) {
         std::cout << tr("This cannot be done with NixNote running.").toStdString() << endl;
         return 16;
     }
-    global.db = new DatabaseConnection("nixnote");  // Startup the database
+    global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
     if (config.exportNotes->backup)
         config.exportNotes->backupDB();
     else
@@ -690,7 +688,7 @@ int CmdLineTool::importNotes(StartupConfig config) {
         std::cout << tr("This cannot be done with NixNote running.").toStdString() << endl;
         return 16;
     }
-    global.db = new DatabaseConnection("nixnote");  // Startup the database
+    global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
     config.importNotes->import();
     return 0;
 }
@@ -709,7 +707,7 @@ int CmdLineTool::alterNote(StartupConfig config) {
     if (useCrossMemory) {
         global.sharedMemory->write("ALTER_NOTE:" + config.alter->wrap());
     } else {
-        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
         return config.alter->alterNote();
     }
     return 0;
@@ -722,7 +720,7 @@ int CmdLineTool::openNotebook(StartupConfig config) {
         std::cout << tr("This cannot be done with NixNote running.").toStdString() << endl;
         return 16;
     }
-    global.db = new DatabaseConnection("nixnote");  // Startup the database
+    global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
     NotebookTable bookTable(global.db);
     for (int i=0; i<config.notebookList.size(); i++) {
         qint32 lid = bookTable.findByName(config.notebookList[i]);
@@ -742,7 +740,7 @@ int CmdLineTool::closeNotebook(StartupConfig config) {
         std::cout << tr("This cannot be done with NixNote running.").toStdString() << endl;
         return 16;
     }
-    global.db = new DatabaseConnection("nixnote");  // Startup the database
+    global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
     NotebookTable bookTable(global.db);
     for (int i=0; i<config.notebookList.size(); i++) {
         qint32 lid = bookTable.findByName(config.notebookList[i]);
@@ -766,7 +764,7 @@ int CmdLineTool::sync() {
         return 16;
     }
 
-    global.db = new DatabaseConnection("nixnote");  // Startup the database
+    global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
 
     // Check if the table exists.  If not, create it.
     NSqlQuery sql(global.db);

@@ -83,7 +83,7 @@ NTagView::NTagView(QWidget *parent) :
     setAcceptDrops(true);
     setDragEnabled(true);
 
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     hideUnassigned = global.settings->value("hideUnassigned", false).toBool();
     global.settings->endGroup();
 
@@ -246,7 +246,7 @@ void NTagView::loadData() {
         if (dataStore.contains(keys[i])) {
             NTagViewItem *ptr = dataStore.take(keys[i]);
             dataStore.remove(keys[i]);
-            if (ptr->parent() != NULL)
+            if (ptr->parent() != nullptr)
                 ptr->parent()->removeChild(ptr);
             ptr->setHidden(true);
            // delete ptr;  << We can leak memory, but otherwise it sometimes gets confused and causes crashes
@@ -291,13 +291,13 @@ void NTagView::rebuildTree() {
     while (i.hasNext()) {
         i.next();
         NTagViewItem *widget = i.value();
-        if (widget != NULL && widget->parentGuid != "") {
+        if (widget != nullptr && widget->parentGuid != "") {
             if (widget->parentLid == 0) {
                 widget->parentLid = tagTable.getLid(widget->parentGuid);
             }
             NTagViewItem *parent = dataStore[widget->parentLid];
             widget->parent()->removeChild(widget);
-            if (parent != NULL) {
+            if (parent != nullptr) {
                 parent->childrenLids.append(i.key());
                 parent->addChild(widget);
             }
@@ -320,10 +320,10 @@ void NTagView::tagUpdated(qint32 lid, QString name, QString parentGuid, qint32 a
     TagTable tagTable(global.db);
 
     // Check if it already exists and if its parent exists
-    NTagViewItem *newWidget = NULL;
-    if (this->dataStore.contains(lid) && dataStore[lid] != NULL) {
+    NTagViewItem *newWidget = nullptr;
+    if (this->dataStore.contains(lid) && dataStore[lid] != nullptr) {
         newWidget = dataStore[lid];
-        if (newWidget->parent() != NULL)
+        if (newWidget->parent() != nullptr)
             newWidget->parent()->removeChild(newWidget);
     } else {
         newWidget = new NTagViewItem();
@@ -335,7 +335,7 @@ void NTagView::tagUpdated(qint32 lid, QString name, QString parentGuid, qint32 a
     if (parentGuid != "") {
         if (parentLid > 0 && dataStore.contains(parentLid)) {
             parentWidget = dataStore[parentLid];
-            if (parentWidget == NULL) {
+            if (parentWidget == nullptr) {
                 parentWidget = new NTagViewItem();
                 parentWidget->account = account;
                 if (account != this->accountFilter)
@@ -417,9 +417,9 @@ void NTagView::buildSelection() {
     newFilter->resetFavorite = true;
     newFilter->resetTags = true;
     newFilter->resetNotebook=true;
-    if (oldFilter!= NULL && oldFilter->isNotebookSet()) {
+    if (oldFilter!= nullptr && oldFilter->isNotebookSet()) {
         QTreeWidgetItem *notebook =oldFilter->getNotebook();
-        if (notebook!= NULL)
+        if (notebook!= nullptr)
             newFilter->setNotebook(*notebook);
     }
 
@@ -538,7 +538,7 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
     if (data->hasFormat("application/x-nixnote-tag")) {
 
         // If there is no parent, then they are trying to drop to the top level, which isn't permitted
-        if (parent == NULL)
+        if (parent == nullptr)
             return false;
 
         // Get the lid we are dropping.
@@ -610,7 +610,7 @@ void NTagView::dropEvent(QDropEvent *event) {
 
 void NTagView::mouseMoveEvent(QMouseEvent *event)
 {
-    if (currentItem() == NULL)
+    if (currentItem() == nullptr)
         return;
 
     if (!(event->buttons() & Qt::LeftButton))
@@ -856,7 +856,7 @@ void NTagView::tagExpunged(qint32 lid) {
 void NTagView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
     if (dataStore.contains(lid)) {
         NTagViewItem *item = dataStore[lid];
-        if (item != NULL) {
+        if (item != nullptr) {
             item->subTotal = subTotal;
             item->total = total;
         }
@@ -878,7 +878,7 @@ void NTagView::hideUnassignedTags() {
         hideUnassigned = false;
 
     // Save this option
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("hideUnassigned", hideUnassigned);
     global.settings->endGroup();
     QList<qint32> keys = dataStore.keys();
@@ -887,7 +887,7 @@ void NTagView::hideUnassignedTags() {
     if (hideUnassigned != true) {
         for (int i=0; i<keys.size(); i++) {
             item = dataStore[keys[i]];
-            if (item != NULL) {
+            if (item != nullptr) {
                 if (item->account == accountFilter)
                     item->setHidden(false);
                 else
@@ -901,7 +901,7 @@ void NTagView::hideUnassignedTags() {
     // Start hiding unassigned tags
     for (int i=0; i<keys.size(); i++) {
         item = dataStore[keys[i]];
-        if (item != NULL) {
+        if (item != nullptr) {
             if (item->subTotal == 0 || item->account != accountFilter)
                 item->setHidden(true);
             else
@@ -911,7 +911,7 @@ void NTagView::hideUnassignedTags() {
 
     for (int i=0; i<keys.size(); i++) {
         item = dataStore[keys[i]];
-        if (item != NULL && !item->isHidden()) {
+        if (item != nullptr && !item->isHidden()) {
             while(item->parentLid > 0) {
                 item->parent()->setHidden(false);
                 item = (NTagViewItem*)item->parent();

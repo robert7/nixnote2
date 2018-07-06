@@ -66,7 +66,7 @@ void AddNote::write(QString uuid) {
     writer->writeDTD("<!DOCTYPE NixNote-Import>");
     writer->writeStartElement("nixnote-import");
     writer->writeAttribute("version", "2");
-    writer->writeAttribute("application", "NixNote");
+    writer->writeAttribute("application", APP_NNEX_APP_NAME);
     writer->writeAttribute("applicationVersion", "2.x");
     writer->writeStartElement("NoteAdd");
 

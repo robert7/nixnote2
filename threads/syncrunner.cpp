@@ -37,12 +37,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
-SyncRunner::SyncRunner()
-{
+SyncRunner::SyncRunner() {
     init = false;
     finalSync = false;
-    apiRateLimitExceeded=false;
-    minutesToNextSync=0;
+    apiRateLimitExceeded = false;
+    minutesToNextSync = 0;
 }
 
 SyncRunner::~SyncRunner() {
@@ -56,19 +55,19 @@ void SyncRunner::synchronize() {
         init = true;
         consumerKey = "";
         secret = "";
-        apiRateLimitExceeded=false;
+        apiRateLimitExceeded = false;
 
         // Setup the user agent
-        userAgent = "NixNote2/Linux";
+        userAgent = NN_APP_CLIENT_NAME;
 
-        userStoreUrl = QString("http://" +global.server +"/edam/user").toStdString();
+        userStoreUrl = QString("http://" + global.server + "/edam/user").toStdString();
         updateSequenceNumber = 0;
 
-         defaultMsgTimeout = 150000;
-         db = new DatabaseConnection("syncrunner");
-         comm = new CommunicationManager(db);
-         if (global.guiAvailable)
-             connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
+        defaultMsgTimeout = 150000;
+        db = new DatabaseConnection("syncrunner");
+        comm = new CommunicationManager(db);
+        if (global.guiAvailable)
+            connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
     }
 
 
@@ -91,10 +90,8 @@ void SyncRunner::synchronize() {
     evernoteSync();
     emit syncComplete();
     comm->enDisconnect();
-    global.connected=false;
+    global.connected = false;
 }
-
-
 
 
 void SyncRunner::evernoteSync() {
@@ -180,7 +177,7 @@ void SyncRunner::evernoteSync() {
     userTable.updateSyncState(syncState);
 
     // Cleanup any missing parent tags
-    QList <qint32> lids;
+    QList<qint32> lids;
     TagTable tagTable(db);
     tagTable.findMissingParents(lids);
     for (int i = 0; i < lids.size(); i++) {
@@ -193,7 +190,6 @@ void SyncRunner::evernoteSync() {
         emit setMessage(tr("Sync completed successfully"), defaultMsgTimeout);
     QLOG_TRACE() << "Leaving SyncRunner::evernoteSync()";
 }
-
 
 
 bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
@@ -222,7 +218,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     bool rc;
     int startingSequenceNumber = updateSequenceNumber;
 
-    while(more && keepRunning)  {
+    while (more && keepRunning) {
         SyncChunk chunk;
         rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize,
                                 SYNC_CHUNK_LINKED_NOTEBOOKS | SYNC_CHUNK_NOTEBOOKS |
@@ -236,8 +232,9 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
             return false;
         }
         QLOG_DEBUG() << "-(Pass 1)->>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
-        int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
-        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete for notebooks, tags, & searches."), defaultMsgTimeout);
+        int pct = (updateSequenceNumber - startingSequenceNumber) * 100 / (updateCount - startingSequenceNumber);
+        emit setMessage(tr("Download ") + QString::number(pct) + tr("% complete for notebooks, tags, & searches."),
+                        defaultMsgTimeout);
 
         processSyncChunk(chunk);
 
@@ -255,9 +252,10 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     UserTable userTable(db);
 
 
-    while(more && keepRunning)  {
+    while (more && keepRunning) {
         SyncChunk chunk;
-        rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, SYNC_CHUNK_NOTES | SYNC_CHUNK_RESOURCES, fullSync);
+        rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, SYNC_CHUNK_NOTES | SYNC_CHUNK_RESOURCES,
+                                fullSync);
         if (!rc) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;
@@ -266,8 +264,8 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
             return false;
         }
         QLOG_DEBUG() << "-(Pass 2) ->>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
-        int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
-        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete."), defaultMsgTimeout);
+        int pct = (updateSequenceNumber - startingSequenceNumber) * 100 / (updateCount - startingSequenceNumber);
+        emit setMessage(tr("Download ") + QString::number(pct) + tr("% complete."), defaultMsgTimeout);
         processSyncChunk(chunk);
 
         userTable.updateLastSyncNumber(chunk.chunkHighUSN);
@@ -284,7 +282,6 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     QLOG_TRACE_OUT();
     return true;
 }
-
 
 
 // Deal with the sync chunk returned
@@ -305,7 +302,6 @@ void SyncRunner::processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook) {
 
     if (chunk.expungedLinkedNotebooks.isSet())
         syncRemoteExpungedLinkedNotebooks(chunk.expungedLinkedNotebooks);
-
 
 
     if (chunk.notebooks.isSet())
@@ -367,12 +363,11 @@ void SyncRunner::processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook) {
 }
 
 
-
 // Expunge deleted notes from the local database
 void SyncRunner::syncRemoteExpungedNotes(QList<Guid> guids) {
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteExpungedNotes";
     NoteTable noteTable(db);
-    for (int i=0; i<guids.size(); i++) {
+    for (int i = 0; i < guids.size(); i++) {
         noteTable.expunge(guids[i]);
     }
     QLOG_TRACE() << "Leaving SyncRunner::syncRemoteExpungedNotes";
@@ -383,7 +378,7 @@ void SyncRunner::syncRemoteExpungedNotes(QList<Guid> guids) {
 void SyncRunner::syncRemoteExpungedNotebooks(QList<Guid> guids) {
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteExpungedNotebooks";
     NotebookTable notebookTable(db);
-    for (int i=0; i<guids.size(); i++) {
+    for (int i = 0; i < guids.size(); i++) {
         int lid = notebookTable.getLid(guids[i]);
         notebookTable.expunge(guids[i]);
         if (!finalSync)
@@ -397,7 +392,7 @@ void SyncRunner::syncRemoteExpungedNotebooks(QList<Guid> guids) {
 void SyncRunner::syncRemoteExpungedTags(QList<Guid> guids) {
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteExpungedTags";
     TagTable tagTable(db);
-    for (int i=0; i<guids.size(); i++) {
+    for (int i = 0; i < guids.size(); i++) {
         int lid = tagTable.getLid(guids[i]);
         tagTable.expunge(guids[i]);
         if (!finalSync)
@@ -411,7 +406,7 @@ void SyncRunner::syncRemoteExpungedTags(QList<Guid> guids) {
 void SyncRunner::syncRemoteExpungedSavedSearches(QList<Guid> guids) {
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteExpungedSavedSearches";
     SearchTable searchTable(db);
-    for (int i=0; i<guids.size(); i++) {
+    for (int i = 0; i < guids.size(); i++) {
         int lid = searchTable.getLid(guids[i]);
         searchTable.expunge(guids[i]);
         if (!finalSync)
@@ -426,7 +421,7 @@ void SyncRunner::syncRemoteTags(QList<Tag> tags, qint32 account) {
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteTags";
     TagTable tagTable(db);
 
-    for (int i=0; i<tags.size() && keepRunning; i++) {
+    for (int i = 0; i < tags.size() && keepRunning; i++) {
         Tag t = tags.at(i);
 
         // There are two ways to get the tag.  We can get
@@ -465,7 +460,7 @@ void SyncRunner::syncRemoteTags(QList<Tag> tags, qint32 account) {
                 emit tagUpdated(lid, t.name, parentGuid, account);
             else
                 emit(tagUpdated(lid, "", parentGuid, account));
-            }
+        }
     }
 
     QLOG_TRACE() << "Leaving SyncRunner::syncRemoteTags";
@@ -478,7 +473,7 @@ void SyncRunner::syncRemoteSearches(QList<SavedSearch> searches) {
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteSearches";
     SearchTable searchTable(db);
 
-    for (int i=0; i<searches.size() && keepRunning; i++) {
+    for (int i = 0; i < searches.size() && keepRunning; i++) {
         SavedSearch t = searches.at(i);
         qint32 lid = searchTable.getLid(t.guid);
         if (lid > 0) {
@@ -506,7 +501,7 @@ void SyncRunner::syncRemoteNotebooks(QList<Notebook> books, qint32 account) {
     LinkedNotebookTable ltable(db);
     SharedNotebookTable stable(db);
 
-    for (int i=0; i<books.size() && keepRunning; i++) {
+    for (int i = 0; i < books.size() && keepRunning; i++) {
         Notebook t = books.at(i);
 
         // There are a few to get the notebook.
@@ -518,7 +513,7 @@ void SyncRunner::syncRemoteNotebooks(QList<Notebook> books, qint32 account) {
             lid = ltable.getLid(t.guid);
         if (lid == 0 && t.sharedNotebooks.isSet()) {
             QList<SharedNotebook> sharedNotebooks = t.sharedNotebooks;
-            for (int j=0; j<sharedNotebooks.size() && lid == 0; j++) {
+            for (int j = 0; j < sharedNotebooks.size() && lid == 0; j++) {
                 lid = stable.findById(sharedNotebooks[j].id);
             }
         }
@@ -568,7 +563,7 @@ void SyncRunner::syncRemoteNotes(QList<Note> notes, qint32 account) {
     NoteTable noteTable(db);
     NotebookTable bookTable(db);
 
-    for (int i=0; i<notes.size() && keepRunning; i++) {
+    for (int i = 0; i < notes.size() && keepRunning; i++) {
         Note t = notes[i];
         qint32 lid = noteTable.getLid(t.guid);
         if (lid > 0) {
@@ -579,7 +574,7 @@ void SyncRunner::syncRemoteNotes(QList<Note> notes, qint32 account) {
                 noteTable.updateNotebook(newLid, conflictNotebook, true);
                 if (!finalSync)
                     emit noteUpdated(newLid);
-             }
+            }
             noteTable.sync(lid, notes.at(i), account);
         } else {
             noteTable.sync(t, account);
@@ -598,13 +593,12 @@ void SyncRunner::syncRemoteNotes(QList<Note> notes, qint32 account) {
 }
 
 
-
 // Synchronize remote resources with the current database
 void SyncRunner::syncRemoteResources(QList<Resource> resources) {
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteResources";
     ResourceTable resTable(db);
 
-    for (int i=0; i<resources.size(); i++) {
+    for (int i = 0; i < resources.size(); i++) {
         Resource r = resources[i];
         qint32 lid = resTable.getLid(r.noteGuid, r.guid);
         if (lid > 0)
@@ -616,12 +610,11 @@ void SyncRunner::syncRemoteResources(QList<Resource> resources) {
 }
 
 
-
 // Synchronize remote linked notebooks
 void SyncRunner::syncRemoteLinkedNotebooksChunk(QList<LinkedNotebook> books) {
     QLOG_TRACE_IN();
     LinkedNotebookTable ltable(db);
-    for (int i=0; i<books.size(); i++) {
+    for (int i = 0; i < books.size(); i++) {
         qint32 lid = ltable.sync(books[i]);
         LinkedNotebook lbk = books[i];
         QString sharename = "";
@@ -637,8 +630,6 @@ void SyncRunner::syncRemoteLinkedNotebooksChunk(QList<LinkedNotebook> books) {
 }
 
 
-
-
 // Synchronize remote linked notebooks
 bool SyncRunner::syncRemoteLinkedNotebooksActual() {
     QLOG_TRACE_IN();
@@ -646,7 +637,7 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
     QList<qint32> lids;
     ltable.getAll(lids);
     bool fs;
-    for (int i=0; i<lids.size(); i++) {
+    for (int i = 0; i < lids.size(); i++) {
         LinkedNotebook book;
         qint32 usn = ltable.getLastUpdateSequenceNumber(lids[i]);
         qint32 startingUSN = usn;
@@ -658,7 +649,7 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
 
             // If we can't authenticate, we just gid of the notebook
             // because the user probably stopped sharing.
-            qint32 linkedLid=0;
+            qint32 linkedLid = 0;
             LinkedNotebookTable ntable(db);
             linkedLid = ntable.getLid(book.guid);
             ntable.expunge(book.guid);
@@ -677,7 +668,7 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
             return false;
         }
         if (syncState.updateCount <= usn)
-            more=false;
+            more = false;
         qint32 startingSequenceNumber = usn;
         if (usn == 0)
             fs = true;
@@ -690,7 +681,7 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
             SyncChunk chunk;
             if (!comm->getLinkedNotebookSyncChunk(chunk, book, usn, chunkSize, fs)) {
                 more = false;
-                if (comm->error.type == CommunicationError::EDAMNotFoundException) {
+                if (comm->error.getType() == CommunicationError::EDAMNotFoundException) {
                     ltable.expunge(lids[i]);
                     if (!finalSync)
                         emit(notebookExpunged(lids[i]));
@@ -704,13 +695,15 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
                 processSyncChunk(chunk, lids[i]);
                 usn = chunk.chunkHighUSN;
                 if (chunk.updateCount > 0 && chunk.updateCount > startingSequenceNumber) {
-                    int pct = (usn-startingSequenceNumber)*100/(chunk.updateCount-startingSequenceNumber);
+                    int pct = (usn - startingSequenceNumber) * 100 / (chunk.updateCount - startingSequenceNumber);
                     QString sharename = "";
                     if (book.shareName.isSet())
                         sharename = book.shareName;
-                    emit setMessage(tr("Downloading ") +QString::number(pct) + tr("% complete for tags in shared notebook ") +sharename + tr("."), defaultMsgTimeout);
+                    emit setMessage(
+                        tr("Downloading ") + QString::number(pct) + tr("% complete for tags in shared notebook ") +
+                        sharename + tr("."), defaultMsgTimeout);
                 }
-                if (!chunk.chunkHighUSN.isSet()|| chunk.chunkHighUSN >= chunk.updateCount)
+                if (!chunk.chunkHighUSN.isSet() || chunk.chunkHighUSN >= chunk.updateCount)
                     more = false;
             }
         }
@@ -721,17 +714,17 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
         more = true;
         chunkSize = 50;
         if (error == true)
-            more=false;
+            more = false;
 
         QString sharename = "";
         if (book.shareName.isSet())
             sharename = book.shareName;
-        emit setMessage(tr("Downloading notes for shared notebook ") +sharename + tr("."), defaultMsgTimeout);
+        emit setMessage(tr("Downloading notes for shared notebook ") + sharename + tr("."), defaultMsgTimeout);
         while (more && keepRunning) {
             SyncChunk chunk;
             if (!comm->getLinkedNotebookSyncChunk(chunk, book, usn, chunkSize, fs)) {
                 more = false;
-                if (comm->error.type == CommunicationError::EDAMNotFoundException) {
+                if (comm->error.getType() == CommunicationError::EDAMNotFoundException) {
                     ltable.expunge(lids[i]);
                     if (!finalSync)
                         emit(notebookExpunged(lids[i]));
@@ -744,11 +737,13 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
                 processSyncChunk(chunk, lids[i]);
                 usn = chunk.chunkHighUSN;
                 if (chunk.updateCount > 0 && chunk.updateCount > startingSequenceNumber) {
-                    int pct = (usn-startingSequenceNumber)*100/(chunk.updateCount-startingSequenceNumber);
+                    int pct = (usn - startingSequenceNumber) * 100 / (chunk.updateCount - startingSequenceNumber);
                     QString sharename = "";
                     if (book.shareName.isSet())
                         sharename = book.shareName;
-                    emit setMessage(tr("Downloading ") +QString::number(pct) + tr("% complete for shared notebook ") +sharename + tr("."), defaultMsgTimeout);
+                    emit setMessage(
+                        tr("Downloading ") + QString::number(pct) + tr("% complete for shared notebook ") + sharename +
+                        tr("."), defaultMsgTimeout);
                 }
                 if (!chunk.chunkHighUSN.isSet() || chunk.chunkHighUSN >= chunk.updateCount) {
                     more = false;
@@ -768,7 +763,6 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
 }
 
 
-
 // Upload notes that belong to me
 qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
     QLOG_TRACE_IN();
@@ -779,7 +773,7 @@ qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
     noteTable.getAllDirty(lids, notebookLid);
 
     // Split the list into deleted and updated notes
-    for (int i=0; i<lids.size(); i++) {
+    for (int i = 0; i < lids.size(); i++) {
         if (noteTable.isDeleted(lids[i]))
             deletedLids.append(lids[i]);
         else
@@ -787,7 +781,7 @@ qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
     }
 
     // Start deleting notes
-    for (int i=0; i<deletedLids.size(); i++) {
+    for (int i = 0; i < deletedLids.size(); i++) {
         QString guid = noteTable.getGuid(deletedLids[i]);
         noteTable.setDirty(lids[i], false);
         usn = comm->deleteLinkedNote(guid);
@@ -813,7 +807,7 @@ qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
 
 
     // Do the actual deletes
-    for (int i=0; i<deleteQueueGuids.size(); i++) {
+    for (int i = 0; i < deleteQueueGuids.size(); i++) {
         QString guid = deleteQueueGuids[i];
         usn = comm->deleteLinkedNote(guid);
         if (usn > maxUsn) {
@@ -824,9 +818,9 @@ qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
 
 
     // Start uploading notes
-    for (int i=0; i<validLids.size(); i++) {
+    for (int i = 0; i < validLids.size(); i++) {
         Note note;
-        noteTable.get(note, validLids[i],true, true);
+        noteTable.get(note, validLids[i], true, true);
         qint32 oldUsn = note.updateSequenceNum;
         usn = comm->uploadLinkedNote(note);
         if (usn == 0) {
@@ -852,13 +846,10 @@ qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
 }
 
 
-
-
-
 // Synchronize remote expunged linked notebooks
 void SyncRunner::syncRemoteExpungedLinkedNotebooks(QList<Guid> guids) {
     LinkedNotebookTable btable(db);
-    for (int i=0; i<guids.size(); i++) {
+    for (int i = 0; i < guids.size(); i++) {
         LinkedNotebookTable ntable(db);
         qint32 lid = ntable.getLid(guids[i]);
         btable.expunge(guids[i]);
@@ -867,13 +858,9 @@ void SyncRunner::syncRemoteExpungedLinkedNotebooks(QList<Guid> guids) {
 }
 
 
-
 void SyncRunner::applicationException(QString s) {
     QLOG_DEBUG() << "Application Exception!!! : " << s;
 }
-
-
-
 
 
 // Upload any saved searchs
@@ -889,7 +876,7 @@ qint32 SyncRunner::uploadSavedSearches() {
         return 0;
     }
 
-    for (int i=0; i<lids.size(); i++) {
+    for (int i = 0; i < lids.size(); i++) {
         SavedSearch search;
         stable.get(search, lids[i]);
         if (!stable.isDeleted(lids[i])) {
@@ -914,7 +901,7 @@ qint32 SyncRunner::uploadSavedSearches() {
             stable.expunge(lids[i]);
             if (search.updateSequenceNum > 0) {
                 usn = comm->expungeSavedSearch(guid);
-                if (usn>maxUsn)
+                if (usn > maxUsn)
                     maxUsn = usn;
             }
         }
@@ -939,7 +926,7 @@ qint32 SyncRunner::uploadTags() {
     }
 
     // Split the lids into lids to be updated, and lids to be deleted
-    for (int i=0; i<lids.size(); i++) {
+    for (int i = 0; i < lids.size(); i++) {
         if (table.isDeleted(lids[i]))
             deletedLids.append(lids[i]);
         else
@@ -952,8 +939,8 @@ qint32 SyncRunner::uploadTags() {
 
     // Update any lids
     QLOG_DEBUG() << "Beginning to upload new & altered tags";
-    int i=0;
-    while(updatedLids.size() > 0) {
+    int i = 0;
+    while (updatedLids.size() > 0) {
 
         Tag tag;
         table.get(tag, updatedLids[i]);
@@ -977,7 +964,7 @@ qint32 SyncRunner::uploadTags() {
             // have that bug.
             Tag foundTag;
             bool matchFound = false;
-            for (int j=0; j<existingTags.size(); j++) {
+            for (int j = 0; j < existingTags.size(); j++) {
                 QString tempTagName = existingTags[j].name;
                 if (tempTagName == tag.name) {
                     matchFound = true;
@@ -1008,7 +995,7 @@ qint32 SyncRunner::uploadTags() {
                     table.setUpdateSequenceNumber(updatedLids[i], usn);
                     table.setDirty(tag.guid, false);
                     updatedLids.removeAt(i);
-                    i=-1;  // Reset for the next time through the loop
+                    i = -1;  // Reset for the next time through the loop
                 } else {
                     error = true;
                     updatedLids.clear();
@@ -1018,7 +1005,7 @@ qint32 SyncRunner::uploadTags() {
                 table.updateGuid(updatedLids[i], foundTag.guid);
                 table.setUpdateSequenceNumber(updatedLids[i], foundTag.updateSequenceNum);
                 updatedLids.removeAt(i);
-                i=-1;  // Reset for the next time through the loop
+                i = -1;  // Reset for the next time through the loop
             }
         }
         i++;
@@ -1026,21 +1013,19 @@ qint32 SyncRunner::uploadTags() {
 
     QLOG_DEBUG() << "Deleting LIDS";
     // delete any lids
-    for (int i=0; i<deletedLids.size(); i++) {
+    for (int i = 0; i < deletedLids.size(); i++) {
         Tag tag;
         table.get(tag, deletedLids[i]);
         table.expunge(lids[i]);
         if (tag.updateSequenceNum > 0) {
             usn = comm->expungeTag(tag.guid);
-            if (usn>maxUsn)
+            if (usn > maxUsn)
                 maxUsn = usn;
         }
     }
     QLOG_TRACE_OUT();
     return maxUsn;
 }
-
-
 
 
 // Upload any saved searchs
@@ -1053,7 +1038,7 @@ qint32 SyncRunner::uploadNotebooks() {
     table.resetDirtyLocalNotebooks();
     table.resetLinkedNotebooksDirty();
     table.getAllDirty(lids);
-    for (int i=0; i<lids.size(); i++) {
+    for (int i = 0; i < lids.size(); i++) {
         Notebook notebook;
         table.get(notebook, lids[i]);
         if (!table.isDeleted(lids[i])) {
@@ -1079,7 +1064,7 @@ qint32 SyncRunner::uploadNotebooks() {
             table.expunge(lids[i]);
             if (notebook.updateSequenceNum > 0) {
                 usn = comm->expungeNotebook(guid);
-                if (usn>maxUsn)
+                if (usn > maxUsn)
                     maxUsn = usn;
             }
         }
@@ -1087,8 +1072,6 @@ qint32 SyncRunner::uploadNotebooks() {
     QLOG_TRACE_OUT();
     return maxUsn;
 }
-
-
 
 
 // Upload notes that belong to me
@@ -1108,7 +1091,7 @@ qint32 SyncRunner::uploadPersonalNotes() {
 
 
     // Get a list of all notes that are both dirty and in an account we own and isn't deleted
-    for (int i=0; i<lids.size(); i++) {
+    for (int i = 0; i < lids.size(); i++) {
         qint32 notebookLid = noteTable.getNotebookLid(lids[i]);
         if (!linkedNotebookTable.exists(notebookLid)) {
             if (!notebookTable.isLocal(notebookLid)) {
@@ -1130,7 +1113,7 @@ qint32 SyncRunner::uploadPersonalNotes() {
     }
 
     // Start deleting notes
-    for (int i=0; i<deletedLids.size(); i++) {
+    for (int i = 0; i < deletedLids.size(); i++) {
         QString guid = noteTable.getGuid(deletedLids[i]);
         noteTable.setDirty(lids[i], false);
         usn = comm->deleteNote(guid);
@@ -1147,9 +1130,9 @@ qint32 SyncRunner::uploadPersonalNotes() {
     // we do is to delete the note on Evernote, then give the
     // note in the local notebook a new GUID & set the
     // update sequence number to 0.
-    for (int i=0; i<movedLids.size(); i++) {
+    for (int i = 0; i < movedLids.size(); i++) {
         QUuid uuid;
-        Guid newGuid = uuid.createUuid().toString().replace("{","").replace("}","");
+        Guid newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
         QString guid = noteTable.getGuid(movedLids[i]);
         noteTable.setDirty(movedLids[i], false);
         noteTable.updateGuid(movedLids[i], newGuid);
@@ -1164,7 +1147,7 @@ qint32 SyncRunner::uploadPersonalNotes() {
 
 
     // Delete any notes that were deleted, but emptied from the trash
-    for (int i=0; i<deleteQueueGuids.size(); i++) {
+    for (int i = 0; i < deleteQueueGuids.size(); i++) {
         QString guid = deleteQueueGuids[i];
         usn = comm->deleteNote(guid);
         if (usn > maxUsn) {
@@ -1175,20 +1158,19 @@ qint32 SyncRunner::uploadPersonalNotes() {
 
 
     // Start uploading notes
-    for (int i=0; i<validLids.size(); i++) {
+    for (int i = 0; i < validLids.size(); i++) {
         Note note;
-        noteTable.get(note, validLids[i],true, true);
+        noteTable.get(note, validLids[i], true, true);
 
-        qint32 oldUsn=0;
+        qint32 oldUsn = 0;
         if (note.updateSequenceNum.isSet())
             oldUsn = note.updateSequenceNum;
         usn = comm->uploadNote(note);
         if (usn == 0) {
             this->communicationErrorHandler();
             if (note.title.isSet())
-                QLOG_ERROR() << tr("Error uploading note:") +note.title;
-            else
-                QLOG_ERROR() << tr("Error uploading note with a missing title!");
+                QLOG_ERROR() << tr("Error uploading note:") + note.title;
+            else QLOG_ERROR() << tr("Error uploading note with a missing title!");
             error = true;
             //return maxUsn;
         }
@@ -1209,11 +1191,8 @@ qint32 SyncRunner::uploadPersonalNotes() {
 }
 
 
-
-
-
 // Return a pointer to the CommunicationManager error class
-CommunicationError* SyncRunner::getError() {
+CommunicationError *SyncRunner::getError() {
     return &comm->error;
 }
 
@@ -1221,131 +1200,22 @@ CommunicationError* SyncRunner::getError() {
 // If a communication error happened, try to determine what the error is and
 // notify the user
 void SyncRunner::communicationErrorHandler() {
-    QString emitMsg;
-    if (comm->error.type == CommunicationError::ThriftException) {
-        if (comm->error.message != "")
-            emitMsg = "Thrift error: " + comm->error.message;
-        else
-            emitMsg = "Thrift error communicating with Evernote";
-        emit(setMessage(emitMsg, defaultMsgTimeout));
-        return;
-    }
-    if (comm->error.type == CommunicationError::TTransportException) {
-        if (comm->error.message != "")
-            emitMsg = "Network Transport error: " + comm->error.message;
-        else
-            emitMsg = "Network Transport error communicating with Evernote";
-        emit(setMessage(emitMsg, defaultMsgTimeout));
+    CommunicationError &error = comm->error;
+    CommunicationError::CommunicationErrorType type = error.getType();
+
+    if (type == CommunicationError::None) {
         return;
     }
 
-    if (comm->error.type == CommunicationError::EDAMSystemException) {
-        if (comm->error.message != "")
-            emitMsg = comm->error.message;
-        else
-            emitMsg = "Evernote System Error communicating with Evernote.";
-        emit(setMessage(emitMsg, defaultMsgTimeout));
-        return;
-    }
-
-    if (comm->error.type == CommunicationError::RateLimitExceeded) {
-        if (comm->error.message != "")
-            emitMsg = comm->error.message;
-        else
-            emitMsg = "API rate limit exceeded.  Please try again in one hour.";
-        emit(setMessage(emitMsg, 0));
+    if (type == CommunicationError::RateLimitExceeded) {
         minutesToNextSync = comm->getMinutesToNextSync();
         apiRateLimitExceeded = true;
-        return;
     }
-
-    if (comm->error.type == CommunicationError::EDAMNotFoundException) {
-        if (comm->error.message != "")
-            emitMsg = comm->error.message;
-        else
-            emitMsg = "Evernote \"Not Found\" error.";
-        emit(setMessage(emitMsg, 0));
-        return;
-    }
-
-    if (comm->error.type == CommunicationError::EDAMUserException) {
-        CommunicationError *e = &comm->error;
-
-        if (e->code == EDAMErrorCode::UNKNOWN)
-            emitMsg = "An unknown error has occurred" + e->message;
-
-        if (e->code == EDAMErrorCode::BAD_DATA_FORMAT)
-            emitMsg = "Unable to sync. Bad data format : " + e->message;
-
-        if (e->code == EDAMErrorCode::PERMISSION_DENIED)
-            emitMsg = "Unable to sync. Permission denied : " + e->message;
-
-        if (e->code == EDAMErrorCode::INTERNAL_ERROR)
-            emitMsg = "Internal Evernote error : " + e->message + " Please try again later.";
-
-        if (e->code == EDAMErrorCode::DATA_REQUIRED)
-            emitMsg = "Communication Error - Data required : " + e->message;
-
-        if (e->code == EDAMErrorCode::INVALID_AUTH)
-            emitMsg = "Invalid authorization : " + e->message;
-
-        if (e->code == EDAMErrorCode::AUTH_EXPIRED) {
-            emitMsg = "Authorization token has expired or been revoked.";
+    if (type == CommunicationError::EDAMUserException) {
+        if (error.getCode() == EDAMErrorCode::AUTH_EXPIRED) {
             global.accountsManager->setOAuthToken("");
         }
-
-        if (e->code == EDAMErrorCode::DATA_CONFLICT)
-            emitMsg = "Communication Error - Data conflict : " + e->message;
-
-        if (e->code == EDAMErrorCode::ENML_VALIDATION)
-            emitMsg = "Unable to update note.  Invalid note structure : " + e->message;
-
-        if (e->code == EDAMErrorCode::LIMIT_REACHED)
-            emitMsg = "Communication Error - limit reached : " + e->message;
-
-        if (e->code == EDAMErrorCode::QUOTA_REACHED)
-            emitMsg = "Communication Error - User quota exceeded : " + e->message;
-
-        if (e->code == EDAMErrorCode::SHARD_UNAVAILABLE)
-            emitMsg = "Communication Error - Shard unavailable.  Please try again later. " + e->message;
-
-        if (e->code == EDAMErrorCode::LEN_TOO_SHORT)
-            emitMsg = "Communication Error - Length too short : " + e->message;
-
-        if (e->code == EDAMErrorCode::LEN_TOO_LONG)
-            emitMsg = "Communication Error - Length too long : " + e->message;
-
-        if (e->code == EDAMErrorCode::TOO_FEW)
-            emitMsg = "Communication Error - Length \"too few\" error : " + e->message;
-
-        if (e->code == EDAMErrorCode::TOO_MANY)
-            emitMsg = "Communication Error - \"too many\" error : " + e->message;
-
-        if (e->code == EDAMErrorCode::UNSUPPORTED_OPERATION)
-            emitMsg = "Communication Error - Unsupported operation " + e->message;
-
-        emit(setMessage(emitMsg, defaultMsgTimeout));
-        return;
     }
-
-    if (comm->error.type == CommunicationError::TSSLException) {
-        CommunicationError *e = &comm->error;
-        emitMsg = "Communication Error - SSL Exception: " + e->message;
-        emit(setMessage(emitMsg, 0));
-        return;
-    }
-
-    if (comm->error.type == CommunicationError::TException) {
-        CommunicationError *e = &comm->error;
-        emitMsg = "TException: " + e->message;
-        emit(setMessage(emitMsg, 0));
-        return;
-    }
-
-    if (comm->error.type == CommunicationError::StdException) {
-        CommunicationError *e = &comm->error;
-        emitMsg = "Internal Error: " + e->message;
-        emit(setMessage(emitMsg, 0));
-        return;
-    }
+    emit(setMessage(error.getMessage(), 0));
 }
+

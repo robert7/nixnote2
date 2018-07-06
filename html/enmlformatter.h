@@ -41,19 +41,19 @@ class EnmlFormatter : public QObject
     Q_OBJECT
 private:
     QByteArray content;
-    QDomDocument doc;
+    //QDomDocument doc;
     bool isAttributeValid(QString attribute);
     bool isElementValid(QWebElement e);
-    void scanTags(QWebElement &element);
+    // void scanTags(QWebElement &element);
     void fixImgNode(QWebElement &element);
-    void fixEnCryptNode(QWebElement &element);
-    void processTodo(QWebElement &element);
+    //void fixEnCryptNode(QWebElement &element);
+    void fixInputNode(QWebElement &element);
     QStringList findAllTags(QWebElement &element);
     void removeInvalidAttributes(QWebElement &node);
-    void fixLinkNode(QWebElement e);
+    void fixANode(QWebElement e);
     void fixObjectNode(QWebElement &e);
-    void scanTags();
-    void fixNode(const QDomNode &node);
+    // void scanTags();
+    // void fixNode(const QDomNode &node);
     void postXmlFix();
     void fixSpanNode(QWebElement &e);
     void fixDivNode(QWebElement &e);
@@ -74,8 +74,8 @@ private:
     QStringList blockQuote;
     QStringList br;
     QStringList caption;
-    QStringList colHAlign;
-    QStringList colVAlign;
+    // QStringList colHAlign;
+    // QStringList colVAlign;
     QStringList col;
     QStringList colGroup;
     QStringList del;
@@ -95,22 +95,17 @@ private:
     QStringList tr_;
     QStringList ul;
 
-    void checkAttributes(QWebElement &e, QStringList valid);
+    void checkAttributes(QWebElement &element, QStringList valid);
+
+    void tidyHtml(QByteArray &content);
 
 public:
     bool formattingError;
     QList<qint32> resources;
 
-    explicit EnmlFormatter(QObject *parent = 0);
-    void setHtml(QString html);
+    explicit EnmlFormatter(QString html);
     QString getEnml();
     QByteArray rebuildNoteEnml();
-
-
-signals:
-
-public slots:
-
 };
 
 

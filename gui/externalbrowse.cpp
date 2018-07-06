@@ -29,7 +29,7 @@ ExternalBrowse::ExternalBrowse(qint32 lid, QWidget *parent) :
     QMdiSubWindow(parent)
 {
     setAttribute(Qt::WA_QuitOnClose, false);
-    this->setWindowTitle(tr("NixNote"));
+    this->setWindowTitle(tr(NN_APP_DISPLAY_NAME_GUI));
     setWindowIcon(global.getIconResource(":windowIcon"));
 
     browser = new NBrowserWindow(this);
@@ -123,7 +123,7 @@ void ExternalBrowse::closeEvent(QCloseEvent *closeEvent) {
 
 
 void ExternalBrowse::setTitle(QString text) {
-    this->setWindowTitle(tr("NixNote - ") +text);
+    this->setWindowTitle(tr(NN_APP_DISPLAY_NAME_GUI " - ") +text);
 }
 
 

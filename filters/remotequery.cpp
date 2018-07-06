@@ -28,7 +28,7 @@ RemoteQuery::RemoteQuery(QObject *parent) :
     QObject(parent)
 {
     this->initDbus();
-    note = NULL;
+    note = nullptr;
     lid = -1;
 }
 
@@ -55,19 +55,19 @@ void RemoteQuery::initDbus() {
 Q_SCRIPTABLE bool RemoteQuery::setNote(qint32 lid) {
     this->lid = lid;
     NoteTable ntable(global.db);
-    if (note != NULL)
+    if (note != nullptr)
         delete note;
     note = new Note();
     if (ntable.get(*note, lid, false,false))
         return true;
     delete note;
-    note = NULL;
+    note = nullptr;
     return false;
 }
 
 
 Q_SCRIPTABLE QString RemoteQuery::getNoteTitle() {
-    if (note == NULL)
+    if (note == nullptr)
         return "";
     if (note->title.isSet())
         return note->title;

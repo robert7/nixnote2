@@ -53,6 +53,16 @@ I suggest running from "appdir" (./appdir/usr/appdir/nixnote2).
 ./development/create-AppImage.sh
 ```
 
+Preparation steps
+* Build tidy library
+  * clone [source code](https://github.com/htacg/tidy-html5) switch to master branch
+  * follow [build instructions](https://github.com/htacg/tidy-html5/blob/next/README/BUILD.md)
+    * short version:
+    * cd build/cmake
+    * edit "build-me.sh" change line with TMPINST to: TMPINST="../../../libs"
+    * ./build-me.sh DEBUG SHARED                      
+    * make install
+    * library is now copied to ../../../libs                                                                                         
 
 ### macOS
 

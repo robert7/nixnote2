@@ -72,7 +72,7 @@ void ExportData::backupData(QString filename) {
         writer->writeAttribute("exportType", "backup");
     else
         writer->writeAttribute("exportType", "export");
-    writer->writeAttribute("application", "NixNote");
+    writer->writeAttribute("application", APP_NNEX_APP_NAME);
     writer->writeAttribute("applicationVersion", "2.x");
     if (backup) {
         NoteTable noteTable(global.db);

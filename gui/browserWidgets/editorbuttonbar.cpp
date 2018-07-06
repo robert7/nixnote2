@@ -355,7 +355,7 @@ void EditorButtonBar::contextMenuEvent(QContextMenuEvent *event) {
 
 void EditorButtonBar::saveButtonbarState() {
     QLOG_DEBUG() << "Buttonbar state save";
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
 
     bool value;
     value = undoButtonAction->isVisible();
@@ -461,21 +461,21 @@ void EditorButtonBar::saveButtonbarState() {
 
 
 void EditorButtonBar::getButtonbarState() {
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
 
-    undoButtonAction->setVisible(global.settings->value("undoButtonVisible", true).toBool());
+    undoButtonAction->setVisible(global.settings->value("undoButtonVisible", false).toBool());
     undoVisible->setChecked(undoButtonAction->isVisible());
 
-    redoButtonAction->setVisible(global.settings->value("redoButtonVisible", true).toBool());
+    redoButtonAction->setVisible(global.settings->value("redoButtonVisible", false).toBool());
     redoVisible->setChecked(redoButtonAction->isVisible());
 
-    cutButtonAction->setVisible(global.settings->value("cutButtonVisible", true).toBool());
+    cutButtonAction->setVisible(global.settings->value("cutButtonVisible", false).toBool());
     cutVisible->setChecked(cutButtonAction->isVisible());
 
-    copyButtonAction->setVisible(global.settings->value("copyButtonVisible", true).toBool());
+    copyButtonAction->setVisible(global.settings->value("copyButtonVisible", false).toBool());
     copyVisible->setChecked(copyButtonAction->isVisible());
 
-    pasteButtonAction->setVisible(global.settings->value("pasteButtonVisible", true).toBool());
+    pasteButtonAction->setVisible(global.settings->value("pasteButtonVisible", false).toBool());
     pasteVisible->setChecked(pasteButtonAction->isVisible());
 
     removeFormatButtonAction->setVisible(global.settings->value("removeFormatButtonVisible", true).toBool());
@@ -487,31 +487,31 @@ void EditorButtonBar::getButtonbarState() {
     italicButtonAction->setVisible(global.settings->value("italicButtonVisible", true).toBool());
     italicVisible->setChecked(italicButtonAction->isVisible());
 
-    underlineButtonAction->setVisible(global.settings->value("underlineButtonVisible", true).toBool());
+    underlineButtonAction->setVisible(global.settings->value("underlineButtonVisible", false).toBool());
     underlineVisible->setChecked(underlineButtonAction->isVisible());
 
     strikethroughButtonAction->setVisible(global.settings->value("strikethroughButtonVisible", true).toBool());
     strikethroughVisible->setChecked(strikethroughButtonAction->isVisible());
 
-    superscriptButtonAction->setVisible(global.settings->value("superscriptButtonVisible", true).toBool());
+    superscriptButtonAction->setVisible(global.settings->value("superscriptButtonVisible", false).toBool());
     superscriptVisible->setChecked(superscriptButtonAction->isVisible());
 
-    subscriptButtonAction->setVisible(global.settings->value("subscriptButtonVisible", true).toBool());
+    subscriptButtonAction->setVisible(global.settings->value("subscriptButtonVisible", false).toBool());
     subscriptVisible->setChecked(subscriptButtonAction->isVisible());
 
-    hlineButtonAction->setVisible(global.settings->value("hlineButtonVisible", true).toBool());
+    hlineButtonAction->setVisible(global.settings->value("hlineButtonVisible", false).toBool());
     hlineVisible->setChecked(hlineButtonAction->isVisible());
 
-    leftJustifyButtonAction->setVisible(global.settings->value("leftJustifyButtonVisible", true).toBool());
+    leftJustifyButtonAction->setVisible(global.settings->value("leftJustifyButtonVisible", false).toBool());
     leftJustifyVisible->setChecked(leftJustifyButtonAction->isVisible());
 
-    centerJustifyButtonAction->setVisible(global.settings->value("centerJustifyButtonVisible", true).toBool());
+    centerJustifyButtonAction->setVisible(global.settings->value("centerJustifyButtonVisible", false).toBool());
     centerJustifyVisible->setChecked(centerJustifyButtonAction->isVisible());
 
-    fullJustifyButtonAction->setVisible(global.settings->value("fullJustifyButtonVisible", true).toBool());
+    fullJustifyButtonAction->setVisible(global.settings->value("fullJustifyButtonVisible", false).toBool());
     fullJustifyVisible->setChecked(fullJustifyButtonAction->isVisible());
 
-    rightJustifyButtonAction->setVisible(global.settings->value("rightJustifyButtonVisible", true).toBool());
+    rightJustifyButtonAction->setVisible(global.settings->value("rightJustifyButtonVisible", false).toBool());
     rightJustifyVisible->setChecked(rightJustifyButtonAction->isVisible());
 
     shiftLeftButtonAction->setVisible(global.settings->value("shiftLeftButtonVisible", true).toBool());
@@ -532,7 +532,7 @@ void EditorButtonBar::getButtonbarState() {
     fontSizeButtonAction->setVisible(global.settings->value("fontSizeButtonVisible", true).toBool());
     fontSizeVisible->setChecked(fontSizeButtonAction->isVisible());
 
-    todoButtonAction->setVisible(global.settings->value("todoButtonVisible", true).toBool());
+    todoButtonAction->setVisible(global.settings->value("todoButtonVisible", false).toBool());
     todoVisible->setChecked(todoButtonAction->isVisible());
 
     insertTableButtonAction->setVisible(global.settings->value("insertTableButtonVisible", true).toBool());
@@ -544,16 +544,16 @@ void EditorButtonBar::getButtonbarState() {
     highlightColorAction->setVisible(global.settings->value("highlightButtonVisible", true).toBool());
     highlightVisible->setChecked(highlightColorAction->isVisible());
 
-    spellCheckButtonAction->setVisible(global.settings->value("spelLCheckButtonVisible", true).toBool());
+    spellCheckButtonAction->setVisible(global.settings->value("spelLCheckButtonVisible", false).toBool());
     spellCheckButtonVisible->setChecked(spellCheckButtonAction->isVisible());
 
-    htmlEntitiesButtonAction->setVisible(global.settings->value("htmlEntitiesButtonVisible", true).toBool());
+    htmlEntitiesButtonAction->setVisible(global.settings->value("htmlEntitiesButtonVisible", false).toBool());
     htmlEntitiesButtonVisible->setChecked(htmlEntitiesButtonAction->isVisible());
 
     insertDatetimeButtonAction->setVisible(global.settings->value("insertDatetimeButtonVisible", true).toBool());
     insertDatetimeVisible->setChecked(insertDatetimeButtonAction->isVisible());
 
-    formatCodeButtonAction->setVisible(global.settings->value("formatCodeButtonVisible", true).toBool());
+    formatCodeButtonAction->setVisible(global.settings->value("formatCodeButtonVisible", false).toBool());
     formatCodeButtonVisible->setChecked(formatCodeButtonAction->isVisible());
 
 
@@ -562,7 +562,7 @@ void EditorButtonBar::getButtonbarState() {
 
 // we can't easily call getButtonbarState, as the buttons are not yet ready at creation time
 void EditorButtonBar::getButtonbarColorState() {
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     fontColor = global.settings->value("fontColor", "red").toString();
     fontHighlightColor = global.settings->value("fontHighlightColor", "yellow").toString();
     global.settings->endGroup();

@@ -520,7 +520,7 @@ void NSearchView::mouseMoveEvent(QMouseEvent *event)
 {
     QTreeView::mouseMoveEvent(event);
 
-    if (currentItem() == NULL)
+    if (currentItem() == nullptr)
         return;
 
     if (!(event->buttons() & Qt::LeftButton))

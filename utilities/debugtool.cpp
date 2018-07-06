@@ -211,10 +211,16 @@ void DebugTool::dumpNotebook(Notebook n) {
 //*******************************************************
 
 void DebugTool::dumpField(Optional<QString> field, QString name) {
-    if (field.isSet())
-        QLOG_DEBUG() << name << ":" << field << ":";
-    else
-        QLOG_DEBUG() << name << " is not set.";
+    if (field.isSet()) {
+        QString &fieldValue = field.ref();
+        if (fieldValue.length() > 100) {
+           QLOG_DEBUG_FILE(QString("attr-").append(name),field);
+        } else {
+            QLOG_DEBUG() << name << ":" << fieldValue << ":";
+        }
+    }
+    // else
+    //     QLOG_DEBUG() << name << " is not set.";
 }
 
 
@@ -225,8 +231,8 @@ void DebugTool::dumpField(Optional<QString> field, QString name) {
 void DebugTool::dumpField(Optional<bool> field, QString name) {
     if (field.isSet())
         QLOG_DEBUG() << name << ":" << field << ":";
-    else
-        QLOG_DEBUG() << name << " is not set.";
+    // else
+    //     QLOG_DEBUG() << name << " is not set.";
 }
 
 
@@ -234,8 +240,8 @@ void DebugTool::dumpField(Optional<bool> field, QString name) {
 void DebugTool::dumpField(Optional<double> field, QString name) {
     if (field.isSet())
         QLOG_DEBUG() << name << ":" << field << ":";
-    else
-        QLOG_DEBUG() << name << " is not set.";
+    // else
+    //     QLOG_DEBUG() << name << " is not set.";
 }
 
 
@@ -243,8 +249,8 @@ void DebugTool::dumpField(Optional<double> field, QString name) {
 void DebugTool::dumpField(Optional<qint32> field, QString name) {
     if (field.isSet())
         QLOG_DEBUG() << name << ":" << field << ":";
-    else
-        QLOG_DEBUG() << name << " is not set.";
+    // else
+    //     QLOG_DEBUG() << name << " is not set.";
 }
 
 
@@ -253,8 +259,8 @@ void DebugTool::dumpField(Optional<qint32> field, QString name) {
 void DebugTool::dumpField(Optional<long long> field, QString name) {
     if (field.isSet())
         QLOG_DEBUG() << name << ":" << field << ":";
-    else
-        QLOG_DEBUG() << name << " is not set.";
+    // else
+    //     QLOG_DEBUG() << name << " is not set.";
 }
 
 
@@ -264,8 +270,8 @@ void DebugTool::dumpField(Optional<long long> field, QString name) {
 void DebugTool::dumpField(Optional<short int> field, QString name) {
     if (field.isSet())
         QLOG_DEBUG() << name << ":" << field << ":";
-    else
-        QLOG_DEBUG() << name << " is not set.";
+    // else
+    //     QLOG_DEBUG() << name << " is not set.";
 }
 
 
@@ -278,9 +284,10 @@ void DebugTool::dumpField(Optional<QByteArray> field, QString name, bool hexValu
             QLOG_DEBUG() << name << ":" << hex.toHex() << ":";
         } else
             QLOG_DEBUG() << name << ":" << field << ":";
-    } else {
-        QLOG_DEBUG() << name << " is not set.";
     }
+    // else {
+    //     QLOG_DEBUG() << name << " is not set.";
+    // }
 }
 
 
@@ -288,7 +295,7 @@ void DebugTool::dumpField(Optional<QByteArray> field, QString name, bool hexValu
 
 void DebugTool::dumpField(Optional<QStringList>  field, QString name) {
     if (!field.isSet()) {
-        QLOG_DEBUG() << name << " is not set.";
+        // QLOG_DEBUG() << name << " is not set.";
         return;
     }
     QStringList fields = field;
@@ -302,7 +309,7 @@ void DebugTool::dumpField(Optional<QStringList>  field, QString name) {
 
 void DebugTool::dumpField(Optional< QList<QString> >  field, QString name) {
     if (!field.isSet()) {
-        QLOG_DEBUG() << name << " is not set.";
+        // QLOG_DEBUG() << name << " is not set.";
         return;
     }
     QList<QString> fields = field;

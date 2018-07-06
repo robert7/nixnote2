@@ -240,13 +240,13 @@ void NNotebookView::loadData() {
 
     QHash<qint32, NNotebookViewItem*>::iterator i1;
     for (i1=dataStore.begin(); i1!=dataStore.end(); ++i1) {
-        if (i1.value() != NULL)
+        if (i1.value() != nullptr)
             i1.value()->setHidden(true);
     }
 
     QHash<QString, NNotebookViewItem*>::iterator i2;
     for (i2=stackStore.begin(); i2!=stackStore.end(); ++i2) {
-        if (i2.value() != NULL)
+        if (i2.value() != nullptr)
             i2.value()->setHidden(true);
     }
 
@@ -302,9 +302,9 @@ void NNotebookView::rebuildTree() {
     while (i.hasNext()) {
         i.next();
         NNotebookViewItem *widget = i.value();
-        if (widget != NULL) {
+        if (widget != nullptr) {
             if (i.value()->stack != "") {
-                NNotebookViewItem *stackWidget = NULL;
+                NNotebookViewItem *stackWidget = nullptr;
                 if (stackStore.contains(i.value()->stack)) {
                     stackWidget = stackStore[i.value()->stack];
                 } else {
@@ -345,7 +345,7 @@ void NNotebookView::rebuildTree() {
     QHashIterator<qint32, NNotebookViewItem *> h(dataStore);
     while (h.hasNext()) {
         h.next();
-        if (h.value() != NULL && h.value()->parent() != NULL && !h.value()->isHidden())
+        if (h.value() != nullptr && h.value()->parent() != nullptr && !h.value()->isHidden())
             h.value()->parent()->setHidden(false);
     }
 
@@ -360,7 +360,7 @@ void NNotebookView::notebookUpdated(qint32 lid, QString name, QString stackName,
     // Check if it already exists
     if (this->dataStore.contains(lid)) {
         NNotebookViewItem *newWidget = dataStore[lid];
-        if (newWidget == NULL) {
+        if (newWidget == nullptr) {
             newWidget = new NNotebookViewItem(lid);
             dataStore.remove(lid);
             dataStore.insert(lid, newWidget);
@@ -384,7 +384,7 @@ void NNotebookView::notebookUpdated(qint32 lid, QString name, QString stackName,
         newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
         newWidget->stack = stackName;
         this->dataStore.insert(lid, newWidget);
-        NNotebookViewItem *stackWidget = NULL;
+        NNotebookViewItem *stackWidget = nullptr;
         if (stackName !="" && this->stackStore.contains(newWidget->stack)) {
             stackWidget = stackStore[stackName];
         }
@@ -400,7 +400,7 @@ void NNotebookView::notebookUpdated(qint32 lid, QString name, QString stackName,
             root->addChild(stackWidget);
         }
 
-        if (stackWidget == NULL) {
+        if (stackWidget == nullptr) {
             root->addChild(newWidget);
         } else {
             stackWidget->addChild(newWidget);
@@ -519,9 +519,9 @@ void NNotebookView::notebookExpunged(qint32 lid) {
         NNotebookViewItem *parent = (NNotebookViewItem*)item->parent();
         //this->removeItemWidget(item, 0);
         dataStore.remove(lid);
-        if (parent != NULL) {
+        if (parent != nullptr) {
             parent->removeChild(item);
-            if (parent->childCount() == 0 && parent->parent() != NULL) {
+            if (parent->childCount() == 0 && parent->parent() != nullptr) {
                parent->parent()->removeChild(parent);
                 stackStore.remove(parent->stack);
                 dataStore.remove(parent->lid);
@@ -718,10 +718,10 @@ void NNotebookView::editComplete() {
         NNotebookViewItem *item = stackStore[oldName];
 
         // If this is null, then we are on our second time here.
-        if (item == NULL)
+        if (item == nullptr)
             return;
 
-        if (text.trimmed() == "" || stackStore[text.trimmed()] != NULL) {
+        if (text.trimmed() == "" || stackStore[text.trimmed()] != nullptr) {
             item->setData(NAME_POSITION, Qt::DisplayRole, oldName);
             return;
         }
@@ -896,7 +896,7 @@ void NNotebookView::sortStackMenu() {
 
 
 void NNotebookView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
-    NNotebookViewItem *item = NULL;
+    NNotebookViewItem *item = nullptr;
 
     if (lid == -1) {
         item = root;
@@ -904,7 +904,7 @@ void NNotebookView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
         root->subTotal = 0;
         QHash<QString, NNotebookViewItem*>::iterator s;
         for (s=stackStore.begin(); s!=stackStore.end(); ++s) {
-            if (s.value() != NULL) {
+            if (s.value() != nullptr) {
                 s.value()->total = 0;
                 s.value()->subTotal = 0;
             }
@@ -912,12 +912,12 @@ void NNotebookView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
 
         QHash<qint32, NNotebookViewItem*>::iterator i;
         for (i=dataStore.begin(); i!=dataStore.end(); ++i) {
-            if (i.value() != NULL) {
+            if (i.value() != nullptr) {
                 root->total += i.value()->total;
                 root->subTotal += i.value()->subTotal;
                 if (i.value()->stack != "") {
                     NNotebookViewItem* stack = stackStore[i.value()->stack];
-                    if (stack!=NULL) {
+                    if (stack!=nullptr) {
                         stack->total += i.value()->total;
                         stack->subTotal += i.value()->subTotal;
                     }
@@ -931,7 +931,7 @@ void NNotebookView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
         if (dataStore.contains(lid)) {
             item = dataStore[lid];
         }
-        if (item == NULL)
+        if (item == nullptr)
             return;
 
         item->subTotal = subTotal;
@@ -1063,7 +1063,7 @@ void NNotebookView::drawBranches(QPainter *painter, const QRect &rect, const QMo
 
 void NNotebookView::mouseMoveEvent(QMouseEvent *event)
 {
-    if (currentItem() == NULL)
+    if (currentItem() == nullptr)
         return;
 
     if (!(event->buttons() & Qt::LeftButton))

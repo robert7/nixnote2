@@ -54,7 +54,7 @@ QObject *PluginFactory::create(const QString &mimeType, const QUrl &url,
         view = new PopplerViewer(argumentValues[argumentNames.indexOf("type")],
                 argumentValues[argumentNames.indexOf("lid")]);
 
-        if (view->doc == NULL || view->doc->isLocked())
+        if (view->doc == nullptr || view->doc->isLocked())
             return 0;
         return (QObject*)view;
     }

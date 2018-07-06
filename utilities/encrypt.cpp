@@ -86,22 +86,6 @@ int EnCrypt::runner(QString &result, QString text, QString passphrase, QString m
 
     return rc;
 
-//    tidyProcess.start("tidy -raw -asxhtml -q -m -u -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
-//    QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
-//    tidyProcess.waitForStarted();
-//    tidyProcess.write(content);
-//    tidyProcess.closeWriteChannel();
-//    tidyProcess.waitForFinished();
-//    QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
-//    QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
-//    content.clear();
-//    content.append(tidyProcess.readAllStandardOutput());
-//    if (content == "") {
-//        formattingError = true;
-//        return "";
-//    }
-
-
     // Below is a botan test
 //    QByteArray hash = QCryptographicHash::hash(passphrase.toUtf8(),QCryptographicHash::Md5);
 //    SymmetricKey key;
@@ -142,7 +126,7 @@ int EnCrypt::runner(QString &result, QString text, QString passphrase, QString m
 //    char cypher[] = "rc2";
 //    char block[] = "ecb";
 
-//    td = mcrypt_module_open(cypher, NULL, block, NULL);
+//    td = mcrypt_module_open(cypher, nullptr, block, nullptr);
 //    if (td == MCRYPT_FAILED)
 //        return "";
 
@@ -155,7 +139,7 @@ int EnCrypt::runner(QString &result, QString text, QString passphrase, QString m
 //      memcpy(block_buffer, ba.data(), ba.length());
 //      qDebug() << block_buffer;
 
-//      i=mcrypt_generic_init(td, key, keysize, NULL);
+//      i=mcrypt_generic_init(td, key, keysize, nullptr);
 //      if (i<0) {
 //         mcrypt_perror(i);
 //         return "";

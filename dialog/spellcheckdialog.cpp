@@ -185,7 +185,7 @@ void SpellCheckDialog::loadLanguages() {
         }
     }
     language->addItems(values);
-    global.settings->beginGroup("Locale");
+    global.settings->beginGroup(INI_GROUP_LOCALE);
     QString dict = global.settings->value("translation").toString();
     global.settings->endGroup();
     if (dict.trimmed() == "")

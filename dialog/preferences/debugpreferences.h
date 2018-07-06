@@ -33,20 +33,14 @@ class DebugPreferences : public QWidget
     Q_OBJECT
 private:
     QGridLayout *mainLayout;
-    QComboBox *debugLevel;
     QCheckBox *disableUploads;
     QCheckBox *showLidColumn;
     QCheckBox *nonAsciiSortBug;
     QCheckBox *disableImageHighlight;
-    QCheckBox *strictDTD;
-    QCheckBox *bypassTidy;
     QCheckBox *forceUTF8;
     QCheckBox *interceptSigHup;
     QCheckBox *multiThreadSave;
-    QCheckBox *useLibTidy;
     QSpinBox *autoSaveInterval;
-    QLabel *debugLevelLabel;
-    int getMessageLevel();
 
 public:
     explicit DebugPreferences(QWidget *parent = 0);

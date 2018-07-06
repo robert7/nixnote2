@@ -119,7 +119,7 @@ void TagEditorNewTag::loadCompleter() {
 
     QStringListModel *model;
     model = (QStringListModel*)(completer->model());
-    if(model==NULL)
+    if(model==nullptr)
         model = new QStringListModel();
 
     model->setStringList(tagNames);

@@ -29,11 +29,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //* about any errors when doing a sync.
 //************************************************
 
-class CommunicationError : public QObject
-{
-    Q_OBJECT
-public:
+class CommunicationError : public QObject {
+Q_OBJECT
 
+public:
     // The type of errors possible
     enum CommunicationErrorType {
         None = 0,
@@ -49,19 +48,31 @@ public:
         ThriftException = 10
     };
 
-    explicit CommunicationError(QObject *parent = 0);    // Constructor
-    CommunicationErrorType type;  // The last error type we encountered
-    QString message;              // The last error message from Evernote
+
+    explicit CommunicationError(QObject *parent = 0);
+
+    void reset();
+
+    void resetTo(CommunicationErrorType type, int code, QString message, QString internalMessage = QString());
+
+    bool retry();
+    inline CommunicationErrorType getType() { return type; };
+    inline QString getMessage() { return message; };
+    inline int getCode() { return code; };
+
+private:
+    // internal type
+    CommunicationErrorType type;
+    // message
+    QString message;
+    QString internalMessage;
+
     int code;                     // The EDAM error code
-    void reset();                 // Reset all values
-    bool retry();                 // Retry after the last error
     int retryCount;               // Current retry count
     int maxRetryCount;            // Maximum number of times to retry
-    
-signals:
-    
-public slots:
-    
+
+    QString communicationErrorTypeToString(CommunicationErrorType type);
+    QString edamErrorCodeToString(int code);
 };
 
 #endif // COMMUNICATIONERROR_H

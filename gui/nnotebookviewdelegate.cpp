@@ -53,8 +53,8 @@ void NNotebookViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 
     painter->save();
 
-    NNotebookView *tree = NULL;
-    NNotebookViewItem *item = NULL;
+    NNotebookView *tree = nullptr;
+    NNotebookViewItem *item = nullptr;
 
     if (lid > 0) {
         tree = (NNotebookView*)options.widget;

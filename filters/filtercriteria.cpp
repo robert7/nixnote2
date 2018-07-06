@@ -23,15 +23,15 @@ FilterCriteria::FilterCriteria(QObject *parent) :
     QObject(parent)
 {
     valueSet = false;
-    notebook = NULL;
+    notebook = nullptr;
     notebookIsSet = false;
     tags.clear();
     tagsIsSet = false;
-    savedSearch = NULL;
+    savedSearch = nullptr;
     savedSearchIsSet = false;
     searchString = "";
     searchStringIsSet = false;
-    attribute = NULL;
+    attribute = nullptr;
     attributeIsSet = false;
     deletedOnly = false;
     deletedOnlyIsSet = false;

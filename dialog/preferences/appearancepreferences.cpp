@@ -115,8 +115,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     confirmDeletes->setChecked(global.confirmDeletes());
 
     int row=0;
-    minimizeToTray = NULL;
-    closeToTray = NULL;
+    minimizeToTray = nullptr;
+    closeToTray = nullptr;
     mainLayout->addWidget(showTrayIcon,row,0);
     mainLayout->addWidget(showSplashScreen, row++,1);
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
@@ -174,7 +174,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(new QLabel(tr("* May require restart on some systems.")), row++, 0);
     mainLayout->addWidget(new QLabel(tr("** Can crash on Gnome systems.")), row++, 0);
 
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
 
     disableEditingOnStartup->setChecked(global.settings->value("disableEditingOnStartup",false).toBool());
 
@@ -191,7 +191,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     trayDoubleClickAction->setCurrentIndex(idx);
 
     showTrayIcon->setChecked(global.settings->value("showTrayIcon", false).toBool());
-    showPDFs->setChecked(global.settings->value("showPDFs", true).toBool());
+    showPDFs->setChecked(global.settings->value("showPDFs", false).toBool());
     showSplashScreen->setChecked(global.settings->value("showSplashScreen", false).toBool());
     showMissedReminders->setChecked(global.settings->value("showMissedReminders", false).toBool());
     startMinimized->setChecked(global.settings->value("startMinimized", false).toBool());
@@ -208,12 +208,12 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 
     connect(showTrayIcon, SIGNAL(clicked(bool)), this, SLOT(showTrayIconChanged(bool)));
 
-    if (minimizeToTray != NULL) {
+    if (minimizeToTray != nullptr) {
         minimizeToTray->setChecked(global.minimizeToTray());
         if (!showTrayIcon->isChecked())
             minimizeToTray->setEnabled(false);
     }
-    if (closeToTray != NULL) {
+    if (closeToTray != nullptr) {
         closeToTray->setChecked(global.closeToTray());
         if (!showTrayIcon->isChecked())
             closeToTray->setEnabled(false);
@@ -250,7 +250,7 @@ void AppearancePreferences::saveValues() {
     global.setAutosetUsername(autosetUserid->isChecked());
     if (!autosetUserid->isChecked())
         global.full_username="";
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     global.settings->setValue("disableEditingOnStartup", disableEditingOnStartup->isChecked());
     global.settings->setValue("forceWebFonts", forceWebFonts->isChecked());
     global.settings->setValue("showTrayIcon", showTrayIcon->isChecked());
@@ -266,11 +266,11 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("showNoteListGrid", showNoteListGrid->isChecked());
     global.settings->setValue("alternateNoteListColors", alternateNoteListColors->isChecked());
     global.pdfPreview = showPDFs->isChecked();
-    if (minimizeToTray!= NULL)
+    if (minimizeToTray!= nullptr)
         global.settings->setValue("minimizeToTray", minimizeToTray->isChecked());
     else
         global.settings->remove("minimizeToTray");
-    if (closeToTray != NULL)
+    if (closeToTray != nullptr)
         global.settings->setValue("closeToTray", closeToTray->isChecked());
     else
         global.settings->remove("closeToTray");
@@ -323,7 +323,7 @@ void AppearancePreferences::saveValues() {
         // Ideally, we could use QSettings since it is ini format, but
         // it puts [Desktop Entry] as [Desktop%20Enry], which screws
         // things up.
-        QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/" APP_NAME ".desktop";
+        QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/" NN_APP_NAME ".desktop";
         QFile systemIni(systemFile);
         QStringList desktopData;
 
@@ -342,7 +342,7 @@ void AppearancePreferences::saveValues() {
 
         // Now, write it back out
         if (!desktopData.isEmpty()) {
-            QString userFile =  QDir::homePath()+"/.local/share/applications/" APP_NAME ".desktop";
+            QString userFile =  QDir::homePath()+"/.local/share/applications/" NN_APP_NAME ".desktop";
             QFile userIni(userFile);
             if (userIni.open(QIODevice::WriteOnly)) {
                 QTextStream data(&userIni);
@@ -362,7 +362,7 @@ void AppearancePreferences::saveValues() {
     QFile::remove(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
 #else
     QDir dir;
-    QString startFile =  QDir::homePath()+"/.config/autostart/" APP_NAME ".desktop";
+    QString startFile =  QDir::homePath()+"/.config/autostart/" NN_APP_NAME ".desktop";
     dir.remove(startFile);
 #endif
     if (autoStart->isChecked()) {
@@ -370,7 +370,7 @@ void AppearancePreferences::saveValues() {
         QFile::link(QCoreApplication::applicationFilePath(), QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
 #elif !defined(__APPLE__)
         //Copy the nixnote2.desktop to the ~/.config/autostart directory
-        QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/" APP_NAME ".desktop";
+        QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/" NN_APP_NAME ".desktop";
         QFile systemIni(systemFile);
         QStringList desktopData;
 
@@ -388,7 +388,7 @@ void AppearancePreferences::saveValues() {
         systemIni.close();
 
         // Now, write it back out
-        QString userFile =  QDir::homePath()+"/.config/autostart/" APP_NAME ".desktop";
+        QString userFile =  QDir::homePath()+"/.config/autostart/" NN_APP_NAME ".desktop";
         QFile userIni(userFile);
         if (userIni.open(QIODevice::WriteOnly)) {
             QTextStream data(&userIni);

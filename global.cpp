@@ -51,7 +51,7 @@ Global::Global() {
     filterCriteria.push_back(criteria);
     filterPosition = 0;
 
-    this->argv = NULL;
+    this->argv = nullptr;
     this->argc = 0;
     criteria->resetNotebook = true;
     criteria->resetTags = true;
@@ -61,9 +61,9 @@ Global::Global() {
     criteria->resetDeletedOnly = true;
     criteria->setDeletedOnly(false);
     criteria->resetLid = true;
-    this->accountsManager = NULL;
+    this->accountsManager = nullptr;
     criteria->resetSearchString = true;
-    this->application = NULL;
+    this->application = nullptr;
     this->autoHideEditorToolbar = false;
     this->showGoodSyncMessagesInTray = false;
     this->batchThumbnailCount = 4;
@@ -72,26 +72,25 @@ Global::Global() {
     this->countBehavior = Global::CountAll;
     password = "";
     javaFound = false;
-    reminderManager = NULL;
-    settings = NULL;
+    reminderManager = nullptr;
+    settings = nullptr;
     startupNewNote = false;
-    this->sharedMemory = NULL;
+    this->sharedMemory = nullptr;
     this->forceSystemTrayAvailable = false;
     this->guiAvailable = true;
-    strictDTD = true;
     forceUTF8 = false;
     startupNote = 0;
-    db = NULL;
+    db = nullptr;
     this->forceWebFonts = false;
     this->indexPDFLocally = true;
-    this->indexRunner = NULL;
+    this->indexRunner = nullptr;
     this->isFullscreen = false;
     this->indexNoteCountPause = -1;
     this->maxIndexInterval = 500;
     this->forceNoStartMimized = false;
     this->forceSearchLowerCase = false;
     this->forceStartMinimized = false;
-    this->globalSettings = NULL;
+    this->globalSettings = nullptr;
     this->disableUploads = false;
     this->enableIndexing = false;
     this->disableThumbnails = false;
@@ -106,63 +105,21 @@ Global::Global() {
     this->nonAsciiSortBug = false;
     this->startMinimized = false;
     this->pdfPreview = true;
-    this->shortcutKeys = NULL;
+    this->shortcutKeys = nullptr;
     this->cryptCounter = 0;
     this->connected = false;
 }
 
 
-// Destructor
-//Global::~Global() {
-//    FilterCriteria *criteria;
-//    for (int i=0; i<filterCriteria.size(); i++) {
-//        criteria = filterCriteria[i];
-//        if (criteria != NULL)
-//            delete criteria;
-//    }
-//}
-
-
-
 // Initial global settings setup
 void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
+    QLOG_ASSERT(globalSettings != nullptr);
+    QLOG_ASSERT(!fileManager.getProgramDataDir().isEmpty());
+
+
     this->guiAvailable = guiAvailable;
-    fileManager.setup(
-        startupConfig.getConfigDir(),
-        startupConfig.getUserDataDir(),
-        startupConfig.getProgramDataDir(),
-        startupConfig.getAccountId());
 
     shortcutKeys = new ShortcutKeys();
-    QString settingsFile = fileManager.getConfigDir() + "nixnote.conf";
-    QLOG_DEBUG() << "Global::setup settingsFile: " << settingsFile;
-
-    globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
-    int accountId = startupConfig.getAccountId();
-    if (accountId <= 0) {
-        globalSettings->beginGroup("SaveState");
-        accountId = globalSettings->value("lastAccessedAccount", 1).toInt();
-        globalSettings->endGroup();
-    }
-
-    globalSettings->beginGroup("MemoryKey");
-    QString key = globalSettings->value("key", "").toString();
-    if (key == "") {
-        key = QUuid::createUuid().toString().replace("}", "").replace("{", "");
-        globalSettings->setValue("key", key);
-    }
-    globalSettings->endGroup();
-
-    key = key + QString::number(accountId);
-    sharedMemory = new CrossMemoryMapper(key);
-
-    settingsFile = fileManager.getConfigDir() + "nixnote-" + QString::number(accountId) + ".conf";
-    settings = new QSettings(settingsFile, QSettings::IniFormat);
-
-    if (startupConfig.getLogLevel() < 0) {
-        // set log level from conf file, but only if it was not already se on command line
-        setDebugLevelBySetting();
-    }
 
     this->forceNoStartMimized = startupConfig.forceNoStartMinimized;
     this->forceSystemTrayAvailable = startupConfig.forceSystemTrayAvailable;
@@ -170,8 +127,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     //this->syncAndExit = startupConfig.syncAndExit;
     this->forceStartMinimized = startupConfig.forceStartMinimized;
     this->startupNote = startupConfig.startupNoteLid;
-    startupConfig.setAccountId(accountId);
-    accountsManager = new AccountsManager(startupConfig.getAccountId());
+    accountsManager = new AccountsManager(getAccountId());
     if (startupConfig.enableIndexing || getBackgroundIndexing())
         enableIndexing = true;
 
@@ -186,23 +142,26 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     server = accountsManager->getServer();
 
     // Cleanup any temporary files from the last time
-    QDir myDir(fileManager.getTmpDirPath());
-    QStringList list = myDir.entryList();
-    for (int i = 0; i < list.size(); i++) {
-        if (list[i] != "." && list[i] != "..") {
-            QString file = fileManager.getTmpDirPath() + list[i];
-            myDir.remove(file);
-        }
-    }
 
-    settings->beginGroup("Debugging");
+    QDir myDir(fileManager.getTmpDirPath());
+    // QStringList list = myDir.entryList();
+    // for (int i = 0; i < list.size(); i++) {
+    //     if (list[i] != "." && list[i] != "..") {
+    //         QString file = fileManager.getTmpDirPath() + list[i];
+    //         myDir.remove(file);
+    //     }
+    // }
+    fileManager.deleteTopLevelFiles(fileManager.getTmpDirPath(), true);
+
+
+    settings->beginGroup(INI_GROUP_DEBUGGING);
     disableUploads = settings->value("disableUploads", false).toBool();
     nonAsciiSortBug = settings->value("nonAsciiSortBug", false).toBool();
     settings->endGroup();
 
     setupDateTimeFormat();
 
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     int countbehavior = settings->value("countBehavior", CountAll).toInt();
     if (countbehavior == 1)
         countBehavior = CountAll;
@@ -233,7 +192,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
         settings->setFontFamily(QWebSettings::StandardFont, defaultFont);
     }
 
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     QString theme = settings->value("themeName", "").toString();
     loadTheme(resourceList, colorList, theme);
     autoHideEditorToolbar = settings->value("autoHideEditorToolbar", true).toBool();
@@ -246,12 +205,10 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     isFullscreen = false;
     indexPDFLocally = getIndexPDFLocally();
     forceSearchLowerCase = getForceSearchLowerCase();
-    strictDTD = getStrictDTD();
-    bypassTidy = getBypassTidy();
     forceUTF8 = getForceUTF8();
 
 
-    settings->beginGroup("Thumbnail");
+    settings->beginGroup(INI_GROUP_THUMBNAIL);
     minimumThumbnailInterval = settings->value("minTime", 5).toInt();
     maximumThumbnailInterval = settings->value("maxTime", 60).toInt();
     batchThumbnailCount = settings->value("count", 1).toInt();
@@ -265,14 +222,65 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     autoSaveInterval = getAutoSaveInterval() * 1000;
 
     multiThreadSaveEnabled = this->getMultiThreadSave();
-    useLibTidy = this->getUseLibTidy();
-
     exitManager = new ExitManager();
     exitManager->loadExits();
 }
 
+void Global::initializeSharedMemoryMapper(int accountId) {
+    QLOG_ASSERT(globalSettings != nullptr);
+
+    globalSettings->beginGroup("MemoryKey");
+    QString key = globalSettings->value("key", "").toString();
+    if (key == "") {
+        key = QUuid::createUuid().toString().replace("}", "").replace("{", "");
+        globalSettings->setValue("key", key);
+    }
+    globalSettings->endGroup();
+
+    key = key + QString::number(accountId);
+    QLOG_ASSERT(sharedMemory == nullptr);
+
+    sharedMemory = new CrossMemoryMapper(key);
+}
+
+/**
+ * Configure global settings.
+ */
+void Global::initializeGlobalSettings() {
+    QLOG_ASSERT(globalSettings == nullptr);
+    QLOG_ASSERT(!fileManager.getProgramDataDir().isEmpty());
+    const QString &configDir = fileManager.getConfigDir();
+    QLOG_ASSERT(!configDir.isEmpty());
+
+    QString settingsFile = configDir + NN_CONFIG_FILE_PREFIX + ".conf";
+    QLOG_DEBUG() << "Configuring global config file " << settingsFile;
+    globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
+}
+
+/**
+ * Configure user settings (accountId may come from command line
+ * or its taken from global config.
+ */
+void Global::initializeUserSettings(int accountId) {
+    QLOG_ASSERT(settings == nullptr);
+
+    if (accountId <= 0) {
+        globalSettings->beginGroup(INI_GROUP_SAVE_STATE);
+        accountId = globalSettings->value("lastAccessedAccount", 1).toInt();
+        QLOG_DEBUG() << "Last accessed accountId is " << accountId;
+        globalSettings->endGroup();
+    }
+    QLOG_ASSERT(accountId > 0);
+    setAccountId(accountId);
+    const QString &configDir = fileManager.getConfigDir();
+
+    QString settingsFile = configDir + NN_CONFIG_FILE_PREFIX + "-" + QString::number(accountId) + ".conf";
+    QLOG_DEBUG() << "Configuring user config file " << settingsFile;
+    settings = new QSettings(settingsFile, QSettings::IniFormat);
+}
+
 void Global::setDeleteConfirmation(bool value) {
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     settings->setValue("confirmDeletes", value);
     settings->endGroup();
 }
@@ -280,7 +288,7 @@ void Global::setDeleteConfirmation(bool value) {
 
 // Should we confirm all deletes?
 bool Global::confirmDeletes() {
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     bool confirmDeletes = settings->value("confirmDeletes", true).toBool();
     settings->endGroup();
     return confirmDeletes;
@@ -313,7 +321,7 @@ void Global::appendFilter(FilterCriteria *criteria) {
 // Should we show the tray icon?
 bool Global::showTrayIcon() {
     bool showTrayIcon;
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     showTrayIcon = settings->value("showTrayIcon", false).toBool();
     settings->endGroup();
     return showTrayIcon;
@@ -323,7 +331,7 @@ bool Global::showTrayIcon() {
 // Should we minimize to the tray
 bool Global::minimizeToTray() {
     bool minimizeToTray;
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     minimizeToTray = settings->value("minimizeToTray", false).toBool();
     settings->endGroup();
     return minimizeToTray;
@@ -333,7 +341,7 @@ bool Global::minimizeToTray() {
 // Should we close to the tray?
 bool Global::closeToTray() {
     bool showTrayIcon;
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     showTrayIcon = settings->value("closeToTray", false).toBool();
     settings->endGroup();
     return showTrayIcon;
@@ -342,7 +350,7 @@ bool Global::closeToTray() {
 
 // Save the user request to minimize to the tray
 void Global::setMinimizeToTray(bool value) {
-    settings->beginGroup("SaveState");
+    settings->beginGroup(INI_GROUP_SAVE_STATE);
     settings->setValue("minimizeToTray", value);
     settings->endGroup();
 }
@@ -350,7 +358,7 @@ void Global::setMinimizeToTray(bool value) {
 
 // Save the user's request to close to the tray
 void Global::setCloseToTray(bool value) {
-    settings->beginGroup("SaveState");
+    settings->beginGroup(INI_GROUP_SAVE_STATE);
     settings->setValue("closeToTray", value);
     settings->endGroup();
 }
@@ -358,7 +366,7 @@ void Global::setCloseToTray(bool value) {
 // Should we whow the note list grid?
 bool Global::showNoteListGrid() {
     bool showNoteListGrid;
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     showNoteListGrid = settings->value("showNoteListGrid", false).toBool();
     settings->endGroup();
     return showNoteListGrid;
@@ -367,7 +375,7 @@ bool Global::showNoteListGrid() {
 // Should we alternate the note list colors?
 bool Global::alternateNoteListColors() {
     bool alternateNoteListColors;
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     alternateNoteListColors = settings->value("alternateNoteListColors", true).toBool();
     settings->endGroup();
     return alternateNoteListColors;
@@ -376,9 +384,9 @@ bool Global::alternateNoteListColors() {
 // Save the position of a column in the note list.
 void Global::setColumnPosition(QString col, int position) {
     if (listView == ListViewWide)
-        settings->beginGroup("ColumnPosition-Wide");
+        settings->beginGroup(INI_GROUP_COL_POS_WIDE);
     else
-        settings->beginGroup("ColumnPosition-Narrow");
+        settings->beginGroup(INI_GROUP_COL_POS_NARROW);
     settings->setValue(col, position);
     settings->endGroup();
 }
@@ -387,9 +395,9 @@ void Global::setColumnPosition(QString col, int position) {
 // Save the with of a column in the note list
 void Global::setColumnWidth(QString col, int width) {
     if (listView == ListViewWide)
-        settings->beginGroup("ColumnWidth-Wide");
+        settings->beginGroup(INI_GROUP_COL_WIDTH_WIDE);
     else
-        settings->beginGroup("ColumnWidth-Narrow");
+        settings->beginGroup(INI_GROUP_COL_WIDTH_NARROW);
     settings->setValue(col, width);
     settings->endGroup();
 }
@@ -398,9 +406,9 @@ void Global::setColumnWidth(QString col, int width) {
 // Get the desired width for a given column
 int Global::getColumnWidth(QString col) {
     if (listView == ListViewWide)
-        settings->beginGroup("ColumnWidth-Wide");
+        settings->beginGroup(INI_GROUP_COL_WIDTH_WIDE);
     else
-        settings->beginGroup("ColumnWidth-Narrow");
+        settings->beginGroup(INI_GROUP_COL_WIDTH_NARROW);
     int value = settings->value(col, -1).toInt();
     settings->endGroup();
     return value;
@@ -410,9 +418,9 @@ int Global::getColumnWidth(QString col) {
 // Get the position of a given column in the note list
 int Global::getColumnPosition(QString col) {
     if (listView == ListViewWide)
-        settings->beginGroup("ColumnPosition-Wide");
+        settings->beginGroup(INI_GROUP_COL_POS_WIDE);
     else
-        settings->beginGroup("ColumnPosition-Narrow");
+        settings->beginGroup(INI_GROUP_COL_POS_NARROW);
     int value = settings->value(col, -1).toInt();
     settings->endGroup();
     return value;
@@ -422,46 +430,46 @@ int Global::getColumnPosition(QString col) {
 // Get the minimum recognition confidence.  Anything below this minimum will not be
 // included in search results.
 int Global::getMinimumRecognitionWeight() {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     int value = settings->value("minimumRecognitionWeight", 20).toInt();
     settings->endGroup();
     return value;
 }
 
 void Global::setClearNotebookOnSearch(bool value) {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     settings->setValue("clearNotebookOnSearch", value);
     settings->endGroup();
 }
 
 
 void Global::setClearTagsOnSearch(bool value) {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     settings->setValue("clearTagsOnSearch", value);
     settings->endGroup();
 }
 
 void Global::setClearSearchOnNotebook(bool value) {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     settings->setValue("clearSearchOnNotebook", value);
     settings->endGroup();
 }
 
 void Global::setTagSelectionOr(bool value) {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     settings->setValue("tagSelectionOr", value);
     settings->endGroup();
 }
 
 bool Global::getClearNotebookOnSearch() {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     bool value = settings->value("clearNotebookOnSearch", false).toBool();
     settings->endGroup();
     return value;
 }
 
 bool Global::getClearSearchOnNotebook() {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     bool value = settings->value("clearSearchOnNotebook", false).toBool();
     settings->endGroup();
     return value;
@@ -469,7 +477,7 @@ bool Global::getClearSearchOnNotebook() {
 
 
 bool Global::getClearTagsOnSearch() {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     bool value = settings->value("clearTagsOnSearch", false).toBool();
     settings->endGroup();
     return value;
@@ -477,7 +485,7 @@ bool Global::getClearTagsOnSearch() {
 
 
 bool Global::getBackgroundIndexing() {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     bool value = settings->value("backgroundIndexing", false).toBool();
     settings->endGroup();
     return value;
@@ -485,14 +493,14 @@ bool Global::getBackgroundIndexing() {
 
 
 void Global::setBackgroundIndexing(bool value) {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     settings->setValue("backgroundIndexing", value);
     settings->endGroup();
 }
 
 
 bool Global::getTagSelectionOr() {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     bool value = settings->value("tagSelectionOr", false).toBool();
     settings->endGroup();
     return value;
@@ -500,7 +508,7 @@ bool Global::getTagSelectionOr() {
 
 
 void Global::setIndexPDFLocally(bool value) {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     settings->setValue("indexPDFLocally", value);
     settings->endGroup();
     indexPDFLocally = value;
@@ -508,7 +516,7 @@ void Global::setIndexPDFLocally(bool value) {
 
 
 bool Global::getIndexPDFLocally() {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     bool value = settings->value("indexPDFLocally", true).toBool();
     settings->endGroup();
     indexPDFLocally = value;
@@ -517,7 +525,7 @@ bool Global::getIndexPDFLocally() {
 
 
 void Global::setForceSearchLowerCase(bool value) {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     settings->setValue("forceLowerCase", value);
     settings->endGroup();
     indexPDFLocally = value;
@@ -525,7 +533,7 @@ void Global::setForceSearchLowerCase(bool value) {
 
 
 bool Global::getForceSearchLowerCase() {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     bool value = settings->value("forceLowerCase", false).toBool();
     settings->endGroup();
     forceSearchLowerCase = value;
@@ -533,42 +541,8 @@ bool Global::getForceSearchLowerCase() {
 }
 
 
-void Global::setStrictDTD(bool value) {
-    settings->beginGroup("Debugging");
-    settings->setValue("strictDTD", value);
-    settings->endGroup();
-    strictDTD = value;
-}
-
-
-bool Global::getStrictDTD() {
-    settings->beginGroup("Debugging");
-    bool value = settings->value("strictDTD", true).toBool();
-    settings->endGroup();
-    strictDTD = value;
-    return value;
-}
-
-
-void Global::setBypassTidy(bool value) {
-    settings->beginGroup("Debugging");
-    settings->setValue("bypassTidy", value);
-    settings->endGroup();
-    bypassTidy = value;
-}
-
-
-bool Global::getBypassTidy() {
-    settings->beginGroup("Debugging");
-    bool value = settings->value("bypassTidy", true).toBool();
-    settings->endGroup();
-    bypassTidy = value;
-    return value;
-}
-
-
 bool Global::getForceUTF8() {
-    settings->beginGroup("Debugging");
+    settings->beginGroup(INI_GROUP_DEBUGGING);
     bool value = settings->value("forceUTF8", true).toBool();
     settings->endGroup();
     forceUTF8 = value;
@@ -577,7 +551,7 @@ bool Global::getForceUTF8() {
 
 
 void Global::setForceUTF8(bool value) {
-    settings->beginGroup("Debugging");
+    settings->beginGroup(INI_GROUP_DEBUGGING);
     settings->setValue("forceUTF8", value);
     settings->endGroup();
     forceUTF8 = value;
@@ -586,7 +560,7 @@ void Global::setForceUTF8(bool value) {
 
 // Save the minimum recognition weight for an item to be included in a serch result
 void Global::setMinimumRecognitionWeight(int weight) {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     settings->setValue("minimumRecognitionWeight", weight);
     settings->endGroup();
 }
@@ -594,7 +568,7 @@ void Global::setMinimumRecognitionWeight(int weight) {
 
 // Should we synchronize attachments?  Not really useful except in debugging
 bool Global::synchronizeAttachments() {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     bool value = settings->value("synchronizeAttachments", true).toBool();
     settings->endGroup();
     return value;
@@ -603,7 +577,7 @@ bool Global::synchronizeAttachments() {
 
 // Should we synchronize attachments?  Not really useful except in debugging
 void Global::setSynchronizeAttachments(bool value) {
-    settings->beginGroup("Search");
+    settings->beginGroup(INI_GROUP_SEARCH);
     settings->setValue("synchronizeAttachments", value);
     settings->endGroup();
 }
@@ -611,7 +585,7 @@ void Global::setSynchronizeAttachments(bool value) {
 
 // get the last time we issued a reminder
 qlonglong Global::getLastReminderTime() {
-    settings->beginGroup("Reminders");
+    settings->beginGroup(INI_GROUP_REMINDERS);
     qlonglong value = settings->value("lastReminderTime", 0).toLongLong();
     settings->endGroup();
     return value;
@@ -620,7 +594,7 @@ qlonglong Global::getLastReminderTime() {
 
 // Save the last time we issued a reminder.
 void Global::setLastReminderTime(qlonglong value) {
-    settings->beginGroup("Reminders");
+    settings->beginGroup(INI_GROUP_REMINDERS);
     settings->setValue("lastReminderTime", value);
     settings->endGroup();
 }
@@ -658,7 +632,7 @@ void Global::setupDateTimeFormat() {
         hmma = 10
     };
 
-    settings->beginGroup("Locale");
+    settings->beginGroup(INI_GROUP_LOCALE);
     int date = settings->value("dateFormat", MMddyy).toInt();
     int time = settings->value("timeFormat", HHmmss).toInt();
     settings->endGroup();
@@ -777,7 +751,7 @@ QString Global::getUsername() {
 
 // Determine if we should automatically set the username on new notes
 bool Global::autosetUsername() {
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     bool value = settings->value("autosetUsername", true).toBool();
     settings->endGroup();
     return value;
@@ -786,7 +760,7 @@ bool Global::autosetUsername() {
 
 // Set the preference of auto-setting the username
 void Global::setAutosetUsername(bool value) {
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     settings->setValue("autosetUsername", value);
     settings->endGroup();
 }
@@ -829,7 +803,7 @@ QFont Global::getGuiFont(QFont f) {
 
 
 // Get a QIcon of in an icon theme
-QIcon Global::getIconResource(QHash <QString, QString> &resourceList, QString key) {
+QIcon Global::getIconResource(QHash<QString, QString> &resourceList, QString key) {
     if (resourceList.contains(key) && resourceList[key].trimmed() != "")
         return QIcon(resourceList[key]);
     return QIcon(key);
@@ -986,36 +960,6 @@ QString Global::getEditorCss() {
     return this->getThemeCss("editorCss");
 }
 
-
-//
-//obsolete - remove
-//QString Global::getGenricStyle(QString key) {
-//    QFile file(getGenricCss(key));
-//    if (file.exists()) {
-//        if (file.open(QFile::ReadOnly | QFile::Text)) {
-//            QTextStream in(&file);
-//            return in.readAll();
-//        }
-//    }
-//
-//    return "";
-//}
-
-//obsolete - remove
-//QString Global::getGenricCss(QString key) {
-//    QString css = fileManager.getQssDirPath("") + key + ".css";
-//    if (colorList.contains(key)) {
-//        css = fileManager.getQssDirPathUser("") + colorList[key].trimmed();
-//        if (QFile(css).exists())
-//            return css;
-//        css = fileManager.getQssDirPath("") + colorList[key].trimmed();
-//        if (QFile(css).exists())
-//            return css;
-//    }
-//    return css;
-//}
-
-
 // Get a QIcon in an icon theme
 QIcon Global::getIconResource(QString key) {
     return this->getIconResource(resourceList, key);
@@ -1029,7 +973,7 @@ QPixmap Global::getPixmapResource(QString key) {
 
 
 // Get a QPixmap from an icon theme
-QPixmap Global::getPixmapResource(QHash <QString, QString> &resourceList, QString key) {
+QPixmap Global::getPixmapResource(QHash<QString, QString> &resourceList, QString key) {
     if (resourceList.contains(key) && resourceList[key] != "")
         return QPixmap(resourceList[key]);
     return QPixmap(key);
@@ -1040,7 +984,7 @@ QPixmap Global::getPixmapResource(QHash <QString, QString> &resourceList, QStrin
 
 
 // Load a theme into a resourceList.
-void Global::loadTheme(QHash <QString, QString> &resourceList, QHash <QString, QString> &colorList, QString theme) {
+void Global::loadTheme(QHash<QString, QString> &resourceList, QHash<QString, QString> &colorList, QString theme) {
     QLOG_DEBUG() << "Loading theme " << theme;
 
     resourceList.clear();
@@ -1064,7 +1008,7 @@ void Global::loadThemeFile(QFile &file, QString themeName) {
 
 
 // Load a theme from a given file
-void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QString, QString> &colorList, QFile &file,
+void Global::loadThemeFile(QHash<QString, QString> &resourceList, QHash<QString, QString> &colorList, QFile &file,
                            QString themeName) {
     if (!file.exists())
         return;
@@ -1120,7 +1064,8 @@ void Global::loadThemeFile(QHash <QString, QString> &resourceList, QHash <QStrin
                     QString filePath = fileManager.getImageDirPath("").append(value);
                     QFile f(filePath);
                     if (f.exists()) {
-                        QLOG_TRACE() << "Theme " << wantedThemeHeader << ": added image key=" << key << "path=" << filePath;
+                        QLOG_TRACE() << "Theme " << wantedThemeHeader << ": added image key=" << key << "path="
+                                     << filePath;
                         resourceList.insert(":" + key, filePath);
                     } else {
                         QLOG_WARN() << "Theme image file for key=" << key << "not found: " + filePath;
@@ -1184,7 +1129,7 @@ void Global::getThemeNamesFromFile(QString fileName, QStringList &values) {
 
 
 // Get the full path of a resource in a theme file
-QString Global::getResourceFileName(QHash <QString, QString> &resourceList, QString key) {
+QString Global::getResourceFileName(QHash<QString, QString> &resourceList, QString key) {
     if (resourceList.contains(key) && resourceList[key].trimmed() != "")
         return resourceList[key];
 
@@ -1196,7 +1141,7 @@ QString Global::getResourceFileName(QHash <QString, QString> &resourceList, QStr
 
 // save the proxy address
 void Global::setProxyHost(QString proxy) {
-    settings->beginGroup("Proxy");
+    settings->beginGroup(INI_GROUP_PROXY);
     settings->setValue("hostName", proxy);
     settings->endGroup();
 }
@@ -1204,14 +1149,14 @@ void Global::setProxyHost(QString proxy) {
 
 // save the port for the proxy server
 void Global::setProxyPort(int port) {
-    settings->beginGroup("Proxy");
+    settings->beginGroup(INI_GROUP_PROXY);
     settings->setValue("port", port);
     settings->endGroup();
 }
 
 // Save the proxy password
 void Global::setProxyPassword(QString password) {
-    settings->beginGroup("Proxy");
+    settings->beginGroup(INI_GROUP_PROXY);
     settings->setValue("password", password);
     settings->endGroup();
 }
@@ -1219,14 +1164,14 @@ void Global::setProxyPassword(QString password) {
 
 // Save the proxy userid
 void Global::setProxyUserid(QString userid) {
-    settings->beginGroup("Proxy");
+    settings->beginGroup(INI_GROUP_PROXY);
     settings->setValue("userid", userid);
     settings->endGroup();
 }
 
 // get the proxy  hostname
 QString Global::getProxyHost() {
-    settings->beginGroup("Proxy");
+    settings->beginGroup(INI_GROUP_PROXY);
     QString value = settings->value("hostName", "").toString();
     settings->endGroup();
     return value;
@@ -1234,7 +1179,7 @@ QString Global::getProxyHost() {
 
 // Get the proxy port number
 int Global::getProxyPort() {
-    settings->beginGroup("Proxy");
+    settings->beginGroup(INI_GROUP_PROXY);
     int value = settings->value("port", 0).toInt();
     settings->endGroup();
     return value;
@@ -1242,7 +1187,7 @@ int Global::getProxyPort() {
 
 // Get the proxy password
 QString Global::getProxyPassword() {
-    settings->beginGroup("Proxy");
+    settings->beginGroup(INI_GROUP_PROXY);
     QString value = settings->value("password", "").toString();
     settings->endGroup();
     return value;
@@ -1250,7 +1195,7 @@ QString Global::getProxyPassword() {
 
 // Get the proxy userid
 QString Global::getProxyUserid() {
-    settings->beginGroup("Proxy");
+    settings->beginGroup(INI_GROUP_PROXY);
     QString value = settings->value("userid", "").toString();
     settings->endGroup();
     return value;
@@ -1258,14 +1203,14 @@ QString Global::getProxyUserid() {
 
 // Get the proxy userid
 void Global::setProxyEnabled(bool value) {
-    settings->beginGroup("Proxy");
+    settings->beginGroup(INI_GROUP_PROXY);
     settings->setValue("enabled", value);
     settings->endGroup();
 }
 
 // Get the proxy userid
 bool Global::isProxyEnabled() {
-    settings->beginGroup("Proxy");
+    settings->beginGroup(INI_GROUP_PROXY);
     bool value = settings->value("enabled", false).toBool();
     settings->endGroup();
     return value;
@@ -1273,14 +1218,14 @@ bool Global::isProxyEnabled() {
 
 // Set the Sock5 proxy
 void Global::setSocks5Enabled(bool value) {
-    settings->beginGroup("Proxy");
+    settings->beginGroup(INI_GROUP_PROXY);
     settings->setValue("socks5", value);
     settings->endGroup();
 }
 
 // Get the Socks5 proxy
 bool Global::isSocks5Enabled() {
-    settings->beginGroup("Proxy");
+    settings->beginGroup(INI_GROUP_PROXY);
     bool value = settings->value("socks5", false).toBool();
     settings->endGroup();
     return value;
@@ -1289,13 +1234,13 @@ bool Global::isSocks5Enabled() {
 
 // Mouse middle click actions
 void Global::setMiddleClickAction(int value) {
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     settings->setValue("mouseMiddleClickOpen", value);
     settings->endGroup();
 }
 
 int Global::getMiddleClickAction() {
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     int value = settings->value("mouseMiddleClickOpen", 0).toInt();
     settings->endGroup();
     return value;
@@ -1303,21 +1248,21 @@ int Global::getMiddleClickAction() {
 
 
 bool Global::newNoteFocusToTitle() {
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     bool returnValue = settings->value("newNoteFocusOnTitle", false).toBool();
     settings->endGroup();
     return returnValue;
 }
 
 void Global::setNewNoteFocusToTitle(bool focus) {
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     settings->setValue("newNoteFocusOnTitle", focus);
     settings->endGroup();
 }
 
 
 bool Global::disableImageHighlight() {
-    settings->beginGroup("Debugging");
+    settings->beginGroup(INI_GROUP_DEBUGGING);
     bool value = settings->value("disableImageHighlight", false).toBool();
     settings->endGroup();
     return value;
@@ -1326,7 +1271,7 @@ bool Global::disableImageHighlight() {
 
 // What version of the database are we using?
 int Global::getDatabaseVersion() {
-    settings->beginGroup("SaveState");
+    settings->beginGroup(INI_GROUP_SAVE_STATE);
     int value = settings->value("databaseVersion", 1).toInt();
     settings->endGroup();
     return value;
@@ -1335,7 +1280,7 @@ int Global::getDatabaseVersion() {
 
 // What version of the database are we using?
 void Global::setDatabaseVersion(int value) {
-    settings->beginGroup("SaveState");
+    settings->beginGroup(INI_GROUP_SAVE_STATE);
     settings->setValue("databaseVersion", value);
     settings->endGroup();
     return;
@@ -1344,7 +1289,7 @@ void Global::setDatabaseVersion(int value) {
 
 // What is doing the system notification?
 QString Global::systemNotifier() {
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     QString value = settings->value("systemNotifier", "qt").toString();
     settings->endGroup();
     return value;
@@ -1365,7 +1310,7 @@ void Global::stackDump(int max) {
 
     if (max > 0)
         size = max + 1;  // We add one here because we always skip the first thing on the stack (this function).
-    for (size_t i = 1; i < size && messages != NULL; ++i) {
+    for (size_t i = 1; i < size && messages != nullptr; ++i) {
         char *mangled_name = 0, *offset_begin = 0, *offset_end = 0;
 
         // find parantheses and +address offset surrounding mangled name
@@ -1416,46 +1361,12 @@ void Global::stackDump(int max) {
 #endif // End windows check
 }
 
-void Global::setDebugLevelBySetting() {
-    settings->beginGroup("Debugging");
-    int level = settings->value("messageLevel", -1).toInt();
-    settings->endGroup();
-    QLOG_INFO() << "Changed logLevel via settings to " << level;
-    setDebugLevel(level);
-}
-
-
-//************************************************
-//* Set the user debug level.
-//************************************************
-void Global::setDebugLevel(int level) {
-    // Setup the QLOG functions for debugging & messages
-    QsLogging::Logger &logger = QsLogging::Logger::instance();
-    if (level == QsLogging::TraceLevel)
-        logger.setLoggingLevel(QsLogging::TraceLevel);
-    else if (level == QsLogging::DebugLevel)
-        logger.setLoggingLevel(QsLogging::DebugLevel);
-    else if (level == QsLogging::InfoLevel || level == -1)
-        logger.setLoggingLevel(QsLogging::InfoLevel);
-    else if (level == QsLogging::WarnLevel)
-        logger.setLoggingLevel(QsLogging::WarnLevel);
-    else if (level == QsLogging::ErrorLevel)
-        logger.setLoggingLevel(QsLogging::ErrorLevel);
-    else if (level == QsLogging::FatalLevel)
-        logger.setLoggingLevel(QsLogging::FatalLevel);
-    else {
-        logger.setLoggingLevel(QsLogging::InfoLevel);
-        QLOG_WARN() << "Invalid message logging level " << level;
-    }
-}
-
-
 Global global;
 
 
 // Should we preview fonts in the editor window?
 bool Global::previewFontsInDialog() {
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     bool value = settings->value("previewFonts", false).toBool();
     settings->endGroup();
     return value;
@@ -1464,7 +1375,7 @@ bool Global::previewFontsInDialog() {
 
 // Set the previewing of fonts in the editor window.
 void Global::setPreviewFontsInDialog(bool value) {
-    settings->beginGroup("Appearance");
+    settings->beginGroup(INI_GROUP_APPEARANCE);
     settings->setValue("previewFonts", value);
     settings->endGroup();
 }
@@ -1472,13 +1383,13 @@ void Global::setPreviewFontsInDialog(bool value) {
 
 // Should we show a popup on sync errors?
 void Global::setPopupOnSyncError(bool value) {
-    global.settings->beginGroup("Sync");
+    global.settings->beginGroup(INI_GROUP_SYNC);
     global.settings->setValue("popupOnSyncError", value);
     global.settings->endGroup();
 }
 
 bool Global::popupOnSyncError() {
-    global.settings->beginGroup("Sync");
+    global.settings->beginGroup(INI_GROUP_SYNC);
     bool value = global.settings->value("popupOnSyncError", true).toBool();
     global.settings->endGroup();
     return value;
@@ -1487,7 +1398,7 @@ bool Global::popupOnSyncError() {
 
 // save the user-specified auto-save interval
 int Global::getAutoSaveInterval() {
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     int value = global.settings->value("autoSaveInterval", 500).toInt();
     global.settings->endGroup();
     return value;
@@ -1495,7 +1406,7 @@ int Global::getAutoSaveInterval() {
 
 // Save the user specified auto-save interval
 void Global::setAutoSaveInterval(int value) {
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     global.settings->setValue("autoSaveInterval", value);
     global.settings->endGroup();
     global.autoSaveInterval = value * 1000;
@@ -1504,14 +1415,14 @@ void Global::setAutoSaveInterval(int value) {
 
 // Should we intercept SIGHUP on Unix platforms
 bool Global::getInterceptSigHup() {
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     bool value = global.settings->value("interceptSigHup", true).toBool();
     global.settings->endGroup();
     return value;
 }
 
 void Global::setInterceptSigHup(bool value) {
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     global.settings->setValue("interceptSigHup", value);
     global.settings->endGroup();
 
@@ -1520,37 +1431,19 @@ void Global::setInterceptSigHup(bool value) {
 
 // Should we use multiple theads to do note saving
 bool Global::getMultiThreadSave() {
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     bool value = global.settings->value("multiThreadSave", false).toBool();
     global.settings->endGroup();
     return value;
 }
 
 void Global::setMultiThreadSave(bool value) {
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     global.settings->setValue("multiThreadSave", value);
     global.settings->endGroup();
     this->multiThreadSaveEnabled = value;
 }
 
-
-// Should we use multiple threads to do note saving
-bool Global::getUseLibTidy() {
-    global.settings->beginGroup("Appearance");
-    bool value = global.settings->value("useLibTidy", false).toBool();
-    global.settings->endGroup();
-    return value;
-}
-
-void Global::setUseLibTidy(bool value) {
-    global.settings->beginGroup("Appearance");
-    global.settings->setValue("useLibTidy", value);
-    global.settings->endGroup();
-    this->useLibTidy = value;
-#ifndef _WIN32
-    this->useLibTidy = false;  // Removing obsolete setting.
-#endif
-}
 
 QString Global::formatShortcutKeyString(QString shortcutKeyString) {
     return shortcutKeyString.toUpper()

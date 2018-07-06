@@ -209,7 +209,7 @@ qint32 BatchImport::addNoteNode() {
         reader->readNext();
         QString endName = reader->name().toString().toLower();
         if (endName == "noteadd" && reader->isEndElement() && tempLid > 0) {
-//            global.db = new DatabaseConnection("nixnote");  // Startup the database
+            //  global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
             Note newNote;
 
             // Fetch the existing note

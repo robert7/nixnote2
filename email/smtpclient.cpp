@@ -30,7 +30,7 @@ extern Global global;
 /* [1] Constructors and destructors */
 
 SmtpClient::SmtpClient(const QString & host, int port, ConnectionType connectionType) :
-    socket(NULL),
+    socket(nullptr),
     name("localhost"),
     authMethod(AuthPlain),
     connectionTimeout(5000),

@@ -1,6 +1,9 @@
 # TODO
 ## 1
-* Update to newest libtidy and generally improve html cleanup (add "simplify html" if possible) 
+* Modify ini file groups for v2.1
+* Add release notes dialog
+* Improve html cleanup (in case of further sync problems)
+* Add "simplify html"  
 * Update to Qt 5.11 
 * Copying images from to note/note seems to destroy the note
 * Send email using external email client

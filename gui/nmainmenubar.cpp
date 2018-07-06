@@ -527,7 +527,7 @@ void NMainMenuBar::setupHelpMenu() {
     QFile file(url);
     if (file.exists())
         themeInformationAction->setVisible(true);
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     QString themeName = global.settings->value("themeName", "").toString();
     global.settings->endGroup();
     if (themeName == "")
@@ -621,7 +621,7 @@ void NMainMenuBar::setupThemeMenu() {
     QStringList list = global.getThemeNames();
     QFont f = global.getGuiFont(QFont());
 
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     QString userTheme = global.settings->value("themeName", DEFAULT_THEME_NAME).toString();
     global.settings->endGroup();
 
@@ -649,7 +649,7 @@ void NMainMenuBar::setupThemeMenu() {
 
 
 void NMainMenuBar::openThemeInformation() {
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     QString themeName = global.settings->value("themeName", "").toString();
     global.settings->endGroup();
     if (themeName == "") {

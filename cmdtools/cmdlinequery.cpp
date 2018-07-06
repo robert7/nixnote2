@@ -47,7 +47,7 @@ void CmdLineQuery::write(QList<qint32> lids, QString filename) {
     QString delimiter = "|";
     if (this->delimiter != "")
         delimiter = this->delimiter;
-    QFile *outputFile = NULL;
+    QFile *outputFile = nullptr;
     if (filename != "") {
         outputFile = new QFile(filename);
         stdoutReq=false;
@@ -243,7 +243,7 @@ void CmdLineQuery::write(QList<qint32> lids, QString filename) {
         }
     }
 
-    if (!stdoutReq && outputFile != NULL && outputFile->isOpen())
+    if (!stdoutReq && outputFile != nullptr && outputFile->isOpen())
         outputFile->close();
 }
 
@@ -286,7 +286,7 @@ QString CmdLineQuery::wrap() {
     writer->writeDTD("<!DOCTYPE NixNote-Query>");
     writer->writeStartElement("nixnote-query");
     writer->writeAttribute("version", "2");
-    writer->writeAttribute("application", "NixNote");
+    writer->writeAttribute("application", APP_NNEX_APP_NAME);
     writer->writeAttribute("applicationVersion", "2.x");
     writer->writeStartElement("Query");
     writer->writeTextElement("ReturnUuid", this->returnUuid);

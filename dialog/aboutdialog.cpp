@@ -43,16 +43,14 @@ AboutDialog::AboutDialog(QDialog *parent) :
     mainLayout->addLayout(buttonLayout);
     this->setLayout(mainLayout);
     const QString programDataDir = global.fileManager.getProgramDataDir();
-    QString versionStr = global.fileManager.getProgramVersion();
+    QString versionStr = tr("Version: ") + global.fileManager.getProgramVersion();
 
     QString aboutFileName = programDataDir + "help/about.html";
     QString data = global.fileManager.readFile(aboutFileName);
 
-
-    QString translationInformation =
-        tr("Note to translators: For translation credit, change this message to your name & contact information and it will appear in the About dialog box. HTML Formatting is available.");
-    QString translationStaticInformation =
-        "Note to translators: For translation credit, change this message to your name & contact information and it will appear in the About dialog box. HTML Formatting is available.";
+    #define TR_TX "Note to translators: For translation credit, change this message to your name & contact information and it will appear in the About dialog box. HTML Formatting is available."
+    QString translationInformation = tr(TR_TX);
+    QString translationStaticInformation = TR_TX;
     if (translationInformation == translationStaticInformation) {
         data.replace("__TRANSLATION__", "");
     } else {

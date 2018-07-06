@@ -112,7 +112,7 @@ class SyncRunner;
 //*************************************************
 NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImage"));
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     if (global.settings->value("showSplashScreen", false).toBool()) {
         splashScreen->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::SplashScreen | Qt::FramelessWindowHint);
         splashScreen->show();
@@ -128,10 +128,10 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
 
     nixnoteTranslator = new QTranslator();
     QString translation;
-    global.settings->beginGroup("Locale");
+    global.settings->beginGroup(INI_GROUP_LOCALE);
     translation = global.settings->value("translation", QLocale::system().name()).toString();
     global.settings->endGroup();
-    translation = global.fileManager.getTranslateFilePath(APP_NAME "_" + translation + ".qm");
+    translation = global.fileManager.getTranslateFilePath(NN_APP_NAME "_" + translation + ".qm");
     QLOG_DEBUG() << "Looking for translations: " << translation;
     bool translationResult = nixnoteTranslator->load(translation);
     QLOG_DEBUG() << "Translation loaded:" << translationResult;
@@ -155,7 +155,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     global.getGuiFont(f);
     this->setFont(f);
 
-    db = new DatabaseConnection("nixnote");  // Startup the database
+    db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
 
     // Setup the sync thread
     QLOG_TRACE() << "Setting up counter thread";
@@ -192,7 +192,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
             SLOT(showMessage(QString, QString, int)));
     global.reminderManager->reloadTimers();
 
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     bool showMissed = global.settings->value("showMissedReminders", false).toBool();
     global.settings->endGroup();
     if (showMissed)
@@ -212,31 +212,14 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
         }
     }
 
-    // Check if Tidy is installed
-    QProcess tidyProcess;
-    tidyProcess.start("tidy -h");
-    tidyProcess.waitForFinished();
-    if (tidyProcess.exitCode()) {
-        QMessageBox mb;
-        mb.critical(this, tr("Tidy Not Found"),
-                    tr("Tidy is not found on this system.\nUntil tidy is installed you cannot save any notes."));
-    }
-
-    if (global.startupNewNote) {
-        this->showMinimized();
-        this->newExternalNote();
-    }
-
-    //this->openNote(false);
-
     // Init OAuth winwod
-    //oauthWindow = NULL;
+    //oauthWindow = nullptr;
 
     //QDesktopServices::setUrlHandler("evernote", this, "showDesktopUrl");
     remoteQuery = new RemoteQuery();
 
     // Initialize pdfExportWindow to null. We don't fully set this up in case the person requests it.
-    pdfExportWindow = NULL;
+    pdfExportWindow = nullptr;
 
     // Setup file watcher
     importManager = new FileWatcherManager(this);
@@ -282,7 +265,7 @@ NixNote::~NixNote() {
 void NixNote::setupGui() {
     // Setup the GUI
     //this->setStyleSheet("background-color: white;");
-    //statusBar();    setWindowTitle(tr("NixNote 2"));
+    //statusBar();    setWindowTitle(tr(NN_APP_DISPLAY_NAME_GUI));
     const auto wIcon = QIcon(global.getIconResource(":windowIcon"));
     if (!wIcon.isNull()) {
         setWindowIcon(wIcon);
@@ -452,13 +435,13 @@ void NixNote::setupGui() {
     // Restore the window state
     global.startMinimized = false;
     QLOG_TRACE() << "Restoring window state";
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     int selectionBehavior = global.settings->value("startupNotebook",
                                                    AppearancePreferences::UseLastViewedNotebook).toInt();
     global.startMinimized = global.settings->value("startMinimized", false).toBool();
     global.settings->endGroup();
 
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     bool showStatusbar = global.settings->value("statusBar", true).toBool();
     if (showStatusbar) {
         menuBar->viewStatusbar->setChecked(showStatusbar);
@@ -659,14 +642,14 @@ void NixNote::setupGui() {
         // Restore whatever they were looking at in the past
         if (selectionBehavior == AppearancePreferences::UseLastViewedNotebook) {
 
-            global.settings->beginGroup("SaveState");
+            global.settings->beginGroup(INI_GROUP_SAVE_STATE);
             qint32 notebookLid = global.settings->value("selectedNotebook", 0).toInt();
-            if (notebookLid > 0 && notebookTreeView->dataStore[notebookLid] != NULL) {
+            if (notebookLid > 0 && notebookTreeView->dataStore[notebookLid] != nullptr) {
                 criteria->setNotebook(*notebookTreeView->dataStore[notebookLid]);
                 criteriaFound = true;
             } else {
                 QString selectedStack = global.settings->value("selectedStack", "").toString();
-                if (selectedStack != "" && notebookTreeView->stackStore[selectedStack] != NULL) {
+                if (selectedStack != "" && notebookTreeView->stackStore[selectedStack] != nullptr) {
                     criteria->setNotebook(*notebookTreeView->stackStore[selectedStack]);
                     criteriaFound = true;
                 }
@@ -680,7 +663,7 @@ void NixNote::setupGui() {
             }
 
             qint32 searchLid = global.settings->value("selectedSearch", 0).toInt();
-            if (searchLid > 0 && searchTreeView->dataStore[searchLid] != NULL) {
+            if (searchLid > 0 && searchTreeView->dataStore[searchLid] != nullptr) {
                 criteria->setSavedSearch(*searchTreeView->dataStore[searchLid]);
                 criteriaFound = true;
             }
@@ -690,7 +673,7 @@ void NixNote::setupGui() {
                 QStringList tags = selectedTags.split(" ");
                 QList<QTreeWidgetItem *> items;
                 for (int i = 0; i < tags.size(); i++) {
-                    if (tagTreeView->dataStore[tags[i].toInt()] != NULL)
+                    if (tagTreeView->dataStore[tags[i].toInt()] != nullptr)
                         items.append(tagTreeView->dataStore[tags[i].toInt()]);
                 }
                 criteriaFound = true;
@@ -704,7 +687,7 @@ void NixNote::setupGui() {
         if (selectionBehavior == AppearancePreferences::UseDefaultNotebook) {
             NotebookTable ntable(global.db);
             qint32 lid = ntable.getDefaultNotebookLid();
-            if (notebookTreeView->dataStore[lid] != NULL) {
+            if (notebookTreeView->dataStore[lid] != nullptr) {
                 criteria->setNotebook(*notebookTreeView->dataStore[lid]);
                 criteriaFound = true;
             }
@@ -728,7 +711,7 @@ void NixNote::setupGui() {
     QList<int> ids = global.accountsManager->idList();
     for (int i = 0; i < ids.size(); i++) {
         if (ids[i] == global.accountsManager->currentId) {
-            setWindowTitle(APP_DISPLAY_NAME " - " + accountNames[i]);
+            setWindowTitle(NN_APP_DISPLAY_NAME_GUI " - " + accountNames[i]);
             i = ids.size();
         }
     }
@@ -748,14 +731,14 @@ void NixNote::setupGui() {
     }
 
     // Restore expanded tags & stacks
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     QString expandedTags = global.settings->value("expandedTags", "").toString();
     if (expandedTags != "") {
         QStringList tags = expandedTags.split(" ");
         for (int i = 0; i < tags.size(); i++) {
             NTagViewItem *item;
             item = tagTreeView->dataStore[tags[i].toInt()];
-            if (item != NULL)
+            if (item != nullptr)
                 item->setExpanded(true);
         }
     }
@@ -765,7 +748,7 @@ void NixNote::setupGui() {
         for (int i = 0; i < books.size(); i++) {
             NNotebookViewItem *item;
             item = notebookTreeView->dataStore[books[i].toInt()];
-            if (item != NULL && item->stack != "" && item->parent() != NULL) {
+            if (item != nullptr && item->stack != "" && item->parent() != nullptr) {
                 item->parent()->setExpanded(true);
                 //QLOG_DEBUG() << "Parent of " << books[i] << " expanded.";
             }
@@ -916,7 +899,7 @@ void NixNote::counterThreadStarted() {
 //***************************************************************
 void NixNote::syncThreadStarted() {
     syncRunner.moveToThread(&syncThread);
-    global.settings->beginGroup("Sync");
+    global.settings->beginGroup(INI_GROUP_SYNC);
     bool syncOnStartup = global.settings->value("syncOnStartup", false).toBool();
     global.showGoodSyncMessagesInTray = global.settings->value("showGoodSyncMessagesInTray", true).toBool();
     global.settings->endGroup();
@@ -1182,12 +1165,12 @@ void NixNote::saveOnExit() {
     config.saveSetting(CONFIG_STORE_WINDOW_GEOMETRY, saveGeometry());
 
     QString lidList;
-    QList<NBrowserWindow *> * browsers = tabWindow->browserList;
+    QList<NBrowserWindow *> *browsers = tabWindow->browserList;
     for (int i = 0; i < browsers->size(); i++) {
         lidList = lidList + QString::number(browsers->at(i)->lid) + QString(" ");
     }
 
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("WindowState", saveState());
     global.settings->setValue("WindowGeometry", saveGeometry());
     global.settings->setValue("isMaximized", isMaximized());
@@ -1245,7 +1228,7 @@ void NixNote::saveOnExit() {
     QHash<qint32, NTagViewItem *>::iterator iterator;
     savedLids = "";
     for (iterator = tagTreeView->dataStore.begin(); iterator != tagTreeView->dataStore.end(); ++iterator) {
-        if (iterator.value() != NULL) {
+        if (iterator.value() != nullptr) {
             qint32 saveLid = iterator.value()->data(0, Qt::UserRole).toInt();
             if (iterator.value()->isExpanded()) {
                 savedLids = savedLids + QString::number(saveLid) + " ";
@@ -1271,7 +1254,7 @@ void NixNote::saveOnExit() {
     QHash<qint32, NNotebookViewItem *>::iterator books;
     savedLids = "";
     for (books = notebookTreeView->dataStore.begin(); books != notebookTreeView->dataStore.end(); ++books) {
-        if (books.value() != NULL) {
+        if (books.value() != nullptr) {
             qint32 saveLid = books.value()->data(0, Qt::UserRole).toInt();
             if (books.value()->stack != "" && books.value()->parent()->isExpanded()) {
                 savedLids = savedLids + QString::number(saveLid) + " ";
@@ -1305,7 +1288,7 @@ void NixNote::closeEvent(QCloseEvent *event) {
 
     saveOnExit();
 
-    global.settings->beginGroup("Sync");
+    global.settings->beginGroup(INI_GROUP_SYNC);
     bool syncOnShutdown = global.settings->value("syncOnShutdown", false).toBool();
     global.settings->endGroup();
     if (syncOnShutdown && !finalSync && global.accountsManager->oauthTokenFound()) {
@@ -1321,11 +1304,11 @@ void NixNote::closeEvent(QCloseEvent *event) {
     syncRunner.keepRunning = false;
     syncThread.quit();
 
-    if (trayIcon != NULL) {
+    if (trayIcon != nullptr) {
         if (trayIcon->isVisible())
             trayIcon->hide();
         delete trayIcon;
-        trayIcon = NULL;
+        trayIcon = nullptr;
     }
 
     QMainWindow::closeEvent(event);
@@ -1482,7 +1465,7 @@ void NixNote::synchronize() {
         EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
         d.setWindowTitle(tr("Log in to Evernote"));
         if (d.exec() != QDialog::Accepted) {
-            QMessageBox::critical(0, tr("NixNote"), "Login failed.\n" + d.oauthError());
+            QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
             return;
         }
         QString token = QString("oauth_token=") + d.oauthResult().authenticationToken +
@@ -1529,7 +1512,7 @@ void NixNote::syncButtonReset() {
 
     // If we had an API rate limit exceeded, restart at the top of the hour.
     if (syncRunner.apiRateLimitExceeded) {
-        global.settings->beginGroup("Sync");
+        global.settings->beginGroup(INI_GROUP_SYNC);
         bool restart = global.settings->value("apiRateLimitAutoRestart", false).toBool();
         global.settings->endGroup();
         if (restart) {
@@ -1673,9 +1656,9 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
     }
     if (selectedNotes.size() > 0 && !afterSync) {
         //tabWindow->currentBrowser()->setContent(selectedNotes.at(0));  // <<<<<< This causes problems with multiple tabs after sync
-        NBrowserWindow *window = NULL;
+        NBrowserWindow *window = nullptr;
         tabWindow->findBrowser(window, selectedNotes.at(0));
-        if (window != NULL)
+        if (window != nullptr)
             window->setContent(selectedNotes.at(0));
         if (!afterSync)
             openNote(false);
@@ -1775,7 +1758,7 @@ void NixNote::databaseBackup(bool backup) {
     else
         directory = saveLastPath;
 
-    QFileDialog fd(0, caption, directory, tr("NixNote Export (*.nnex);;All Files (*.*)"));
+    QFileDialog fd(0, caption, directory, tr(APP_NNEX_APP_NAME " Export (*.nnex);;All Files (*.*)"));
     fd.setFileMode(QFileDialog::AnyFile);
     fd.setConfirmOverwrite(true);
     fd.setAcceptMode(QFileDialog::AcceptSave);
@@ -1859,10 +1842,10 @@ void NixNote::databaseRestore(bool fullRestore) {
 
     if (fullRestore) {
         caption = tr("Restore Database");
-        filter = tr("NixNote Export (*.nnex);;All Files (*.*)");
+        filter = tr(APP_NNEX_APP_NAME " Export (*.nnex);;All Files (*.*)");
     } else {
         caption = tr("Import Notes");
-        filter = tr("NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)");
+        filter = tr(APP_NNEX_APP_NAME " Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)");
     }
 
     if (saveLastPath == "")
@@ -1952,7 +1935,7 @@ void NixNote::setMessage(QString text, int timeout) {
 void NixNote::notifySyncComplete() {
     updateSelectionCriteria(true);
     bool show;
-    global.settings->beginGroup("Sync");
+    global.settings->beginGroup(INI_GROUP_SYNC);
     show = global.settings->value("enableNotification", false).toBool();
     global.settings->endGroup();
     if (!show)
@@ -1960,7 +1943,7 @@ void NixNote::notifySyncComplete() {
     if (syncRunner.error) {
         showMessage(tr("Sync Error"), tr("Sync completed with errors."));
 
-        global.settings->beginGroup("Sync");
+        global.settings->beginGroup(INI_GROUP_SYNC);
         bool isAutoRestartEnabled = global.settings->value("apiRateLimitAutoRestart", false).toBool();
         global.settings->endGroup();
 
@@ -2276,8 +2259,7 @@ void NixNote::openQtAbout() {
 //* Open the NixNote GitHub page.
 //*******************************
 void NixNote::openGithub() {
-    QString server = "http://www.github.com/baumgarr/nixnote2";
-    QDesktopServices::openUrl(QUrl(server));
+    QDesktopServices::openUrl(QUrl(NN_GITHUB_PAGE));
 }
 
 
@@ -2303,7 +2285,7 @@ void NixNote::toggleLeftPanel() {
         visible = true;
         leftScroll->show();
     }
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("leftPanelVisible", visible);
     global.settings->endGroup();
 }
@@ -2321,7 +2303,7 @@ void NixNote::toggleNoteList() {
         value = true;
         topRightWidget->show();
     }
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("noteListVisible", value);
     global.settings->endGroup();
 }
@@ -2339,7 +2321,7 @@ void NixNote::toggleTabWindow() {
         tabWindow->show();
         value = true;
     }
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("tabWindowVisible", value);
     global.settings->endGroup();
 
@@ -2394,7 +2376,7 @@ void NixNote::viewNoteHistory() {
         EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
         d.setWindowTitle(tr("Log in to Evernote"));
         if (d.exec() != QDialog::Accepted) {
-            QMessageBox::critical(0, tr("NixNote"), "Login failed.\n" + d.oauthError());
+            QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
             return;
         }
         QString token = QString("oauth_token=") + d.oauthResult().authenticationToken +
@@ -2722,7 +2704,7 @@ void NixNote::heartbeatTimerTriggered() {
             this->newExternalNote();
             this->raise();
             this->activateWindow();
-            if (tabWindow->lastExternal != NULL) {
+            if (tabWindow->lastExternal != nullptr) {
                 tabWindow->lastExternal->activateWindow();
                 tabWindow->lastExternal->showNormal();
                 tabWindow->lastExternal->browser->editor->setFocus();
@@ -2732,7 +2714,7 @@ void NixNote::heartbeatTimerTriggered() {
             cmd = cmd.mid(18);
             qint32 lid = cmd.toInt();
             this->openExternalNote(lid);
-            if (tabWindow->lastExternal != NULL) {
+            if (tabWindow->lastExternal != nullptr) {
                 tabWindow->lastExternal->activateWindow();
                 tabWindow->lastExternal->showNormal();
                 tabWindow->lastExternal->browser->editor->setFocus();
@@ -2763,7 +2745,7 @@ void NixNote::heartbeatTimerTriggered() {
                     delete global.filterCriteria.takeAt(global.filterCriteria.size() - 1);
             }
 
-            FilterCriteria *newFilter = new FilterCriteria();
+            auto *newFilter = new FilterCriteria();
             global.filterCriteria.at(global.filterPosition)->duplicate(*newFilter);
 
             newFilter->setSelectedNotes(lids);
@@ -2869,7 +2851,7 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
     int screenCapture = 4;
 
     if (reason == QSystemTrayIcon::DoubleClick) {
-        global.settings->beginGroup("Appearance");
+        global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("trayDoubleClickAction", -1).toInt();
         global.settings->endGroup();
         if (value == doNothing)
@@ -2887,7 +2869,7 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
             this->screenCapture();
     }
     if (reason == QSystemTrayIcon::MiddleClick) {
-        global.settings->beginGroup("Appearance");
+        global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("trayMiddleClickAction", -1).toInt();
         global.settings->endGroup();
         if (value == doNothing)
@@ -2905,7 +2887,7 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
             this->screenCapture();
     }
     if (reason == QSystemTrayIcon::Trigger) {
-        global.settings->beginGroup("Appearance");
+        global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("traySingleClickAction", -1).toInt();
         global.settings->endGroup();
         if (value == doNothing)
@@ -2983,19 +2965,18 @@ void NixNote::openPreferences() {
         }
         indexRunner.officeFound = global.synchronizeAttachments();
 
-//        global.settings->beginGroup("Locale");
-//        QString translation;
-//        translation = global.settings->value("translation", QLocale::system().name()).toString();
-//        global.settings->endGroup();
-//        translation = global.fileManager.getTranslateFilePath("nixnote2_" + translation + ".qm");
-//        QApplication::removeTranslator(nixnoteTranslator);
-//        QLOG_DEBUG() << "Looking for transaltions: " << translation;
-//        bool translationResult = nixnoteTranslator->load(translation);
-//        QLOG_DEBUG() << "Translation loaded:" << translationResult;
-//        QApplication::instance()->installTranslator(nixnoteTranslator);
+        //        global.settings->beginGroup(INI_GROUP_LOCALE);
+        //        QString translation;
+        //        translation = global.settings->value("translation", QLocale::system().name()).toString();
+        //        global.settings->endGroup();
+        //        translation = global.fileManager.getTranslateFilePath("nixnote2_" + translation + ".qm");
+        //        QApplication::removeTranslator(nixnoteTranslator);
+        //        QLOG_DEBUG() << "Looking for transaltions: " << translation;
+        //        bool translationResult = nixnoteTranslator->load(translation);
+        //        QLOG_DEBUG() << "Translation loaded:" << translationResult;
+        //        QApplication::instance()->installTranslator(nixnoteTranslator);
 
     }
-    global.setDebugLevelBySetting();
 }
 
 
@@ -3003,7 +2984,7 @@ void NixNote::openPreferences() {
 //* Set the automatic sync timer interval.
 //**************************************************************
 void NixNote::setSyncTimer() {
-    global.settings->beginGroup("Sync");
+    global.settings->beginGroup(INI_GROUP_SYNC);
     bool automaticSync = global.settings->value("syncAutomatically", false).toBool();
     int interval = global.settings->value("syncInterval", 15).toInt();
     if (interval < 15)
@@ -3055,7 +3036,7 @@ void NixNote::switchUser() {
         menuBar->userAccountActions[currentAcctPos]->setChecked(false);
         menuBar->blockSignals(false);
         global.accountsManager->currentId = menuBar->userAccountActions[newAcctPos]->data().toInt();
-        global.globalSettings->beginGroup("SaveState");
+        global.globalSettings->beginGroup(INI_GROUP_SAVE_STATE);
         global.globalSettings->setValue("lastAccessedAccount", global.accountsManager->currentId);
         global.globalSettings->endGroup();
         closeAction->trigger();
@@ -3588,7 +3569,7 @@ void NixNote::showDesktopUrl(const QUrl &url) {
 // Reload the icons after a theme switch
 void NixNote::reloadIcons() {
     QString newThemeName = "";
-    global.settings->beginGroup("Appearance");
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
     QString currentTheme = global.settings->value("themeName", "").toString();
     global.settings->endGroup();
 
@@ -3621,7 +3602,7 @@ void NixNote::reloadIcons() {
         menuBar->blockSignals(true);
         menuBar->themeActions[currentThemePos]->setChecked(false);
         menuBar->blockSignals(false);
-        global.settings->beginGroup("Appearance");
+        global.settings->beginGroup(INI_GROUP_APPEARANCE);
         newThemeName = menuBar->themeActions[newThemePos]->data().toString();
         if (newThemeName != "")
             global.settings->setValue("themeName", newThemeName);
@@ -3675,7 +3656,7 @@ void NixNote::toggleFavoritesTree() {
     bool visible = true;
     if (favoritesTreeView->isVisible())
         visible = false;
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("favoritesTreeVisible", visible);
     global.settings->endGroup();
     favoritesTreeView->setVisible(visible);
@@ -3688,7 +3669,7 @@ void NixNote::toggleNotebookTree() {
     bool visible = true;
     if (notebookTreeView->isVisible())
         visible = false;
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("notebookTreeVisible", visible);
     global.settings->endGroup();
     notebookTreeView->setVisible(visible);
@@ -3701,7 +3682,7 @@ void NixNote::toggleTagTree() {
     bool visible = true;
     if (tagTreeView->isVisible())
         visible = false;
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("tagTreeVisible", visible);
     global.settings->endGroup();
     tagTreeView->setVisible(visible);
@@ -3714,7 +3695,7 @@ void NixNote::toggleSavedSearchTree() {
     bool visible = true;
     if (searchTreeView->isVisible())
         visible = false;
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("savedSearchTreeVisible", visible);
     global.settings->endGroup();
     searchTreeView->setVisible(visible);
@@ -3727,7 +3708,7 @@ void NixNote::toggleAttributesTree() {
     bool visible = true;
     if (attributeTree->isVisible())
         visible = false;
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("attributeTreeVisible", visible);
     global.settings->endGroup();
     attributeTree->setVisible(visible);
@@ -3739,7 +3720,7 @@ void NixNote::toggleTrashTree() {
     bool visible = true;
     if (trashTree->isVisible())
         visible = false;
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     global.settings->setValue("trashTreeVisible", visible);
     global.settings->endGroup();
     trashTree->setVisible(visible);
@@ -3763,7 +3744,7 @@ void NixNote::checkLeftPanelSeparators() {
     bool attributes;
     bool trash;
 
-    global.settings->beginGroup("SaveState");
+    global.settings->beginGroup(INI_GROUP_SAVE_STATE);
     favorites = global.settings->value("favoritesTreeVisible", true).toBool();
     notebooks = global.settings->value("notebookTreeVisible", true).toBool();
     tags = global.settings->value("tagTreeVisible", true).toBool();
@@ -3880,36 +3861,36 @@ void NixNote::loadPlugins() {
         filter.append("libhunspellplugin.so");
         filter.append("libwebcamplugin.dylib");
         filter.append("libhunspellplugin.dylib");
-        foreach(QString
-        fileName, pluginsDir.entryList(filter)) {
-            QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-            QObject *plugin = pluginLoader.instance();
-            if (fileName == "libwebcamplugin.so" || fileName == "libwebcamplugin.dylib") {
-                if (plugin) {
-                    webcamInterface = qobject_cast<WebCamInterface *>(plugin);
-                    if (webcamInterface) {
-                        webcamPluginAvailable = true;
+            foreach(QString
+                        fileName, pluginsDir.entryList(filter)) {
+                QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+                QObject *plugin = pluginLoader.instance();
+                if (fileName == "libwebcamplugin.so" || fileName == "libwebcamplugin.dylib") {
+                    if (plugin) {
+                        webcamInterface = qobject_cast<WebCamInterface *>(plugin);
+                        if (webcamInterface) {
+                            webcamPluginAvailable = true;
+                        }
+                    } else {
+                        QLOG_ERROR() << tr("Error loading Webcam plugin: ") << pluginLoader.errorString();
                     }
-                } else {
-                    QLOG_ERROR() << tr("Error loading Webcam plugin: ") << pluginLoader.errorString();
                 }
-            }
 
-            // The Hunspell plugin isn't actually used here. We just use this as a
-            // check to be sure that the menu should be available.
-            if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
-                if (plugin) {
-                    HunspellInterface * hunspellInterface;
-                    hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                    if (hunspellInterface != NULL) {
-                        hunspellPluginAvailable = true;
+                // The Hunspell plugin isn't actually used here. We just use this as a
+                // check to be sure that the menu should be available.
+                if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
+                    if (plugin) {
+                        HunspellInterface *hunspellInterface;
+                        hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
+                        if (hunspellInterface != nullptr) {
+                            hunspellPluginAvailable = true;
+                        }
+                        delete hunspellInterface;
+                    } else {
+                        QLOG_ERROR() << tr("Error loading Hunspell plugin: ") << pluginLoader.errorString();
                     }
-                    delete hunspellInterface;
-                } else {
-                    QLOG_ERROR() << tr("Error loading Hunspell plugin: ") << pluginLoader.errorString();
                 }
             }
-        }
     }
 }
 
@@ -3921,7 +3902,7 @@ void NixNote::exportAsPdf() {
     QList<qint32> lids;
     noteTableView->getSelectedLids(lids);
 
-    if (pdfExportWindow == NULL) {
+    if (pdfExportWindow == nullptr) {
         pdfExportWindow = new QWebView();
         connect(pdfExportWindow, SIGNAL(loadFinished(bool)), this, SLOT(exportAsPdfReady(bool)));
     }
@@ -3943,7 +3924,7 @@ void NixNote::exportAsPdf() {
 
         printer.setDocName(tabWindow->currentBrowser()->noteTitle.text());
         tabWindow->currentBrowser()->editor->print(&printer);
-        QMessageBox::information(0, tr("NixNote"), tr("Export complete"));
+        QMessageBox::information(0, tr(NN_APP_DISPLAY_NAME_GUI), tr("Export complete"));
 
         return;
     }
@@ -3994,5 +3975,5 @@ void NixNote::exportAsPdfReady(bool) {
     printer.setPaperSize(QPrinter::A4);
     printer.setOutputFileName(file);
     pdfExportWindow->print(&printer);
-    QMessageBox::information(0, tr("NixNote"), tr("Export complete"));
+    QMessageBox::information(0, tr(NN_APP_DISPLAY_NAME_GUI), tr("Export complete"));
 }

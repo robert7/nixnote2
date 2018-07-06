@@ -38,14 +38,14 @@ DatabaseConnection::DatabaseConnection(QString connection)
     QLOG_TRACE() << "Adding database SQLITE";
     conn = QSqlDatabase::addDatabase("QSQLITE", connection);
     QLOG_TRACE() << "Setting DB name";
-    conn.setDatabaseName(global.fileManager.getDbDirPath("nixnote.db"));
+    conn.setDatabaseName(global.fileManager.getDbDirPath(NN_NIXNOTE_DATABASE_NAME));
     QLOG_TRACE() << "Opening database";
     if (!conn.open()) {
         QLOG_FATAL() << "Error opening database: " << conn.lastError();
         exit(16);
     }
 
-    if (connection == "nixnote")
+    if (connection == NN_DB_CONNECTION_NAME)
         global.db = this;
     QLOG_TRACE() << "Preparing tables";
     // Start preparing the tables
@@ -59,7 +59,7 @@ DatabaseConnection::DatabaseConnection(QString connection)
     tempTable.exec("pragma journal_mode=wal");
 
 //    tempTable.exec("pragma SQLITE_THREADSAFE=2");
-    if (connection == "nixnote") {
+    if (connection == NN_DB_CONNECTION_NAME) {
         tempTable.exec("pragma COMPILE_OPTIONS");
         QLOG_DEBUG() << "*** SQLITE COMPILE OPTIONS ***";
         while (tempTable.next()) {

@@ -247,7 +247,7 @@ void NoteIndexer::indexPdf(qint32 reslid) {
 
     QString text = "";
     Poppler::Document *doc = Poppler::Document::load(file);
-    if (doc == NULL || doc->isEncrypted() || doc->isLocked())
+    if (doc == nullptr || doc->isEncrypted() || doc->isLocked())
         return;
 
     for (int i=0; i<doc->numPages(); i++) {

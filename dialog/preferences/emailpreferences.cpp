@@ -53,7 +53,7 @@ EmailPreferences::EmailPreferences(QWidget *parent) :
     mainLayout->addWidget(testEmail, row++,0);
 
     // Get the smtp server settings
-    global.settings->beginGroup("Email");
+    global.settings->beginGroup(INI_GROUP_EMAIL);
     QString s = global.settings->value("smtpServer", "").toString();
     QString p = global.settings->value("smtpPort", "25").toString();
     QString ctype = global.settings->value("smtpConnectionType", "TcpConnection").toString();
@@ -81,7 +81,7 @@ void EmailPreferences::saveValues() {
     QString ctype = smtpConnectionType.itemData(index).toString();
 
 
-    global.settings->beginGroup("Email");
+    global.settings->beginGroup(INI_GROUP_EMAIL);
     global.settings->setValue("smtpServer", smtpServer.text().trimmed());
     global.settings->setValue("smtpPort", smtpPort.text().trimmed());
     global.settings->setValue("smtpConnectionType", ctype);

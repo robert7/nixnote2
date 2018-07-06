@@ -48,7 +48,7 @@ QString EmailNote::wrap() {
     writer->writeDTD("<!DOCTYPE NixNote-Query>");
     writer->writeStartElement("nixnote-email");
     writer->writeAttribute("version", "2");
-    writer->writeAttribute("application", "NixNote");
+    writer->writeAttribute("application", APP_NNEX_APP_NAME);
     writer->writeAttribute("applicationVersion", "2.x");
     writer->writeStartElement("EmailNote");
     writer->writeTextElement("id", QString::number(lid));
@@ -247,7 +247,7 @@ QString EmailNote::stripContentsForPrint(QString contents) {
 
 
 int EmailNote::sendEmail() {
-    global.settings->beginGroup("Email");
+    global.settings->beginGroup(INI_GROUP_EMAIL);
     QString server = global.settings->value("smtpServer", "").toString();
     int port = global.settings->value("smtpPort", 25).toInt();
     QString smtpConnectionType = global.settings->value("smtpConnectionType", "TcpConnection").toString();

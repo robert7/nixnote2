@@ -113,7 +113,7 @@ void ColorMenu::setCurrentColor(QString color) {
 }
 
 void ColorMenu::itemHovered() {
-    if (menu.activeAction() != NULL && menu.activeAction()->toolTip() != NULL) {
+    if (menu.activeAction() != nullptr && menu.activeAction()->toolTip() != nullptr) {
         QString color = menu.activeAction()->toolTip();
         setCurrentColor(color);
     }

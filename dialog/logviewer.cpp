@@ -27,8 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 LogViewer::LogViewer(QWidget *parent) :
-    QDialog(parent)
-{
+    QDialog(parent) {
     QVBoxLayout *mainLayout = new QVBoxLayout();
     this->setLayout(mainLayout);
 
@@ -52,7 +51,7 @@ LogViewer::LogViewer(QWidget *parent) :
     mainLayout->addLayout(buttonLayout);
     loadData();
     this->setWindowTitle(tr("Save Logs"));
-    this->resize(600,400);
+    this->resize(600, 400);
     this->setFont(global.getGuiFont(font()));
 }
 
@@ -66,11 +65,11 @@ void LogViewer::loadData() {
             QString line = file.readLine();
             line.replace("\n", "");
             if (line.startsWith("DEBUG"))
-                line = "<span style=\"color:gray;\">" +line +"</span>";
+                line = "<span style=\"color:gray;\">" + line + "</span>";
             if (line.startsWith("TRACE"))
-                line = "<span style=\"color:blue;\">" +line +"</span>";
+                line = "<span style=\"color:blue;\">" + line + "</span>";
             if (line.startsWith("ERROR"))
-                line = "<span style=\"color:red;\">" +line +"</span>";
+                line = "<span style=\"color:red;\">" + line + "</span>";
             viewer->append(line);
         }
     }
@@ -79,14 +78,10 @@ void LogViewer::loadData() {
 
 
 void LogViewer::saveData() {
-//    QFileDialog fd;
-    QFileDialog fd(0, tr("Save Log"), QDir::homePath(), tr("NixNote Log (*.log);;All Files (*.*)"));
+    QFileDialog fd(0, tr("Save Log"), QDir::homePath(), tr(NN_APP_DISPLAY_NAME_GUI " Log (*.log);;All Files (*.*)"));
     fd.setFileMode(QFileDialog::AnyFile);
     fd.setConfirmOverwrite(true);
-//    fd.setWindowTitle(tr("Save Log"));
-//    fd.setFilter(tr("NixNote Log (*.log);;All Files (*.*)"));
     fd.setAcceptMode(QFileDialog::AcceptSave);
-//       fd.setDirectory(QDir::homePath());
     if (fd.exec() == 0 || fd.selectedFiles().size() == 0) {
         return;
     }

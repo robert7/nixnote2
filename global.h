@@ -106,8 +106,52 @@ class IndexRunner;
 #define DEFAULT_THEME_NAME "Default"
 
 // app name for config paths
-#define APP_NAME "nixnote2"
-#define APP_DISPLAY_NAME "NixNote2+"
+#define NN_APP_NAME "nixnote2"
+// string to be displayed with program version (current version will be appended)
+#define NN_APP_DISPLAY_NAME "NixNote"
+// string to be displayed without program version
+#define NN_APP_DISPLAY_NAME_GUI "NixNote2"
+// user agent name
+#define NN_APP_CLIENT_NAME "NixNote2/Linux"
+
+// app name for NNEX format
+#define APP_NNEX_APP_NAME "NixNote"
+
+// name of the config file (main config and user configs)
+#define NN_CONFIG_FILE_PREFIX "nixnote"
+#define NN_NIXNOTE_DATABASE_NAME "nixnote.db"
+#define NN_ACCOUNTS_CONFIG_FILE_PREFIX "accounts"
+#define NN_DB_DIR_PREFIX "db"
+#define NN_LOGS_DIR_PREFIX "logs"
+#define NN_TMP_DIR_PREFIX "tmp"
+// subdirectory in log directory for file attachments
+#define LOG_DIR_FILES "files"
+
+#define NN_DB_CONNECTION_NAME "nixnote"
+
+// as the upstream is currently defunct main page is the fork
+#define NN_GITHUB_PAGE "https://www.github.com/robert7/nixnote2"
+
+#define INI_GROUP_APPEARANCE "Appearance"
+#define INI_GROUP_COL_HIDDEN_WIDE "ColumnHidden-Wide"
+#define INI_GROUP_COL_POS_WIDE "ColumnPosition-Wide"
+#define INI_GROUP_COL_WIDTH_WIDE "ColumnWidth-Wide"
+#define INI_GROUP_COL_HIDDEN_NARROW "ColumnHidden-Narrow"
+#define INI_GROUP_COL_POS_NARROW "ColumnPosition-Narrow"
+#define INI_GROUP_COL_WIDTH_NARROW "ColumnWidth-Narrow"
+#define INI_GROUP_SAVE_STATE "SaveState"
+#define INI_GROUP_DEBUGGING "Debugging"
+#define INI_GROUP_SYNC "Sync"
+#define INI_GROUP_LOCALE "Locale"
+#define INI_GROUP_SEARCH "Search"
+#define INI_GROUP_THUMBNAIL "Thumbnail"
+
+#define INI_GROUP_REMINDERS "Reminders"
+#define INI_GROUP_PROXY "Proxy"
+#define INI_GROUP_EMAIL "Email"
+#define INI_GROUP_PRINTER "Printer"
+
+
 
 #define QLOG_ASSERT(expr) if (expr) {} else { QLOG_FATAL() << "Assertion failed: " #expr; exit(16);}
 
@@ -117,8 +161,7 @@ class Global : public QObject {
 
 private:
     void getThemeNamesFromFile(QString fileName, QStringList &values);
-
-
+    int accountId;
 public:
     Global();           // Generic constructor
     virtual ~Global() {};          // destructor
@@ -262,8 +305,6 @@ public:
     bool getClearSearchOnNotebook();
     bool getClearTagsOnSearch();
     bool getTagSelectionOr();
-    void setDebugLevel(int level);
-    void setDebugLevelBySetting();
     bool disableImageHighlight();
 
 
@@ -280,12 +321,6 @@ public:
     bool forceSearchLowerCase;                              // force storing of notes to lower case
     bool getIndexPDFLocally();                              // Should we index PDFs locally (read from settings)
     void setIndexPDFLocally(bool value);                    // save local index of PDFs option
-    bool strictDTD;                                         // Should we do strict enml checking?
-    bool getStrictDTD();                                    // Should we do strict enml checking? (read from settings)
-    void setStrictDTD(bool value);                          // save strict enml checking
-    bool bypassTidy;                                        // Bypass HTML Tidy
-    bool getBypassTidy();                                   // should we bypass HTML tidy?
-    void setBypassTidy(bool value);                         // Set if we should bypass HTML tidy.
     QString getEditorStyle(bool colorOnly);                 // Get note editor style overrides
     QString getEditorFontColor();                           // Get the editor font color from the theme
     QString getEditorBackgroundColor();                     // Get the editor background color from the theme
@@ -348,10 +383,6 @@ public:
     bool getMultiThreadSave();
     bool multiThreadSaveEnabled;
 
-    void setUseLibTidy(bool value);                            // Should we use new tidy or classic
-    bool getUseLibTidy();
-    bool useLibTidy;
-
     ExitManager *exitManager;                                  // Utility to manage exit points.
     QString getProgramDataDir() { return fileManager.getProgramDataDir(); }
 
@@ -377,9 +408,17 @@ public:
     // update status bar with given string
     void setMessage(QString msg, int timeout=SET_MESSAGE_TIMEOUT_LONGER);
 
+    void initializeGlobalSettings();
+    void initializeUserSettings(int accountId);
+    void initializeSharedMemoryMapper(int accountId);
+
+    int getAccountId() { return accountId; };
+    void setAccountId(int accountId)  {this->accountId = accountId; };
+
 signals:
     // global can send signal about updating status bar
     void setMessageSignal(QString msg, int timeout);
+
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

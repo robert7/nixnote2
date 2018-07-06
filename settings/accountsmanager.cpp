@@ -27,10 +27,9 @@ extern Global global;
 //* Constructor
 //********************************************
 AccountsManager::AccountsManager(int id, QObject *parent) :
-    QObject(parent)
-{
+    QObject(parent) {
     currentId = id;
-    configFile = global.fileManager.getConfigDir()+"accounts.conf";
+    configFile = global.fileManager.getConfigDir() + NN_ACCOUNTS_CONFIG_FILE_PREFIX + ".conf";
     if (!QFile(configFile).exists()) {
         QFile xmlFile(configFile);
         xmlFile.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -54,17 +53,16 @@ AccountsManager::AccountsManager(int id, QObject *parent) :
     doc.setContent(&file);
     file.close();
     QDomNodeList nodes = doc.elementsByTagName("account");
-    for (int i=0; i<nodes.size(); i++) {
+    for (int i = 0; i < nodes.size(); i++) {
         QDomElement element = nodes.at(i).toElement();
         QDomNode idNode = element.firstChildElement("id");
         int value = idNode.toElement().text().toInt();
         if (value == currentId) {
             currentNode = nodes.at(i);
-            i=nodes.size();
+            i = nodes.size();
         }
     }
 }
-
 
 
 //********************************************
@@ -79,14 +77,13 @@ bool AccountsManager::oauthTokenFound() {
 }
 
 
-
 //********************************************
 //* Get a list of account IDs
 //********************************************
 QList<int> AccountsManager::idList() {
     QList<int> ids;
     QDomNodeList nodes = doc.elementsByTagName("account");
-    for (int i=0; i<nodes.size(); i++) {
+    for (int i = 0; i < nodes.size(); i++) {
         QDomElement element = nodes.at(i).toElement();
         QDomNode idNode = element.firstChildElement("id");
         int value = idNode.toElement().text().toInt();
@@ -96,15 +93,13 @@ QList<int> AccountsManager::idList() {
 }
 
 
-
-
 //********************************************
 //* get a list of defined account names
 //********************************************
 QStringList AccountsManager::nameList() {
     QStringList names;
     QDomNodeList nodes = doc.elementsByTagName("account");
-    for (int i=0; i<nodes.size(); i++) {
+    for (int i = 0; i < nodes.size(); i++) {
         QDomElement element = nodes.at(i).toElement();
         QDomNode idNode = element.firstChildElement("name");
         QString value = idNode.toElement().text();
@@ -112,7 +107,6 @@ QStringList AccountsManager::nameList() {
     }
     return names;
 }
-
 
 
 //********************************************
@@ -123,11 +117,10 @@ QString AccountsManager::getOAuthToken() {
     QDomElement element = currentNode.toElement();
     QDomNode consumerNode = element.firstChildElement("consumerKey");
     if (consumerNode.toElement().text() != "baumgarr-3523")   // Current EDAM_CONSUMER_KEY
-            return "";
+        return "";
     QDomNode tokenNode = element.firstChildElement("oauth-token");
     return tokenNode.toElement().text();
 }
-
 
 
 //********************************************
@@ -141,18 +134,16 @@ void AccountsManager::setOAuthToken(QString token) {
     this->removeId(currentId);
     this->addId(currentId, name, token, server);
     QDomNodeList nodes = doc.elementsByTagName("account");
-    for (int i=0; i<nodes.size(); i++) {
+    for (int i = 0; i < nodes.size(); i++) {
         QDomElement element = nodes.at(i).toElement();
         QDomNode idNode = element.firstChildElement("id");
         int value = idNode.toElement().text().toInt();
         if (value == currentId) {
             currentNode = nodes.at(i);
-            i=nodes.size();
+            i = nodes.size();
         }
     }
 }
-
-
 
 
 //********************************************
@@ -161,13 +152,12 @@ void AccountsManager::setOAuthToken(QString token) {
 void AccountsManager::setName(QString name, int id) {
     QString server = this->getServer();
     QString token = this->getOAuthToken();
-    if (id <=0)
+    if (id <= 0)
         id = currentId;
 
     this->removeId(id);
     this->addId(id, name, token, server);
 }
-
 
 
 //********************************************
@@ -183,7 +173,6 @@ QString AccountsManager::getServer() {
 }
 
 
-
 //********************************************
 //* Get the name of the account in use
 //********************************************
@@ -195,12 +184,11 @@ QString AccountsManager::getName() {
 }
 
 
-
 //********************************************
 //* Add an account
 //********************************************
 int AccountsManager::addId(int id, QString name, QString oauth, QString server) {
-    if (id <=0)
+    if (id <= 0)
         id = getNewIdNumber();
 
     QDomElement account = doc.createElement("account");
@@ -240,7 +228,6 @@ int AccountsManager::addId(int id, QString name, QString oauth, QString server) 
 }
 
 
-
 //********************************************
 //* save to accounts.conf
 //********************************************
@@ -252,13 +239,12 @@ void AccountsManager::save() {
 }
 
 
-
 //********************************************
 //* Remove an account
 //********************************************
 bool AccountsManager::removeId(int id) {
     QDomNodeList nodes = doc.elementsByTagName("account");
-    for (int i=0; i<nodes.size(); i++) {
+    for (int i = 0; i < nodes.size(); i++) {
         QDomElement element = nodes.at(i).toElement();
         QDomNode idNode = element.firstChildElement("id");
         int value = idNode.toElement().text().toInt();
@@ -272,14 +258,13 @@ bool AccountsManager::removeId(int id) {
 }
 
 
-
 //********************************************
 //* Increment the account to the next ID number
 //* available.
 //********************************************
 int AccountsManager::getNewIdNumber() {
     QList<int> numbers = idList();
-    for (int i=1; ;i++)
+    for (int i = 1;; i++)
         if (!numbers.contains(i))
             return i;
 }

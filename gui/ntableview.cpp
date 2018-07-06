@@ -104,7 +104,7 @@ NTableView::NTableView(QWidget *parent) :
     this->setItemDelegateForColumn(NOTE_TABLE_SEARCH_RELEVANCE_POSITION, blankNumber);
 
     QLOG_TRACE() << "Setting up column headers";
-    global.settings->beginGroup("Debugging");
+    global.settings->beginGroup(INI_GROUP_DEBUGGING);
     this->setColumnHidden(NOTE_TABLE_LID_POSITION, !global.settings->value("showLids", false).toBool());
     global.settings->endGroup();
     this->setColumnHidden(NOTE_TABLE_NOTEBOOK_LID_POSITION, true);
@@ -358,7 +358,7 @@ NoteModel *NTableView::model() {
 
 void NTableView::contextMenuEvent(QContextMenuEvent *event) {
     deleteNoteAction->setEnabled(false);
-    QList <qint32> lids;
+    QList<qint32> lids;
     getSelectedLids(lids);
     mergeNotesAction->setVisible(false);
 
@@ -413,7 +413,7 @@ void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
     //    proxy->blockSignals(true);
     //    model()->blockSignals(true);
 
-    QList <qint32> selectedLids;
+    QList<qint32> selectedLids;
     getSelectedLids(selectedLids);
 
     // Check the highlighted LIDs from the history selection.
@@ -513,7 +513,7 @@ void NTableView::refreshSelection() {
         setColumnHidden(NOTE_TABLE_LID_POSITION, false);
 
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
-    QList <qint32> historyList;
+    QList<qint32> historyList;
     criteria->getSelectedNotes(historyList);
     if (criteria->isFavoriteSet() && criteria->getFavorite() > 0)
         historyList.append(criteria->getFavorite());
@@ -559,7 +559,7 @@ void NTableView::refreshSelection() {
     QLOG_TRACE() << "Highlighting complete";
 
     // Save the list of selected notes
-    QList <qint32> selectedNotes;
+    QList<qint32> selectedNotes;
     this->getSelectedLids(selectedNotes);
     global.filterCriteria[global.filterPosition]->setSelectedNotes(selectedNotes);
 
@@ -601,7 +601,7 @@ void NTableView::keyPressEvent(QKeyEvent *event) {
 // Open a selected note.  This is not done via the context menu.
 void NTableView::openSelectedLids(bool newWindow) {
 
-    QList <qint32> lids;
+    QList<qint32> lids;
     getSelectedLids(lids);
     if (lids.size() == 0) {
         QLOG_DEBUG() << "No selected lids";
@@ -632,7 +632,7 @@ void NTableView::openSelectedLids(bool newWindow) {
 
 // Restore notes from the trash
 void NTableView::restoreSelectedNotes() {
-    QList <qint32> lids;
+    QList<qint32> lids;
     this->getSelectedLids(lids);
     if (lids.size() == 0)
         return;
@@ -655,7 +655,7 @@ void NTableView::restoreSelectedNotes() {
 
 // Delete the selected notes
 void NTableView::deleteSelectedNotes() {
-    QList <qint32> lids;
+    QList<qint32> lids;
     this->getSelectedLids(lids);
     if (lids.size() == 0)
         return;
@@ -708,7 +708,7 @@ void NTableView::deleteSelectedNotes() {
 
 
 // Get a list of selected lids from the table
-void NTableView::getSelectedLids(QList <qint32> &lids) {
+void NTableView::getSelectedLids(QList<qint32> &lids) {
 
     lids.clear();
 
@@ -835,14 +835,14 @@ void NTableView::copyNote() {
     // Make sure we save whatever we are currently viewing
     emit saveAllNotes();
 
-    QList <qint32> lids;
+    QList<qint32> lids;
     getSelectedLids(lids);
     if (lids.size() == 0)
         return;
 
     NoteTable noteTable(global.db);
     qint32 saveLid = 0;
-    QList <qint32> newLids;
+    QList<qint32> newLids;
     for (int i = 0; i < lids.size(); i++) {
         saveLid = noteTable.duplicateNote(lids[i]);
         newLids.append(saveLid);
@@ -867,7 +867,7 @@ void NTableView::copyNote() {
 
 // Copy a note link into the clipboard
 void NTableView::copyNoteLink() {
-    QList <qint32> lids;
+    QList<qint32> lids;
     getSelectedLids(lids);
     if (lids.size() == 0)
         return;
@@ -939,9 +939,9 @@ void NTableView::toggleColumnVisible(int position, bool visible) {
 // Save which columns are visible so it can be restored on the next stat
 void NTableView::saveColumnsVisible() {
     if (global.listView == Global::ListViewWide)
-        global.settings->beginGroup("ColumnHidden-Wide");
+        global.settings->beginGroup(INI_GROUP_COL_HIDDEN_WIDE);
     else
-        global.settings->beginGroup("ColumnHidden-Narrow");
+        global.settings->beginGroup(INI_GROUP_COL_HIDDEN_NARROW);
 
     bool value = isColumnHidden(NOTE_TABLE_ALTITUDE_POSITION);
     global.settings->setValue("altitude", value);
@@ -1031,15 +1031,15 @@ void NTableView::saveColumnsVisible() {
 // Set which columns are visible (used after restarting)
 void NTableView::setColumnsVisible() {
     if (global.listView == Global::ListViewWide)
-        global.settings->beginGroup("ColumnHidden-Wide");
+        global.settings->beginGroup(INI_GROUP_COL_HIDDEN_WIDE);
     else
-        global.settings->beginGroup("ColumnHidden-Narrow");
+        global.settings->beginGroup(INI_GROUP_COL_HIDDEN_NARROW);
 
-    bool value = global.settings->value("dateCreated", false).toBool();
+    bool value = global.settings->value("dateCreated", true).toBool();
     tableViewHeader->createdDateAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_DATE_CREATED_POSITION, value);
 
-    value = global.settings->value("dateUpdated", false).toBool();
+    value = global.settings->value("dateUpdated", true).toBool();
     tableViewHeader->changedDateAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_DATE_UPDATED_POSITION, value);
 
@@ -1047,7 +1047,7 @@ void NTableView::setColumnsVisible() {
     tableViewHeader->subjectDateAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_DATE_SUBJECT_POSITION, value);
 
-    value = global.settings->value("tags", false).toBool();
+    value = global.settings->value("tags", true).toBool();
     tableViewHeader->tagsAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_TAGS_POSITION, value);
 
@@ -1055,11 +1055,11 @@ void NTableView::setColumnsVisible() {
     tableViewHeader->titleAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_TITLE_POSITION, value);
 
-    value = global.settings->value("notebook", false).toBool();
+    value = global.settings->value("notebook", true).toBool();
     tableViewHeader->notebookAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_NOTEBOOK_POSITION, value);
 
-    value = global.settings->value("isDirty", false).toBool();
+    value = global.settings->value("isDirty", true).toBool();
     tableViewHeader->synchronizedAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_IS_DIRTY_POSITION, value);
 
@@ -1067,7 +1067,7 @@ void NTableView::setColumnsVisible() {
     tableViewHeader->sourceAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_SOURCE_POSITION, value);
 
-    value = global.settings->value("author", false).toBool();
+    value = global.settings->value("author", true).toBool();
     tableViewHeader->authorAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_AUTHOR_POSITION, value);
 
@@ -1087,15 +1087,15 @@ void NTableView::setColumnsVisible() {
     tableViewHeader->latitudeAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_LATITUDE_POSITION, value);
 
-    value = global.settings->value("hasTodo", false).toBool();
+    value = global.settings->value("hasTodo", true).toBool();
     tableViewHeader->hasTodoAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_HAS_TODO_POSITION, value);
 
-    value = global.settings->value("hasEncryption", false).toBool();
+    value = global.settings->value("hasEncryption", true).toBool();
     tableViewHeader->hasEncryptionAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_HAS_ENCRYPTION_POSITION, value);
 
-    value = global.settings->value("size", false).toBool();
+    value = global.settings->value("size", true).toBool();
     tableViewHeader->sizeAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_SIZE_POSITION, value);
 
@@ -1107,20 +1107,20 @@ void NTableView::setColumnsVisible() {
     tableViewHeader->relevanceAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_SEARCH_RELEVANCE_POSITION, value);
 
-    value = global.settings->value("reminderTime", false).toBool();
+    value = global.settings->value("reminderTime", true).toBool();
     tableViewHeader->reminderTimeAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_REMINDER_TIME_POSITION, value);
 
-    value = global.settings->value("reminderTimeDone", false).toBool();
+    value = global.settings->value("reminderTimeDone", true).toBool();
     tableViewHeader->reminderTimeDoneAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_REMINDER_TIME_DONE_POSITION, value);
 
-    value = global.settings->value("reminderOrder", false).toBool();
+    value = global.settings->value("reminderOrder", true).toBool();
     tableViewHeader->reminderOrderAction->setChecked(!value);
     //setColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION, value);
     setColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION, true);  // Column hidden because it isn't really needed
 
-    value = global.settings->value("isPinned", false).toBool();
+    value = global.settings->value("isPinned", true).toBool();
     tableViewHeader->pinnedAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_PINNED_POSITION, value);
 
@@ -1293,7 +1293,10 @@ void NTableView::resizeColumns() {
     if (width > 0) setColumnWidth(NOTE_TABLE_TAGS_POSITION, width);
 
     width = global.getColumnWidth("noteTableTitlePosition");
-    if (width > 0) setColumnWidth(NOTE_TABLE_TITLE_POSITION, width);
+    if (width < 0) {
+        width = 1200;
+    }
+    setColumnWidth(NOTE_TABLE_TITLE_POSITION, width);
 
     width = global.getColumnWidth("noteTableThumbnailPosition");
     if (width > 0) setColumnWidth(NOTE_TABLE_THUMBNAIL_POSITION, width);
@@ -1314,7 +1317,7 @@ void NTableView::resizeColumns() {
 
 // Combine multiple notes
 void NTableView::createTableOfContents() {
-    QList <qint32> lids;
+    QList<qint32> lids;
     getSelectedLids(lids);
     if (lids.size() == 0)
         return;
@@ -1405,7 +1408,7 @@ void NTableView::createTableOfContents() {
 
 // Combine multiple notes
 void NTableView::mergeNotes() {
-    QList <qint32> lids;
+    QList<qint32> lids;
     getSelectedLids(lids);
     if (lids.size() == 0)
         return;
@@ -1425,7 +1428,7 @@ void NTableView::mergeNotes() {
     // goes horribly wrong
     for (int i = 1; i < lids.size(); i++) {
         qint32 newLid = nTable.duplicateNote(lids[i]);
-        QList <qint32> resLids;
+        QList<qint32> resLids;
         rTable.getResourceList(resLids, newLid);
         for (int j = 0; j < resLids.size(); j++) {
             rTable.updateNoteLid(resLids[j], lid);
@@ -1457,7 +1460,7 @@ void NTableView::mergeNotes() {
 
 // Pin notes
 void NTableView::pinNote() {
-    QList <qint32> lids;
+    QList<qint32> lids;
     ConfigStore cs(global.db);
     getSelectedLids(lids);
     if (lids.size() == 0)
@@ -1475,7 +1478,7 @@ void NTableView::pinNote() {
 
 // Unpin notes
 void NTableView::unpinNote() {
-    QList <qint32> lids;
+    QList<qint32> lids;
     ConfigStore cs(global.db);
     getSelectedLids(lids);
     if (lids.size() == 0)
@@ -1535,7 +1538,7 @@ void NTableView::mouseMoveEvent(QMouseEvent *event) {
         return;
     }
 
-    QList <qint32> lids;
+    QList<qint32> lids;
     getSelectedLids(lids);
     if (lids.size() == 0)
         return;
@@ -1554,7 +1557,7 @@ void NTableView::mouseMoveEvent(QMouseEvent *event) {
 
 
 void NTableView::openNoteExternalWindowTriggered() {
-    QList <qint32> lids;
+    QList<qint32> lids;
     getSelectedLids(lids);
     for (int i = 0; i < lids.size(); i++)
         emit(openNoteExternalWindow(lids[i]));
@@ -1583,7 +1586,7 @@ void NTableView::setTitleColorCyan() { setTitleColor("cyan"); }
 void NTableView::setTitleColorMagenta() { setTitleColor("magenta"); }
 
 void NTableView::setTitleColor(QString color) {
-    QList <qint32> lids;
+    QList<qint32> lids;
     getSelectedLids(lids);
     QString value = color;
     if (color == "white")
@@ -1794,7 +1797,7 @@ void NTableView::markReminderCompleted() {
     // Make sure we save whatever we are currently viewing
     emit saveAllNotes();
 
-    QList <qint32> lids;
+    QList<qint32> lids;
     getSelectedLids(lids);
     if (lids.size() == 0)
         return;
@@ -1818,7 +1821,7 @@ void NTableView::removeReminder() {
     // Make sure we save whatever we are currently viewing
     emit saveAllNotes();
 
-    QList <qint32> lids;
+    QList<qint32> lids;
     getSelectedLids(lids);
     if (lids.size() == 0)
         return;

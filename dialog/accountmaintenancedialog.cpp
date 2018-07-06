@@ -27,13 +27,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 AccountMaintenanceDialog::AccountMaintenanceDialog(NMainMenuBar *menubar, QWidget *parent) :
-    QDialog(parent)
-{
+    QDialog(parent) {
     this->parent = parent;
     this->menuBar = menubar;
     okButton = new QPushButton(tr("OK"), this);
-    closeButton = new QPushButton(tr("Close"),this);
-    addButton = new QPushButton(tr("Add"),this);
+    closeButton = new QPushButton(tr("Close"), this);
+    addButton = new QPushButton(tr("Add"), this);
     renameButton = new QPushButton(tr("Rename"));
     deleteButton = new QPushButton(tr("Delete"));
     removeAuthButton = new QPushButton(tr("Remove Authorization"));
@@ -49,17 +48,17 @@ AccountMaintenanceDialog::AccountMaintenanceDialog(NMainMenuBar *menubar, QWidge
     buttonLayout1->addWidget(renameButton);
     buttonLayout1->addWidget(removeAuthButton);
     buttonLayout1->addWidget(deleteButton);
-    buttonLayout1->addSpacerItem(new QSpacerItem(0,0,QSizePolicy::Minimum, QSizePolicy::Maximum));
-    buttonLayout1->setStretch(4,100);
+    buttonLayout1->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Maximum));
+    buttonLayout1->setStretch(4, 100);
     mainLayout->addLayout(displayLayout);
     mainLayout->addLayout(buttonLayout2);
 
-    buttonLayout2->addSpacerItem(new QSpacerItem(0,0,QSizePolicy::Maximum, QSizePolicy::Minimum));
+    buttonLayout2->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
     buttonLayout2->addWidget(okButton);
     buttonLayout2->addWidget(closeButton);
-    buttonLayout2->addSpacerItem(new QSpacerItem(0,0,QSizePolicy::Maximum, QSizePolicy::Minimum));
-    buttonLayout2->setStretch(0,100);
-    buttonLayout2->setStretch(3,100);
+    buttonLayout2->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
+    buttonLayout2->setStretch(0, 100);
+    buttonLayout2->setStretch(3, 100);
     this->setLayout(mainLayout);
     this->setWindowTitle(tr("User Account Maintenance"));
 
@@ -67,12 +66,11 @@ AccountMaintenanceDialog::AccountMaintenanceDialog(NMainMenuBar *menubar, QWidge
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(addButton, SIGNAL(clicked()), this, SLOT(addAccount()));
     connect(removeAuthButton, SIGNAL(clicked()), this, SLOT(removeOAuth()));
-    connect(deleteButton,SIGNAL(clicked()), this, SLOT(deleteAccount()));
+    connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteAccount()));
     connect(renameButton, SIGNAL(clicked()), this, SLOT(renameAccount()));
     this->loadData();
     this->setFont(global.getGuiFont(font()));
 }
-
 
 
 void AccountMaintenanceDialog::loadData() {
@@ -83,7 +81,7 @@ void AccountMaintenanceDialog::loadData() {
 
     names = global.accountsManager->nameList();
     ids = global.accountsManager->idList();
-    for (int i=0; i<names.size(); i++)
+    for (int i = 0; i < names.size(); i++)
         nameList->addItem(names[i]);
 
     if (ids.size() >= 2) {
@@ -110,7 +108,7 @@ void AccountMaintenanceDialog::deleteAccount() {
         return;
     int id = -1;
     QString name = nameList->selectedItems()[0]->text();
-    for (int i=0; i<names.size(); i++) {
+    for (int i = 0; i < names.size(); i++) {
         if (names[i] == name) {
             if (ids[i] == global.accountsManager->currentId) {
                 msgBox.setIcon(QMessageBox::Information);
@@ -122,12 +120,12 @@ void AccountMaintenanceDialog::deleteAccount() {
             }
             global.accountsManager->removeId(ids[i]);
             id = ids[i];
-            i=names.size();
+            i = names.size();
         }
     }
     loadData();
-    if (id>-1) {
-        for (int i=0; i<menuBar->userAccountActions.size(); i++) {
+    if (id > -1) {
+        for (int i = 0; i < menuBar->userAccountActions.size(); i++) {
             QAction *action = menuBar->userAccountActions[i];
             if (action->data().toInt() == id) {
                 action = menuBar->userAccountActions.takeAt(i);
@@ -137,9 +135,9 @@ void AccountMaintenanceDialog::deleteAccount() {
             }
         }
     }
-    QFile configFile(global.fileManager.getConfigDir()+"nixnote-"+QString::number(id) +".conf");
+    QFile configFile(global.fileManager.getConfigDir() + NN_CONFIG_FILE_PREFIX + "-" + QString::number(id) + ".conf");
     configFile.remove();
-    removeDir(global.fileManager.getUserDataDir()+QString("db-")+QString::number(id));
+    removeDir(global.fileManager.getUserDataDir() + QString(NN_DB_DIR_PREFIX "-") + QString::number(id));
 }
 
 void AccountMaintenanceDialog::renameAccount() {
@@ -147,7 +145,7 @@ void AccountMaintenanceDialog::renameAccount() {
     bool activeId = false;
     QString name = nameList->selectedItems()[0]->text();
     QString newName;
-    for (int i=0; i<names.size(); i++) {
+    for (int i = 0; i < names.size(); i++) {
         if (names[i] == name) {
             if (ids[i] == global.accountsManager->currentId)
                 activeId = true;
@@ -163,13 +161,13 @@ void AccountMaintenanceDialog::renameAccount() {
             newName = userDialog.newAccountName->text();
             global.accountsManager->setName(newName, ids[i]);
             id = ids[i];
-            i=names.size();
+            i = names.size();
         }
     }
     if (!activeId)
         newName = tr("Switch to ") + newName;
-    if (id>-1) {
-        for (int i=0; i<menuBar->userAccountActions.size(); i++) {
+    if (id > -1) {
+        for (int i = 0; i < menuBar->userAccountActions.size(); i++) {
             QAction *action = menuBar->userAccountActions[i];
             if (action->data().toInt() == id) {
                 action = menuBar->userAccountActions.at(i);
@@ -191,32 +189,33 @@ void AccountMaintenanceDialog::addAccount() {
     QString server = dialog.newAccountServer->itemData(six, Qt::UserRole).toString();
     int newid = global.accountsManager->addId(-1, name, "", server);
     QAction *newAction = new QAction(menuBar);
-    newAction->setText(tr("Switch to ") +name);
+    newAction->setText(tr("Switch to ") + name);
     newAction->setCheckable(true);
     newAction->setData(newid);
     menuBar->addUserAccount(newAction);
-    connect(newAction, SIGNAL(triggered()), (NixNote*)parent, SLOT(switchUser()));
+    connect(newAction, SIGNAL(triggered()), (NixNote *) parent, SLOT(switchUser()));
     loadData();
 }
 
 
-bool AccountMaintenanceDialog:: removeDir(const QString & dirName)  {
+bool AccountMaintenanceDialog::removeDir(const QString &dirName) {
     bool result = false;
     QDir dir(dirName);
 
     if (dir.exists(dirName)) {
-        Q_FOREACH(QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst)) {
-            if (info.isDir()) {
-                result = removeDir(info.absoluteFilePath());
-            }
-            else {
-                result = QFile::remove(info.absoluteFilePath());
-            }
+        Q_FOREACH(QFileInfo info,
+                  dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden | QDir::AllDirs | QDir::Files,
+                                    QDir::DirsFirst)) {
+                if (info.isDir()) {
+                    result = removeDir(info.absoluteFilePath());
+                } else {
+                    result = QFile::remove(info.absoluteFilePath());
+                }
 
-            if (!result) {
-                return result;
+                if (!result) {
+                    return result;
+                }
             }
-        }
         result = dir.rmdir(dirName);
     }
     return result;
@@ -228,7 +227,7 @@ void AccountMaintenanceDialog::removeOAuth() {
         return;
     QString name = nameList->selectedItems()[0]->text();
     QString currentName = global.accountsManager->getName();
-    for (int i=0; i<names.size(); i++) {
+    for (int i = 0; i < names.size(); i++) {
         if (names[i] == name) {
             global.accountsManager->setOAuthToken(ids[i], "");
             if (currentName == names[i])

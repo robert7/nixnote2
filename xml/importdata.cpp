@@ -100,7 +100,7 @@ void ImportData::import(QString file) {
     QTextStream *countReader = new QTextStream(&scanFile);
 
     int recCnt = 0;
-    QMessageBox *mb = NULL;
+    QMessageBox *mb = nullptr;
     if (!cmdline) {
         mb = new QMessageBox();
         mb->setWindowTitle(tr("Scanning File"));
@@ -156,7 +156,7 @@ void ImportData::import(QString file) {
             errorMessage = reader->errorString();
             QLOG_ERROR() << "************************* ERROR READING BACKUP " << errorMessage;
             lastError = 16;
-            if (mb != NULL)
+            if (mb != nullptr)
                 delete mb;
             return;
         }
@@ -169,14 +169,14 @@ void ImportData::import(QString file) {
                     && version != "0.95") {
                 lastError = 1;
                 errorMessage = "Unknown backup version = " +version;
-                if (mb != NULL)
+                if (mb != nullptr)
                     delete mb;
                 return;
             }
             if (application.toLower() != "nevernote") {
                 lastError = 2;
                 errorMessage = "This backup is from an unknown application = " +application;
-                if (mb != NULL)
+                if (mb != nullptr)
                     delete mb;
                 return;
             }
@@ -185,14 +185,14 @@ void ImportData::import(QString file) {
                 errorMessage = "This is backup file, not an export file";
                 if (!cmdline)
                     progress->hide();
-                if (mb != NULL)
+                if (mb != nullptr)
                     delete mb;
                 return;
             }
             if (type.toLower() == "export" && backup) {
                 lastError = 5;
                 errorMessage = "This is an export file, not a backup file";
-                if (mb != NULL)
+                if (mb != nullptr)
                     delete mb;
                 return;
             }
@@ -245,7 +245,7 @@ void ImportData::import(QString file) {
     query.exec("commit");
     if (!this->cmdline)
         progress->hide();
-    if (mb != NULL)
+    if (mb != nullptr)
         delete mb;
 }
 
@@ -351,7 +351,7 @@ void ImportData::processNoteNode() {
         noteTable.add(0,note, noteIsDirty);
     else {
         note.updateSequenceNum = 0;
-        if (notebookGuid != NULL)
+        if (notebookGuid != nullptr)
             note.notebookGuid = notebookGuid;
         noteTable.add(0,note, true);
         if (metaData.contains(note.guid)) {

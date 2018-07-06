@@ -135,7 +135,7 @@ void FileWatcher::saveFile(QString file) {
     QHash<QString, ExitPoint*> *points;
     points = global.exitManager->exitPoints;
     if (points->contains(exitName) &&
-            points->value(exitName) != NULL &&
+            points->value(exitName) != nullptr &&
             points->value(exitName)->getEnabled())
         exitPoint(points->value(exitName), newNote);
     // END EXIT POINT

@@ -38,7 +38,7 @@ ThumbnailPreferences::ThumbnailPreferences(QWidget *parent) : QWidget(parent)
     mainLayout->addWidget(maxTimeLabel,3,0);
     mainLayout->addWidget(maxTime, 3,1);
 
-    global.settings->beginGroup("Thumbnail");
+    global.settings->beginGroup(INI_GROUP_THUMBNAIL);
     int min = global.settings->value("minTime", 5).toInt();
     int max = global.settings->value("maxTime", 60).toInt();
     int cnt = global.settings->value("count", 1).toInt();
@@ -64,7 +64,7 @@ void ThumbnailPreferences::disableToggled(bool value) {
 
 void ThumbnailPreferences::saveValues() {
 
-    global.settings->beginGroup("Thumbnail");
+    global.settings->beginGroup(INI_GROUP_THUMBNAIL);
     global.settings->setValue("minTime", minTime->value());
     global.settings->setValue("maxTime", maxTime->value());
     global.settings->setValue("count", count->value());

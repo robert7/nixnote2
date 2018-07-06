@@ -76,7 +76,7 @@ private:
 
 public:
     explicit FilterEngine(QObject *parent = 0);
-    void filter(FilterCriteria *newCriteria=NULL, QList<qint32> *results=NULL);
+    void filter(FilterCriteria *newCriteria=nullptr, QList<qint32> *results=nullptr);
     bool resourceContains(qint32 resourceLid, QString searchString, QStringList *returnHits);
     
 signals:
