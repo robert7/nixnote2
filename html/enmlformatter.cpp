@@ -356,11 +356,10 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
             QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
                 foreach(QWebElement
                             element, anchors) {
-                    //QLOG_DEBUG() << "Processing tag name: " << element.tagName();
                     if (element.tagName().toLower() == "input") {
-                        processTodo(element);
+                        fixInputNode(element);
                     } else if (element.tagName().toLower() == "a") {
-                        fixLinkNode(element);
+                        fixANode(element);
                     } else if (element.tagName().toLower() == "object") {
                         fixObjectNode(element);
                     } else if (element.tagName().toLower() == "img") {
@@ -372,6 +371,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
                     } else if (element.tagName().toLower() == "pre") {
                         fixPreNode(element);
                     } else if (!isElementValid(element))
+                        QLOG_DEBUG() << "Removing " << element.tagName();
                         element.removeFromDocument();
                 }
         }
@@ -380,16 +380,14 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     }
     QLOG_DEBUG_FILE("fmt-post-dt-check", QString(content.constData()));
 
-    // Strip off HTML header
+    // Add EN xml header
     {
         qint32 index = content.indexOf("<body");
         //index = content.indexOf(">", index)+1;
         content.remove(0, index);
         index = content.indexOf("</body");
         content.truncate(index);
-    }
 
-    {
         QByteArray b;
         b.clear();
         b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -429,7 +427,7 @@ QStringList EnmlFormatter::findAllTags(QWebElement &element) {
 }
 
 
-void EnmlFormatter::processTodo(QWebElement &node) {
+void EnmlFormatter::fixInputNode(QWebElement &node) {
     bool checked = false;
     if (node.hasAttribute("checked"))
         checked = true;
@@ -518,7 +516,7 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 }
 
 
-void EnmlFormatter::fixLinkNode(QWebElement e) {
+void EnmlFormatter::fixANode(QWebElement e) {
     QString enTag = e.attribute("en-tag", "").toLower();
     if (enTag == "en-media") {
         resources.append(e.attribute("lid").toInt());
@@ -852,7 +850,6 @@ void EnmlFormatter::fixPreNode(QWebElement &node) {
 
 
 void EnmlFormatter::postXmlFix() {
-
     int pos;
     content = content.replace("<hr>", "<hr/>");
 
@@ -874,7 +871,6 @@ void EnmlFormatter::postXmlFix() {
         }
         pos = content.indexOf("<br", pos + 1);
     }
-
 
     // Fix <en-todo> tags
     content = content.replace("</en-todo>", "");
@@ -948,6 +944,7 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
         newContent.append(encrypted.toLocal8Bit());
         newContent.append(QByteArray("</en-crypt>"));
         newContent.append(end);
+        QLOG_DEBUG() << "Rewritten 'en-crypt' tag";
     }
     return newContent;
 }

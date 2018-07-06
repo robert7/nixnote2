@@ -47,10 +47,10 @@ private:
     // void scanTags(QWebElement &element);
     void fixImgNode(QWebElement &element);
     //void fixEnCryptNode(QWebElement &element);
-    void processTodo(QWebElement &element);
+    void fixInputNode(QWebElement &element);
     QStringList findAllTags(QWebElement &element);
     void removeInvalidAttributes(QWebElement &node);
-    void fixLinkNode(QWebElement e);
+    void fixANode(QWebElement e);
     void fixObjectNode(QWebElement &e);
     // void scanTags();
     // void fixNode(const QDomNode &node);
