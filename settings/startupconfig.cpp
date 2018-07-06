@@ -60,7 +60,7 @@ StartupConfig::StartupConfig() {
 
 // Print out user help
 void StartupConfig::printHelp() {
-    QString help = QString("usage: " APP_NAME " <command>\n"
+    QString help = QString("usage: " NN_APP_NAME " <command>\n"
                            + QString("  <command> options:\n\n")
                            + QString("  help or ? or --? or --help           Show this message\n")
                            + QString(
@@ -231,28 +231,28 @@ void StartupConfig::printHelp() {
                            QString("          --newExternalNote            Create a new note in an external window.\n")
                            + QString("  Examples:\n\n")
                            + QString("     To start NixNote, do a sync, and then exit.\n")
-                           + QString("     " APP_NAME " start --syncAndExit\n\n")
+                           + QString("     " NN_APP_NAME " start --syncAndExit\n\n")
                            + QString("     To start NixNote using a secondary account.\n")
-                           + QString("     " APP_NAME " --accountId=2\n\n")
+                           + QString("     " NN_APP_NAME " --accountId=2\n\n")
                            + QString("     To close an open notebook.\n")
-                           + QString("     " APP_NAME " --closeNotebook notebook=\"My Notebook\"\n\n")
+                           + QString("     " NN_APP_NAME " --closeNotebook notebook=\"My Notebook\"\n\n")
                            + QString("     To add a note to the notebook \"My Notebook\"\n")
                            + QString(
-        "     " APP_NAME " addNote --notebook=\"My Stuff\" --title=\"My New Note\" --tag=\"Tag1\" --tag=\"Tag2\" --noteText=\"My Note Text\"\n\n")
+        "     " NN_APP_NAME " addNote --notebook=\"My Stuff\" --title=\"My New Note\" --tag=\"Tag1\" --tag=\"Tag2\" --noteText=\"My Note Text\"\n\n")
                            + QString("     To append to an existing note.\n")
-                           + QString("     " APP_NAME " appendNote --id=3 --noteText=\"My Note Text\"\n\n")
+                           + QString("     " NN_APP_NAME " appendNote --id=3 --noteText=\"My Note Text\"\n\n")
                            + QString("     To add a tag to notes in the notebook \"Stuff\".\n")
-                           + QString("     " APP_NAME " alterNote --search=\"notebook:Stuff\" --addTag=\"NewTag\"\n\n")
+                           + QString("     " NN_APP_NAME " alterNote --search=\"notebook:Stuff\" --addTag=\"NewTag\"\n\n")
                            + QString(
         "     Query notes for the search text. Results show the ID, note title (padded to 10 characters but truncated longer) and the notebook\n")
                            + QString(
-        "     " APP_NAME " query --search=\"Famous Authors\" --delimiter=\" * \" --display=\"\%i%t10:%n\"\n\n")
+        "     " NN_APP_NAME " query --search=\"Famous Authors\" --delimiter=\" * \" --display=\"\%i%t10:%n\"\n\n")
                            + QString("     To extract all notes in the \"Notes\" notebook.\n")
                            + QString(
-        "     " APP_NAME " export --search=\"notebook:notes\" --output=/home/joe/exports.nnex\n\n")
+        "     " NN_APP_NAME " export --search=\"notebook:notes\" --output=/home/joe/exports.nnex\n\n")
                            + QString(
         "     To signal NixNote to do a screenshot from the command line (NixNote must already be running).\n")
-                           + QString("     " APP_NAME " signalGui --screenshot\n\n")
+                           + QString("     " NN_APP_NAME " signalGui --screenshot\n\n")
                            + QString("\n\n")
     );
 

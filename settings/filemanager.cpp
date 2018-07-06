@@ -49,7 +49,7 @@ QString getDefaultProgramDirPath() {
     if (path.endsWith("/bin")) {
         // runs in std location
         path.chop(3); // remove 3 chars from end of string
-        return path + "share/" + APP_NAME;
+        return path + "share/" + NN_APP_NAME;
     } else {
         return QDir(path + "/..").absolutePath();
     }
@@ -141,7 +141,7 @@ FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString
     //    qssDirPath = slashTerminatePath(qssDir.path());
 
     // Read/write directories that only we use
-    QString globalSettingsFileName = configDir + CONFIG_FILE_PREFIX + ".conf";
+    QString globalSettingsFileName = configDir + NN_CONFIG_FILE_PREFIX + ".conf";
     QLOG_DEBUG() << "FileManager::setup globalSettingsFileName: " << globalSettingsFileName;
     QSettings globalSettings(globalSettingsFileName, QSettings::IniFormat);
 
@@ -157,29 +157,29 @@ FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString
     //    createDirOrCheckWriteable(qssDirUser);
     //    qssDirPathUser = slashTerminatePath(qssDirUser.path());
 
-    logsDir.setPath(userDataDir + "logs-" + QString::number(accountId));
+    logsDir.setPath(userDataDir + NN_LOGS_DIR_PREFIX + "-" + QString::number(accountId));
     createDirOrCheckWriteable(logsDir);
     logsDirPath = slashTerminatePath(logsDir.path());
 
-    tmpDir.setPath(userDataDir + "tmp-" + QString::number(accountId));
+    tmpDir.setPath(userDataDir + NN_TMP_DIR_PREFIX + "-" + QString::number(accountId));
     createDirOrCheckWriteable(tmpDir);
     tmpDirPath = slashTerminatePath(tmpDir.path());
 
-    QString dbPath = userDataDir + DB_DIR_PREFIX + "-" + QString::number(accountId);
+    QString dbPath = userDataDir + NN_DB_DIR_PREFIX + "-" + QString::number(accountId);
     dbDir.setPath(dbPath);
 
     createDirOrCheckWriteable(dbDir);
     dbDirPath = slashTerminatePath(dbDir.path());
 
-    dbaDir.setPath(dbDirPath + DB_DIR_PREFIX + "a");
+    dbaDir.setPath(dbDirPath + NN_DB_DIR_PREFIX + "a");
     createDirOrCheckWriteable(dbaDir);
     dbaDirPath = slashTerminatePath(dbaDir.path());
 
-    dbiDir.setPath(dbDirPath + DB_DIR_PREFIX + "i");
+    dbiDir.setPath(dbDirPath + NN_DB_DIR_PREFIX + "i");
     createDirOrCheckWriteable(dbiDir);
     dbiDirPath = slashTerminatePath(dbiDir.path());
 
-    thumbnailDir.setPath(dbDirPath + "t" + DB_DIR_PREFIX + "a");
+    thumbnailDir.setPath(dbDirPath + "t" + NN_DB_DIR_PREFIX + "a");
     createDirOrCheckWriteable(thumbnailDir);
     thumbnailDirPath = slashTerminatePath(thumbnailDir.path());
 }

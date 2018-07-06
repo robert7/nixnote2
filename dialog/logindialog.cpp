@@ -30,7 +30,7 @@ extern Global global;
 LoginDialog::LoginDialog(QWidget *parent) :
     QDialog(parent) {
     okPressed = false;
-    setWindowTitle(tr(APP_DISPLAY_NAME_GUI " Login"));
+    setWindowTitle(tr(NN_APP_DISPLAY_NAME_GUI " Login"));
     setWindowIcon(global.getIconResource(":passwordIcon"));
     setLayout(&grid);
 

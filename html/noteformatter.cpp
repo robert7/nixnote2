@@ -479,7 +479,7 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
         if (data.size.isSet() && data.size > 0) {
             QString imgfile =
                 "file:///" +
-                global.fileManager.getDbDirPath(QString(DB_DIR_PREFIX + "a/") + QString::number(resLid) + type);
+                global.fileManager.getDbDirPath(QString(NN_DB_DIR_PREFIX "a/") + QString::number(resLid) + type);
 
             enMedia.setAttribute("src", imgfile);
             // Check if this is a LaTeX image

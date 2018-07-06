@@ -131,7 +131,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     global.settings->beginGroup("Locale");
     translation = global.settings->value("translation", QLocale::system().name()).toString();
     global.settings->endGroup();
-    translation = global.fileManager.getTranslateFilePath(APP_NAME "_" + translation + ".qm");
+    translation = global.fileManager.getTranslateFilePath(NN_APP_NAME "_" + translation + ".qm");
     QLOG_DEBUG() << "Looking for translations: " << translation;
     bool translationResult = nixnoteTranslator->load(translation);
     QLOG_DEBUG() << "Translation loaded:" << translationResult;
@@ -155,7 +155,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     global.getGuiFont(f);
     this->setFont(f);
 
-    db = new DatabaseConnection("nixnote");  // Startup the database
+    db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
 
     // Setup the sync thread
     QLOG_TRACE() << "Setting up counter thread";
@@ -282,7 +282,7 @@ NixNote::~NixNote() {
 void NixNote::setupGui() {
     // Setup the GUI
     //this->setStyleSheet("background-color: white;");
-    //statusBar();    setWindowTitle(tr(APP_DISPLAY_NAME_GUI));
+    //statusBar();    setWindowTitle(tr(NN_APP_DISPLAY_NAME_GUI));
     const auto wIcon = QIcon(global.getIconResource(":windowIcon"));
     if (!wIcon.isNull()) {
         setWindowIcon(wIcon);
@@ -728,7 +728,7 @@ void NixNote::setupGui() {
     QList<int> ids = global.accountsManager->idList();
     for (int i = 0; i < ids.size(); i++) {
         if (ids[i] == global.accountsManager->currentId) {
-            setWindowTitle(APP_DISPLAY_NAME_GUI " - " + accountNames[i]);
+            setWindowTitle(NN_APP_DISPLAY_NAME_GUI " - " + accountNames[i]);
             i = ids.size();
         }
     }
@@ -1482,7 +1482,7 @@ void NixNote::synchronize() {
         EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
         d.setWindowTitle(tr("Log in to Evernote"));
         if (d.exec() != QDialog::Accepted) {
-            QMessageBox::critical(0, tr(APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
+            QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
             return;
         }
         QString token = QString("oauth_token=") + d.oauthResult().authenticationToken +
@@ -2394,7 +2394,7 @@ void NixNote::viewNoteHistory() {
         EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
         d.setWindowTitle(tr("Log in to Evernote"));
         if (d.exec() != QDialog::Accepted) {
-            QMessageBox::critical(0, tr(APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
+            QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
             return;
         }
         QString token = QString("oauth_token=") + d.oauthResult().authenticationToken +
@@ -2983,16 +2983,16 @@ void NixNote::openPreferences() {
         }
         indexRunner.officeFound = global.synchronizeAttachments();
 
-//        global.settings->beginGroup("Locale");
-//        QString translation;
-//        translation = global.settings->value("translation", QLocale::system().name()).toString();
-//        global.settings->endGroup();
-//        translation = global.fileManager.getTranslateFilePath("nixnote2_" + translation + ".qm");
-//        QApplication::removeTranslator(nixnoteTranslator);
-//        QLOG_DEBUG() << "Looking for transaltions: " << translation;
-//        bool translationResult = nixnoteTranslator->load(translation);
-//        QLOG_DEBUG() << "Translation loaded:" << translationResult;
-//        QApplication::instance()->installTranslator(nixnoteTranslator);
+        //        global.settings->beginGroup("Locale");
+        //        QString translation;
+        //        translation = global.settings->value("translation", QLocale::system().name()).toString();
+        //        global.settings->endGroup();
+        //        translation = global.fileManager.getTranslateFilePath("nixnote2_" + translation + ".qm");
+        //        QApplication::removeTranslator(nixnoteTranslator);
+        //        QLOG_DEBUG() << "Looking for transaltions: " << translation;
+        //        bool translationResult = nixnoteTranslator->load(translation);
+        //        QLOG_DEBUG() << "Translation loaded:" << translationResult;
+        //        QApplication::instance()->installTranslator(nixnoteTranslator);
 
     }
 }
@@ -3942,7 +3942,7 @@ void NixNote::exportAsPdf() {
 
         printer.setDocName(tabWindow->currentBrowser()->noteTitle.text());
         tabWindow->currentBrowser()->editor->print(&printer);
-        QMessageBox::information(0, tr(APP_DISPLAY_NAME_GUI), tr("Export complete"));
+        QMessageBox::information(0, tr(NN_APP_DISPLAY_NAME_GUI), tr("Export complete"));
 
         return;
     }
@@ -3993,5 +3993,5 @@ void NixNote::exportAsPdfReady(bool) {
     printer.setPaperSize(QPrinter::A4);
     printer.setOutputFileName(file);
     pdfExportWindow->print(&printer);
-    QMessageBox::information(0, tr(APP_DISPLAY_NAME_GUI), tr("Export complete"));
+    QMessageBox::information(0, tr(NN_APP_DISPLAY_NAME_GUI), tr("Export complete"));
 }

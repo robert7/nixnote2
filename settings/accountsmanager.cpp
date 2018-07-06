@@ -29,7 +29,7 @@ extern Global global;
 AccountsManager::AccountsManager(int id, QObject *parent) :
     QObject(parent) {
     currentId = id;
-    configFile = global.fileManager.getConfigDir() + ACCOUNTS_CONFIG_FILE_PREFIX + ".conf";
+    configFile = global.fileManager.getConfigDir() + NN_ACCOUNTS_CONFIG_FILE_PREFIX + ".conf";
     if (!QFile(configFile).exists()) {
         QFile xmlFile(configFile);
         xmlFile.open(QIODevice::WriteOnly | QIODevice::Text);

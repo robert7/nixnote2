@@ -809,7 +809,7 @@ void NBrowserWindow::saveNoteContent() {
             QMessageBox::information(
                 this,
                 tr("Unable to reformat"),
-                QString(tr("Nixnote was unable to reformat the note in ENML. Note could not be saved."))
+                QString(tr(NN_APP_DISPLAY_NAME_GUI " was unable to reformat the note in ENML. Note could not be saved."))
             );
             return;
         }

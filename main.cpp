@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
     } else {
         a = new QCoreApplication(argc, argv);
     }
-    QCoreApplication::setApplicationName(APP_NAME);
+    QCoreApplication::setApplicationName(NN_APP_NAME);
     global.application = a;
 
 
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 
     // We were passed a SQL command
     if (startupConfig.sqlExec) {
-        DatabaseConnection *db = new DatabaseConnection("nixnote");  // Startup the database
+        DatabaseConnection *db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
         QLOG_DEBUG() << "Starting DB";
         QSqlQuery query(db->conn);
         QLOG_DEBUG() << "After DB Start";
@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
 
     // from now on logging goes also to log file (up to here only to terminal)
 
-    QLOG_INFO().noquote() << APP_DISPLAY_NAME " " << versionStr << "- build at " << __DATE__ << " at " << __TIME__
+    QLOG_INFO().noquote() << NN_APP_DISPLAY_NAME " " << versionStr << "- build at " << __DATE__ << " at " << __TIME__
                           << ", with Qt" << QT_VERSION_STR << " running on " << qVersion();
     if (logger.loggingLevel() > 1) {
         QLOG_INFO() << "To get more detailed startup logging use --logLevel=1";

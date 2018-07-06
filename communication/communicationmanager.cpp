@@ -66,7 +66,7 @@ CommunicationManager::CommunicationManager(DatabaseConnection *db) {
     this->db = db;
     evernoteHost = global.server;
     userStorePath = "/edam/user";
-    clientName = APP_CLIENT_NAME;
+    clientName = NN_APP_CLIENT_NAME;
     inkNoteList = new QList<QPair<QString, QImage *> *>();
     thumbnailList = new QList<QPair<QString, QImage *> *>();
     postData = new QUrl();

@@ -270,11 +270,11 @@ void Global::initializeSettings(int accountId) {
     const QString &configDir = fileManager.getConfigDir();
     QLOG_ASSERT(!configDir.isEmpty());
 
-    QString settingsFile = configDir + CONFIG_FILE_PREFIX + ".conf";
+    QString settingsFile = configDir + NN_CONFIG_FILE_PREFIX + ".conf";
     QLOG_DEBUG() << "Opening INI file " << settingsFile;
     globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
 
-    settingsFile = configDir + CONFIG_FILE_PREFIX + "-" + QString::number(accountId) + ".conf";
+    settingsFile = configDir + NN_CONFIG_FILE_PREFIX + "-" + QString::number(accountId) + ".conf";
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 }
 

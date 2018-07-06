@@ -135,9 +135,9 @@ void AccountMaintenanceDialog::deleteAccount() {
             }
         }
     }
-    QFile configFile(global.fileManager.getConfigDir() + CONFIG_FILE_PREFIX + "-" + QString::number(id) + ".conf");
+    QFile configFile(global.fileManager.getConfigDir() + NN_CONFIG_FILE_PREFIX + "-" + QString::number(id) + ".conf");
     configFile.remove();
-    removeDir(global.fileManager.getUserDataDir() + QString(DB_DIR_PREFIX + "-") + QString::number(id));
+    removeDir(global.fileManager.getUserDataDir() + QString(NN_DB_DIR_PREFIX "-") + QString::number(id));
 }
 
 void AccountMaintenanceDialog::renameAccount() {

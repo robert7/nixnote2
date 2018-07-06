@@ -106,27 +106,28 @@ class IndexRunner;
 #define DEFAULT_THEME_NAME "Default"
 
 // app name for config paths
-#define APP_NAME "nixnote2"
+#define NN_APP_NAME "nixnote2"
 // string to be displayed with program version (current version will be appended)
-#define APP_DISPLAY_NAME "NixNote"
+#define NN_APP_DISPLAY_NAME "NixNote"
 // string to be displayed without program version
-#define APP_DISPLAY_NAME_GUI "NixNote2"
+#define NN_APP_DISPLAY_NAME_GUI "NixNote2"
 // user agent name
-#define APP_CLIENT_NAME "NixNote2/Linux"
+#define NN_APP_CLIENT_NAME "NixNote2/Linux"
 
 // app name for NNEX format
 #define APP_NNEX_APP_NAME "NixNote"
 
 // name of the config file (main config and user configs)
-#define CONFIG_FILE_PREFIX "nixnote"
-#define NIXNOTE_DATABASE_NAME "nixnote.db"
-#define ACCOUNTS_CONFIG_FILE_PREFIX "accounts"
-#define DB_DIR_PREFIX "db"
-#define LOG_DIR_PREFIX "log"
-#define TMP_DIR_PREFIX "log"
+#define NN_CONFIG_FILE_PREFIX "nixnote"
+#define NN_NIXNOTE_DATABASE_NAME "nixnote.db"
+#define NN_ACCOUNTS_CONFIG_FILE_PREFIX "accounts"
+#define NN_DB_DIR_PREFIX "db"
+#define NN_LOGS_DIR_PREFIX "logs"
+#define NN_TMP_DIR_PREFIX "tmp"
 // subdirectory in log directory for file attachments
 #define LOG_DIR_FILES "files"
 
+#define NN_DB_CONNECTION_NAME "nixnote"
 
 
 #define QLOG_ASSERT(expr) if (expr) {} else { QLOG_FATAL() << "Assertion failed: " #expr; exit(16);}

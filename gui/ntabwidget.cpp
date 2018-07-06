@@ -264,7 +264,7 @@ void NTabWidget::openNote(qint32 lid, OpenNoteMode mode) {
             ExternalBrowse *external = new ExternalBrowse(lid);
             externalList->append(external);
             setupExternalBrowserConnections(external->browser);
-            external->setWindowTitle(tr(APP_DISPLAY_NAME_GUI " - ") + external->browser->noteTitle.text());
+            external->setWindowTitle(tr(NN_APP_DISPLAY_NAME_GUI " - ") + external->browser->noteTitle.text());
             external->show();
             connect(external->browser->editor->titleEditor, SIGNAL(titleUpdated(QString)), external,
                     SLOT(setTitle(QString)));
@@ -331,7 +331,7 @@ void NTabWidget::noteSyncSignaled(qint32 lid) {
     }
     for (int i = 0; i < externalList->size(); i++) {
         if (externalList->at(i)->browser->lid == lid && !externalList->at(i)->browser->editor->isDirty) {
-            externalList->at(i)->setWindowTitle(tr(APP_DISPLAY_NAME_GUI " - ") + n.title);
+            externalList->at(i)->setWindowTitle(tr(NN_APP_DISPLAY_NAME_GUI " - ") + n.title);
             externalList->at(i)->browser->blockSignals(true);
             externalList->at(i)->browser->clear();
             externalList->at(i)->browser->setContent(lid);

@@ -78,7 +78,7 @@ void LogViewer::loadData() {
 
 
 void LogViewer::saveData() {
-    QFileDialog fd(0, tr("Save Log"), QDir::homePath(), tr(APP_DISPLAY_NAME_GUI " Log (*.log);;All Files (*.*)"));
+    QFileDialog fd(0, tr("Save Log"), QDir::homePath(), tr(NN_APP_DISPLAY_NAME_GUI " Log (*.log);;All Files (*.*)"));
     fd.setFileMode(QFileDialog::AnyFile);
     fd.setConfirmOverwrite(true);
     fd.setAcceptMode(QFileDialog::AcceptSave);
