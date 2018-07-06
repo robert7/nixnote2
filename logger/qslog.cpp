@@ -170,7 +170,9 @@ namespace QsLogging {
         if (!logid.isEmpty()) {
             filename.append("-").append(logid);
         }
-        filename.append(".log");
+        if (!filename.contains(".")) {
+            filename.append(".log");
+        }
 
         QFile file(fileLoggingPath + filename);
 
