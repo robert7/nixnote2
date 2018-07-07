@@ -109,6 +109,7 @@ private:
     void debugNote(Note note);
     void debugField(Optional<QString> field, QString name);
     void debugField(Optional<qint32> field, QString name);
+    void dumpNote(const Note &note) const;
 
 
 public:

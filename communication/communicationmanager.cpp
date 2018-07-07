@@ -451,40 +451,43 @@ qint32 CommunicationManager::expungeNotebook(Guid guid) {
 
 // Upload a note to Evernote
 qint32 CommunicationManager::uploadNote(Note &note, QString token) {
-    if (token == "")
+    if (token == "") {
         token = authToken;
-    if (token == authToken)
-        noteStore = myNoteStore;
-    else
-        noteStore = linkedNoteStore;
-    try {
-        if (note.updateSequenceNum.isSet() && note.updateSequenceNum > 0)
-            note = noteStore->updateNote(note, token);
-        else
-            note = noteStore->createNote(note, token);
-        return note.updateSequenceNum;
-
-    } catch (ThriftException &e) {
-        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
-        DebugTool d;
-        d.dumpNote(note);
-        return 0;
-    } catch (EDAMUserException &e) {
-        error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
-        DebugTool d;
-        d.dumpNote(note);
-        return 0;
-    } catch (EDAMSystemException &e) {
-        DebugTool d;
-        d.dumpNote(note);
-        handleEDAMSystemException(e, note.title);
-        return 0;
-    } catch (EDAMNotFoundException &e) {
-        handleEDAMNotFoundException(e, note.title);
-        DebugTool d;
-        d.dumpNote(note);
-        return false;
     }
+    noteStore = (token == authToken) ? myNoteStore : linkedNoteStore;
+    try{
+        if (note.updateSequenceNum.isSet() && note.updateSequenceNum > 0) {
+            note = noteStore->updateNote(note, token);
+        } else {
+            note = noteStore->createNote(note, token);
+        }
+        return note.updateSequenceNum;
+    } catch (ThriftException & e)
+    {
+        error.resetTo(CommunicationError::ThriftException, e.type(), e.what());
+        dumpNote(note);
+        return 0;
+    } catch (EDAMUserException & e)
+    {
+        error.resetTo(CommunicationError::EDAMUserException, e.errorCode, e.what());
+        dumpNote(note);
+        return 0;
+    } catch (EDAMSystemException & e)
+    {
+        handleEDAMSystemException(e, note.title);
+        dumpNote(note);
+        return 0;
+    } catch (EDAMNotFoundException & e)
+    {
+        handleEDAMNotFoundException(e, note.title);
+        dumpNote(note);
+        return 0;
+    }
+}
+
+void CommunicationManager::dumpNote(const Note &note) const {
+    DebugTool d;
+    d.dumpNote(note);
 }
 
 

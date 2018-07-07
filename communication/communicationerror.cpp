@@ -75,7 +75,7 @@ void CommunicationError::resetTo(CommunicationErrorType type, int code, QString 
         msg.append(" ## " + internalMessage);
     }
 
-    // check if this is the right point to print, or we hant to have dedicated method
+    // check if this is the right point to print, or we will need dedicated method
     QLOG_ERROR() << msg;
 }
 
