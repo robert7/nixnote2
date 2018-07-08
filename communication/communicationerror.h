@@ -53,12 +53,16 @@ public:
 
     void reset();
 
-    void resetTo(CommunicationErrorType type, int code, QString message, QString internalMessage = QString());
+    void resetTo(
+        CommunicationErrorType type,
+        int code,
+        const QString &message,
+        const QString &internalMessage = QString());
 
     bool retry();
-    inline CommunicationErrorType getType() { return type; };
-    inline QString getMessage() { return message; };
-    inline int getCode() { return code; };
+    inline CommunicationErrorType getType() const { return type; };
+    inline QString getMessage() const { return message; };
+    inline int getCode() const { return code; };
 
 private:
     // internal type

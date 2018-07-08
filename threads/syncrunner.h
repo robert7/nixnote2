@@ -104,7 +104,6 @@ public:
     SyncRunner();
     ~SyncRunner();
     bool error;
-    CommunicationError* getError();
     void communicationErrorHandler();
     bool finalSync;
 

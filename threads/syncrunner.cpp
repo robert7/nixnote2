@@ -77,7 +77,8 @@ void SyncRunner::synchronize() {
 
     error = false;
 
-    comm->error.reset();
+    comm->resetError();
+
     if (!comm->enConnect()) {
         this->communicationErrorHandler();
         error = true;
@@ -677,6 +678,8 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
 
 
         // ***** STARTING PASS #1
+
+
         while (more && keepRunning) {
             SyncChunk chunk;
             if (!comm->getLinkedNotebookSyncChunk(chunk, book, usn, chunkSize, fs)) {
@@ -720,6 +723,8 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
         if (book.shareName.isSet())
             sharename = book.shareName;
         emit setMessage(tr("Downloading notes for shared notebook ") + sharename + tr("."), defaultMsgTimeout);
+
+
         while (more && keepRunning) {
             SyncChunk chunk;
             if (!comm->getLinkedNotebookSyncChunk(chunk, book, usn, chunkSize, fs)) {
@@ -1191,17 +1196,10 @@ qint32 SyncRunner::uploadPersonalNotes() {
 }
 
 
-// Return a pointer to the CommunicationManager error class
-CommunicationError *SyncRunner::getError() {
-    return &comm->error;
-}
-
-
 // If a communication error happened, try to determine what the error is and
 // notify the user
 void SyncRunner::communicationErrorHandler() {
-    CommunicationError &error = comm->error;
-    CommunicationError::CommunicationErrorType type = error.getType();
+    CommunicationError::CommunicationErrorType type = comm->error.getType();
 
     if (type == CommunicationError::None) {
         return;
@@ -1212,10 +1210,10 @@ void SyncRunner::communicationErrorHandler() {
         apiRateLimitExceeded = true;
     }
     if (type == CommunicationError::EDAMUserException) {
-        if (error.getCode() == EDAMErrorCode::AUTH_EXPIRED) {
+        if (comm->error.getCode() == EDAMErrorCode::AUTH_EXPIRED) {
             global.accountsManager->setOAuthToken("");
         }
     }
-    emit(setMessage(error.getMessage(), 0));
+    emit(setMessage(comm->error.getMessage(), 0));
 }
 
