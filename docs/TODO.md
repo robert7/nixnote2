@@ -5,7 +5,7 @@
 ASSERT failure in QList<T>::operator[]: "index out of range", file ../Qt/5.5/gcc_64/include/QtCore/qlist.h, line 518
 fish: “./NixNote-2.1.0-alfa8-x86_64.Ap…” terminated by signal SIGABRT (Abort)
 
-
+* Change "Message Log" for info box with paths
 * Modify ini file groups for v2.1
 * Docker build with ubuntu 14.04 (to support older systems)
 * Better statusbar display on exceptions

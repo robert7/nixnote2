@@ -486,6 +486,17 @@ void CommunicationManager::reportError(
     int code,
     const QString &message,
     const QString &internalMessage) {
+#ifndef _WIN32
+    // non Windows only
+    void *array[30];
+    size_t size;
+    // get void*'s for all entries on the stack
+    size = backtrace(array, 30);
+
+    // print out all the frames to stderr
+    QLOG_ERROR() << "Exception stacktrace:";
+    backtrace_symbols_fd(array, size, 2);
+#endif // End windows check
     error.resetTo(errorType, code, message, internalMessage);
 
     global.setMessage(tr("Error in sync: ") + error.getMessage(), 0);
@@ -494,7 +505,6 @@ void CommunicationManager::reportError(
 void CommunicationManager::resetError() {
     error.reset();
 }
-
 
 
 void CommunicationManager::dumpNote(const Note &note) const {
@@ -1003,20 +1013,6 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
 
 // Error handler EDAM System Exception
 void CommunicationManager::handleEDAMSystemException(EDAMSystemException e, QString additionalInfo) {
-
-#ifndef _WIN32
-    // non Windows only
-
-    void *array[30];
-    size_t size;
-    // get void*'s for all entries on the stack
-    size = backtrace(array, 30);
-
-    // print out all the frames to stderr
-    fprintf(stderr, "EDAM System Exception backtrace");
-    backtrace_symbols_fd(array, size, 2);
-#endif // End windows check
-
     QString msg;
     msg.append(e.what());
     if (e.message.isSet()) {
@@ -1058,18 +1054,6 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e, QStr
 
 // Error handler EDAM Not Found exception.
 void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e, QString additionalInfo) {
-// Windows Check
-#ifndef _WIN32
-    void *array[30];
-    size_t size;
-    // get void*'s for all entries on the stack
-    size = backtrace(array, 30);
-
-    // print out all the frames to stderr
-    fprintf(stderr, "EDAM Not Found Exception backtrace");
-    backtrace_symbols_fd(array, size, 2);
-#endif
-
     QString msg(e.what());
     if (!additionalInfo.isEmpty()) {
         msg.append(" # ");
@@ -1092,6 +1076,7 @@ qint32 CommunicationManager::getMinutesToNextSync() {
 int CommunicationManager::getLastErrorCode() const {
     return error.getCode();
 }
+
 CommunicationError::CommunicationErrorType CommunicationManager::getLastErrorType() const {
     return error.getType();
 }
