@@ -59,8 +59,9 @@ Preparation steps
   * follow [build instructions](https://github.com/htacg/tidy-html5/blob/next/README/BUILD.md)
     * short version:
     * cd build/cmake
-    * cmake ../..  -DCMAKE_INSTALL_PREFIX=../../../libs RELEASE -DBUILD_SHARED_LIB:BOOL=TRUE -DCMAKE_BUILD_TYPE=Release                      
-    * make install
+    * cmake ../..  -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
+    * make                       
+    * make DESTDIR=../../../libs install
     * library is now copied to ../../../libs                                                                                         
 
 ### macOS

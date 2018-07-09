@@ -40,18 +40,17 @@ ARG git_branch_tidy="master"
 RUN cd $wdir && git clone -b $git_branch_tidy "https://github.com/htacg/tidy-html5.git" && \
         cd tidy-html5 && \
         git checkout $git_rev_tidy && \
-        cd build/cmake
-        #&& \
-        #cmake ../..  -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release && \
-        #make -j $make_core && \
-        #make DESTDIR=/$wdir/libs install
+        cd build/cmake && \
+        cmake ../..  -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release && \
+        make -j $make_core && \
+        make DESTDIR=$wdir/libs install
 
-## use git_rev to make sure the last layers are run again, if there are new commits
-#ARG git_rev="HEAD"
-#ARG git_branch="feature/rs-9-alfa"
-#RUN cd $wdir && git clone -b $git_branch "https://github.com/robert7/nixnote2.git" && \
-#        cd nixnote2 && \
-#        git checkout $git_rev
+# use git_rev to make sure the last layers are run again, if there are new commits
+ARG git_rev="HEAD"
+ARG git_branch="feature/rs-9-alfa"
+RUN cd $wdir && git clone -b $git_branch "https://github.com/robert7/nixnote2.git" && \
+        cd nixnote2 && \
+        git checkout $git_rev
 
 
 
