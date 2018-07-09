@@ -59,8 +59,7 @@ Preparation steps
   * follow [build instructions](https://github.com/htacg/tidy-html5/blob/next/README/BUILD.md)
     * short version:
     * cd build/cmake
-    * edit "build-me.sh" change line with TMPINST to: TMPINST="../../../libs"
-    * ./build-me.sh DEBUG SHARED                      
+    * cmake ../..  -DCMAKE_INSTALL_PREFIX=../../../libs RELEASE -DBUILD_SHARED_LIB:BOOL=TRUE -DCMAKE_BUILD_TYPE=Release                      
     * make install
     * library is now copied to ../../../libs                                                                                         
 

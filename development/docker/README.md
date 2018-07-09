@@ -3,8 +3,7 @@
 WORK IN PROGRESS
 
 docker build -t nixnote2/trusty -f Dockerfile.ubuntu_trusty .
-docker run --name nixnote2_trusty nixnote2/trusty 
-docker exec -it nixnote2_trusty bash
+docker run -it nixnote2/trusty /bin/bash
 
 HOW TO USE
 
