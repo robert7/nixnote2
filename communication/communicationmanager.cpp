@@ -488,7 +488,7 @@ void CommunicationManager::reportError(
     const QString &internalMessage) {
     error.resetTo(errorType, code, message, internalMessage);
 
-    ///CHECK//global.setMessage(error.getMessage(), 0);
+    global.setMessage(error.getMessage(), 0);
 }
 
 void CommunicationManager::resetError() {
@@ -1089,3 +1089,9 @@ qint32 CommunicationManager::getMinutesToNextSync() {
     return this->minutesToNextSync;
 }
 
+int CommunicationManager::getLastErrorCode() const {
+    return error.getCode();
+}
+CommunicationError::CommunicationErrorType CommunicationManager::getLastErrorType() const {
+    return error.getType();
+}

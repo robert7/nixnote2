@@ -1923,6 +1923,8 @@ void NixNote::waitCursor(bool value) {
 
 
 // Show a message in the status bar
+// If timeout is 0 (default), the message remains displayed until the clearMessage() slot is called
+// or until the showMessage() slot is called again to change the message.
 void NixNote::setMessage(QString text, int timeout) {
     QLOG_TRACE_IN();
     statusBar()->showMessage(text, timeout);

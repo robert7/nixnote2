@@ -106,28 +106,14 @@ private:
                      const QString &message,
                      const QString &internalMessage = QString());
 
-    // UNUSED DISCARDED
-    //void handleStdException(const exception &ex);               // Handle std exception messages
-    // void debugTag(Tag tag);                                   // Dump a tag to the log
-    // void debugNote(Note note);
-    // void debugField(Optional<QString> field, QString name);
-    // void debugField(Optional<qint32> field, QString name);
-    //QString clientName;                       // Client name
-    //QString linkedNoteStorePath;              // URL for linked notebook.
-    //QString userStorePath;                    // Userstore URL path.
-    //bool inkNoteImageDownloaded;              // Is an inknote download ready?
-
-    // Used to report back errors
-
-    public:
+    CommunicationError error;
 
 public:
-    CommunicationError error;
 
     CommunicationManager(DatabaseConnection *db);              // Constructor
     ~CommunicationManager();                                   // Destructor
 
-    // its used (just clion does not recognise it)
+    // both are used (just clion does not recognise it)
     bool getSharedNotebookByAuth(SharedNotebook &sharedNotebook);    // Get a shared notebook by authorization key
     bool authenticateToLinkedNotebook(AuthenticationResult &authResult, LinkedNotebook &book);   // Authenticate to linked notebook account
 
@@ -164,10 +150,11 @@ public:
     bool listNoteVersions(QList<NoteVersionId> &list, QString guid);    // Get a list of note revisions
     bool getNoteVersion(Note &note, QString guid, qint32 usn, bool withResourceData=true, bool withResourceRecognition=true, bool withResourceAlternateData=true);  // Download a past version of a note from a linked account
     void loadTagGuidMap();                                     // Load the tag hashmap.
-    //QString  errorWhat(QString what);                           // help build error string
 
     qint32 getMinutesToNextSync();
     void resetError();
+    int getLastErrorCode() const;
+    CommunicationError::CommunicationErrorType getLastErrorType() const;
 
 public slots:
     int inkNoteReady(QImage *newImage, QImage *replyImage, int position);   // An inknote has been downloaded.
