@@ -1,7 +1,7 @@
-# currently additionally  PKG_CONFIG_PATH=$$PWD/../libs/lib/pkgconfig is needed
+# currently additionally  PKG_CONFIG_PATH=$$PWD/../libs/usr/lib/pkgconfig is needed
 
 
-QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
+QT += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 unix {
     CONFIG += link_pkgconfig

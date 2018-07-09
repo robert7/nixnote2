@@ -1,4 +1,4 @@
-FROM ubuntu:trusty
+FROM ubuntu:xenial
 
 ARG wdir="/opt"
 WORKDIR $wdir
@@ -8,19 +8,20 @@ ARG make_core=4
 ENV PATH="${wdir}/${cmake_ver}/bin:${PATH}"
 ENV PATH="${wdir}/linuxdeployqt:${PATH}"
 
+
+
 RUN apt-get update && apt-get install -y software-properties-common
 
-# install Qt 5.5 from PPA - https://launchpad.net/~beineri/+archive/ubuntu/opt-qt551-trusty
-# note: trusty would have 5.3 per default
-ENV PATH="/opt/qt55/bin:${PATH}"
-RUN add-apt-repository ppa:beineri/opt-qt551-trusty -y
-RUN add-apt-repository ppa:beineri/opt-qt551-trusty -y && apt-get update
+# install Qt from PPA
+# https://launchpad.net/~beineri/+archive/ubuntu/opt-qt551-trusty
+#ENV PATH="/opt/qt55/bin:${PATH}"
+#RUN add-apt-repository ppa:beineri/opt-qt58-trusty -y
+#RUN add-apt-repository ppa:beineri/opt-qt551-trusty -y && apt-get update
 
-RUN apt-get update && apt-get install -y git-core build-essential \
+RUN apt-get update && apt-get install -y git-core qt5-default build-essential \
                               wget curl make \
                               libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev libcurl4-openssl-dev \
-                              qt55base \
-                              qttools5-dev-tools
+                              libpoppler-qt5-dev libqt5webkit5-dev qt5-qmake qttools5-dev-tools
 
 
 # install cmake
