@@ -447,8 +447,31 @@ HEADERS  += \
     exits/exitmanager.h \
     dialog/preferences/exitpreferences.h
 
-linux:QMAKE_CXXFLAGS += -std=c++11 -g -O2 -fstack-protector-strong -Wformat -Werror=format-security
+# http://doc.qt.io/qt-5/qmake-function-reference.html#str-member-arg-start-end
+# $$left(VAR, len)
+#left = $$str_member(VAR, 0, $$num_add($$len, -1))
+
+# get g++ version
+gcc {
+    COMPILER_VERSION = $$system($$QMAKE_CXX " -dumpversion")
+    COMPILER_MAJOR_VERSION1 = $$split(COMPILER_VERSION, ".")
+    COMPILER_MAJOR_VERSION = $$first(COMPILER_MAJOR_VERSION1)
+    message("Compiler version $$COMPILER_MAJOR_VERSION")
+    COMPILER_CONFIG = g++$$COMPILER_MAJOR_VERSION
+    message("Adding compiler config $$COMPILER_CONFIG")
+    CONFIG += $$COMPILER_CONFIG
+}
+
+linux:QMAKE_CXXFLAGS += -std=c++11 -g -O2  -Wformat -Werror=format-security
 linux:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
+
+g++4 {
+  # this is a guess, but "stack-protector-strong" may not be available yet
+  QMAKE_CXXFLAGS += -fstack-protector
+} else {
+  QMAKE_CXXFLAGS += -fstack-protector-strong
+}
+
 
 win32:QMAKE_CXXFLAGS +=-g -O2 --param=ssp-buffer-size=4 -Wformat -Werror=format-security
 win32:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions

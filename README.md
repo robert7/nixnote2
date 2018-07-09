@@ -23,7 +23,7 @@ that minor adjustments are needed for the non linux builds.
 * Install development dependencies
   * Install basic dependencies (recipe for Ubuntu, use similar for other distros)
     * ```sudo apt-get install -y git-core qt5-default build-essential```
-    * ```sudo apt-get install -y libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev``` 
+    * ```sudo apt-get install -y libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev libcurl4-openssl-dev``` 
   * Install qt5 and poppler
     * ```sudo apt-get install -y libpoppler-qt5-dev```
     * ```sudo apt-get install -y libqt5webkit5-dev```

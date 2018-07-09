@@ -20,8 +20,8 @@ RUN apt-get update && apt-get install -y software-properties-common
 
 RUN apt-get update && apt-get install -y git-core qt5-default build-essential \
                               wget curl make \
-                              libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev \
-                              libpoppler-qt5-dev libqt5webkit5-dev qt5-qmake
+                              libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev libcurl4-openssl-dev \
+                              libpoppler-qt5-dev libqt5webkit5-dev qt5-qmake qttools5-dev-tools
 
 
 # install cmake
@@ -32,7 +32,8 @@ RUN wget -nv "https://cmake.org/files/v3.8/${cmake_ver}.tar.gz" && \
 RUN wget -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" && \
         chmod a+x ./linuxdeployqt-continuous-x86_64.AppImage && \
         ./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract && \
-        mv squashfs-root linuxdeployqt
+        mv squashfs-root linuxdeployqt && \
+        mv linuxdeployqt/AppRun linuxdeployqt/linuxdeployqt
 
 # compile tidy
 ARG git_rev_tidy="HEAD"
@@ -52,6 +53,7 @@ RUN cd $wdir && git clone -b $git_branch "https://github.com/robert7/nixnote2.gi
         cd nixnote2 && \
         git checkout $git_rev
 
+#RUN cd $wdir/nixnote2 && env PKG_CONFIG_PATH=/opt/libs/usr/lib/pkgconfig ./development/build-with-qmake.sh /usr debug
 
 
 
