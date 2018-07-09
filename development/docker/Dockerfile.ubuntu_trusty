@@ -1,0 +1,28 @@
+FROM ubuntu:trusty
+
+ARG wdir="/opt"
+WORKDIR $wdir
+ENV PATH="/opt/qt55/bin:${PATH}"
+
+RUN apt-get update && apt-get install -y software-properties-common
+RUN add-apt-repository ppa:beineri/opt-qt58-trusty -y
+RUN add-apt-repository ppa:beineri/opt-qt551-trusty -y && apt-get update
+
+# https://launchpad.net/~beineri/+archive/ubuntu/opt-qt551-trusty
+RUN apt-get update && apt-get install -y mesa-common-dev clang-3.5 wget curl make \
+        qt55base git libfuse2
+
+# use git_rev to make sure the last layers are run again, if there are new commits
+ARG git_rev="HEAD"
+ARG git_branch="feature/rs-9-alfa"
+
+RUN git clone -b $git_branch "https://github.com/robert7/nixnote2.git" && \
+        cd nixnote2 && \
+        git checkout $git_rev
+
+RUN wget -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" && \
+        mv -v ./linuxdeployqt-continuous-x86_64.AppImage ./linuxdeployqt && \
+        chmod a+x linuxdeployqt
+
+CMD /bin/bash
+
