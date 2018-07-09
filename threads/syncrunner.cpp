@@ -132,16 +132,15 @@ void SyncRunner::evernoteSync() {
         fullSync = true;
     }
 
-    emit setMessage(tr("Beginning Sync"), defaultMsgTimeout);
+    emit setMessage(tr("Beginning sync"), defaultMsgTimeout);
 
     // If there are remote changes
     QLOG_DEBUG() << "--->>>  Current Chunk High Sequence Number: " << syncState.updateCount;
     QLOG_DEBUG() << "--->>>  Last User High Sequence Number: " << updateSequenceNumber;
 
     if (syncState.updateCount > updateSequenceNumber) {
-        QLOG_DEBUG() << "Remote changes found";
-        QLOG_DEBUG() << "Downloading changes";
-        emit setMessage(tr("Downloading changes"), defaultMsgTimeout);
+        QLOG_DEBUG() << "Remote changes found. Downloading changes....";
+        emit setMessage(tr("Downloading changes.."), 0);
         bool rc = syncRemoteToLocal(syncState.updateCount);
         if (!rc) {
             error = true;

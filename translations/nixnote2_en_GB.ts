@@ -4891,12 +4891,12 @@ any key or using the right or middle mouse buttons.</source>
     <name>SyncRunner</name>
     <message>
         <location filename="../threads/syncrunner.cpp" line="135"/>
-        <source>Beginning Sync</source>
+        <source>Beginning sync</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../threads/syncrunner.cpp" line="143"/>
-        <source>Downloading changes</source>
+        <source>Downloading changes..</source>
         <translation></translation>
     </message>
     <message>

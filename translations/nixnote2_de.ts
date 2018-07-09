@@ -4957,12 +4957,12 @@ oder drücke eine Taste oder verwende die rechte oder mittlere Maustaste, um die
     <name>SyncRunner</name>
     <message>
         <location filename="../threads/syncrunner.cpp" line="135"/>
-        <source>Beginning Sync</source>
+        <source>Beginning sync</source>
         <translation>Starte die Synchronisierung</translation>
     </message>
     <message>
         <location filename="../threads/syncrunner.cpp" line="143"/>
-        <source>Downloading changes</source>
+        <source>Downloading changes..</source>
         <translation>Lade Änderungen herunter</translation>
     </message>
     <message>

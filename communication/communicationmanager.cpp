@@ -488,7 +488,7 @@ void CommunicationManager::reportError(
     const QString &internalMessage) {
     error.resetTo(errorType, code, message, internalMessage);
 
-    global.setMessage(error.getMessage(), 0);
+    global.setMessage(tr("Error in sync: ") + error.getMessage(), 0);
 }
 
 void CommunicationManager::resetError() {

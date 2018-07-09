@@ -5012,12 +5012,12 @@ nebo ukončete snímkování libovolnou klávesou či prostředním tlačítekm 
     <name>SyncRunner</name>
     <message>
         <location filename="../threads/syncrunner.cpp" line="135"/>
-        <source>Beginning Sync</source>
+        <source>Beginning sync</source>
         <translation>Zahajuji synchronizaci</translation>
     </message>
     <message>
         <location filename="../threads/syncrunner.cpp" line="143"/>
-        <source>Downloading changes</source>
+        <source>Downloading changes..</source>
         <translation>Stahuji změny</translation>
     </message>
     <message>
