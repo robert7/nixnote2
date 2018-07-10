@@ -2,7 +2,8 @@
 Following the recipe will create [AppImage packaged binary](https://appimage.org/). 
 This then should run on all distributions which are ~same date or more recent then selected build system
 (e.g. Ubuntu 16.04).
-So basically, if build with 16.04, then all newer then 2016 should be OK. **At least in theory :)**
+So basically, if build with 16.04, then all newer distribution then 2016 should be OK. 
+**At least in theory :)**
 
 ## Ubuntu 16.04 (xenial)
 
@@ -38,13 +39,10 @@ docker stop nixnote2_xenial
 docker start -a nixnote2_xenial
 ```
 
-
-
-
 ## Ubuntu 14.04 (trusty)
 WORK IN PROGRESS - !! doesn't work yet !!
 
 ```bash  
-#docker build -t nixnote2/trusty -f Dockerfile.ubuntu_trusty .
+#docker build -t nixnote2/trusty -f ./development/docker/Dockerfile.ubuntu_trusty .
 #docker run -it nixnote2/trusty /bin/bash
 ```
