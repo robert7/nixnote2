@@ -1,9 +1,17 @@
 # docker build helper
-
 WORK IN PROGRESS
 
+## Ubuntu 16.04 (xenial)
+cd $PROJECTDIR/development/docker
+docker build -t nixnote2/xenial -f Dockerfile.ubuntu_xenial .
+docker run -it nixnote2/xenial /bin/bash
+
+## Ubuntu 14.04 (trusty) !! doesn't work yet !!
+cd $PROJECTDIR/development/docker
 docker build -t nixnote2/trusty -f Dockerfile.ubuntu_trusty .
 docker run -it nixnote2/trusty /bin/bash
+
+
 
 HOW TO USE
 

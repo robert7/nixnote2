@@ -210,48 +210,41 @@ void DebugTool::dumpField(Optional<QString> field, QString name) {
             QLOG_DEBUG() << name << ":" << fieldValue << ":";
         }
     }
-    // else
-    //     QLOG_DEBUG() << name << " is not set.";
 }
 
 
 void DebugTool::dumpField(Optional<bool> field, QString name) {
-    if (field.isSet())
+    if (field.isSet()) {
         QLOG_DEBUG() << name << ":" << field << ":";
-    // else
-    //     QLOG_DEBUG() << name << " is not set.";
+    }
 }
 
 
 void DebugTool::dumpField(Optional<double> field, QString name) {
-    if (field.isSet())
+    if (field.isSet()) {
         QLOG_DEBUG() << name << ":" << field << ":";
-    // else
-    //     QLOG_DEBUG() << name << " is not set.";
+    }
 }
 
 
 void DebugTool::dumpField(Optional<qint32> field, QString name) {
-    if (field.isSet())
+    if (field.isSet()) {
         QLOG_DEBUG() << name << ":" << field << ":";
-    // else
-    //     QLOG_DEBUG() << name << " is not set.";
+    }
 }
 
 
 void DebugTool::dumpField(Optional<long long> field, QString name) {
-    if (field.isSet())
+    if (field.isSet()) {
         QLOG_DEBUG() << name << ":" << field << ":";
-    // else
-    //     QLOG_DEBUG() << name << " is not set.";
+    }
 }
 
 
 void DebugTool::dumpField(Optional<short int> field, QString name) {
-    if (field.isSet())
+    if (field.isSet()) {
         QLOG_DEBUG() << name << ":" << field << ":";
-    // else
-    //     QLOG_DEBUG() << name << " is not set.";
+    }
 }
 
 
@@ -262,15 +255,11 @@ void DebugTool::dumpField(Optional<QByteArray> field, QString name, bool hexValu
             QLOG_DEBUG() << name << ":" << hex.toHex() << ":";
         } else QLOG_DEBUG() << name << ":" << field << ":";
     }
-    // else {
-    //     QLOG_DEBUG() << name << " is not set.";
-    // }
 }
 
 
 void DebugTool::dumpField(Optional<QStringList> field, QString name) {
     if (!field.isSet()) {
-        // QLOG_DEBUG() << name << " is not set.";
         return;
     }
     QStringList fields = field;
@@ -283,7 +272,6 @@ void DebugTool::dumpField(Optional<QStringList> field, QString name) {
 
 void DebugTool::dumpField(Optional<QList<QString> > field, QString name) {
     if (!field.isSet()) {
-        // QLOG_DEBUG() << name << " is not set.";
         return;
     }
     QList<QString> fields = field;

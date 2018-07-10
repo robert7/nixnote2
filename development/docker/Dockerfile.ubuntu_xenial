@@ -8,21 +8,11 @@ ARG make_core=4
 ENV PATH="${wdir}/${cmake_ver}/bin:${PATH}"
 ENV PATH="${wdir}/linuxdeployqt:${PATH}"
 
-
-
 RUN apt-get update && apt-get install -y software-properties-common
-
-# install Qt from PPA
-# https://launchpad.net/~beineri/+archive/ubuntu/opt-qt551-trusty
-#ENV PATH="/opt/qt55/bin:${PATH}"
-#RUN add-apt-repository ppa:beineri/opt-qt58-trusty -y
-#RUN add-apt-repository ppa:beineri/opt-qt551-trusty -y && apt-get update
-
 RUN apt-get update && apt-get install -y git-core qt5-default build-essential \
-                              wget curl make \
+                              wget curl make pkg-config \
                               libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev libcurl4-openssl-dev \
                               libpoppler-qt5-dev libqt5webkit5-dev qt5-qmake qttools5-dev-tools
-
 
 # install cmake
 RUN wget -nv "https://cmake.org/files/v3.8/${cmake_ver}.tar.gz" && \
@@ -54,15 +44,13 @@ RUN cd $wdir && git clone -b $git_branch "https://github.com/robert7/nixnote2.gi
         cd nixnote2 && \
         git checkout $git_rev
 
-#RUN cd $wdir/nixnote2 &&
+# should NOT be needed:
 #env PKG_CONFIG_PATH=/opt/libs/usr/lib/pkgconfig
-#./development/build-with-qmake.sh /usr debug
 
 
-
-
-
-
+RUN cd $wdir/nixnote2 && ./development/build-with-qmake.sh /usr debug
+RUN cd $wdir/nixnote2 && ./development/create-AppImage.sh
+#RUN cd $wdir/nixnote2 && mv *.AppImage appdir
 
 CMD /bin/bash
 
