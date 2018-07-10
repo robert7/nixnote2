@@ -26,31 +26,17 @@ RUN wget -nv "https://github.com/probonopd/linuxdeployqt/releases/download/conti
         mv linuxdeployqt/AppRun linuxdeployqt/linuxdeployqt
 
 # compile tidy
-ARG git_rev_tidy="HEAD"
-ARG git_branch_tidy="master"
-RUN cd $wdir && git clone -b $git_branch_tidy "https://github.com/htacg/tidy-html5.git" && \
+ARG GIT_REV_TIDY="HEAD"
+ARG GIT_BRANCH_TIDY="master"
+RUN cd $wdir && git clone -b $GIT_BRANCH_TIDY "https://github.com/htacg/tidy-html5.git" && \
         cd tidy-html5 && \
-        git checkout $git_rev_tidy && \
+        git checkout $GIT_REV_TIDY && \
         cd build/cmake && \
         cmake ../..  -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release && \
         make -j $make_core && \
         make install
 
-# use git_rev to make sure the last layers are run again, if there are new commits
-ARG git_rev1="HEAD"
-ARG git_rev="HEAD"
-ARG git_branch="feature/rs-9-alfa"
-RUN cd $wdir && git clone -b $git_branch "https://github.com/robert7/nixnote2.git" && \
-        cd nixnote2 && \
-        git checkout $git_rev
-
-# should NOT be needed:
-#env PKG_CONFIG_PATH=/opt/libs/usr/lib/pkgconfig
-
-
-RUN cd $wdir/nixnote2 && ./development/build-with-qmake.sh /usr debug
-RUN cd $wdir/nixnote2 && ./development/create-AppImage.sh
-#RUN cd $wdir/nixnote2 && mv *.AppImage appdir
+RUN cd $wdir && git clone "https://github.com/robert7/nixnote2.git" && cd nixnote2 && git checkout master
 
 CMD /bin/bash
 

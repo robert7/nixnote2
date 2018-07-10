@@ -1,30 +1,50 @@
-# docker build helper
-WORK IN PROGRESS
+# Docker build helper
+Following the recipe will create [AppImage packaged binary](https://appimage.org/). 
+This then should run on all distributions which are ~same date or more recent then selected build system
+(e.g. Ubuntu 16.04).
+So basically, if build with 16.04, then all newer then 2016 should be OK. **At least in theory :)**
 
 ## Ubuntu 16.04 (xenial)
-cd $PROJECTDIR/development/docker
-docker build -t nixnote2/xenial -f Dockerfile.ubuntu_xenial .
-docker run -it nixnote2/xenial /bin/bash
 
-## Ubuntu 14.04 (trusty) !! doesn't work yet !!
-cd $PROJECTDIR/development/docker
-docker build -t nixnote2/trusty -f Dockerfile.ubuntu_trusty .
-docker run -it nixnote2/trusty /bin/bash
+```bash
+# replace path with real project path
+PROJECTDIR=/d/dev/nixnote2
+cd $PROJECTDIR
+# create "builder" image 
+docker build -t nixnote2/xenial -f ./development/docker/Dockerfile.ubuntu_xenial ./development/docker
+# delete appdir content
+rm -rf appdir; mkdir appdir
+
+# start container (note: each call creates new container(
+docker run -v $PROJECTDIR/appdir:/opt/nixnote2/appdir -it nixnote2/xenial /bin/bash
+
+# checkout right branch/pull
+cd nixnote2 && git checkout master && git pull
+# compile (debug mode) 
+./development/build-with-qmake.sh /usr debug && ./development/create-AppImage.sh && mv *.AppImage appdir
+# now terminate session (Ctrl-D), to return to host
+
+ls appdir/*.AppImage # => this one file is your result binary
+```
+
+```bash
+# more advanced combination with container reuse (after image has been build)
+docker run --name nixnote2_xenial -it nixnote2/xenial /bin/bash
+... compile or whatever...
+
+# from other terminal session at host:
+docker stop nixnote2_xenial
+# later: restart & reuse
+docker start -a nixnote2_xenial
+```
 
 
 
-HOW TO USE
 
-?????????????
-run docker container interactively and allow access to fuse device
-docker run -it --cap-add SYS_ADMIN --device /dev/fuse trustylab
-enter labpowerqt build directory and run linuxdeployqt
+## Ubuntu 14.04 (trusty)
+WORK IN PROGRESS - !! doesn't work yet !!
 
-
-source /opt/qt5*/bin/qt5*-env.sh
-./linuxdeployqt appdir/usr/share/applications/*.desktop -bundle-non-qt-libs && \
-./linuxdeployqt appdir/usr/share/applications/*.desktop -appimage
-
-use docker cp to copy the generated appimage. the appimage has the same
-architecture than the host system.
-
+```bash  
+#docker build -t nixnote2/trusty -f Dockerfile.ubuntu_trusty .
+#docker run -it nixnote2/trusty /bin/bash
+```
