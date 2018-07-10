@@ -1,8 +1,11 @@
 # CHANGELOG
 
 ## 2018-07
-### 9
-
+### #9
+* Added **docker build**. Creating binaries ouf of source is now very straightforward.
+* Improved reporting and logging of errors (mainly for sync errors). The messages may be now
+  more technical (can be improved later), but should at least display always and more 
+  details are in log.
 
 ### #8
 * **Redesigned html cleanup** to prevent sync errors. Now newest html tidy libray is used (currently v.5.6). 
