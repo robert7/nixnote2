@@ -21,9 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 
 
-DebugTool::DebugTool()
-{
-}
+DebugTool::DebugTool() = default;
 
 
 //************************************
@@ -39,11 +37,10 @@ void DebugTool::dumpTag(Tag tag) {
 }
 
 
-
 //************************************
 // Dump a saved search to the debug log
 //************************************
-void DebugTool::dumpSavedSearch(SavedSearch search) {
+void DebugTool::dumpSavedSearch(SavedSearch &search) {
     QLOG_DEBUG() << "*** Dumping Saved Search ***";
     dumpField(search.guid, "guid");
     dumpField(search.name, "name");
@@ -51,25 +48,26 @@ void DebugTool::dumpSavedSearch(SavedSearch search) {
     dumpField(search.updateSequenceNum, "USN");
     if (search.format.isSet())
         QLOG_DEBUG() << "format:" << search.format << ":";
-    else
-        QLOG_DEBUG() << "format not found.";
+    else QLOG_DEBUG() << "format not found.";
     if (search.scope.isSet()) {
         SavedSearchScope scope = search.scope;
         dumpField(scope.includeAccount, "includeAccount");
         dumpField(scope.includePersonalLinkedNotebooks, "includePersonalLinkedNotebooks");
         dumpField(scope.includeBusinessLinkedNotebooks, "includeBusinessLinkedNotebooks");
-    } else
-        QLOG_DEBUG() << "search scope not found.";
+    } else QLOG_DEBUG() << "search scope not found.";
 
     QLOG_DEBUG() << "*** Saved Search Dump Complete ***";
 }
 
 
-
 //************************************
 // Dump a note to the debug log
 //************************************
-void DebugTool::dumpNote(Note note) {
+void DebugTool::dumpNote(const Note &note) {
+    if (!QLOG_IS_DEBUG) {
+        return;
+    }
+
     QLOG_DEBUG() << "*** Dumping Note ***";
     dumpField(note.guid, "guid");
     dumpField(note.active, "active");
@@ -83,6 +81,7 @@ void DebugTool::dumpNote(Note note) {
     dumpField(note.updateSequenceNum, "USN");
     dumpField(note.tagGuids, "tag guids");
     dumpField(note.tagNames, "tag names");
+
     if (!note.attributes.isSet()) {
         QLOG_DEBUG() << "no note attributes found.";
     } else {
@@ -109,7 +108,7 @@ void DebugTool::dumpNote(Note note) {
     if (note.resources.isSet()) {
         QList<Resource> resources = note.resources;
         QLOG_DEBUG() << resources.size() << " resources found";
-        for (int i=0; i<resources.size(); i++) {
+        for (int i = 0; i < resources.size(); i++) {
             QLOG_DEBUG() << "resource #" << i;
             dumpResource(resources[i]);
         }
@@ -134,22 +133,17 @@ void DebugTool::dumpResource(Resource r) {
     if (r.data.isSet()) {
         QLOG_DEBUG() << "resource data found:";
         dumpData(r.data);
-    } else
-        QLOG_DEBUG() << "resource data not found.";
+    } else QLOG_DEBUG() << "resource data not found.";
     if (r.recognition.isSet()) {
         QLOG_DEBUG() << "resource recognition data found:";
         dumpData(r.data);
-    } else
-        QLOG_DEBUG() << "resource recognition data not found.";
+    } else QLOG_DEBUG() << "resource recognition data not found.";
     if (r.alternateData.isSet()) {
         QLOG_DEBUG() << "resource alternate data found:";
         dumpData(r.alternateData);
-    } else
-        QLOG_DEBUG() << "resource alternate data not found.";
+    } else QLOG_DEBUG() << "resource alternate data not found.";
     QLOG_DEBUG() << "*** Resource Dump Complete ***";
 }
-
-
 
 
 //******************************************
@@ -161,8 +155,6 @@ void DebugTool::dumpData(Data d) {
     dumpField(d.size, "size");
     QLOG_DEBUG() << "*** Data Field Dump Complete ***";
 }
-
-
 
 
 //************************************
@@ -184,8 +176,7 @@ void DebugTool::dumpNotebook(Notebook n) {
         dumpField(p.uri, "uri");
         QLOG_DEBUG() << "order:" << p.order << ":";
         dumpField(p.publicDescription, "publicDescription");
-    } else
-        QLOG_DEBUG() << "publishing data not found";
+    } else QLOG_DEBUG() << "publishing data not found";
     if (n.businessNotebook.isSet()) {
         QLOG_DEBUG() << "businessnotebook data:";
         BusinessNotebook b = n.businessNotebook;
@@ -214,67 +205,47 @@ void DebugTool::dumpField(Optional<QString> field, QString name) {
     if (field.isSet()) {
         QString &fieldValue = field.ref();
         if (fieldValue.length() > 100) {
-           QLOG_DEBUG_FILE(QString("attr-").append(name),field);
+            QLOG_DEBUG_FILE(QString("attr-").append(name), field);
         } else {
             QLOG_DEBUG() << name << ":" << fieldValue << ":";
         }
     }
-    // else
-    //     QLOG_DEBUG() << name << " is not set.";
 }
-
-
-
-
 
 
 void DebugTool::dumpField(Optional<bool> field, QString name) {
-    if (field.isSet())
+    if (field.isSet()) {
         QLOG_DEBUG() << name << ":" << field << ":";
-    // else
-    //     QLOG_DEBUG() << name << " is not set.";
+    }
 }
-
 
 
 void DebugTool::dumpField(Optional<double> field, QString name) {
-    if (field.isSet())
+    if (field.isSet()) {
         QLOG_DEBUG() << name << ":" << field << ":";
-    // else
-    //     QLOG_DEBUG() << name << " is not set.";
+    }
 }
-
 
 
 void DebugTool::dumpField(Optional<qint32> field, QString name) {
-    if (field.isSet())
+    if (field.isSet()) {
         QLOG_DEBUG() << name << ":" << field << ":";
-    // else
-    //     QLOG_DEBUG() << name << " is not set.";
+    }
 }
-
-
 
 
 void DebugTool::dumpField(Optional<long long> field, QString name) {
-    if (field.isSet())
+    if (field.isSet()) {
         QLOG_DEBUG() << name << ":" << field << ":";
-    // else
-    //     QLOG_DEBUG() << name << " is not set.";
+    }
 }
-
-
-
 
 
 void DebugTool::dumpField(Optional<short int> field, QString name) {
-    if (field.isSet())
+    if (field.isSet()) {
         QLOG_DEBUG() << name << ":" << field << ":";
-    // else
-    //     QLOG_DEBUG() << name << " is not set.";
+    }
 }
-
-
 
 
 void DebugTool::dumpField(Optional<QByteArray> field, QString name, bool hexValue) {
@@ -282,39 +253,30 @@ void DebugTool::dumpField(Optional<QByteArray> field, QString name, bool hexValu
         if (hexValue) {
             QByteArray hex = field;
             QLOG_DEBUG() << name << ":" << hex.toHex() << ":";
-        } else
-            QLOG_DEBUG() << name << ":" << field << ":";
+        } else QLOG_DEBUG() << name << ":" << field << ":";
     }
-    // else {
-    //     QLOG_DEBUG() << name << " is not set.";
-    // }
 }
 
 
-
-
-void DebugTool::dumpField(Optional<QStringList>  field, QString name) {
+void DebugTool::dumpField(Optional<QStringList> field, QString name) {
     if (!field.isSet()) {
-        // QLOG_DEBUG() << name << " is not set.";
         return;
     }
     QStringList fields = field;
     QLOG_DEBUG() << name << " has " << fields.size() << " entries.";
-    for (int i=0; i<fields.size(); i++) {
+    for (int i = 0; i < fields.size(); i++) {
         QLOG_DEBUG() << "#" << i << ":" << fields[i];
     }
 }
 
 
-
-void DebugTool::dumpField(Optional< QList<QString> >  field, QString name) {
+void DebugTool::dumpField(Optional<QList<QString> > field, QString name) {
     if (!field.isSet()) {
-        // QLOG_DEBUG() << name << " is not set.";
         return;
     }
     QList<QString> fields = field;
     QLOG_DEBUG() << name << " has " << fields.size() << " entries.";
-    for (int i=0; i<fields.size(); i++) {
+    for (int i = 0; i < fields.size(); i++) {
         QLOG_DEBUG() << "#" << i << ":" << fields[i];
     }
 }

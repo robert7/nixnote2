@@ -72,12 +72,13 @@ void SyncRunner::synchronize() {
 
 
     // If we are already connected, we are already synchronizing so there is nothing more to do
-    if (global.connected == true)
+    if (global.connected) {
         return;
+    }
 
     error = false;
+    comm->resetError();
 
-    comm->error.reset();
     if (!comm->enConnect()) {
         this->communicationErrorHandler();
         error = true;
@@ -96,8 +97,9 @@ void SyncRunner::synchronize() {
 
 void SyncRunner::evernoteSync() {
     QLOG_TRACE() << "Sync thread:" << QThread::currentThreadId();
-    if (!global.connected)
+    if (!global.connected) {
         return;
+    }
 
     User user;
     UserTable userTable(db);
@@ -126,21 +128,23 @@ void SyncRunner::evernoteSync() {
         fullSync = true;
     }
 
-    if (updateSequenceNumber == 0)
+    if (updateSequenceNumber == 0) {
         fullSync = true;
+    }
 
-    emit setMessage(tr("Beginning Sync"), defaultMsgTimeout);
+    emit setMessage(tr("Beginning sync"), defaultMsgTimeout);
+
     // If there are remote changes
     QLOG_DEBUG() << "--->>>  Current Chunk High Sequence Number: " << syncState.updateCount;
     QLOG_DEBUG() << "--->>>  Last User High Sequence Number: " << updateSequenceNumber;
 
     if (syncState.updateCount > updateSequenceNumber) {
-        QLOG_DEBUG() << "Remote changes found";
-        QLOG_DEBUG() << "Downloading changes";
-        emit setMessage(tr("Downloading changes"), defaultMsgTimeout);
+        QLOG_DEBUG() << "Remote changes found. Downloading changes....";
+        emit setMessage(tr("Downloading changes.."), 0);
         bool rc = syncRemoteToLocal(syncState.updateCount);
-        if (!rc)
+        if (!rc) {
             error = true;
+        }
     }
 
     if (!comm->getUserInfo(user)) {
@@ -677,11 +681,13 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
 
 
         // ***** STARTING PASS #1
+
+
         while (more && keepRunning) {
             SyncChunk chunk;
             if (!comm->getLinkedNotebookSyncChunk(chunk, book, usn, chunkSize, fs)) {
                 more = false;
-                if (comm->error.getType() == CommunicationError::EDAMNotFoundException) {
+                if (comm->getLastErrorType() == CommunicationError::EDAMNotFoundException) {
                     ltable.expunge(lids[i]);
                     if (!finalSync)
                         emit(notebookExpunged(lids[i]));
@@ -720,11 +726,13 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
         if (book.shareName.isSet())
             sharename = book.shareName;
         emit setMessage(tr("Downloading notes for shared notebook ") + sharename + tr("."), defaultMsgTimeout);
+
+
         while (more && keepRunning) {
             SyncChunk chunk;
             if (!comm->getLinkedNotebookSyncChunk(chunk, book, usn, chunkSize, fs)) {
                 more = false;
-                if (comm->error.getType() == CommunicationError::EDAMNotFoundException) {
+                if (comm->getLastErrorType()== CommunicationError::EDAMNotFoundException) {
                     ltable.expunge(lids[i]);
                     if (!finalSync)
                         emit(notebookExpunged(lids[i]));
@@ -1191,17 +1199,10 @@ qint32 SyncRunner::uploadPersonalNotes() {
 }
 
 
-// Return a pointer to the CommunicationManager error class
-CommunicationError *SyncRunner::getError() {
-    return &comm->error;
-}
-
-
 // If a communication error happened, try to determine what the error is and
 // notify the user
 void SyncRunner::communicationErrorHandler() {
-    CommunicationError &error = comm->error;
-    CommunicationError::CommunicationErrorType type = error.getType();
+    CommunicationError::CommunicationErrorType type = comm->getLastErrorType();
 
     if (type == CommunicationError::None) {
         return;
@@ -1212,10 +1213,11 @@ void SyncRunner::communicationErrorHandler() {
         apiRateLimitExceeded = true;
     }
     if (type == CommunicationError::EDAMUserException) {
-        if (error.getCode() == EDAMErrorCode::AUTH_EXPIRED) {
+        if (comm->getLastErrorCode() == EDAMErrorCode::AUTH_EXPIRED) {
             global.accountsManager->setOAuthToken("");
         }
     }
-    emit(setMessage(error.getMessage(), 0));
+    // should be already displayed by "error" itself
+    //emit(setMessage(comm->error.getMessage(), 0));
 }
 

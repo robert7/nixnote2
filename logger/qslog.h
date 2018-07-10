@@ -135,8 +135,10 @@ namespace QsLogging {
 #define QLOG_FATAL() \
       (QsLogging::Logger::Helper(QsLogging::FatalLevel).stream() <<  __FILE__ << ':' << __LINE__ << ' ')
 
-#define QLOG_DEBUG_FILE(logid, content) if (QsLogging::Logger::instance().loggingLevel() > QsLogging::DebugLevel) { } \
-      else { QsLogging::Logger::Helper(QsLogging::DebugLevel).stream() <<  __FILE__ << ':' << __LINE__ << ' ' << "Attachment: " << (logid); \
+#define QLOG_IS_DEBUG (QsLogging::Logger::instance().loggingLevel() <= QsLogging::DebugLevel)
+
+#define QLOG_DEBUG_FILE(logid, content) if (QLOG_IS_DEBUG) \
+    { QsLogging::Logger::Helper(QsLogging::DebugLevel).stream() <<  __FILE__ << ':' << __LINE__ << ' ' << "Attachment: " << (logid); \
       QsLogging::Logger::instance().writeToFile(logid, content); }
 
 

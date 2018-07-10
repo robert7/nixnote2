@@ -4960,12 +4960,12 @@ en appuyant sur n&apos;importe quelle touche.</translation>
     <name>SyncRunner</name>
     <message>
         <location filename="../threads/syncrunner.cpp" line="135"/>
-        <source>Beginning Sync</source>
+        <source>Beginning sync</source>
         <translation>Synchronisation en cours</translation>
     </message>
     <message>
         <location filename="../threads/syncrunner.cpp" line="143"/>
-        <source>Downloading changes</source>
+        <source>Downloading changes..</source>
         <translation>Téléchargement des changements</translation>
     </message>
     <message>

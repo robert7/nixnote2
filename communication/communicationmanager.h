@@ -73,18 +73,14 @@ class CommunicationManager : public QObject
     Q_OBJECT
 
 private:
-    bool inkNoteImageDownloaded;              // Is an inknote download ready?
     bool initComplete;                        // Has the class been properly initialized?
     DatabaseConnection *db;                   // Database connection
     bool initNoteStore();                     // Initialize the Notestore connection
     QUrl *postData;                           // URL used to communicate with Evernote
 
-    QString userStorePath;                    // Userstore URL path.
     QString noteStorePath;                    // Notestore URL path.
-    QString clientName;                       // Client name
     QString evernoteHost;                     // Evernote server URL.
 
-    QString linkedNoteStorePath;              // URL for linked notebook.
     AuthenticationResult linkedAuth;          // Linked notebook authorization key
     QString linkedAuthToken;                  // linked notebook authorization token
 
@@ -99,22 +95,28 @@ private:
     QNetworkAccessManager *networkAccessManager;              // Network connection to download inknotes
     void handleEDAMSystemException(EDAMSystemException e, QString additionalInfo = "");
     void handleEDAMNotFoundException(EDAMNotFoundException e, QString additionalInfo = "");
-    void handleStdException(const exception &ex);               // Handle std exception messages
     UserStore *userStore;                                     // UserStore class
     NoteStore *noteStore;                                     // Notestore class
     NoteStore *linkedNoteStore;                               // Linked notestore class
     NoteStore *myNoteStore;                                   // local account notestore class
     void processSyncChunk(SyncChunk &chunk, QString token);   // Deal with a sync chunk.
-    void debugTag(Tag tag);                                   // Dump a tag to the log
-    void debugNote(Note note);
-    void debugField(Optional<QString> field, QString name);
-    void debugField(Optional<qint32> field, QString name);
+    void dumpNote(const Note &note) const;
+    void reportError(const CommunicationError::CommunicationErrorType errorType,
+                     int code,
+                     const QString &message,
+                     const QString &internalMessage = QString());
 
+    CommunicationError error;
 
 public:
+
     CommunicationManager(DatabaseConnection *db);              // Constructor
     ~CommunicationManager();                                   // Destructor
-    CommunicationError error;                                  // Used to report back errors
+
+    // both are used (just clion does not recognise it)
+    bool getSharedNotebookByAuth(SharedNotebook &sharedNotebook);    // Get a shared notebook by authorization key
+    bool authenticateToLinkedNotebook(AuthenticationResult &authResult, LinkedNotebook &book);   // Authenticate to linked notebook account
+
     bool enConnect();                                            // Connect to Evernote
     bool getSyncState(QString authToken, SyncState &syncState);    // Download the last sync state
     bool getSyncChunk(SyncChunk &chunk, int start, int chunkSize, int type, bool fullSync, QString token="");   // Download a sync chunk
@@ -122,13 +124,11 @@ public:
     bool getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook &book, int start, int chunkSize, bool fullSync);   // Get linked notebook sync chunk
     void enDisconnect();                                         // Disconnect from evernote
     bool authenticateToLinkedNotebookShard(LinkedNotebook &book);    // Authenticate to a linked notebook account owner shard
-    bool authenticateToLinkedNotebook(AuthenticationResult &authResult, LinkedNotebook &book);   // Authenticate to linked notebook account
     bool getUserInfo(User &user);                              // Get user information
     bool getNote(Note &n, QString guid, bool wthResource, bool withRecognition, bool withResource);
     QList< QPair<QString, QImage*>* > *inkNoteList;            // List to store inknotes downloaded from account.
     QList< QPair<QString, QImage*>* > *thumbnailList;          // List to store thumbnails from account (not used)
     QHash<QString,QString> *tagGuidMap;                        // Temporary hashmap used to store tags.  Keeps from repetitive DB lookups filling in tag names
-    bool getSharedNotebookByAuth(SharedNotebook &sharedNotebook);    // Get a shared notebook by authorization key
 
     qint32 uploadSavedSearch(SavedSearch &search);             // Upload a saved search to Evernote
     qint32 expungeSavedSearch(Guid guid);                      // Expunge/delete a saved search
@@ -150,9 +150,11 @@ public:
     bool listNoteVersions(QList<NoteVersionId> &list, QString guid);    // Get a list of note revisions
     bool getNoteVersion(Note &note, QString guid, qint32 usn, bool withResourceData=true, bool withResourceRecognition=true, bool withResourceAlternateData=true);  // Download a past version of a note from a linked account
     void loadTagGuidMap();                                     // Load the tag hashmap.
-    QString  errorWhat(QString what);                           // help build error string
 
     qint32 getMinutesToNextSync();
+    void resetError();
+    int getLastErrorCode() const;
+    CommunicationError::CommunicationErrorType getLastErrorType() const;
 
 public slots:
     int inkNoteReady(QImage *newImage, QImage *replyImage, int position);   // An inknote has been downloaded.

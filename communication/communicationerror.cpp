@@ -46,7 +46,11 @@ bool CommunicationError::retry() {
 }
 
 // reset class to given exception/error info
-void CommunicationError::resetTo(CommunicationErrorType type, int code, QString message, QString internalMessage) {
+void CommunicationError::resetTo(
+    CommunicationErrorType type,
+    int code,
+    const QString &message,
+    const QString &internalMessage) {
     reset();
     this->type = type;
     this->code = code;
@@ -68,14 +72,17 @@ void CommunicationError::resetTo(CommunicationErrorType type, int code, QString 
     // then by message
     msg.append(": ");
     msg.append(message);
+
     // save like this
     this->message = msg;
+
     // then append internal message
     if (!internalMessage.isEmpty()) {
         msg.append(" ## " + internalMessage);
     }
 
-    // check if this is the right point to print, or we hant to have dedicated method
+    // check if this is the right point to print, or we will need dedicated method
+    // access the display version by getMessage()
     QLOG_ERROR() << msg;
 }
 

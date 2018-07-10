@@ -1503,5 +1503,6 @@ QString Global::setupShortcut(QAction *action, QString shortCutCode) {
 }
 
 void Global::setMessage(QString msg, int timeout) {
+    // sent "setMessage" signal
     emit setMessageSignal(msg, timeout);
 }

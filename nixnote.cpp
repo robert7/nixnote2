@@ -1451,13 +1451,15 @@ void NixNote::syncTimerExpired() {
 //******************************************************************************
 void NixNote::synchronize() {
     // If we are already connected, we are already synchronizing so there is nothing more to do
-    if (global.connected == true)
+    if (global.connected) {
         return;
+    }
 
     this->pauseIndexing(true);
 
-    if (tabWindow->currentBrowser()->noteTitle.hasFocus())
+    if (tabWindow->currentBrowser()->noteTitle.hasFocus()) {
         tabWindow->currentBrowser()->noteTitle.checkNoteTitleChange();
+    }
 
     if (!global.accountsManager->oauthTokenFound()) {
         QString consumerKey = "baumgarr-3523";
@@ -1479,7 +1481,7 @@ void NixNote::synchronize() {
     }
 
     this->saveContents();
-    statusBar()->clearMessage();
+    //statusBar()->clearMessage();
 
     tabWindow->saveAllNotes();
     syncButtonTimer.start(3);
@@ -1923,6 +1925,8 @@ void NixNote::waitCursor(bool value) {
 
 
 // Show a message in the status bar
+// If timeout is 0 (default), the message remains displayed until the clearMessage() slot is called
+// or until the showMessage() slot is called again to change the message.
 void NixNote::setMessage(QString text, int timeout) {
     QLOG_TRACE_IN();
     statusBar()->showMessage(text, timeout);
@@ -3787,11 +3791,12 @@ void NixNote::toolbarVisibilityChanged() {
 //Turn on presentation mode
 void NixNote::presentationModeOn() {
     this->leftScroll->hide();
-//    this->toggleLeftPanel();
-//    this->toggleLeftPanel();
+    //    this->toggleLeftPanel();
+    //    this->toggleLeftPanel();
     this->menuBar->setVisible(false);
     this->topRightWidget->setVisible(false);
     this->toolBar->setVisible(false);
+
     this->statusBar()->setVisible(false);
     this->showFullScreen();
     global.isFullscreen = true;

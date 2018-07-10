@@ -1,9 +1,12 @@
 # CHANGELOG
 
 ## 2018-07
+### 9
+
+
 ### #8
-* **Redesigned html cleanup**. Now newest html tidy libray is used (currently v.5.6). Before system level
-  tidy executable was used, which could be like 9 years old.
+* **Redesigned html cleanup** to prevent sync errors. Now newest html tidy libray is used (currently v.5.6). 
+  Before system level tidy executable was used, which could be like 9 years old.
   Pasting ~any html content into note should work now. Although sometimes images are not recognised.
   Images need to be attached manually (e.g. by drag & drop.) 
 * Improved exception handling and logging. Removed log level setting in gui. Log level may now be set
