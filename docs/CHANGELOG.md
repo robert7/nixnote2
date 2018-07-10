@@ -84,8 +84,7 @@
 * [Preview](https://www.dropbox.com/sh/62lnikzyf4r0sa2/AADMk-EHBwvBt7G5bOga9tyia?dl=0&preview=RS-3-search-sort-relevance.png)
 
 ### #2
-* Some note editing and toolbar tweeks (color picker has now restricted list of color; but does'nt really 
-  work correctly yet)
+* Some note editing and toolbar tweeks (color picker has now restricted list of colors).
 
 ### #1
 * Merged master to development

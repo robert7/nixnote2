@@ -27,7 +27,7 @@ is needed. The created binary image should work on all ~recent distributions (at
 in theory).
 Basic docker familiarity with docker is probably quite helpful.
 
-More info in: [DOCKER README](DOCKER-README.md)   
+More info in: [DOCKER README](docs/DOCKER-README.md)   
 
 ### Linux - manual build
 * Install development dependencies - look in content of [this docker file](development/docker/Dockerfile.ubuntu_xenial)

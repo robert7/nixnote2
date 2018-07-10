@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/preferences/preferencesdialog.h"
 #include "sql/resourcetable.h"
 #include "sql/nsqlquery.h"
-#include "dialog/logviewer.h"
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"
 #include "dialog/faderdialog.h"
@@ -2218,12 +2217,6 @@ void NixNote::notesRestored(QList<qint32>) {
 }
 
 
-// Open the trunk web site
-void NixNote::openTrunk() {
-    QDesktopServices::openUrl(QUrl("http://www.evernote.com/trunk"));
-}
-
-
 // Open Evernote support
 void NixNote::openEvernoteSupport() {
     QString server = "http://www.evernote.com/about/contact/support/";
@@ -2263,7 +2256,7 @@ void NixNote::openQtAbout() {
 //* Open the NixNote GitHub page.
 //*******************************
 void NixNote::openGithub() {
-    QDesktopServices::openUrl(QUrl(NN_GITHUB_PAGE));
+    QDesktopServices::openUrl(QUrl("https://github.com/" NN_MAIN_REPO_USER "/" NN_MAIN_REPO_NAME));
 }
 
 
@@ -3546,10 +3539,18 @@ void NixNote::pauseIndexing(bool value) {
 }
 
 
-// View the mesasge log.  These same messages show up in a terminal
-void NixNote::openMessageLog() {
-    LogViewer viewer;
-    viewer.exec();
+// View the message log info
+void NixNote::openMessageLogInfo() {
+    QMessageBox mb;
+    mb.information(this, tr("Log file info"),
+                   tr("Main app log file is located at:")
+                   + global.fileManager.getMainLogFileName()
+                   + ".\n\n"
+                   + tr("Please use some appropriate log viewer app to look at logs.") + "\n\n "
+                   + tr("If you want to create support issue, where log info is needed, please use DEBUG log level"
+                        " and post whole log inclusive subdirectory."
+                        " Just before posting make sure, that no private info, like private note text, is included inside.")
+    );
 }
 
 

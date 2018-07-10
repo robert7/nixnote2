@@ -28,7 +28,7 @@ extern Global global;
 
 struct QPairFirstComparer {
     template<typename T1, typename T2>
-    bool operator()(const QPair <T1, T2> &a, const QPair <T1, T2> &b) const {
+    bool operator()(const QPair<T1, T2> &a, const QPair<T1, T2> &b) const {
         return a.first < b.first;
     }
 };
@@ -111,9 +111,9 @@ void NMainMenuBar::setupFileMenu() {
     fileMenu->addAction(importNoteAction);
 
     fileMenu->addSeparator();
-    QList <QString> names = global.accountsManager->nameList();
+    QList<QString> names = global.accountsManager->nameList();
     QList<int> ids = global.accountsManager->idList();
-    QList <QPair<int, QString>> pairList;
+    QList<QPair<int, QString>> pairList;
     for (int i = 0; i < ids.size(); i++) {
         pairList.append(QPair<int, QString>(ids[i], names[i]));
     }
@@ -510,70 +510,47 @@ void NMainMenuBar::setupHelpMenu() {
     QFont f = global.getGuiFont(QFont());
     helpMenu->setFont(f);
 
-    openManualAction = new QAction(tr("&User's Guide"), this);
-    openManualAction->setToolTip(tr("Open the user manual."));
+    openManualAction = new QAction(tr("&NixNote wiki"), this);
+    openManualAction->setToolTip(tr("Open NixNote wiki page with help/documentation"));
     connect(openManualAction, SIGNAL(triggered()),
             this, SLOT(openManual()));
     helpMenu->addAction(openManualAction);
 
-    themeInformationAction = new QAction(tr("Theme &Information"), this);
-    themeInformationAction->setToolTip(tr("View information about the current theme."));
-    connect(themeInformationAction, SIGNAL(triggered()), this, SLOT(openThemeInformation()));
-    helpMenu->addAction(themeInformationAction);
-    QString url = global.getResourceFileName(global.resourceList, ":themeInformation");
-    themeInformationAction->setVisible(false);
-    if (url.startsWith("http://", Qt::CaseInsensitive) || url.startsWith("https://", Qt::CaseInsensitive))
-        themeInformationAction->setVisible(true);
-    QFile file(url);
-    if (file.exists())
-        themeInformationAction->setVisible(true);
-    global.settings->beginGroup(INI_GROUP_APPEARANCE);
-    QString themeName = global.settings->value("themeName", "").toString();
-    global.settings->endGroup();
-    if (themeName == "")
-        themeInformationAction->setVisible(true);
-
-    openShortcutsDialogAction = new QAction(tr("Shortcuts"), this);
-    openShortcutsDialogAction->setToolTip(tr("View currentt shortcuts"));
-    connect(openShortcutsDialogAction, SIGNAL(triggered(bool)), parent, SLOT(openShortcutsDialog()));
-    helpMenu->addAction(openShortcutsDialogAction);
-
-    openMessageLogAction = new QAction(tr("Message &Log"), this);
-    openMessageLogAction->setToolTip(tr("View current program messages"));
-    connect(openMessageLogAction, SIGNAL(triggered()), parent, SLOT(openMessageLog()));
-    helpMenu->addAction(openMessageLogAction);
-
     openGithubAction = new QAction(tr("Github Page"), this);
-    openGithubAction->setToolTip(tr("Goto the NixNote2 Github project page."));
+    openGithubAction->setToolTip(tr("Goto the " NN_APP_DISPLAY_NAME_GUI " Github project page."));
     connect(openGithubAction, SIGNAL(triggered(bool)), parent, SLOT(openGithub()));
     helpMenu->addAction(openGithubAction);
 
-    helpMenu->addSeparator();
 
-    openEvernoteAccountPageAction = new QAction(tr("&Evernote Account Page"), this);
-    openEvernoteAccountPageAction->setToolTip(tr("Go to your Evernote account page."));
-    connect(openEvernoteAccountPageAction, SIGNAL(triggered()), this, SLOT(openEvernoteAccountPage()));
-    helpMenu->addAction(openEvernoteAccountPageAction);
+    themeInformationAction = new QAction(tr("Theme &Information"), this);
+    // themeInformationAction->setToolTip(tr("View information about the current theme."));
+    // connect(themeInformationAction, SIGNAL(triggered()), this, SLOT(openThemeInformation()));
+    // helpMenu->addAction(themeInformationAction);
+    // QString url = global.getResourceFileName(global.resourceList, ":themeInformation");
+    // themeInformationAction->setVisible(false);
+    // if (url.startsWith("http://", Qt::CaseInsensitive) || url.startsWith("https://", Qt::CaseInsensitive))
+    //     themeInformationAction->setVisible(true);
+    // QFile file(url);
+    // if (file.exists())
+    //     themeInformationAction->setVisible(true);
+    // global.settings->beginGroup(INI_GROUP_APPEARANCE);
+    // QString themeName = global.settings->value("themeName", "").toString();
+    // global.settings->endGroup();
+    // if (themeName == "")
 
-    openEvernoteSupportAction = new QAction(tr("Evernote &Support"), this);
-    openEvernoteSupportAction->setToolTip(tr("Go to Evernote's support page"));
-    if (global.accountsManager->getServer() == "app.yinxiang.com") {
-        openEvernoteSupportAction = new QAction(tr("Yinxiang Biji Support"), this);
-        openEvernoteSupportAction->setToolTip(tr("Go to Yinxiang Biji's support page"));
-    }
-    connect(openEvernoteSupportAction, SIGNAL(triggered()), parent, SLOT(openEvernoteSupport()));
-    helpMenu->addAction(openEvernoteSupportAction);
+    // temporarily off - as the themes are currently un-ripe/unfinished
+    themeInformationAction->setVisible(false);
 
-    // seems to be obsolete
-    //openTrunkAction = new QAction(tr("Evernote &Trunk"), this);
-    //openTrunkAction->setToolTip(tr("Go to Evernote Trunk"));
-    //connect(openTrunkAction, SIGNAL(triggered()), parent, SLOT(openTrunk()));
-    //helpMenu->addAction(openTrunkAction);
+    openMessageLogAction = new QAction(tr("Message &Log Info"), this);
+    openMessageLogAction->setToolTip(tr("View current program messages"));
+    connect(openMessageLogAction, SIGNAL(triggered()), parent, SLOT(openMessageLogInfo()));
+    helpMenu->addAction(openMessageLogAction);
 
-    openUserForumAction = new QAction(tr("Evernote User &Forum"), this);
-    openUserForumAction->setToolTip(tr("Go to the Evernote user support forum."));
-    connect(openUserForumAction, SIGNAL(triggered()), this, SLOT(openUserForum()));
-    helpMenu->addAction(openUserForumAction);
+    openShortcutsDialogAction = new QAction(tr("Active shortcuts"), this);
+    openShortcutsDialogAction->setToolTip(tr("View current shortcuts"));
+    connect(openShortcutsDialogAction, SIGNAL(triggered(bool)), parent, SLOT(openShortcutsDialog()));
+    helpMenu->addAction(openShortcutsDialogAction);
+
 
     helpMenu->addSeparator();
 
@@ -601,18 +578,7 @@ void NMainMenuBar::setupShortcut(QAction *action, QString text) {
 
 
 void NMainMenuBar::openManual() {
-    QDesktopServices::openUrl(QString("file://") +
-                              global.getProgramDataDir() + "help/UserDocumentation.pdf");
-}
-
-
-void NMainMenuBar::openUserForum() {
-    QDesktopServices::openUrl(QUrl("https://discussion.evernote.com/index.php"));
-}
-
-
-void NMainMenuBar::openEvernoteAccountPage() {
-    QDesktopServices::openUrl(QUrl("https://www.evernote.com/Settings.action"));
+    QDesktopServices::openUrl(QUrl("https://github.com/" NN_MAIN_REPO_USER "/" NN_MAIN_REPO_NAME "/wiki"));
 }
 
 

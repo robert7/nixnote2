@@ -74,7 +74,7 @@ private:
 
     QsLogging::DestinationPtr fileLoggingDestination;
 
-    QString toPlatformPathSeparator(QString relativePath);
+    QString toPlatformPathSeparator(QString relativePath) const;
     QString slashTerminatePath(QString path);
     void checkExistingReadableDir(QDir dir);
     void checkExistingWriteableDir(QDir dir);
@@ -112,7 +112,7 @@ public:
     QDir getJavaDirFile(QString relativePath);
     QString getJavaDirPath(QString relativePath);
     QDir getLogsDirFile(QString relativePath);
-    QString getLogsDirPath(QString relativePath);
+    QString getLogsDirPath(QString relativePath) const;
     //    QString getQssDirPath(QString relativePath);
     //    QString getQssDirPathUser(QString relativePath);
     QString getTmpDirPath();
@@ -123,6 +123,7 @@ public:
     QString getProgramVersion();
     void setupFileAttachmentLogging();
     void deleteTopLevelFiles(QDir dir, bool exitOnFail);
+    QString getMainLogFileName() const { return this->getLogsDirPath("") + "messages.log"; }
 };
 
 #endif // FILEMANAGER_H

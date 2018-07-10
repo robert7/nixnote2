@@ -173,7 +173,7 @@ void FileManager::setupUserDirectories(int accountId) {
 }
 
 
-QString FileManager::toPlatformPathSeparator(QString relativePath) {
+QString FileManager::toPlatformPathSeparator(QString relativePath) const {
     return relativePath;
 }
 
@@ -304,16 +304,9 @@ QDir FileManager::getLogsDirFile(QString relativePath) {
     return QDir(logsDir.dirName() + toPlatformPathSeparator(relativePath));
 }
 
-QString FileManager::getLogsDirPath(QString relativePath) {
+QString FileManager::getLogsDirPath(QString relativePath) const {
     return logsDirPath + toPlatformPathSeparator(relativePath);
 }
-
-//QString FileManager::getQssDirPath(QString relativePath) {
-//    return qssDirPath + toPlatformPathSeparator(relativePath);
-//}
-//QString FileManager::getQssDirPathUser(QString relativePath) {
-//    return qssDirPathUser + toPlatformPathSeparator(relativePath);
-//}
 
 QString FileManager::getTmpDirPath() {
     return tmpDirPath;
@@ -395,7 +388,7 @@ void FileManager::setupFileAttachmentLogging() {
     // 4 configure file logging (until now logging was only to terminal)
     const QString loggingPath = getLogsDirPath("");
 
-    QString loggingAttachmentsPath = loggingPath + "files";
+    QString loggingAttachmentsPath = loggingPath + LOG_DIR_FILES;
     QDir loggingAttachmentsPathQD(loggingAttachmentsPath);
     createDirOrCheckWriteable(loggingAttachmentsPathQD);
     deleteTopLevelFiles(loggingAttachmentsPathQD, true);
