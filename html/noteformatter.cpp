@@ -104,7 +104,7 @@ QString NoteFormatter::getPage() {
 /* If we have search criteria, then we highlight the text matching
   those results in the note. */
 //void NoteFormatter::setHighlight() {
-//    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+//    FilterCriteria *criteria = global.getCurrentCriteria();
 //    if (criteria->isSearchStringSet())
 //        enableHighlight = true;
 //    else
@@ -644,7 +644,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
 QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     QLOG_TRACE_IN();
 
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    FilterCriteria *criteria = global.getCurrentCriteria();
     // First get the icon for this type of file
     resourceHighlight = false;
     if (criteria->isSearchStringSet() && criteria->getSearchString() != "") {

@@ -417,6 +417,8 @@ public:
     int getAccountId() { return accountId; };
     void setAccountId(int accountId)  {this->accountId = accountId; };
 
+    FilterCriteria* getCurrentCriteria() const;
+
 signals:
     // global can send signal about updating status bar
     void setMessageSignal(QString msg, int timeout);

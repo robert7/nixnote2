@@ -512,7 +512,7 @@ void NixNote::setupGui() {
     QStringList lidList = lidListString.split(' ');
     // If we have old notes we were viewing the last time
     if (lidList.size() > 0) {
-        FilterCriteria *filter = global.filterCriteria[global.filterPosition];
+        FilterCriteria *filter = global.getCurrentCriteria();
 
         for (int i = 0; i < lidList.size(); i++) {
             // if we are doing multiple notes, they each need
@@ -1562,7 +1562,7 @@ void NixNote::updateSyncButton() {
 //************************************************************
 void NixNote::openNote(bool newWindow) {
     saveContents();
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    FilterCriteria *criteria = global.getCurrentCriteria();
     qint32 lid;
     if (criteria->isLidSet()) {
         lid = criteria->getLid();
@@ -1597,7 +1597,9 @@ void NixNote::openExternalNote(qint32 lid) {
 //* (i.e. they select a notebook, tag, saved search...
 //*****************************************************
 void NixNote::updateSelectionCriteria(bool afterSync) {
-    QLOG_DEBUG() << "starting NixNote.updateSelectionCriteria()";
+    QLOG_DEBUG() << "starting NixNote::updateSelectionCriteria() filtercnt="
+                 << global.filterCriteria.size()
+                 << " pos=" << global.filterPosition;
 
     tabWindow->currentBrowser()->saveNoteContent();
 
@@ -1650,7 +1652,7 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
         leftArrowButton->setEnabled(true);
 
     QList<qint32> selectedNotes;
-    global.filterCriteria[global.filterPosition]->getSelectedNotes(selectedNotes);
+    global.getCurrentCriteria()->getSelectedNotes(selectedNotes);
     if (selectedNotes.size() == 0) {
         tabWindow->currentBrowser()->clear();
         tabWindow->currentBrowser()->setReadOnly(true);
@@ -1665,8 +1667,8 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
             openNote(false);
     }
 
-    if (global.filterCriteria[global.filterPosition]->isDeletedOnlySet() &&
-        global.filterCriteria[global.filterPosition]->getDeletedOnly())
+    if (global.getCurrentCriteria()->isDeletedOnlySet() &&
+        global.getCurrentCriteria()->getDeletedOnly())
         newNoteButton->setEnabled(false);
     else
         newNoteButton->setEnabled(true);
@@ -1999,7 +2001,7 @@ void NixNote::saveContents() {
 //********************************************
 void NixNote::resetView() {
     FilterCriteria *criteria = new FilterCriteria();
-    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    global.getCurrentCriteria()->duplicate(*criteria);
     criteria->resetAttribute = true;
     criteria->resetDeletedOnly = true;
     criteria->resetFavorite = true;
@@ -2106,7 +2108,7 @@ void NixNote::newNote() {
     qint32 lid = table.add(0, n, true);
 
     FilterCriteria *criteria = new FilterCriteria();
-    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    global.getCurrentCriteria()->duplicate(*criteria);
     criteria->unsetTags();
     criteria->unsetSearchString();
     criteria->setLid(lid);
@@ -3406,7 +3408,7 @@ void NixNote::newWebcamNote() {
 
 
     FilterCriteria *criteria = new FilterCriteria();
-    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    global.getCurrentCriteria()->duplicate(*criteria);
     criteria->setLid(noteLid);
     global.filterCriteria.append(criteria);
     global.filterPosition++;
@@ -3446,7 +3448,7 @@ void NixNote::deleteCurrentNote() {
 
     QString typeDelete;
     QString msg;
-    FilterCriteria *f = global.filterCriteria[global.filterPosition];
+    FilterCriteria *f = global.getCurrentCriteria();
     bool expunged = false;
     typeDelete = tr("Delete ");
 
@@ -3495,7 +3497,7 @@ void NixNote::duplicateCurrentNote() {
     newLid = ntable.duplicateNote(oldLid);
 
     FilterCriteria *criteria = new FilterCriteria();
-    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    global.getCurrentCriteria()->duplicate(*criteria);
     criteria->setLid(newLid);
     global.filterCriteria.append(criteria);
     global.filterPosition++;

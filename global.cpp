@@ -1506,3 +1506,13 @@ void Global::setMessage(QString msg, int timeout) {
     // sent "setMessage" signal
     emit setMessageSignal(msg, timeout);
 }
+
+/**
+ * @return Current filter criteria.
+ */
+FilterCriteria *Global::getCurrentCriteria() const {
+    qint32 filterCount = global.filterCriteria.size();
+    qint32 pos = global.filterPosition;
+    QLOG_DEBUG() << "Requesting filter [" << pos << "], count=" << filterCount;
+    return global.filterCriteria[pos];
+}

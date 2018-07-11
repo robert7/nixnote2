@@ -59,7 +59,7 @@ extern Global global;
      filterPosition++;
      FilterCriteria *newFilter = new FilterCriteria();
      global.filterCriteria.push_back(newFilter);
-     FilterCriteria *oldFilter = global.filterCriteria[global.filterPosition];
+     FilterCriteria *oldFilter = global.getCurrentCriteria();
      global.filterPosition++;
 
      newFilter->setSearchString(text());
@@ -97,7 +97,7 @@ extern Global global;
      int maxFilterIndex = global.filterCriteria.size() - 1;
      QLOG_ASSERT(global.filterPosition <= maxFilterIndex);
      
-     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+     FilterCriteria *criteria = global.getCurrentCriteria();
      if (global.filterPosition != filterPosition) {
          if (criteria->isSearchStringSet()) {
              setText(criteria->getSearchString());

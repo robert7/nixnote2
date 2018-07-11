@@ -463,7 +463,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     // If we are searching, we never pull from the cache since the search string may
     // have changed since the last time.
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    FilterCriteria *criteria = global.getCurrentCriteria();
     if (criteria->isSearchStringSet() && criteria->getSearchString().trimmed() != "") {
         global.cache.remove(lid);
     }
@@ -2115,7 +2115,7 @@ void NBrowserWindow::linkClicked(const QUrl url) {
         } else {
             // Setup a new filter
             FilterCriteria *criteria = new FilterCriteria();
-            global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+            global.getCurrentCriteria()->duplicate(*criteria);
             criteria->unsetSelectedNotes();
             criteria->unsetLid();
             criteria->setLid(newlid);

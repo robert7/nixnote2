@@ -403,7 +403,7 @@ void NTagView::buildSelection() {
             global.filterCriteria.removeLast();
     }
 
-    FilterCriteria *oldFilter = global.filterCriteria[global.filterPosition];
+    FilterCriteria *oldFilter = global.getCurrentCriteria();
 
     filterPosition++;
     FilterCriteria *newFilter = new FilterCriteria();
@@ -435,7 +435,7 @@ void NTagView::buildSelection() {
 void NTagView::updateSelection() {
     blockSignals(true);
 
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    FilterCriteria *criteria = global.getCurrentCriteria();
     if (global.filterPosition != filterPosition) {
         QList<QTreeWidgetItem*> selectedItems = this->selectedItems();
         for (int i=0; i<selectedItems.size() && criteria->resetTags; i++) {
