@@ -301,6 +301,8 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 
         for (int i = 0; i < tags.size(); i++) {
             QString tag = tags[i];
+            QLOG_DEBUG() << "== processing tag " << tag;
+
             QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
                 foreach(QWebElement
                             element, anchors) {
@@ -368,12 +370,15 @@ QStringList EnmlFormatter::findAllTags(QWebElement &element) {
     while (i != -1) {
         int eot = body.indexOf(" ", i);
         QString tag = body.mid(i + 1, eot - i - 1);
-        if (!tags.contains(tag) && tag != "body")
+        if (!tags.contains(tag) && tag != "body") {
             tags.append(tag);
+        }
         i = body.indexOf("<", eot);
-        if (tag == "body")
+        if (tag == "body") {
             i = -1;
+        }
     }
+    QLOG_DEBUG() << "Findall tags: " << tags;
     return tags;
 }
 
