@@ -2120,7 +2120,6 @@ void NBrowserWindow::linkClicked(const QUrl url) {
             criteria->unsetLid();
             criteria->setLid(newlid);
             global.appendFilter(criteria);
-            global.filterPosition++;
         }
         emit(evernoteLinkClicked(newlid, newTab, newExternalWindow));
 

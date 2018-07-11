@@ -301,7 +301,9 @@ QString Global::tagBehavior() {
 }
 
 
-// Append the filter criteria to the filterCriteria queue.
+/**
+ * Append the filter criteria to the filterCriteria queue and adjust filter position.
+ */
 void Global::appendFilter(FilterCriteria *criteria) {
     // First, find out if we're already viewing history.  If we are, we
     // chop off the end of the history & start a new one
@@ -1513,6 +1515,6 @@ void Global::setMessage(QString msg, int timeout) {
 FilterCriteria *Global::getCurrentCriteria() const {
     qint32 filterCount = global.filterCriteria.size();
     qint32 pos = global.filterPosition;
-    QLOG_DEBUG() << "Requesting filter [" << pos << "], count=" << filterCount;
+    //QLOG_DEBUG() << "Requesting filter [" << pos << "], count=" << filterCount;
     return global.filterCriteria[pos];
 }
