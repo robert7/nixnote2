@@ -265,25 +265,6 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     // 1b is ascii 27 = escape character
     content = this->removeInvalidUnicode(content);
 
-    // // Strip off HTML header & remove the background & default font color
-    // // if they match the theme default.
-    // // mid() Returns a string that contains n characters of this string, starting at the specified position index.
-    // {
-    //     qint32 index = content.indexOf("<body");
-    //     QString header = content.mid(0, index);
-    //     QByteArray c1 = content.mid(index);
-    //     index = header.indexOf(">");
-    //     header = header.mid(0, index);
-    //     QByteArray c2 = content.mid(content.indexOf(">", index));
-    //     QString newHeader = header;
-    //     QString bgColor = "background-color: " + global.getEditorBackgroundColor() + ";";
-    //     QString fgColor = "color: " + global.getEditorFontColor() + ";";
-    //     newHeader = newHeader.replace(bgColor, "");
-    //     newHeader = newHeader.replace(fgColor, "");
-    //     content = c1;
-    //     content.append(newHeader).append(c2);
-    // }
-
     {
         // remove all before body
         qint32 index = content.indexOf("<body");
@@ -306,45 +287,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.replace("<form>", "");
     content.replace("</form>", "");
 
-
-
-    // {
-    //     QByteArray b;
-    //     b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    //     b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>\n");
-    //     b.append("<html><head><title></title></head>");
-    //     //b.append("<body style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
-    //     b.append(content);
-    //     b.append("</html>");
-    //     content.clear();
-    //     content = b;
-    // }
-
-    // // Remove <o:p> tags in case pasting from MicroSoft products.
-    // content = content.replace("<o:p>", "");
-    // content = content.replace("</o:p>", "");
-    // content = content.replace("<o:p/>", "");
-    //
-    // // Remove auto-complete tags
-    // content = content.replace("<ac:rich-text-body", "<div");
-    // content = content.replace("</ac:rich-text-body", "</div");
-
-
-
-
-
-
-
-
-    {
-        // qint32 index = content.indexOf("<body");
-        // content.remove(0, index);
-        // content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
-        // content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
-        // content.prepend("<html>");
-        // content.append("</html>");
-        content = fixEncryptionTags(content);
-    }
+    content = fixEncryptionTags(content);
 
     if (global.guiAvailable) {
         QWebPage page;
