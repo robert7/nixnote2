@@ -40,7 +40,7 @@ EnmlFormatter::EnmlFormatter(QString html) :
     QObject(nullptr) {
 
     this->content.clear();
-    this->content.append(html);
+    this->content.append(html.toUtf8());
 
     // initial state without error
     formattingError = false;
@@ -174,13 +174,18 @@ EnmlFormatter::EnmlFormatter(QString html) :
     ul.append("compact");
 }
 
-/* Return the formatted content */
+/**
+ * Return the formatted content as unicode string
+ */
 QString EnmlFormatter::getContent() const {
-    return this->content;
+    return QString::fromUtf8(content);
 }
 
+/**
+ * Return the formatted content as byte array (in utf8).
+ */
 QByteArray EnmlFormatter::getContentBytes() const {
-    return this->content;
+    return content;
 }
 
 
@@ -193,14 +198,14 @@ QByteArray EnmlFormatter::getContentBytes() const {
 void EnmlFormatter::tidyHtml() {
     // adapted from example at http://www.html-tidy.org/developer/
 
-    QLOG_DEBUG_FILE("fmt-pre-tidy.html", QString(content.constData()));
+    QLOG_DEBUG_FILE("fmt-pre-tidy.html", getContent());
 
     // 1b is ascii 27 = escape character; not really sure whats the idea behind
     //removeInvalidUnicode();
 
     removeHtmlHeader();
     // without header
-    QLOG_DEBUG_FILE("fmt-pre-tidy2.html", QString(content.constData()));
+    QLOG_DEBUG_FILE("fmt-pre-tidy2.html", getContent());
 
     // TODO
     // https://stackoverflow.com/questions/35671329/how-to-remove-all-attributes-and-classes-from-html-with-tidy
@@ -215,10 +220,34 @@ void EnmlFormatter::tidyHtml() {
     // Convert to XHTML
     Bool ok = tidyOptSetBool(tdoc, TidyXhtmlOut, yes);
     if (ok) {
-        // despite "Warning: An XML declaration was detected. Did you mean to use input-xml"
-        // I think we should not use xml parser
+        // Treat input as XML: no
         rc = tidyOptSetBool(tdoc, TidyXmlTags, no);
     }
+
+
+    if (ok) {
+        // Make bare HTML: remove Microsoft cruft
+        rc = tidyOptSetBool(tdoc, TidyMakeBare, no);
+    }
+    if (ok) {
+        // Discard proprietary attributes ## warn may discard images
+        rc = tidyOptSetBool(tdoc, TidyDropPropAttrs, no);
+    }
+    if (ok) {
+        // Clean up HTML exported from Google Docs
+        rc = tidyOptSetBool(tdoc, TidyGDocClean, no);
+    }
+    if (ok) {
+        // Replace presentational clutter by style rules
+        rc = tidyOptSetBool(tdoc, TidyMakeClean, no);
+    }
+    if (ok) {
+        // Ensure tags and attributes match output HTML version
+        rc = tidyOptSetBool(tdoc, TidyStrictTagsAttr, no);
+    }
+
+
+
     if (ok) {
         rc = tidySetCharEncoding(tdoc, "utf8");
     }
@@ -262,7 +291,7 @@ void EnmlFormatter::tidyHtml() {
         formattingError = true;
         QLOG_ERROR() << "Tidy FAILED: severe error occurred, code=" << rc;
     }
-    QLOG_DEBUG_FILE("fmt-post-tidy.html", QString(content.constData()));
+    QLOG_DEBUG_FILE("fmt-post-tidy.html", getContent());
 
     tidyBufFree(&output);
     tidyBufFree(&errbuf);
@@ -290,7 +319,7 @@ void EnmlFormatter::removeHtmlHeader() {
  * */
 void EnmlFormatter::rebuildNoteEnml() {
     QLOG_INFO() << "===== Rebuilding note ENML";
-    QLOG_DEBUG_FILE("fmt-html-input.html", QString(content.constData()));
+    QLOG_DEBUG_FILE("fmt-html-input.html", getContent());
 
     // list of referenced LIDs
     resources.clear();
@@ -301,7 +330,9 @@ void EnmlFormatter::rebuildNoteEnml() {
         QLOG_ERROR() << "Got no output from tidy - cleanup failed";
         return;
     }
-    removeHtmlHeader();
+    //removeHtmlHeader();
+
+    //zrejme tu sa nieco poserie - asi chyba utf8 hint v headeri
 
     // Tidy puts this in place, but we don't really need it.
     content.replace("<form>", "");
@@ -350,7 +381,7 @@ void EnmlFormatter::rebuildNoteEnml() {
         content.clear();
         content.append(elementRoot.toOuterXml());
     }
-    QLOG_DEBUG_FILE("fmt-post-dt-check.html", QString(content.constData()));
+    QLOG_DEBUG_FILE("fmt-post-dt-check.html", getContent());
 
     // TEMP hack - rerun tidy - to fix XML after manual fixup
     tidyHtml();
@@ -374,7 +405,7 @@ void EnmlFormatter::rebuildNoteEnml() {
     // content = content.replace("<hr>", "<hr/>");
     // content = content.replace("<br>", "<br/>");
 
-    QLOG_DEBUG_FILE("fmt-final.html", QString(content.constData()));
+    QLOG_DEBUG_FILE("fmt-final.html", getContent());
     QLOG_INFO() << "===== Finished rebuilding note ENML";
 }
 
