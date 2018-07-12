@@ -57,7 +57,7 @@ private:
     void fixSpanNode(QWebElement &e);
     void fixDivNode(QWebElement &e);
     void fixPreNode(QWebElement &e);
-    QByteArray removeInvalidUnicode(QByteArray content);
+    void removeInvalidUnicode();
     QByteArray fixEncryptionTags(QByteArray newContent);
 
     QStringList coreattrs;
@@ -99,6 +99,7 @@ public:
 
     explicit EnmlFormatter(QString html);
     QString getContent() const;
+    void removeHtmlHeader();
     void rebuildNoteEnml();
     void tidyHtml();
     bool isFormattingError() const;

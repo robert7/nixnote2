@@ -188,6 +188,9 @@ void EnmlFormatter::tidyHtml() {
     // adapted from example at http://www.html-tidy.org/developer/
 
     QLOG_DEBUG_FILE("fmt-pre-tidy.html", QString(content.constData()));
+    removeHtmlHeader();
+    // without header
+    QLOG_DEBUG_FILE("fmt-pre-tidy2.html", QString(content.constData()));
 
     // TODO
     // https://stackoverflow.com/questions/35671329/how-to-remove-all-attributes-and-classes-from-html-with-tidy
@@ -256,6 +259,22 @@ void EnmlFormatter::tidyHtml() {
 }
 
 /**
+ * Remove html header.
+ * Automaticalled before tidy.
+ */
+void EnmlFormatter::removeHtmlHeader() {
+    // remove all before body
+    qint32 index = content.indexOf("<body");
+    content.remove(0, index);
+    // remove all after body
+    index = content.indexOf("</body");
+    content.truncate(index);
+    content.append("</body>");
+}
+
+
+
+/**
  * Take the WebKit HTML and transform it into ENML
  * */
 void EnmlFormatter::rebuildNoteEnml() {
@@ -272,17 +291,7 @@ void EnmlFormatter::rebuildNoteEnml() {
     content = content.replace("<br>", "<br/>");
 
     // 1b is ascii 27 = escape character
-    content = this->removeInvalidUnicode(content);
-
-    {
-        // remove all before body
-        qint32 index = content.indexOf("<body");
-        content.remove(0, index);
-        // remove all after body
-        index = content.indexOf("</body");
-        content.truncate(index);
-        content.append("</body>");
-    }
+    removeInvalidUnicode();
 
     tidyHtml();
     if (isFormattingError()) {
@@ -922,12 +931,15 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
 }
 
 
-// Remove any invalid unicode characters to allow it to sync properly.
-QByteArray EnmlFormatter::removeInvalidUnicode(QByteArray content) {
+/**
+ * Remove any invalid unicode characters to allow it to sync properly.
+ * @return
+ */
+void EnmlFormatter::removeInvalidUnicode() {
     QString c(content);
     // 1b is ascii 27 = escape character
     c = c.remove(QChar(0x1b), Qt::CaseInsensitive);
-    return c.toUtf8();
+    content = c.toUtf8();
 }
 
 
