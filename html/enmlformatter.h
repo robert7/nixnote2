@@ -93,6 +93,7 @@ private:
     QStringList ul;
     bool formattingError;
     void checkAttributes(QWebElement &element, QStringList valid);
+    void setContent(QString &content);
 
 public:
     QList<qint32> resources;

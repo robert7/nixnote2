@@ -39,8 +39,7 @@ extern Global global;
 EnmlFormatter::EnmlFormatter(QString html) :
     QObject(nullptr) {
 
-    this->content.clear();
-    this->content.append(html.toUtf8());
+    setContent(html);
 
     // initial state without error
     formattingError = false;
@@ -343,7 +342,7 @@ void EnmlFormatter::rebuildNoteEnml() {
     if (global.guiAvailable) {
         QWebPage page;
         QEventLoop loop;
-        page.mainFrame()->setContent(content);
+        page.mainFrame()->setContent(getContentBytes());
         QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
         loop.exit();
 
@@ -378,8 +377,8 @@ void EnmlFormatter::rebuildNoteEnml() {
                     }
                 }
         }
-        content.clear();
-        content.append(elementRoot.toOuterXml());
+        QString outerXml = elementRoot.toOuterXml();
+        setContent(outerXml);
     }
     QLOG_DEBUG_FILE("fmt-post-dt-check.html", getContent());
 
@@ -979,8 +978,10 @@ void EnmlFormatter::removeInvalidUnicode() {
 }
 
 
-// Look through all attributes of the node.  If it isn't in the list of
-// valid attributes, we remove it.
+/**
+ * Look through all attributes of the node.  If it isn't in the list of
+ * valid attributes, we remove it.
+ */
 void EnmlFormatter::checkAttributes(QWebElement &element, QStringList valid) {
     QStringList attrs = element.attributeNames();
     QString tagname = element.tagName().toLower();;
@@ -996,3 +997,12 @@ bool EnmlFormatter::isFormattingError() const {
     return formattingError;
 }
 
+
+/**
+ * Set content from unicode string.
+ * @param contentStr unicode string.
+ */
+void EnmlFormatter::setContent(QString &contentStr) {
+    this->content.clear();
+    this->content.append(contentStr.toUtf8());
+}
