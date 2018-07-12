@@ -179,6 +179,12 @@ QString EnmlFormatter::getContent() const {
     return this->content;
 }
 
+QByteArray EnmlFormatter::getContentBytes() const {
+    return this->content;
+}
+
+
+
 /**
  * Tidy current content.
  * Will set formattingError to true on error.
@@ -188,6 +194,10 @@ void EnmlFormatter::tidyHtml() {
     // adapted from example at http://www.html-tidy.org/developer/
 
     QLOG_DEBUG_FILE("fmt-pre-tidy.html", QString(content.constData()));
+
+    // 1b is ascii 27 = escape character; not really sure whats the idea behind
+    removeInvalidUnicode();
+
     removeHtmlHeader();
     // without header
     QLOG_DEBUG_FILE("fmt-pre-tidy2.html", QString(content.constData()));
@@ -205,9 +215,9 @@ void EnmlFormatter::tidyHtml() {
     // Convert to XHTML
     Bool ok = tidyOptSetBool(tdoc, TidyXhtmlOut, yes);
     if (ok) {
-        // dispite "Warning: An XML declaration was detected. Did you mean to use input-xml"
+        // despite "Warning: An XML declaration was detected. Did you mean to use input-xml"
         // I think we should not use xml parser
-        rc = tidyOptSetBool(tdoc, TidyXmlTags, yes);
+        rc = tidyOptSetBool(tdoc, TidyXmlTags, no);
     }
     if (ok) {
         rc = tidySetCharEncoding(tdoc, "utf8");
@@ -247,6 +257,7 @@ void EnmlFormatter::tidyHtml() {
         }
         //printf("\nAnd here is the result:\n\n%s", output.bp);
         content.append((char *) output.bp);
+        content = content.replace("</body>", "<br/>tidy ok</body>");
     } else {
         formattingError = true;
         QLOG_ERROR() << "Tidy FAILED: severe error occurred, code=" << rc;
@@ -284,20 +295,14 @@ void EnmlFormatter::rebuildNoteEnml() {
     // list of referenced LIDs
     resources.clear();
 
-    // Remove invalid stuff
-    content.replace("</input>", "");
-
-    content = content.replace("<hr>", "<hr/>");
-    content = content.replace("<br>", "<br/>");
-
-    // 1b is ascii 27 = escape character
-    removeInvalidUnicode();
 
     tidyHtml();
     if (isFormattingError()) {
         QLOG_ERROR() << "Got no output from tidy - cleanup failed";
         return;
     }
+    removeHtmlHeader();
+
     // Tidy puts this in place, but we don't really need it.
     content.replace("<form>", "");
     content.replace("</form>", "");
@@ -349,11 +354,7 @@ void EnmlFormatter::rebuildNoteEnml() {
 
     // Add EN xml header
     {
-        qint32 index = content.indexOf("<body");
-        //index = content.indexOf(">", index)+1;
-        content.remove(0, index);
-        index = content.indexOf("</body");
-        content.truncate(index);
+        removeHtmlHeader();
 
         QByteArray b;
         b.clear();
@@ -361,9 +362,9 @@ void EnmlFormatter::rebuildNoteEnml() {
         b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>");
         //b.append("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
         b.append(content);
-        b.append("</en-note>");
         content.clear();
         content = b.replace("<body", "<en-note");
+        content = b.replace("</body>", "</en-note>");
     }
 
     // content = content.replace("<hr>", "<hr/>");

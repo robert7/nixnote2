@@ -99,6 +99,8 @@ public:
 
     explicit EnmlFormatter(QString html);
     QString getContent() const;
+    QByteArray getContentBytes() const;
+
     void removeHtmlHeader();
     void rebuildNoteEnml();
     void tidyHtml();

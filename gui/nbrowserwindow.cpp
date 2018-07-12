@@ -1162,8 +1162,7 @@ void NBrowserWindow::htmlCleanup() {
         );
         return;
     }
-    // @@
-    rootElement.setOuterXml(formatter.getContent());
+    editor->setContent(formatter.getContentBytes());
 
     this->editor->setFocus();
     microFocusChanged();
