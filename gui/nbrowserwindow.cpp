@@ -1147,18 +1147,20 @@ void NBrowserWindow::removeFormatButtonPressed() {
     microFocusChanged();
 }
 
-void NBrowserWindow::htmlTidy() {
-    QLOG_DEBUG() << "htmlTidy";
+
+// TODO add enum
+void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
+    QLOG_DEBUG() << "html cleanup, mode " << mode;
     QWebElement rootElement = editor->editorPage->mainFrame()->documentElement();
     QString contents = rootElement.toOuterXml();
     EnmlFormatter formatter(contents);
-    formatter.tidyHtml();
+    formatter.tidyHtml(mode);
 
     if (formatter.isFormattingError()) {
         QMessageBox::information(
             this,
             tr("Unable to reformat"),
-            QString(tr("HTML tidy failed."))
+            QString(tr("HTML cleanup failed."))
         );
         return;
     }
@@ -1166,6 +1168,21 @@ void NBrowserWindow::htmlTidy() {
 
     this->editor->setFocus();
     microFocusChanged();
+}
+
+
+/**
+ * Just tidy - same as before save.
+ */
+void NBrowserWindow::htmlTidy() {
+    htmlCleanup(HtmlCleanupMode::Tidy);
+}
+
+/**
+ * Simplify - same as before save.
+ */
+void NBrowserWindow::htmlSimplify() {
+    htmlCleanup(HtmlCleanupMode::Simplify);
 }
 
 

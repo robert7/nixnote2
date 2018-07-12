@@ -62,6 +62,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "plugins/hunspell/hunspellplugin.h"
 #include "gui/findreplace.h"
 #include "threads/browserrunner.h"
+#include "html/enmlformatter.h"
 
 class ToolbarWidgetAction;
 
@@ -132,6 +133,7 @@ private:
     QString getCurrentNoteTitle();
 
     void setDirty(qint32 lid, bool dirty, bool setDateUpdated=true);
+    void htmlCleanup(HtmlCleanupMode mode);
 
 
 public:
@@ -273,7 +275,6 @@ public slots:
     void rotateImageLeftButtonPressed();
     void rotateImageRightButtonPressed();
     void removeFormatButtonPressed();
-    void htmlTidy();
     void formatCodeButtonPressed();
     void linkClicked(const QUrl url);
     void toggleSource();
@@ -331,6 +332,9 @@ public slots:
     void findPrevInNote();
     void findReplaceWindowHidden();
     void findReplaceInNotePressed();
+
+    void htmlTidy();
+    void htmlSimplify();
 
 
 private slots:

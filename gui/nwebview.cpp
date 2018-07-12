@@ -84,10 +84,15 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addAction(removeFormattingAction);
     connect(removeFormattingAction, SIGNAL(triggered()), parent, SLOT(removeFormatButtonPressed()));
 
-    htmlTidyAction = new QAction(tr("HTML - tidy"), this);
+    htmlTidyAction = new QAction(tr("HTML - Tidy"), this);
     global.setupShortcut(htmlTidyAction, "Edit_HTML_Tidy");
     contextMenu->addAction(htmlTidyAction);
     connect(htmlTidyAction, SIGNAL(triggered()), parent, SLOT(htmlTidy()));
+
+    htmlSimplifyAction = new QAction(tr("HTML - Simplify (experimental!)"), this);
+    global.setupShortcut(htmlSimplifyAction, "Edit_HTML_Simplify");
+    contextMenu->addAction(htmlSimplifyAction);
+    connect(htmlSimplifyAction, SIGNAL(triggered()), parent, SLOT(htmlSimplify()));
 
     copyNoteUrlAction = new QAction(tr("Copy Note URL"), this);
     global.setupShortcut(copyNoteUrlAction, "Edit_Copy_Note_Url");

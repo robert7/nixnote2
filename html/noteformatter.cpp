@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"
 #include "utilities/mimereference.h"
+#include "html/enmlformatter.h"
 
 #include <QFileSystemModel>
 #include <QFileIconProvider>
@@ -169,12 +170,11 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
 
     qint32 index = content.indexOf("<body");
     content.remove(0, index);
-    content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
-    content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
+    content.prepend(DEFAULT_HTML_HEAD);
 
     // OLD:content.prepend("<html>");
     // NEW: EXPERIMENTAL !!!!
-    content.prepend("<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">");
+    content.prepend(DEFAULT_HTML_TYPE);
 
     content.append("</html>");
 

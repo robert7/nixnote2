@@ -36,6 +36,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 using namespace std;
 
 
+enum HtmlCleanupMode {
+    Tidy = 0,
+    Simplify = 1
+};
+
+#define DEFAULT_HTML_HEAD "<head>" \
+                          "<meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\">" \
+                          "<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>" \
+                          "</head>"
+#define DEFAULT_HTML_TYPE "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">"
+
+
+
+
+
 class EnmlFormatter : public QObject
 {
     Q_OBJECT
@@ -104,7 +119,7 @@ public:
 
     void removeHtmlHeader();
     void rebuildNoteEnml();
-    void tidyHtml();
+    void tidyHtml(HtmlCleanupMode mode);
     bool isFormattingError() const;
 };
 

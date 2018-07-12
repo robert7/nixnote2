@@ -5,7 +5,9 @@
 * Simplified content of the Help menu. Removed unrelevant items. "Message Log Info" now shows
   log file location & instructions.
 * Further stabilisation of html cleanup.
-* Duplicate note will now mark note as "- copy".   
+* Duplicate note will now mark note as "- copy".
+* Added "Simplify html" to clean html garbage e.g. after paste from some web page. 
+  So far only very experimental version. Discards images. Will be improved later.
 
 ### #9
 * Added **docker build**. Creating binaries ouf of source is now very straightforward.

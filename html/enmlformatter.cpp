@@ -188,13 +188,12 @@ QByteArray EnmlFormatter::getContentBytes() const {
 }
 
 
-
 /**
  * Tidy current content.
  * Will set formattingError to true on error.
  * Else content is input and also output.
  */
-void EnmlFormatter::tidyHtml() {
+void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
     // adapted from example at http://www.html-tidy.org/developer/
 
     QLOG_DEBUG_FILE("fmt-pre-tidy.html", getContent());
@@ -223,28 +222,28 @@ void EnmlFormatter::tidyHtml() {
         rc = tidyOptSetBool(tdoc, TidyXmlTags, no);
     }
 
-
-    if (ok) {
-        // Make bare HTML: remove Microsoft cruft
-        rc = tidyOptSetBool(tdoc, TidyMakeBare, no);
+    if (mode == HtmlCleanupMode::Simplify) {
+        if (ok) {
+            // Make bare HTML: remove Microsoft cruft
+            rc = tidyOptSetBool(tdoc, TidyMakeBare, yes);
+        }
+        if (ok) {
+            // Discard proprietary attributes ## warn may discard images
+            rc = tidyOptSetBool(tdoc, TidyDropPropAttrs, yes);
+        }
+        if (ok) {
+            // Clean up HTML exported from Google Docs
+            rc = tidyOptSetBool(tdoc, TidyGDocClean, yes);
+        }
+        if (ok) {
+            // Replace presentational clutter by style rules
+            rc = tidyOptSetBool(tdoc, TidyMakeClean, yes);
+        }
+        if (ok) {
+            // Ensure tags and attributes match output HTML version
+            rc = tidyOptSetBool(tdoc, TidyStrictTagsAttr, yes);
+        }
     }
-    if (ok) {
-        // Discard proprietary attributes ## warn may discard images
-        rc = tidyOptSetBool(tdoc, TidyDropPropAttrs, no);
-    }
-    if (ok) {
-        // Clean up HTML exported from Google Docs
-        rc = tidyOptSetBool(tdoc, TidyGDocClean, no);
-    }
-    if (ok) {
-        // Replace presentational clutter by style rules
-        rc = tidyOptSetBool(tdoc, TidyMakeClean, no);
-    }
-    if (ok) {
-        // Ensure tags and attributes match output HTML version
-        rc = tidyOptSetBool(tdoc, TidyStrictTagsAttr, no);
-    }
-
 
 
     if (ok) {
@@ -312,7 +311,6 @@ void EnmlFormatter::removeHtmlHeader() {
 }
 
 
-
 /**
  * Take the WebKit HTML and transform it into ENML
  * */
@@ -324,14 +322,14 @@ void EnmlFormatter::rebuildNoteEnml() {
     resources.clear();
 
 
-    tidyHtml();
+    tidyHtml(HtmlCleanupMode::Tidy);
     if (isFormattingError()) {
         QLOG_ERROR() << "Got no output from tidy - cleanup failed";
         return;
     }
-    //removeHtmlHeader();
-
-    //zrejme tu sa nieco poserie - asi chyba utf8 hint v headeri
+    removeHtmlHeader();
+    content.prepend(DEFAULT_HTML_HEAD);
+    content.prepend(DEFAULT_HTML_TYPE);
 
     // Tidy puts this in place, but we don't really need it.
     content.replace("<form>", "");
@@ -339,6 +337,7 @@ void EnmlFormatter::rebuildNoteEnml() {
 
     content = fixEncryptionTags(content);
 
+    QLOG_DEBUG_FILE("fmt-pre-dt-check.html", getContent());
     if (global.guiAvailable) {
         QWebPage page;
         QEventLoop loop;
@@ -383,7 +382,7 @@ void EnmlFormatter::rebuildNoteEnml() {
     QLOG_DEBUG_FILE("fmt-post-dt-check.html", getContent());
 
     // TEMP hack - rerun tidy - to fix XML after manual fixup
-    tidyHtml();
+    tidyHtml(HtmlCleanupMode::Tidy);
 
     // Add EN xml header
     {
