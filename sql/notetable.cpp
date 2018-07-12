@@ -1984,6 +1984,12 @@ qint32 NoteTable::duplicateNote(qint32 oldLid, bool keepCreatedDate) {
     query.bindValue(":key", NOTE_GUID);
     query.exec();
 
+    // experimental: mark copy as "- copy" in title
+    query.prepare("update datastore set data=data || ' - copy' where lid=:lid and key=:key");
+    query.bindValue(":lid", newLid);
+    query.bindValue(":key", NOTE_TITLE);
+    query.exec();
+
     query.prepare("update datastore set data=:data where lid=:lid and key=:key");
     query.bindValue(":data", 0);
     query.bindValue(":lid", newLid);
