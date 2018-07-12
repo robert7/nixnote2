@@ -41,7 +41,6 @@ class EnmlFormatter : public QObject
     Q_OBJECT
 private:
     QByteArray content;
-    //QDomDocument doc;
     bool isAttributeValid(QString attribute);
     bool isElementValid(QWebElement e);
     // void scanTags(QWebElement &element);
@@ -74,8 +73,6 @@ private:
     QStringList blockQuote;
     QStringList br;
     QStringList caption;
-    // QStringList colHAlign;
-    // QStringList colVAlign;
     QStringList col;
     QStringList colGroup;
     QStringList del;
@@ -94,18 +91,20 @@ private:
     QStringList th;
     QStringList tr_;
     QStringList ul;
+    bool formattingError;
+public:
+    bool isFormattingError() const;
 
+private:
     void checkAttributes(QWebElement &element, QStringList valid);
 
-    void tidyHtml(QByteArray &content);
-
 public:
-    bool formattingError;
     QList<qint32> resources;
 
     explicit EnmlFormatter(QString html);
     QString getEnml();
     QByteArray rebuildNoteEnml();
+    void tidyHtml();
 };
 
 

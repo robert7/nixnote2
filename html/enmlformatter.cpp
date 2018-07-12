@@ -22,17 +22,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/resourcetable.h"
 #include "global.h"
 #include "utilities/encrypt.h"
-
 #include <QFileIconProvider>
 #include <QWebPage>
 #include <QWebFrame>
 #include <QIcon>
 #include <QMessageBox>
-
 #include <tidy.h>
 #include <tidybuffio.h>
-
-
 #include <iostream>
 
 using namespace std;
@@ -46,6 +42,7 @@ EnmlFormatter::EnmlFormatter(QString html) :
     this->content.clear();
     this->content.append(html);
 
+    // initial state without error
     formattingError = false;
 
     coreattrs.append("style");
@@ -182,9 +179,18 @@ QString EnmlFormatter::getEnml() {
     return this->content;
 }
 
+/**
+ * Tidy current content.
+ * Will set formattingError to true on error.
+ * Else content is input and also output.
+ */
+void EnmlFormatter::tidyHtml() {
+    // adapted from example at http://www.html-tidy.org/developer/
 
-void EnmlFormatter::tidyHtml(QByteArray &content) {
-    // addapted from example at http://www.html-tidy.org/developer/
+
+    // TODO
+    // https://stackoverflow.com/questions/35671329/how-to-remove-all-attributes-and-classes-from-html-with-tidy
+    // http://api.html-tidy.org/tidy/quickref_5.0.0.html#bare
 
     TidyBuffer output = {nullptr};
     TidyBuffer errbuf = {nullptr};
@@ -238,6 +244,7 @@ void EnmlFormatter::tidyHtml(QByteArray &content) {
         //printf("\nAnd here is the result:\n\n%s", output.bp);
         content.append((char *) output.bp);
     } else {
+        formattingError = true;
         QLOG_ERROR() << "Tidy FAILED: severe error occurred, code=" << rc;
     }
 
@@ -246,8 +253,9 @@ void EnmlFormatter::tidyHtml(QByteArray &content) {
     tidyRelease(tdoc);
 }
 
-/* Take the ENML note and transform it into HTML that WebKit will
-  not complain about */
+/**
+ * Take the WebKit HTML and transform it into ENML
+ * */
 QByteArray EnmlFormatter::rebuildNoteEnml() {
     QLOG_INFO() << "===== Rebuilding note ENML";
     QLOG_DEBUG_FILE("fmt-html-input.html", QString(content.constData()));
@@ -255,10 +263,9 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     // list of referenced LIDs
     resources.clear();
 
-
     // Remove invalid stuff
     content.replace("</input>", "");
-    // EXTRACT
+
     content = content.replace("<hr>", "<hr/>");
     content = content.replace("<br>", "<br/>");
 
@@ -276,10 +283,9 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     }
 
     QLOG_DEBUG_FILE("fmt-pre-tidy.html", QString(content.constData()));
-    tidyHtml(content);
-    if (content == "") {
+    tidyHtml();
+    if (isFormattingError()) {
         QLOG_ERROR() << "Got no output from tidy - cleanup failed";
-        formattingError = true;
         return "";
     }
     QLOG_DEBUG_FILE("fmt-post-tidy.html", QString(content.constData()));
@@ -350,9 +356,10 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         content.clear();
         content = b.replace("<body", "<en-note");
     }
-    QLOG_DEBUG_FILE("fmt-post-hdr-add.html", QString(content.constData()));
 
-    postXmlFix();
+    // content = content.replace("<hr>", "<hr/>");
+    // content = content.replace("<br>", "<br/>");
+
     QLOG_DEBUG_FILE("fmt-final.html", QString(content.constData()));
     QLOG_INFO() << "===== Finished rebuilding note ENML";
     return content;
@@ -806,68 +813,75 @@ void EnmlFormatter::fixPreNode(QWebElement &node) {
 
 
 void EnmlFormatter::postXmlFix() {
-    int pos;
+    // int pos;
 
     // EXTRACT
-    content = content.replace("<hr>", "<hr/>");
-    content = content.replace("<br>", "<br/>");
+    // content = content.replace("<hr>", "<hr/>");
+    // content = content.replace("<br>", "<br/>");
 
-    // Fix the <br> tags
-    content = content.replace("<br clear=\"none\">", "<br/>");
-    pos = content.indexOf("<br");
-    if (pos != -1) {
-        QLOG_DEBUG() << "postXmlFix: 'br' found.  Beginning fix";
-    }
-    while (pos != -1) {
-        int endPos = content.indexOf(">", pos);
-        int tagEndPos = content.indexOf("/>", pos);
 
-        // Check the next /> end tag.  If it is beyond the end
-        // of the current tag or if it doesn't exist then we
-        // need to fix the end of the img
-        if (tagEndPos == -1 || tagEndPos > endPos) {
-            content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
-        }
-        pos = content.indexOf("<br", pos + 1);
-    }
+    /////// DON'T DELETE THIS
+    //
+    // // Fix the <br> tags
+    // content = content.replace("<br clear=\"none\">", "<br/>");
+    // pos = content.indexOf("<br");
+    // if (pos != -1) {
+    //     QLOG_DEBUG() << "postXmlFix: 'br' found.  Beginning fix";
+    // }
+    // while (pos != -1) {
+    //     int endPos = content.indexOf(">", pos);
+    //     int tagEndPos = content.indexOf("/>", pos);
+    //
+    //     // Check the next /> end tag.  If it is beyond the end
+    //     // of the current tag or if it doesn't exist then we
+    //     // need to fix the end of the img
+    //     if (tagEndPos == -1 || tagEndPos > endPos) {
+    //         content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
+    //     }
+    //     pos = content.indexOf("<br", pos + 1);
+    // }
 
-    // Fix <en-todo> tags
-    content = content.replace("</en-todo>", "");
-    pos = content.indexOf("<en-todo");
-    if (pos != -1) {
-        QLOG_DEBUG() << "postXmlFix: 'en-todo'.  Beginning fix";
-    }
-    while (pos != -1) {
-        int endPos = content.indexOf(">", pos);
-        int tagEndPos = content.indexOf("/>", pos);
+    /////// DON'T DELETE THIS
+    //
+    // // Fix <en-todo> tags
+    // content = content.replace("</en-todo>", "");
+    // pos = content.indexOf("<en-todo");
+    // if (pos != -1) {
+    //     QLOG_DEBUG() << "postXmlFix: 'en-todo'.  Beginning fix";
+    // }
+    // while (pos != -1) {
+    //     int endPos = content.indexOf(">", pos);
+    //     int tagEndPos = content.indexOf("/>", pos);
+    //
+    //     // Check the next /> end tag.  If it is beyond the end
+    //     // of the current tag or if it doesn't exist then we
+    //     // need to fix the end of the img
+    //     if (tagEndPos == -1 || tagEndPos > endPos) {
+    //         content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
+    //     }
+    //     pos = content.indexOf("<en-todo", pos + 1);
+    // }
 
-        // Check the next /> end tag.  If it is beyond the end
-        // of the current tag or if it doesn't exist then we
-        // need to fix the end of the img
-        if (tagEndPos == -1 || tagEndPos > endPos) {
-            content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
-        }
-        pos = content.indexOf("<en-todo", pos + 1);
-    }
-
-    // Fix <en-media> tags
-    content = content.replace("</en-media>", "");
-    pos = content.indexOf("<en-media");
-    if (pos != -1) {
-        QLOG_DEBUG() << "postXmlFix: 'en-media'.  Beginning fix";
-    }
-    while (pos != -1) {
-        int endPos = content.indexOf(">", pos);
-        int tagEndPos = content.indexOf("/>", pos);
-
-        // Check the next /> end tag.  If it is beyond the end
-        // of the current tag or if it doesn't exist then we
-        // need to fix the end of the img
-        if (tagEndPos == -1 || tagEndPos > endPos) {
-            content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
-        }
-        pos = content.indexOf("<en-media", pos + 1);
-    }
+    /////// DON'T DELETE THIS
+    //
+    // // Fix <en-media> tags
+    // content = content.replace("</en-media>", "");
+    // pos = content.indexOf("<en-media");
+    // if (pos != -1) {
+    //     QLOG_DEBUG() << "postXmlFix: 'en-media'.  Beginning fix";
+    // }
+    // while (pos != -1) {
+    //     int endPos = content.indexOf(">", pos);
+    //     int tagEndPos = content.indexOf("/>", pos);
+    //
+    //     // Check the next /> end tag.  If it is beyond the end
+    //     // of the current tag or if it doesn't exist then we
+    //     // need to fix the end of the img
+    //     if (tagEndPos == -1 || tagEndPos > endPos) {
+    //         content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
+    //     }
+    //     pos = content.indexOf("<en-media", pos + 1);
+    // }
 }
 
 
@@ -930,3 +944,8 @@ void EnmlFormatter::checkAttributes(QWebElement &element, QStringList valid) {
         }
     }
 }
+
+bool EnmlFormatter::isFormattingError() const {
+    return formattingError;
+}
+

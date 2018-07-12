@@ -805,11 +805,12 @@ void NBrowserWindow::saveNoteContent() {
 
         EnmlFormatter formatter(contents);
         formatter.rebuildNoteEnml();
-        if (formatter.formattingError) {
+        if (formatter.isFormattingError()) {
             QMessageBox::information(
                 this,
                 tr("Unable to reformat"),
-                QString(tr(NN_APP_DISPLAY_NAME_GUI " was unable to reformat the note in ENML. Note could not be saved."))
+                QString(
+                    tr(NN_APP_DISPLAY_NAME_GUI " was unable to reformat the note in ENML. Note could not be saved."))
             );
             return;
         }
@@ -1137,11 +1138,31 @@ void NBrowserWindow::underlineButtonPressed() {
 }
 
 
-// The underline button was toggled
 void NBrowserWindow::removeFormatButtonPressed() {
     // for some reason first call doesn't remove background color, but the second does...
     this->editor->triggerPageAction(QWebPage::RemoveFormat);
     this->editor->triggerPageAction(QWebPage::RemoveFormat);
+
+    this->editor->setFocus();
+    microFocusChanged();
+}
+
+void NBrowserWindow::htmlCleanup() {
+    QLOG_DEBUG() << "htmlCleanup";
+    QWebElement rootElement = editor->editorPage->mainFrame()->documentElement();
+    QString contents = rootElement.toOuterXml();
+    EnmlFormatter formatter(contents);
+    formatter.tidyHtml();
+
+    if (formatter.isFormattingError()) {
+        QMessageBox::information(
+            this,
+            tr("Unable to reformat"),
+            QString(tr("HTML cleanup failed."))
+        );
+        return;
+    }
+    // @@
 
     this->editor->setFocus();
     microFocusChanged();

@@ -84,6 +84,11 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addAction(removeFormattingAction);
     connect(removeFormattingAction, SIGNAL(triggered()), parent, SLOT(removeFormatButtonPressed()));
 
+    htmlCleanupAction = new QAction(tr("HTML cleanup"), this);
+    global.setupShortcut(htmlCleanupAction, "Edit_HTML_Cleanup");
+    contextMenu->addAction(htmlCleanupAction);
+    connect(htmlCleanupAction, SIGNAL(triggered()), parent, SLOT(htmlCleanup()));
+
     copyNoteUrlAction = new QAction(tr("Copy Note URL"), this);
     global.setupShortcut(copyNoteUrlAction, "Edit_Copy_Note_Url");
     contextMenu->addAction(copyNoteUrlAction);

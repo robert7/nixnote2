@@ -1,6 +1,11 @@
 # CHANGELOG
 
 ## 2018-07
+### #10
+* Simplified content of the Help menu. Removed unrelevant items. "Message Log Info" now shows
+  log file location & instructions.
+* Further refactoring of html cleanup.   
+
 ### #9
 * Added **docker build**. Creating binaries ouf of source is now very straightforward.
 * Improved reporting and logging of errors (mainly for sync errors). The messages may be now
