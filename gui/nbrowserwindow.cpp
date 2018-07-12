@@ -840,9 +840,9 @@ void NBrowserWindow::saveNoteContent() {
         QLOG_DEBUG() << "Updating note content";
         if (!global.multiThreadSaveEnabled) {
             NoteTable table(global.db);
-            table.updateNoteContent(lid, formatter.getEnml());
+            table.updateNoteContent(lid, formatter.getContent());
         } else
-            emit requestNoteContentUpdate(lid, formatter.getEnml(), true);
+            emit requestNoteContentUpdate(lid, formatter.getContent(), true);
         editor->isDirty = false;
 
         if (thumbnailer == nullptr)
@@ -1163,6 +1163,7 @@ void NBrowserWindow::htmlCleanup() {
         return;
     }
     // @@
+    rootElement.setOuterXml(formatter.getContent());
 
     this->editor->setFocus();
     microFocusChanged();

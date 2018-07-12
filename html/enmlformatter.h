@@ -92,19 +92,16 @@ private:
     QStringList tr_;
     QStringList ul;
     bool formattingError;
-public:
-    bool isFormattingError() const;
-
-private:
     void checkAttributes(QWebElement &element, QStringList valid);
 
 public:
     QList<qint32> resources;
 
     explicit EnmlFormatter(QString html);
-    QString getEnml();
-    QByteArray rebuildNoteEnml();
+    QString getContent() const;
+    void rebuildNoteEnml();
     void tidyHtml();
+    bool isFormattingError() const;
 };
 
 

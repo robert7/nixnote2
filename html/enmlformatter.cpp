@@ -175,7 +175,7 @@ EnmlFormatter::EnmlFormatter(QString html) :
 }
 
 /* Return the formatted content */
-QString EnmlFormatter::getEnml() {
+QString EnmlFormatter::getContent() const {
     return this->content;
 }
 
@@ -187,6 +187,7 @@ QString EnmlFormatter::getEnml() {
 void EnmlFormatter::tidyHtml() {
     // adapted from example at http://www.html-tidy.org/developer/
 
+    QLOG_DEBUG_FILE("fmt-pre-tidy.html", QString(content.constData()));
 
     // TODO
     // https://stackoverflow.com/questions/35671329/how-to-remove-all-attributes-and-classes-from-html-with-tidy
@@ -247,6 +248,7 @@ void EnmlFormatter::tidyHtml() {
         formattingError = true;
         QLOG_ERROR() << "Tidy FAILED: severe error occurred, code=" << rc;
     }
+    QLOG_DEBUG_FILE("fmt-post-tidy.html", QString(content.constData()));
 
     tidyBufFree(&output);
     tidyBufFree(&errbuf);
@@ -256,7 +258,7 @@ void EnmlFormatter::tidyHtml() {
 /**
  * Take the WebKit HTML and transform it into ENML
  * */
-QByteArray EnmlFormatter::rebuildNoteEnml() {
+void EnmlFormatter::rebuildNoteEnml() {
     QLOG_INFO() << "===== Rebuilding note ENML";
     QLOG_DEBUG_FILE("fmt-html-input.html", QString(content.constData()));
 
@@ -282,13 +284,11 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         content.append("</body>");
     }
 
-    QLOG_DEBUG_FILE("fmt-pre-tidy.html", QString(content.constData()));
     tidyHtml();
     if (isFormattingError()) {
         QLOG_ERROR() << "Got no output from tidy - cleanup failed";
-        return "";
+        return;
     }
-    QLOG_DEBUG_FILE("fmt-post-tidy.html", QString(content.constData()));
     // Tidy puts this in place, but we don't really need it.
     content.replace("<form>", "");
     content.replace("</form>", "");
@@ -362,7 +362,6 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 
     QLOG_DEBUG_FILE("fmt-final.html", QString(content.constData()));
     QLOG_INFO() << "===== Finished rebuilding note ENML";
-    return content;
 }
 
 
