@@ -273,7 +273,7 @@ public slots:
     void rotateImageLeftButtonPressed();
     void rotateImageRightButtonPressed();
     void removeFormatButtonPressed();
-    void htmlCleanup();
+    void htmlTidy();
     void formatCodeButtonPressed();
     void linkClicked(const QUrl url);
     void toggleSource();

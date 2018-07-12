@@ -196,7 +196,7 @@ void EnmlFormatter::tidyHtml() {
     QLOG_DEBUG_FILE("fmt-pre-tidy.html", QString(content.constData()));
 
     // 1b is ascii 27 = escape character; not really sure whats the idea behind
-    removeInvalidUnicode();
+    //removeInvalidUnicode();
 
     removeHtmlHeader();
     // without header
@@ -257,7 +257,7 @@ void EnmlFormatter::tidyHtml() {
         }
         //printf("\nAnd here is the result:\n\n%s", output.bp);
         content.append((char *) output.bp);
-        content = content.replace("</body>", "<br/>tidy ok</body>");
+        //content = content.replace("</body>", "<br/>tidy ok</body>");
     } else {
         formattingError = true;
         QLOG_ERROR() << "Tidy FAILED: severe error occurred, code=" << rc;
@@ -352,8 +352,12 @@ void EnmlFormatter::rebuildNoteEnml() {
     }
     QLOG_DEBUG_FILE("fmt-post-dt-check.html", QString(content.constData()));
 
+    // TEMP hack - rerun tidy - to fix XML after manual fixup
+    tidyHtml();
+
     // Add EN xml header
     {
+        // because tidy will add one
         removeHtmlHeader();
 
         QByteArray b;

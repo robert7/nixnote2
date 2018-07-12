@@ -141,12 +141,17 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     QEventLoop loop;
     QLOG_TRACE() << "Before preHTMLFormat";
     QString html = "<body></body>";
-    if (note.content.isSet())
+    if (note.content.isSet()) {
         html = preHtmlFormat(note.content);
+    }
+
     html.replace("<en-note", "<body");
     html.replace("</en-note>", "</body>");
+
     QByteArray htmlPage;
     htmlPage.append(html);
+    QLOG_DEBUG_FILE("htmlfmt-begin.html", html);
+
     QLOG_TRACE() << "About to set content";
     page.mainFrame()->setContent(htmlPage);
     QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
@@ -154,7 +159,11 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     QLOG_TRACE() << "Starting to modify tags";
     modifyTags(page);
     QLOG_TRACE() << "Done modifying tags";
-    note.content = page.mainFrame()->toHtml();
+    html = page.mainFrame()->toHtml();
+    note.content = html;
+
+    QLOG_DEBUG_FILE("htmlfmt-post-modify.html", html);
+
     content.clear();
     content.append(note.content);
 
@@ -162,7 +171,11 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     content.remove(0, index);
     content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
     content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
-    content.prepend("<html>");
+
+    // OLD:content.prepend("<html>");
+    // NEW: EXPERIMENTAL !!!!
+    content.prepend("<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">");
+
     content.append("</html>");
 
     if (!formatError && !readOnly) {
@@ -180,6 +193,8 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
         QLOG_WARN() << "Note is inactive.  Setting to read-only. Note guid=" << note.guid;
     }
     QLOG_TRACE() << "Done rebuilding HTML";
+    QLOG_DEBUG_FILE("htmlfmt-final.html", content);
+
     return content;
 }
 
@@ -191,7 +206,9 @@ QString NoteFormatter::preHtmlFormat(QString note) {
     int pos;
 
     // Correct <br></br> because Webkit messes it up.
-    QString content = note.replace("<br></br>", "<br/>");
+    //QString content = note.replace("<br></br>", "<br/>");
+
+    QString content = note;
 
     pos = content.indexOf("<en-media");
     while (pos != -1) {

@@ -1147,8 +1147,8 @@ void NBrowserWindow::removeFormatButtonPressed() {
     microFocusChanged();
 }
 
-void NBrowserWindow::htmlCleanup() {
-    QLOG_DEBUG() << "htmlCleanup";
+void NBrowserWindow::htmlTidy() {
+    QLOG_DEBUG() << "htmlTidy";
     QWebElement rootElement = editor->editorPage->mainFrame()->documentElement();
     QString contents = rootElement.toOuterXml();
     EnmlFormatter formatter(contents);
@@ -1158,7 +1158,7 @@ void NBrowserWindow::htmlCleanup() {
         QMessageBox::information(
             this,
             tr("Unable to reformat"),
-            QString(tr("HTML cleanup failed."))
+            QString(tr("HTML tidy failed."))
         );
         return;
     }
