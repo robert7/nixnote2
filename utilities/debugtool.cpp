@@ -208,7 +208,7 @@ void DebugTool::dumpField(Optional<QString> field, QString name) {
             QString fname = QString("attr-").append(name);
             // just a hack for better logging
             if (name == "content") {
-                fname = "note-content.enml";
+                fname = "note-content.xml";
             }
             QLOG_DEBUG_FILE(fname, field);
         } else {

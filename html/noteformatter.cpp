@@ -125,6 +125,10 @@ void NoteFormatter::setNoteHistory(bool value) {
 QByteArray NoteFormatter::rebuildNoteHTML() {
     bool haveGuid = note.guid.isSet();
     QString guid = haveGuid ? note.guid.ref() : "unknown";
+
+    // create log file prefix for log file attachments
+    QString logfilePrefix("html-");
+    logfilePrefix.append(guid).append("-");
     QLOG_DEBUG() << "htmlfmt: rebuilding note HTML, note guid=" << guid;
 
     formatError = false;
@@ -139,13 +143,17 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
         QLOG_DEBUG() << "htmlfmt: getting resource from note guid=" << guid;
         resTable.getResourceMap(hashMap, resourceMap, guid);
     }
+    // original note ENML as we got it from database (should be basically 1:1 what we got from Evernote)
+    QString origENML(note.content);
+    QLOG_DEBUG_FILE(logfilePrefix + "original-enml.xml", origENML);
+
 
     QWebPage page;
     QEventLoop loop;
     QLOG_TRACE() << "Before preHTMLFormat";
     QString html = "<body></body>";
     if (note.content.isSet()) {
-        html = preHtmlFormat(note.content);
+        html = preHtmlFormat(origENML);
     }
 
     html.replace("<en-note", "<body");
@@ -153,10 +161,7 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
 
     QByteArray htmlPage;
     htmlPage.append(html);
-    QString logfilePrefix("html-");
-    logfilePrefix.append(guid).append("-");
 
-    QLOG_DEBUG_FILE(logfilePrefix + "begin.html", html);
 
     QLOG_TRACE() << "About to set content";
     page.mainFrame()->setContent(htmlPage);

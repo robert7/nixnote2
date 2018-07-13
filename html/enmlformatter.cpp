@@ -192,28 +192,18 @@ QByteArray EnmlFormatter::getContentBytes() const {
  * Tidy current content.
  * Will set formattingError to true on error.
  * Else content is input and also output.
+ *
+ * Adapted from example at http://www.html-tidy.org/developer/
  */
 void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
-    // adapted from example at http://www.html-tidy.org/developer/
-
     QLOG_DEBUG_FILE("fmt-pre-tidy.html", getContent());
-
-    // 1b is ascii 27 = escape character; not really sure whats the idea behind
-    //removeInvalidUnicode();
-
-    removeHtmlHeader();
-    // without header
-    QLOG_DEBUG_FILE("fmt-pre-tidy2.html", getContent());
-
-    // TODO
-    // https://stackoverflow.com/questions/35671329/how-to-remove-all-attributes-and-classes-from-html-with-tidy
-    // http://api.html-tidy.org/tidy/quickref_5.0.0.html#bare
 
     TidyBuffer output = {nullptr};
     TidyBuffer errbuf = {nullptr};
     int rc = -1;
 
-    TidyDoc tdoc = tidyCreate();                     // Initialize "document"
+    // Initialize "document"
+    TidyDoc tdoc = tidyCreate();
 
     // Convert to XHTML
     Bool ok = tidyOptSetBool(tdoc, TidyXhtmlOut, yes);
@@ -280,10 +270,14 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
 
     if (rc >= 0) {
         if (rc > 0) {
-            QLOG_INFO() << "Tidy DONE: diagnostics: " << ((char *) errbuf.bp);
+            QString tidyErrors((char *) errbuf.bp);
+            tidyErrors.prepend("    ").replace("\n", "\n    ");
+
+            QLOG_INFO() << "Tidy DONE: diagnostics: " << tidyErrors;
         }
-        //printf("\nAnd here is the result:\n\n%s", output.bp);
+        // results
         content.append((char *) output.bp);
+
         //content = content.replace("</body>", "<br/>tidy ok</body>");
     } else {
         formattingError = true;

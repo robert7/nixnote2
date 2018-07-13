@@ -195,7 +195,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     settings->beginGroup(INI_GROUP_APPEARANCE);
     QString theme = settings->value("themeName", "").toString();
     loadTheme(resourceList, colorList, theme);
-    autoHideEditorToolbar = settings->value("autoHideEditorToolbar", true).toBool();
+    // note auto-hide doesn't really work well
+    autoHideEditorToolbar = settings->value("autoHideEditorToolbar", false).toBool();
     settings->endGroup();
 
     minIndexInterval = 5000;

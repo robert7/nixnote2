@@ -759,7 +759,7 @@ void NBrowserWindow::noteSyncUpdate(qint32 lid) {
 // mark note currently open in editor as dirty (or as NOT dirty depending on param)
 // default setDateUpdated=true
 void NBrowserWindow::setDirty(qint32 lid, bool dirty, bool setDateUpdated) {
-    QLOG_DEBUG() << "setDirty: lid=" << lid << ", dirty=" << dirty << ", setDateUpdated" << setDateUpdated;
+    QLOG_DEBUG() << "setDirty: lid=" << lid << ", dirty=" << dirty << ", setDateUpdated=" << setDateUpdated;
     NoteTable noteTable(global.db);
     noteTable.setDirty(lid, dirty, setDateUpdated);
     if (setDateUpdated) {
@@ -1175,7 +1175,9 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
 
     // mark as dirty
     editor->isDirty = true;
+    // not really sure whenever we need both
     noteContentUpdated();
+    noteContentEdited();
 }
 
 
@@ -3002,7 +3004,7 @@ void NBrowserWindow::noteSourceUpdated() {
     ba.append("</body></html>");
     editor->setContent(ba);
     this->editor->isDirty = true;
-    emit noteContentEditedSignal(uuid, lid, editor->editorPage->mainFrame()->documentElement().toOuterXml());
+    noteContentEdited();
 }
 
 
@@ -3614,12 +3616,13 @@ void NBrowserWindow::handleUrls(const QMimeData *mime) {
 }
 
 
-// This is used to notify the tab window that the contents of a
-// note have changed.  It avoids some of the overhead that happens
-// when a note is first edited, but it is signaled on every change.
-// The tab window uses it to update any duplicate windows (i.e. a note
-// was edited in an external editor and is still being viewed internally
-// so we need to keep the contents in sync.
+/** This is used to notify the tab window that the contents of a
+  * note have changed.  It avoids some of the overhead that happens
+  * when a note is first edited, but it is signaled on every change.
+  * The tab window uses it to update any duplicate windows (i.e. a note
+  * was edited in an external editor and is still being viewed internally
+  * so we need to keep the contents in sync.
+  * */
 void NBrowserWindow::noteContentEdited() {
     emit noteContentEditedSignal(uuid, lid, editor->editorPage->mainFrame()->documentElement().toOuterXml());
 }
