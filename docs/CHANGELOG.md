@@ -1,4 +1,5 @@
 # CHANGELOG
+* [Binary releases](https://github.com/robert7/nixnote2/releases)
 
 ## 2018-07
 ### #10
