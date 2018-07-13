@@ -123,19 +123,21 @@ void NoteFormatter::setNoteHistory(bool value) {
 /* Take the ENML note and transform it into HTML that WebKit will
   not complain about */
 QByteArray NoteFormatter::rebuildNoteHTML() {
-    QLOG_DEBUG() << "Rebuilding note HTML, note guid=" << note.guid;
+    bool haveGuid = note.guid.isSet();
+    QString guid = haveGuid ? note.guid.ref() : "unknown";
+    QLOG_DEBUG() << "htmlfmt: rebuilding note HTML, note guid=" << guid;
 
     formatError = false;
     readOnly = false;
 
     ResourceTable resTable(global.db);
-    if (!note.guid.isSet()) {
+    if (!haveGuid) {
         formatError = true;
         readOnly = true;
-        QLOG_WARN() << "NOTE GUID IS NOT SET!!! => readOnly";
+        QLOG_WARN() << "htmlfmt: NOTE GUID IS NOT SET!!! => readOnly";
     } else {
-        QLOG_DEBUG() << "Getting resource from note guid=" << note.guid;
-        resTable.getResourceMap(hashMap, resourceMap, note.guid);
+        QLOG_DEBUG() << "htmlfmt: getting resource from note guid=" << guid;
+        resTable.getResourceMap(hashMap, resourceMap, guid);
     }
 
     QWebPage page;
@@ -151,7 +153,10 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
 
     QByteArray htmlPage;
     htmlPage.append(html);
-    QLOG_DEBUG_FILE("htmlfmt-begin.html", html);
+    QString logfilePrefix("html-");
+    logfilePrefix.append(guid).append("-");
+
+    QLOG_DEBUG_FILE(logfilePrefix + "begin.html", html);
 
     QLOG_TRACE() << "About to set content";
     page.mainFrame()->setContent(htmlPage);
@@ -163,7 +168,7 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     html = page.mainFrame()->toHtml();
     note.content = html;
 
-    QLOG_DEBUG_FILE("htmlfmt-post-modify.html", html);
+    QLOG_DEBUG_FILE(logfilePrefix + "modify.html", html);
 
     content.clear();
     content.append(note.content);
@@ -184,16 +189,16 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
             qint32 notebookLid = ntable.getLid(note.notebookGuid);
             if (ntable.isReadOnly(notebookLid)) {
                 readOnly = true;
-                QLOG_WARN() << "Notebook is read-only.  Marking note read-only. Note guid=" << note.guid;
+                QLOG_WARN() << "Notebook is read-only.  Marking note read-only. Note guid=" << guid;
             }
         }
     }
     if (note.active.isSet() && !note.active) {
         readOnly = true;
-        QLOG_WARN() << "Note is inactive.  Setting to read-only. Note guid=" << note.guid;
+        QLOG_WARN() << "Note is inactive.  Setting to read-only. Note guid=" << guid;
     }
     QLOG_TRACE() << "Done rebuilding HTML";
-    QLOG_DEBUG_FILE("htmlfmt-final.html", content);
+    QLOG_DEBUG_FILE(logfilePrefix + "final.html", content);
 
     return content;
 }
@@ -469,14 +474,14 @@ const char *NoteFormatter::findImageFormat(QString file) {
   modify the ENML */
 void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     QLOG_TRACE_IN();
-    QLOG_DEBUG() << "Getting resource hash=" << hash;
+    //QLOG_DEBUG() << "Image tag - getting resource hash=" << hash;
     QString mimetype = enMedia.attribute("type");
     qint32 resLid = 0;
     resLid = hashMap[hash];
     QString highlightString = "";
 
     if (resLid > 0) {
-        QLOG_DEBUG() << "Getting resource resLid=" << resLid;
+        QLOG_DEBUG() << "htmlfmt: image tag - getting resource hash=" << hash << ", lid=" << resLid;
         Resource r = resourceMap[resLid];
         QLOG_TRACE() << "resource retrieved";
 
@@ -532,7 +537,7 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     } else {
         resourceError = true;
         readOnly = true;
-        QLOG_WARN() << "Resource error. Setting note to read-only . Note guid=" << note.guid
+        QLOG_WARN() << "Image tag - resource error. Setting note to read-only . Note guid=" << note.guid
                     << ". Resource hash " << hash << ")";
     }
 
@@ -561,7 +566,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
 
     ResourceTable resTable(global.db);
     QString contextFileName;
-    QLOG_DEBUG() << "Fetching for note: " << note.guid << " hash: " << hash;
+    QLOG_DEBUG() << "htmlfmt: fetching for note: " << note.guid << " hash: " << hash;
     qint32 resLid = resTable.getLidByHashHex(note.guid, hash);
     Resource r;
     resTable.get(r, resLid, false);

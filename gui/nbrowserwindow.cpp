@@ -1164,10 +1164,18 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
         );
         return;
     }
-    editor->setContent(formatter.getContentBytes());
+    const QString html = formatter.getContent();
+    // equals to setContent(html, "text/html", baseUrl).
+    editor->setHtml(html);
+    QLOG_DEBUG_FILE("editor.html", html);
 
-    this->editor->setFocus();
+
+    editor->setFocus();
     microFocusChanged();
+
+    // mark as dirty
+    editor->isDirty = true;
+    noteContentUpdated();
 }
 
 
