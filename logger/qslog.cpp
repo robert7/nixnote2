@@ -180,7 +180,7 @@ namespace QsLogging {
             QTextStream stream(&file);
             stream << message;
         }
-        QLOGINFO() << "Writing attachment data to " << filename;
+        //QLOGINFO() << "Writing attachment data to " << filename;
     }
 
     /**
@@ -193,6 +193,10 @@ namespace QsLogging {
 
     bool Logger::isDisplayTimestamp() const {
         return displayTimestamp;
+    }
+
+    int Logger::getFilenameCounter() const {
+        return filenameCounter;
     }
 
 } // end namespace
