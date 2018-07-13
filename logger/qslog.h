@@ -141,7 +141,7 @@ namespace QsLogging {
 
 #define QLOG_DEBUG_FILE(logid, content) if (QLOG_IS_DEBUG) { \
        QsLogging::Logger::Helper(QsLogging::DebugLevel).stream() <<  __FILE__ << ':' << __LINE__ << ' ' \
-       << "Attachment: #" << QsLogging::Logger::instance().getFilenameCounter() << ' ' << (logid); \
+       << "Attachment: #" << (QsLogging::Logger::instance().getFilenameCounter() + 1) << ' ' << (logid); \
        QsLogging::Logger::instance().writeToFile(logid, content); \
        }
 

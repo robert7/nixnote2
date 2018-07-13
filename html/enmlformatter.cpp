@@ -271,8 +271,7 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
     if (rc >= 0) {
         if (rc > 0) {
             QString tidyErrors((char *) errbuf.bp);
-            tidyErrors.prepend("    ").replace("\n", "\n    ");
-
+            tidyErrors.replace("\n", "; ");
             QLOG_INFO() << "Tidy DONE: diagnostics: " << tidyErrors;
         }
         // results
@@ -378,6 +377,15 @@ void EnmlFormatter::rebuildNoteEnml() {
     // TEMP hack - rerun tidy - to fix XML after manual fixup
     tidyHtml(HtmlCleanupMode::Tidy);
 
+
+    /// TEMPORARY POST TIDY HACK
+    /// TEMPORARY POST TIDY HACK
+    content.replace("<!-- <en-media", "<en-media");
+    content.replace("</en-media> -->", "</en-media>");
+    /// TEMPORARY POST TIDY HACK
+    /// TEMPORARY POST TIDY HACK
+
+
     // Add EN xml header
     {
         // because tidy will add one
@@ -397,7 +405,7 @@ void EnmlFormatter::rebuildNoteEnml() {
     // content = content.replace("<hr>", "<hr/>");
     // content = content.replace("<br>", "<br/>");
 
-    QLOG_DEBUG_FILE("fmt-final.html", getContent());
+    QLOG_DEBUG_FILE("fmt-enml-final.xml", getContent());
     QLOG_INFO() << "===== Finished rebuilding note ENML";
 }
 
@@ -483,9 +491,9 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         e.removeAttribute("style");
         removeInvalidAttributes(e);
         e.setInnerXml(encrypted);
-        const QString xml = "<en-crypt cipher=\"" + cipher + "\" length=\"" +
+        const QString xml = "<!-- en-crypt cipher=\"" + cipher + "\" length=\"" +
                             length + "\" hint=\"" + hint
-                            + "\">" + encrypted + "</en-crypt>";
+                            + "\">" + encrypted + "</en-crypt -->";
         e.setOuterXml(xml);
         QLOG_DEBUG() << "Processing tag 'img', type=en-crypt' - fixed img node to " << xml;
     } else if (enType == "temporary") { ;
@@ -508,7 +516,8 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 
         resources.append(lid);
         removeInvalidAttributes(e);
-        const QString xml = e.toOuterXml().replace("<img", "<en-media").replace("</img", "</en-media");
+        // temp hack for tidy call
+        const QString xml = e.toOuterXml().replace("<img", "<!-- <en-media").append("</en-media> -->");
         e.setOuterXml(xml);
         QLOG_DEBUG() << "Fixed img node to: " << xml;
         // zda sa ze nefunguje uz - a mozno ani netreba

@@ -195,7 +195,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     settings->beginGroup(INI_GROUP_APPEARANCE);
     QString theme = settings->value("themeName", "").toString();
     loadTheme(resourceList, colorList, theme);
-    // note auto-hide doesn't really work well
+    // note auto-hide doesn't really work well - there are problems with menu appearing when you try
+    // to select text
     autoHideEditorToolbar = settings->value("autoHideEditorToolbar", false).toBool();
     settings->endGroup();
 
