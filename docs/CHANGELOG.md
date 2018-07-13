@@ -1,6 +1,14 @@
 # CHANGELOG
 
 ## 2018-07
+### #10
+* Simplified content of the Help menu. Removed unrelevant items. "Message Log Info" now shows
+  log file location & instructions.
+* Further stabilisation of html cleanup.
+* Duplicate note will now mark note as "- copy".
+* Added "Simplify html" to clean html garbage e.g. after paste from some web page. 
+  So far only very experimental version. Discards images. Will be improved later.
+
 ### #9
 * Added **docker build**. Creating binaries ouf of source is now very straightforward.
 * Improved reporting and logging of errors (mainly for sync errors). The messages may be now
@@ -84,8 +92,7 @@
 * [Preview](https://www.dropbox.com/sh/62lnikzyf4r0sa2/AADMk-EHBwvBt7G5bOga9tyia?dl=0&preview=RS-3-search-sort-relevance.png)
 
 ### #2
-* Some note editing and toolbar tweeks (color picker has now restricted list of color; but does'nt really 
-  work correctly yet)
+* Some note editing and toolbar tweeks (color picker has now restricted list of colors).
 
 ### #1
 * Merged master to development

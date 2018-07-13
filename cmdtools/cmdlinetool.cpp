@@ -271,7 +271,8 @@ int CmdLineTool::addNote(StartupConfig config) {
 
 
     EnmlFormatter formatter(config.newNote->content);
-    config.newNote->content = formatter.rebuildNoteEnml();
+    formatter.rebuildNoteEnml();
+    config.newNote->content = formatter.getContent();
 
     bool expectResponse = true;
 
@@ -490,7 +491,8 @@ int CmdLineTool::appendNote(StartupConfig config) {
 
 
     EnmlFormatter formatter(config.newNote->content);
-    config.newNote->content = formatter.rebuildNoteEnml();
+    formatter.rebuildNoteEnml();
+    config.newNote->content = formatter.getContent();
 
     bool expectResponse = true;
 

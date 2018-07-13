@@ -201,7 +201,7 @@ int main(int argc, char *argv[]) {
         exit(retval1);
     }
 
-    QString logPath = global.fileManager.getLogsDirPath("") + "messages.log";
+    QString logPath = global.fileManager.getMainLogFileName();
     QsLogging::DestinationPtr fileDestination(
         QsLogging::DestinationFactory::MakeFileDestination(logPath));
     logger.addDestination(fileDestination.get());

@@ -463,7 +463,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     // If we are searching, we never pull from the cache since the search string may
     // have changed since the last time.
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    FilterCriteria *criteria = global.getCurrentCriteria();
     if (criteria->isSearchStringSet() && criteria->getSearchString().trimmed() != "") {
         global.cache.remove(lid);
     }
@@ -759,7 +759,7 @@ void NBrowserWindow::noteSyncUpdate(qint32 lid) {
 // mark note currently open in editor as dirty (or as NOT dirty depending on param)
 // default setDateUpdated=true
 void NBrowserWindow::setDirty(qint32 lid, bool dirty, bool setDateUpdated) {
-    QLOG_DEBUG() << "setDirty: lid=" << lid << ", dirty=" << dirty << ", setDateUpdated" << setDateUpdated;
+    QLOG_DEBUG() << "setDirty: lid=" << lid << ", dirty=" << dirty << ", setDateUpdated=" << setDateUpdated;
     NoteTable noteTable(global.db);
     noteTable.setDirty(lid, dirty, setDateUpdated);
     if (setDateUpdated) {
@@ -805,11 +805,12 @@ void NBrowserWindow::saveNoteContent() {
 
         EnmlFormatter formatter(contents);
         formatter.rebuildNoteEnml();
-        if (formatter.formattingError) {
+        if (formatter.isFormattingError()) {
             QMessageBox::information(
                 this,
                 tr("Unable to reformat"),
-                QString(tr(NN_APP_DISPLAY_NAME_GUI " was unable to reformat the note in ENML. Note could not be saved."))
+                QString(
+                    tr(NN_APP_DISPLAY_NAME_GUI " was unable to reformat the note in ENML. Note could not be saved."))
             );
             return;
         }
@@ -839,9 +840,9 @@ void NBrowserWindow::saveNoteContent() {
         QLOG_DEBUG() << "Updating note content";
         if (!global.multiThreadSaveEnabled) {
             NoteTable table(global.db);
-            table.updateNoteContent(lid, formatter.getEnml());
+            table.updateNoteContent(lid, formatter.getContent());
         } else
-            emit requestNoteContentUpdate(lid, formatter.getEnml(), true);
+            emit requestNoteContentUpdate(lid, formatter.getContent(), true);
         editor->isDirty = false;
 
         if (thumbnailer == nullptr)
@@ -1137,7 +1138,6 @@ void NBrowserWindow::underlineButtonPressed() {
 }
 
 
-// The underline button was toggled
 void NBrowserWindow::removeFormatButtonPressed() {
     // for some reason first call doesn't remove background color, but the second does...
     this->editor->triggerPageAction(QWebPage::RemoveFormat);
@@ -1145,6 +1145,54 @@ void NBrowserWindow::removeFormatButtonPressed() {
 
     this->editor->setFocus();
     microFocusChanged();
+}
+
+
+// TODO add enum
+void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
+    QLOG_DEBUG() << "html cleanup, mode " << mode;
+    QWebElement rootElement = editor->editorPage->mainFrame()->documentElement();
+    QString contents = rootElement.toOuterXml();
+    EnmlFormatter formatter(contents);
+    formatter.tidyHtml(mode);
+
+    if (formatter.isFormattingError()) {
+        QMessageBox::information(
+            this,
+            tr("Unable to reformat"),
+            QString(tr("HTML cleanup failed."))
+        );
+        return;
+    }
+    const QString html = formatter.getContent();
+    // equals to setContent(html, "text/html", baseUrl).
+    editor->setHtml(html);
+    QLOG_DEBUG_FILE("editor.html", html);
+
+
+    editor->setFocus();
+    microFocusChanged();
+
+    // mark as dirty
+    editor->isDirty = true;
+    // not really sure whenever we need both
+    noteContentUpdated();
+    noteContentEdited();
+}
+
+
+/**
+ * Just tidy - same as before save.
+ */
+void NBrowserWindow::htmlTidy() {
+    htmlCleanup(HtmlCleanupMode::Tidy);
+}
+
+/**
+ * Simplify - same as before save.
+ */
+void NBrowserWindow::htmlSimplify() {
+    htmlCleanup(HtmlCleanupMode::Simplify);
 }
 
 
@@ -2115,12 +2163,11 @@ void NBrowserWindow::linkClicked(const QUrl url) {
         } else {
             // Setup a new filter
             FilterCriteria *criteria = new FilterCriteria();
-            global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+            global.getCurrentCriteria()->duplicate(*criteria);
             criteria->unsetSelectedNotes();
             criteria->unsetLid();
             criteria->setLid(newlid);
             global.appendFilter(criteria);
-            global.filterPosition++;
         }
         emit(evernoteLinkClicked(newlid, newTab, newExternalWindow));
 
@@ -2957,7 +3004,7 @@ void NBrowserWindow::noteSourceUpdated() {
     ba.append("</body></html>");
     editor->setContent(ba);
     this->editor->isDirty = true;
-    emit noteContentEditedSignal(uuid, lid, editor->editorPage->mainFrame()->documentElement().toOuterXml());
+    noteContentEdited();
 }
 
 
@@ -3569,12 +3616,13 @@ void NBrowserWindow::handleUrls(const QMimeData *mime) {
 }
 
 
-// This is used to notify the tab window that the contents of a
-// note have changed.  It avoids some of the overhead that happens
-// when a note is first edited, but it is signaled on every change.
-// The tab window uses it to update any duplicate windows (i.e. a note
-// was edited in an external editor and is still being viewed internally
-// so we need to keep the contents in sync.
+/** This is used to notify the tab window that the contents of a
+  * note have changed.  It avoids some of the overhead that happens
+  * when a note is first edited, but it is signaled on every change.
+  * The tab window uses it to update any duplicate windows (i.e. a note
+  * was edited in an external editor and is still being viewed internally
+  * so we need to keep the contents in sync.
+  * */
 void NBrowserWindow::noteContentEdited() {
     emit noteContentEditedSignal(uuid, lid, editor->editorPage->mainFrame()->documentElement().toOuterXml());
 }

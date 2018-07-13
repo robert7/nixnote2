@@ -36,12 +36,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 using namespace std;
 
 
+enum HtmlCleanupMode {
+    Tidy = 0,
+    Simplify = 1
+};
+
+#define DEFAULT_HTML_HEAD "<head>" \
+                          "<meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\">" \
+                          "<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>" \
+                          "</head>"
+#define DEFAULT_HTML_TYPE "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">"
+
+
+
+
+
 class EnmlFormatter : public QObject
 {
     Q_OBJECT
 private:
     QByteArray content;
-    //QDomDocument doc;
     bool isAttributeValid(QString attribute);
     bool isElementValid(QWebElement e);
     // void scanTags(QWebElement &element);
@@ -58,7 +72,7 @@ private:
     void fixSpanNode(QWebElement &e);
     void fixDivNode(QWebElement &e);
     void fixPreNode(QWebElement &e);
-    QByteArray removeInvalidUnicode(QByteArray content);
+    void removeInvalidUnicode();
     QByteArray fixEncryptionTags(QByteArray newContent);
 
     QStringList coreattrs;
@@ -74,8 +88,6 @@ private:
     QStringList blockQuote;
     QStringList br;
     QStringList caption;
-    // QStringList colHAlign;
-    // QStringList colVAlign;
     QStringList col;
     QStringList colGroup;
     QStringList del;
@@ -94,18 +106,21 @@ private:
     QStringList th;
     QStringList tr_;
     QStringList ul;
-
+    bool formattingError;
     void checkAttributes(QWebElement &element, QStringList valid);
-
-    void tidyHtml(QByteArray &content);
+    void setContent(QString &content);
 
 public:
-    bool formattingError;
     QList<qint32> resources;
 
     explicit EnmlFormatter(QString html);
-    QString getEnml();
-    QByteArray rebuildNoteEnml();
+    QString getContent() const;
+    QByteArray getContentBytes() const;
+
+    void removeHtmlHeader();
+    void rebuildNoteEnml();
+    void tidyHtml(HtmlCleanupMode mode);
+    bool isFormattingError() const;
 };
 
 

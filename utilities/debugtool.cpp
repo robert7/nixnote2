@@ -205,7 +205,12 @@ void DebugTool::dumpField(Optional<QString> field, QString name) {
     if (field.isSet()) {
         QString &fieldValue = field.ref();
         if (fieldValue.length() > 100) {
-            QLOG_DEBUG_FILE(QString("attr-").append(name), field);
+            QString fname = QString("attr-").append(name);
+            // just a hack for better logging
+            if (name == "content") {
+                fname = "note-content.xml";
+            }
+            QLOG_DEBUG_FILE(fname, field);
         } else {
             QLOG_DEBUG() << name << ":" << fieldValue << ":";
         }

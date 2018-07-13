@@ -179,7 +179,7 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList <qint32> *results) 
 
     FilterCriteria *criteria = newCriteria;
     if (criteria == nullptr)
-        criteria = global.filterCriteria[global.filterPosition];
+        criteria = global.getCurrentCriteria();
     else
         internalSearch = false;
 
@@ -215,7 +215,7 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList <qint32> *results) 
     if (internalSearch) {
         // Remove any selected notes that are not in the filter.
         if (global.filterCriteria.size() > 0) {
-            FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+            FilterCriteria *criteria = global.getCurrentCriteria();
             QList <qint32> selectedLids;
             criteria->getSelectedNotes(selectedLids);
             for (int i = selectedLids.size() - 1; i >= 0; i--) {
@@ -612,7 +612,7 @@ void FilterEngine::filterNotebook(FilterCriteria *criteria) {
         QString stackName = criteria->getNotebook()->text(0);
         filterStack(stackName);
     } else {
-        FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+        FilterCriteria *criteria = global.getCurrentCriteria();
         qint32 notebookLid = criteria->getNotebook()->data(0,Qt::UserRole).toInt();
         NotebookTable notebookTable(global.db);
         QString notebook;

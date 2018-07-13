@@ -233,7 +233,6 @@ public slots:
     void setSyncTimer();
     void notesDeleted(QList<qint32> lid);
     void reindexCurrentNote();
-    void openTrunk();
     void openAccount();
     void openDatabaseStatus();
     void openAbout();
@@ -296,7 +295,7 @@ public slots:
     void pauseIndexing(bool value=true);
     void openEvernoteSupport();
     void openGithub();
-    void openMessageLog();
+    void openMessageLogInfo();
     void showDesktopUrl(const QUrl &url);
     void reloadIcons();
     void showMessage(QString title, QString msg, int timeout=10000);

@@ -118,12 +118,10 @@ public:
     QAction *pinNoteAction;
     QAction *unpinNoteAction;
     QAction *spellCheckAction;
-    QAction *openTrunkAction;
     QAction *openManualAction;
-    QAction *openEvernoteSupportAction;
     QAction *openMessageLogAction;
-    QAction *openUserForumAction;
-    QAction *openEvernoteAccountPageAction;
+
+
     QAction *themeInformationAction;
     QAction *openShortcutsDialogAction;
     QAction *openGithubAction;
@@ -137,8 +135,6 @@ signals:
 
 public slots:
     void openManual();
-    void openUserForum();
-    void openEvernoteAccountPage();
     void openThemeInformation();
 };
 

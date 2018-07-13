@@ -43,8 +43,12 @@ TableDialog::TableDialog(QWidget *parent) :
 
     rows.setMinimum(1);
     rows.setMaximum(30);
+    rows.setValue(2);
+
     cols.setMinimum(1);
     cols.setMaximum(30);
+    cols.setValue(2);
+
 
 
     connect(&unit, SIGNAL(activated(int)), this, SLOT(unitChanged()));

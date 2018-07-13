@@ -488,7 +488,7 @@ void NNotebookView::buildSelection() {
 void NNotebookView::updateSelection() {
     blockSignals(true);
 
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    FilterCriteria *criteria = global.getCurrentCriteria();
     if (global.filterPosition != filterPosition) {
         QList<QTreeWidgetItem*> selectedItems = this->selectedItems();
         for (int i=0; i<selectedItems.size() && criteria->resetNotebook; i++) {

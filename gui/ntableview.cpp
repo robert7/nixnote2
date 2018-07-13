@@ -393,8 +393,8 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
         if (!readOnlySelected)
             deleteNoteAction->setEnabled(true);
     }
-    if (global.filterCriteria[global.filterPosition]->isDeletedOnlySet() &&
-        global.filterCriteria[global.filterPosition]->getDeletedOnly())
+    if (global.getCurrentCriteria()->isDeletedOnlySet() &&
+        global.getCurrentCriteria()->getDeletedOnly())
         restoreNoteAction->setVisible(true);
     else
         restoreNoteAction->setVisible(false);
@@ -512,7 +512,7 @@ void NTableView::refreshSelection() {
     if (lidHidden)
         setColumnHidden(NOTE_TABLE_LID_POSITION, false);
 
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    FilterCriteria *criteria = global.getCurrentCriteria();
     QList<qint32> historyList;
     criteria->getSelectedNotes(historyList);
     if (criteria->isFavoriteSet() && criteria->getFavorite() > 0)
@@ -561,7 +561,7 @@ void NTableView::refreshSelection() {
     // Save the list of selected notes
     QList<qint32> selectedNotes;
     this->getSelectedLids(selectedNotes);
-    global.filterCriteria[global.filterPosition]->setSelectedNotes(selectedNotes);
+    global.getCurrentCriteria()->setSelectedNotes(selectedNotes);
 
     if (lidHidden)
         setColumnHidden(NOTE_TABLE_LID_POSITION, true);
@@ -662,7 +662,7 @@ void NTableView::deleteSelectedNotes() {
 
     QString typeDelete;
     QString msg;
-    FilterCriteria *f = global.filterCriteria[global.filterPosition];
+    FilterCriteria *f = global.getCurrentCriteria();
     bool expunged = false;
     typeDelete = tr("Delete ");
 
@@ -849,7 +849,7 @@ void NTableView::copyNote() {
     }
 
     FilterCriteria *criteria = new FilterCriteria();
-    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    global.getCurrentCriteria()->duplicate(*criteria);
     criteria->resetSelectedNotes = true;
     criteria->setSelectedNotes(newLids);
     criteria->setLid(saveLid);
@@ -1394,7 +1394,7 @@ void NTableView::createTableOfContents() {
         selectRow(proxyIndex.row());
 
         FilterCriteria *criteria = new FilterCriteria();
-        global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+        global.getCurrentCriteria()->duplicate(*criteria);
         criteria->unsetSearchString();
         criteria->setLid(lid);
         global.filterCriteria.append(criteria);

@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"
 #include "utilities/mimereference.h"
+#include "html/enmlformatter.h"
 
 #include <QFileSystemModel>
 #include <QFileIconProvider>
@@ -104,7 +105,7 @@ QString NoteFormatter::getPage() {
 /* If we have search criteria, then we highlight the text matching
   those results in the note. */
 //void NoteFormatter::setHighlight() {
-//    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+//    FilterCriteria *criteria = global.getCurrentCriteria();
 //    if (criteria->isSearchStringSet())
 //        enableHighlight = true;
 //    else
@@ -122,31 +123,46 @@ void NoteFormatter::setNoteHistory(bool value) {
 /* Take the ENML note and transform it into HTML that WebKit will
   not complain about */
 QByteArray NoteFormatter::rebuildNoteHTML() {
-    QLOG_DEBUG() << "Rebuilding note HTML, note guid=" << note.guid;
+    bool haveGuid = note.guid.isSet();
+    QString guid = haveGuid ? note.guid.ref() : "unknown";
+
+    // create log file prefix for log file attachments
+    QString logfilePrefix("html-");
+    logfilePrefix.append(guid).append("-");
+    QLOG_DEBUG() << "htmlfmt: rebuilding note HTML, note guid=" << guid;
 
     formatError = false;
     readOnly = false;
 
     ResourceTable resTable(global.db);
-    if (!note.guid.isSet()) {
+    if (!haveGuid) {
         formatError = true;
         readOnly = true;
-        QLOG_WARN() << "NOTE GUID IS NOT SET!!! => readOnly";
+        QLOG_WARN() << "htmlfmt: NOTE GUID IS NOT SET!!! => readOnly";
     } else {
-        QLOG_DEBUG() << "Getting resource from note guid=" << note.guid;
-        resTable.getResourceMap(hashMap, resourceMap, note.guid);
+        QLOG_DEBUG() << "htmlfmt: getting resource from note guid=" << guid;
+        resTable.getResourceMap(hashMap, resourceMap, guid);
     }
+    // original note ENML as we got it from database (should be basically 1:1 what we got from Evernote)
+    QString origENML(note.content);
+    QLOG_DEBUG_FILE(logfilePrefix + "original-enml.xml", origENML);
+
 
     QWebPage page;
     QEventLoop loop;
     QLOG_TRACE() << "Before preHTMLFormat";
     QString html = "<body></body>";
-    if (note.content.isSet())
-        html = preHtmlFormat(note.content);
+    if (note.content.isSet()) {
+        html = preHtmlFormat(origENML);
+    }
+
     html.replace("<en-note", "<body");
     html.replace("</en-note>", "</body>");
+
     QByteArray htmlPage;
     htmlPage.append(html);
+
+
     QLOG_TRACE() << "About to set content";
     page.mainFrame()->setContent(htmlPage);
     QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
@@ -154,15 +170,22 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     QLOG_TRACE() << "Starting to modify tags";
     modifyTags(page);
     QLOG_TRACE() << "Done modifying tags";
-    note.content = page.mainFrame()->toHtml();
+    html = page.mainFrame()->toHtml();
+    note.content = html;
+
+    QLOG_DEBUG_FILE(logfilePrefix + "modify.html", html);
+
     content.clear();
     content.append(note.content);
 
     qint32 index = content.indexOf("<body");
     content.remove(0, index);
-    content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
-    content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
-    content.prepend("<html>");
+    content.prepend(DEFAULT_HTML_HEAD);
+
+    // OLD:content.prepend("<html>");
+    // NEW: EXPERIMENTAL !!!!
+    content.prepend(DEFAULT_HTML_TYPE);
+
     content.append("</html>");
 
     if (!formatError && !readOnly) {
@@ -171,15 +194,17 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
             qint32 notebookLid = ntable.getLid(note.notebookGuid);
             if (ntable.isReadOnly(notebookLid)) {
                 readOnly = true;
-                QLOG_WARN() << "Notebook is read-only.  Marking note read-only. Note guid=" << note.guid;
+                QLOG_WARN() << "Notebook is read-only.  Marking note read-only. Note guid=" << guid;
             }
         }
     }
     if (note.active.isSet() && !note.active) {
         readOnly = true;
-        QLOG_WARN() << "Note is inactive.  Setting to read-only. Note guid=" << note.guid;
+        QLOG_WARN() << "Note is inactive.  Setting to read-only. Note guid=" << guid;
     }
     QLOG_TRACE() << "Done rebuilding HTML";
+    QLOG_DEBUG_FILE(logfilePrefix + "final.html", content);
+
     return content;
 }
 
@@ -191,7 +216,9 @@ QString NoteFormatter::preHtmlFormat(QString note) {
     int pos;
 
     // Correct <br></br> because Webkit messes it up.
-    QString content = note.replace("<br></br>", "<br/>");
+    //QString content = note.replace("<br></br>", "<br/>");
+
+    QString content = note;
 
     pos = content.indexOf("<en-media");
     while (pos != -1) {
@@ -452,14 +479,14 @@ const char *NoteFormatter::findImageFormat(QString file) {
   modify the ENML */
 void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     QLOG_TRACE_IN();
-    QLOG_DEBUG() << "Getting resource hash=" << hash;
+    //QLOG_DEBUG() << "Image tag - getting resource hash=" << hash;
     QString mimetype = enMedia.attribute("type");
     qint32 resLid = 0;
     resLid = hashMap[hash];
     QString highlightString = "";
 
     if (resLid > 0) {
-        QLOG_DEBUG() << "Getting resource resLid=" << resLid;
+        QLOG_DEBUG() << "htmlfmt: image tag - getting resource hash=" << hash << ", lid=" << resLid;
         Resource r = resourceMap[resLid];
         QLOG_TRACE() << "resource retrieved";
 
@@ -515,7 +542,7 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     } else {
         resourceError = true;
         readOnly = true;
-        QLOG_WARN() << "Resource error. Setting note to read-only . Note guid=" << note.guid
+        QLOG_WARN() << "Image tag - resource error. Setting note to read-only . Note guid=" << note.guid
                     << ". Resource hash " << hash << ")";
     }
 
@@ -544,7 +571,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
 
     ResourceTable resTable(global.db);
     QString contextFileName;
-    QLOG_DEBUG() << "Fetching for note: " << note.guid << " hash: " << hash;
+    QLOG_DEBUG() << "htmlfmt: fetching for note: " << note.guid << " hash: " << hash;
     qint32 resLid = resTable.getLidByHashHex(note.guid, hash);
     Resource r;
     resTable.get(r, resLid, false);
@@ -644,7 +671,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
 QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     QLOG_TRACE_IN();
 
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    FilterCriteria *criteria = global.getCurrentCriteria();
     // First get the icon for this type of file
     resourceHighlight = false;
     if (criteria->isSearchStringSet() && criteria->getSearchString() != "") {

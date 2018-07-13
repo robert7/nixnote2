@@ -22,17 +22,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/resourcetable.h"
 #include "global.h"
 #include "utilities/encrypt.h"
-
 #include <QFileIconProvider>
 #include <QWebPage>
 #include <QWebFrame>
 #include <QIcon>
 #include <QMessageBox>
-
 #include <tidy.h>
 #include <tidybuffio.h>
-
-
 #include <iostream>
 
 using namespace std;
@@ -43,9 +39,9 @@ extern Global global;
 EnmlFormatter::EnmlFormatter(QString html) :
     QObject(nullptr) {
 
-    this->content.clear();
-    this->content.append(html);
+    setContent(html);
 
+    // initial state without error
     formattingError = false;
 
     coreattrs.append("style");
@@ -177,28 +173,69 @@ EnmlFormatter::EnmlFormatter(QString html) :
     ul.append("compact");
 }
 
-/* Return the formatted content */
-QString EnmlFormatter::getEnml() {
-    return this->content;
+/**
+ * Return the formatted content as unicode string
+ */
+QString EnmlFormatter::getContent() const {
+    return QString::fromUtf8(content);
+}
+
+/**
+ * Return the formatted content as byte array (in utf8).
+ */
+QByteArray EnmlFormatter::getContentBytes() const {
+    return content;
 }
 
 
-void EnmlFormatter::tidyHtml(QByteArray &content) {
-    // addapted from example at http://www.html-tidy.org/developer/
+/**
+ * Tidy current content.
+ * Will set formattingError to true on error.
+ * Else content is input and also output.
+ *
+ * Adapted from example at http://www.html-tidy.org/developer/
+ */
+void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
+    QLOG_DEBUG_FILE("fmt-pre-tidy.html", getContent());
 
     TidyBuffer output = {nullptr};
     TidyBuffer errbuf = {nullptr};
     int rc = -1;
 
-    TidyDoc tdoc = tidyCreate();                     // Initialize "document"
+    // Initialize "document"
+    TidyDoc tdoc = tidyCreate();
 
     // Convert to XHTML
     Bool ok = tidyOptSetBool(tdoc, TidyXhtmlOut, yes);
     if (ok) {
-        // dispite "Warning: An XML declaration was detected. Did you mean to use input-xml"
-        // I think we should not use xml parser
-        rc = tidyOptSetBool(tdoc, TidyXmlTags, yes);
+        // Treat input as XML: no
+        rc = tidyOptSetBool(tdoc, TidyXmlTags, no);
     }
+
+    if (mode == HtmlCleanupMode::Simplify) {
+        if (ok) {
+            // Make bare HTML: remove Microsoft cruft
+            rc = tidyOptSetBool(tdoc, TidyMakeBare, yes);
+        }
+        if (ok) {
+            // Discard proprietary attributes ## warn may discard images
+            rc = tidyOptSetBool(tdoc, TidyDropPropAttrs, yes);
+        }
+        if (ok) {
+            // Clean up HTML exported from Google Docs
+            rc = tidyOptSetBool(tdoc, TidyGDocClean, yes);
+        }
+        if (ok) {
+            // Replace presentational clutter by style rules
+            rc = tidyOptSetBool(tdoc, TidyMakeClean, yes);
+        }
+        if (ok) {
+            // Ensure tags and attributes match output HTML version
+            rc = tidyOptSetBool(tdoc, TidyStrictTagsAttr, yes);
+        }
+    }
+
+
     if (ok) {
         rc = tidySetCharEncoding(tdoc, "utf8");
     }
@@ -233,123 +270,71 @@ void EnmlFormatter::tidyHtml(QByteArray &content) {
 
     if (rc >= 0) {
         if (rc > 0) {
-            QLOG_INFO() << "Tidy DONE: diagnostics: " << ((char *) errbuf.bp);
+            QString tidyErrors((char *) errbuf.bp);
+            tidyErrors.replace("\n", "; ");
+            QLOG_INFO() << "Tidy DONE: diagnostics: " << tidyErrors;
         }
-        //printf("\nAnd here is the result:\n\n%s", output.bp);
+        // results
         content.append((char *) output.bp);
+
+        //content = content.replace("</body>", "<br/>tidy ok</body>");
     } else {
+        formattingError = true;
         QLOG_ERROR() << "Tidy FAILED: severe error occurred, code=" << rc;
     }
+    QLOG_DEBUG_FILE("fmt-post-tidy.html", getContent());
 
     tidyBufFree(&output);
     tidyBufFree(&errbuf);
     tidyRelease(tdoc);
 }
 
-/* Take the ENML note and transform it into HTML that WebKit will
-  not complain about */
-QByteArray EnmlFormatter::rebuildNoteEnml() {
+/**
+ * Remove html header.
+ * Automaticalled before tidy.
+ */
+void EnmlFormatter::removeHtmlHeader() {
+    // remove all before body
+    qint32 index = content.indexOf("<body");
+    content.remove(0, index);
+    // remove all after body
+    index = content.indexOf("</body");
+    content.truncate(index);
+    content.append("</body>");
+}
+
+
+/**
+ * Take the WebKit HTML and transform it into ENML
+ * */
+void EnmlFormatter::rebuildNoteEnml() {
     QLOG_INFO() << "===== Rebuilding note ENML";
-    QLOG_DEBUG_FILE("fmt-html-input.html", QString(content.constData()));
+    QLOG_DEBUG_FILE("fmt-html-input.html", getContent());
 
     // list of referenced LIDs
     resources.clear();
 
 
-    // Remove invalid stuff
-    content.replace("</input>", "");
-    // EXTRACT
-    content = content.replace("<hr>", "<hr/>");
-    content = content.replace("<br>", "<br/>");
-
-    // 1b is ascii 27 = escape character
-    content = this->removeInvalidUnicode(content);
-
-    // // Strip off HTML header & remove the background & default font color
-    // // if they match the theme default.
-    // // mid() Returns a string that contains n characters of this string, starting at the specified position index.
-    // {
-    //     qint32 index = content.indexOf("<body");
-    //     QString header = content.mid(0, index);
-    //     QByteArray c1 = content.mid(index);
-    //     index = header.indexOf(">");
-    //     header = header.mid(0, index);
-    //     QByteArray c2 = content.mid(content.indexOf(">", index));
-    //     QString newHeader = header;
-    //     QString bgColor = "background-color: " + global.getEditorBackgroundColor() + ";";
-    //     QString fgColor = "color: " + global.getEditorFontColor() + ";";
-    //     newHeader = newHeader.replace(bgColor, "");
-    //     newHeader = newHeader.replace(fgColor, "");
-    //     content = c1;
-    //     content.append(newHeader).append(c2);
-    // }
-
-    {
-        // remove all before body
-        qint32 index = content.indexOf("<body");
-        content.remove(0, index);
-        // remove all after body
-        index = content.indexOf("</body");
-        content.truncate(index);
-        content.append("</body>");
-    }
-
-    QLOG_DEBUG_FILE("fmt-pre-tidy.html", QString(content.constData()));
-    tidyHtml(content);
-    if (content == "") {
+    tidyHtml(HtmlCleanupMode::Tidy);
+    if (isFormattingError()) {
         QLOG_ERROR() << "Got no output from tidy - cleanup failed";
-        formattingError = true;
-        return "";
+        return;
     }
-    QLOG_DEBUG_FILE("fmt-post-tidy.html", QString(content.constData()));
+    removeHtmlHeader();
+    content.prepend(DEFAULT_HTML_HEAD);
+    content.prepend(DEFAULT_HTML_TYPE);
+
     // Tidy puts this in place, but we don't really need it.
     content.replace("<form>", "");
     content.replace("</form>", "");
 
+    content = fixEncryptionTags(content);
 
-
-    // {
-    //     QByteArray b;
-    //     b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    //     b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>\n");
-    //     b.append("<html><head><title></title></head>");
-    //     //b.append("<body style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
-    //     b.append(content);
-    //     b.append("</html>");
-    //     content.clear();
-    //     content = b;
-    // }
-
-    // // Remove <o:p> tags in case pasting from MicroSoft products.
-    // content = content.replace("<o:p>", "");
-    // content = content.replace("</o:p>", "");
-    // content = content.replace("<o:p/>", "");
-    //
-    // // Remove auto-complete tags
-    // content = content.replace("<ac:rich-text-body", "<div");
-    // content = content.replace("</ac:rich-text-body", "</div");
-
-
-
-
-
-
-
-
-    {
-        // qint32 index = content.indexOf("<body");
-        // content.remove(0, index);
-        // content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
-        // content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
-        // content.prepend("<html>");
-        // content.append("</html>");
-        content = fixEncryptionTags(content);
-    }
-
+    QLOG_DEBUG_FILE("fmt-pre-dt-check.html", getContent());
     if (global.guiAvailable) {
         QWebPage page;
         QEventLoop loop;
-        page.mainFrame()->setContent(content);
+        page.mainFrame()->setContent(getContentBytes());
         QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
         loop.exit();
 
@@ -358,6 +343,8 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 
         for (int i = 0; i < tags.size(); i++) {
             QString tag = tags[i];
+            QLOG_DEBUG() << "== processing tag " << tag;
+
             QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
                 foreach(QWebElement
                             element, anchors) {
@@ -382,18 +369,27 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
                     }
                 }
         }
-        content.clear();
-        content.append(elementRoot.toOuterXml());
+        QString outerXml = elementRoot.toOuterXml();
+        setContent(outerXml);
     }
-    QLOG_DEBUG_FILE("fmt-post-dt-check.html", QString(content.constData()));
+    QLOG_DEBUG_FILE("fmt-post-dt-check.html", getContent());
+
+    // TEMP hack - rerun tidy - to fix XML after manual fixup
+    tidyHtml(HtmlCleanupMode::Tidy);
+
+
+    /// TEMPORARY POST TIDY HACK
+    /// TEMPORARY POST TIDY HACK
+    content.replace("<!-- <en-media", "<en-media");
+    content.replace("</en-media> -->", "</en-media>");
+    /// TEMPORARY POST TIDY HACK
+    /// TEMPORARY POST TIDY HACK
+
 
     // Add EN xml header
     {
-        qint32 index = content.indexOf("<body");
-        //index = content.indexOf(">", index)+1;
-        content.remove(0, index);
-        index = content.indexOf("</body");
-        content.truncate(index);
+        // because tidy will add one
+        removeHtmlHeader();
 
         QByteArray b;
         b.clear();
@@ -401,16 +397,16 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>");
         //b.append("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
         b.append(content);
-        b.append("</en-note>");
         content.clear();
         content = b.replace("<body", "<en-note");
+        content = b.replace("</body>", "</en-note>");
     }
-    QLOG_DEBUG_FILE("fmt-post-hdr-add.html", QString(content.constData()));
 
-    postXmlFix();
-    QLOG_DEBUG_FILE("fmt-final.html", QString(content.constData()));
+    // content = content.replace("<hr>", "<hr/>");
+    // content = content.replace("<br>", "<br/>");
+
+    QLOG_DEBUG_FILE("fmt-enml-final.xml", getContent());
     QLOG_INFO() << "===== Finished rebuilding note ENML";
-    return content;
 }
 
 
@@ -425,12 +421,15 @@ QStringList EnmlFormatter::findAllTags(QWebElement &element) {
     while (i != -1) {
         int eot = body.indexOf(" ", i);
         QString tag = body.mid(i + 1, eot - i - 1);
-        if (!tags.contains(tag) && tag != "body")
+        if (!tags.contains(tag) && tag != "body") {
             tags.append(tag);
+        }
         i = body.indexOf("<", eot);
-        if (tag == "body")
+        if (tag == "body") {
             i = -1;
+        }
     }
+    QLOG_DEBUG() << "Findall tags: " << tags;
     return tags;
 }
 
@@ -492,9 +491,9 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         e.removeAttribute("style");
         removeInvalidAttributes(e);
         e.setInnerXml(encrypted);
-        const QString xml = "<en-crypt cipher=\"" + cipher + "\" length=\"" +
+        const QString xml = "<!-- en-crypt cipher=\"" + cipher + "\" length=\"" +
                             length + "\" hint=\"" + hint
-                            + "\">" + encrypted + "</en-crypt>";
+                            + "\">" + encrypted + "</en-crypt -->";
         e.setOuterXml(xml);
         QLOG_DEBUG() << "Processing tag 'img', type=en-crypt' - fixed img node to " << xml;
     } else if (enType == "temporary") { ;
@@ -517,7 +516,8 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 
         resources.append(lid);
         removeInvalidAttributes(e);
-        const QString xml = e.toOuterXml().replace("<img", "<en-media").replace("</img", "</en-media");
+        // temp hack for tidy call
+        const QString xml = e.toOuterXml().replace("<img", "<!-- <en-media").append("</en-media> -->");
         e.setOuterXml(xml);
         QLOG_DEBUG() << "Fixed img node to: " << xml;
         // zda sa ze nefunguje uz - a mozno ani netreba
@@ -858,68 +858,75 @@ void EnmlFormatter::fixPreNode(QWebElement &node) {
 
 
 void EnmlFormatter::postXmlFix() {
-    int pos;
+    // int pos;
 
     // EXTRACT
-    content = content.replace("<hr>", "<hr/>");
-    content = content.replace("<br>", "<br/>");
+    // content = content.replace("<hr>", "<hr/>");
+    // content = content.replace("<br>", "<br/>");
 
-    // Fix the <br> tags
-    content = content.replace("<br clear=\"none\">", "<br/>");
-    pos = content.indexOf("<br");
-    if (pos != -1) {
-        QLOG_DEBUG() << "postXmlFix: 'br' found.  Beginning fix";
-    }
-    while (pos != -1) {
-        int endPos = content.indexOf(">", pos);
-        int tagEndPos = content.indexOf("/>", pos);
 
-        // Check the next /> end tag.  If it is beyond the end
-        // of the current tag or if it doesn't exist then we
-        // need to fix the end of the img
-        if (tagEndPos == -1 || tagEndPos > endPos) {
-            content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
-        }
-        pos = content.indexOf("<br", pos + 1);
-    }
+    /////// DON'T DELETE THIS
+    //
+    // // Fix the <br> tags
+    // content = content.replace("<br clear=\"none\">", "<br/>");
+    // pos = content.indexOf("<br");
+    // if (pos != -1) {
+    //     QLOG_DEBUG() << "postXmlFix: 'br' found.  Beginning fix";
+    // }
+    // while (pos != -1) {
+    //     int endPos = content.indexOf(">", pos);
+    //     int tagEndPos = content.indexOf("/>", pos);
+    //
+    //     // Check the next /> end tag.  If it is beyond the end
+    //     // of the current tag or if it doesn't exist then we
+    //     // need to fix the end of the img
+    //     if (tagEndPos == -1 || tagEndPos > endPos) {
+    //         content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
+    //     }
+    //     pos = content.indexOf("<br", pos + 1);
+    // }
 
-    // Fix <en-todo> tags
-    content = content.replace("</en-todo>", "");
-    pos = content.indexOf("<en-todo");
-    if (pos != -1) {
-        QLOG_DEBUG() << "postXmlFix: 'en-todo'.  Beginning fix";
-    }
-    while (pos != -1) {
-        int endPos = content.indexOf(">", pos);
-        int tagEndPos = content.indexOf("/>", pos);
+    /////// DON'T DELETE THIS
+    //
+    // // Fix <en-todo> tags
+    // content = content.replace("</en-todo>", "");
+    // pos = content.indexOf("<en-todo");
+    // if (pos != -1) {
+    //     QLOG_DEBUG() << "postXmlFix: 'en-todo'.  Beginning fix";
+    // }
+    // while (pos != -1) {
+    //     int endPos = content.indexOf(">", pos);
+    //     int tagEndPos = content.indexOf("/>", pos);
+    //
+    //     // Check the next /> end tag.  If it is beyond the end
+    //     // of the current tag or if it doesn't exist then we
+    //     // need to fix the end of the img
+    //     if (tagEndPos == -1 || tagEndPos > endPos) {
+    //         content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
+    //     }
+    //     pos = content.indexOf("<en-todo", pos + 1);
+    // }
 
-        // Check the next /> end tag.  If it is beyond the end
-        // of the current tag or if it doesn't exist then we
-        // need to fix the end of the img
-        if (tagEndPos == -1 || tagEndPos > endPos) {
-            content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
-        }
-        pos = content.indexOf("<en-todo", pos + 1);
-    }
-
-    // Fix <en-media> tags
-    content = content.replace("</en-media>", "");
-    pos = content.indexOf("<en-media");
-    if (pos != -1) {
-        QLOG_DEBUG() << "postXmlFix: 'en-media'.  Beginning fix";
-    }
-    while (pos != -1) {
-        int endPos = content.indexOf(">", pos);
-        int tagEndPos = content.indexOf("/>", pos);
-
-        // Check the next /> end tag.  If it is beyond the end
-        // of the current tag or if it doesn't exist then we
-        // need to fix the end of the img
-        if (tagEndPos == -1 || tagEndPos > endPos) {
-            content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
-        }
-        pos = content.indexOf("<en-media", pos + 1);
-    }
+    /////// DON'T DELETE THIS
+    //
+    // // Fix <en-media> tags
+    // content = content.replace("</en-media>", "");
+    // pos = content.indexOf("<en-media");
+    // if (pos != -1) {
+    //     QLOG_DEBUG() << "postXmlFix: 'en-media'.  Beginning fix";
+    // }
+    // while (pos != -1) {
+    //     int endPos = content.indexOf(">", pos);
+    //     int tagEndPos = content.indexOf("/>", pos);
+    //
+    //     // Check the next /> end tag.  If it is beyond the end
+    //     // of the current tag or if it doesn't exist then we
+    //     // need to fix the end of the img
+    //     if (tagEndPos == -1 || tagEndPos > endPos) {
+    //         content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
+    //     }
+    //     pos = content.indexOf("<en-media", pos + 1);
+    // }
 }
 
 
@@ -961,17 +968,22 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
 }
 
 
-// Remove any invalid unicode characters to allow it to sync properly.
-QByteArray EnmlFormatter::removeInvalidUnicode(QByteArray content) {
+/**
+ * Remove any invalid unicode characters to allow it to sync properly.
+ * @return
+ */
+void EnmlFormatter::removeInvalidUnicode() {
     QString c(content);
     // 1b is ascii 27 = escape character
     c = c.remove(QChar(0x1b), Qt::CaseInsensitive);
-    return c.toUtf8();
+    content = c.toUtf8();
 }
 
 
-// Look through all attributes of the node.  If it isn't in the list of
-// valid attributes, we remove it.
+/**
+ * Look through all attributes of the node.  If it isn't in the list of
+ * valid attributes, we remove it.
+ */
 void EnmlFormatter::checkAttributes(QWebElement &element, QStringList valid) {
     QStringList attrs = element.attributeNames();
     QString tagname = element.tagName().toLower();;
@@ -981,4 +993,18 @@ void EnmlFormatter::checkAttributes(QWebElement &element, QStringList valid) {
             element.removeAttribute(attrs[i]);
         }
     }
+}
+
+bool EnmlFormatter::isFormattingError() const {
+    return formattingError;
+}
+
+
+/**
+ * Set content from unicode string.
+ * @param contentStr unicode string.
+ */
+void EnmlFormatter::setContent(QString &contentStr) {
+    this->content.clear();
+    this->content.append(contentStr.toUtf8());
 }

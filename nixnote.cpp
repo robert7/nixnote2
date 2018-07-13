@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/preferences/preferencesdialog.h"
 #include "sql/resourcetable.h"
 #include "sql/nsqlquery.h"
-#include "dialog/logviewer.h"
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"
 #include "dialog/faderdialog.h"
@@ -513,7 +512,7 @@ void NixNote::setupGui() {
     QStringList lidList = lidListString.split(' ');
     // If we have old notes we were viewing the last time
     if (lidList.size() > 0) {
-        FilterCriteria *filter = global.filterCriteria[global.filterPosition];
+        FilterCriteria *filter = global.getCurrentCriteria();
 
         for (int i = 0; i < lidList.size(); i++) {
             // if we are doing multiple notes, they each need
@@ -1563,7 +1562,7 @@ void NixNote::updateSyncButton() {
 //************************************************************
 void NixNote::openNote(bool newWindow) {
     saveContents();
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    FilterCriteria *criteria = global.getCurrentCriteria();
     qint32 lid;
     if (criteria->isLidSet()) {
         lid = criteria->getLid();
@@ -1598,7 +1597,9 @@ void NixNote::openExternalNote(qint32 lid) {
 //* (i.e. they select a notebook, tag, saved search...
 //*****************************************************
 void NixNote::updateSelectionCriteria(bool afterSync) {
-    QLOG_DEBUG() << "starting NixNote.updateSelectionCriteria()";
+    QLOG_DEBUG() << "starting NixNote::updateSelectionCriteria() filtercnt="
+                 << global.filterCriteria.size()
+                 << " pos=" << global.filterPosition;
 
     tabWindow->currentBrowser()->saveNoteContent();
 
@@ -1651,7 +1652,7 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
         leftArrowButton->setEnabled(true);
 
     QList<qint32> selectedNotes;
-    global.filterCriteria[global.filterPosition]->getSelectedNotes(selectedNotes);
+    global.getCurrentCriteria()->getSelectedNotes(selectedNotes);
     if (selectedNotes.size() == 0) {
         tabWindow->currentBrowser()->clear();
         tabWindow->currentBrowser()->setReadOnly(true);
@@ -1666,8 +1667,8 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
             openNote(false);
     }
 
-    if (global.filterCriteria[global.filterPosition]->isDeletedOnlySet() &&
-        global.filterCriteria[global.filterPosition]->getDeletedOnly())
+    if (global.getCurrentCriteria()->isDeletedOnlySet() &&
+        global.getCurrentCriteria()->getDeletedOnly())
         newNoteButton->setEnabled(false);
     else
         newNoteButton->setEnabled(true);
@@ -2000,7 +2001,7 @@ void NixNote::saveContents() {
 //********************************************
 void NixNote::resetView() {
     FilterCriteria *criteria = new FilterCriteria();
-    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    global.getCurrentCriteria()->duplicate(*criteria);
     criteria->resetAttribute = true;
     criteria->resetDeletedOnly = true;
     criteria->resetFavorite = true;
@@ -2107,7 +2108,7 @@ void NixNote::newNote() {
     qint32 lid = table.add(0, n, true);
 
     FilterCriteria *criteria = new FilterCriteria();
-    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    global.getCurrentCriteria()->duplicate(*criteria);
     criteria->unsetTags();
     criteria->unsetSearchString();
     criteria->setLid(lid);
@@ -2218,12 +2219,6 @@ void NixNote::notesRestored(QList<qint32>) {
 }
 
 
-// Open the trunk web site
-void NixNote::openTrunk() {
-    QDesktopServices::openUrl(QUrl("http://www.evernote.com/trunk"));
-}
-
-
 // Open Evernote support
 void NixNote::openEvernoteSupport() {
     QString server = "http://www.evernote.com/about/contact/support/";
@@ -2263,7 +2258,7 @@ void NixNote::openQtAbout() {
 //* Open the NixNote GitHub page.
 //*******************************
 void NixNote::openGithub() {
-    QDesktopServices::openUrl(QUrl(NN_GITHUB_PAGE));
+    QDesktopServices::openUrl(QUrl("https://github.com/" NN_MAIN_REPO_USER "/" NN_MAIN_REPO_NAME));
 }
 
 
@@ -3413,7 +3408,7 @@ void NixNote::newWebcamNote() {
 
 
     FilterCriteria *criteria = new FilterCriteria();
-    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    global.getCurrentCriteria()->duplicate(*criteria);
     criteria->setLid(noteLid);
     global.filterCriteria.append(criteria);
     global.filterPosition++;
@@ -3453,7 +3448,7 @@ void NixNote::deleteCurrentNote() {
 
     QString typeDelete;
     QString msg;
-    FilterCriteria *f = global.filterCriteria[global.filterPosition];
+    FilterCriteria *f = global.getCurrentCriteria();
     bool expunged = false;
     typeDelete = tr("Delete ");
 
@@ -3502,7 +3497,7 @@ void NixNote::duplicateCurrentNote() {
     newLid = ntable.duplicateNote(oldLid);
 
     FilterCriteria *criteria = new FilterCriteria();
-    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    global.getCurrentCriteria()->duplicate(*criteria);
     criteria->setLid(newLid);
     global.filterCriteria.append(criteria);
     global.filterPosition++;
@@ -3546,10 +3541,18 @@ void NixNote::pauseIndexing(bool value) {
 }
 
 
-// View the mesasge log.  These same messages show up in a terminal
-void NixNote::openMessageLog() {
-    LogViewer viewer;
-    viewer.exec();
+// View the message log info
+void NixNote::openMessageLogInfo() {
+    QMessageBox mb;
+    mb.information(this, tr("Log file info"),
+                   tr("Main app log file is located at:")
+                   + global.fileManager.getMainLogFileName()
+                   + ".\n\n"
+                   + tr("Please use some appropriate log viewer app to look at logs.") + "\n\n "
+                   + tr("If you want to create support issue, where log info is needed, please use DEBUG log level"
+                        " and post whole log inclusive subdirectory."
+                        " Just before posting make sure, that no private info, like private note text, is included inside.")
+    );
 }
 
 

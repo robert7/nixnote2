@@ -50,7 +50,7 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
 
     totalPages = doc->numPages();
 
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    FilterCriteria *criteria = global.getCurrentCriteria();
     searchHits.empty();
     QList<QRectF> searchLocations;
     if (criteria->isSearchStringSet() && criteria->getSearchString() != "") {

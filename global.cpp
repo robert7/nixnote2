@@ -195,7 +195,9 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     settings->beginGroup(INI_GROUP_APPEARANCE);
     QString theme = settings->value("themeName", "").toString();
     loadTheme(resourceList, colorList, theme);
-    autoHideEditorToolbar = settings->value("autoHideEditorToolbar", true).toBool();
+    // note auto-hide doesn't really work well - there are problems with menu appearing when you try
+    // to select text
+    autoHideEditorToolbar = settings->value("autoHideEditorToolbar", false).toBool();
     settings->endGroup();
 
     minIndexInterval = 5000;
@@ -301,7 +303,9 @@ QString Global::tagBehavior() {
 }
 
 
-// Append the filter criteria to the filterCriteria queue.
+/**
+ * Append the filter criteria to the filterCriteria queue and adjust filter position.
+ */
 void Global::appendFilter(FilterCriteria *criteria) {
     // First, find out if we're already viewing history.  If we are, we
     // chop off the end of the history & start a new one
@@ -1505,4 +1509,13 @@ QString Global::setupShortcut(QAction *action, QString shortCutCode) {
 void Global::setMessage(QString msg, int timeout) {
     // sent "setMessage" signal
     emit setMessageSignal(msg, timeout);
+}
+
+/**
+ * @return Current filter criteria.
+ */
+FilterCriteria *Global::getCurrentCriteria() const {
+    qint32 pos = global.filterPosition;
+    //QLOG_DEBUG() << "Requesting filter [" << pos << "], count=" << global.filterCriteria.size();
+    return global.filterCriteria[pos];
 }
