@@ -4,14 +4,10 @@
 Fork of [baumgarr/nixnote2](https://github.com/baumgarr/nixnote2) - An unofficial client of Evernote for Linux.
 
 This version contains the original code, selected changes merged from other forks and my changes. 
-The current aim is:
-* Make the application more stable
-* Improve status info (sync, error cases)
-* Minor usability improvements (mainly focused on my personal needs)
-* [CHANGELOG](docs/CHANGELOG.md)
-* [TODO list](docs/TODO.md)
-* Binaries: upcoming..
 
+* [CHANGELOG](docs/CHANGELOG.md)
+* [**Binary releases**](releases)
+* [TODO list](docs/TODO.md)
 
 ## Building from source
 
