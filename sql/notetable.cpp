@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QSqlTableModel>
 #include <QtXml>
-#include "html/tagscanner.h"
+#include "src/html/tagscanner.h"
 
 extern Global global;
 

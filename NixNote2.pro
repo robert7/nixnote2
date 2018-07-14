@@ -90,8 +90,8 @@ SOURCES += \
     sql/notetable.cpp \
     sql/notebooktable.cpp \
     filters/notesortfilterproxymodel.cpp \
-    html/thumbnailer.cpp \
-    html/noteformatter.cpp \
+    src/html/thumbnailer.cpp \
+    src/html/noteformatter.cpp \
     settings/startupconfig.cpp \
     dialog/logindialog.cpp \
     gui/lineedit.cpp \
@@ -102,7 +102,7 @@ SOURCES += \
     models/notecache.cpp \
     gui/nbrowserwindow.cpp \
     threads/indexrunner.cpp \
-    html/tagscanner.cpp \
+    src/html/tagscanner.cpp \
     xml/importdata.cpp \
     sql/notemetadata.cpp \
     sql/sharednotebooktable.cpp \
@@ -121,7 +121,7 @@ SOURCES += \
     gui/treewidgeteditor.cpp \
     dialog/tagproperties.cpp \
     dialog/notebookproperties.cpp \
-    html/enmlformatter.cpp \
+    src/html/enmlformatter.cpp \
     utilities/encrypt.cpp \
     dialog/endecryptdialog.cpp \
     oauth/oauthtokenizer.cpp \
@@ -165,7 +165,7 @@ SOURCES += \
     dialog/screencapture.cpp \
     gui/imagedelegate.cpp \
     dialog/preferences/searchpreferences.cpp \
-    html/attachmenticonbuilder.cpp \
+    src/html/attachmenticonbuilder.cpp \
     dialog/locationdialog.cpp \
     gui/browserWidgets/locationeditor.cpp \
     dialog/preferences/localepreferences.cpp \
@@ -278,8 +278,8 @@ HEADERS  += \
     sql/notetable.h \
     sql/notebooktable.h \
     filters/notesortfilterproxymodel.h \
-    html/thumbnailer.h \
-    html/noteformatter.h \
+    src/html/thumbnailer.h \
+    src/html/noteformatter.h \
     settings/startupconfig.h \
     dialog/logindialog.h \
     gui/lineedit.h \
@@ -290,7 +290,7 @@ HEADERS  += \
     models/notecache.h \
     gui/nbrowserwindow.h \
     threads/indexrunner.h \
-    html/tagscanner.h \
+    src/html/tagscanner.h \
     xml/importdata.h \
     sql/notemetadata.h \
     sql/sharednotebooktable.h \
@@ -309,7 +309,7 @@ HEADERS  += \
     gui/treewidgeteditor.h \
     dialog/tagproperties.h \
     dialog/notebookproperties.h \
-    html/enmlformatter.h \
+    src/html/enmlformatter.h \
     utilities/encrypt.h \
     dialog/endecryptdialog.h \
     oauth/oauthtokenizer.h \
@@ -351,7 +351,7 @@ HEADERS  += \
     dialog/screencapture.h \
     gui/imagedelegate.h \
     dialog/preferences/searchpreferences.h \
-    html/attachmenticonbuilder.h \
+    src/html/attachmenticonbuilder.h \
     dialog/locationdialog.h \
     gui/browserWidgets/locationeditor.h \
     dialog/preferences/localepreferences.h \

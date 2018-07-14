@@ -56,13 +56,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "xml/xmlhighlighter.h"
 #include "gui/browserWidgets/editorbuttonbar.h"
 #include "gui/browserWidgets/reminderbutton.h"
-#include "html/thumbnailer.h"
+#include "src/html/thumbnailer.h"
 #include "email/mimemessage.h"
 #include "plugins/hunspell/hunspellinterface.h"
 #include "plugins/hunspell/hunspellplugin.h"
 #include "gui/findreplace.h"
 #include "threads/browserrunner.h"
-#include "html/enmlformatter.h"
+#include "src/html/enmlformatter.h"
 
 class ToolbarWidgetAction;
 

@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include <iostream>
 #include <unistd.h>
-#include "html/enmlformatter.h"
+#include "src/html/enmlformatter.h"
 #include "utilities/crossmemorymapper.h"
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"

@@ -50,7 +50,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/accountdialog.h"
 #include "threads/counterrunner.h"
 //#include "oauth/oauthwindow.h"
-#include "html/thumbnailer.h"
+#include "src/html/thumbnailer.h"
 #include "reminders/remindermanager.h"
 #include "plugins/webcam/webcaminterface.h"
 #include "plugins/hunspell/hunspellinterface.h"

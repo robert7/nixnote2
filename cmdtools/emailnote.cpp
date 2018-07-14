@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "email/mimeinlinefile.h"
 #include "sql/resourcetable.h"
 #include "sql/notetable.h"
-#include "html/noteformatter.h"
+#include "src/html/noteformatter.h"
 
 extern Global global;
 
