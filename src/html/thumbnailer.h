@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QObject>
 #include <QSqlDatabase>
 
-#include "html/noteformatter.h"
+#include "noteformatter.h"
 #include "sql/databaseconnection.h"
 
 

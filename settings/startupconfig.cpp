@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDir>
 #include <QString>
 #include <iostream>
-#include "threads/syncrunner.h"
+#include "src/threads/syncrunner.h"
 #include "global.h"
 
 #include <QProcessEnvironment>

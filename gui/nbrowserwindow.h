@@ -61,7 +61,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "plugins/hunspell/hunspellinterface.h"
 #include "plugins/hunspell/hunspellplugin.h"
 #include "gui/findreplace.h"
-#include "threads/browserrunner.h"
+#include "src/threads/browserrunner.h"
 #include "src/html/enmlformatter.h"
 
 class ToolbarWidgetAction;

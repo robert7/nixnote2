@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "nixnote.h"
-#include "threads/syncrunner.h"
+#include "src/threads/syncrunner.h"
 #include "gui/nwebview.h"
 #include "watcher/filewatcher.h"
 #include "dialog/accountdialog.h"

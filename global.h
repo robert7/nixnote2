@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "settings/accountsmanager.h"
 #include "reminders/remindermanager.h"
 #include "sql/databaseconnection.h"
-#include "threads/indexrunner.h"
+#include "src/threads/indexrunner.h"
 #include "utilities/crossmemorymapper.h"
 #include "exits/exitpoint.h"
 #include "exits/exitmanager.h"

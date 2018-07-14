@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/nbrowserwindow.h"
 #include "gui/ntagview.h"
 #include "gui/nnotebookview.h"
-#include "threads/syncrunner.h"
+#include "src/threads/syncrunner.h"
 #include "gui/externalbrowse.h"
 #include "dialog/htmlentitiesdialog.h"
 #include "nixnote.h"

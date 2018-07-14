@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"
 #include "utilities/mimereference.h"
-#include "html/enmlformatter.h"
+#include "enmlformatter.h"
 
 #include <QFileSystemModel>
 #include <QFileIconProvider>
