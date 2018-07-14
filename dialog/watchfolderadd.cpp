@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "watchfolderadd.h"
 #include "sql/filewatchertable.h"
 #include "sql/notebooktable.h"
-#include "watcher/filewatcher.h"
+#include "src/watcher/filewatcher.h"
 #include "sql/configstore.h"
 
 #include <QFileDialog>

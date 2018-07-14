@@ -23,9 +23,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notetable.h"
 #include "sql/notebooktable.h"
 #include "sql/resourcetable.h"
-#include "utilities/mimereference.h"
+#include "src/utilities/mimereference.h"
 #include "sql/filewatchertable.h"
-#include "xml/batchimport.h"
+#include "src/xml/batchimport.h"
 #include "sql/tagtable.h"
 
 #include <QDirIterator>

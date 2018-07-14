@@ -1,7 +1,7 @@
 #include "importnotes.h"
 #include <iostream>
 #include <QFile>
-#include "xml/importdata.h"
+#include "src/xml/importdata.h"
 
 ImportNotes::ImportNotes(QObject *parent) :
     QObject(parent)

@@ -24,15 +24,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <iostream>
 #include <unistd.h>
 #include "src/html/enmlformatter.h"
-#include "utilities/crossmemorymapper.h"
+#include "src/utilities/crossmemorymapper.h"
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"
 #include "sql/notebooktable.h"
 #include "sql/tagtable.h"
 #include "sql/notetable.h"
-#include "utilities/nuuid.h"
+#include "src/utilities/nuuid.h"
 #include "email/smtpclient.h"
-#include "utilities/mimereference.h"
+#include "src/utilities/mimereference.h"
 #include "src/threads/syncrunner.h"
 
 

@@ -56,7 +56,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #endif // End windows check
 
-#include "utilities/debugtool.h"
+#include "src/utilities/debugtool.h"
 
 extern Global global;
 

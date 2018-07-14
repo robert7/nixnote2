@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define FILEWATCHERTABLE_H
 
 #include <QObject>
-#include "watcher/filewatcher.h"
+#include "src/watcher/filewatcher.h"
 #include "sql/databaseconnection.h"
 #include "global.h"
 

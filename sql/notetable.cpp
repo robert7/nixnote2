@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/nsqlquery.h"
 #include "tagtable.h"
 #include "global.h"
-#include "utilities/noteindexer.h"
+#include "src/utilities/noteindexer.h"
 
 #include <QSqlTableModel>
 #include <QtXml>

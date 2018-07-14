@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notebooktable.h"
 #include "sql/notetable.h"
 #include "sql/tagtable.h"
-#include "utilities/nuuid.h"
+#include "src/utilities/nuuid.h"
 
 #include "alternote.h"
 

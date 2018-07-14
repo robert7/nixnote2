@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "nixnote.h"
 #include "src/threads/syncrunner.h"
 #include "gui/nwebview.h"
-#include "watcher/filewatcher.h"
+#include "src/watcher/filewatcher.h"
 #include "dialog/accountdialog.h"
 #include "dialog/preferences/preferencesdialog.h"
 #include "sql/resourcetable.h"
@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "filters/filterengine.h"
 #include "dialog/faderdialog.h"
 #include "dialog/shortcutdialog.h"
-#include "utilities/noteindexer.h"
+#include "src/utilities/noteindexer.h"
 
 #include <QApplication>
 #include <QThread>
@@ -72,7 +72,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/adduseraccountdialog.h"
 #include "dialog/accountmaintenancedialog.h"
 #include "communication/communicationmanager.h"
-#include "utilities/encrypt.h"
+#include "src/utilities/encrypt.h"
 
 // Windows Check
 #ifndef _WIN32
@@ -87,9 +87,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "gui/nmainmenubar.h"
 #include "dialog/logindialog.h"
-#include "xml/importdata.h"
-#include "xml/importenex.h"
-#include "xml/exportdata.h"
+#include "src/xml/importdata.h"
+#include "src/xml/importenex.h"
+#include "src/xml/exportdata.h"
 #include "dialog/aboutdialog.h"
 
 #include "qevercloud/include/QEverCloudOAuth.h"

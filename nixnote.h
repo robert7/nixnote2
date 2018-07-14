@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSplashScreen>
 
 #include "filters/remotequery.h"
-#include "watcher/filewatchermanager.h"
+#include "src/watcher/filewatchermanager.h"
 #include "gui/ntabwidget.h"
 #include "gui/lineedit.h"
 #include "sql/databaseconnection.h"

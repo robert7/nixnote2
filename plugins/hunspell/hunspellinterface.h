@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define HUNSPELLINTERFACE_H
 
 #include <QtPlugin>
-#include "../../utilities/spellchecker.h"
+#include "src/utilities/spellchecker.h"
 
 
 class HunspellInterface

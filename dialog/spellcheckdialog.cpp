@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "global.h"
 #include "spellcheckdialog.h"
-#include "../utilities/spellchecker.h"
+#include "src/utilities/spellchecker.h"
 
 extern Global global;
 

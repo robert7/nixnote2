@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QString>
 #include "global.h"
 #include "email/mimehtml.h"
-#include "utilities/mimereference.h"
+#include "src/utilities/mimereference.h"
 #include "email/mimeinlinefile.h"
 #include "sql/resourcetable.h"
 #include "sql/notetable.h"

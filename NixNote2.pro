@@ -228,20 +228,20 @@ SOURCES += \
     src/threads/counterrunner.cpp \
     src/threads/indexrunner.cpp \
     src/threads/syncrunner.cpp \
-    utilities/crossmemorymapper.cpp \
-    utilities/debugtool.cpp \
-    utilities/encrypt.cpp \
-    utilities/mimereference.cpp \
-    utilities/noteindexer.cpp \
-    utilities/nuuid.cpp \
-    utilities/pixelconverter.cpp \
-    watcher/filewatcher.cpp \
-    watcher/filewatchermanager.cpp \
-    xml/batchimport.cpp \
-    xml/exportdata.cpp \
-    xml/importdata.cpp \
-    xml/importenex.cpp \
-    xml/xmlhighlighter.cpp
+    src/utilities/crossmemorymapper.cpp \
+    src/utilities/debugtool.cpp \
+    src/utilities/encrypt.cpp \
+    src/utilities/mimereference.cpp \
+    src/utilities/noteindexer.cpp \
+    src/utilities/nuuid.cpp \
+    src/utilities/pixelconverter.cpp \
+    src/watcher/filewatcher.cpp \
+    src/watcher/filewatchermanager.cpp \
+    src/xml/batchimport.cpp \
+    src/xml/exportdata.cpp \
+    src/xml/importdata.cpp \
+    src/xml/importenex.cpp \
+    src/xml/xmlhighlighter.cpp
 
 HEADERS  += \
     application.h \
@@ -430,20 +430,20 @@ HEADERS  += \
     src/threads/counterrunner.h \
     src/threads/indexrunner.h \
     src/threads/syncrunner.h \
-    utilities/crossmemorymapper.h \
-    utilities/debugtool.h \
-    utilities/encrypt.h \
-    utilities/mimereference.h \
-    utilities/noteindexer.h \
-    utilities/nuuid.h \
-    utilities/pixelconverter.h \
-    watcher/filewatcher.h \
-    watcher/filewatchermanager.h \
-    xml/batchimport.h \
-    xml/exportdata.h \
-    xml/importdata.h \
-    xml/importenex.h \
-    xml/xmlhighlighter.h
+    src/utilities/crossmemorymapper.h \
+    src/utilities/debugtool.h \
+    src/utilities/encrypt.h \
+    src/utilities/mimereference.h \
+    src/utilities/noteindexer.h \
+    src/utilities/nuuid.h \
+    src/utilities/pixelconverter.h \
+    src/watcher/filewatcher.h \
+    src/watcher/filewatchermanager.h \
+    src/xml/batchimport.h \
+    src/xml/exportdata.h \
+    src/xml/importdata.h \
+    src/xml/importenex.h \
+    src/xml/xmlhighlighter.h
 
 # http://doc.qt.io/qt-5/qmake-function-reference.html#str-member-arg-start-end
 # $$left(VAR, len)

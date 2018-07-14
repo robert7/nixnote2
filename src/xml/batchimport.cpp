@@ -28,8 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/tagtable.h"
 #include "sql/searchtable.h"
 #include "sql/usertable.h"
-#include "utilities/crossmemorymapper.h"
-#include "utilities/mimereference.h"
+#include "src/utilities/crossmemorymapper.h"
+#include "src/utilities/mimereference.h"
 #include "global.h"
 
 #include <QProgressDialog>

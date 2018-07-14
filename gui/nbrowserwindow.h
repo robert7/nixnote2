@@ -53,7 +53,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/browserWidgets/colormenu.h"
 #include "gui/browserWidgets/editorbuttonbar.h"
 #include "gui/nwebview.h"
-#include "xml/xmlhighlighter.h"
+#include "src/xml/xmlhighlighter.h"
 #include "gui/browserWidgets/editorbuttonbar.h"
 #include "gui/browserWidgets/reminderbutton.h"
 #include "src/html/thumbnailer.h"

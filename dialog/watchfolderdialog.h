@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QDialog>
 #include <QPushButton>
-#include "watcher/filewatcher.h"
+#include "src/watcher/filewatcher.h"
 #include <QTableWidget>
 
 class WatchFolderDialog : public QDialog

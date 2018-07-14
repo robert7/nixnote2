@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "enmlformatter.h"
 #include "sql/resourcetable.h"
 #include "global.h"
-#include "utilities/encrypt.h"
+#include "src/utilities/encrypt.h"
 #include <QFileIconProvider>
 #include <QWebPage>
 #include <QWebFrame>

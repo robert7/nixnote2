@@ -268,7 +268,7 @@ index 06cd92e..12d98c2 100644
 --- a/nixnote.cpp
 +++ b/nixnote.cpp
 @@ -91,7 +91,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- #include "xml/exportdata.h"
+ #include "src/xml/exportdata.h"
  #include "dialog/aboutdialog.h"
  
 -#include "qevercloud/include/QEverCloudOAuth.h"
