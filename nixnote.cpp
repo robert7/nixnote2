@@ -53,7 +53,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/ntabwidget.h"
 #include "src/sql/notebooktable.h"
 #include "src/sql/usertable.h"
-#include "settings/startupconfig.h"
+#include "src/settings/startupconfig.h"
 #include "dialog/logindialog.h"
 #include "dialog/closenotebookdialog.h"
 #include "gui/lineedit.h"
@@ -92,7 +92,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/xml/exportdata.h"
 #include "dialog/aboutdialog.h"
 
-#include "qevercloud/include/QEverCloudOAuth.h"
+#include "src/qevercloud/include/QEverCloudOAuth.h"
 
 using namespace qevercloud;
 

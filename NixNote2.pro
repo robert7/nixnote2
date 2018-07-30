@@ -187,21 +187,21 @@ SOURCES += \
     models/ntreemodel.cpp \
     oauth/oauthtokenizer.cpp \
     oauth/oauthwindow.cpp \
-    qevercloud/AsyncResult.cpp \
-    qevercloud/EventLoopFinisher.cpp \
-    qevercloud/exceptions.cpp \
-    qevercloud/generated/constants.cpp \
-    qevercloud/generated/services.cpp \
-    qevercloud/generated/types.cpp \
-    qevercloud/http.cpp \
-    qevercloud/oauth.cpp \
-    qevercloud/services_nongenerated.cpp \
-    reminders/reminderevent.cpp \
-    reminders/remindermanager.cpp \
-    settings/accountsmanager.cpp \
-    settings/colorsettings.cpp \
-    settings/filemanager.cpp \
-    settings/startupconfig.cpp \
+    src/qevercloud/AsyncResult.cpp \
+    src/qevercloud/EventLoopFinisher.cpp \
+    src/qevercloud/exceptions.cpp \
+    src/qevercloud/generated/constants.cpp \
+    src/qevercloud/generated/services.cpp \
+    src/qevercloud/generated/types.cpp \
+    src/qevercloud/http.cpp \
+    src/qevercloud/oauth.cpp \
+    src/qevercloud/services_nongenerated.cpp \
+    src/reminders/reminderevent.cpp \
+    src/reminders/remindermanager.cpp \
+    src/settings/accountsmanager.cpp \
+    src/settings/colorsettings.cpp \
+    src/settings/filemanager.cpp \
+    src/settings/startupconfig.cpp \
     src/sql/configstore.cpp \
     src/sql/databaseconnection.cpp \
     src/sql/databaseupgrade.cpp \
@@ -376,34 +376,34 @@ HEADERS  += \
     models/ntreemodel.h \
     oauth/oauthtokenizer.h \
     oauth/oauthwindow.h \
-    plugins/hunspell/hunspellinterface.h \
-    plugins/webcam/webcaminterface.h \
-    qevercloud/AsyncResult.h \
-    qevercloud/EventLoopFinisher.h \
-    qevercloud/EverCloudException.h \
-    qevercloud/exceptions.h \
-    qevercloud/generated/constants.h \
-    qevercloud/generated/EDAMErrorCode.h \
-    qevercloud/generated/services.h \
-    qevercloud/generated/types.h \
-    qevercloud/generated/types_impl.h \
-    qevercloud/globals.h \
-    qevercloud/http.h \
-    qevercloud/impl.h \
-    qevercloud/include/QEverCloud.h \
-    qevercloud/include/QEverCloudOAuth.h \
-    qevercloud/oauth.h \
-    qevercloud/Optional.h \
-    qevercloud/public.h \
-    qevercloud/qt4helpers.h \
-    qevercloud/thrift.h \
-    qevercloud/thumbnail.h \
-    reminders/reminderevent.h \
-    reminders/remindermanager.h \
-    settings/accountsmanager.h \
-    settings/colorsettings.h \
-    settings/filemanager.h \
-    settings/startupconfig.h \
+    src/plugins/hunspell/hunspellinterface.h \
+    src/plugins/webcam/webcaminterface.h \
+    src/qevercloud/AsyncResult.h \
+    src/qevercloud/EventLoopFinisher.h \
+    src/qevercloud/EverCloudException.h \
+    src/qevercloud/exceptions.h \
+    src/qevercloud/generated/constants.h \
+    src/qevercloud/generated/EDAMErrorCode.h \
+    src/qevercloud/generated/services.h \
+    src/qevercloud/generated/types.h \
+    src/qevercloud/generated/types_impl.h \
+    src/qevercloud/globals.h \
+    src/qevercloud/http.h \
+    src/qevercloud/impl.h \
+    src/qevercloud/include/QEverCloud.h \
+    src/qevercloud/include/QEverCloudOAuth.h \
+    src/qevercloud/oauth.h \
+    src/qevercloud/Optional.h \
+    src/qevercloud/public.h \
+    src/qevercloud/qt4helpers.h \
+    src/qevercloud/thrift.h \
+    src/qevercloud/thumbnail.h \
+    src/reminders/reminderevent.h \
+    src/reminders/remindermanager.h \
+    src/settings/accountsmanager.h \
+    src/settings/colorsettings.h \
+    src/settings/filemanager.h \
+    src/settings/startupconfig.h \
     src/sql/configstore.h \
     src/sql/databaseconnection.h \
     src/sql/databaseupgrade.h \

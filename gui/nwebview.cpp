@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMessageBox>
 #include <QtWebKit>
 #include <QFileDialog>
-#include "settings/colorsettings.h"
+#include "src/settings/colorsettings.h"
 
 //#include "./libencrypt/encrypt_global.h"
 //#include "./libencrypt/encrypt.h"

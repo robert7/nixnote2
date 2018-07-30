@@ -36,7 +36,7 @@ typedef qint64 int64_t;
 
 using namespace std;
 
-#include "qevercloud/include/QEverCloud.h"
+#include "src/qevercloud/include/QEverCloud.h"
 using namespace qevercloud;
 
 

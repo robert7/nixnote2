@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QObject>
 #include <QSharedMemory>
 
-#include "settings/startupconfig.h"
+#include "src/settings/startupconfig.h"
 
 class CmdLineTool : public QObject
 {

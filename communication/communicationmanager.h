@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //*  NixNote.  A lot of this is done with QEvercloud.
 //***************************************************************************
 
-#include "qevercloud/include/QEverCloud.h"
+#include "src/qevercloud/include/QEverCloud.h"
 
 #include "global.h"
 
@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QNetworkAccessManager>
 #include <QSqlDatabase>
 
-#include "qevercloud/include/QEverCloud.h"
+#include "src/qevercloud/include/QEverCloud.h"
 using namespace qevercloud;
 
 typedef unsigned int SOCKET;

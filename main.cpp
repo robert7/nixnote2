@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QApplication>
 #include "nixnote.h"
 #include "global.h"
-#include "settings/startupconfig.h"
+#include "src/settings/startupconfig.h"
 #include "cmdtools/cmdlinetool.h"
 //#include "cmdtools/cmdlineapp.h"
 

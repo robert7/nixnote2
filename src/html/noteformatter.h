@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QHash>
 #include <QVector>
 #include <QtXml>
-#include "qevercloud/include/QEverCloud.h"
+#include "src/qevercloud/include/QEverCloud.h"
 #include "enmlformatter.h"
 
 using namespace qevercloud;

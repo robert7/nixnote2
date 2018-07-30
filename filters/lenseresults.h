@@ -2,7 +2,7 @@
 #define LENSERESULTS_H
 
 #include <QObject>
-#include "qevercloud/include/QEverCloud.h"
+#include "src/qevercloud/include/QEverCloud.h"
 
 class LenseResults : public QObject
 {

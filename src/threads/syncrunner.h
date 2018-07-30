@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <string>
 #include <stdio.h>
 
-#include "qevercloud/include/QEverCloud.h"
+#include "src/qevercloud/include/QEverCloud.h"
 using namespace qevercloud;
 
 class SyncRunner : public QObject

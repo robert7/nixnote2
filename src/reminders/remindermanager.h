@@ -1,6 +1,6 @@
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
-Copyright (C) 2016 Randy Baumgarte
+Copyright (C) 2013 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -17,37 +17,34 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+#ifndef REMINDERMANAGER_H
+#define REMINDERMANAGER_H
 
-// This overrides the virtual plugin WebCamInterface.
+#include <QObject>
+#include <QList>
+#include <QSystemTrayIcon>
 
-#ifndef WEBCAMPLUGIN_H
-#define WEBCAMPLUGIN_H
-#include "webcaminterface.h"
-#include "../../dialog/webcamcapturedialog.h"
+#include "reminderevent.h"
 
-class WebCamPlugin : public QObject, WebCamInterface
+class ReminderManager : public QObject
 {
     Q_OBJECT
-    Q_INTERFACES(WebCamInterface)
-#if QT_VERSION < 0x050000
-#else
-    Q_PLUGIN_METADATA(IID "org.nixnote.NixNote2.WebCamInterface/2.0")
-#endif
-
 private:
-    WebcamCaptureDialog *dialog;
-    bool initialized;
+    QList<ReminderEvent*> reminders;
 
 public:
-    WebCamPlugin();
-    void initialize();
-    bool getImage(QImage &image);
-    bool isWebcamReady();
-    void exec();
-    bool okPressed();
-    void pictureRefresh();
+    explicit ReminderManager(QObject *parent = 0);
+    void reloadTimers();
+    void checkReminders();
+    void updateReminder(qint32 lid, QDateTime time);
+    void remove(qint32 lid);
+    
+signals:
+    void showMessage(QString, QString, int);
+    
+public slots:
+    void timerPop();
+    
 };
 
-
-
-#endif // WEBCAMPLUGIN_H
+#endif // REMINDERMANAGER_H

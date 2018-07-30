@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "gui/nwebview.h"
 
-#include "qevercloud/include/QEverCloud.h"
+#include "src/qevercloud/include/QEverCloud.h"
 #include "gui/browserWidgets/ntitleeditor.h"
 #include "gui/browserWidgets/notebookmenubutton.h"
 #include "gui/plugins/pluginfactory.h"
@@ -58,8 +58,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/browserWidgets/reminderbutton.h"
 #include "src/html/thumbnailer.h"
 #include "email/mimemessage.h"
-#include "plugins/hunspell/hunspellinterface.h"
-#include "plugins/hunspell/hunspellplugin.h"
+#include "src/plugins/hunspell/hunspellinterface.h"
+#include "src/plugins/hunspell/hunspellplugin.h"
 #include "gui/findreplace.h"
 #include "src/threads/browserrunner.h"
 #include "src/html/enmlformatter.h"

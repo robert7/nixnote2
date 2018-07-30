@@ -51,9 +51,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/threads/counterrunner.h"
 //#include "oauth/oauthwindow.h"
 #include "src/html/thumbnailer.h"
-#include "reminders/remindermanager.h"
-#include "plugins/webcam/webcaminterface.h"
-#include "plugins/hunspell/hunspellinterface.h"
+#include "src/reminders/remindermanager.h"
+#include "src/plugins/webcam/webcaminterface.h"
+#include "src/plugins/hunspell/hunspellinterface.h"
 
 //****************************************
 //* This is the main NixNote class that
