@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "accountdialog.h"
 
-#include "sql/usertable.h"
+#include "src/sql/usertable.h"
 #include "global.h"
 #include <QGridLayout>
 #include <QLabel>

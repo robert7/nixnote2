@@ -202,23 +202,23 @@ SOURCES += \
     settings/colorsettings.cpp \
     settings/filemanager.cpp \
     settings/startupconfig.cpp \
-    sql/configstore.cpp \
-    sql/databaseconnection.cpp \
-    sql/databaseupgrade.cpp \
-    sql/datastore.cpp \
-    sql/favoritesrecord.cpp \
-    sql/favoritestable.cpp \
-    sql/filewatchertable.cpp \
-    sql/linkednotebooktable.cpp \
-    sql/notebooktable.cpp \
-    sql/notemetadata.cpp \
-    sql/notetable.cpp \
-    sql/nsqlquery.cpp \
-    sql/resourcetable.cpp \
-    sql/searchtable.cpp \
-    sql/sharednotebooktable.cpp \
-    sql/tagtable.cpp \
-    sql/usertable.cpp \
+    src/sql/configstore.cpp \
+    src/sql/databaseconnection.cpp \
+    src/sql/databaseupgrade.cpp \
+    src/sql/datastore.cpp \
+    src/sql/favoritesrecord.cpp \
+    src/sql/favoritestable.cpp \
+    src/sql/filewatchertable.cpp \
+    src/sql/linkednotebooktable.cpp \
+    src/sql/notebooktable.cpp \
+    src/sql/notemetadata.cpp \
+    src/sql/notetable.cpp \
+    src/sql/nsqlquery.cpp \
+    src/sql/resourcetable.cpp \
+    src/sql/searchtable.cpp \
+    src/sql/sharednotebooktable.cpp \
+    src/sql/tagtable.cpp \
+    src/sql/usertable.cpp \
     src/html/attachmenticonbuilder.cpp \
     src/html/enmlformatter.cpp \
     src/html/noteformatter.cpp \
@@ -404,23 +404,23 @@ HEADERS  += \
     settings/colorsettings.h \
     settings/filemanager.h \
     settings/startupconfig.h \
-    sql/configstore.h \
-    sql/databaseconnection.h \
-    sql/databaseupgrade.h \
-    sql/datastore.h \
-    sql/favoritesrecord.h \
-    sql/favoritestable.h \
-    sql/filewatchertable.h \
-    sql/linkednotebooktable.h \
-    sql/notebooktable.h \
-    sql/notemetadata.h \
-    sql/notetable.h \
-    sql/nsqlquery.h \
-    sql/resourcetable.h \
-    sql/searchtable.h \
-    sql/sharednotebooktable.h \
-    sql/tagtable.h \
-    sql/usertable.h \
+    src/sql/configstore.h \
+    src/sql/databaseconnection.h \
+    src/sql/databaseupgrade.h \
+    src/sql/datastore.h \
+    src/sql/favoritesrecord.h \
+    src/sql/favoritestable.h \
+    src/sql/filewatchertable.h \
+    src/sql/linkednotebooktable.h \
+    src/sql/notebooktable.h \
+    src/sql/notemetadata.h \
+    src/sql/notetable.h \
+    src/sql/nsqlquery.h \
+    src/sql/resourcetable.h \
+    src/sql/searchtable.h \
+    src/sql/sharednotebooktable.h \
+    src/sql/tagtable.h \
+    src/sql/usertable.h \
     src/html/attachmenticonbuilder.h \
     src/html/enmlformatter.h \
     src/html/noteformatter.h \

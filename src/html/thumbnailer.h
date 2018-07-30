@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSqlDatabase>
 
 #include "noteformatter.h"
-#include "sql/databaseconnection.h"
+#include "src/sql/databaseconnection.h"
 
 
 #include "qevercloud/include/QEverCloud.h"

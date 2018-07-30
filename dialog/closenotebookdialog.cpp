@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QFormLayout>
 #include <QList>
 
-#include "sql/notebooktable.h"
+#include "src/sql/notebooktable.h"
 #include "global.h"
 
 extern Global global;

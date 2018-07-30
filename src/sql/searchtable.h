@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSqlTableModel>
 #include <QtSql>
 #include <QString>
-#include "sql/databaseconnection.h"
+#include "src/sql/databaseconnection.h"
 
 using namespace std;
 

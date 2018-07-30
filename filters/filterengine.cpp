@@ -20,15 +20,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "filterengine.h"
 #include "filtercriteria.h"
 #include "global.h"
-#include "sql/notetable.h"
-#include "sql/notebooktable.h"
-#include "sql/tagtable.h"
+#include "src/sql/notetable.h"
+#include "src/sql/notebooktable.h"
+#include "src/sql/tagtable.h"
 #include "gui/nattributetree.h"
-#include "sql/notebooktable.h"
-#include "sql/resourcetable.h"
-#include "sql/nsqlquery.h"
-#include "sql/favoritesrecord.h"
-#include "sql/favoritestable.h"
+#include "src/sql/notebooktable.h"
+#include "src/sql/resourcetable.h"
+#include "src/sql/nsqlquery.h"
+#include "src/sql/favoritesrecord.h"
+#include "src/sql/favoritestable.h"
 
 #include <QtSql>
 

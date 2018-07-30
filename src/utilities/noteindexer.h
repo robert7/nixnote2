@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 #include <QString>
-#include "sql/databaseconnection.h"
+#include "src/sql/databaseconnection.h"
 
 #include <iostream>
 #include <string>

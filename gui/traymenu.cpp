@@ -18,8 +18,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "traymenu.h"
-#include "sql/notetable.h"
-#include "sql/favoritestable.h"
+#include "src/sql/notetable.h"
+#include "src/sql/favoritestable.h"
 #include "global.h"
 
 extern Global global;

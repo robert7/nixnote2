@@ -1,13 +1,13 @@
 #include "databaseupgrade.h"
 #include <QPair>
-#include "sql/notetable.h"
-#include "sql/notebooktable.h"
-#include "sql/searchtable.h"
-#include "sql/tagtable.h"
-#include "sql/resourcetable.h"
-#include "sql/linkednotebooktable.h"
-#include "sql/sharednotebooktable.h"
-#include "sql/nsqlquery.h"
+#include "src/sql/notetable.h"
+#include "src/sql/notebooktable.h"
+#include "src/sql/searchtable.h"
+#include "src/sql/tagtable.h"
+#include "src/sql/resourcetable.h"
+#include "src/sql/linkednotebooktable.h"
+#include "src/sql/sharednotebooktable.h"
+#include "src/sql/nsqlquery.h"
 #include "global.h"
 
 

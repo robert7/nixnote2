@@ -19,10 +19,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 #include "noteformatter.h"
-#include "sql/resourcetable.h"
-#include "sql/notebooktable.h"
-#include "sql/sharednotebooktable.h"
-#include "sql/linkednotebooktable.h"
+#include "src/sql/resourcetable.h"
+#include "src/sql/notebooktable.h"
+#include "src/sql/sharednotebooktable.h"
+#include "src/sql/linkednotebooktable.h"
 #include "global.h"
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"

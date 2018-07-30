@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/watcher/filewatchermanager.h"
 #include "gui/ntabwidget.h"
 #include "gui/lineedit.h"
-#include "sql/databaseconnection.h"
+#include "src/sql/databaseconnection.h"
 #include "gui/ntableview.h"
 #include "gui/ntagview.h"
 #include "gui/nsearchview.h"

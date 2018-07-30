@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "configstore.h"
 #include "notetable.h"
 #include "src/utilities/mimereference.h"
-#include "sql/nsqlquery.h"
+#include "src/sql/nsqlquery.h"
 #include "src/utilities/noteindexer.h"
 
 #include <QSqlTableModel>

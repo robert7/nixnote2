@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "tageditornewtag.h"
 #include "global.h"
-#include "sql/tagtable.h"
+#include "src/sql/tagtable.h"
 
 #include <QKeyEvent>
 #include <QListView>

@@ -23,8 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/watcher/filewatcher.h"
 #include "dialog/accountdialog.h"
 #include "dialog/preferences/preferencesdialog.h"
-#include "sql/resourcetable.h"
-#include "sql/nsqlquery.h"
+#include "src/sql/resourcetable.h"
+#include "src/sql/nsqlquery.h"
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"
 #include "dialog/faderdialog.h"
@@ -48,11 +48,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSplashScreen>
 #include <unistd.h>
 
-#include "sql/notetable.h"
+#include "src/sql/notetable.h"
 #include "dialog/screencapture.h"
 #include "gui/ntabwidget.h"
-#include "sql/notebooktable.h"
-#include "sql/usertable.h"
+#include "src/sql/notebooktable.h"
+#include "src/sql/usertable.h"
 #include "settings/startupconfig.h"
 #include "dialog/logindialog.h"
 #include "dialog/closenotebookdialog.h"

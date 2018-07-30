@@ -30,14 +30,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTextDocument>
 #include <QFontMetrics>
 
-#include "sql/notebooktable.h"
-#include "sql/linkednotebooktable.h"
-#include "sql/sharednotebooktable.h"
-#include "sql/notetable.h"
+#include "src/sql/notebooktable.h"
+#include "src/sql/linkednotebooktable.h"
+#include "src/sql/sharednotebooktable.h"
+#include "src/sql/notetable.h"
 #include "dialog/notebookproperties.h"
 #include "gui/nnotebookviewdelegate.h"
 #include "gui/widgetpanel.h"
-#include "sql/nsqlquery.h"
+#include "src/sql/nsqlquery.h"
 
 #define NAME_POSITION 0
 

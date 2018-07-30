@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "src/html/noteformatter.h"
 #include "gui/externalbrowse.h"
-#include "sql/notetable.h"
+#include "src/sql/notetable.h"
 #include "global.h"
 
 extern Global global;

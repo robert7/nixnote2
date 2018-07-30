@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define CONFIGSTORE_H
 
 #include <QtSql>
-#include "sql/databaseconnection.h"
+#include "src/sql/databaseconnection.h"
 
 //*************************************
 //* This table is used to store

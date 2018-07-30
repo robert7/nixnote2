@@ -20,10 +20,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 #include "importenex.h"
-#include "sql/notebooktable.h"
-#include "sql/tagtable.h"
-#include "sql/notetable.h"
-#include "sql/nsqlquery.h"
+#include "src/sql/notebooktable.h"
+#include "src/sql/tagtable.h"
+#include "src/sql/notetable.h"
+#include "src/sql/nsqlquery.h"
 
 #include <QMessageBox>
 #include <QPushButton>

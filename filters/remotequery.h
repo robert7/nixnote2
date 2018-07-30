@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #endif
 #include <QList>
 #include <QString>
-#include "sql/notetable.h"
+#include "src/sql/notetable.h"
 
 
 #define DBUS_SERVICE_NAME "com.canonical.Unity.Scope.Notes.NixNote"

@@ -2,7 +2,7 @@
 #define BROWSERRUNNER_H
 
 #include <QObject>
-#include "sql/databaseconnection.h"
+#include "src/sql/databaseconnection.h"
 
 class BrowserRunner : public QObject
 {

@@ -24,10 +24,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTextStream>
 #include <QStringList>
 
-#include "sql/notetable.h"
-#include "sql/notebooktable.h"
+#include "src/sql/notetable.h"
+#include "src/sql/notebooktable.h"
 #include "global.h"
-#include "sql/nsqlquery.h"
+#include "src/sql/nsqlquery.h"
 
 
 extern Global global;

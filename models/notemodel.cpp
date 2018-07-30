@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "notemodel.h"
 #include "logger/qslog.h"
 #include "global.h"
-#include "sql/nsqlquery.h"
+#include "src/sql/nsqlquery.h"
 
 #include <QString>
 #include <QSqlDatabase>

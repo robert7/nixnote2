@@ -21,10 +21,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include "nsearchviewitem.h"
 #include "dialog/savedsearchproperties.h"
-#include "sql/searchtable.h"
+#include "src/sql/searchtable.h"
 #include "gui/treewidgeteditor.h"
 #include "gui/widgetpanel.h"
-#include "sql/nsqlquery.h"
+#include "src/sql/nsqlquery.h"
 
 #include <QHeaderView>
 #include <QMouseEvent>

@@ -242,7 +242,7 @@ index cd28550..df69530 100644
 --- a/html/thumbnailer.h
 +++ b/html/thumbnailer.h
 @@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- #include "sql/databaseconnection.h"
+ #include "src/sql/databaseconnection.h"
  
  
 -#include "qevercloud/include/QEverCloud.h"
@@ -295,7 +295,7 @@ index f8767da..f026b12 100644
 +++ b/sql/notetable.h
 @@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  #include <QString>
- #include "sql/databaseconnection.h"
+ #include "src/sql/databaseconnection.h"
  
 -#include "qevercloud/include/QEverCloud.h"
 +#include <qt5qevercloud/QEverCloud.h>
@@ -308,7 +308,7 @@ index 92e7f00..c472095 100644
 +++ b/sql/usertable.h
 @@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  #include <QSqlDatabase>
- #include "sql/databaseconnection.h"
+ #include "src/sql/databaseconnection.h"
  
 -#include <qevercloud/include/QEverCloud.h>
 +#include <qt5qevercloud/QEverCloud.h>

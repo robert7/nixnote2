@@ -18,8 +18,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "filewatchertable.h"
-#include "sql/configstore.h"
-#include "sql/nsqlquery.h"
+#include "src/sql/configstore.h"
+#include "src/sql/nsqlquery.h"
 
 FileWatcherTable::FileWatcherTable(DatabaseConnection *db)
 {

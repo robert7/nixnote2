@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define SHAREDNOTEBOOKTABLE_H
 
 #include "global.h"
-#include "sql/databaseconnection.h"
+#include "src/sql/databaseconnection.h"
 
 #include <iostream>
 #include <string>

@@ -18,10 +18,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "counterrunner.h"
-#include "sql/notetable.h"
-#include "sql/notebooktable.h"
-#include "sql/nsqlquery.h"
-#include "sql/tagtable.h"
+#include "src/sql/notetable.h"
+#include "src/sql/notebooktable.h"
+#include "src/sql/nsqlquery.h"
+#include "src/sql/tagtable.h"
 
 #include <QtSql>
 

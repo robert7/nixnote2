@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "configstore.h"
 
 #include <QSqlTableModel>
-#include "sql/nsqlquery.h"
+#include "src/sql/nsqlquery.h"
 
 #include "global.h"
 extern Global global;

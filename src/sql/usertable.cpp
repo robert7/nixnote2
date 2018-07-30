@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "usertable.h"
 #include "nsqlquery.h"
-#include "sql/databaseconnection.h"
+#include "src/sql/databaseconnection.h"
 
 #define USER_EVERNOTE_ACCOUNT 1   // Unique Evernote account number
 #define USER_EMAIL 2                         // User email registered with Evernote

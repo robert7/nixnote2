@@ -24,8 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPixmap>
 #include <QHideEvent>
 #include "tagviewer.h"
-#include "sql/notetable.h"
-#include "sql/tagtable.h"
+#include "src/sql/notetable.h"
+#include "src/sql/tagtable.h"
 
 extern Global global;
 

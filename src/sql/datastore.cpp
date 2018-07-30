@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "tagtable.h"
 #include "notebooktable.h"
 #include "global.h"
-#include "sql/nsqlquery.h"
+#include "src/sql/nsqlquery.h"
 
 extern Global global;
 

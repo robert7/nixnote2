@@ -20,9 +20,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "databaseconnection.h"
 #include "global.h"
 #include "notetable.h"
-#include "sql/nsqlquery.h"
+#include "src/sql/nsqlquery.h"
 #include "resourcetable.h"
-#include "sql/databaseupgrade.h"
+#include "src/sql/databaseupgrade.h"
 
 
 extern Global global;

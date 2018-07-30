@@ -23,8 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define FAVORITESTABLE_H
 
 #include <QObject>
-#include "sql/favoritesrecord.h"
-#include "sql/databaseconnection.h"
+#include "src/sql/favoritesrecord.h"
+#include "src/sql/databaseconnection.h"
 #include <QSqlDatabase>
 #include <QPair>
 

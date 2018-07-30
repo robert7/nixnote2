@@ -38,7 +38,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #endif  // End Windows Check
 
-#include "sql/usertable.h"
+#include "src/sql/usertable.h"
 
 //******************************************
 //* Global settings used by the program

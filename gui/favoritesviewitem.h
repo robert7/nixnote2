@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define FAVORITESVIEWITEM_H
 
 #include <QTreeWidgetItem>
-#include "sql/favoritesrecord.h"
+#include "src/sql/favoritesrecord.h"
 
 class FavoritesViewItem : public QTreeWidgetItem
 {

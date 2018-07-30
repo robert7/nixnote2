@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "savedsearchproperties.h"
 #include "global.h"
-#include "sql/searchtable.h"
+#include "src/sql/searchtable.h"
 
 #include <QString>
 #include <QIcon>

@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //#include "./libencrypt/encrypt_global.h"
 //#include "./libencrypt/encrypt.h"
 #include "../dialog/endecryptdialog.h"
-#include "sql/resourcetable.h"
+#include "src/sql/resourcetable.h"
 
 extern Global global;
 

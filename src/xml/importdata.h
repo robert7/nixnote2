@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QHash>
 #include <QtXml>
 
-#include "sql/notemetadata.h"
+#include "src/sql/notemetadata.h"
 #include "global.h"
 
 using namespace std;

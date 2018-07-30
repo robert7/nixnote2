@@ -20,21 +20,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "ntagview.h"
 #include "global.h"
 #include "ntagviewitem.h"
-#include "sql/tagtable.h"
+#include "src/sql/tagtable.h"
 #include "dialog/tagproperties.h"
 #include "filters/filtercriteria.h"
 #include "gui/ntagviewdelegate.h"
-#include "sql/nsqlquery.h"
+#include "src/sql/nsqlquery.h"
 
 #include <QHeaderView>
 #include <QMouseEvent>
 #include <QDrag>
 #include <QByteArray>
 #include <QtSql>
-#include "sql/linkednotebooktable.h"
-#include "sql/notebooktable.h"
+#include "src/sql/linkednotebooktable.h"
+#include "src/sql/notebooktable.h"
 #include "gui/widgetpanel.h"
-#include "sql/notetable.h"
+#include "src/sql/notetable.h"
 #include <QMessageBox>
 #include <QPainter>
 

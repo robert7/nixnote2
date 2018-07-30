@@ -19,13 +19,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtXml>
 #include <QString>
 
-#include "sql/notetable.h"
+#include "src/sql/notetable.h"
 #include "global.h"
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"
-#include "sql/notebooktable.h"
-#include "sql/notetable.h"
-#include "sql/tagtable.h"
+#include "src/sql/notebooktable.h"
+#include "src/sql/notetable.h"
+#include "src/sql/tagtable.h"
 #include "src/utilities/nuuid.h"
 
 #include "alternote.h"

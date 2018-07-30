@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "tagproperties.h"
 
 #include "global.h"
-#include "sql/tagtable.h"
+#include "src/sql/tagtable.h"
 
 #include <QString>
 #include <QIcon>

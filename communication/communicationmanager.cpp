@@ -32,10 +32,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include "sql/resourcetable.h"
-#include "sql/tagtable.h"
-#include <sql/usertable.h>
-#include <sql/notetable.h>
+#include "src/sql/resourcetable.h"
+#include "src/sql/tagtable.h"
+#include "src/sql/usertable.h"
+#include "src/sql/notetable.h"
 #include <QPainter>
 
 #include <stdio.h>

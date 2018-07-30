@@ -22,8 +22,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtXml>
 #include <QDebug>
 #include "global.h"
-#include "sql/notetable.h"
-#include "sql/resourcetable.h"
+#include "src/sql/notetable.h"
+#include "src/sql/resourcetable.h"
 
 extern Global global;
 

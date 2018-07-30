@@ -20,14 +20,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "exportdata.h"
 #include "global.h"
-#include "sql/usertable.h"
-#include "sql/tagtable.h"
-#include "sql/notebooktable.h"
-#include "sql/notetable.h"
-#include "sql/linkednotebooktable.h"
-#include "sql/sharednotebooktable.h"
-#include "sql/notebooktable.h"
-#include "sql/searchtable.h"
+#include "src/sql/usertable.h"
+#include "src/sql/tagtable.h"
+#include "src/sql/notebooktable.h"
+#include "src/sql/notetable.h"
+#include "src/sql/linkednotebooktable.h"
+#include "src/sql/sharednotebooktable.h"
+#include "src/sql/notebooktable.h"
+#include "src/sql/searchtable.h"
 
 #include <QProgressDialog>
 

@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "notebookproperties.h"
 
 #include "global.h"
-#include "sql/notebooktable.h"
+#include "src/sql/notebooktable.h"
 
 #include <QString>
 #include <QIcon>
