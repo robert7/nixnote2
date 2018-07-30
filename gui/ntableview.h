@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTableView>
 #include <QMenu>
 #include "ntableviewheader.h"
-#include "models/notemodel.h"
+#include "src/models/notemodel.h"
 #include "datedelegate.h"
 #include "numberdelegate.h"
 #include "reminderorderdelegate.h"

@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 #include "communicationmanager.h"
-#include "oauth/oauthtokenizer.h"
+#include "src/oauth/oauthtokenizer.h"
 #include "global.h"
 
 // Windows Check

@@ -179,14 +179,14 @@ SOURCES += \
     gui/treewidgeteditor.cpp \
     gui/truefalsedelegate.cpp \
     gui/widgetpanel.cpp \
-    logger/qsdebugoutput.cpp \
-    logger/qslog.cpp \
-    logger/qslogdest.cpp \
-    models/notecache.cpp \
-    models/notemodel.cpp \
-    models/ntreemodel.cpp \
-    oauth/oauthtokenizer.cpp \
-    oauth/oauthwindow.cpp \
+    src/logger/qsdebugoutput.cpp \
+    src/logger/qslog.cpp \
+    src/logger/qslogdest.cpp \
+    src/models/notecache.cpp \
+    src/models/notemodel.cpp \
+    src/models/ntreemodel.cpp \
+    src/oauth/oauthtokenizer.cpp \
+    src/oauth/oauthwindow.cpp \
     src/qevercloud/AsyncResult.cpp \
     src/qevercloud/EventLoopFinisher.cpp \
     src/qevercloud/exceptions.cpp \
@@ -368,14 +368,14 @@ HEADERS  += \
     gui/treewidgeteditor.h \
     gui/truefalsedelegate.h \
     gui/widgetpanel.h \
-    logger/qsdebugoutput.h \
-    logger/qslog.h \
-    logger/qslogdest.h \
-    models/notecache.h \
-    models/notemodel.h \
-    models/ntreemodel.h \
-    oauth/oauthtokenizer.h \
-    oauth/oauthwindow.h \
+    src/logger/qsdebugoutput.h \
+    src/logger/qslog.h \
+    src/logger/qslogdest.h \
+    src/models/notecache.h \
+    src/models/notemodel.h \
+    src/models/ntreemodel.h \
+    src/oauth/oauthtokenizer.h \
+    src/oauth/oauthwindow.h \
     src/plugins/hunspell/hunspellinterface.h \
     src/plugins/webcam/webcaminterface.h \
     src/qevercloud/AsyncResult.h \

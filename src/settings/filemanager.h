@@ -27,8 +27,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDir>
 #include <exception>
 #include <QStandardPaths>
-#include "logger/qslog.h"
-#include "logger/qslogdest.h"
+#include "src/logger/qslog.h"
+#include "src/logger/qslogdest.h"
 
 //************************************************
 //* This class is used to retrieve the

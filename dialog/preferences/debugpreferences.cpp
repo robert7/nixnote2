@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "debugpreferences.h"
-#include "logger/qslog.h"
+#include "src/logger/qslog.h"
 #include "global.h"
 
 extern Global global;

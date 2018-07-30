@@ -756,7 +756,7 @@ int CmdLineTool::closeNotebook(StartupConfig config) {
 }
 
 
-#include "models/notemodel.h"
+#include "src/models/notemodel.h"
 #include "src/sql/nsqlquery.h"
 
 // Do a sync

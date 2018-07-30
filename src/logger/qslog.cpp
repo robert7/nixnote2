@@ -23,8 +23,8 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "logger/qslog.h"
-#include "logger/qslogdest.h"
+#include "qslog.h"
+#include "qslogdest.h"
 #include <QMutex>
 #include <QList>
 #include <QDateTime>

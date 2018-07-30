@@ -22,8 +22,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <iostream>
 #include <cstdlib>
 #include <QLibraryInfo>
-#include "logger/qslog.h"
-#include "logger/qslogdest.h"
+#include "src/logger/qslog.h"
+#include "src/logger/qslogdest.h"
 
 //*******************************************
 //* This class is used to find the location

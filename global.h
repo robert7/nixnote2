@@ -25,12 +25,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "application.h"
 #include <QSettings>
 
-#include "logger/qslog.h"
-#include "logger/qslogdest.h"
+#include "src/logger/qslog.h"
+#include "src/logger/qslogdest.h"
 #include "src/settings/filemanager.h"
 #include "src/settings/startupconfig.h"
 #include "filters/filtercriteria.h"
-#include "models/notecache.h"
+#include "src/models/notecache.h"
 #include "gui/shortcutkeys.h"
 #include "src/settings/accountsmanager.h"
 #include "src/reminders/remindermanager.h"

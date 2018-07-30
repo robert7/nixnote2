@@ -49,7 +49,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/ntrashtree.h"
 #include "dialog/accountdialog.h"
 #include "src/threads/counterrunner.h"
-//#include "oauth/oauthwindow.h"
+//#include "src/oauth/oauthwindow.h"
 #include "src/html/thumbnailer.h"
 #include "src/reminders/remindermanager.h"
 #include "src/plugins/webcam/webcaminterface.h"
