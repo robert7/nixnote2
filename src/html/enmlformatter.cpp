@@ -380,8 +380,8 @@ void EnmlFormatter::rebuildNoteEnml() {
 
     /// TEMPORARY POST TIDY HACK
     /// TEMPORARY POST TIDY HACK
-    content.replace("<!-- <en-media", "<en-media");
-    content.replace("</en-media> -->", "</en-media>");
+    content.replace(HTML_COMMENT_START "<en-media", "<en-media");
+    content.replace("</en-media>" HTML_COMMENT_END, "</en-media>");
     /// TEMPORARY POST TIDY HACK
     /// TEMPORARY POST TIDY HACK
 
@@ -491,9 +491,9 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         e.removeAttribute("style");
         removeInvalidAttributes(e);
         e.setInnerXml(encrypted);
-        const QString xml = "<!-- en-crypt cipher=\"" + cipher + "\" length=\"" +
+        const QString xml = HTML_COMMENT_START "en-crypt cipher=\"" + cipher + "\" length=\"" +
                             length + "\" hint=\"" + hint
-                            + "\">" + encrypted + "</en-crypt -->";
+                            + "\">" + encrypted + "</en-crypt" HTML_COMMENT_END;
         e.setOuterXml(xml);
         QLOG_DEBUG() << "Processing tag 'img', type=en-crypt' - fixed img node to " << xml;
     } else if (enType == "temporary") { ;
@@ -517,7 +517,7 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         resources.append(lid);
         removeInvalidAttributes(e);
         // temp hack for tidy call
-        const QString xml = e.toOuterXml().replace("<img", "<!-- <en-media").append("</en-media> -->");
+        const QString xml = e.toOuterXml().replace("<img", HTML_COMMENT_START "<en-media").append("</en-media>" HTML_COMMENT_END);
         e.setOuterXml(xml);
         QLOG_DEBUG() << "Fixed img node to: " << xml;
         // zda sa ze nefunguje uz - a mozno ani netreba
@@ -538,8 +538,8 @@ void EnmlFormatter::fixANode(QWebElement e) {
 
         e.removeAllChildren();
         QString xml = e.toOuterXml();
-        xml.replace("<a", "<!-- <en-media");
-        xml.replace("</a>", "</en-media> -->");
+        xml.replace("<a", HTML_COMMENT_START "<en-media");
+        xml.replace("</a>", "</en-media>" HTML_COMMENT_END);
         QLOG_DEBUG() << "Fixed link node to " << xml;
         e.setOuterXml(xml);
     }

@@ -1149,12 +1149,46 @@ void NBrowserWindow::removeFormatButtonPressed() {
 
 
 // TODO add enum
-void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
+void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode)
+{
     QLOG_DEBUG() << "html cleanup, mode " << mode;
     QWebElement rootElement = editor->editorPage->mainFrame()->documentElement();
     QString contents = rootElement.toOuterXml();
+    bool isSimplify = mode == HtmlCleanupMode::Simplify;
+
     EnmlFormatter formatter(contents);
-    formatter.tidyHtml(mode);
+
+    if (isSimplify) {
+        formatter.tidyHtml(HtmlCleanupMode::Tidy);
+        bool isOK = !formatter.isFormattingError();
+        if (isOK) {
+            contents = formatter.getContent();
+
+            // http://doc.qt.io/qt-5/qstring.html#replace-12
+            QRegularExpression reImg("(<img [^>]*>)");
+            QRegularExpression reA("(<a [^>]*>)");
+
+            contents.replace(reA, HTML_COMMENT_START "\\1" HTML_COMMENT_END);
+            contents.replace("</a>", HTML_COMMENT_START "</a>" HTML_COMMENT_END);
+            contents.replace(reImg, HTML_COMMENT_START "\\1" HTML_COMMENT_END);
+            formatter.setContent(contents);
+            QLOG_DEBUG_FILE("simplify1.html", formatter.getContent());
+
+            formatter.tidyHtml(HtmlCleanupMode::Simplify);
+            QLOG_DEBUG_FILE("simplify2.html", formatter.getContent());
+            isOK = !formatter.isFormattingError();
+        }
+        if (isOK) {
+            contents = formatter.getContent();
+            contents.replace(HTML_COMMENT_START, "");
+            contents.replace(HTML_COMMENT_END, "");
+        }
+    }
+    else {
+        formatter.tidyHtml(mode);
+        contents = formatter.getContent();
+    };
+
 
     if (formatter.isFormattingError()) {
         QMessageBox::information(
@@ -1164,10 +1198,9 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
         );
         return;
     }
-    const QString html = formatter.getContent();
     // equals to setContent(html, "text/html", baseUrl).
-    editor->setHtml(html);
-    QLOG_DEBUG_FILE("editor.html", html);
+    editor->setHtml(contents);
+    QLOG_DEBUG_FILE("editor.html", contents);
 
 
     editor->setFocus();

@@ -48,6 +48,9 @@ enum HtmlCleanupMode {
 #define DEFAULT_HTML_TYPE "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">"
 
 
+#define HTML_COMMENT_START "<!-- "
+#define HTML_COMMENT_END " -->"
+
 
 
 
@@ -108,7 +111,6 @@ private:
     QStringList ul;
     bool formattingError;
     void checkAttributes(QWebElement &element, QStringList valid);
-    void setContent(QString &content);
 
 public:
     QList<qint32> resources;
@@ -121,6 +123,7 @@ public:
     void rebuildNoteEnml();
     void tidyHtml(HtmlCleanupMode mode);
     bool isFormattingError() const;
+    void setContent(QString &content);
 };
 
 

@@ -1,9 +1,13 @@
 # CHANGELOG
 * [Binary releases](https://github.com/robert7/nixnote2/releases)
 
-## 2018-07
+## 2018-08
 ### #11
+* Various minor improvements and stabilisation
 * Fixed bug with media attachments
+
+
+## 2018-07
 
 ### #10
 * Simplified content of the Help menu. Removed unrelevant items. "Message Log Info" now shows
