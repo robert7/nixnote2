@@ -538,8 +538,8 @@ void EnmlFormatter::fixANode(QWebElement e) {
 
         e.removeAllChildren();
         QString xml = e.toOuterXml();
-        xml.replace("<a", "<en-media");
-        xml.replace("</a>", "</en-media>");
+        xml.replace("<a", "<!-- <en-media");
+        xml.replace("</a>", "</en-media> -->");
         QLOG_DEBUG() << "Fixed link node to " << xml;
         e.setOuterXml(xml);
     }

@@ -2,6 +2,9 @@
 * [Binary releases](https://github.com/robert7/nixnote2/releases)
 
 ## 2018-07
+### #11
+* Fixed bug with media attachments
+
 ### #10
 * Simplified content of the Help menu. Removed unrelevant items. "Message Log Info" now shows
   log file location & instructions.

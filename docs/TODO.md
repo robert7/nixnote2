@@ -2,10 +2,8 @@
 ## 1
 * Improve html cleanup 
 * Better statusbar display on exceptions (shortcuts / 2 part status bar)
-* Remove autohide option, remove pdfinline-option
-* Fix medias
+* ~Remove autohide option, remove pdfinline-option
 * Improve "simplify html" (images/medias)  
-* Update to Qt 5.11 
 * Copying images from to note/note seems to destroy the note
 * Refresh translation files
 * PDF export
