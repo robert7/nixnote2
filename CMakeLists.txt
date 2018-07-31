@@ -26,11 +26,11 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(TIDY REQUIRED tidy)
 
 set (nixnote2_src
-        ${PROJECT_SOURCE_DIR}/main.cpp
-        ${PROJECT_SOURCE_DIR}/global.cpp
+        src/main.cpp
+        src/global.cpp
 )
 set (nixnote2_hdr
-        ${PROJECT_SOURCE_DIR}/global.h
+        src/global.h
 )
 
 qt5_wrap_cpp(nixnote2_hdr_moc ${nixnote2_hdr})

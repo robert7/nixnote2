@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef WEBCAMPLUGIN_H
 #define WEBCAMPLUGIN_H
 #include "webcaminterface.h"
-#include "dialog/webcamcapturedialog.h"
+#include "src/dialog/webcamcapturedialog.h"
 
 class WebCamPlugin : public QObject, WebCamInterface
 {

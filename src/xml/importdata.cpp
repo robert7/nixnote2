@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/sql/tagtable.h"
 #include "src/sql/searchtable.h"
 #include "src/sql/usertable.h"
-#include "global.h"
+#include "src/global.h"
 
 #include <QProgressDialog>
 #include <QMessageBox>

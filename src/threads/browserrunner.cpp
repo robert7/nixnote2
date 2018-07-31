@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "browserrunner.h"
 
 
-#include "global.h"
+#include "src/global.h"
 #include "src/utilities/nuuid.h"
 #include "src/utilities/noteindexer.h"
 #include "src/sql/notetable.h"

@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define RESOURCETABLE_H
 
 #include "src/sql/nsqlquery.h"
-#include "global.h"
+#include "src/global.h"
 
 #include <iostream>
 #include <string>

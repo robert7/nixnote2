@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "filemanager.h"
-#include "global.h"
+#include "src/global.h"
 #include <iostream>
 #include <cstdlib>
 #include <QLibraryInfo>

@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef DATABASECONNECTION_H
 #define DATABASECONNECTION_H
 
-#include "global.h"
+#include "src/global.h"
 #include "datastore.h"
 #include "configstore.h"
 

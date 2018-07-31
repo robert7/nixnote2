@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QString>
 #include <algorithm>
 #include <stdexcept>
-#include "global.h"
+#include "src/global.h"
 #include <QCryptographicHash>
 
 extern Global global;

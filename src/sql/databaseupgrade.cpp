@@ -8,7 +8,7 @@
 #include "src/sql/linkednotebooktable.h"
 #include "src/sql/sharednotebooktable.h"
 #include "src/sql/nsqlquery.h"
-#include "global.h"
+#include "src/global.h"
 
 
 DatabaseUpgrade::DatabaseUpgrade(QObject *parent) :

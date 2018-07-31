@@ -20,7 +20,7 @@ if [ -z ${QT_DIR} ]; then
     echo "Example: $0 /d/dev/Qt/5.5/gcc_64 debug"
     exit 1
 fi
-if [ ! -f main.cpp ]; then
+if [ ! -f src/main.cpp ]; then
   echo "You seem to be in wrong directory. script MUST be run from the project directory."
   exit 1
 fi

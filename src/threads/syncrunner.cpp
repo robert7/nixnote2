@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTimer>
 
 #include "syncrunner.h"
-#include "global.h"
+#include "src/global.h"
 #include "src/sql/databaseconnection.h"
 #include "src/sql/usertable.h"
 #include "src/sql/tagtable.h"
@@ -30,9 +30,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/sql/linkednotebooktable.h"
 #include "src/sql/resourcetable.h"
 #include "src/sql/sharednotebooktable.h"
-#include "nixnote.h"
-#include "communication/communicationmanager.h"
-#include "communication/communicationerror.h"
+#include "src/nixnote.h"
+#include "src/communication/communicationmanager.h"
+#include "src/communication/communicationerror.h"
 #include "src/sql/nsqlquery.h"
 
 extern Global global;

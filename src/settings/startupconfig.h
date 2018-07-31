@@ -26,15 +26,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPixmap>
 #include <QBitArray>
 
-#include "cmdtools/addnote.h"
-#include "cmdtools/cmdlinequery.h"
-#include "cmdtools/deletenote.h"
-#include "cmdtools/emailnote.h"
-#include "cmdtools/extractnotetext.h"
-#include "cmdtools/extractnotes.h"
-#include "cmdtools/alternote.h"
-#include "cmdtools/importnotes.h"
-#include "cmdtools/signalgui.h"
+#include "src/cmdtools/addnote.h"
+#include "src/cmdtools/cmdlinequery.h"
+#include "src/cmdtools/deletenote.h"
+#include "src/cmdtools/emailnote.h"
+#include "src/cmdtools/extractnotetext.h"
+#include "src/cmdtools/extractnotes.h"
+#include "src/cmdtools/alternote.h"
+#include "src/cmdtools/importnotes.h"
+#include "src/cmdtools/signalgui.h"
 
 #define STARTUP_GUI 0
 #define STARTUP_SYNC 1

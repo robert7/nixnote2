@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "linkednotebooktable.h"
 #include "src/sql/nsqlquery.h"
 #include "tagtable.h"
-#include "global.h"
+#include "src/global.h"
 #include "src/utilities/noteindexer.h"
 
 #include <QSqlTableModel>

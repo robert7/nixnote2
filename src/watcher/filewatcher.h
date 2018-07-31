@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QStringList>
 #include <QFileInfo>
 
-#include "exits/exitpoint.h"
+#include "src/exits/exitpoint.h"
 
 #include "src/qevercloud/include/QEverCloud.h"
 using namespace qevercloud;

@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/sql/usertable.h"
 #include "src/utilities/crossmemorymapper.h"
 #include "src/utilities/mimereference.h"
-#include "global.h"
+#include "src/global.h"
 
 #include <QProgressDialog>
 #include <QMessageBox>

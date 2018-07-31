@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define COUNTERRUNNER_H
 
 #include <QThread>
-#include "global.h"
+#include "src/global.h"
 #include <QPair>
 #include <QList>
 #include "src/sql/databaseconnection.h"

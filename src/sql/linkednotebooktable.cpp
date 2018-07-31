@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/sql/notebooktable.h"
 #include "src/sql/sharednotebooktable.h"
 #include "src/sql/nsqlquery.h"
-#include "global.h"
+#include "src/global.h"
 
 
 // Generic constructor

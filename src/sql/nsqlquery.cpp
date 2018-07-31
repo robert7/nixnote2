@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSqlQuery>
 #include <QSqlError>
 
-#include "global.h"
+#include "src/global.h"
 
 // Windows Check
 #ifndef _WIN32
