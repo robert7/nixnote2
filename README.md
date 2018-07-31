@@ -6,7 +6,7 @@ Fork of [baumgarr/nixnote2](https://github.com/baumgarr/nixnote2) - An unofficia
 This version contains the original code, selected changes merged from other forks and my changes. 
 
 * [CHANGELOG](docs/CHANGELOG.md)
-* [**Binary releases**](https://github.com/robert7/nixnote2/releases)
+* [Binary releases](https://github.com/robert7/nixnote2/releases)
 * [TODO list](docs/TODO.md)
 
 ## Building from source
