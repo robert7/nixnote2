@@ -5,6 +5,7 @@
 ### #11
 * Various minor improvements and stabilisation
 * Fixed bug with media attachments
+* Improved HTML simplify
 
 
 ## 2018-07
