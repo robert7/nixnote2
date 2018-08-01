@@ -253,7 +253,7 @@ public slots:
     void printPreviewNote();
     void fastPrintNote();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
-    void toggleVisible();
+    void showMainWindow();
     //void trayIconBehavior();
 //    void changeEvent(QEvent *e);
     void openPreferences();

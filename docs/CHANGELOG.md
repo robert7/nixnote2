@@ -7,6 +7,7 @@
 * Fixed bug with media attachments
 * Improved HTML simplify
 * Removed both webcam and screenshoot functionality (there are better tools for bot actions)
+* Show/Hide is now simplified to "Show" as previously it could lead to inconsistent behaviour
 
 
 ## 2018-07

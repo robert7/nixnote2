@@ -545,7 +545,7 @@ void NixNote::setupGui() {
     connect(trayIconContextMenu, SIGNAL(openNote(qint32)), this, SLOT(openExternalNote(qint32)));
     trayIconContextMenu->addSeparator();
 
-    showAction = trayIconContextMenu->addAction(tr("Show/Hide"));
+    showAction = trayIconContextMenu->addAction(tr("Show"));
     QLOG_DEBUG() << "QSystemTrayIcon::isSystemTrayAvailable():" << QSystemTrayIcon::isSystemTrayAvailable();
     if (!QSystemTrayIcon::isSystemTrayAvailable() && global.forceSystemTrayAvailable) {
         QLOG_INFO() << "Overriding QSystemTrayIcon::isSystemTrayAvailable() per command line option.";
@@ -560,7 +560,7 @@ void NixNote::setupGui() {
     trayIconContextMenu->addSeparator();
     closeAction = trayIconContextMenu->addAction(tr("Close"));
     connect(closeAction, SIGNAL(triggered()), this, SLOT(closeNixNote()));
-    connect(showAction, SIGNAL(triggered()), this, SLOT(toggleVisible()));
+    connect(showAction, SIGNAL(triggered()), this, SLOT(showMainWindow()));
 
     trayIcon->setContextMenu(trayIconContextMenu);
     trayIcon->setVisible(global.showTrayIcon());
@@ -1105,7 +1105,7 @@ void NixNote::closeNixNote() {
 //*****************************************************************************
 void NixNote::closeShortcut() {
     if (closeToTray && isVisible())
-        toggleVisible();
+        showMainWindow();
     else
         closeNixNote();
 
@@ -2644,7 +2644,7 @@ void NixNote::heartbeatTimerTriggered() {
         }
         if (cmd.startsWith("SHOW")) {
             if (!isVisible())
-                this->toggleVisible();
+                this->showMainWindow();
             this->raise();
             this->activateWindow();
             this->showNormal();
@@ -2653,7 +2653,7 @@ void NixNote::heartbeatTimerTriggered() {
         if (cmd.startsWith("NEW_NOTE")) {
             this->newNote();
             if (!isVisible())
-                this->toggleVisible();
+                this->showMainWindow();
             this->raise();
             this->activateWindow();
             this->showNormal();
@@ -2683,9 +2683,7 @@ void NixNote::heartbeatTimerTriggered() {
         if (cmd.startsWith("OPEN_NOTE")) {
             bool newTab = false;
 
-            if (!isVisible()) {
-                this->toggleVisible();
-            }
+            this->showMainWindow();
 
             if (cmd.startsWith("OPEN_NOTE_NEW_TAB")) {
                 newTab = true;
@@ -2771,9 +2769,9 @@ void NixNote::fastPrintNote() {
 //* Toggle the window visibility.  Used when closing to
 //* the tray.
 //************************************************************
-void NixNote::toggleVisible() {
+void NixNote::showMainWindow() {
     if (minimizeToTray || closeToTray) {
-        if (isMinimized() || !isVisible()) {
+        //if (isMinimized() || !isVisible()) {
             setWindowState(Qt::WindowActive);
             this->show();
             this->raise();
@@ -2781,21 +2779,21 @@ void NixNote::toggleVisible() {
             this->activateWindow();
             this->setFocus();
             return;
-        } else {
-            showMinimized();
-            this->setHidden(true);
-            return;
-        }
+        // } else {
+        //     showMinimized();
+        //     this->setHidden(true);
+        //     return;
+        // }
     } else {
-        if (isMinimized()) {
+        //if (isMinimized()) {
             setWindowState(Qt::WindowActive);
             this->showNormal();
             this->setFocus();
             return;
-        } else {
-            this->showMinimized();
-            return;
-        }
+        // } else {
+        //     this->showMinimized();
+        //     return;
+        // }
     }
 }
 
@@ -2815,10 +2813,9 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
         if (value == doNothing)
             return;
         if (value == showHide)
-            toggleVisible();
+            showMainWindow();
         if (value == newNote) {
-            if (!isVisible())
-                toggleVisible();
+            showMainWindow();
             this->newNote();
         }
         if (value == newQuickNote)
@@ -2831,10 +2828,9 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
         if (value == doNothing)
             return;
         if (value == showHide)
-            toggleVisible();
+            showMainWindow();
         if (value == newNote) {
-            if (!isVisible())
-                toggleVisible();
+            showMainWindow();
             this->newNote();
         }
         if (value == newQuickNote)
@@ -2847,10 +2843,9 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
         if (value == doNothing)
             return;
         if (value == showHide)
-            toggleVisible();
+            showMainWindow();
         if (value == newNote) {
-            if (!isVisible())
-                toggleVisible();
+            showMainWindow();
             this->newNote();
         }
         if (value == newQuickNote)
@@ -2880,7 +2875,7 @@ bool NixNote::event(QEvent *event) {
     if (event->type() == QEvent::Close) {
         if (closeToTray && isVisible()) {
             QLOG_DEBUG() << "overriding close event";
-            this->toggleVisible();
+            this->showMainWindow();
             event->ignore();
             return false;
         }
