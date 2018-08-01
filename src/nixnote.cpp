@@ -530,22 +530,29 @@ void NixNote::setupGui() {
     closeToTray = global.closeToTray();
     trayIcon = new QSystemTrayIcon(global.getIconResource(":trayIcon"), this);
     trayIconContextMenu = new TrayMenu(this);
-    trayIconContextMenu->addAction(newNoteButton);
 
-    newExternalNoteButton = trayIconContextMenu->addAction(tr("Quick Note"));
-    connect(newExternalNoteButton, SIGNAL(triggered()), this, SLOT(newExternalNote()));
+    // ~temporary removal
+    //newExternalNoteButton = trayIconContextMenu->addAction(tr("Quick Note"));
+    //connect(newExternalNoteButton, SIGNAL(triggered()), this, SLOT(newExternalNote()));
 
-    trayIconContextMenu->addSeparator();
-    QMenu *favoritesMenu = trayIconContextMenu->addMenu(tr("Shortcut Notes"));
-    trayIconContextMenu->setActionMenu(TrayMenu::FavoriteNotesMenu, favoritesMenu);
-    QMenu *pinnedMenu = trayIconContextMenu->addMenu(tr("Pinned Notes"));
-    trayIconContextMenu->setActionMenu(TrayMenu::PinnedMenu, pinnedMenu);
-    QMenu *recentMenu = trayIconContextMenu->addMenu(tr("Recently Updated Notes"));
-    trayIconContextMenu->setActionMenu(TrayMenu::RecentMenu, recentMenu);
+    // trayIconContextMenu->addSeparator();
+    // QMenu *favoritesMenu = trayIconContextMenu->addMenu(tr("Shortcut Notes"));
+    // trayIconContextMenu->setActionMenu(TrayMenu::FavoriteNotesMenu, favoritesMenu);
+    // QMenu *pinnedMenu = trayIconContextMenu->addMenu(tr("Pinned Notes"));
+    // trayIconContextMenu->setActionMenu(TrayMenu::PinnedMenu, pinnedMenu);
+    // QMenu *recentMenu = trayIconContextMenu->addMenu(tr("Recently Updated Notes"));
+    // trayIconContextMenu->setActionMenu(TrayMenu::RecentMenu, recentMenu);
+
     connect(trayIconContextMenu, SIGNAL(openNote(qint32)), this, SLOT(openExternalNote(qint32)));
-    trayIconContextMenu->addSeparator();
+    //trayIconContextMenu->addSeparator();
 
     showAction = trayIconContextMenu->addAction(tr("Show"));
+    connect(showAction, SIGNAL(triggered()), this, SLOT(showMainWindow()));
+
+    QAction *newNoteButton2 = trayIconContextMenu->addAction(tr("New note"));
+    connect(newNoteButton2, SIGNAL(triggered()), this, SLOT(newNote()));
+
+
     QLOG_DEBUG() << "QSystemTrayIcon::isSystemTrayAvailable():" << QSystemTrayIcon::isSystemTrayAvailable();
     if (!QSystemTrayIcon::isSystemTrayAvailable() && global.forceSystemTrayAvailable) {
         QLOG_INFO() << "Overriding QSystemTrayIcon::isSystemTrayAvailable() per command line option.";
@@ -558,9 +565,8 @@ void NixNote::setupGui() {
     }
 
     trayIconContextMenu->addSeparator();
-    closeAction = trayIconContextMenu->addAction(tr("Close"));
-    connect(closeAction, SIGNAL(triggered()), this, SLOT(closeNixNote()));
-    connect(showAction, SIGNAL(triggered()), this, SLOT(showMainWindow()));
+    quitAction = trayIconContextMenu->addAction(tr("Quit"));
+    connect(quitAction, SIGNAL(triggered()), this, SLOT(quitNixNote()));
 
     trayIcon->setContextMenu(trayIconContextMenu);
     trayIcon->setVisible(global.showTrayIcon());
@@ -1089,26 +1095,24 @@ void NixNote::setupTabWindow() {
 }
 
 
-//****************************************************************************
-//* Close NixNote.   This will force a close.  Even if "close to tray" is set.
-//*****************************************************************************
-void NixNote::closeNixNote() {
+/**
+ * Quit NixNote.   This will force a app close even if "close to tray" is set.
+ */
+void NixNote::quitNixNote() {
     closeFlag = true;
     closeToTray = false;
     close();
 }
 
 
-//*****************************************************************************
-//* Close nixnote via the shortcut. If we have it set to close to the tray,
-//* we just hide things.
-//*****************************************************************************
+/**
+ * Close nixnote via the shortcut. If we have it set to close to the tray,
+ */
 void NixNote::closeShortcut() {
     if (closeToTray && isVisible())
         showMainWindow();
     else
-        closeNixNote();
-
+        quitNixNote();
 }
 
 
@@ -1996,6 +2000,10 @@ void NixNote::resetView() {
 // Create a new note
 //*****************************
 void NixNote::newNote() {
+    // in case its called from systray, the main window may be hidden
+    showMainWindow();
+
+
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
                           QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
                           QString(
@@ -2527,7 +2535,7 @@ void NixNote::heartbeatTimerTriggered() {
     }
     if (data.startsWith("IMMEDIATE_SHUTDOWN")) {
         QLOG_ERROR() << "Immediate shutdown requested by shared memory segment.";
-        this->closeNixNote();
+        this->quitNixNote();
         return;
     }
     if (data.startsWith("SHOW_WINDOW")) {
@@ -2864,7 +2872,6 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 //}
 
 bool NixNote::event(QEvent *event) {
-
     if (event->type() == QEvent::WindowStateChange && isMinimized()) {
         if (minimizeToTray) {
             hide();
@@ -2874,8 +2881,11 @@ bool NixNote::event(QEvent *event) {
 
     if (event->type() == QEvent::Close) {
         if (closeToTray && isVisible()) {
-            QLOG_DEBUG() << "overriding close event";
-            this->showMainWindow();
+            QLOG_DEBUG() << "overriding close event => minimize";
+
+            hide();
+            this->setHidden(true);
+
             event->ignore();
             return false;
         }
@@ -2986,7 +2996,7 @@ void NixNote::switchUser() {
         global.globalSettings->beginGroup(INI_GROUP_SAVE_STATE);
         global.globalSettings->setValue("lastAccessedAccount", global.accountsManager->currentId);
         global.globalSettings->endGroup();
-        closeAction->trigger();
+        quitAction->trigger();
         global.sharedMemory->detach();
         QProcess::startDetached(QCoreApplication::applicationFilePath());
         return;

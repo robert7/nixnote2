@@ -52,7 +52,7 @@ public:
     QMenu *findReplaceMenu;
     QMenu *themeMenu;
 
-    QAction *exitAction;
+    QAction *quitAction;
     QAction *openCloseAction;
     QAction *printAction;
     QAction *printPreviewAction;

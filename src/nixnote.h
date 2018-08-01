@@ -119,14 +119,14 @@ private:
     QAction *printNoteButton;
     QAction *deleteNoteButton;
     QAction *newNoteButton;
-    QAction *newExternalNoteButton;
+    //~temp removed//QAction *newExternalNoteButton;
     QAction *emailButton;
     QAction *toolsAccountAction;
 
     QAction *showAction;
     //QAction *minimizeToTrayAction;
     //QAction *closeToTrayAction;
-    QAction *closeAction;
+    QAction *quitAction;
     bool minimizeToTray;
     bool closeToTray;
     bool closeFlag;
@@ -197,7 +197,7 @@ public:
     bool hunspellPluginAvailable;
 
 public slots:
-    void closeNixNote();
+    void quitNixNote();
     void closeShortcut();
     void synchronize();
     void syncTimerExpired();
