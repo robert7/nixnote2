@@ -394,11 +394,6 @@ void NMainMenuBar::setupNoteMenu() {
     noteMenu->addAction(newNoteAction);
     connect(newNoteAction, SIGNAL(triggered()), parent, SLOT(newNote()));
 
-    newWebcamNoteAction = new QAction(tr("New &Webcam Note"), noteMenu);
-    setupShortcut(deleteNoteAction, QString("File_Note_New_Webcam"));
-    noteMenu->addAction(newWebcamNoteAction);
-    connect(newWebcamNoteAction, SIGNAL(triggered()), parent, SLOT(newWebcamNote()));
-
     duplicateNoteAction = new QAction(tr("Dupl&icate Note"), noteMenu);
     setupShortcut(duplicateNoteAction, QString("File_Note_Duplicate"));
     noteMenu->addAction(duplicateNoteAction);

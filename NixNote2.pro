@@ -100,7 +100,6 @@ SOURCES += \
     src/dialog/preferences/thumbnailpreferences.cpp \
     src/dialog/remindersetdialog.cpp \
     src/dialog/savedsearchproperties.cpp \
-    src/dialog/screencapture.cpp \
     src/dialog/shortcutdialog.cpp \
     src/dialog/spellcheckdialog.cpp \
     src/dialog/tabledialog.cpp \
@@ -288,7 +287,6 @@ HEADERS  += \
     src/dialog/preferences/thumbnailpreferences.h \
     src/dialog/remindersetdialog.h \
     src/dialog/savedsearchproperties.h \
-    src/dialog/screencapture.h \
     src/dialog/shortcutdialog.h \
     src/dialog/spellcheckdialog.h \
     src/dialog/tabledialog.h \
@@ -377,7 +375,6 @@ HEADERS  += \
     src/oauth/oauthtokenizer.h \
     src/oauth/oauthwindow.h \
     src/plugins/hunspell/hunspellinterface.h \
-    src/plugins/webcam/webcaminterface.h \
     src/qevercloud/AsyncResult.h \
     src/qevercloud/EventLoopFinisher.h \
     src/qevercloud/EverCloudException.h \

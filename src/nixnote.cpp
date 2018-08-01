@@ -49,7 +49,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <unistd.h>
 
 #include "src/sql/notetable.h"
-#include "src/dialog/screencapture.h"
 #include "src/gui/ntabwidget.h"
 #include "src/sql/notebooktable.h"
 #include "src/sql/usertable.h"
@@ -324,25 +323,10 @@ void NixNote::setupGui() {
     homeButton = toolBar->addAction(global.getIconResource(":homeIcon"), tr("All Notes"));
     homeButton->setToolTip(tr("All Notes") + global.setupShortcut(homeButtonShortcut, "View_All_Notes"));
 
-    toolBar->addSeparator();
 
-    noteButton = new QToolButton();
-    newNoteButton = new QAction(noteButton);
-    newNoteButton->setIcon(global.getIconResource(":newNoteIcon"));
-    newNoteButton->setText(tr("New Note"));
-    newWebcamNoteButton = new QAction(noteButton);
-    newWebcamNoteButton->setIcon(global.getIconResource(":webcamIcon"));
-    newWebcamNoteButton->setText(tr("New Webcam Note"));
-    noteButton->addAction(newNoteButton);
-    noteButton->addAction(newWebcamNoteButton);
-    noteButton->setText(newNoteButton->text());
-    noteButton->setIcon(newNoteButton->icon());
-    noteButton->setProperty("currentNoteButton", NewTextNote);
-    noteButton->setPopupMode(QToolButton::MenuButtonPopup);
-    noteButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    connect(noteButton, SIGNAL(clicked()), this, SLOT(noteButtonClicked()));
-    toolBar->addWidget(noteButton);
-    noteButton->setToolTip(global.appendShortcutInfo(tr("New Note"), "File_Note_Add"));
+    newNoteButton = toolBar->addAction(global.getIconResource(":newNoteIcon"), tr("New Note"));
+    newNoteButton->setToolTip(global.appendShortcutInfo(tr("New Note"), "File_Note_Add"));
+    connect(newNoteButton, SIGNAL(clicked()), this, SLOT(newNote()));
 
     toolBar->addSeparator();
 
@@ -375,8 +359,6 @@ void NixNote::setupGui() {
     connect(printNoteButton, SIGNAL(triggered()), this, SLOT(fastPrintNote()));
     connect(deleteNoteButton, SIGNAL(triggered()), this, SLOT(deleteCurrentNote()));
     connect(newNoteButton, SIGNAL(triggered()), this, SLOT(newNote()));
-    connect(newWebcamNoteButton, SIGNAL(triggered()), this, SLOT(newWebcamNote()));
-    connect(newNoteButton, SIGNAL(triggered()), this, SLOT(noteButtonClicked()));
     connect(emailButton, SIGNAL(triggered()), this, SLOT(emailNote()));
 
     QLOG_TRACE() << "Adding main splitter";
@@ -552,12 +534,6 @@ void NixNote::setupGui() {
 
     newExternalNoteButton = trayIconContextMenu->addAction(tr("Quick Note"));
     connect(newExternalNoteButton, SIGNAL(triggered()), this, SLOT(newExternalNote()));
-
-    screenCaptureButton = new QAction(tr("Screen Capture"), this);
-    trayIconContextMenu->addAction(screenCaptureButton);
-    screenCaptureButton->setIcon(global.getIconResource(":screenCaptureIcon"));
-    noteButton->addAction(screenCaptureButton);
-    connect(screenCaptureButton, SIGNAL(triggered()), this, SLOT(screenCapture()));
 
     trayIconContextMenu->addSeparator();
     QMenu *favoritesMenu = trayIconContextMenu->addMenu(tr("Shortcut Notes"));
@@ -855,14 +831,6 @@ void NixNote::setupGui() {
     upNoteShortcut->setContext(Qt::WidgetWithChildrenShortcut);
     global.setupShortcut(upNoteShortcut, "Up_Note");
     connect(upNoteShortcut, SIGNAL(activated()), noteTableView, SLOT(upNote()));
-
-
-    // Disable menu items when plugins are not available
-    if (!webcamPluginAvailable) {
-        newWebcamNoteButton->setVisible(false);
-        this->menuBar->newWebcamNoteAction->setVisible(false);
-        this->menuBar->newWebcamNoteAction->setEnabled(false);
-    }
 
     // startup the index timer (if needed)
     if (global.enableIndexing) {
@@ -2028,11 +1996,6 @@ void NixNote::resetView() {
 // Create a new note
 //*****************************
 void NixNote::newNote() {
-    if (noteButton->property("currentNoteButton").toInt() != NewTextNote) {
-        noteButton->setText(newNoteButton->text());
-        noteButton->setIcon(newNoteButton->icon());
-        noteButton->setProperty("currentNoteButton", NewTextNote);
-    }
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
                           QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
                           QString(
@@ -2676,9 +2639,6 @@ void NixNote::heartbeatTimerTriggered() {
         if (cmd.startsWith("SYNCHRONIZE")) {
             this->synchronize();
         }
-        if (cmd.startsWith("SCREENSHOT")) {
-            this->screenCapture();
-        }
         if (cmd.startsWith("SHUTDOWN")) {
             this->close();
         }
@@ -2847,7 +2807,6 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
     int showHide = 1;
     int newNote = 2;
     int newQuickNote = 3;
-    int screenCapture = 4;
 
     if (reason == QSystemTrayIcon::DoubleClick) {
         global.settings->beginGroup(INI_GROUP_APPEARANCE);
@@ -2864,8 +2823,6 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
         }
         if (value == newQuickNote)
             this->newExternalNote();
-        if (value == screenCapture)
-            this->screenCapture();
     }
     if (reason == QSystemTrayIcon::MiddleClick) {
         global.settings->beginGroup(INI_GROUP_APPEARANCE);
@@ -2882,8 +2839,6 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
         }
         if (value == newQuickNote)
             this->newExternalNote();
-        if (value == screenCapture)
-            this->screenCapture();
     }
     if (reason == QSystemTrayIcon::Trigger) {
         global.settings->beginGroup(INI_GROUP_APPEARANCE);
@@ -2900,8 +2855,6 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
         }
         if (value == newQuickNote)
             this->newExternalNote();
-        if (value == screenCapture)
-            this->screenCapture();
     }
 }
 
@@ -3156,92 +3109,6 @@ void NixNote::resourceExternallyUpdated(QString resourceFile) {
 }
 
 
-//*********************************************************************
-//* Screen capture request.
-//*********************************************************************
-void NixNote::screenCapture() {
-    if (noteButton->property("currentNoteButton").toInt() != NewScreenNote) {
-        noteButton->setText(screenCaptureButton->text());
-        noteButton->setIcon(screenCaptureButton->icon());
-        noteButton->setProperty("currentNoteButton", NewScreenNote);
-    }
-    this->hide();
-    sleep(1);
-
-    ScreenCapture sc(this);
-    int result = sc.exec();
-    if (result == QDialog::Rejected) {
-        show();
-        return;
-    }
-    QPixmap pix = sc.getSelection();
-    this->show();
-    ConfigStore cs(global.db);
-    qint32 lid = cs.incrementLidCounter();
-
-    QCryptographicHash md5hash(QCryptographicHash::Md5);
-    QByteArray data;
-    QBuffer buffer(&data);
-    buffer.open(QIODevice::WriteOnly);
-    pix.save(&buffer, "PNG");
-
-    QByteArray hash = md5hash.hash(data, QCryptographicHash::Md5);
-
-    // * Start setting up the new note
-    Note newNote;
-    newNote.guid = QString::number(lid);
-    newNote.title = tr("Screen Capture");
-
-    NotebookTable bookTable(global.db);
-    QString notebook;
-    notebook = bookTable.getDefaultNotebookGuid();
-    newNote.notebookGuid = notebook;
-
-    QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
-                          QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
-                          QString(
-                              "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">");
-
-    QString mime = "image/png";
-    QString enMedia = QString("<en-media hash=\"") + hash.toHex() + QString("\" border=\"0\"")
-                      + QString(" type=\"" + mime + "\" ")
-                      + QString("/>");
-    newNoteBody.append(enMedia + QString("</en-note>"));
-    newNote.content = newNoteBody;
-    newNote.active = true;
-    newNote.created = QDateTime::currentMSecsSinceEpoch();;
-    newNote.updated = newNote.created;
-    newNote.updateSequenceNum = 0;
-
-    NoteTable ntable(global.db);
-    ntable.add(lid, newNote, true);
-    QString noteGuid = ntable.getGuid(lid);
-    qint32 noteLid = lid;
-    lid = cs.incrementLidCounter();
-
-
-    // Start creating the new resource
-    Resource newRes;
-    Data d;
-    d.body = data;
-    d.bodyHash = hash;
-    d.size = data.size();
-    newRes.mime = mime;
-    ResourceAttributes attributes;
-    attributes.attachment = false;
-    newRes.active = true;
-    newRes.guid = QString::number(lid);
-    newRes.noteGuid = noteGuid;
-    newRes.updateSequenceNum = 0;
-    newRes.data = d;
-    newRes.attributes = attributes;
-    ResourceTable restable(global.db);
-    restable.add(lid, newRes, true, noteLid);
-
-    updateSelectionCriteria();
-}
-
-
 // Reindex all notes & resources
 void NixNote::reindexDatabase() {
 
@@ -3269,161 +3136,6 @@ void NixNote::openCloseNotebooks() {
         notebookTreeView->rebuildTree();
     }
 }
-
-
-// Capture an image from the webcam and create a new note
-void NixNote::newWebcamNote() {
-    if (!webcamPluginAvailable) {
-        QMessageBox::critical(this, tr("Plugin Error"), tr("Webcam plugin not found or could not be loaded"));
-        return;
-    }
-    webcamInterface->initialize();
-
-    if (noteButton->property("currentNoteButton") != NewWebcamNote) {
-        noteButton->setText(newWebcamNoteButton->text());
-        noteButton->setIcon(newWebcamNoteButton->icon());
-        noteButton->setProperty("currentNoteButton", NewWebcamNote);
-    }
-
-    //WebcamCaptureDialog dialog;
-    QMessageBox msgBox;
-    msgBox.setText(tr("Unable to find webcam or capture image."));
-    msgBox.setWindowTitle(tr("Webcam Error"));
-
-    webcamInterface->initialize();
-    // Check for error reading camera
-    if (!webcamInterface->isWebcamReady()) {
-        msgBox.exec();
-        return;
-    }
-
-    webcamInterface->exec();
-
-    if (!webcamInterface->okPressed()) {
-        return;
-    }
-
-    QImage img;
-    // Check for webcam error
-    if (!webcamInterface->isWebcamReady() ||
-        !webcamInterface->getImage(img)) {
-        msgBox.exec();
-        return;
-    }
-
-    //Start generating the new note
-    Note newNote;
-    NoteTable ntable(global.db);
-
-    QByteArray data;
-    QBuffer buffer(&data);
-    buffer.open(QIODevice::WriteOnly);
-    img.save(&buffer, "PNG");
-
-    ConfigStore cs(global.db);
-    qint32 lid = cs.incrementLidCounter();
-
-    QCryptographicHash md5hash(QCryptographicHash::Md5);
-    QByteArray hash = md5hash.hash(data, QCryptographicHash::Md5);
-
-    // * Start setting up the new note
-    newNote.guid = QString::number(lid);
-    newNote.title = "Webcam Note";
-
-    NotebookTable notebookTable(global.db);
-    if (notebookTreeView->selectedItems().size() == 0) {
-        newNote.notebookGuid = notebookTable.getDefaultNotebookGuid();
-    } else {
-        NNotebookViewItem *item = (NNotebookViewItem *) notebookTreeView->selectedItems().at(0);
-        qint32 lid = item->lid;
-
-        // If we have a stack, we find the first notebook (in alphabetical order) for the new note.
-        if (lid == 0) {
-            QString stackName = notebookTreeView->selectedItems().at(0)->data(0, Qt::DisplayRole).toString();
-            QList<qint32> notebooks;
-            notebookTable.getStack(notebooks, stackName);
-            QString priorName;
-            Notebook book;
-            if (notebooks.size() > 0) {
-                for (int i = 0; i < notebooks.size(); i++) {
-                    qint32 priorLid = notebooks[i];
-                    notebookTable.get(book, priorLid);
-                    QString currentName = "";
-                    if (book.name.isSet())
-                        currentName = book.name;
-                    if (currentName.toUpper() < priorName.toUpper() || priorName == "") {
-                        lid = notebooks[i];
-                    }
-                    priorLid = notebooks[i];
-                    priorName = currentName;
-                }
-            }
-        }
-        QString notebookGuid;
-        notebookTable.getGuid(notebookGuid, lid);
-        newNote.notebookGuid = notebookGuid;
-    }
-
-    QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
-                          QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
-                          QString(
-                              "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">");
-
-
-    QString enMedia = QString("<en-media hash=\"") + hash.toHex() + QString("\" border=\"0\"")
-                      + QString(" type=\"image/png\" ")
-                      + QString("/>");
-    newNoteBody.append(enMedia + QString("</en-note>"));
-    newNote.content = newNoteBody;
-    newNote.active = true;
-    newNote.created = QDateTime::currentMSecsSinceEpoch();;
-    newNote.updated = newNote.created;
-    newNote.updateSequenceNum = 0;
-
-
-    qint32 noteLid = lid;
-    ntable.add(lid, newNote, true);
-    QString noteGuid = ntable.getGuid(lid);
-    lid = cs.incrementLidCounter();
-
-
-    // Start creating the new resource
-    Resource newRes;
-    Data d;
-    ResourceAttributes attributes;
-    d.body = data;
-    d.bodyHash = hash;
-    d.size = data.size();
-    newRes.mime = "image/png";
-    attributes.fileName = "";
-    attributes.attachment = false;
-    newRes.active = true;
-    newRes.guid = QString::number(lid);
-    newRes.noteGuid = noteGuid;
-    newRes.updateSequenceNum = 0;
-    newRes.data = d;
-    newRes.attributes = attributes;
-    ResourceTable restable(global.db);
-    restable.add(lid, newRes, true, noteLid);
-
-
-    FilterCriteria *criteria = new FilterCriteria();
-    global.getCurrentCriteria()->duplicate(*criteria);
-    criteria->setLid(noteLid);
-    global.filterCriteria.append(criteria);
-    global.filterPosition++;
-    openNote(false);
-    updateSelectionCriteria();
-
-    if (global.newNoteFocusToTitle()) {
-        tabWindow->currentBrowser()->noteTitle.setFocus();
-        tabWindow->currentBrowser()->noteTitle.selectAll();
-    } else
-        tabWindow->currentBrowser()->editor->setFocus();
-
-    return;
-}
-
 
 // Reindex the current note
 void NixNote::reindexCurrentNote() {
@@ -3556,17 +3268,6 @@ void NixNote::openMessageLogInfo() {
 }
 
 
-// Note button has been pressed, so we need to know what type of note to create
-void NixNote::noteButtonClicked() {
-    if (noteButton->property("currentNoteButton").toInt() == NewTextNote)
-        newNote();
-    if (noteButton->property("currentNoteButton").toInt() == NewWebcamNote)
-        newWebcamNote();
-    if (noteButton->property("currentNoteButton").toInt() == NewScreenNote)
-        screenCapture();
-}
-
-
 // Show a url to the debugging log
 void NixNote::showDesktopUrl(const QUrl &url) {
     QLOG_DEBUG() << url.toString();
@@ -3629,11 +3330,9 @@ void NixNote::reloadIcons() {
     syncButton->setIcon(global.getIconResource(":synchronizeIcon"));
     printNoteButton->setIcon(global.getIconResource(":printerIcon"));
     newNoteButton->setIcon(global.getIconResource(":newNoteIcon"));
-    newWebcamNoteButton->setIcon(global.getIconResource(":webcamIcon"));
     deleteNoteButton->setIcon(global.getIconResource(":deleteIcon"));
 
     trayIcon->setIcon(global.getIconResource(":trayIcon"));
-    screenCaptureButton->setIcon(global.getIconResource(":screenCaptureIcon"));
     emailButton->setIcon(global.getIconResource(":emailIcon"));
     notebookTreeView->reloadIcons();
     tagTreeView->reloadIcons();
@@ -3836,8 +3535,6 @@ void NixNote::presentationModeOff() {
 // Check to see if plugins are available and they match
 // the correct version expected. Load them if possible.
 void NixNote::loadPlugins() {
-    webcamPluginAvailable = false;
-
     QStringList dirList;
     dirList.append(global.fileManager.getProgramDataDir());
     dirList.append(global.fileManager.getProgramDataDir() + "plugins");
@@ -3865,24 +3562,13 @@ void NixNote::loadPlugins() {
     for (int i = 0; i < dirList.size(); i++) {
         QDir pluginsDir(dirList[i]);
         QStringList filter;
-        filter.append("libwebcamplugin.so");
         filter.append("libhunspellplugin.so");
-        filter.append("libwebcamplugin.dylib");
         filter.append("libhunspellplugin.dylib");
             foreach(QString
                         fileName, pluginsDir.entryList(filter)) {
                 QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
                 QObject *plugin = pluginLoader.instance();
-                if (fileName == "libwebcamplugin.so" || fileName == "libwebcamplugin.dylib") {
-                    if (plugin) {
-                        webcamInterface = qobject_cast<WebCamInterface *>(plugin);
-                        if (webcamInterface) {
-                            webcamPluginAvailable = true;
-                        }
-                    } else {
-                        QLOG_ERROR() << tr("Error loading Webcam plugin: ") << pluginLoader.errorString();
-                    }
-                }
+
 
                 // The Hunspell plugin isn't actually used here. We just use this as a
                 // check to be sure that the menu should be available.

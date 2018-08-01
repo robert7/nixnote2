@@ -50,7 +50,6 @@
         <file alias="navigationIcon">images/navigation.png</file>
         <file alias="splashLogoImage">images/splash_logo.png</file>
         <file alias="alarmclockIcon">images/alarmclock.png</file>
-        <file alias="webcamIcon">images/webcam.png</file>
         <file alias="printerIcon">images/printer.png</file>
         <file alias="deleteIcon">images/delete.png</file>
         <file>images/encrypt.png</file>
@@ -60,7 +59,6 @@
         <file alias="expandedIcon">images/expanded.png</file>
         <file alias="collapsedIcon">images/collapsed.png</file>
         <file alias="htmlentitiesIcon">images/htmlentities.png</file>
-        <file alias="screenCaptureIcon">images/screenCapture.png</file>
         <file alias="favoritesIcon">images/favorites.png</file>
         <file alias="trayIcon">images/trayicon.png</file>
         <file alias="dateTime">images/datetime.png</file>
