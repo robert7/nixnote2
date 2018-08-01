@@ -1,5 +1,6 @@
 # TODO / Roadmap
 ## 1
+* FIX close to tray/close
 * Better statusbar display on exceptions (shortcuts / 2 part status bar)
 * Removal of diacritics before search and index - currently mixing words with 
   diacritics and without doesn't work at all 
