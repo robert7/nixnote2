@@ -6,6 +6,7 @@
 * Various minor improvements and stabilisation
 * Fixed bug with media attachments
 * Improved HTML simplify
+* Removed both webcam and screenshoot functionality (there are better tools for bot actions)
 
 
 ## 2018-07
