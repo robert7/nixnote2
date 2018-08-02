@@ -1572,7 +1572,6 @@ QString Global::normalizeTermForSearchAndIndex(QString s) const
         stringUtils.removeDiacritics(s);
     }
 
-
     return s;
 }
 

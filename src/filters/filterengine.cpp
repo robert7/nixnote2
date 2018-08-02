@@ -160,7 +160,7 @@ void setupTitleSelectionQuery(NSqlQuery &sql, QString searchStr, int relevance, 
 }
 
 
-void FilterEngine::filter(FilterCriteria *newCriteria, QList <qint32> *results) {
+void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
     QLOG_TRACE_IN();
     bool internalSearch = true;
 
@@ -178,10 +178,12 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList <qint32> *results) 
 
 
     FilterCriteria *criteria = newCriteria;
-    if (criteria == nullptr)
+    if (criteria == nullptr) {
         criteria = global.getCurrentCriteria();
-    else
+    }
+    else {
         internalSearch = false;
+    }
 
     QLOG_DEBUG() << "Filtering favorite";
     filterFavorite(criteria);
