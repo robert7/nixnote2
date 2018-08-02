@@ -19,9 +19,11 @@
 #ifndef LIB_QUENTIER_UTILITY_STRING_UTILS_H
 #define LIB_QUENTIER_UTILITY_STRING_UTILS_H
 
-#include <quentier/utility/Linkage.h>
+//#include <quentier/utility/Linkage.h>
 #include <QString>
 #include <QVector>
+
+#define QUENTIER_EXPORT Q_DECL_EXPORT
 
 namespace quentier {
 
