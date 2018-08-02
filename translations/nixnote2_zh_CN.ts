@@ -804,28 +804,28 @@
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="47"/>
-        <source>Total Notes:</source>
+        <source>Total notes:</source>
         <translation>总笔记数：</translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="49"/>
-        <source>Total Resources:</source>
+        <source>Total resources:</source>
         <translatorcomment>What is the &quot;resources&quot; really mean?</translatorcomment>
         <translation>总资源数：</translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="51"/>
-        <source>Unindexed Notes:</source>
+        <source>Unindexed notes:</source>
         <translation>未索引笔记：</translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="53"/>
-        <source>Unindexed Resources:</source>
+        <source>Unindexed resources:</source>
         <translation>未索引资源：</translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="55"/>
-        <source>Thumbnails Needed:</source>
+        <source>Thumbnails needed:</source>
         <translation>所需缩略图数：</translation>
     </message>
     <message>

@@ -112,9 +112,9 @@ void IndexRunner::index() {
     if (keepRunning && !pauseIndexing && noteTable.getIndexNeeded(lids) > 0) {
         QApplication::processEvents();
         endMsgNeeded = true;
-        QLOG_DEBUG() << "Unindexed Notes found: " << lids.size();
+        QLOG_DEBUG() << "Unindexed notes found: " << lids.size();
 
-        // Index any undindexed note content.
+        // Index any unindexed note content.
         for (int i=0; keepRunning && !pauseIndexing && i<lids.size(); i++) {
             QApplication::processEvents();
             Note n;

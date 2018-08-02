@@ -812,29 +812,29 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="47"/>
-        <source>Total Notes:</source>
+        <source>Total notes:</source>
         <translation>Poznámek celkem:</translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="49"/>
-        <source>Total Resources:</source>
+        <source>Total resources:</source>
         <translatorcomment>Např. obrázky v HTML, atd.</translatorcomment>
         <translation>Příloh celkem:</translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="51"/>
-        <source>Unindexed Notes:</source>
+        <source>Unindexed notes:</source>
         <translation>Nezindexovované poznámky:</translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="53"/>
-        <source>Unindexed Resources:</source>
+        <source>Unindexed resources:</source>
         <translatorcomment>Např. obrázky v HTML, atd.</translatorcomment>
         <translation>Nezindexovované přílohy:</translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="55"/>
-        <source>Thumbnails Needed:</source>
+        <source>Thumbnails needed:</source>
         <translation>Náhledy poznámek:</translation>
     </message>
     <message>

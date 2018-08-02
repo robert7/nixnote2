@@ -44,15 +44,15 @@ DatabaseStatus::DatabaseStatus(QWidget *parent) :
     qint32 unindexedResources = rtable.getUnindexedCount();
     qint32 thumbnailsNeeded = ntable.getThumbnailsNeededCount();
 
-    textGrid->addWidget(new QLabel(tr("Total Notes:")),1,1);
+    textGrid->addWidget(new QLabel(tr("Total notes:")),1,1);
     textGrid->addWidget(new QLabel(QString::number(totalNotes)), 1,2);
-    textGrid->addWidget(new QLabel(tr("Total Resources:")), 2,1);
+    textGrid->addWidget(new QLabel(tr("Total resources:")), 2,1);
     textGrid->addWidget(new QLabel(QString::number(totalResources)), 2, 2);
-    textGrid->addWidget(new QLabel(tr("Unindexed Notes:")), 3,1);
+    textGrid->addWidget(new QLabel(tr("Unindexed notes:")), 3,1);
     textGrid->addWidget(new QLabel(QString::number(unindexedNotes)),3,2);
-    textGrid->addWidget(new QLabel(tr("Unindexed Resources:")), 4,1);
+    textGrid->addWidget(new QLabel(tr("Unindexed resources:")), 4,1);
     textGrid->addWidget(new QLabel(QString::number(unindexedResources)),4,2);
-    textGrid->addWidget(new QLabel(tr("Thumbnails Needed:")), 5,1);
+    textGrid->addWidget(new QLabel(tr("Thumbnails needed:")), 5,1);
     textGrid->addWidget(new QLabel(QString::number(thumbnailsNeeded)),5,2);
 
 

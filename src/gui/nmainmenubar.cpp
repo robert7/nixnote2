@@ -453,7 +453,7 @@ void NMainMenuBar::setupToolsMenu() {
     disconnectAction->setEnabled(false);
     disconnectAction->setVisible(false);  /// We can probably delete this whole menu option
 
-    pauseIndexingAction = new QAction(tr("Pause &Indexing"), this);
+    pauseIndexingAction = new QAction(tr("Pause &indexing"), this);
     pauseIndexingAction->setToolTip(tr("Temporarily pause indexing"));
     setupShortcut(pauseIndexingAction, QString("Tools_Pause_Indexing"));
     connect(pauseIndexingAction, SIGNAL(triggered()), parent, SLOT(pauseIndexing()));
@@ -461,7 +461,7 @@ void NMainMenuBar::setupToolsMenu() {
     toolsMenu->addAction(pauseIndexingAction);
     pauseIndexingAction->setVisible(global.enableIndexing);
 
-    disableEditingAction = new QAction(tr("Disable &Editing"), this);
+    disableEditingAction = new QAction(tr("Disable &editing"), this);
     disableEditingAction->setToolTip(tr("Temporarily disable note editing"));
     setupShortcut(disableEditingAction, QString("Tools_Disable_Editing"));
     disableEditingAction->setCheckable(true);
@@ -469,7 +469,24 @@ void NMainMenuBar::setupToolsMenu() {
     connect(disableEditingAction, SIGNAL(triggered()), parent, SLOT(disableEditing()));
     toolsMenu->addAction(disableEditingAction);
 
-    accountDialogAction = new QAction(tr("A&ccount / Usage"), this);
+    toolsMenu->addSeparator();
+
+    reindexDatabaseAction = new QAction(tr("&Reindex database"), this);
+    reindexDatabaseAction->setToolTip(tr("Reindex all notes"));
+    setupShortcut(reindexDatabaseAction, QString("Tools_Database_Reindex"));
+    connect(reindexDatabaseAction, SIGNAL(triggered()), parent, SLOT(reindexDatabase()));
+    toolsMenu->addAction(reindexDatabaseAction);
+    reindexDatabaseAction->setVisible(global.enableIndexing);
+
+    databaseStatusDialogAction = new QAction(tr("&Database status"), this);
+    databaseStatusDialogAction->setToolTip(tr("Database Status"));
+    setupShortcut(databaseStatusDialogAction, QString("Tools_Database_Status"));
+    connect(databaseStatusDialogAction, SIGNAL(triggered()), parent, SLOT(openDatabaseStatus()));
+    toolsMenu->addAction(databaseStatusDialogAction);
+
+    toolsMenu->addSeparator();
+
+    accountDialogAction = new QAction(tr("A&ccount / usage"), this);
     accountDialogAction->setToolTip(tr("Account and usage information"));
     connect(accountDialogAction, SIGNAL(triggered()), parent, SLOT(openAccount()));
     setupShortcut(accountDialogAction, QString("Tools_Account_Information"));
@@ -477,28 +494,11 @@ void NMainMenuBar::setupToolsMenu() {
 
     toolsMenu->addSeparator();
 
-    databaseStatusDialogAction = new QAction(tr("&Database Status"), this);
-    databaseStatusDialogAction->setToolTip(tr("Database Status"));
-    setupShortcut(databaseStatusDialogAction, QString("Tools_Database_Status"));
-    connect(databaseStatusDialogAction, SIGNAL(triggered()), parent, SLOT(openDatabaseStatus()));
-    toolsMenu->addAction(databaseStatusDialogAction);
-
-    reindexDatabaseAction = new QAction(tr("&Reindex Database"), this);
-    reindexDatabaseAction->setToolTip(tr("Reindex all notes"));
-    setupShortcut(reindexDatabaseAction, QString("Tools_Database_Reindex"));
-    connect(reindexDatabaseAction, SIGNAL(triggered()), parent, SLOT(reindexDatabase()));
-    toolsMenu->addAction(reindexDatabaseAction);
-    reindexDatabaseAction->setVisible(global.enableIndexing);
-
-    toolsMenu->addSeparator();
-
-    importFoldersDialogAction = new QAction(tr("&Import Folders"), this);
+    importFoldersDialogAction = new QAction(tr("&Import folders"), this);
     importFoldersDialogAction->setToolTip(tr("Import Folders"));
     setupShortcut(importFoldersDialogAction, QString("Tools_Import_Folders"));
     connect(importFoldersDialogAction, SIGNAL(triggered()), parent, SLOT(openImportFolders()));
     toolsMenu->addAction(importFoldersDialogAction);
-
-
 }
 
 void NMainMenuBar::setupHelpMenu() {

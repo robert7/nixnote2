@@ -258,8 +258,8 @@ public:
     bool forceWebFonts;
     qint32 startupNote;                                   // Initial note to startup with.
 
-    qint32 minIndexInterval;                              // Minimum interval to check for any Unindexed notes.
-    qint32 maxIndexInterval;                              // Maximum interval to check for any Unindexed notes.
+    qint32 minIndexInterval;                              // Minimum interval to check for any unindexed notes.
+    qint32 maxIndexInterval;                              // Maximum interval to check for any unindexed notes.
     qint32 indexResourceCountPause;                       // After indexing this many resources we pause to avoid overloading the CPU
     qint32 indexNoteCountPause;                           // After indexing this many notes we pause to avoid overloading the CPU
 
