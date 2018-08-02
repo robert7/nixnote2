@@ -240,7 +240,9 @@ SOURCES += \
     src/xml/exportdata.cpp \
     src/xml/importdata.cpp \
     src/xml/importenex.cpp \
-    src/xml/xmlhighlighter.cpp
+    src/xml/xmlhighlighter.cpp \
+    src/quentier/utility/StringUtils.cpp \
+    src/quentier/utility/StringUtils_p.cpp
 
 HEADERS  += \
     src/application.h \
@@ -440,7 +442,9 @@ HEADERS  += \
     src/xml/exportdata.h \
     src/xml/importdata.h \
     src/xml/importenex.h \
-    src/xml/xmlhighlighter.h
+    src/xml/xmlhighlighter.h \
+    src/quentier/utility/StringUtils.h \
+    src/quentier/utility/StringUtils_p.h
 
 # http://doc.qt.io/qt-5/qmake-function-reference.html#str-member-arg-start-end
 # $$left(VAR, len)

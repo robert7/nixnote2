@@ -1,8 +1,8 @@
 /*
  * Copyright 2016 Dmitry Ivanov
  *
- * This file is part of libquentier
- *
+* This file is part of libquentier -https://github.com/d1vanov/libquentier
+  *
  * libquentier is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, version 3 of the License.
@@ -47,9 +47,9 @@ void StringUtilsPrivate::removePunctuation(QString & str, const QVector<QChar> &
 
 void StringUtilsPrivate::removeDiacritics(QString & str) const
 {
-    QNTRACE(QStringLiteral("str before normalizing by D form: ") << str);
+    //QNTRACE(QStringLiteral("str before normalizing by D form: ") << str);
     str = str.normalized(QString::NormalizationForm_KD);
-    QNTRACE(QStringLiteral("str after normalizing by KD form: ") << str);
+    //QNTRACE(QStringLiteral("str after normalizing by KD form: ") << str);
 
     for(int i = 0; i < str.length(); ++i)
     {
@@ -72,7 +72,7 @@ void StringUtilsPrivate::removeDiacritics(QString & str) const
         str.replace(i, 1, replacement);
     }
 
-    QNTRACE(QStringLiteral("str after removing diacritics: ") << str);
+    //QNTRACE(QStringLiteral("str after removing diacritics: ") << str);
 }
 
 void StringUtilsPrivate::removeNewlines(QString & str) const
