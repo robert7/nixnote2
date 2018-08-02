@@ -62,21 +62,21 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 
     traySingleClickAction = new QComboBox();
     traySingleClickAction->addItem(tr("Do Nothing"), 0);
-    traySingleClickAction->addItem(tr("Show/Hide NixNote"), 1);
+    traySingleClickAction->addItem(tr("Show NixNote"), 1);
     traySingleClickAction->addItem(tr("New Text Note"), 2);
     traySingleClickAction->addItem(tr("New Quick Note"), 3);
     traySingleClickAction->addItem(tr("Screen Capture"), 4);
 
     trayMiddleClickAction = new QComboBox();
     trayMiddleClickAction->addItem(tr("Do Nothing"), 0);
-    trayMiddleClickAction->addItem(tr("Show/Hide NixNote"), 1);
+    trayMiddleClickAction->addItem(tr("Show NixNote"), 1);
     trayMiddleClickAction->addItem(tr("New Text Note"), 2);
     trayMiddleClickAction->addItem(tr("New Quick Note"), 3);
     trayMiddleClickAction->addItem(tr("Screen Capture"), 4);
 
     trayDoubleClickAction = new QComboBox();
     trayDoubleClickAction->addItem(tr("Do Nothing"), 0);
-    trayDoubleClickAction->addItem(tr("Show/Hide NixNote"), 1);
+    trayDoubleClickAction->addItem(tr("Show NixNote"), 1);
     trayDoubleClickAction->addItem(tr("New Text Note"), 2);
     trayDoubleClickAction->addItem(tr("New Quick Note"), 3);
     trayDoubleClickAction->addItem(tr("Screen Capture"), 4);

@@ -147,18 +147,19 @@ void NMainMenuBar::setupFileMenu() {
     openCloseAction = new QAction(tr("&Open/Close Notebooks"), this);
     openCloseAction->setToolTip(tr("Open/Close Notebooks"));
     connect(openCloseAction, SIGNAL(triggered()), parent, SLOT(openCloseNotebooks()));
-    setupShortcut(exitAction, QString("File_Notebook_OpenClose"));
+    setupShortcut(quitAction, QString("File_Notebook_OpenClose"));
     fileMenu->addAction(openCloseAction);
 
     fileMenu->addSeparator();
 
-    exitAction = new QAction(tr("E&xit"), this);
-    exitAction->setToolTip(tr("Close the program"));
-    connect(exitAction, SIGNAL(triggered()), parent, SLOT(closeShortcut()));
-    exitAction->setShortcut(QKeySequence::Close);
-    exitAction->setIcon(QIcon::fromTheme("exit"));
-    setupShortcut(exitAction, QString("File_Exit"));
-    fileMenu->addAction(exitAction);
+    quitAction = new QAction(tr("Quit"), this);
+    quitAction->setToolTip(tr("Quit the program"));
+    connect(quitAction, SIGNAL(triggered()), parent, SLOT(quitNixNote()));
+
+    quitAction->setShortcut(QKeySequence::Close);
+    quitAction->setIcon(QIcon::fromTheme("exit"));
+    setupShortcut(quitAction, QString("File_Exit"));
+    fileMenu->addAction(quitAction);
 
     QString menuCss = global.getThemeCss("menuCss");
     if (menuCss != "")
@@ -393,11 +394,6 @@ void NMainMenuBar::setupNoteMenu() {
     setupShortcut(newNoteAction, QString("File_Note_Add"));
     noteMenu->addAction(newNoteAction);
     connect(newNoteAction, SIGNAL(triggered()), parent, SLOT(newNote()));
-
-    newWebcamNoteAction = new QAction(tr("New &Webcam Note"), noteMenu);
-    setupShortcut(deleteNoteAction, QString("File_Note_New_Webcam"));
-    noteMenu->addAction(newWebcamNoteAction);
-    connect(newWebcamNoteAction, SIGNAL(triggered()), parent, SLOT(newWebcamNote()));
 
     duplicateNoteAction = new QAction(tr("Dupl&icate Note"), noteMenu);
     setupShortcut(duplicateNoteAction, QString("File_Note_Duplicate"));

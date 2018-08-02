@@ -79,25 +79,28 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addAction(pasteWithoutFormatAction);
     connect(pasteWithoutFormatAction, SIGNAL(triggered()), parent, SLOT(pasteWithoutFormatButtonPressed()));
 
-    removeFormattingAction = new QAction(tr("Text - Remove Formatting"), this);
-    global.setupShortcut(removeFormattingAction, "Edit_Remove_Formatting");
-    contextMenu->addAction(removeFormattingAction);
-    connect(removeFormattingAction, SIGNAL(triggered()), parent, SLOT(removeFormatButtonPressed()));
-
-    htmlTidyAction = new QAction(tr("HTML - Tidy"), this);
-    global.setupShortcut(htmlTidyAction, "Edit_HTML_Tidy");
-    contextMenu->addAction(htmlTidyAction);
-    connect(htmlTidyAction, SIGNAL(triggered()), parent, SLOT(htmlTidy()));
-
-    htmlSimplifyAction = new QAction(tr("HTML - Simplify (experimental!)"), this);
-    global.setupShortcut(htmlSimplifyAction, "Edit_HTML_Simplify");
-    contextMenu->addAction(htmlSimplifyAction);
-    connect(htmlSimplifyAction, SIGNAL(triggered()), parent, SLOT(htmlSimplify()));
-
     copyNoteUrlAction = new QAction(tr("Copy Note URL"), this);
     global.setupShortcut(copyNoteUrlAction, "Edit_Copy_Note_Url");
     contextMenu->addAction(copyNoteUrlAction);
     connect(copyNoteUrlAction, SIGNAL(triggered()), parent, SLOT(copyNoteUrl()));
+
+    contextMenu->addSeparator();
+
+    removeFormattingAction = new QAction(tr("Remove formatting (light)"), this);
+    global.setupShortcut(removeFormattingAction, "Edit_Remove_Formatting");
+    contextMenu->addAction(removeFormattingAction);
+    connect(removeFormattingAction, SIGNAL(triggered()), parent, SLOT(removeFormatButtonPressed()));
+
+    htmlTidyAction = new QAction(tr("Tidy HTML"), this);
+    global.setupShortcut(htmlTidyAction, "Edit_HTML_Tidy");
+    // internal => DISABLED for now
+    //contextMenu->addAction(htmlTidyAction);
+    connect(htmlTidyAction, SIGNAL(triggered()), parent, SLOT(htmlTidy()));
+
+    htmlSimplifyAction = new QAction(tr("Simplify formatting (strong)"), this);
+    global.setupShortcut(htmlSimplifyAction, "Edit_HTML_Simplify");
+    contextMenu->addAction(htmlSimplifyAction);
+    connect(htmlSimplifyAction, SIGNAL(triggered()), parent, SLOT(htmlSimplify()));
 
     contextMenu->addSeparator();
 

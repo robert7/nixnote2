@@ -52,7 +52,7 @@ public:
     QMenu *findReplaceMenu;
     QMenu *themeMenu;
 
-    QAction *exitAction;
+    QAction *quitAction;
     QAction *openCloseAction;
     QAction *printAction;
     QAction *printPreviewAction;
@@ -113,7 +113,6 @@ public:
     QAction *deleteNoteAction;
     QAction *newNoteAction;
     QAction *reindexNoteAction;
-    QAction *newWebcamNoteAction;
     QAction *duplicateNoteAction;
     QAction *pinNoteAction;
     QAction *unpinNoteAction;

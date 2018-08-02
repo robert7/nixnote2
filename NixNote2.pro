@@ -100,7 +100,6 @@ SOURCES += \
     src/dialog/preferences/thumbnailpreferences.cpp \
     src/dialog/remindersetdialog.cpp \
     src/dialog/savedsearchproperties.cpp \
-    src/dialog/screencapture.cpp \
     src/dialog/shortcutdialog.cpp \
     src/dialog/spellcheckdialog.cpp \
     src/dialog/tabledialog.cpp \
@@ -241,7 +240,9 @@ SOURCES += \
     src/xml/exportdata.cpp \
     src/xml/importdata.cpp \
     src/xml/importenex.cpp \
-    src/xml/xmlhighlighter.cpp
+    src/xml/xmlhighlighter.cpp \
+    src/quentier/utility/StringUtils.cpp \
+    src/quentier/utility/StringUtils_p.cpp
 
 HEADERS  += \
     src/application.h \
@@ -288,7 +289,6 @@ HEADERS  += \
     src/dialog/preferences/thumbnailpreferences.h \
     src/dialog/remindersetdialog.h \
     src/dialog/savedsearchproperties.h \
-    src/dialog/screencapture.h \
     src/dialog/shortcutdialog.h \
     src/dialog/spellcheckdialog.h \
     src/dialog/tabledialog.h \
@@ -377,7 +377,6 @@ HEADERS  += \
     src/oauth/oauthtokenizer.h \
     src/oauth/oauthwindow.h \
     src/plugins/hunspell/hunspellinterface.h \
-    src/plugins/webcam/webcaminterface.h \
     src/qevercloud/AsyncResult.h \
     src/qevercloud/EventLoopFinisher.h \
     src/qevercloud/EverCloudException.h \
@@ -443,7 +442,9 @@ HEADERS  += \
     src/xml/exportdata.h \
     src/xml/importdata.h \
     src/xml/importenex.h \
-    src/xml/xmlhighlighter.h
+    src/xml/xmlhighlighter.h \
+    src/quentier/utility/StringUtils.h \
+    src/quentier/utility/StringUtils_p.h
 
 # http://doc.qt.io/qt-5/qmake-function-reference.html#str-member-arg-start-end
 # $$left(VAR, len)

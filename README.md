@@ -100,5 +100,4 @@ can be loaded from inside that bundle (wherever it ends up).
 Should work Windows, but minor tweaks will be needed to make it run. 
 I currently have no time for it. Pull request is welcome.
 
-
-
+![stat](http://c.statcounter.com/11779538/0/b8561dd9/1/)

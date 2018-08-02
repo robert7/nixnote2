@@ -52,7 +52,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //#include "src/oauth/oauthwindow.h"
 #include "src/html/thumbnailer.h"
 #include "src/reminders/remindermanager.h"
-#include "src/plugins/webcam/webcaminterface.h"
 #include "src/plugins/hunspell/hunspellinterface.h"
 
 //****************************************
@@ -80,12 +79,6 @@ class NixNote : public QMainWindow
     Q_OBJECT
 
 private:
-    enum NewNoteButtonAction {
-        NewTextNote=1,
-        NewWebcamNote=2,
-        NewScreenNote=3
-    };
-
     QTranslator *nixnoteTranslator;
     QWebView *pdfExportWindow;
     DatabaseConnection *db;  // The database connection
@@ -105,7 +98,6 @@ private:
     WidgetPanel *leftPanel;
     QSplitter *rightPanelSplitter;
     QScrollArea *leftScroll;
-    QToolButton *noteButton;
     QWidget *topRightWidget;
     QVBoxLayout *topRightLayout;
     NAttributeTree *attributeTree;
@@ -113,7 +105,6 @@ private:
     QSystemTrayIcon *trayIcon;
     QString saveLastPath;   // Last path viewed in the restore dialog
     FileWatcherManager *importManager;
-//    OAuthWindow *oauthWindow;
     Thumbnailer *hammer;
     QTimer indexTimer;
 
@@ -128,16 +119,14 @@ private:
     QAction *printNoteButton;
     QAction *deleteNoteButton;
     QAction *newNoteButton;
-    QAction *newWebcamNoteButton;
-    QAction *screenCaptureButton;
-    QAction *newExternalNoteButton;
+    //~temp removed//QAction *newExternalNoteButton;
     QAction *emailButton;
     QAction *toolsAccountAction;
 
     QAction *showAction;
     //QAction *minimizeToTrayAction;
     //QAction *closeToTrayAction;
-    QAction *closeAction;
+    QAction *quitAction;
     bool minimizeToTray;
     bool closeToTray;
     bool closeFlag;
@@ -190,8 +179,6 @@ private:
 
     // Plugins
     void loadPlugins();
-    bool webcamPluginAvailable;
-    WebCamInterface *webcamInterface;
 
 public:
     NixNote(QWidget *parent = 0);  // Constructor
@@ -210,7 +197,7 @@ public:
     bool hunspellPluginAvailable;
 
 public slots:
-    void closeNixNote();
+    void quitNixNote();
     void closeShortcut();
     void synchronize();
     void syncTimerExpired();
@@ -227,7 +214,6 @@ public slots:
     void databaseBackup(bool backup=true);
     void resetView();
     void newNote();
-    void noteButtonClicked();
     void newExternalNote();
     void disableEditing();
     void setSyncTimer();
@@ -267,7 +253,7 @@ public slots:
     void printPreviewNote();
     void fastPrintNote();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
-    void toggleVisible();
+    void showMainWindow();
     //void trayIconBehavior();
 //    void changeEvent(QEvent *e);
     void openPreferences();
@@ -278,14 +264,12 @@ public slots:
     void viewNoteListWide();
     void viewNoteListNarrow();
     void resourceExternallyUpdated(QString resource);
-    void screenCapture();
     void reindexDatabase();
     void noteSynchronized(qint32 lid, bool value);
     void indexThreadStarted();
     void syncThreadStarted();
     void counterThreadStarted();
     void openCloseNotebooks();
-    void newWebcamNote();
     void deleteCurrentNote();
     void duplicateCurrentNote();
     void pinCurrentNote();
