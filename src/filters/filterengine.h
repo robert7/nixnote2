@@ -38,7 +38,7 @@ private:
     void filterSearchStringAll(QStringList list);
     void splitSearchTerms(QStringList &list, QString search);
     void filterSearchStringNotebookAll(QString string);
-//    void filterSearchTodoAll(QStringList list);
+    //    void filterSearchTodoAll(QStringList list);
     void filterSearchStringTodoAll(QString string);
     void filterSearchStringReminderOrderAll(QString string);
     void filterSearchStringReminderDoneTimeAll(QString string);

@@ -758,19 +758,24 @@ void FilterEngine::filterTrash(FilterCriteria *criteria) {
 
 // Filter the data based upon what the user enters in the search string
 void FilterEngine::filterSearchString(FilterCriteria *criteria) {
-    if (!criteria->isSet() || !criteria->isSearchStringSet() ||
-            criteria->getSearchString().trimmed() == "")
+    if (!criteria->isSet() 
+        || !criteria->isSearchStringSet() 
+        || criteria->getSearchString().trimmed() == "") {
         return;
+    }
     QLOG_TRACE_IN();
 
     anyFlagSet = false;
-    if (criteria->getSearchString().trimmed().startsWith("any:", Qt::CaseInsensitive))
+    QString searchString = global.normalizeTermForSearchAndIndex(criteria->getSearchString());
+
+    if (searchString.trimmed().startsWith("any:", Qt::CaseInsensitive)) {
         anyFlagSet = true;
+    }
 
     // Tokenize out the words
     QStringList list;
-    QLOG_DEBUG() << "Original String Search: " << criteria->getSearchString();
-    splitSearchTerms(list, criteria->getSearchString());
+    QLOG_DEBUG() << "Original String Search: " << searchString;
+    splitSearchTerms(list, searchString);
 
     if (!anyFlagSet)
         filterSearchStringAll(list);
@@ -1479,8 +1484,6 @@ void FilterEngine::filterSearchStringNotebookAll(QString string) {
 void FilterEngine::filterSearchStringTodoAll(QString string) {
     QLOG_TRACE_IN();
 
-    string = global.normalizeTermForSearchAndIndex(string);
-
     if (!string.startsWith("-")) {
         string.remove(0,5);
         if (string == "")
@@ -1537,8 +1540,6 @@ void FilterEngine::filterSearchStringTodoAll(QString string) {
 // filter and not the "any".
 void FilterEngine::filterSearchStringReminderOrderAll(QString string) {
     QLOG_TRACE_IN();
-
-    string = global.normalizeTermForSearchAndIndex(string);
 
     if (!string.startsWith("-")) {
         string.remove(0,14);
@@ -2409,6 +2410,9 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAny(QString string) 
 // in knowing what to highlight in a PDF.
 bool FilterEngine::resourceContains(qint32 resourceLid, QString searchString, QStringList *returnHits) {
     QLOG_TRACE_IN();
+
+    searchString = global.normalizeTermForSearchAndIndex(searchString);
+    
     bool returnValue = false;
     if (returnHits != nullptr)
         returnHits->empty();
