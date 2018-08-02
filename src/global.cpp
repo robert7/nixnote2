@@ -536,13 +536,14 @@ bool Global::getIndexPDFLocally() {
 bool Global::readSettingForceSearchLowerCase() const {
     settings->beginGroup(INI_GROUP_SEARCH);
     const QVariant variant = settings->value("forceLowerCase");
+    settings->endGroup();
+
     bool value = false;
     if (variant.isValid()) {
         value = variant.toBool();
     } else {
         saveSettingForceSearchLowerCase(value);
     }
-    settings->endGroup();
     return value;
 }
 
@@ -555,13 +556,14 @@ void Global::saveSettingForceSearchLowerCase(bool value) const {
 bool Global::readSettingForceSearchWithoutDiacritics() const {
     settings->beginGroup(INI_GROUP_SEARCH);
     const QVariant variant = settings->value("forceSearchWithoutDiacritics");
+    settings->endGroup();
+
     bool value = false;
     if (variant.isValid()) {
         value = variant.toBool();
     } else {
         saveSettingForceSearchWithoutDiacritics(value);
     }
-    settings->endGroup();
     return value;
 }
 
@@ -1564,8 +1566,13 @@ bool Global::isForceSearchWithoutDiacritics() const
 QString Global::normalizeTermForSearchAndIndex(QString s) const
 {
     if (forceSearchLowerCase) {
-        s.toLower();
+        s = s.toLower();
     }
+    if (forceSearchWithoutDiacritics) {
+        stringUtils.removeDiacritics(s);
+    }
+
+
     return s;
 }
 

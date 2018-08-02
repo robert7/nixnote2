@@ -65,16 +65,26 @@ SearchPreferences::SearchPreferences(QWidget *parent) :
     mainLayout->addWidget(enableBackgroundIndexing,row++,0);
     enableBackgroundIndexing->setChecked(global.getBackgroundIndexing());
 
-    forceSearchLowerCase = new QCheckBox(tr("Experimental: Force search to lower case"));
-    mainLayout->addWidget(forceSearchLowerCase,row++,0);
-    forceSearchLowerCase->setChecked(global.isForceSearchLowerCase());
-
-    weight = new QSpinBox(this);
     mainLayout->addWidget(new QLabel(tr("Minimum Image Recognition Weight")), row,0);
+    weight = new QSpinBox(this);
     mainLayout->addWidget(weight,row++,1);
     weight->setMinimum(1);
     weight->setMaximum(100);
     weight->setValue(global.getMinimumRecognitionWeight());
+
+
+    mainLayout->addWidget(new QLabel(tr("Experimental: Search/index preprocessing. On change reindexing of all notes is needed.")), row++, 0);
+    mainLayout->addWidget(new QLabel(tr("=> currently can be only enabled manually")), row++, 0);
+    forceSearchLowerCase = new QCheckBox(tr("Force search/index to lower case"));
+    mainLayout->addWidget(forceSearchLowerCase, row++, 0);
+    forceSearchLowerCase->setChecked(global.isForceSearchLowerCase());
+    forceSearchLowerCase->setEnabled(false);
+
+    forceSearchWithoutDiacritics = new QCheckBox(tr("Remove diacritics before search/index"));
+    mainLayout->addWidget(forceSearchWithoutDiacritics, row++, 0);
+    forceSearchWithoutDiacritics->setChecked(global.isForceSearchWithoutDiacritics());
+    forceSearchWithoutDiacritics->setEnabled(false);
+
 
     this->setFont(global.getGuiFont(font()));
 

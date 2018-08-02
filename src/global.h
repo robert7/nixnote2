@@ -21,10 +21,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include <QString>
-#include "src/application.h"
-#include <QSettings>
+//*******************************
+//* This class is used to store
+//* global values across the
+//* program.
+//*******************************
 
+#include <QString>
+#include <QSettings>
+#include <QObject>
+#include <string>
+#include <QSqlDatabase>
+#include <QReadWriteLock>
+#include <QShortcut>
+#include <QAction>
+#include "src/application.h"
 #include "src/logger/qslog.h"
 #include "src/logger/qslogdest.h"
 #include "src/settings/filemanager.h"
@@ -39,20 +50,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/utilities/crossmemorymapper.h"
 #include "src/exits/exitpoint.h"
 #include "src/exits/exitmanager.h"
-
-#include <QObject>
-#include <string>
-#include <QSqlDatabase>
-#include <QReadWriteLock>
-#include <QShortcut>
-#include <QAction>
+#include "src/quentier/utility/StringUtils.h"
 
 
-//*******************************
-//* This class is used to store
-//* global values across the
-//* program.
-//*******************************
 
 #define NOTE_TABLE_LID_POSITION 0
 #define NOTE_TABLE_DATE_CREATED_POSITION 1
@@ -169,6 +169,8 @@ private:
     bool forceSearchLowerCase;
     bool forceSearchWithoutDiacritics;
 
+    quentier::StringUtils stringUtils;
+
 public:
     Global();           // Generic constructor
     virtual ~Global() {};          // destructor
@@ -256,8 +258,8 @@ public:
     bool forceWebFonts;
     qint32 startupNote;                                   // Initial note to startup with.
 
-    qint32 minIndexInterval;                              // Minimum interval to check for any unindexed notes.
-    qint32 maxIndexInterval;                              // Maximum interval to check for any unindexed notes.
+    qint32 minIndexInterval;                              // Minimum interval to check for any Unindexed notes.
+    qint32 maxIndexInterval;                              // Maximum interval to check for any Unindexed notes.
     qint32 indexResourceCountPause;                       // After indexing this many resources we pause to avoid overloading the CPU
     qint32 indexNoteCountPause;                           // After indexing this many notes we pause to avoid overloading the CPU
 
