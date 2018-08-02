@@ -88,7 +88,10 @@ Global::Global() {
     this->indexNoteCountPause = -1;
     this->maxIndexInterval = 500;
     this->forceNoStartMimized = false;
+
     this->forceSearchLowerCase = false;
+    this->forceSearchWithoutDiacritics = false;
+
     this->forceStartMinimized = false;
     this->globalSettings = nullptr;
     this->disableUploads = false;
@@ -206,7 +209,10 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     indexNoteCountPause = 100;
     isFullscreen = false;
     indexPDFLocally = getIndexPDFLocally();
-    forceSearchLowerCase = getForceSearchLowerCase();
+    
+    forceSearchLowerCase = readSettingForceSearchLowerCase();
+    forceSearchWithoutDiacritics = readSettingForceSearchWithoutDiacritics();
+    
     forceUTF8 = getForceUTF8();
 
 
@@ -518,7 +524,6 @@ void Global::setIndexPDFLocally(bool value) {
     indexPDFLocally = value;
 }
 
-
 bool Global::getIndexPDFLocally() {
     settings->beginGroup(INI_GROUP_SEARCH);
     bool value = settings->value("indexPDFLocally", true).toBool();
@@ -528,22 +533,43 @@ bool Global::getIndexPDFLocally() {
 }
 
 
-void Global::setForceSearchLowerCase(bool value) {
+bool Global::readSettingForceSearchLowerCase() const {
     settings->beginGroup(INI_GROUP_SEARCH);
-    settings->setValue("forceLowerCase", value);
+    const QVariant variant = settings->value("forceLowerCase");
+    bool value = false;
+    if (variant.isValid()) {
+        value = variant.toBool();
+    } else {
+        saveSettingForceSearchLowerCase(value);
+    }
     settings->endGroup();
-    indexPDFLocally = value;
-}
-
-
-bool Global::getForceSearchLowerCase() {
-    settings->beginGroup(INI_GROUP_SEARCH);
-    bool value = settings->value("forceLowerCase", false).toBool();
-    settings->endGroup();
-    forceSearchLowerCase = value;
     return value;
 }
 
+void Global::saveSettingForceSearchLowerCase(bool value) const {
+    settings->beginGroup(INI_GROUP_SEARCH);
+    settings->setValue("forceLowerCase", value);
+    settings->endGroup();
+}
+
+bool Global::readSettingForceSearchWithoutDiacritics() const {
+    settings->beginGroup(INI_GROUP_SEARCH);
+    const QVariant variant = settings->value("forceSearchWithoutDiacritics");
+    bool value = false;
+    if (variant.isValid()) {
+        value = variant.toBool();
+    } else {
+        saveSettingForceSearchWithoutDiacritics(value);
+    }
+    settings->endGroup();
+    return value;
+}
+
+void Global::saveSettingForceSearchWithoutDiacritics(bool value) const {
+    settings->beginGroup(INI_GROUP_SEARCH);
+    settings->setValue("forceSearchWithoutDiacritics", value);
+    settings->endGroup();
+}
 
 bool Global::getForceUTF8() {
     settings->beginGroup(INI_GROUP_DEBUGGING);
@@ -1519,3 +1545,28 @@ FilterCriteria *Global::getCurrentCriteria() const {
     //QLOG_DEBUG() << "Requesting filter [" << pos << "], count=" << global.filterCriteria.size();
     return global.filterCriteria[pos];
 }
+
+bool Global::isForceSearchLowerCase() const
+{
+    return forceSearchLowerCase;
+}
+
+bool Global::isForceSearchWithoutDiacritics() const
+{
+    return forceSearchWithoutDiacritics;
+}
+
+/**
+ * Normalize term before search or index process,
+ * @param s String to process.
+ * @return Normalized representation.
+ */
+QString Global::normalizeTermForSearchAndIndex(QString s) const
+{
+    if (forceSearchLowerCase) {
+        s.toLower();
+    }
+    return s;
+}
+
+

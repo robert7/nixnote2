@@ -452,10 +452,10 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
         sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
         sql.bindValue(":lid", lid);
         sql.bindValue(":weight", 100);
-        if (!global.forceSearchLowerCase)
-            sql.bindValue(":content", text);
-        else
-            sql.bindValue(":content", text.toLower());
+
+        text = global.normalizeTermForSearchAndIndex(text);
+        sql.bindValue(":content", text);
+
         QLOG_DEBUG() << "Adding note resource to index DB";
         sql.exec();
         db->unlock();
@@ -497,10 +497,10 @@ void IndexRunner::flushCache() {
         sql.bindValue(":lid", lid);
         sql.bindValue(":weight", weight);
         sql.bindValue(":source", source);
-        if (!global.forceSearchLowerCase)
-            sql.bindValue(":content", content);
-        else
-            sql.bindValue(":content", content.toLower());
+
+        content = global.normalizeTermForSearchAndIndex(content);
+        sql.bindValue(":content", content);
+
         sql.exec();
         commitCount--;
         if (commitCount <= 0) {

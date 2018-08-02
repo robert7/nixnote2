@@ -1479,8 +1479,7 @@ void FilterEngine::filterSearchStringNotebookAll(QString string) {
 void FilterEngine::filterSearchStringTodoAll(QString string) {
     QLOG_TRACE_IN();
 
-    if (!global.forceSearchLowerCase)
-        string = string.toLower();
+    string = global.normalizeTermForSearchAndIndex(string);
 
     if (!string.startsWith("-")) {
         string.remove(0,5);
@@ -1539,8 +1538,8 @@ void FilterEngine::filterSearchStringTodoAll(QString string) {
 void FilterEngine::filterSearchStringReminderOrderAll(QString string) {
     QLOG_TRACE_IN();
 
-    if (!global.forceSearchLowerCase)
-        string = string.toLower();
+    string = global.normalizeTermForSearchAndIndex(string);
+
     if (!string.startsWith("-")) {
         string.remove(0,14);
         if (string == "")
