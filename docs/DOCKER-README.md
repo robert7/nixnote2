@@ -7,9 +7,12 @@ So basically, if build with 16.04, then all newer distribution then 2016 should 
 
 ## Ubuntu 16.04 (xenial)
 
+### Basic version 
 ```bash
 # replace path with real project path
 PROJECTDIR=/d/dev/nixnote2
+PROJECTBRANCH=master
+
 cd $PROJECTDIR
 # create "builder" image 
 docker build -t nixnote2/xenial -f ./development/docker/Dockerfile.ubuntu_xenial ./development/docker
@@ -20,7 +23,7 @@ rm -rf appdir; mkdir appdir
 docker run -v $PROJECTDIR/appdir:/opt/nixnote2/appdir -it nixnote2/xenial /bin/bash
 
 # checkout right branch/pull
-cd nixnote2 && git fetch && git checkout master && git pull
+cd nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull
 # compile (debug mode) 
 ./development/build-with-qmake.sh /usr debug && ./development/create-AppImage.sh && mv *.AppImage appdir && chmod -R a+rwx appdir
 ```
@@ -31,8 +34,8 @@ Now terminate session (Ctrl-D), to return to host
 ls appdir/*.AppImage # => this one file is your result binary
 ```
 
+### More advanced combination with container reuse (experimental)
 ```bash
-# more advanced combination with container reuse (after image has been build)
 docker run --name nixnote2_xenial -v $PROJECTDIR/appdir:/opt/nixnote2/appdir -it nixnote2/xenial /bin/bash
 
 ... compile or whatever...
