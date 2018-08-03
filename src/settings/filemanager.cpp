@@ -380,11 +380,12 @@ QString FileManager::getProgramVersion() {
 }
 
 /**
- * Bit more print friendly vetsion.
+ * Bit more print friendly version.
  * @return
  */
 QString FileManager::getProgramVersionPrintable() {
-    return getProgramVersion().replace("?c=", " ");
+    // cuurently no difference
+    return getProgramVersion();
 }
 
 /**

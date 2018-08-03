@@ -138,25 +138,11 @@ private:
     QList<QPixmap> syncIcons;
     unsigned int synchronizeIconAngle;
 
-    QTimer heartbeatTimer;   // Timer to check shared memory for other instance commands
+    // Timer to check shared memory for other instance commands
+    QTimer heartbeatTimer;
     QNetworkAccessManager *networkManager;
-
-    void setupGui();
-    void setupNoteList();
-    void setupSearchTree();
-    void setupTagTree();
-    void setupAttributeTree();
-    void setupFavoritesTree();
-    void setupTrashTree();
-    void setupSynchronizedNotebookTree();
-    void setupTabWindow();
-    void waitCursor(bool value);
-    void saveContents();
-    void saveNoteColumnPositions();
-    void saveNoteColumnWidths();
-    void checkLeftPanelSeparators();
     QSplashScreen *splashScreen;
-    RemoteQuery *remoteQuery;
+    QString clientId;
 
     QShortcut *focusSearchShortcut;
     QShortcut *fileSaveShortcut;
@@ -178,8 +164,22 @@ private:
     QShortcut *leftArrowButtonShortcut;
     QShortcut *rightArrowButtonShortcut;
 
-    // Plugins
+private:
     void loadPlugins();
+    void setupGui();
+    void setupNoteList();
+    void setupSearchTree();
+    void setupTagTree();
+    void setupAttributeTree();
+    void setupFavoritesTree();
+    void setupTrashTree();
+    void setupSynchronizedNotebookTree();
+    void setupTabWindow();
+    void waitCursor(bool value);
+    void saveContents();
+    void saveNoteColumnPositions();
+    void saveNoteColumnWidths();
+    void checkLeftPanelSeparators();
 
 public:
     NixNote(QWidget *parent = 0);  // Constructor
@@ -196,6 +196,9 @@ public:
     LineEdit *searchText;
     NTabWidget *tabWindow;
     bool hunspellPluginAvailable;
+
+private slots:
+    void onNetworkManagerFinished(QNetworkReply *reply);
 
 public slots:
     void quitNixNote();
@@ -255,8 +258,6 @@ public slots:
     void fastPrintNote();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
     void showMainWindow();
-    //void trayIconBehavior();
-//    void changeEvent(QEvent *e);
     void openPreferences();
     void notifySyncComplete();
     void addAnotherUser();

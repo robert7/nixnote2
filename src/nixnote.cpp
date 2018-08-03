@@ -210,12 +210,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
         }
     }
 
-    // Init OAuth winwod
-    //oauthWindow = nullptr;
-
-    //QDesktopServices::setUrlHandler("evernote", this, "showDesktopUrl");
-    remoteQuery = new RemoteQuery();
-
     // Initialize pdfExportWindow to null. We don't fully set this up in case the person requests it.
     pdfExportWindow = nullptr;
 
@@ -227,6 +221,10 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     this->updateSelectionCriteria(true);  // This is only needed in case we imported something at statup
 
     networkManager = new QNetworkAccessManager();
+    connect(networkManager, SIGNAL(finished(QNetworkReply * )), this, SLOT(onNetworkManagerFinished(QNetworkReply * )));
+
+    QUuid uuid;
+    clientId = uuid.createUuid().toString().replace("{", "").replace("}", "");
 
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
@@ -1421,6 +1419,16 @@ void NixNote::syncTimerExpired() {
     emit(syncRequested());
 }
 
+void NixNote::onNetworkManagerFinished(QNetworkReply *reply) {
+    //QLOG_DEBUG() << "onNetworkManagerFinished";
+    if (reply->error()) {
+        //QLOG_DEBUG() << "onNetworkManagerFinished err " << reply->errorString();
+        return;
+    }
+
+    QString answer = reply->readAll();
+    QLOG_DEBUG() << "onNetworkManagerFinished OK"; // << answer;
+}
 
 //******************************************************************************
 //* User synchronize was requested
@@ -1458,12 +1466,18 @@ void NixNote::synchronize() {
 
     QLOG_DEBUG() << "Preparing sync";
     QNetworkRequest request;
-    request.setUrl(QUrl("https://sstatic1.histats.com/0.gif?4116517&101"));
+
+    #define GA_ID "UA-123318717-1"
+    #define GA_EC "app"
+    #define GA_EA "sync"
+
     const QString version = global.fileManager.getProgramVersion();
-    QString reqUrl(NN_GITHUB_REPO_URL);
-    reqUrl = reqUrl.append("/releases/tag/v").append(version);
-    //QLOG_DEBUG() << "Req.url " << reqUrl;
-    request.setRawHeader(QByteArray("Referer"), reqUrl.toUtf8());
+    QString url("http://www.google-analytics.com/collect?v=1&tid=" GA_ID "&cid=");
+    url.append(clientId).append("&t=event&ec=" GA_EC "&ea=" GA_EA "&el=").append(version);
+    request.setUrl(QUrl(url));
+
+    QLOG_DEBUG() << "Req.url " << url;
+    //request.setRawHeader(QByteArray("Referer"), reqUrl.toUtf8());
     networkManager->get(request);
 
     this->saveContents();
