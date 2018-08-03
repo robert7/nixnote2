@@ -1,5 +1,7 @@
 # TODO / Roadmap
 ## 1
+* Check why some new notes land in "Conflict"
+  * seems to happen, when new note is creates and edited more than one time before sync 
 * Better statusbar display on exceptions (shortcuts / 2 part status bar)
 * Check relevance evaluation in connection with diacritic removal 
 * PDF export

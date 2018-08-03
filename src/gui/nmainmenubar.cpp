@@ -98,13 +98,13 @@ void NMainMenuBar::setupFileMenu() {
     setupShortcut(exportNoteAction, QString("File_Note_Export"));
     fileMenu->addAction(exportNoteAction);
 
-    exportAsPdfAction = new QAction(tr("&Export Notes as PDF"), this);
+    exportAsPdfAction = new QAction(tr("&Export notes as PDF"), this);
     exportAsPdfAction->setToolTip(tr("Export selected notes to a PDF file"));
     connect(exportAsPdfAction, SIGNAL(triggered()), parent, SLOT(exportAsPdf()));
     setupShortcut(exportAsPdfAction, QString("File_Note_Export_Pdf"));
     fileMenu->addAction(exportAsPdfAction);
 
-    importNoteAction = new QAction(tr("&Import Notes"), this);
+    importNoteAction = new QAction(tr("&Import notes"), this);
     importNoteAction->setToolTip(tr("Import notes from an export file"));
     connect(importNoteAction, SIGNAL(triggered()), parent, SLOT(noteImport()));
     setupShortcut(importNoteAction, QString("File_Note_Import"));

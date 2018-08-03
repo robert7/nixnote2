@@ -1845,7 +1845,7 @@ void NixNote::databaseRestore(bool fullRestore) {
         caption = tr("Restore Database");
         filter = tr(APP_NNEX_APP_NAME " Export (*.nnex);;All Files (*.*)");
     } else {
-        caption = tr("Import Notes");
+        caption = tr("Import notes");
         filter = tr(APP_NNEX_APP_NAME " Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)");
     }
 
