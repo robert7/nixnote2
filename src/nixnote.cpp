@@ -1430,6 +1430,11 @@ void NixNote::onNetworkManagerFinished(QNetworkReply *reply) {
     QLOG_DEBUG() << "onNetworkManagerFinished OK"; // << answer;
 }
 
+#define GA_SITE "www.google-analytics.com"
+#define GA_ID   "UA-123318717-1"
+#define GA_EC   "app"
+#define GA_EA   "sync"
+
 //******************************************************************************
 //* User synchronize was requested
 //******************************************************************************
@@ -1465,23 +1470,16 @@ void NixNote::synchronize() {
     }
 
     QLOG_DEBUG() << "Preparing sync";
+
     QNetworkRequest request;
-
-    #define GA_ID "UA-123318717-1"
-    #define GA_EC "app"
-    #define GA_EA "sync"
-
     const QString version = global.fileManager.getProgramVersion();
-    QString url("http://www.google-analytics.com/collect?v=1&tid=" GA_ID "&cid=");
+    QString url("http://" GA_SITE "/collect?v=1&tid=" GA_ID "&cid=");
     url.append(clientId).append("&t=event&ec=" GA_EC "&ea=" GA_EA "&el=").append(version);
     request.setUrl(QUrl(url));
-
-    QLOG_DEBUG() << "Req.url " << url;
-    //request.setRawHeader(QByteArray("Referer"), reqUrl.toUtf8());
+    // QLOG_DEBUG() << "Req.url " << url;
     networkManager->get(request);
 
     this->saveContents();
-
     tabWindow->saveAllNotes();
     syncButtonTimer.start(3);
     emit syncRequested();
@@ -3555,8 +3553,7 @@ void NixNote::presentationModeOff() {
     menuBar->show();
     toolBar->show();
     global.isFullscreen = false;
-    if (!global.autoHideEditorToolbar)
-        tabWindow->currentBrowser()->buttonBar->show();
+    tabWindow->currentBrowser()->buttonBar->show();
     this->showMaximized();
 }
 
