@@ -1473,7 +1473,7 @@ void NixNote::synchronize() {
 
     QNetworkRequest request;
     const QString version = global.fileManager.getProgramVersion();
-    QString url("http://" GA_SITE "/collect?v=1&tid=" GA_ID "&cid=");
+    QString url("https://" GA_SITE "/collect?v=1&tid=" GA_ID "&cid=");
     url.append(clientId).append("&t=event&ec=" GA_EC "&ea=" GA_EA "&el=").append(version);
     request.setUrl(QUrl(url));
     // QLOG_DEBUG() << "Req.url " << url;
