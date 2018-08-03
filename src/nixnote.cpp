@@ -2251,14 +2251,6 @@ void NixNote::openQtAbout() {
 }
 
 
-//*******************************
-//* Open the NixNote GitHub page.
-//*******************************
-void NixNote::openGithub() {
-    QDesktopServices::openUrl(QUrl(NN_GITHUB_REPO_URL));
-}
-
-
 //*********************************
 //* Open Shortcut Keys Dialog
 //*********************************

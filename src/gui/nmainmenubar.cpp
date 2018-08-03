@@ -506,17 +506,10 @@ void NMainMenuBar::setupHelpMenu() {
     QFont f = global.getGuiFont(QFont());
     helpMenu->setFont(f);
 
-    openManualAction = new QAction(tr("&NixNote wiki"), this);
-    openManualAction->setToolTip(tr("Open NixNote wiki page with help/documentation"));
-    connect(openManualAction, SIGNAL(triggered()),
-            this, SLOT(openManual()));
-    helpMenu->addAction(openManualAction);
-
-    openGithubAction = new QAction(tr("Github Page"), this);
-    openGithubAction->setToolTip(tr("Goto the " NN_APP_DISPLAY_NAME_GUI " Github project page."));
-    connect(openGithubAction, SIGNAL(triggered(bool)), parent, SLOT(openGithub()));
-    helpMenu->addAction(openGithubAction);
-
+    openProjectWebPageAction = new QAction(tr("&Project web page"), this);
+    openProjectWebPageAction->setToolTip(tr("Open NixNote wiki page with help/documentation/contact"));
+    connect(openProjectWebPageAction, SIGNAL(triggered()), this, SLOT(onOpenProjectWebPage()));
+    helpMenu->addAction(openProjectWebPageAction);
 
     themeInformationAction = new QAction(tr("Theme &Information"), this);
     // themeInformationAction->setToolTip(tr("View information about the current theme."));
@@ -572,11 +565,9 @@ void NMainMenuBar::setupShortcut(QAction *action, QString text) {
     action->setShortcut(key);
 }
 
-
-void NMainMenuBar::openManual() {
+void NMainMenuBar::onOpenProjectWebPage() {
     QDesktopServices::openUrl(QUrl(NN_GITHUB_WIKI_URL));
 }
-
 
 void NMainMenuBar::setupThemeMenu() {
     themeMenu = editMenu->addMenu(tr("Theme"));

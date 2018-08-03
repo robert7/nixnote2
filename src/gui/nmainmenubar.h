@@ -117,23 +117,19 @@ public:
     QAction *pinNoteAction;
     QAction *unpinNoteAction;
     QAction *spellCheckAction;
-    QAction *openManualAction;
+    QAction *openProjectWebPageAction;
     QAction *openMessageLogAction;
-
-
     QAction *themeInformationAction;
     QAction *openShortcutsDialogAction;
-    QAction *openGithubAction;
 
     explicit NMainMenuBar(QWidget *parent = 0);
-
     void addUserAccount(QAction *action);
     void setupThemeMenu();
 
 signals:
 
 public slots:
-    void openManual();
+    void onOpenProjectWebPage();
     void openThemeInformation();
 };
 
