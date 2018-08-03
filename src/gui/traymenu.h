@@ -32,7 +32,7 @@ private:
     QMenu *favoriteNotesMenu;
     QMenu *recentlyUpdatedMenu;
     QSignalMapper *signalMapper;
-    void buildMenu(QMenu *actionMenu, QList<QPair<qint32, QString> > records);
+    void buildMenu(QString info, QMenu *actionMenu, QList<QPair<qint32, QString> > records);
 
 public:
     enum ActionMenuType {

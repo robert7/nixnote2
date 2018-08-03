@@ -48,6 +48,8 @@ void TrayMenu::setActionMenu(ActionMenuType type, QMenu *menu)  {
 }
 
 void TrayMenu::buildActionMenu() {
+    QLOG_DEBUG() << "buildActionMenu";
+
     for (int i=actions.size()-1; i>=0; i--) {
         signalMapper->removeMappings(actions[i]);
         pinnedMenu->removeAction(actions[i]);
@@ -58,10 +60,12 @@ void TrayMenu::buildActionMenu() {
     QList< QPair< qint32, QString> > records;
     NoteTable noteTable(global.db);
     noteTable.getAllPinned(records);
-    buildMenu(pinnedMenu, records);
+    buildMenu("pinnedMenu", pinnedMenu, records);
+
+
     records.clear();;
     noteTable.getRecentlyUpdated(records);
-    buildMenu(recentlyUpdatedMenu, records);
+    buildMenu("recentlyUpdatedMenu", recentlyUpdatedMenu, records);
 
     records.clear();
     FavoritesTable ftable(global.db);
@@ -78,11 +82,13 @@ void TrayMenu::buildActionMenu() {
         }
     }
     favoriteNotesMenu->clear();
-    buildMenu(favoriteNotesMenu, records);
+    buildMenu("favoriteNotesMenu", favoriteNotesMenu, records);
 }
 
 
-void TrayMenu::buildMenu(QMenu *actionMenu, QList< QPair <qint32, QString> > records) {
+void TrayMenu::buildMenu(QString info, QMenu *actionMenu, QList< QPair <qint32, QString> > records) {
+    QLOG_DEBUG() << "buildMenu: " << info;
+
     for (int i=0; i<records.size(); i++) {
         QAction *newAction = actionMenu->addAction(records[i].second);
         signalMapper->setMapping(newAction, records[i].first);
