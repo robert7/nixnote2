@@ -132,6 +132,12 @@ class IndexRunner;
 // as the upstream is currently defunct main page is the fork
 #define NN_MAIN_REPO_USER "robert7"
 #define NN_MAIN_REPO_NAME "nixnote2"
+#define NN_GITHUB_URL_WITH_USER "https://github.com/" NN_MAIN_REPO_USER
+
+// project repository with source
+#define NN_GITHUB_REPO_URL NN_GITHUB_URL_WITH_USER "/" NN_MAIN_REPO_NAME
+// project wiki
+#define NN_GITHUB_WIKI_URL NN_GITHUB_REPO_URL "/wiki"
 
 #define INI_GROUP_APPEARANCE "Appearance"
 #define INI_GROUP_COL_HIDDEN_WIDE "ColumnHidden-Wide"

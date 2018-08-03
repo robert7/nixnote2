@@ -574,7 +574,7 @@ void NMainMenuBar::setupShortcut(QAction *action, QString text) {
 
 
 void NMainMenuBar::openManual() {
-    QDesktopServices::openUrl(QUrl("https://github.com/" NN_MAIN_REPO_USER "/" NN_MAIN_REPO_NAME "/wiki"));
+    QDesktopServices::openUrl(QUrl(NN_GITHUB_WIKI_URL));
 }
 
 

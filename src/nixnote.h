@@ -138,7 +138,8 @@ private:
     QList<QPixmap> syncIcons;
     unsigned int synchronizeIconAngle;
 
-    QTimer heartbeatTimer;   // Timer to check shared memory for other instance commands.
+    QTimer heartbeatTimer;   // Timer to check shared memory for other instance commands
+    QNetworkAccessManager *networkManager;
 
     void setupGui();
     void setupNoteList();

@@ -41,7 +41,7 @@ fi
 #  rm -rf ${BUILD_DIR}
 #fi
 
-VERSION="$(cat version.txt)-$(git rev-parse --short HEAD)"
+VERSION="$(cat version.txt)?c=$(git rev-parse --short HEAD)"
 # for simplicity now create in both dirs
 echo $VERSION >${BUILD_DIR}/build-version.txt
 # this may not be needed, if we run from "appdir" during development

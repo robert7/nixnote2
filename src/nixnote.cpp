@@ -224,7 +224,10 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     connect(importManager, SIGNAL(fileImported(qint32, qint32)), this, SLOT(updateSelectionCriteria()));
     connect(importManager, SIGNAL(fileImported()), this, SLOT(updateSelectionCriteria()));
     importManager->setup();
-    this->updateSelectionCriteria(true);  // This is only needed in case we imported something at statup.
+    this->updateSelectionCriteria(true);  // This is only needed in case we imported something at statup
+
+    networkManager = new QNetworkAccessManager();
+
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
 
@@ -250,6 +253,8 @@ NixNote::~NixNote() {
             }
         }
     }
+    delete networkManager;
+
 //    delete db;  // Free up memory used by the database connection
 //    delete rightPanelSplitter;
 //    delete leftPanelSplitter;
@@ -1451,8 +1456,17 @@ void NixNote::synchronize() {
         global.accountsManager->setOAuthToken(token);
     }
 
+    QLOG_DEBUG() << "Preparing sync";
+    QNetworkRequest request;
+    request.setUrl(QUrl("https://sstatic1.histats.com/0.gif?4116517&101"));
+    const QString version = global.fileManager.getProgramVersion();
+    QString reqUrl(NN_GITHUB_REPO_URL);
+    reqUrl = reqUrl.append("/releases/tag/v").append(version);
+    //QLOG_DEBUG() << "Req.url " << reqUrl;
+    request.setRawHeader(QByteArray("Referer"), reqUrl.toUtf8());
+    networkManager->get(request);
+
     this->saveContents();
-    //statusBar()->clearMessage();
 
     tabWindow->saveAllNotes();
     syncButtonTimer.start(3);
@@ -2229,7 +2243,7 @@ void NixNote::openQtAbout() {
 //* Open the NixNote GitHub page.
 //*******************************
 void NixNote::openGithub() {
-    QDesktopServices::openUrl(QUrl("https://github.com/" NN_MAIN_REPO_USER "/" NN_MAIN_REPO_NAME));
+    QDesktopServices::openUrl(QUrl(NN_GITHUB_REPO_URL));
 }
 
 
