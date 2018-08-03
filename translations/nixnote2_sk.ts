@@ -2603,7 +2603,7 @@ Unable to decrypt.</source>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="112"/>
-        <source>&amp;Import Notes</source>
+        <source>&amp;Import notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2928,7 +2928,7 @@ Unable to decrypt.</source>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="106"/>
-        <source>&amp;Export Notes as PDF</source>
+        <source>&amp;Export notes as PDF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3958,7 +3958,7 @@ Until tidy is installed you cannot save any notes.</source>
     </message>
     <message>
         <location filename="../nixnote.cpp" line="1832"/>
-        <source>Import Notes</source>
+        <source>Import notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

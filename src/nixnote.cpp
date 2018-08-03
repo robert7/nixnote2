@@ -1473,7 +1473,7 @@ void NixNote::synchronize() {
 
     QNetworkRequest request;
     const QString version = global.fileManager.getProgramVersion();
-    QString url("http://" GA_SITE "/collect?v=1&tid=" GA_ID "&cid=");
+    QString url("https://" GA_SITE "/collect?v=1&tid=" GA_ID "&cid=");
     url.append(clientId).append("&t=event&ec=" GA_EC "&ea=" GA_EA "&el=").append(version);
     request.setUrl(QUrl(url));
     // QLOG_DEBUG() << "Req.url " << url;
@@ -1765,7 +1765,7 @@ void NixNote::databaseBackup(bool backup) {
     fd.setAcceptMode(QFileDialog::AcceptSave);
 
     if (fd.exec() == 0 || fd.selectedFiles().size() == 0) {
-        QLOG_DEBUG() << "Database restore canceled in file dialog.";
+        QLOG_DEBUG() << "Database backup canceled in file dialog.";
         return;
     }
 
@@ -1845,7 +1845,7 @@ void NixNote::databaseRestore(bool fullRestore) {
         caption = tr("Restore Database");
         filter = tr(APP_NNEX_APP_NAME " Export (*.nnex);;All Files (*.*)");
     } else {
-        caption = tr("Import Notes");
+        caption = tr("Import notes");
         filter = tr(APP_NNEX_APP_NAME " Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)");
     }
 
@@ -2248,14 +2248,6 @@ void NixNote::openAbout() {
 //*******************************
 void NixNote::openQtAbout() {
     QApplication::aboutQt();
-}
-
-
-//*******************************
-//* Open the NixNote GitHub page.
-//*******************************
-void NixNote::openGithub() {
-    QDesktopServices::openUrl(QUrl(NN_GITHUB_REPO_URL));
 }
 
 
@@ -3620,15 +3612,13 @@ void NixNote::loadPlugins() {
 
 
 // Export selected notes as PDF files.
-void NixNote::exportAsPdf() {
-
-
+void NixNote::onExportAsPdf() {
     QList<qint32> lids;
     noteTableView->getSelectedLids(lids);
 
     if (pdfExportWindow == nullptr) {
         pdfExportWindow = new QWebView();
-        connect(pdfExportWindow, SIGNAL(loadFinished(bool)), this, SLOT(exportAsPdfReady(bool)));
+        connect(pdfExportWindow, SIGNAL(loadFinished(bool)), this, SLOT(onExportAsPdfReady(bool)));
     }
 
 
@@ -3636,9 +3626,11 @@ void NixNote::exportAsPdf() {
         QList<qint32> lids;
         noteTableView->getSelectedLids(lids);
 
-        QString file = QFileDialog::getSaveFileName(0, tr("PDF Export"), "", "*.pdf");
-        if (file == "")
+        QString file = selectExportPDFFileName();
+        if (file.isEmpty()) {
             return;
+        }
+
 
         QPrinter printer;
         printer.setOutputFormat(QPrinter::PdfFormat);
@@ -3646,10 +3638,10 @@ void NixNote::exportAsPdf() {
         printer.setPaperSize(QPrinter::A4);
         printer.setOutputFileName(file);
 
-        printer.setDocName(tabWindow->currentBrowser()->noteTitle.text());
+        // TODO use this as base for filename
+        const QString noteTitle = tabWindow->currentBrowser()->noteTitle.text();
+        printer.setDocName(noteTitle);
         tabWindow->currentBrowser()->editor->print(&printer);
-        QMessageBox::information(0, tr(NN_APP_DISPLAY_NAME_GUI), tr("Export complete"));
-
         return;
     }
 
@@ -3660,13 +3652,15 @@ void NixNote::exportAsPdf() {
 
     QProgressDialog *progress = new QProgressDialog(0);
     progress->setMinimum(0);
-    progress->setWindowTitle(tr("Exporting Notes as PDF"));
+    progress->setWindowTitle(tr("Exporting notes as PDF"));
     progress->setLabelText(tr("Exporting notes as PDF"));
     progress->setMaximum(lids.size());
     progress->setVisible(true);
     progress->setWindowModality(Qt::ApplicationModal);
     progress->setCancelButton(0);
     progress->show();
+
+    // TODO pass first note as default for PDF title
     for (int i = 0; i < lids.size(); i++) {
         Note n;
         noteTable.get(n, lids[i], true, false);
@@ -3682,16 +3676,28 @@ void NixNote::exportAsPdf() {
     progress->hide();
     delete progress;
     pdfExportWindow->setHtml(content);
-    return;
+}
+
+QString NixNote::selectExportPDFFileName() {
+    QString file = QFileDialog::getSaveFileName(this, tr("PDF Export"), "", "*.pdf");
+
+    if (!file.isEmpty()) {
+        // add file suffix
+        if (!file.endsWith(".pdf")) {
+            file = file.append(".pdf");
+        }
+    }
+    return file;
 }
 
 
 // Slot called when notes that were exported as PDF files are ready to be printed
-void NixNote::exportAsPdfReady(bool) {
-    QString file = QFileDialog::getSaveFileName(0, tr("PDF Export"), "", "*.pdf");
-
-    if (file == "")
+// TODO bool param not needed
+void NixNote::onExportAsPdfReady(bool) {
+    QString file = selectExportPDFFileName();
+    if (file.isEmpty()) {
         return;
+    }
 
     QPrinter printer;
     printer.setOutputFormat(QPrinter::PdfFormat);
@@ -3699,5 +3705,4 @@ void NixNote::exportAsPdfReady(bool) {
     printer.setPaperSize(QPrinter::A4);
     printer.setOutputFileName(file);
     pdfExportWindow->print(&printer);
-    QMessageBox::information(0, tr(NN_APP_DISPLAY_NAME_GUI), tr("Export complete"));
 }

@@ -132,7 +132,7 @@ void LineEdit::focusInEvent(QFocusEvent *e)
 
     // this is workaround.. improve later
     QString shortcutInfo = global.appendShortcutInfo(QString(), "Focus_Search");
-    global.setMessage(tr("Shortcut") + shortcutInfo, SET_MESSAGE_TIMEOUT_SHORT);
+    //global.setMessage(tr("Shortcut") + shortcutInfo, SET_MESSAGE_TIMEOUT_SHORT);
 }
 
 void LineEdit::setFocus(Qt::FocusReason reason) {

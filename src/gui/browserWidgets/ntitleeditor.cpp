@@ -66,7 +66,7 @@ void NTitleEditor::focusInEvent(QFocusEvent *e)
 
     // this is workaround.. improve later
     QString shortcutInfo = global.appendShortcutInfo(QString(), "Focus_Title");
-    global.setMessage(tr("Shortcut") + shortcutInfo, SET_MESSAGE_TIMEOUT_SHORT);
+    //global.setMessage(tr("Shortcut") + shortcutInfo, SET_MESSAGE_TIMEOUT_SHORT);
 }
 
 

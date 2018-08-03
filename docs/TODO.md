@@ -1,12 +1,12 @@
 # TODO / Roadmap
 ## 1
-* Better statusbar display on exceptions (shortcuts / 2 part status bar)
+* Check why some new notes land in "Conflict"
+  * seems to happen, when new note is created and edited more than one time before sync 
+* Better status bar display on exceptions (shortcuts / 2 part status bar)
 * Check relevance evaluation in connection with diacritic removal 
 * PDF export
-    * It seems PDF export file picker stays in background after first PDF export.. then stays hidden=>confusing
-    * Filedialog should add pdf extension
     * Default FN - note title?
-    * OK dialog is useless
+    * Maybe open the PDF after export
 * Refresh translation files
 
 ## 2
