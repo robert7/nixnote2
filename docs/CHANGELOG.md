@@ -2,7 +2,7 @@
 * [Binary releases](https://github.com/robert7/nixnote2/releases)
 
 ## 2018-08
-### #11
+### v2.1.0-beta-1
 * Various minor improvements and stabilisation
 * Fixed bug with media attachments
 * Improved HTML Simplify
@@ -12,9 +12,11 @@
 * New feature search and index without [diacritics](https://en.wikipedia.org/wiki/Diacritic). This is highly
   useful for some eastern european languages. As this requires reindexing whole database, activation currently 
   needs to be done manually (I'll write later some Howto)
-* Remove "auto hide toolbar option", as it was not working correctly  
-  
-
+* Remove "auto hide toolbar option", as it was not working correctly
+* PDF export improvements
+  * fixed: PDF export file picker stays in background after first PDF export.. then stays hidden=>confusing
+  * OK dialog is useless
+  * fixed: Filedialog should add pdf extension
 
 ## 2018-07
 
