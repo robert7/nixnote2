@@ -16,15 +16,18 @@ docker build -t nixnote2/xenial -f ./development/docker/Dockerfile.ubuntu_xenial
 # delete appdir content
 rm -rf appdir; mkdir appdir
 
-# start container (note: each call creates new container(
+# start container (note: each call creates new container)
 docker run -v $PROJECTDIR/appdir:/opt/nixnote2/appdir -it nixnote2/xenial /bin/bash
 
 # checkout right branch/pull
 cd nixnote2 && git fetch && git checkout master && git pull
 # compile (debug mode) 
 ./development/build-with-qmake.sh /usr debug && ./development/create-AppImage.sh && mv *.AppImage appdir && chmod -R a+rwx appdir
-# now terminate session (Ctrl-D), to return to host
+```
 
+Now terminate session (Ctrl-D), to return to host
+```bash
+# at host
 ls appdir/*.AppImage # => this one file is your result binary
 ```
 
