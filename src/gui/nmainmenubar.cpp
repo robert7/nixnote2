@@ -100,7 +100,7 @@ void NMainMenuBar::setupFileMenu() {
 
     exportAsPdfAction = new QAction(tr("&Export notes as PDF"), this);
     exportAsPdfAction->setToolTip(tr("Export selected notes to a PDF file"));
-    connect(exportAsPdfAction, SIGNAL(triggered()), parent, SLOT(exportAsPdf()));
+    connect(exportAsPdfAction, SIGNAL(triggered()), parent, SLOT(onExportAsPdf()));
     setupShortcut(exportAsPdfAction, QString("File_Note_Export_Pdf"));
     fileMenu->addAction(exportAsPdfAction);
 

@@ -180,6 +180,7 @@ private:
     void saveNoteColumnPositions();
     void saveNoteColumnWidths();
     void checkLeftPanelSeparators();
+    QString selectExportPDFFileName();
 
 public:
     NixNote(QWidget *parent = 0);  // Constructor
@@ -199,6 +200,7 @@ public:
 
 private slots:
     void onNetworkManagerFinished(QNetworkReply *reply);
+    void onExportAsPdfReady(bool);
 
 public slots:
     void quitNixNote();
@@ -288,13 +290,13 @@ public slots:
     void presentationModeOn();
     void presentationModeOff();
     void indexFinished(bool finished);
-    void exportAsPdf();
-    void exportAsPdfReady(bool);
+    void onExportAsPdf();
     void saveOnExit();
 
 signals:
     void syncRequested();
     void updateCounts();
+
 };
 
 #endif // NIXNOTE_H
