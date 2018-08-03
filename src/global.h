@@ -21,10 +21,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include <QString>
-#include "src/application.h"
-#include <QSettings>
+//*******************************
+//* This class is used to store
+//* global values across the
+//* program.
+//*******************************
 
+#include <QString>
+#include <QSettings>
+#include <QObject>
+#include <string>
+#include <QSqlDatabase>
+#include <QReadWriteLock>
+#include <QShortcut>
+#include <QAction>
+#include "src/application.h"
 #include "src/logger/qslog.h"
 #include "src/logger/qslogdest.h"
 #include "src/settings/filemanager.h"
@@ -39,20 +50,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/utilities/crossmemorymapper.h"
 #include "src/exits/exitpoint.h"
 #include "src/exits/exitmanager.h"
-
-#include <QObject>
-#include <string>
-#include <QSqlDatabase>
-#include <QReadWriteLock>
-#include <QShortcut>
-#include <QAction>
+#include "src/quentier/utility/StringUtils.h"
 
 
-//*******************************
-//* This class is used to store
-//* global values across the
-//* program.
-//*******************************
 
 #define NOTE_TABLE_LID_POSITION 0
 #define NOTE_TABLE_DATE_CREATED_POSITION 1
@@ -132,6 +132,12 @@ class IndexRunner;
 // as the upstream is currently defunct main page is the fork
 #define NN_MAIN_REPO_USER "robert7"
 #define NN_MAIN_REPO_NAME "nixnote2"
+#define NN_GITHUB_URL_WITH_USER "https://github.com/" NN_MAIN_REPO_USER
+
+// project repository with source
+#define NN_GITHUB_REPO_URL NN_GITHUB_URL_WITH_USER "/" NN_MAIN_REPO_NAME
+// project wiki
+#define NN_GITHUB_WIKI_URL NN_GITHUB_REPO_URL "/wiki"
 
 #define INI_GROUP_APPEARANCE "Appearance"
 #define INI_GROUP_COL_HIDDEN_WIDE "ColumnHidden-Wide"
@@ -164,6 +170,13 @@ class Global : public QObject {
 private:
     void getThemeNamesFromFile(QString fileName, QStringList &values);
     int accountId;
+
+    // Force notes search text to be lower case.  Useful for some non-ASCII languages.
+    bool forceSearchLowerCase;
+    bool forceSearchWithoutDiacritics;
+
+    quentier::StringUtils stringUtils;
+
 public:
     Global();           // Generic constructor
     virtual ~Global() {};          // destructor
@@ -278,7 +291,6 @@ public:
     int getDatabaseVersion();                                 // What DB version are we using?
     void setDatabaseVersion(int value);                       // Save the current database version
     bool nonAsciiSortBug;                                     // Workaround for non-ASCII characters in tag name sorting
-    bool autoHideEditorToolbar;                               // Should the editor bar be hidden when focus is lost?
     ReminderManager *reminderManager;                         // Used to alert the user when a reminder time has expired
 
     // These functions deal with proxy settings
@@ -320,7 +332,8 @@ public:
     QHash<QString,QString> resourceList;                    // Hashmap of icons used in the current theme
     QHash<QString,QString> colorList;                       // List of colors used in the current theme
     bool indexPDFLocally;                                   // Should we index PDFs locally?
-    bool forceSearchLowerCase;                              // force storing of notes to lower case
+
+
     bool getIndexPDFLocally();                              // Should we index PDFs locally (read from settings)
     void setIndexPDFLocally(bool value);                    // save local index of PDFs option
     QString getEditorStyle(bool colorOnly);                 // Get note editor style overrides
@@ -365,8 +378,13 @@ public:
     QString getResourceFileName(QHash<QString, QString> &resourceList, QString key);    // Get the actual file path for a given icon theme
     QString getResourcefileName(QString key);                  // Get the actual file path for a given icon theme
     void stackDump(int max=0);                                 // Utility to dump the running stack
-    bool getForceSearchLowerCase();                            // Get value to force search db in lower case from settings
-    void setForceSearchLowerCase(bool value);                  // save forceSearchLowerCase
+
+    bool readSettingForceSearchLowerCase() const;
+    bool readSettingForceSearchWithoutDiacritics() const;
+
+    void saveSettingForceSearchWithoutDiacritics(bool value) const;
+    void saveSettingForceSearchLowerCase(bool value) const;
+
     IndexRunner *indexRunner;                                    // Pointer to index thread
 
     int minimumThumbnailInterval;                               // Minimum time to scan for thumbnails
@@ -418,6 +436,11 @@ public:
     void setAccountId(int accountId)  {this->accountId = accountId; };
 
     FilterCriteria* getCurrentCriteria() const;
+
+    bool isForceSearchLowerCase() const;
+    bool isForceSearchWithoutDiacritics() const;
+
+    QString normalizeTermForSearchAndIndex(QString s) const;
 
 signals:
     // global can send signal about updating status bar

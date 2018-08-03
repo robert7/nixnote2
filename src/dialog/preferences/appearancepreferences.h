@@ -40,7 +40,6 @@ private:
     QComboBox *defaultFontSizeChooser;
     QComboBox *defaultGuiFontSizeChooser;
     QComboBox *defaultGuiFontChooser;
-    QCheckBox *autoHideEditorButtonbar;
     QComboBox *traySingleClickAction;
     QComboBox *trayMiddleClickAction;
     QComboBox *trayDoubleClickAction;

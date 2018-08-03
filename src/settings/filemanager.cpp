@@ -380,6 +380,15 @@ QString FileManager::getProgramVersion() {
 }
 
 /**
+ * Bit more print friendly version.
+ * @return
+ */
+QString FileManager::getProgramVersionPrintable() {
+    // cuurently no difference
+    return getProgramVersion();
+}
+
+/**
  * Setup logging with QLOG_DEBUG_FILE.
  */
 void FileManager::setupFileAttachmentLogging() {

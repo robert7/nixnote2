@@ -776,27 +776,27 @@
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="47"/>
-        <source>Total Notes:</source>
+        <source>Total notes:</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="49"/>
-        <source>Total Resources:</source>
+        <source>Total resources:</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="51"/>
-        <source>Unindexed Notes:</source>
+        <source>Unindexed notes:</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="53"/>
-        <source>Unindexed Resources:</source>
+        <source>Unindexed resources:</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="55"/>
-        <source>Thumbnails Needed:</source>
+        <source>Thumbnails needed:</source>
         <translation></translation>
     </message>
     <message>

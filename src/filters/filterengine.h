@@ -38,7 +38,7 @@ private:
     void filterSearchStringAll(QStringList list);
     void splitSearchTerms(QStringList &list, QString search);
     void filterSearchStringNotebookAll(QString string);
-//    void filterSearchTodoAll(QStringList list);
+    //    void filterSearchTodoAll(QStringList list);
     void filterSearchStringTodoAll(QString string);
     void filterSearchStringReminderOrderAll(QString string);
     void filterSearchStringReminderDoneTimeAll(QString string);
@@ -76,7 +76,7 @@ private:
 
 public:
     explicit FilterEngine(QObject *parent = 0);
-    void filter(FilterCriteria *newCriteria=nullptr, QList<qint32> *results=nullptr);
+    void filter(FilterCriteria *newCriteria = nullptr, QList<qint32> *results = nullptr);
     bool resourceContains(qint32 resourceLid, QString searchString, QStringList *returnHits);
     
 signals:

@@ -43,7 +43,7 @@ AboutDialog::AboutDialog(QDialog *parent) :
     mainLayout->addLayout(buttonLayout);
     this->setLayout(mainLayout);
     const QString programDataDir = global.fileManager.getProgramDataDir();
-    QString versionStr = tr("Version: ") + global.fileManager.getProgramVersion();
+    QString versionStr = tr("Version: ") + global.fileManager.getProgramVersionPrintable();
 
     QString aboutFileName = programDataDir + "help/about.html";
     QString data = global.fileManager.readFile(aboutFileName);

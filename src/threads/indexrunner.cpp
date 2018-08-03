@@ -112,9 +112,9 @@ void IndexRunner::index() {
     if (keepRunning && !pauseIndexing && noteTable.getIndexNeeded(lids) > 0) {
         QApplication::processEvents();
         endMsgNeeded = true;
-        QLOG_DEBUG() << "Unindexed Notes found: " << lids.size();
+        QLOG_DEBUG() << "Unindexed notes found: " << lids.size();
 
-        // Index any undindexed note content.
+        // Index any unindexed note content.
         for (int i=0; keepRunning && !pauseIndexing && i<lids.size(); i++) {
             QApplication::processEvents();
             Note n;
@@ -452,10 +452,10 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
         sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
         sql.bindValue(":lid", lid);
         sql.bindValue(":weight", 100);
-        if (!global.forceSearchLowerCase)
-            sql.bindValue(":content", text);
-        else
-            sql.bindValue(":content", text.toLower());
+
+        text = global.normalizeTermForSearchAndIndex(text);
+        sql.bindValue(":content", text);
+
         QLOG_DEBUG() << "Adding note resource to index DB";
         sql.exec();
         db->unlock();
@@ -497,10 +497,10 @@ void IndexRunner::flushCache() {
         sql.bindValue(":lid", lid);
         sql.bindValue(":weight", weight);
         sql.bindValue(":source", source);
-        if (!global.forceSearchLowerCase)
-            sql.bindValue(":content", content);
-        else
-            sql.bindValue(":content", content.toLower());
+
+        content = global.normalizeTermForSearchAndIndex(content);
+        sql.bindValue(":content", content);
+
         sql.exec();
         commitCount--;
         if (commitCount <= 0) {

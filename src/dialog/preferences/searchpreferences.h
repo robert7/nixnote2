@@ -37,7 +37,11 @@ private:
     QCheckBox *clearNotebookOnSearch;   // Clear notebook on search text changes
     QCheckBox *clearTagsOnSearch;      // Clear tag selection on search text changes
     QCheckBox *tagSelectionOr;          // "OR" tag selections.
-    QCheckBox *forceLowerCase;          // Force notes search text to be lower case.  Useful for some non-ASCII languages.
+
+    QCheckBox *forceSearchLowerCase;
+    QCheckBox *forceSearchWithoutDiacritics;
+
+
     QCheckBox *enableBackgroundIndexing;  // Do indexing in the background by default.
 
 public:

@@ -47,8 +47,6 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     showMissedReminders = new QCheckBox(tr("Show missed reminders on startup"), this);
     startMinimized = new QCheckBox(tr("Always Start minimized"), this);
     dynamicTotals = new QCheckBox(tr("Show notebook and tag totals"), this);
-    autoHideEditorButtonbar = new QCheckBox(tr("Auto-Hide editor toolbar"), this);
-    autoHideEditorButtonbar->setChecked(global.autoHideEditorToolbar);
     disableEditingOnStartup = new QCheckBox(tr("Disable note editing on startup"), this);
     newNoteFocusOnTitle = new QCheckBox(tr("Focus on Note Title on New Note"), this);
     forceWebFonts = new QCheckBox(tr("Limit Editor to Web Fonts*"), this);
@@ -125,7 +123,6 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
         mainLayout->addWidget(minimizeToTray, row, 0);
         mainLayout->addWidget(closeToTray, row++, 1);
     }
-    mainLayout->addWidget(autoHideEditorButtonbar, row, 0);
     mainLayout->addWidget(showPDFs, row++, 1);
     mainLayout->addWidget(showMissedReminders, row, 0);
     mainLayout->addWidget(dynamicTotals, row++, 1);
@@ -190,15 +187,17 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     idx = trayDoubleClickAction->findData(idx, Qt::UserRole);
     trayDoubleClickAction->setCurrentIndex(idx);
 
-    showTrayIcon->setChecked(global.settings->value("showTrayIcon", false).toBool());
+    showTrayIcon->setChecked(global.settings->value("showTrayIcon", true).toBool());
     showPDFs->setChecked(global.settings->value("showPDFs", false).toBool());
     showSplashScreen->setChecked(global.settings->value("showSplashScreen", false).toBool());
     showMissedReminders->setChecked(global.settings->value("showMissedReminders", false).toBool());
     startMinimized->setChecked(global.settings->value("startMinimized", false).toBool());
+
     if (global.countBehavior == Global::CountAll)
         dynamicTotals->setChecked(true);
     else
         dynamicTotals->setChecked(false);
+
     autoStart->setChecked(global.settings->value("autoStart", false).toBool());
     int defaultNotebook = global.settings->value("startupNotebook", UseLastViewedNotebook).toInt();
     defaultNotebookOnStartup->setCurrentIndex(defaultNotebook);
@@ -255,14 +254,11 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("forceWebFonts", forceWebFonts->isChecked());
     global.settings->setValue("showTrayIcon", showTrayIcon->isChecked());
     global.settings->setValue("showPDFs", showPDFs->isChecked());
-    global.autoHideEditorToolbar = this->autoHideEditorButtonbar->isChecked();
-    global.settings->setValue("autoHideEditorToolbar", global.autoHideEditorToolbar);
     global.settings->setValue("mouseMiddleClickOpen", mouseMiddleClickAction->currentIndex());
     global.settings->setValue("trayDoubleClickAction", trayDoubleClickAction->currentIndex());
     global.settings->setValue("traySingleClickAction", traySingleClickAction->currentIndex());
     global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentIndex());
     global.settings->setValue("systemNotifier", sysnotifier);
-//    global.settings->remove("trayDoubleClickAction");
     global.settings->setValue("showNoteListGrid", showNoteListGrid->isChecked());
     global.settings->setValue("alternateNoteListColors", alternateNoteListColors->isChecked());
     global.pdfPreview = showPDFs->isChecked();

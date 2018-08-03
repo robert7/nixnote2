@@ -64,7 +64,6 @@ Global::Global() {
     this->accountsManager = nullptr;
     criteria->resetSearchString = true;
     this->application = nullptr;
-    this->autoHideEditorToolbar = false;
     this->showGoodSyncMessagesInTray = false;
     this->batchThumbnailCount = 4;
     username = "";
@@ -88,7 +87,10 @@ Global::Global() {
     this->indexNoteCountPause = -1;
     this->maxIndexInterval = 500;
     this->forceNoStartMimized = false;
+
     this->forceSearchLowerCase = false;
+    this->forceSearchWithoutDiacritics = false;
+
     this->forceStartMinimized = false;
     this->globalSettings = nullptr;
     this->disableUploads = false;
@@ -195,9 +197,6 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     settings->beginGroup(INI_GROUP_APPEARANCE);
     QString theme = settings->value("themeName", "").toString();
     loadTheme(resourceList, colorList, theme);
-    // note auto-hide doesn't really work well - there are problems with menu appearing when you try
-    // to select text
-    autoHideEditorToolbar = settings->value("autoHideEditorToolbar", false).toBool();
     settings->endGroup();
 
     minIndexInterval = 5000;
@@ -206,7 +205,10 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     indexNoteCountPause = 100;
     isFullscreen = false;
     indexPDFLocally = getIndexPDFLocally();
-    forceSearchLowerCase = getForceSearchLowerCase();
+    
+    forceSearchLowerCase = readSettingForceSearchLowerCase();
+    forceSearchWithoutDiacritics = readSettingForceSearchWithoutDiacritics();
+    
     forceUTF8 = getForceUTF8();
 
 
@@ -336,7 +338,7 @@ bool Global::showTrayIcon() {
 bool Global::minimizeToTray() {
     bool minimizeToTray;
     settings->beginGroup(INI_GROUP_APPEARANCE);
-    minimizeToTray = settings->value("minimizeToTray", false).toBool();
+    minimizeToTray = settings->value("minimizeToTray", true).toBool();
     settings->endGroup();
     return minimizeToTray;
 }
@@ -346,7 +348,7 @@ bool Global::minimizeToTray() {
 bool Global::closeToTray() {
     bool showTrayIcon;
     settings->beginGroup(INI_GROUP_APPEARANCE);
-    showTrayIcon = settings->value("closeToTray", false).toBool();
+    showTrayIcon = settings->value("closeToTray", true).toBool();
     settings->endGroup();
     return showTrayIcon;
 }
@@ -518,7 +520,6 @@ void Global::setIndexPDFLocally(bool value) {
     indexPDFLocally = value;
 }
 
-
 bool Global::getIndexPDFLocally() {
     settings->beginGroup(INI_GROUP_SEARCH);
     bool value = settings->value("indexPDFLocally", true).toBool();
@@ -528,22 +529,45 @@ bool Global::getIndexPDFLocally() {
 }
 
 
-void Global::setForceSearchLowerCase(bool value) {
+bool Global::readSettingForceSearchLowerCase() const {
     settings->beginGroup(INI_GROUP_SEARCH);
-    settings->setValue("forceLowerCase", value);
+    const QVariant variant = settings->value("forceLowerCase");
     settings->endGroup();
-    indexPDFLocally = value;
-}
 
-
-bool Global::getForceSearchLowerCase() {
-    settings->beginGroup(INI_GROUP_SEARCH);
-    bool value = settings->value("forceLowerCase", false).toBool();
-    settings->endGroup();
-    forceSearchLowerCase = value;
+    bool value = false;
+    if (variant.isValid()) {
+        value = variant.toBool();
+    } else {
+        saveSettingForceSearchLowerCase(value);
+    }
     return value;
 }
 
+void Global::saveSettingForceSearchLowerCase(bool value) const {
+    settings->beginGroup(INI_GROUP_SEARCH);
+    settings->setValue("forceLowerCase", value);
+    settings->endGroup();
+}
+
+bool Global::readSettingForceSearchWithoutDiacritics() const {
+    settings->beginGroup(INI_GROUP_SEARCH);
+    const QVariant variant = settings->value("forceSearchWithoutDiacritics");
+    settings->endGroup();
+
+    bool value = false;
+    if (variant.isValid()) {
+        value = variant.toBool();
+    } else {
+        saveSettingForceSearchWithoutDiacritics(value);
+    }
+    return value;
+}
+
+void Global::saveSettingForceSearchWithoutDiacritics(bool value) const {
+    settings->beginGroup(INI_GROUP_SEARCH);
+    settings->setValue("forceSearchWithoutDiacritics", value);
+    settings->endGroup();
+}
 
 bool Global::getForceUTF8() {
     settings->beginGroup(INI_GROUP_DEBUGGING);
@@ -1519,3 +1543,32 @@ FilterCriteria *Global::getCurrentCriteria() const {
     //QLOG_DEBUG() << "Requesting filter [" << pos << "], count=" << global.filterCriteria.size();
     return global.filterCriteria[pos];
 }
+
+bool Global::isForceSearchLowerCase() const
+{
+    return forceSearchLowerCase;
+}
+
+bool Global::isForceSearchWithoutDiacritics() const
+{
+    return forceSearchWithoutDiacritics;
+}
+
+/**
+ * Normalize term before search or index process,
+ * @param s String to process.
+ * @return Normalized representation.
+ */
+QString Global::normalizeTermForSearchAndIndex(QString s) const
+{
+    if (forceSearchLowerCase) {
+        s = s.toLower();
+    }
+    if (forceSearchWithoutDiacritics) {
+        stringUtils.removeDiacritics(s);
+    }
+
+    return s;
+}
+
+

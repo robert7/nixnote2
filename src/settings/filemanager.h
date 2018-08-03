@@ -121,6 +121,7 @@ public:
     QString getTranslateFilePath(QString relativePath);
     QString readFile(QString file);
     QString getProgramVersion();
+    QString getProgramVersionPrintable();
     void setupFileAttachmentLogging();
     void deleteTopLevelFiles(QDir dir, bool exitOnFail);
     QString getMainLogFileName() const { return this->getLogsDirPath("") + "messages.log"; }

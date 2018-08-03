@@ -210,12 +210,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
         }
     }
 
-    // Init OAuth winwod
-    //oauthWindow = nullptr;
-
-    //QDesktopServices::setUrlHandler("evernote", this, "showDesktopUrl");
-    remoteQuery = new RemoteQuery();
-
     // Initialize pdfExportWindow to null. We don't fully set this up in case the person requests it.
     pdfExportWindow = nullptr;
 
@@ -224,7 +218,14 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     connect(importManager, SIGNAL(fileImported(qint32, qint32)), this, SLOT(updateSelectionCriteria()));
     connect(importManager, SIGNAL(fileImported()), this, SLOT(updateSelectionCriteria()));
     importManager->setup();
-    this->updateSelectionCriteria(true);  // This is only needed in case we imported something at statup.
+    this->updateSelectionCriteria(true);  // This is only needed in case we imported something at statup
+
+    networkManager = new QNetworkAccessManager();
+    connect(networkManager, SIGNAL(finished(QNetworkReply * )), this, SLOT(onNetworkManagerFinished(QNetworkReply * )));
+
+    QUuid uuid;
+    clientId = uuid.createUuid().toString().replace("{", "").replace("}", "");
+
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
 
@@ -250,6 +251,8 @@ NixNote::~NixNote() {
             }
         }
     }
+    delete networkManager;
+
 //    delete db;  // Free up memory used by the database connection
 //    delete rightPanelSplitter;
 //    delete leftPanelSplitter;
@@ -1416,6 +1419,21 @@ void NixNote::syncTimerExpired() {
     emit(syncRequested());
 }
 
+void NixNote::onNetworkManagerFinished(QNetworkReply *reply) {
+    //QLOG_DEBUG() << "onNetworkManagerFinished";
+    if (reply->error()) {
+        //QLOG_DEBUG() << "onNetworkManagerFinished err " << reply->errorString();
+        return;
+    }
+
+    QString answer = reply->readAll();
+    QLOG_DEBUG() << "onNetworkManagerFinished OK"; // << answer;
+}
+
+#define GA_SITE "www.google-analytics.com"
+#define GA_ID   "UA-123318717-1"
+#define GA_EC   "app"
+#define GA_EA   "sync"
 
 //******************************************************************************
 //* User synchronize was requested
@@ -1451,9 +1469,17 @@ void NixNote::synchronize() {
         global.accountsManager->setOAuthToken(token);
     }
 
-    this->saveContents();
-    //statusBar()->clearMessage();
+    QLOG_DEBUG() << "Preparing sync";
 
+    QNetworkRequest request;
+    const QString version = global.fileManager.getProgramVersion();
+    QString url("http://" GA_SITE "/collect?v=1&tid=" GA_ID "&cid=");
+    url.append(clientId).append("&t=event&ec=" GA_EC "&ea=" GA_EA "&el=").append(version);
+    request.setUrl(QUrl(url));
+    // QLOG_DEBUG() << "Req.url " << url;
+    networkManager->get(request);
+
+    this->saveContents();
     tabWindow->saveAllNotes();
     syncButtonTimer.start(3);
     emit syncRequested();
@@ -2229,7 +2255,7 @@ void NixNote::openQtAbout() {
 //* Open the NixNote GitHub page.
 //*******************************
 void NixNote::openGithub() {
-    QDesktopServices::openUrl(QUrl("https://github.com/" NN_MAIN_REPO_USER "/" NN_MAIN_REPO_NAME));
+    QDesktopServices::openUrl(QUrl(NN_GITHUB_REPO_URL));
 }
 
 
@@ -3527,8 +3553,7 @@ void NixNote::presentationModeOff() {
     menuBar->show();
     toolBar->show();
     global.isFullscreen = false;
-    if (!global.autoHideEditorToolbar)
-        tabWindow->currentBrowser()->buttonBar->show();
+    tabWindow->currentBrowser()->buttonBar->show();
     this->showMaximized();
 }
 
