@@ -9,6 +9,11 @@
 * Removed both webcam and screenshoot functionality (there are better tools for bot actions)
 * Show/Hide is now simplified to "Show" as previously it could lead to inconsistent behaviour
 * Sys Tray menu functionality cleanup
+* New feature search and index without [diacritics](https://en.wikipedia.org/wiki/Diacritic). This is highly
+  useful for some eastern european languages. As this requires reindexing whole database, activation currently 
+  needs to be done manually (I'll write later some Howto)
+* Remove "auto hide toolbar option", as it was not working correctly  
+  
 
 
 ## 2018-07
