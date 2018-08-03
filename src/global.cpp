@@ -64,7 +64,6 @@ Global::Global() {
     this->accountsManager = nullptr;
     criteria->resetSearchString = true;
     this->application = nullptr;
-    this->autoHideEditorToolbar = false;
     this->showGoodSyncMessagesInTray = false;
     this->batchThumbnailCount = 4;
     username = "";
@@ -198,9 +197,6 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     settings->beginGroup(INI_GROUP_APPEARANCE);
     QString theme = settings->value("themeName", "").toString();
     loadTheme(resourceList, colorList, theme);
-    // note auto-hide doesn't really work well - there are problems with menu appearing when you try
-    // to select text
-    autoHideEditorToolbar = settings->value("autoHideEditorToolbar", false).toBool();
     settings->endGroup();
 
     minIndexInterval = 5000;
@@ -342,7 +338,7 @@ bool Global::showTrayIcon() {
 bool Global::minimizeToTray() {
     bool minimizeToTray;
     settings->beginGroup(INI_GROUP_APPEARANCE);
-    minimizeToTray = settings->value("minimizeToTray", false).toBool();
+    minimizeToTray = settings->value("minimizeToTray", true).toBool();
     settings->endGroup();
     return minimizeToTray;
 }
@@ -352,7 +348,7 @@ bool Global::minimizeToTray() {
 bool Global::closeToTray() {
     bool showTrayIcon;
     settings->beginGroup(INI_GROUP_APPEARANCE);
-    showTrayIcon = settings->value("closeToTray", false).toBool();
+    showTrayIcon = settings->value("closeToTray", true).toBool();
     settings->endGroup();
     return showTrayIcon;
 }
