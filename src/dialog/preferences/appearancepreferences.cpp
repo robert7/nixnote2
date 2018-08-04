@@ -74,7 +74,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     trayDoubleClickAction->addItem(tr("New Text Note"), 2);
 
     mouseMiddleClickAction = new QComboBox();
-    mouseMiddleClickAction->addItem(tr("Open New Tab"), MOUSE_MIDDLE_CLICK_NEW_TAB);
+    //mouseMiddleClickAction->addItem(tr("Open New Tab"), MOUSE_MIDDLE_CLICK_NEW_TAB);
     mouseMiddleClickAction->addItem(tr("Open New Window"), MOUSE_MIDDLE_CLICK_NEW_WINDOW);
     mouseMiddleClickAction->setCurrentIndex(middleClickIndex);
 
