@@ -186,7 +186,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     insertDateShortcut = new QShortcut(this);
     global.setupShortcut(insertDateShortcut, "Insert_Date");
-    connect(insertDatetimeShortcut, SIGNAL(activated()), this, SLOT(insertDate()));
+    connect(insertDateShortcut, SIGNAL(activated()), this, SLOT(insertDate()));
 
     insertTimeShortcut = new QShortcut(this);
     global.setupShortcut(insertTimeShortcut, "Insert_Time");

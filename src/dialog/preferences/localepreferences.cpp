@@ -60,7 +60,7 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     dateFormatLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     dateFormatCombo = new QComboBox(this);
     const QStringList dateFormats = global.getDateFormats();
-    for (int i = 0; i < dateFormats.size() - 1; i++) {
+    for (int i = 0; i < dateFormats.size(); i++) {
         const QString fmt = dateFormats.at(i);
         dateFormatCombo->addItem(fmt + QStringLiteral(" - ") + date.toString(fmt), i + 1);
     }
@@ -70,7 +70,7 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     timeFormatLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     timeFormatCombo = new QComboBox(this);
     const QStringList timeFormats = global.getTimeFormats();
-    for (int i = 0; i < timeFormats.size() - 1; i++) {
+    for (int i = 0; i < timeFormats.size(); i++) {
         const QString fmt = timeFormats.at(i);
         timeFormatCombo->addItem(fmt + QStringLiteral(" - ") + time.toString(fmt), i + 1);
     }
