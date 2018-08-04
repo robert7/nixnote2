@@ -96,7 +96,7 @@ void TrayMenu::buildActionMenu() {
                 QPair<qint32, QString> pair;
                 pair.first = record.target.toInt();
                 pair.second = record.displayName;
-                records.append(pair);
+                records.prepend(pair);
             }
         }
         favoriteNotesMenu->clear();

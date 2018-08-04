@@ -4019,7 +4019,7 @@ Until tidy is installed you cannot save any notes.</source>
     </message>
     <message>
         <location filename="../nixnote.cpp" line="553"/>
-        <source>Shortcut Notes</source>
+        <source>Shortcut notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4029,7 +4029,7 @@ Until tidy is installed you cannot save any notes.</source>
     </message>
     <message>
         <location filename="../nixnote.cpp" line="557"/>
-        <source>Recently Updated Notes</source>
+        <source>Recently updated</source>
         <translation>最近更新されたノート</translation>
     </message>
     <message>

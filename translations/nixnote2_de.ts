@@ -4042,7 +4042,7 @@ Bis zur Installation von Tidy können keine Notizen gespeichert werden.</transla
     </message>
     <message>
         <location filename="../nixnote.cpp" line="553"/>
-        <source>Shortcut Notes</source>
+        <source>Shortcut notes</source>
         <translation>Favoriten-Notizen</translation>
     </message>
     <message>
@@ -4052,7 +4052,7 @@ Bis zur Installation von Tidy können keine Notizen gespeichert werden.</transla
     </message>
     <message>
         <location filename="../nixnote.cpp" line="557"/>
-        <source>Recently Updated Notes</source>
+        <source>Recently updated</source>
         <translation>Aktualisierte Notizen</translation>
     </message>
     <message>

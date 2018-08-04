@@ -841,12 +841,15 @@ TrayMenu *NixNote::createTrayContexMenu() {
     QAction *newNoteButton2 = trayIconContextMenu->addAction(tr("New note"));
     connect(newNoteButton2, SIGNAL(triggered()), this, SLOT(newNote()));
 
-    QMenu *favoritesMenu = trayIconContextMenu->addMenu(tr("Shortcut Notes"));
+    QMenu *favoritesMenu = trayIconContextMenu->addMenu(tr("Shortcut notes"));
     trayIconContextMenu->setActionMenu(TrayMenu::FavoriteNotesMenu, favoritesMenu);
+
+    // ~temporary removal
     // QMenu *pinnedMenu = trayIconContextMenu->addMenu(tr("Pinned Notes"));
     // trayIconContextMenu->setActionMenu(TrayMenu::PinnedMenu, pinnedMenu);
-    // QMenu *recentMenu = trayIconContextMenu->addMenu(tr("Recently Updated Notes"));
-    // trayIconContextMenu->setActionMenu(TrayMenu::RecentMenu, recentMenu);
+
+    QMenu *recentMenu = trayIconContextMenu->addMenu(tr("Recently updated"));
+    trayIconContextMenu->setActionMenu(TrayMenu::RecentMenu, recentMenu);
     connect(trayIconContextMenu, SIGNAL(openNote(qint32)), this, SLOT(openExternalNote(qint32)));
 
     trayIconContextMenu->addSeparator();
