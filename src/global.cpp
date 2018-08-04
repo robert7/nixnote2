@@ -630,114 +630,13 @@ void Global::setLastReminderTime(qlonglong value) {
 
 // Setup the default date & time formatting
 void Global::setupDateTimeFormat() {
-    QString datefmt;
-    QString timefmt;
-
-    // note: see also duplicate in LocalePreferences - dialog/preferences/localepreferences.cpp
-    enum DateFormat {
-        MMddyy = 1,
-        MMddyyyy = 2,
-        Mddyyyy = 3,
-        Mdyyyy = 4,
-        ddMMyy = 5,
-        dMyy = 6,
-        ddMMyyyy = 7,
-        dMyyyy = 8,
-        yyyyMMdd = 9,
-        yyMMdd = 10,
-        yyMMdd2 = 11
-    };
-    enum TimeFormat {
-        HHmmss = 1,
-        HHMMSSa = 2,
-        HHmm = 3,
-        HHmma = 4,
-        hhmmss = 5,
-        hhmmssa = 6,
-        hmmssa = 7,
-        hhmm = 8,
-        hhmma = 9,
-        hmma = 10
-    };
-
     settings->beginGroup(INI_GROUP_LOCALE);
-    int date = settings->value("dateFormat", MMddyy).toInt();
-    int time = settings->value("timeFormat", HHmmss).toInt();
+    int dateFmtNo = settings->value("dateFormat", MMddyy).toInt();
+    int timeFmtNo = settings->value("timeFormat", HHmmss).toInt();
     settings->endGroup();
 
-    datefmt = "MM/dd/yy";
-    switch (date) {
-        case MMddyy:
-            datefmt = "MM/dd/yy";
-            break;
-        case MMddyyyy:
-            datefmt = "MM/dd/yyyy";
-            break;
-        case Mddyyyy:
-            datefmt = "M/dd/yyyy";
-            break;
-        case Mdyyyy:
-            datefmt = "M/d/yyyy";
-            break;
-        case ddMMyy:
-            datefmt = "dd/MM/yy";
-            break;
-        case dMyy:
-            datefmt = "d/M/yy";
-            break;
-        case ddMMyyyy:
-            datefmt = "dd/MM/yyyy";
-            break;
-        case dMyyyy:
-            datefmt = "d/M/yyyy";
-            break;
-        case yyyyMMdd:
-            datefmt = "yyyy-MM-dd";
-            break;
-        case yyMMdd:
-            datefmt = "yy-MM-dd";
-            break;
-        case yyMMdd2:
-            datefmt = "yyMMdd";
-            break;
-    }
-
-    timefmt = "HH:mm:ss";
-    switch (time) {
-        case HHmmss:
-            timefmt = "HH:mm:ss";
-            break;
-        case HHMMSSa:
-            timefmt = "HH:MM:SS a";
-            break;
-        case HHmm:
-            timefmt = "HH:mm";
-            break;
-        case HHmma:
-            timefmt = "HH:mm a";
-            break;
-        case hhmmss:
-            timefmt = "hh:mm:ss";
-            break;
-        case hhmmssa:
-            timefmt = "hh:mm:ss a";
-            break;
-        case hmmssa:
-            timefmt = "h:mm:ss a";
-            break;
-        case hhmm:
-            timefmt = "hh:mm";
-            break;
-        case hhmma:
-            timefmt = "hh:mm a";
-            break;
-        case hmma:
-            timefmt = "h:mm a";
-            break;
-    }
-
-    this->dateFormat = datefmt;
-    this->timeFormat = timefmt;
+    this->setDateFormat(dateFmtNo);
+    this->setTimeFormat(timeFmtNo);
 }
 
 
@@ -1571,4 +1470,54 @@ QString Global::normalizeTermForSearchAndIndex(QString s) const
     return s;
 }
 
+const QString &Global::getDateFormat() const {
+    return dateFormat;
+}
+
+
+void Global::setDateFormat(int fmtNo) {
+    Global::dateFormat = getDateFormatByNo(fmtNo);
+}
+
+QString Global::getDateFormatByNo(int fmtNo) const {
+    QStringList l = getDateFormats();
+    if (fmtNo < 1 || (fmtNo > l.size())) {
+        fmtNo = 1;
+    }
+    return l[fmtNo - 1];
+}
+
+QStringList Global::getDateFormats() const {
+    QStringList l;
+    l << "MM/dd/yy" << "MM/dd/yyyy" << "M/dd/yyyy" << "M/d/yyyy" << "dd/MM/yy"
+      << "d/M/yy" << "dd/MM/yyyy" << "d/M/yyyy" << "yyyy-MM-dd" << "yy-MM-dd"
+      << "yyMMdd" << "MM.dd.yy" << "MM.dd.yyyy";
+}
+
+QStringList Global::getTimeFormats() const {
+    QStringList l;
+    l << "HH:mm:ss" << "HH:MM:SS a" << "HH:mm" << "HH:mm a" << "hh:mm:ss"
+      << "hh:mm:ss a" << "h:mm:ss a" << "hh:mm" << "hh:mm a" << "h:mm a";
+    return l;
+}
+
+const QString &Global::getTimeFormat() const {
+    return timeFormat;
+}
+
+void Global::setTimeFormat(int time) {
+    Global::timeFormat = getTimeFormatByNo(time);
+}
+
+QString Global::getTimeFormatByNo(int fmtNo) const {
+    QStringList l = getTimeFormats();
+    if (fmtNo < 1 || (fmtNo > l.size())) {
+        fmtNo = 1;
+    }
+    return l[fmtNo - 1];
+}
+
+QString Global::getDateTimeFormat() const {
+    return getDateFormat() + QStringLiteral(" ") + getTimeFormat();
+}
 
