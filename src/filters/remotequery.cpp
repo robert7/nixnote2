@@ -111,7 +111,7 @@ Q_SCRIPTABLE QString RemoteQuery::getNoteDateUpdated() {
 
     if (timestamp.date() == QDate::currentDate())
         return tr("Today") +" " + timestamp.time().toString(Qt::SystemLocaleShortDate);
-    return timestamp.toString(global.dateFormat + QString(" ") +global.timeFormat);
+    return timestamp.toString(global.getDateTimeFormat());
 
 }
 
@@ -128,7 +128,7 @@ Q_SCRIPTABLE QString RemoteQuery::getNoteDateCreated() {
 
     if (timestamp.date() == QDate::currentDate())
         return tr("Today") +" " + timestamp.time().toString(Qt::SystemLocaleShortDate);
-    return timestamp.toString(global.dateFormat + QString(" ") +global.timeFormat);
+    return timestamp.toString(global.getDateTimeFormat());
 
 }
 

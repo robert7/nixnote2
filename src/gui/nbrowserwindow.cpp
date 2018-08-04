@@ -558,7 +558,7 @@ void NBrowserWindow::setContent(qint32 lid) {
         else if (atime.date() == QDate::currentDate().addDays(-1))
             alarmText.setText(tr("Yesterday"));
         else
-            alarmText.setText(atime.date().toString(global.dateFormat));
+            alarmText.setText(atime.date().toString(global.getDateFormat()));
     } else {
         alarmText.setText("");
         alarmText.setVisible(false);
@@ -2559,11 +2559,9 @@ void NBrowserWindow::focusNote() {
 // Insert the date/time into a note
 void NBrowserWindow::insertDatetime() {
     QDateTime dt = QDateTime::currentDateTime();
-    QLocale locale;
-    QString dts = dt.toString(locale.dateTimeFormat(QLocale::ShortFormat));
+    QString dts = dt.toString(global.getDateTimeFormat());
 
-    editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('insertHtml', false, '" + dts + "');");
+    editor->page()->mainFrame()->evaluateJavaScript("document.execCommand('insertHtml', false, '" + dts + "');");
     editor->setFocus();
 }
 
@@ -3267,7 +3265,7 @@ void NBrowserWindow::alarmSet() {
     else if (dt.date() == QDate::currentDate().addDays(-1))
         alarmText.setText(tr("Yesterday"));
     else
-        alarmText.setText(dt.date().toString(global.dateFormat));
+        alarmText.setText(dt.date().toString(global.getDateFormat()));
 
     alarmText.setVisible(true);
     QFont f = alarmText.font();
