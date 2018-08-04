@@ -7,7 +7,9 @@
 * PDF export
     * Default FN - note title?
     * Maybe open the PDF after export
-* Refresh translation files
+* Check error
+    QObject::connect: No such signal TrayMenu::show() in src/gui/traymenu.cpp:34
+    QObject::connect: No such signal QSystemTrayIcon::QSystemTrayIcon::activated(QSystemTrayIcon::ActivationReason) in src/nixnote.cpp:552
 
 ## 2
 * Send email using external email client
