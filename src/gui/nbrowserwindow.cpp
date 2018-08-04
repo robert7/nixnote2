@@ -2197,10 +2197,10 @@ void NBrowserWindow::linkClicked(const QUrl url) {
         bool newExternalWindow = false;
         bool newTab = false;
         if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
-            if (global.getMiddleClickAction() == MOUSE_MIDDLE_CLICK_NEW_WINDOW)
+            //if (global.getMiddleClickAction() == MOUSE_MIDDLE_CLICK_NEW_WINDOW)
                 newExternalWindow = true;
-            else
-                newTab = true;
+            //else
+            //    newTab = true;
         } else {
             // Setup a new filter
             FilterCriteria *criteria = new FilterCriteria();
@@ -3721,27 +3721,28 @@ void NBrowserWindow::changeDisplayFontName(QString name) {
 
 
 void NBrowserWindow::focusCheck() {
-    bool buttonBarVisible = false;
-    if (editor->hasFocus())
-        buttonBarVisible = true;
-    if (editor->contextMenu->hasFocus())
-        buttonBarVisible = true;
-    if (buttonBar->hasFocus())
-        buttonBarVisible = true;
-    if (buttonBar->fontNames->isExpanded())
-        buttonBarVisible = true;
-    if (buttonBar->fontNames->lineEdit()->hasFocus())
-        buttonBarVisible = true;
-    if (buttonBar->fontSizes->lineEdit()->hasFocus())
-        buttonBarVisible = true;
-    if (buttonBar->fontSizes->isExpanded())
-        buttonBarVisible = true;
+    bool buttonBarVisible = true;
+
+    //    if (editor->hasFocus())
+    //        buttonBarVisible = true;
+    //    if (editor->contextMenu->hasFocus())
+    //        buttonBarVisible = true;
+    //    if (buttonBar->hasFocus())
+    //        buttonBarVisible = true;
+    //    if (buttonBar->fontNames->isExpanded())
+    //        buttonBarVisible = true;
+    //    if (buttonBar->fontNames->lineEdit()->hasFocus())
+    //        buttonBarVisible = true;
+    //    if (buttonBar->fontSizes->lineEdit()->hasFocus())
+    //        buttonBarVisible = true;
+    //    if (buttonBar->fontSizes->isExpanded())
+    //        buttonBarVisible = true;
 
     if (global.isFullscreen)
         buttonBarVisible = false;
-
     if (!editor->page()->isContentEditable())
         buttonBarVisible = false;
+
     buttonBar->setVisible(buttonBarVisible);
 }
 

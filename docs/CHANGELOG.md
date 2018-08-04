@@ -17,6 +17,9 @@
   * fixed: PDF export file picker stays in background after first PDF export.. then stays hidden=>confusing
   * OK dialog is useless
   * fixed: Filedialog should add pdf extension
+* Insert Date/Time now respect locale settings; added shortcut for Insert Date and Insert Time
+  few more european date formats added
+* Adjusted middle mouse click behaviour (middle click now opens in new window)    
 
 ## 2018-07
 
