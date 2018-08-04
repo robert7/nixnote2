@@ -532,7 +532,7 @@ void NixNote::setupGui() {
     minimizeToTray = global.readSettingMinimizeToTray();
     closeToTray = global.readSettingCloseToTray();
     bool isSystemTrayAvailable = QSystemTrayIcon::isSystemTrayAvailable();
-    QLOG_DEBUG() << "QSystemTrayIcon::isSystemTrayAvailable():" << isSystemTrayAvailable;
+    QLOG_DEBUG() << "System tray available=" << isSystemTrayAvailable;
     if (!isSystemTrayAvailable && global.forceSystemTrayAvailable) {
         QLOG_INFO() << "Overriding QSystemTrayIcon::isSystemTrayAvailable() per command line option.";
     }
@@ -678,11 +678,15 @@ void NixNote::setupGui() {
     QLOG_DEBUG() << "isSystemTrayAvailable:" << isSystemTrayAvailable;
     if (global.startMinimized && !global.forceNoStartMimized &&
         (isSystemTrayAvailable || global.forceSystemTrayAvailable)) {
+        // TODO refactor
+        QLOG_DEBUG() << "About to start minimized in system tray";
         this->setWindowState(Qt::WindowMinimized);
-        if (minimizeToTray)
+        if (minimizeToTray) {
             QTimer::singleShot(100, this, SLOT(hide()));
+        }
     }
     if (global.forceStartMinimized) {
+        QLOG_DEBUG() << "About to start minimized in system tray (2)";
         this->setWindowState(Qt::WindowMinimized);
         if (minimizeToTray)
             QTimer::singleShot(100, this, SLOT(hide()));
