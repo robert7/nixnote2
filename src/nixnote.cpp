@@ -527,56 +527,30 @@ void NixNote::setupGui() {
         openExternalNote(global.startupNote);
     }
 
+
     // Setup the tray icon
-    closeFlag = false;
-    minimizeToTray = global.minimizeToTray();
-    closeToTray = global.closeToTray();
-    trayIcon = new QSystemTrayIcon(global.getIconResource(":trayIcon"), this);
-    trayIconContextMenu = new TrayMenu(this);
-
-    // ~temporary removal
-    //newExternalNoteButton = trayIconContextMenu->addAction(tr("Quick Note"));
-    //connect(newExternalNoteButton, SIGNAL(triggered()), this, SLOT(newExternalNote()));
-
-    // trayIconContextMenu->addSeparator();
-    // QMenu *favoritesMenu = trayIconContextMenu->addMenu(tr("Shortcut Notes"));
-    // trayIconContextMenu->setActionMenu(TrayMenu::FavoriteNotesMenu, favoritesMenu);
-    // QMenu *pinnedMenu = trayIconContextMenu->addMenu(tr("Pinned Notes"));
-    // trayIconContextMenu->setActionMenu(TrayMenu::PinnedMenu, pinnedMenu);
-    // QMenu *recentMenu = trayIconContextMenu->addMenu(tr("Recently Updated Notes"));
-    // trayIconContextMenu->setActionMenu(TrayMenu::RecentMenu, recentMenu);
-
-    connect(trayIconContextMenu, SIGNAL(openNote(qint32)), this, SLOT(openExternalNote(qint32)));
-    //trayIconContextMenu->addSeparator();
-
-    showAction = trayIconContextMenu->addAction(tr("Show"));
-    connect(showAction, SIGNAL(triggered()), this, SLOT(showMainWindow()));
-
-    QAction *newNoteButton2 = trayIconContextMenu->addAction(tr("New note"));
-    connect(newNoteButton2, SIGNAL(triggered()), this, SLOT(newNote()));
-
-
-    QLOG_DEBUG() << "QSystemTrayIcon::isSystemTrayAvailable():" << QSystemTrayIcon::isSystemTrayAvailable();
-    if (!QSystemTrayIcon::isSystemTrayAvailable() && global.forceSystemTrayAvailable) {
+    minimizeToTray = global.readSettingMinimizeToTray();
+    closeToTray = global.readSettingCloseToTray();
+    bool isSystemTrayAvailable = QSystemTrayIcon::isSystemTrayAvailable();
+    QLOG_DEBUG() << "QSystemTrayIcon::isSystemTrayAvailable():" << isSystemTrayAvailable;
+    if (!isSystemTrayAvailable && global.forceSystemTrayAvailable) {
         QLOG_INFO() << "Overriding QSystemTrayIcon::isSystemTrayAvailable() per command line option.";
     }
-    if (!global.showTrayIcon() || global.forceNoStartMimized ||
-        (!QSystemTrayIcon::isSystemTrayAvailable() && !global.forceSystemTrayAvailable)) {
+    if (!global.readSettingShowTrayIcon() || global.forceNoStartMimized ||
+        (!isSystemTrayAvailable && !global.forceSystemTrayAvailable)) {
         QLOG_DEBUG() << "Overriding close & minimize to tray because of command line or isSystemTrayAvailable";
         closeToTray = false;
         minimizeToTray = false;
     }
 
-    trayIconContextMenu->addSeparator();
-    quitAction = trayIconContextMenu->addAction(tr("Quit"));
-    connect(quitAction, SIGNAL(triggered()), this, SLOT(quitNixNote()));
-
-    trayIcon->setContextMenu(trayIconContextMenu);
-    trayIcon->setVisible(global.showTrayIcon());
-    if (trayIcon->isVisible())
+    trayIcon = new QSystemTrayIcon(global.getIconResource(":trayIcon"), this);
+    trayIcon->setContextMenu(createTrayContexMenu());
+    if (global.readSettingShowTrayIcon()) {
+        QLOG_DEBUG() << "Showing tray icon";
         trayIcon->show();
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this,
-            SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
+    }
+    connect(trayIcon, SIGNAL(QSystemTrayIcon::activated(QSystemTrayIcon::ActivationReason)), this,
+            SLOT(onTrayActivated(QSystemTrayIcon::ActivationReason)));
 
 
     // Setup timers
@@ -588,7 +562,7 @@ void NixNote::setupGui() {
 
     QLOG_TRACE() << "Setting up more connections for tab windows & threads";
     // Setup so we refresh whenever the sync is done.
-//    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria(bool)));
+    //    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria(bool)));
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(notifySyncComplete()));
 
     // connect so we refresh the note list and counts whenever a note has changed
@@ -701,9 +675,9 @@ void NixNote::setupGui() {
     }
 
     // Determine if we should start minimized
-    QLOG_DEBUG() << "isSystemTrayAvailable:" << QSystemTrayIcon::isSystemTrayAvailable();
+    QLOG_DEBUG() << "isSystemTrayAvailable:" << isSystemTrayAvailable;
     if (global.startMinimized && !global.forceNoStartMimized &&
-        (QSystemTrayIcon::isSystemTrayAvailable() || global.forceSystemTrayAvailable)) {
+        (isSystemTrayAvailable || global.forceSystemTrayAvailable)) {
         this->setWindowState(Qt::WindowMinimized);
         if (minimizeToTray)
             QTimer::singleShot(100, this, SLOT(hide()));
@@ -848,6 +822,33 @@ void NixNote::setupGui() {
         connect(&indexRunner, SIGNAL(indexDone(bool)), this, SLOT(indexFinished(bool)));
         indexTimer.start();
     }
+}
+
+TrayMenu *NixNote::createTrayContexMenu() {
+    TrayMenu *trayIconContextMenu = new TrayMenu(this);
+
+    // ~temporary removal
+    //newExternalNoteButton = trayIconContextMenu->addAction(tr("Quick Note"));
+    //connect(newExternalNoteButton, SIGNAL(triggered()), this, SLOT(newExternalNote()));
+
+    showAction = trayIconContextMenu->addAction(tr("Show"));
+    connect(showAction, SIGNAL(triggered()), this, SLOT(showMainWindow()));
+
+    QAction *newNoteButton2 = trayIconContextMenu->addAction(tr("New note"));
+    connect(newNoteButton2, SIGNAL(triggered()), this, SLOT(newNote()));
+
+    QMenu *favoritesMenu = trayIconContextMenu->addMenu(tr("Shortcut Notes"));
+    trayIconContextMenu->setActionMenu(TrayMenu::FavoriteNotesMenu, favoritesMenu);
+    // QMenu *pinnedMenu = trayIconContextMenu->addMenu(tr("Pinned Notes"));
+    // trayIconContextMenu->setActionMenu(TrayMenu::PinnedMenu, pinnedMenu);
+    // QMenu *recentMenu = trayIconContextMenu->addMenu(tr("Recently Updated Notes"));
+    // trayIconContextMenu->setActionMenu(TrayMenu::RecentMenu, recentMenu);
+    connect(trayIconContextMenu, SIGNAL(openNote(qint32)), this, SLOT(openExternalNote(qint32)));
+
+    trayIconContextMenu->addSeparator();
+    quitAction = trayIconContextMenu->addAction(tr("Quit"));
+    connect(quitAction, SIGNAL(triggered()), this, SLOT(quitNixNote()));
+    return trayIconContextMenu;
 }
 
 
@@ -1102,7 +1103,6 @@ void NixNote::setupTabWindow() {
  * Quit NixNote.   This will force a app close even if "close to tray" is set.
  */
 void NixNote::quitNixNote() {
-    closeFlag = true;
     closeToTray = false;
     close();
 }
@@ -1279,8 +1279,9 @@ void NixNote::closeEvent(QCloseEvent *event) {
     syncThread.quit();
 
     if (trayIcon != nullptr) {
-        if (trayIcon->isVisible())
+        if (trayIcon->isVisible()) {
             trayIcon->hide();
+        }
         delete trayIcon;
         trayIcon = nullptr;
     }
@@ -2824,58 +2825,41 @@ void NixNote::showMainWindow() {
 }
 
 
-// The tray icon was activated.  If it was double clicked we restore the
-// gui.
-void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
-    int doNothing = 0;
-    int showHide = 1;
-    int newNote = 2;
-    int newQuickNote = 3;
+void NixNote::trayActivatedAction(int value) {
+    //int newQuickNote = 3;
+
+    if (value == TRAY_ACTION_SHOW) {
+        showMainWindow();
+    } else if (value == TRAY_ACTION_NEWNOTE) {
+        showMainWindow();
+        newNote();
+    }
+    // if (value == newQuickNote) this->newExternalNote();
+}
+
+// The tray icon was activated.  If it was double clicked we restore the gui.
+void NixNote::onTrayActivated(QSystemTrayIcon::ActivationReason reason) {
+    QLOG_DEBUG() << "onTrayActivated reason=" << reason;
 
     if (reason == QSystemTrayIcon::DoubleClick) {
         global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("trayDoubleClickAction", -1).toInt();
         global.settings->endGroup();
-        if (value == doNothing)
-            return;
-        if (value == showHide)
-            showMainWindow();
-        if (value == newNote) {
-            showMainWindow();
-            this->newNote();
-        }
-        if (value == newQuickNote)
-            this->newExternalNote();
+
+        trayActivatedAction(value);
     }
-    if (reason == QSystemTrayIcon::MiddleClick) {
+    else if (reason == QSystemTrayIcon::MiddleClick) {
         global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("trayMiddleClickAction", -1).toInt();
         global.settings->endGroup();
-        if (value == doNothing)
-            return;
-        if (value == showHide)
-            showMainWindow();
-        if (value == newNote) {
-            showMainWindow();
-            this->newNote();
-        }
-        if (value == newQuickNote)
-            this->newExternalNote();
+        trayActivatedAction(value);
     }
-    if (reason == QSystemTrayIcon::Trigger) {
+    else if (reason == QSystemTrayIcon::Trigger) {
         global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("traySingleClickAction", -1).toInt();
         global.settings->endGroup();
-        if (value == doNothing)
-            return;
-        if (value == showHide)
-            showMainWindow();
-        if (value == newNote) {
-            showMainWindow();
-            this->newNote();
-        }
-        if (value == newQuickNote)
-            this->newExternalNote();
+
+        trayActivatedAction(value);
     }
 }
 
@@ -2920,24 +2904,22 @@ void NixNote::openPreferences() {
     prefs.exec();
     if (prefs.okButtonPressed) {
         setSyncTimer();
-        bool showTrayIcon = global.showTrayIcon();
+        bool showTrayIcon = global.readSettingShowTrayIcon();
         const auto wIcon = QIcon(global.getIconResource(":windowIcon"));
         if (!wIcon.isNull()) {
             setWindowIcon(wIcon);
         }
         trayIcon->setIcon(global.getIconResource(":trayIcon"));
+        trayIcon->setVisible(showTrayIcon);
         if (!showTrayIcon) {
-            //trayIconBehavior();
             if (!this->isVisible())
                 this->show();
-            trayIcon->setVisible(false);
 
         } else {
-            trayIcon->setVisible(true);
-            minimizeToTray = global.minimizeToTray();
-            closeToTray = global.closeToTray();
-            //trayIconBehavior();
+            minimizeToTray = global.readSettingMinimizeToTray();
+            closeToTray = global.readSettingCloseToTray();
         }
+
         indexRunner.officeFound = global.synchronizeAttachments();
 
         //        global.settings->beginGroup(INI_GROUP_LOCALE);

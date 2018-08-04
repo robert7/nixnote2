@@ -277,7 +277,7 @@ int main(int argc, char *argv[]) {
     QObject::connect(&global, SIGNAL(setMessageSignal(QString, int)), w, SLOT(setMessage(QString, int)));
 
     bool show = true;
-    if (global.minimizeToTray() && global.startMinimized)
+    if (global.readSettingMinimizeToTray() && global.startMinimized)
         show = false;
     if (show)
         w->show();

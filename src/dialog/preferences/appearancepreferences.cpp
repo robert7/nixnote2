@@ -59,25 +59,19 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     fontPreviewInDialog->setChecked(global.previewFontsInDialog());
 
     traySingleClickAction = new QComboBox();
-    traySingleClickAction->addItem(tr("Do Nothing"), 0);
-    traySingleClickAction->addItem(tr("Show NixNote"), 1);
-    traySingleClickAction->addItem(tr("New Text Note"), 2);
-    traySingleClickAction->addItem(tr("New Quick Note"), 3);
-    traySingleClickAction->addItem(tr("Screen Capture"), 4);
+    traySingleClickAction->addItem(tr("Do Nothing"), TRAY_ACTION_NOTHING);
+    traySingleClickAction->addItem(tr("Show NixNote"), TRAY_ACTION_SHOW);
+    traySingleClickAction->addItem(tr("New Text Note"), TRAY_ACTION_NEWNOTE);
 
     trayMiddleClickAction = new QComboBox();
-    trayMiddleClickAction->addItem(tr("Do Nothing"), 0);
-    trayMiddleClickAction->addItem(tr("Show NixNote"), 1);
-    trayMiddleClickAction->addItem(tr("New Text Note"), 2);
-    trayMiddleClickAction->addItem(tr("New Quick Note"), 3);
-    trayMiddleClickAction->addItem(tr("Screen Capture"), 4);
+    trayMiddleClickAction->addItem(tr("Do Nothing"), TRAY_ACTION_NOTHING);
+    trayMiddleClickAction->addItem(tr("Show NixNote"), TRAY_ACTION_SHOW);
+    trayMiddleClickAction->addItem(tr("New Text Note"), TRAY_ACTION_NEWNOTE);
 
     trayDoubleClickAction = new QComboBox();
     trayDoubleClickAction->addItem(tr("Do Nothing"), 0);
     trayDoubleClickAction->addItem(tr("Show NixNote"), 1);
     trayDoubleClickAction->addItem(tr("New Text Note"), 2);
-    trayDoubleClickAction->addItem(tr("New Quick Note"), 3);
-    trayDoubleClickAction->addItem(tr("Screen Capture"), 4);
 
     mouseMiddleClickAction = new QComboBox();
     mouseMiddleClickAction->addItem(tr("Open New Tab"), MOUSE_MIDDLE_CLICK_NEW_TAB);
@@ -208,12 +202,12 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     connect(showTrayIcon, SIGNAL(clicked(bool)), this, SLOT(showTrayIconChanged(bool)));
 
     if (minimizeToTray != nullptr) {
-        minimizeToTray->setChecked(global.minimizeToTray());
+        minimizeToTray->setChecked(global.readSettingMinimizeToTray());
         if (!showTrayIcon->isChecked())
             minimizeToTray->setEnabled(false);
     }
     if (closeToTray != nullptr) {
-        closeToTray->setChecked(global.closeToTray());
+        closeToTray->setChecked(global.readSettingCloseToTray());
         if (!showTrayIcon->isChecked())
             closeToTray->setEnabled(false);
     }
@@ -255,9 +249,11 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("showTrayIcon", showTrayIcon->isChecked());
     global.settings->setValue("showPDFs", showPDFs->isChecked());
     global.settings->setValue("mouseMiddleClickOpen", mouseMiddleClickAction->currentIndex());
+
     global.settings->setValue("trayDoubleClickAction", trayDoubleClickAction->currentIndex());
     global.settings->setValue("traySingleClickAction", traySingleClickAction->currentIndex());
     global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentIndex());
+
     global.settings->setValue("systemNotifier", sysnotifier);
     global.settings->setValue("showNoteListGrid", showNoteListGrid->isChecked());
     global.settings->setValue("alternateNoteListColors", alternateNoteListColors->isChecked());

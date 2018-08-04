@@ -73,6 +73,7 @@ class Thumbnailer;
 class NTableView;
 class SyncRunner;
 
+
 // Define the actual class
 class NixNote : public QMainWindow
 {
@@ -110,7 +111,7 @@ private:
 
     // Tool & menu bar
     NMainMenuBar *menuBar;
-    TrayMenu   *trayIconContextMenu;
+    //TrayMenu   *trayIconContextMenu;
     QToolBar *toolBar;
     QAction *leftArrowButton;
     QAction *rightArrowButton;
@@ -129,7 +130,6 @@ private:
     QAction *quitAction;
     bool minimizeToTray;
     bool closeToTray;
-    bool closeFlag;
     bool unhidingWindow;
 
     // Sync Button rotate
@@ -181,6 +181,8 @@ private:
     void saveNoteColumnWidths();
     void checkLeftPanelSeparators();
     QString selectExportPDFFileName();
+    void trayActivatedAction(int value);
+    TrayMenu *createTrayContexMenu();
 
 public:
     NixNote(QWidget *parent = 0);  // Constructor
@@ -258,7 +260,6 @@ public slots:
     void printNote();
     void printPreviewNote();
     void fastPrintNote();
-    void trayActivated(QSystemTrayIcon::ActivationReason reason);
     void showMainWindow();
     void openPreferences();
     void notifySyncComplete();
@@ -292,6 +293,7 @@ public slots:
     void indexFinished(bool finished);
     void onExportAsPdf();
     void saveOnExit();
+    void onTrayActivated(QSystemTrayIcon::ActivationReason reason);
 
 signals:
     void syncRequested();

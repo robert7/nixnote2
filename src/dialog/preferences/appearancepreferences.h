@@ -28,6 +28,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPushButton>
 #include <QScrollArea>
 
+#define TRAY_ACTION_NOTHING 0
+#define TRAY_ACTION_SHOW 1
+#define TRAY_ACTION_NEWNOTE 2
 class AppearancePreferences : public QWidget
 {
     Q_OBJECT
