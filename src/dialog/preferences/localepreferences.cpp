@@ -61,18 +61,18 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     dateFormatCombo = new QComboBox(this);
     const QStringList dateFormats = global.getDateFormats();
     for (int i = 0; i < dateFormats.size() - 1; i++) {
-        const QString fmt = dateFormats[i];
-        dateFormatCombo->addItem(fmt + date.toString(fmt), i + 1);
+        const QString fmt = dateFormats.at(i);
+        dateFormatCombo->addItem(fmt + QStringLiteral(" - ") + date.toString(fmt), i + 1);
     }
 
 
     timeFormatLabel = new QLabel(tr("Time Format"), this);
     timeFormatLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     timeFormatCombo = new QComboBox(this);
-    const QStringList timeFormats = global.getDateFormats();
+    const QStringList timeFormats = global.getTimeFormats();
     for (int i = 0; i < timeFormats.size() - 1; i++) {
-        const QString fmt = timeFormats[i];
-        timeFormatCombo->addItem(fmt + time.toString(fmt), i + 1);
+        const QString fmt = timeFormats.at(i);
+        timeFormatCombo->addItem(fmt + QStringLiteral(" - ") + time.toString(fmt), i + 1);
     }
 
     mainLayout->addWidget(translationLabel,0,0);

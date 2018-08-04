@@ -631,8 +631,8 @@ void Global::setLastReminderTime(qlonglong value) {
 // Setup the default date & time formatting
 void Global::setupDateTimeFormat() {
     settings->beginGroup(INI_GROUP_LOCALE);
-    int dateFmtNo = settings->value("dateFormat", MMddyy).toInt();
-    int timeFmtNo = settings->value("timeFormat", HHmmss).toInt();
+    int dateFmtNo = settings->value("dateFormat", 1).toInt();
+    int timeFmtNo = settings->value("timeFormat", 1).toInt();
     settings->endGroup();
 
     this->setDateFormat(dateFmtNo);
@@ -1481,24 +1481,22 @@ void Global::setDateFormat(int fmtNo) {
 
 QString Global::getDateFormatByNo(int fmtNo) const {
     QStringList l = getDateFormats();
+    //QLOG_DEBUG() << l << "size=" << l.size();
     if (fmtNo < 1 || (fmtNo > l.size())) {
         fmtNo = 1;
     }
-    return l[fmtNo - 1];
+    return l.at(fmtNo - 1);
 }
 
 QStringList Global::getDateFormats() const {
-    QStringList l;
-    l << "MM/dd/yy" << "MM/dd/yyyy" << "M/dd/yyyy" << "M/d/yyyy" << "dd/MM/yy"
-      << "d/M/yy" << "dd/MM/yyyy" << "d/M/yyyy" << "yyyy-MM-dd" << "yy-MM-dd"
-      << "yyMMdd" << "MM.dd.yy" << "MM.dd.yyyy";
+    return (QStringList() << "MM/dd/yy" << "MM/dd/yyyy" << "M/dd/yyyy" << "M/d/yyyy" << "dd/MM/yy"
+                                   << "d/M/yy" << "dd/MM/yyyy" << "d/M/yyyy" << "yyyy-MM-dd" << "yy-MM-dd"
+                                   << "yyMMdd" << "MM.dd.yy" << "MM.dd.yyyy");
 }
 
 QStringList Global::getTimeFormats() const {
-    QStringList l;
-    l << "HH:mm:ss" << "HH:MM:SS a" << "HH:mm" << "HH:mm a" << "hh:mm:ss"
-      << "hh:mm:ss a" << "h:mm:ss a" << "hh:mm" << "hh:mm a" << "h:mm a";
-    return l;
+    return (QStringList() << "HH:mm:ss" << "HH:MM:SS a" << "HH:mm" << "HH:mm a" << "hh:mm:ss"
+                                   << "hh:mm:ss a" << "h:mm:ss a" << "hh:mm" << "hh:mm a" << "h:mm a");
 }
 
 const QString &Global::getTimeFormat() const {
@@ -1514,7 +1512,7 @@ QString Global::getTimeFormatByNo(int fmtNo) const {
     if (fmtNo < 1 || (fmtNo > l.size())) {
         fmtNo = 1;
     }
-    return l[fmtNo - 1];
+    return l.at(fmtNo - 1);
 }
 
 QString Global::getDateTimeFormat() const {

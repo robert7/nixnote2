@@ -184,6 +184,14 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     global.setupShortcut(insertDatetimeShortcut, "Insert_DateTime");
     connect(insertDatetimeShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
 
+    insertDateShortcut = new QShortcut(this);
+    global.setupShortcut(insertDateShortcut, "Insert_Date");
+    connect(insertDatetimeShortcut, SIGNAL(activated()), this, SLOT(insertDate()));
+
+    insertTimeShortcut = new QShortcut(this);
+    global.setupShortcut(insertTimeShortcut, "Insert_Time");
+    connect(insertTimeShortcut, SIGNAL(activated()), this, SLOT(insertTime()));
+
     fontColorShortcut = new QShortcut(this);
     global.setupShortcut(fontColorShortcut, "Format_Font_Color");
     connect(fontColorShortcut, SIGNAL(activated()), this, SLOT(fontColorClicked()));
@@ -2558,9 +2566,23 @@ void NBrowserWindow::focusNote() {
 
 // Insert the date/time into a note
 void NBrowserWindow::insertDatetime() {
-    QDateTime dt = QDateTime::currentDateTime();
-    QString dts = dt.toString(global.getDateTimeFormat());
+    const QString format = global.getDateTimeFormat();
+    insertDateTimeUsingFormat(format);
+}
 
+void NBrowserWindow::insertDate() {
+    const QString format = global.getDateFormat();
+    insertDateTimeUsingFormat(format);
+}
+
+void NBrowserWindow::insertTime() {
+    const QString format = global.getTimeFormat();
+    insertDateTimeUsingFormat(format);
+}
+
+void NBrowserWindow::insertDateTimeUsingFormat(const QString &format) const {
+    QDateTime dt = QDateTime::currentDateTime();
+    QString dts = dt.toString(format);
     editor->page()->mainFrame()->evaluateJavaScript("document.execCommand('insertHtml', false, '" + dts + "');");
     editor->setFocus();
 }
