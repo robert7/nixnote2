@@ -1861,7 +1861,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="42"/>
-        <source>Czech (Check Republic)</source>
+        <source>Czech</source>
         <translation></translation>
     </message>
     <message>
