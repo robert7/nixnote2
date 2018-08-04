@@ -39,7 +39,7 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     translationCombo = new QComboBox(this);
     translationCombo->addItem(tr("<System Default>"), QLocale::system().name());
     translationCombo->addItem(tr("Catalan"), "ca");
-    translationCombo->addItem(tr("Czech (Check Republic)"), "cs_CZ");
+    translationCombo->addItem(tr("Czech"), "cs_CZ");
     translationCombo->addItem(tr("Danish"), "da");
     translationCombo->addItem(tr("German"), "de");
     translationCombo->addItem(tr("English (US)"), "en_US");

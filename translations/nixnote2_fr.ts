@@ -1881,7 +1881,7 @@ Voir http://www.w3schools.com/charsets/ pour la liste.</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="42"/>
-        <source>Czech (Check Republic)</source>
+        <source>Czech</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4026,7 +4026,7 @@ Tant que tidy n&apos;est pas installé, vous ne pourrez pas sauvegarder des note
     </message>
     <message>
         <location filename="../nixnote.cpp" line="553"/>
-        <source>Shortcut Notes</source>
+        <source>Shortcut notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4036,7 +4036,7 @@ Tant que tidy n&apos;est pas installé, vous ne pourrez pas sauvegarder des note
     </message>
     <message>
         <location filename="../nixnote.cpp" line="557"/>
-        <source>Recently Updated Notes</source>
+        <source>Recently updated</source>
         <translation>Notes récemment modifiées</translation>
     </message>
     <message>

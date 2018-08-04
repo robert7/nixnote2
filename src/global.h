@@ -224,10 +224,10 @@ public:
     ShortcutKeys *shortcutKeys;            // Keyboard shortcuts defined by the user
     QList<qint32> expungedResources;       // List of expunged resource LIDs
     QFileSystemWatcher *resourceWatcher;    // Watcher for file system directories.  New files here will create anote
-    bool showTrayIcon();                   // Should we show the tray icon?
-    bool closeToTray();                    // Close it to the tray.  We really just hide it.
-    bool minimizeToTray();                 // Minimize it to tray rather than the task list.  We really just hide it.
-    void setMinimizeToTray(bool value);    // Set if we should minimize it to the tray
+    bool readSettingShowTrayIcon();                   // Should we show the tray icon?
+    bool readSettingCloseToTray();                    // Close it to the tray.  We really just hide it.
+    bool readSettingMinimizeToTray();                 // Minimize it to tray rather than the task list.  We really just hide it.
+    void saveSettingMinimizeToTray(bool value);    // Set if we should minimize it to the tray
     void setCloseToTray(bool value);       // Set if we should close it to the tray
     bool showNoteListGrid();               // Should we whow the table grid?
     bool alternateNoteListColors();        // Should we alternate the table colors?

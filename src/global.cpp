@@ -325,7 +325,7 @@ void Global::appendFilter(FilterCriteria *criteria) {
 
 
 // Should we show the tray icon?
-bool Global::showTrayIcon() {
+bool Global::readSettingShowTrayIcon() {
     bool showTrayIcon;
     settings->beginGroup(INI_GROUP_APPEARANCE);
     showTrayIcon = settings->value("showTrayIcon", false).toBool();
@@ -335,7 +335,7 @@ bool Global::showTrayIcon() {
 
 
 // Should we minimize to the tray
-bool Global::minimizeToTray() {
+bool Global::readSettingMinimizeToTray() {
     bool minimizeToTray;
     settings->beginGroup(INI_GROUP_APPEARANCE);
     minimizeToTray = settings->value("minimizeToTray", true).toBool();
@@ -345,7 +345,7 @@ bool Global::minimizeToTray() {
 
 
 // Should we close to the tray?
-bool Global::closeToTray() {
+bool Global::readSettingCloseToTray() {
     bool showTrayIcon;
     settings->beginGroup(INI_GROUP_APPEARANCE);
     showTrayIcon = settings->value("closeToTray", true).toBool();
@@ -355,7 +355,7 @@ bool Global::closeToTray() {
 
 
 // Save the user request to minimize to the tray
-void Global::setMinimizeToTray(bool value) {
+void Global::saveSettingMinimizeToTray(bool value) {
     settings->beginGroup(INI_GROUP_SAVE_STATE);
     settings->setValue("minimizeToTray", value);
     settings->endGroup();

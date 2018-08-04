@@ -26,13 +26,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class TrayMenu : public QMenu
 {
     Q_OBJECT
+
 private:
     QList<QAction*> actions;
     QMenu *pinnedMenu;
     QMenu *favoriteNotesMenu;
     QMenu *recentlyUpdatedMenu;
     QSignalMapper *signalMapper;
-    void buildMenu(QMenu *actionMenu, QList<QPair<qint32, QString> > records);
+    void buildMenu(QString debugInfo, QMenu *actionMenu, QList<QPair<qint32, QString> > records);
 
 public:
     enum ActionMenuType {
@@ -50,7 +51,6 @@ signals:
 public slots:
     void buildActionMenu();
     void noteChosen(int note);
-
 };
 
 #endif // TRAYMENU_H
