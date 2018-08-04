@@ -1075,7 +1075,7 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="54"/>
-        <source>Insert Date &amp;&amp; Time</source>
+        <source>Insert Date Time</source>
         <translation>Vložit Datum a Čas</translation>
     </message>
     <message>
@@ -1148,7 +1148,7 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="217"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="218"/>
-        <source>Insert Date &amp; Time</source>
+        <source>Insert Date Time</source>
         <translation>Vložit Datum a Čas</translation>
     </message>
     <message>
@@ -3844,7 +3844,7 @@ Přejete si pokračovat?</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="132"/>
-        <source>Insert Date &amp;&amp; Time</source>
+        <source>Insert Date Time</source>
         <translation>Vložit Datum a Čas</translation>
     </message>
     <message>

@@ -152,7 +152,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     global.setupShortcut(encryptAction, "Edit_Encrypt_Text");
     connect(encryptAction, SIGNAL(triggered()), parent, SLOT(encryptButtonPressed()));
 
-    insertDateTimeAction = new QAction(tr("Insert Date && Time"), this);
+    insertDateTimeAction = new QAction(tr("Insert Date Time"), this);
     global.setupShortcut(insertDateTimeAction, "Insert_DateTime");
     contextMenu->addAction(insertDateTimeAction);
     connect(insertDateTimeAction, SIGNAL(triggered()), parent, SLOT(insertDatetime()));  // => nbrowserwindow.cpp

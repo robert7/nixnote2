@@ -132,6 +132,9 @@ About_Log                                       // Message log
 About_About                                     // About dialog box
 
 Insert_DateTime               Ctrl+;            // Insert the current date/time
+Insert_Date                   Ctrl+,            // Insert the current date
+Insert_Time                   Ctrl+.            // Insert the current time
+
 Focus_Title                   F2                // Focus on the current note title
 Focus_Tag                     F3                // Focus on the tag line
 Focus_Note                                      // Focus on the note itself

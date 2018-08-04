@@ -58,51 +58,43 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
 
     dateFormatLabel = new QLabel(tr("Date Format"), this);
     dateFormatLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
-    dateFormat = new QComboBox(this);
-    dateFormat->addItem(tr("MM/dd/yy - ") + date.toString("MM/dd/yy"), MMddyy);
-    dateFormat->addItem(tr("MM/dd/yyyy - ")+ date.toString("MM/dd/yyyy"), MMddyyyy);
-    dateFormat->addItem(tr("M/dd/yyyy - ")+ date.toString("M/dd/yyyy"), Mddyyyy);
-    dateFormat->addItem(tr("M/d/yyyy - ")+ date.toString("M/d/yyyy"), Mdyyyy);
-    dateFormat->addItem(tr("dd/MM/yy - ")+ date.toString("dd/MM/yy"), ddMMyy);
-    dateFormat->addItem(tr("d/M/yy - ")+ date.toString("d/M/yy"), dMyy);
-    dateFormat->addItem(tr("dd/MM/yyyy - ")+ date.toString("dd/MM/yyyy"), ddMMyyyy);
-    dateFormat->addItem(tr("d/M/yyyy - ")+ date.toString("d/M/yyyy"), dMyyyy);
-    dateFormat->addItem(tr("yyyy-MM-dd - ")+ date.toString("yyyy-MM-dd"), yyyyMMdd);
-    dateFormat->addItem(tr("yy-MM-dd - ")+ date.toString("yy-MM-dd"), yyMMdd);
-    dateFormat->addItem(tr("yyMMdd - ")+ date.toString("yyMMdd"), yyMMdd2);
+    dateFormatCombo = new QComboBox(this);
+    const QStringList dateFormats = global.getDateFormats();
+    for (int i = 0; i < dateFormats.size(); i++) {
+        const QString fmt = dateFormats.at(i);
+        dateFormatCombo->addItem(fmt + QStringLiteral(" - ") + date.toString(fmt), i + 1);
+    }
 
 
     timeFormatLabel = new QLabel(tr("Time Format"), this);
     timeFormatLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
-    timeFormat = new QComboBox(this);
-    timeFormat->addItem(tr("HH:mm:ss - ")+time.toString("HH:mm:ss"), HHmmss);
-    timeFormat->addItem(tr("HH:mm:ss a - ")+time.toString("HH:mm:ss a"), HHmmssa);
-    timeFormat->addItem(tr("HH:mm - ")+time.toString("HH:mm"), HHmm);
-    timeFormat->addItem(tr("HH:mm a - ")+time.toString("HH:mm a"), HHmma);
-    timeFormat->addItem(tr("hh:mm:ss - ")+time.toString("hh:mm:ss"), hhmmss);
-    timeFormat->addItem(tr("hh:mm:ss a- ")+time.toString("hh:mm:ss a"), hhmmssa);
-    timeFormat->addItem(tr("h:mm:ss a - ")+time.toString("h:mm:ss a"), hmmssa);
-    timeFormat->addItem(tr("hh:mm - ")+time.toString("HH:mm"), hhmm);
-    timeFormat->addItem(tr("hh:mm a - ")+time.toString("hh:mm a"), hhmma);
-    timeFormat->addItem(tr("h:mm a - ")+time.toString("h:mm a"), hmma);
+    timeFormatCombo = new QComboBox(this);
+    const QStringList timeFormats = global.getTimeFormats();
+    for (int i = 0; i < timeFormats.size(); i++) {
+        const QString fmt = timeFormats.at(i);
+        timeFormatCombo->addItem(fmt + QStringLiteral(" - ") + time.toString(fmt), i + 1);
+    }
 
     mainLayout->addWidget(translationLabel,0,0);
     mainLayout->addWidget(translationCombo,0,1);
     mainLayout->addWidget(dateFormatLabel,1,0);
-    mainLayout->addWidget(dateFormat,1,1);
+    mainLayout->addWidget(dateFormatCombo,1,1);
     mainLayout->addWidget(timeFormatLabel,2,0);
-    mainLayout->addWidget(timeFormat,2,1);
+    mainLayout->addWidget(timeFormatCombo,2,1);
     mainLayout->addWidget(restartLabel,3,0);
 
     global.settings->beginGroup(INI_GROUP_LOCALE);
     QString translationi = global.settings->value("translation", "").toString();
-    int datei = global.settings->value("dateFormat", MMddyy).toInt();
-    int timei = global.settings->value("timeFormat", HHmmss).toInt();
+    int datei = global.settings->value("dateFormat", 1).toInt();
+    int timei = global.settings->value("timeFormat", 1).toInt();
     global.settings->endGroup();
-    int index = dateFormat->findData(datei);
-    dateFormat->setCurrentIndex(index);
-    index = timeFormat->findData(timei);
-    timeFormat->setCurrentIndex(index);
+
+    int index = dateFormatCombo->findData(datei);
+    dateFormatCombo->setCurrentIndex(index);
+
+    index = timeFormatCombo->findData(timei);
+    timeFormatCombo->setCurrentIndex(index);
+
     index = translationCombo->findData(translationi);
     translationCombo->setCurrentIndex(index);
     this->setFont(global.getGuiFont(font()));
@@ -110,98 +102,24 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
 
 
 LocalePreferences::~LocalePreferences() {
-//    delete dateFormat;
-//    delete dateFormatLabel;
-//    delete timeFormat;
-//    delete timeFormatLabel;
-//    delete mainLayout;
 }
 
 
 
 void LocalePreferences::saveValues() {
-    int date = getDateFormat();
-    int time = getTimeFormat();
+    int dateFormat = getDateFormatNo();
+    int timeFormat = getTimeFormatNo();
     QString translation = getTranslation();
 
     global.settings->beginGroup(INI_GROUP_LOCALE);
     global.settings->setValue("translation", translation);
-    global.settings->setValue("dateFormat", date);
-    global.settings->setValue("timeFormat", time);
+    global.settings->setValue("dateFormat", dateFormat);
+    global.settings->setValue("timeFormat", timeFormat);
     global.settings->endGroup();
 
-    datefmt = "MM/dd/yy";
-    switch (date) {
-    case MMddyy:
-        datefmt = "MM/dd/yy";
-        break;
-    case MMddyyyy:
-        datefmt = "MM/dd/yyyy";
-        break;
-    case Mddyyyy:
-        datefmt = "M/dd/yyyy";
-        break;
-    case Mdyyyy:
-        datefmt = "M/d/yyyy";
-        break;
-    case ddMMyy:
-        datefmt = "dd/MM/yy";
-        break;
-    case dMyy:
-        datefmt = "d/M/yy";
-        break;
-    case ddMMyyyy:
-        datefmt = "dd/MM/yyyy";
-        break;
-    case dMyyyy:
-        datefmt = "d/M/yyyy";
-        break;
-    case yyyyMMdd:
-        datefmt = "yyyy-MM-dd";
-        break;
-    case yyMMdd:
-        datefmt = "yy-MM-dd";
-        break;
-    case yyMMdd2:
-        datefmt = "yyMMdd";
-        break;
-    }
 
-    timefmt = "HH:mm:ss";
-    switch (time) {
-    case HHmmss:
-        timefmt = "HH:mm:ss";
-        break;
-    case HHmmssa:
-        timefmt = "HH:MM:SS a";
-        break;
-    case HHmm:
-        timefmt = "HH:mm";
-        break;
-    case HHmma:
-        timefmt = "HH:mm a";
-        break;
-    case hhmmss:
-        timefmt = "hh:mm:ss";
-        break;
-    case hhmmssa:
-        timefmt = "hh:mm:ss a";
-        break;
-    case hhmm:
-        timefmt = "hh:mm";
-        break;
-    case hhmma:
-        timefmt = "hh:mm a";
-        break;
-    case hmma:
-        timefmt = "h:mm a";
-        break;
-    case hmmssa:
-        timefmt = "h:mm:ss a";
-        break;
-    }
-    global.dateFormat = datefmt;
-    global.timeFormat = timefmt;
+    global.setDateFormat(dateFormat);
+    global.setTimeFormat(timeFormat);
 }
 
 
@@ -213,14 +131,14 @@ QString LocalePreferences::getTranslation() {
 }
 
 
-int LocalePreferences::getDateFormat() {
-    int index = dateFormat->currentIndex();
-    return dateFormat->itemData(index).toInt();
+int LocalePreferences::getDateFormatNo() {
+    int index = dateFormatCombo->currentIndex();
+    return dateFormatCombo->itemData(index).toInt();
 }
 
 
 
-int LocalePreferences::getTimeFormat() {
-    int index = timeFormat->currentIndex();
-    return timeFormat->itemData(index).toInt();
+int LocalePreferences::getTimeFormatNo() {
+    int index = timeFormatCombo->currentIndex();
+    return timeFormatCombo->itemData(index).toInt();
 }
