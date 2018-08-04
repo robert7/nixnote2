@@ -309,10 +309,6 @@
         <translation type="unfinished">新規テキストノート</translation>
     </message>
     <message>
-        <source>Screen Capture</source>
-        <translation type="obsolete">スクリーンキャプチャ</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="63"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="68"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="73"/>
@@ -737,18 +733,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>API rate limit exceeded.  Please try again in </source>
-        <translation type="vanished">APIの更新制限を超えました。次の時間経過後、再度試みてください　</translation>
-    </message>
-    <message>
-        <source> minutes.</source>
-        <translation type="vanished">分。</translation>
-    </message>
-    <message>
-        <source> minute.</source>
-        <translation type="vanished">分。</translation>
-    </message>
-    <message>
         <location filename="../src/communication/communicationmanager.cpp" line="1042"/>
         <source>API rate limit exceeded.</source>
         <translation type="unfinished"></translation>
@@ -790,13 +774,6 @@
         <location filename="../src/dialog/databasestatus.cpp" line="60"/>
         <source>OK</source>
         <translation>OK</translation>
-    </message>
-</context>
-<context>
-    <name>DateDelegate</name>
-    <message>
-        <source>Today</source>
-        <translation type="vanished">今日</translation>
     </message>
 </context>
 <context>
@@ -858,34 +835,6 @@
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="64"/>
         <source>Auto-Save Interval (in seconds).</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message Level</source>
-        <translation type="vanished">メッセージレベル</translation>
-    </message>
-    <message>
-        <source>Trace</source>
-        <translation type="vanished">トレース</translation>
-    </message>
-    <message>
-        <source>Debug</source>
-        <translation type="vanished">デバッグ</translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation type="vanished">情報</translation>
-    </message>
-    <message>
-        <source>Warnings</source>
-        <translation type="vanished">警告</translation>
-    </message>
-    <message>
-        <source>Errors</source>
-        <translation type="vanished">エラー</translation>
-    </message>
-    <message>
-        <source>Fatal</source>
-        <translation type="vanished">重大なエラー</translation>
     </message>
 </context>
 <context>
@@ -997,14 +946,6 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="278"/>
         <source>Insert Date Time</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift Right</source>
-        <translation type="vanished">右へシフト</translation>
-    </message>
-    <message>
-        <source>Shift Left</source>
-        <translation type="vanished">左へシフト</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
@@ -1121,10 +1062,6 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="260"/>
         <source>Left Justify</source>
         <translation>左揃え</translation>
-    </message>
-    <message>
-        <source>Center</source>
-        <translation type="vanished">中央</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="255"/>
@@ -1558,17 +1495,6 @@ Please specify server settings in the Preferences menu.</source>
     </message>
 </context>
 <context>
-    <name>ExternalBrowse</name>
-    <message>
-        <source>NixNote</source>
-        <translation type="vanished">NixNote</translation>
-    </message>
-    <message>
-        <source>NixNote - </source>
-        <translation type="vanished">NixNote - </translation>
-    </message>
-</context>
-<context>
     <name>ExtractNotes</name>
     <message>
         <location filename="../src/cmdtools/extractnotes.cpp" line="41"/>
@@ -1989,38 +1915,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     </message>
 </context>
 <context>
-    <name>LogViewer</name>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">閉じる</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation type="obsolete">再表示</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="vanished">保存</translation>
-    </message>
-    <message>
-        <source>Save Logs</source>
-        <translation type="vanished">ログ保存</translation>
-    </message>
-    <message>
-        <source>Save Log</source>
-        <translation type="vanished">ログ保存</translation>
-    </message>
-    <message>
-        <source>NixNote Log (*.log);;All Files (*.*)</source>
-        <translation type="vanished">NixNoteログ（*.log);;全てのファイル(*.*)</translation>
-    </message>
-</context>
-<context>
     <name>LoginDialog</name>
-    <message>
-        <source>NixNote Login</source>
-        <translation type="vanished">NixNoteログイン</translation>
-    </message>
     <message>
         <location filename="../src/dialog/logindialog.cpp" line="44"/>
         <source>Userid</source>
@@ -2252,10 +2147,6 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <translation>昨日</translation>
     </message>
     <message>
-        <source>Unable to Save</source>
-        <translation type="vanished">保存不可</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1271"/>
         <source>Insert your code here.</source>
         <translation type="unfinished"></translation>
@@ -2429,10 +2320,6 @@ Unable to decrypt.</source>
         <translation>バックアップから復元</translation>
     </message>
     <message>
-        <source>Export selected notes to a file</source>
-        <translation type="vanished">選択したノートをファイルに書きだす</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="108"/>
         <source>Import notes from an export file</source>
         <translation>書きだしたファイルからノートを読み込む</translation>
@@ -2446,10 +2333,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/nmainmenubar.cpp" line="148"/>
         <source>Open/Close Notebooks</source>
         <translation>ノートブックの表示/非表示</translation>
-    </message>
-    <message>
-        <source>Close the program</source>
-        <translation type="vanished">プログラムの終了</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="177"/>
@@ -2812,10 +2695,6 @@ Unable to decrypt.</source>
         <translation>Evernoteから切断</translation>
     </message>
     <message>
-        <source>Account information</source>
-        <translation type="vanished">アカウント情報</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="482"/>
         <source>Database Status</source>
         <translation>データベースの状態</translation>
@@ -2834,10 +2713,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/nmainmenubar.cpp" line="505"/>
         <source>&amp;Help</source>
         <translation>ヘルプ(&amp;H)</translation>
-    </message>
-    <message>
-        <source>Open the user manual.</source>
-        <translation type="vanished">ユーザマニュアルを開く</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="554"/>
@@ -2905,26 +2780,6 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Go to your Evernote account page.</source>
-        <translation type="vanished">Evernoteのアカウントページへ行く。</translation>
-    </message>
-    <message>
-        <source>Go to Evernote&apos;s support page</source>
-        <translation type="vanished">Evernoteのサポートページへ行く</translation>
-    </message>
-    <message>
-        <source>Yinxiang Biji Support</source>
-        <translation type="vanished">印象笔记サポート</translation>
-    </message>
-    <message>
-        <source>Go to Yinxiang Biji&apos;s support page</source>
-        <translation type="vanished">印象笔记のサポートへ行く</translation>
-    </message>
-    <message>
-        <source>Go to Evernote Trunk</source>
-        <translation type="vanished">Evernote　Trunkへ行く</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="555"/>
         <source>About</source>
         <translation>情報</translation>
@@ -2951,10 +2806,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/nnotebookview.cpp" line="103"/>
         <source>Add to stack</source>
         <translation>スタックの追加</translation>
-    </message>
-    <message>
-        <source>New stack</source>
-        <translation type="vanished">新規スタック</translation>
     </message>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="116"/>
@@ -3043,10 +2894,6 @@ Unable to decrypt.</source>
         <source>Untitled Note</source>
         <translation>タイトルのないノート</translation>
     </message>
-    <message>
-        <source>NixNote - </source>
-        <translation type="vanished">NixNote - </translation>
-    </message>
 </context>
 <context>
     <name>NTableView</name>
@@ -3054,14 +2901,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/ntableview.cpp" line="202"/>
         <source>Open Note</source>
         <translation>ノートを開く</translation>
-    </message>
-    <message>
-        <source>Open Note In New Tab</source>
-        <translation type="vanished">ノートを新規タブに開く</translation>
-    </message>
-    <message>
-        <source>Open Note In New Window</source>
-        <translation type="vanished">ノートを新規ウインドウで開く</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="209"/>
@@ -3593,17 +3432,9 @@ Do you wish to continue?</source>
         <translation>書式なしテキストとして貼り付け</translation>
     </message>
     <message>
-        <source>Remove Formatting</source>
-        <translation type="vanished">書式を削除</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nwebview.cpp" line="82"/>
         <source>Copy Note URL</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Background Color</source>
-        <translation type="vanished">背景の色</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="89"/>
@@ -3776,41 +3607,9 @@ Do you wish to continue?</source>
         <translation>同期</translation>
     </message>
     <message>
-        <source>Print</source>
-        <translation type="vanished">印刷</translation>
-    </message>
-    <message>
-        <source>New Text Note</source>
-        <translation type="vanished">新規テキストノート</translation>
-    </message>
-    <message>
-        <source>New Webcam Note</source>
-        <translation type="vanished">新規Webカムノート</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="338"/>
         <source>Delete</source>
         <translation>削除</translation>
-    </message>
-    <message>
-        <source>Trunk</source>
-        <translation type="vanished">Trunk</translation>
-    </message>
-    <message>
-        <source>Usage</source>
-        <translation type="vanished">用途</translation>
-    </message>
-    <message>
-        <source>Screen Capture</source>
-        <translation type="vanished">スクリーンキャプチャ</translation>
-    </message>
-    <message>
-        <source>Show/Hide</source>
-        <translation type="vanished">表示/非表示</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">閉じる</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1837"/>
@@ -3828,17 +3627,9 @@ Do you wish to continue?</source>
         <translation>ノートの取り込み</translation>
     </message>
     <message>
-        <source>NixNote Export (*.nnex);;All Files (*.*)</source>
-        <translation type="vanished">NixNote書き出し（*.nnex);;全ファイル(*.*)</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="346"/>
         <source>Print the current note</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Email</source>
-        <translation type="obsolete">電子メール</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="351"/>
@@ -3846,17 +3637,9 @@ Do you wish to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Quick Note</source>
-        <translation type="vanished">クイックノート</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="844"/>
         <source>Shortcut notes</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pinned Notes</source>
-        <translation type="vanished">Pinされたノート</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="851"/>
@@ -3868,10 +3651,6 @@ Do you wish to continue?</source>
         <location filename="../src/nixnote.cpp" line="2373"/>
         <source>Log in to Evernote</source>
         <translation>Evernoteへのログイン</translation>
-    </message>
-    <message>
-        <source>NixNote</source>
-        <translation type="vanished">NixNote</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1755"/>
@@ -3924,10 +3703,6 @@ an empty database.  Restoring into a database that
 
 Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)</source>
-        <translation type="vanished">NixNote形式(*.nnex);;Evernote形式（*.enex);;全ファイル(*.*)</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="330"/>
@@ -4028,14 +3803,6 @@ Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This feature is only available to premium users.</source>
-        <translation type="vanished">この機能は、プレミアムユーザにのみ有効です。</translation>
-    </message>
-    <message>
-        <source>Premium Feature</source>
-        <translation type="vanished">プレミアム機能</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="2414"/>
         <location filename="../src/nixnote.cpp" line="2421"/>
         <source>Error retrieving note.</source>
@@ -4069,14 +3836,6 @@ Are you sure you want to continue?</source>
         <translation>ノート復元</translation>
     </message>
     <message>
-        <source>No versions of this note can be found.</source>
-        <translation type="vanished">このノートの前の版が見つかりません。</translation>
-    </message>
-    <message>
-        <source>Note Not Found</source>
-        <translation type="vanished">ノートが見つからない</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="2662"/>
         <source>Note not found.</source>
         <translation type="unfinished"></translation>
@@ -4100,14 +3859,6 @@ Are you sure you want to continue?</source>
         <location filename="../src/nixnote.cpp" line="3137"/>
         <source>Notes will be reindexed.</source>
         <translation>ノートは再索引されます。</translation>
-    </message>
-    <message>
-        <source>Unable to find webcam or capture image.</source>
-        <translation type="vanished">Webカムやイメージキャプチャが見つかりません。</translation>
-    </message>
-    <message>
-        <source>Webcam Error</source>
-        <translation type="vanished">Webカムエラー</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3165"/>
@@ -4366,17 +4117,6 @@ Are you sure you want to continue?</source>
         <location filename="../src/dialog/preferences/preferencesdialog.cpp" line="135"/>
         <source>Advanced</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Debugging</source>
-        <translation type="vanished">デバッグ</translation>
-    </message>
-</context>
-<context>
-    <name>QApplication</name>
-    <message>
-        <source>%1 x %2 pixels </source>
-        <translation type="vanished">%1 x %2 ピクセル</translation>
     </message>
 </context>
 <context>
@@ -4662,10 +4402,6 @@ Are you sure you want to continue?</source>
 <context>
     <name>SpellCheckDialog</name>
     <message>
-        <source>Spell Check</source>
-        <translation type="vanished">スペルチェック</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/spellcheckdialog.cpp" line="52"/>
         <source>Suggestion</source>
         <translation type="unfinished"></translation>
@@ -4694,13 +4430,6 @@ Are you sure you want to continue?</source>
         <location filename="../src/dialog/spellcheckdialog.cpp" line="69"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
-    </message>
-</context>
-<context>
-    <name>SpellChecker</name>
-    <message>
-        <source>Unable to find dictionaries.  Is Huntspell installed?</source>
-        <translation type="vanished">辞書が見つかりません。Huntｓpellがインストールサれていますか？</translation>
     </message>
 </context>
 <context>

@@ -13,10 +13,6 @@
         <source>Version: </source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
-        <translation type="vanished">UK English translation by R.J.V. Bertin &lt;rjvbertin@gmail.com&gt;</translation>
-    </message>
 </context>
 <context>
     <name>AccountDialog</name>
@@ -287,10 +283,6 @@
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="56"/>
         <source>Set author on new notes.</source>
         <translation></translation>
-    </message>
-    <message>
-        <source>Preview fonts in editor dialag*</source>
-        <translation type="vanished">Preview fonts in editor dialog</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="62"/>
@@ -3441,10 +3433,6 @@ Do you wish to continue?</translation>
         <location filename="../src/gui/nwebview.cpp" line="82"/>
         <source>Copy Note URL</source>
         <translation></translation>
-    </message>
-    <message>
-        <source>Background Color</source>
-        <translation type="vanished">Background Colour</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="89"/>

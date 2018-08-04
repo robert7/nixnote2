@@ -255,14 +255,6 @@
         <translation>Afficher le total des cahier de notes et étiquettes</translation>
     </message>
     <message>
-        <source>Auto-Hide editor toolbar</source>
-        <translation type="vanished">Cacher automatiquement la barre d&apos;édition</translation>
-    </message>
-    <message>
-        <source>Disable note editing on statup</source>
-        <translation type="vanished">Désactiver l&apos;édition de notes au démarrage</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="50"/>
         <source>Disable note editing on startup</source>
         <translation type="unfinished"></translation>
@@ -305,27 +297,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show/Hide NixNote</source>
-        <translation type="vanished">Montrer/Cacher NixNote</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="64"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="69"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="74"/>
         <source>New Text Note</source>
         <translation>Nouvelle note texte</translation>
-    </message>
-    <message>
-        <source>New Quick Note</source>
-        <translation type="vanished">Nouvelle note rapide</translation>
-    </message>
-    <message>
-        <source>Screen Capture</source>
-        <translation type="vanished">Enregistrement de l&apos;écran</translation>
-    </message>
-    <message>
-        <source>Open New Tab</source>
-        <translation type="vanished">Ouvrir un nouvel onglet</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="63"/>
@@ -752,18 +728,6 @@
         <translation>URL notestore du cahier de notes lié manquante.</translation>
     </message>
     <message>
-        <source>API rate limit exceeded.  Please try again in </source>
-        <translation type="vanished">Ratio limite de l&apos;API dépassé.  Réessayer dans </translation>
-    </message>
-    <message>
-        <source> minutes.</source>
-        <translation type="vanished"> minutes.</translation>
-    </message>
-    <message>
-        <source> minute.</source>
-        <translation type="vanished"> minute.</translation>
-    </message>
-    <message>
         <location filename="../src/communication/communicationmanager.cpp" line="1042"/>
         <source>API rate limit exceeded.</source>
         <translation type="unfinished"></translation>
@@ -805,13 +769,6 @@
         <location filename="../src/dialog/databasestatus.cpp" line="60"/>
         <source>OK</source>
         <translation>OK</translation>
-    </message>
-</context>
-<context>
-    <name>DateDelegate</name>
-    <message>
-        <source>Today</source>
-        <translation type="vanished">Aujourd&apos;hui</translation>
     </message>
 </context>
 <context>
@@ -873,26 +830,6 @@
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="64"/>
         <source>Auto-Save Interval (in seconds).</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message Level</source>
-        <translation type="vanished">Niveau des messages</translation>
-    </message>
-    <message>
-        <source>Trace</source>
-        <translation type="vanished">Trace</translation>
-    </message>
-    <message>
-        <source>Debug</source>
-        <translation type="vanished">Débogue</translation>
-    </message>
-    <message>
-        <source>Warnings</source>
-        <translation type="vanished">Avertissements</translation>
-    </message>
-    <message>
-        <source>Errors</source>
-        <translation type="vanished">Erreurs</translation>
     </message>
 </context>
 <context>
@@ -1004,14 +941,6 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="278"/>
         <source>Insert Date Time</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift Right</source>
-        <translation type="vanished">Décaler à droite</translation>
-    </message>
-    <message>
-        <source>Shift Left</source>
-        <translation type="vanished">Décaler à gauche</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
@@ -1128,10 +1057,6 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="260"/>
         <source>Left Justify</source>
         <translation>Justifier à gauche</translation>
-    </message>
-    <message>
-        <source>Center</source>
-        <translation type="vanished">Centrer</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="255"/>
@@ -1924,46 +1849,6 @@ Voir http://www.w3schools.com/charsets/ pour la liste.</translation>
         <translation>Format des dates</translation>
     </message>
     <message>
-        <source>MM/dd/yy - </source>
-        <translation type="vanished">MM/jj/aa - </translation>
-    </message>
-    <message>
-        <source>MM/dd/yyyy - </source>
-        <translation type="vanished">MM/jj/aaaa - </translation>
-    </message>
-    <message>
-        <source>M/dd/yyyy - </source>
-        <translation type="vanished">M/jj/aaaa - </translation>
-    </message>
-    <message>
-        <source>M/d/yyyy - </source>
-        <translation type="vanished">M/j/aaaa - </translation>
-    </message>
-    <message>
-        <source>dd/MM/yy - </source>
-        <translation type="vanished">jj/MM/aa - </translation>
-    </message>
-    <message>
-        <source>d/M/yy - </source>
-        <translation type="vanished">j/M/aa - </translation>
-    </message>
-    <message>
-        <source>dd/MM/yyyy - </source>
-        <translation type="vanished">jj/MM/aaaa - </translation>
-    </message>
-    <message>
-        <source>d/M/yyyy - </source>
-        <translation type="vanished">j/M/aaaa - </translation>
-    </message>
-    <message>
-        <source>yyyy-MM-dd - </source>
-        <translation type="vanished">aaaa-MM-jj</translation>
-    </message>
-    <message>
-        <source>yy-MM-dd - </source>
-        <translation type="vanished">aa-MM-jj - </translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="69"/>
         <source>Time Format</source>
         <translation>Format de l&apos;heure</translation>
@@ -2026,38 +1911,7 @@ Voir http://www.w3schools.com/charsets/ pour la liste.</translation>
     </message>
 </context>
 <context>
-    <name>LogViewer</name>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">Fermer</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation type="vanished">Rafraichir</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="vanished">Sauvegarder</translation>
-    </message>
-    <message>
-        <source>Save Logs</source>
-        <translation type="vanished">Sauvegarder les historiques d&apos;activité</translation>
-    </message>
-    <message>
-        <source>Save Log</source>
-        <translation type="vanished">Sauvegarder l&apos;historique d&apos;activité</translation>
-    </message>
-    <message>
-        <source>NixNote Log (*.log);;All Files (*.*)</source>
-        <translation type="vanished">Historique d&apos;activité NixNote (*.log);;Tous les fichiers (*.*)</translation>
-    </message>
-</context>
-<context>
     <name>LoginDialog</name>
-    <message>
-        <source>NixNote Login</source>
-        <translation type="vanished">Ouverture de session NixNote</translation>
-    </message>
     <message>
         <location filename="../src/dialog/logindialog.cpp" line="44"/>
         <source>Userid</source>
@@ -2289,14 +2143,6 @@ Voir http://www.w3schools.com/charsets/ pour la liste.</translation>
         <translation>Hier</translation>
     </message>
     <message>
-        <source>Unable to Save</source>
-        <translation type="vanished">Impossible de sauvegarder</translation>
-    </message>
-    <message>
-        <source>Unable to save this note.  Either tidy isn&apos;t installed or the note is too complex to save.</source>
-        <translation type="vanished">Impossible de sauvegarder cette note.  Ou bien tidy n&apos;est pas installé, ou bien la note est trop compliquée pour être sauvegarder.</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1271"/>
         <source>Insert your code here.</source>
         <translation type="unfinished"></translation>
@@ -2471,10 +2317,6 @@ Impossible de déchiffrer.</translation>
         <translation>Restaurer à partir d&apos;une sauvegarde</translation>
     </message>
     <message>
-        <source>Export selected notes to a file</source>
-        <translation type="vanished">Exporter les notes sélectionnées dans un fichier</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="108"/>
         <source>Import notes from an export file</source>
         <translation>Importer des notes à partir d&apos;un fichier</translation>
@@ -2488,10 +2330,6 @@ Impossible de déchiffrer.</translation>
         <location filename="../src/gui/nmainmenubar.cpp" line="148"/>
         <source>Open/Close Notebooks</source>
         <translation>Ouvrir/fermer les cahiers de notes</translation>
-    </message>
-    <message>
-        <source>Close the program</source>
-        <translation type="vanished">Fermer le programme</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="177"/>
@@ -2534,10 +2372,6 @@ Impossible de déchiffrer.</translation>
         <translation>&amp;Restaurer la base de données</translation>
     </message>
     <message>
-        <source>&amp;Export Notes</source>
-        <translation type="vanished">&amp;Exporter les notes</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="107"/>
         <source>&amp;Import notes</source>
         <translation>&amp;Importer des notes</translation>
@@ -2556,10 +2390,6 @@ Impossible de déchiffrer.</translation>
         <location filename="../src/gui/nmainmenubar.cpp" line="147"/>
         <source>&amp;Open/Close Notebooks</source>
         <translation>&amp;Ouvrir/fermer les cahiers de notes</translation>
-    </message>
-    <message>
-        <source>E&amp;xit</source>
-        <translation type="vanished">&amp;Quitter</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="181"/>
@@ -2747,10 +2577,6 @@ Impossible de déchiffrer.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New &amp;Webcam Note</source>
-        <translation type="vanished">Nouvelle note &amp;filmée</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="398"/>
         <source>Dupl&amp;icate Note</source>
         <translation>Dupli&amp;quer la note</translation>
@@ -2796,38 +2622,14 @@ Impossible de déchiffrer.</translation>
         <translation>&amp;Déconnecter</translation>
     </message>
     <message>
-        <source>Pause &amp;Indexing</source>
-        <translation type="vanished">Mettre l&apos;indexation en &amp;pause</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="457"/>
         <source>Temporarily pause indexing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Disable &amp;Editing</source>
-        <translation type="vanished">Désactiver l&apos;é&amp;dition</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="465"/>
         <source>Temporarily disable note editing</source>
         <translation>Désactiver temporairement l&apos;édition</translation>
-    </message>
-    <message>
-        <source>A&amp;ccount</source>
-        <translation type="vanished">Co&amp;mpte</translation>
-    </message>
-    <message>
-        <source>&amp;Reindex Database</source>
-        <translation type="vanished">&amp;Réindexer la base de données</translation>
-    </message>
-    <message>
-        <source>&amp;User&apos;s Guide</source>
-        <translation type="vanished">&amp;Guide de l&apos;utilisateur</translation>
-    </message>
-    <message>
-        <source>Shortcuts</source>
-        <translation type="obsolete">Raccourcis</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="546"/>
@@ -2890,14 +2692,6 @@ Impossible de déchiffrer.</translation>
         <translation>Se déconnecter d&apos;Evernote</translation>
     </message>
     <message>
-        <source>Account information</source>
-        <translation type="vanished">Informations sur le compte</translation>
-    </message>
-    <message>
-        <source>&amp;Database Status</source>
-        <translation type="vanished">&amp;État de la base de données</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="482"/>
         <source>Database Status</source>
         <translation>État de la base de données</translation>
@@ -2906,10 +2700,6 @@ Impossible de déchiffrer.</translation>
         <location filename="../src/gui/nmainmenubar.cpp" line="475"/>
         <source>Reindex all notes</source>
         <translation>Réindexer toutes les notes</translation>
-    </message>
-    <message>
-        <source>&amp;Import Folders</source>
-        <translation type="vanished">&amp;Importer des dossiers</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="498"/>
@@ -2922,37 +2712,9 @@ Impossible de déchiffrer.</translation>
         <translation>&amp;Aide</translation>
     </message>
     <message>
-        <source>Open the user manual.</source>
-        <translation type="vanished">Ouvrir le manuel utilisateur.</translation>
-    </message>
-    <message>
-        <source>Message &amp;Log</source>
-        <translation type="vanished">&amp;Historique d&apos;activité</translation>
-    </message>
-    <message>
-        <source>&amp;Evernote Account Page</source>
-        <translation type="vanished">Page de compte &amp;Evernote</translation>
-    </message>
-    <message>
-        <source>Evernote &amp;Support</source>
-        <translation type="vanished">&amp;Support Evernote</translation>
-    </message>
-    <message>
-        <source>Evernote &amp;Trunk</source>
-        <translation type="vanished">Evernote &amp;Trunk</translation>
-    </message>
-    <message>
-        <source>Evernote User &amp;Forum</source>
-        <translation type="vanished">Forum utilisateurs &amp;Evernote</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="554"/>
         <source>&amp;About</source>
         <translation>&amp;À propos</translation>
-    </message>
-    <message>
-        <source>System Default</source>
-        <translation type="vanished">Valeur par défaut du système</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="534"/>
@@ -3015,30 +2777,6 @@ Impossible de déchiffrer.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Go to your Evernote account page.</source>
-        <translation type="vanished">Aller à la page Evernote de votre compte.</translation>
-    </message>
-    <message>
-        <source>Go to Evernote&apos;s support page</source>
-        <translation type="vanished">Aller à la page de support Evernote</translation>
-    </message>
-    <message>
-        <source>Yinxiang Biji Support</source>
-        <translation type="vanished">Support Yinxiang Biji</translation>
-    </message>
-    <message>
-        <source>Go to Yinxiang Biji&apos;s support page</source>
-        <translation type="vanished">Aller à la page de support de Yinxiang Biji</translation>
-    </message>
-    <message>
-        <source>Go to Evernote Trunk</source>
-        <translation type="vanished">Aller au Trunk d&apos;Evernote</translation>
-    </message>
-    <message>
-        <source>Go to the Evernote user support forum.</source>
-        <translation type="vanished">Aller au forum de support aux utilisateurs d&apos;Evernote.</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="555"/>
         <source>About</source>
         <translation>À propos</translation>
@@ -3065,10 +2803,6 @@ Impossible de déchiffrer.</translation>
         <location filename="../src/gui/nnotebookview.cpp" line="103"/>
         <source>Add to stack</source>
         <translation>Ajouter à la pile</translation>
-    </message>
-    <message>
-        <source>New stack</source>
-        <translation type="vanished">Nouvelle pile</translation>
     </message>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="116"/>
@@ -3157,10 +2891,6 @@ Impossible de déchiffrer.</translation>
         <source>Untitled Note</source>
         <translation>Note sans titre</translation>
     </message>
-    <message>
-        <source>NixNote - </source>
-        <translation type="vanished">NixNote - </translation>
-    </message>
 </context>
 <context>
     <name>NTableView</name>
@@ -3168,14 +2898,6 @@ Impossible de déchiffrer.</translation>
         <location filename="../src/gui/ntableview.cpp" line="202"/>
         <source>Open Note</source>
         <translation>Ouvrir la note</translation>
-    </message>
-    <message>
-        <source>Open Note In New Tab</source>
-        <translation type="vanished">Ouvrir la note dans un nouvel onglet</translation>
-    </message>
-    <message>
-        <source>Open Note In New Window</source>
-        <translation type="vanished">Ouvrir la note dans une nouvelle fenêtre</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="209"/>
@@ -3708,17 +3430,9 @@ Do you wish to continue?</source>
         <translation>Coller comme texte non formaté</translation>
     </message>
     <message>
-        <source>Remove Formatting</source>
-        <translation type="vanished">Supprimer le formatage</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nwebview.cpp" line="82"/>
         <source>Copy Note URL</source>
         <translation>Copier l&apos;URL de la note</translation>
-    </message>
-    <message>
-        <source>Background Color</source>
-        <translation type="vanished">Couleur d&apos;arrière-plan</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="89"/>
@@ -3865,16 +3579,6 @@ Do you wish to continue?</source>
 <context>
     <name>NixNote</name>
     <message>
-        <source>Tidy Not Found</source>
-        <translation type="vanished">Tiny non trouvé</translation>
-    </message>
-    <message>
-        <source>Tidy is not found on this system.
-Until tidy is installed you cannot save any notes.</source>
-        <translation type="vanished">Tidy n&apos;a pas été trouvé sur ce système.
-Tant que tidy n&apos;est pas installé, vous ne pourrez pas sauvegarder des notes.</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="281"/>
         <source>ToolBar</source>
         <translation>Bar d&apos;outils</translation>
@@ -3901,41 +3605,9 @@ Tant que tidy n&apos;est pas installé, vous ne pourrez pas sauvegarder des note
         <translation>Sync</translation>
     </message>
     <message>
-        <source>Print</source>
-        <translation type="vanished">Imprimer</translation>
-    </message>
-    <message>
-        <source>New Text Note</source>
-        <translation type="vanished">Nouvelle note texte</translation>
-    </message>
-    <message>
-        <source>New Webcam Note</source>
-        <translation type="vanished">Nouvelle note filmée</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="338"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
-    </message>
-    <message>
-        <source>Trunk</source>
-        <translation type="vanished">Trunk</translation>
-    </message>
-    <message>
-        <source>Usage</source>
-        <translation type="vanished">Utilisation</translation>
-    </message>
-    <message>
-        <source>Screen Capture</source>
-        <translation type="vanished">Enregistrement de l&apos;écran</translation>
-    </message>
-    <message>
-        <source>Show/Hide</source>
-        <translation type="vanished">Montrer/Cacher</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">Fermer</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1837"/>
@@ -3953,17 +3625,9 @@ Tant que tidy n&apos;est pas installé, vous ne pourrez pas sauvegarder des note
         <translation>Importer des notes</translation>
     </message>
     <message>
-        <source>NixNote Export (*.nnex);;All Files (*.*)</source>
-        <translation type="vanished">Exportation NixNote (*.nnex);;Tous les fichiers (*.*)</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="346"/>
         <source>Print the current note</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Email</source>
-        <translation type="obsolete">Courriel</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="351"/>
@@ -3971,17 +3635,9 @@ Tant que tidy n&apos;est pas installé, vous ne pourrez pas sauvegarder des note
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Quick Note</source>
-        <translation type="vanished">Note rapide</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="844"/>
         <source>Shortcut notes</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pinned Notes</source>
-        <translation type="vanished">Notes épinglées</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="851"/>
@@ -3993,10 +3649,6 @@ Tant que tidy n&apos;est pas installé, vous ne pourrez pas sauvegarder des note
         <location filename="../src/nixnote.cpp" line="2373"/>
         <source>Log in to Evernote</source>
         <translation>Ouvrir une session Evernote</translation>
-    </message>
-    <message>
-        <source>NixNote</source>
-        <translation type="vanished">NixNote</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1755"/>
@@ -4049,10 +3701,6 @@ an empty database.  Restoring into a database that
 
 Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)</source>
-        <translation type="vanished">Exportation NixNote (*.nnex);;Exportation Evernote (*.enex);;Tous les fichiers (*.*)</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="330"/>
@@ -4153,14 +3801,6 @@ Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This feature is only available to premium users.</source>
-        <translation type="vanished">Cette fonctionnalité n&apos;est disponible qu&apos;aux utilisateurs premium.</translation>
-    </message>
-    <message>
-        <source>Premium Feature</source>
-        <translation type="vanished">Fonctionnalité premium</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="2414"/>
         <location filename="../src/nixnote.cpp" line="2421"/>
         <source>Error retrieving note.</source>
@@ -4194,14 +3834,6 @@ Are you sure you want to continue?</source>
         <translation>Note restaurée</translation>
     </message>
     <message>
-        <source>No versions of this note can be found.</source>
-        <translation type="vanished">Aucune version de cette note ne peut être trouvée.</translation>
-    </message>
-    <message>
-        <source>Note Not Found</source>
-        <translation type="vanished">La note n&apos;a pas pu être trouvée</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="2662"/>
         <source>Note not found.</source>
         <translation type="unfinished"></translation>
@@ -4225,14 +3857,6 @@ Are you sure you want to continue?</source>
         <location filename="../src/nixnote.cpp" line="3137"/>
         <source>Notes will be reindexed.</source>
         <translation>Les notes vont être réindexées.</translation>
-    </message>
-    <message>
-        <source>Unable to find webcam or capture image.</source>
-        <translation type="vanished">Impossible de trouver la webcam ou d&apos;enregistrer une image.</translation>
-    </message>
-    <message>
-        <source>Webcam Error</source>
-        <translation type="vanished">Erreur de la webcam</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3165"/>
@@ -4491,23 +4115,6 @@ Are you sure you want to continue?</source>
         <location filename="../src/dialog/preferences/preferencesdialog.cpp" line="135"/>
         <source>Advanced</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Debugging</source>
-        <translation type="vanished">Débogage</translation>
-    </message>
-</context>
-<context>
-    <name>QApplication</name>
-    <message>
-        <source>Use your mouse to draw a rectangle to screenshot or exit pressing
-any key or using the right or middle mouse buttons.</source>
-        <translation type="vanished">Utilisez votre souris pour dessiner un rectangle à capturer, ou annuler
-en appuyant sur n&apos;importe quelle touche.</translation>
-    </message>
-    <message>
-        <source>%1 x %2 pixels </source>
-        <translation type="vanished">%1 x %2 pixels</translation>
     </message>
 </context>
 <context>
@@ -4793,10 +4400,6 @@ en appuyant sur n&apos;importe quelle touche.</translation>
 <context>
     <name>SpellCheckDialog</name>
     <message>
-        <source>Spell Check</source>
-        <translation type="vanished">Vérification de l&apos;orthographe</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/spellcheckdialog.cpp" line="52"/>
         <source>Suggestion</source>
         <translation>Suggestion</translation>
@@ -4825,13 +4428,6 @@ en appuyant sur n&apos;importe quelle touche.</translation>
         <location filename="../src/dialog/spellcheckdialog.cpp" line="69"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
-    </message>
-</context>
-<context>
-    <name>SpellChecker</name>
-    <message>
-        <source>Unable to find dictionaries.  Is Huntspell installed?</source>
-        <translation type="vanished">Dictionnaires introuvables.  Est-ce que Huntspell est installé ?</translation>
     </message>
 </context>
 <context>
@@ -4925,10 +4521,6 @@ en appuyant sur n&apos;importe quelle touche.</translation>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="73"/>
         <source>Popup message on sync errors.</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Note: Restart required</source>
-        <translation type="vanished">Note : redémarrage requis</translation>
     </message>
 </context>
 <context>

@@ -13,12 +13,6 @@
         <source>Version: </source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
-        <translation type="vanished">&lt;span align=&quot;center&quot;&gt;&lt;p&gt;正體中文翻譯：Iridium Cao, 2016。&lt;br&gt;
-有任何翻譯問題，請賜教！&lt;br&gt;
-電郵：&lt;i&gt;iridiumcao@gmail.com&lt;/i&gt;。&lt;/p&gt;&lt;/span&gt;</translation>
-    </message>
 </context>
 <context>
     <name>AccountDialog</name>
@@ -261,14 +255,6 @@
         <translation>顯示記事本和標籤數量</translation>
     </message>
     <message>
-        <source>Auto-Hide editor toolbar</source>
-        <translation type="vanished">自動隱藏編輯工具欄</translation>
-    </message>
-    <message>
-        <source>Disable note editing on statup</source>
-        <translation type="vanished">啓動時禁用記事編輯</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="50"/>
         <source>Disable note editing on startup</source>
         <translation type="unfinished"></translation>
@@ -311,27 +297,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show/Hide NixNote</source>
-        <translation type="vanished">顯示/隱藏 NixNote</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="64"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="69"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="74"/>
         <source>New Text Note</source>
         <translation>新文本記事</translation>
-    </message>
-    <message>
-        <source>New Quick Note</source>
-        <translation type="vanished">新快捷記事</translation>
-    </message>
-    <message>
-        <source>Screen Capture</source>
-        <translation type="vanished">擷取螢幕截圖</translation>
-    </message>
-    <message>
-        <source>Open New Tab</source>
-        <translation type="vanished">在新的標籤頁開啓</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="63"/>
@@ -600,14 +570,6 @@
         <translation>無法連接到共享記憶體。請確保 NixNote 正在運行！</translation>
     </message>
     <message>
-        <source>Type DELETE to very: </source>
-        <translation type="vanished">確認刪除類型</translation>
-    </message>
-    <message>
-        <source>No resospnse received from NixNote.</source>
-        <translation type="vanished">未收到 NixNote 的響應。</translation>
-    </message>
-    <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="315"/>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="452"/>
         <source> has been created.
@@ -766,33 +728,9 @@
         <translation>記事缺失用於鏈接的 URL。</translation>
     </message>
     <message>
-        <source>API rate limit exceeded.  Please try again in </source>
-        <translation type="vanished">API 比例超限，請於以下時間重試：</translation>
-    </message>
-    <message>
-        <source> minutes.</source>
-        <translation type="vanished">分鐘。</translation>
-    </message>
-    <message>
-        <source> minute.</source>
-        <translation type="vanished">分鐘。</translation>
-    </message>
-    <message>
         <location filename="../src/communication/communicationmanager.cpp" line="1042"/>
         <source>API rate limit exceeded.</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>EDAMSystemException </source>
-        <translation type="vanished">EDAMSystemException </translation>
-    </message>
-    <message>
-        <source>EDAMSystemException: Unknown error</source>
-        <translation type="vanished">EDAMSystemException: 未知錯誤</translation>
-    </message>
-    <message>
-        <source>EDAMNotFoundException: Note not found</source>
-        <translation type="vanished">EDAMNotFoundException: 記事未找到</translation>
     </message>
 </context>
 <context>
@@ -834,13 +772,6 @@
     </message>
 </context>
 <context>
-    <name>DateDelegate</name>
-    <message>
-        <source>Today</source>
-        <translation type="vanished">今日</translation>
-    </message>
-</context>
-<context>
     <name>DateEditor</name>
     <message>
         <location filename="../src/gui/browserWidgets/dateeditor.cpp" line="38"/>
@@ -864,10 +795,6 @@
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="35"/>
         <source>Disable image search highlighting.</source>
         <translation>禁用圖像搜索高亮。</translation>
-    </message>
-    <message>
-        <source>Strict note checking.</source>
-        <translation type="vanished">精確的記事檢查。</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="34"/>
@@ -903,35 +830,6 @@
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="64"/>
         <source>Auto-Save Interval (in seconds).</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message Level</source>
-        <translation type="vanished">訊息等級</translation>
-    </message>
-    <message>
-        <source>Trace</source>
-        <translation type="vanished">記錄</translation>
-    </message>
-    <message>
-        <source>Debug</source>
-        <translatorcomment>查錯</translatorcomment>
-        <translation type="vanished">Debug</translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation type="vanished">訊息</translation>
-    </message>
-    <message>
-        <source>Warnings</source>
-        <translation type="vanished">警告</translation>
-    </message>
-    <message>
-        <source>Errors</source>
-        <translation type="vanished">錯誤</translation>
-    </message>
-    <message>
-        <source>Fatal</source>
-        <translation type="vanished">致命錯誤</translation>
     </message>
 </context>
 <context>
@@ -1043,14 +941,6 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="278"/>
         <source>Insert Date Time</source>
         <translation type="unfinished">插入日期</translation>
-    </message>
-    <message>
-        <source>Shift Right</source>
-        <translation type="vanished">增加縮排</translation>
-    </message>
-    <message>
-        <source>Shift Left</source>
-        <translation type="vanished">減小縮排</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
@@ -1167,10 +1057,6 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="260"/>
         <source>Left Justify</source>
         <translation>靠左對齊</translation>
-    </message>
-    <message>
-        <source>Center</source>
-        <translation type="vanished">置中</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="255"/>
@@ -1604,13 +1490,6 @@ Please specify server settings in the Preferences menu.</source>
     </message>
 </context>
 <context>
-    <name>ExternalBrowse</name>
-    <message>
-        <source>NixNote</source>
-        <translation type="obsolete">NixNote</translation>
-    </message>
-</context>
-<context>
     <name>ExtractNotes</name>
     <message>
         <location filename="../src/cmdtools/extractnotes.cpp" line="41"/>
@@ -1627,10 +1506,6 @@ Please specify server settings in the Preferences menu.</source>
         <location filename="../src/cmdtools/extractnotes.cpp" line="65"/>
         <source>Type DELETE to verify: </source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type DELETE to very: </source>
-        <translation type="obsolete">確認刪除類型</translation>
     </message>
 </context>
 <context>
@@ -2035,21 +1910,6 @@ See http://www.w3schools.com/charsets/ for list.</source>
     </message>
 </context>
 <context>
-    <name>LogViewer</name>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">關閉</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation type="vanished">刷新</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="vanished">保存</translation>
-    </message>
-</context>
-<context>
     <name>LoginDialog</name>
     <message>
         <location filename="../src/dialog/logindialog.cpp" line="44"/>
@@ -2282,14 +2142,6 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <translation>昨日</translation>
     </message>
     <message>
-        <source>Unable to Save</source>
-        <translation type="vanished">無法存檔</translation>
-    </message>
-    <message>
-        <source>Unable to save this note.  Either tidy isn&apos;t installed or the note is too complex to save.</source>
-        <translation type="vanished">記事無法存檔。未安裝 tidy 或記事過於複雜。</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1271"/>
         <source>Insert your code here.</source>
         <translation type="unfinished"></translation>
@@ -2462,10 +2314,6 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export selected notes to a file</source>
-        <translation type="vanished">匯出選中的記事到單個檔案</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="108"/>
         <source>Import notes from an export file</source>
         <translation>從已匯出的檔案中匯入記事</translation>
@@ -2479,10 +2327,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/nmainmenubar.cpp" line="148"/>
         <source>Open/Close Notebooks</source>
         <translation>開啓/關閉記事本</translation>
-    </message>
-    <message>
-        <source>Close the program</source>
-        <translation type="vanished">關閉程式</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="177"/>
@@ -2525,10 +2369,6 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Export Notes</source>
-        <translation type="vanished">&amp;導出紀事</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="107"/>
         <source>&amp;Import notes</source>
         <translation>&amp;導入記事</translation>
@@ -2547,10 +2387,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/nmainmenubar.cpp" line="147"/>
         <source>&amp;Open/Close Notebooks</source>
         <translation>&amp;開啓/關閉記事本</translation>
-    </message>
-    <message>
-        <source>E&amp;xit</source>
-        <translation type="vanished">&amp;退出</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="181"/>
@@ -2738,10 +2574,6 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New &amp;Webcam Note</source>
-        <translation type="vanished">新網路相機記事</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="398"/>
         <source>Dupl&amp;icate Note</source>
         <translation>復制記事</translation>
@@ -2795,10 +2627,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/nmainmenubar.cpp" line="465"/>
         <source>Temporarily disable note editing</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shortcuts</source>
-        <translation type="obsolete">捷徑</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="546"/>
@@ -2861,10 +2689,6 @@ Unable to decrypt.</source>
         <translation>自 Evernote 斷線</translation>
     </message>
     <message>
-        <source>Account information</source>
-        <translation type="vanished">帳戶資訊</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="482"/>
         <source>Database Status</source>
         <translation>資料庫狀態</translation>
@@ -2885,29 +2709,9 @@ Unable to decrypt.</source>
         <translation>&amp;說明</translation>
     </message>
     <message>
-        <source>Open the user manual.</source>
-        <translation type="vanished">開啓用戶手冊</translation>
-    </message>
-    <message>
-        <source>&amp;Evernote Account Page</source>
-        <translation type="vanished">Evernote 帳戶頁</translation>
-    </message>
-    <message>
-        <source>Evernote &amp;Support</source>
-        <translation type="vanished">Evernote 支援</translation>
-    </message>
-    <message>
-        <source>Evernote User &amp;Forum</source>
-        <translation type="vanished">Evernote 用戶論壇</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="554"/>
         <source>&amp;About</source>
         <translation>關於</translation>
-    </message>
-    <message>
-        <source>System Default</source>
-        <translation type="obsolete">系統缺省</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="534"/>
@@ -2970,26 +2774,6 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Go to your Evernote account page.</source>
-        <translation type="vanished">前往我的帳戶頁</translation>
-    </message>
-    <message>
-        <source>Go to Evernote&apos;s support page</source>
-        <translation type="vanished">支援 學習中心</translation>
-    </message>
-    <message>
-        <source>Yinxiang Biji Support</source>
-        <translation type="vanished">印象筆記支援</translation>
-    </message>
-    <message>
-        <source>Go to Yinxiang Biji&apos;s support page</source>
-        <translation type="vanished">前往印象筆記支援頁</translation>
-    </message>
-    <message>
-        <source>Go to the Evernote user support forum.</source>
-        <translation type="vanished">前往用戶支援論壇</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="555"/>
         <source>About</source>
         <translation>關於</translation>
@@ -3016,10 +2800,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/nnotebookview.cpp" line="103"/>
         <source>Add to stack</source>
         <translation>新增至堆壘</translation>
-    </message>
-    <message>
-        <source>New stack</source>
-        <translation type="vanished">新堆壘</translation>
     </message>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="116"/>
@@ -3115,10 +2895,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/ntableview.cpp" line="202"/>
         <source>Open Note</source>
         <translation>開啓記事</translation>
-    </message>
-    <message>
-        <source>Open Note In New Tab</source>
-        <translation type="vanished">在新的 Tab 中開啓記事</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="209"/>
@@ -3650,17 +3426,9 @@ Do you wish to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Remove Formatting</source>
-        <translation type="vanished">移除格式</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nwebview.cpp" line="82"/>
         <source>Copy Note URL</source>
         <translation>複製 URL</translation>
-    </message>
-    <message>
-        <source>Background Color</source>
-        <translation type="obsolete">背景顏色</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="89"/>
@@ -3807,10 +3575,6 @@ Do you wish to continue?</source>
 <context>
     <name>NixNote</name>
     <message>
-        <source>Tidy Not Found</source>
-        <translation type="vanished">未找到 Tidy</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="281"/>
         <source>ToolBar</source>
         <translation>工具列</translation>
@@ -3837,37 +3601,9 @@ Do you wish to continue?</source>
         <translation>同步</translation>
     </message>
     <message>
-        <source>Print</source>
-        <translation type="vanished">列印</translation>
-    </message>
-    <message>
-        <source>New Text Note</source>
-        <translation type="vanished">新文本記事</translation>
-    </message>
-    <message>
-        <source>New Webcam Note</source>
-        <translation type="vanished">新網路相機記事</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="338"/>
         <source>Delete</source>
         <translation type="unfinished">刪除</translation>
-    </message>
-    <message>
-        <source>Trunk</source>
-        <translation type="vanished">堆壘</translation>
-    </message>
-    <message>
-        <source>Screen Capture</source>
-        <translation type="vanished">擷取螢幕截圖</translation>
-    </message>
-    <message>
-        <source>Show/Hide</source>
-        <translation type="vanished">顯示/隱藏</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">關閉</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1837"/>
@@ -3890,17 +3626,9 @@ Do you wish to continue?</source>
         <translation>列印當前記事</translation>
     </message>
     <message>
-        <source>Email</source>
-        <translation type="vanished">傳送電子郵件</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="351"/>
         <source>Email the current note</source>
         <translation>用電子郵件傳送當前記事</translation>
-    </message>
-    <message>
-        <source>Quick Note</source>
-        <translation type="vanished">快捷記事</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="844"/>
@@ -3917,10 +3645,6 @@ Do you wish to continue?</source>
         <location filename="../src/nixnote.cpp" line="2373"/>
         <source>Log in to Evernote</source>
         <translation>登錄 Evernote</translation>
-    </message>
-    <message>
-        <source>NixNote</source>
-        <translation type="vanished">NixNote</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1755"/>
@@ -4109,10 +3833,6 @@ Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Note Not Found</source>
-        <translation type="vanished">記事未找到</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="2662"/>
         <source>Note not found.</source>
         <translation>記事未找到</translation>
@@ -4136,14 +3856,6 @@ Are you sure you want to continue?</source>
         <location filename="../src/nixnote.cpp" line="3137"/>
         <source>Notes will be reindexed.</source>
         <translation>將重建記事本索引</translation>
-    </message>
-    <message>
-        <source>Unable to find webcam or capture image.</source>
-        <translation type="vanished">未找到網路相機或無法截圖</translation>
-    </message>
-    <message>
-        <source>Webcam Error</source>
-        <translation type="vanished">網路相機錯誤</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3165"/>
@@ -4402,10 +4114,6 @@ Are you sure you want to continue?</source>
         <location filename="../src/dialog/preferences/preferencesdialog.cpp" line="135"/>
         <source>Advanced</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Debugging</source>
-        <translation type="vanished">除錯</translation>
     </message>
 </context>
 <context>
@@ -4691,10 +4399,6 @@ Are you sure you want to continue?</source>
 <context>
     <name>SpellCheckDialog</name>
     <message>
-        <source>Spell Check</source>
-        <translation type="vanished">拼字檢查</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/spellcheckdialog.cpp" line="52"/>
         <source>Suggestion</source>
         <translation>建議</translation>
@@ -4723,13 +4427,6 @@ Are you sure you want to continue?</source>
         <location filename="../src/dialog/spellcheckdialog.cpp" line="69"/>
         <source>Cancel</source>
         <translation>取消</translation>
-    </message>
-</context>
-<context>
-    <name>SpellChecker</name>
-    <message>
-        <source>Unable to find dictionaries.  Is Huntspell installed?</source>
-        <translation type="vanished">辭典未找到。是否已安裝 Huntspell?</translation>
     </message>
 </context>
 <context>

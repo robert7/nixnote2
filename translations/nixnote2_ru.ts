@@ -772,13 +772,6 @@
     </message>
 </context>
 <context>
-    <name>DateDelegate</name>
-    <message>
-        <source>Today</source>
-        <translation type="vanished">Сегодня</translation>
-    </message>
-</context>
-<context>
     <name>DateEditor</name>
     <message>
         <location filename="../src/gui/browserWidgets/dateeditor.cpp" line="38"/>
@@ -837,14 +830,6 @@
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="64"/>
         <source>Auto-Save Interval (in seconds).</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message Level</source>
-        <translation type="obsolete">Количество сообщений</translation>
-    </message>
-    <message>
-        <source>Debug</source>
-        <translation type="vanished">Отладка</translation>
     </message>
 </context>
 <context>
@@ -956,14 +941,6 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="278"/>
         <source>Insert Date Time</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift Right</source>
-        <translation type="vanished">Увеличить отступ</translation>
-    </message>
-    <message>
-        <source>Shift Left</source>
-        <translation type="vanished">Уменьшить отступ</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
@@ -1080,10 +1057,6 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="260"/>
         <source>Left Justify</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Center</source>
-        <translation type="obsolete">По центру</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="255"/>
@@ -1517,17 +1490,6 @@ Please specify server settings in the Preferences menu.</source>
     </message>
 </context>
 <context>
-    <name>ExternalBrowse</name>
-    <message>
-        <source>NixNote</source>
-        <translation type="vanished">NixNote</translation>
-    </message>
-    <message>
-        <source>NixNote - </source>
-        <translation type="vanished">NixNote - </translation>
-    </message>
-</context>
-<context>
     <name>ExtractNotes</name>
     <message>
         <location filename="../src/cmdtools/extractnotes.cpp" line="41"/>
@@ -1886,89 +1848,9 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <translation>Формат даты</translation>
     </message>
     <message>
-        <source>MM/dd/yy - </source>
-        <translation type="vanished">MM/dd/yy - </translation>
-    </message>
-    <message>
-        <source>MM/dd/yyyy - </source>
-        <translation type="vanished">MM/dd/yyyy - </translation>
-    </message>
-    <message>
-        <source>M/dd/yyyy - </source>
-        <translation type="vanished">M/dd/yyyy - </translation>
-    </message>
-    <message>
-        <source>M/d/yyyy - </source>
-        <translation type="vanished">M/d/yyyy - </translation>
-    </message>
-    <message>
-        <source>dd/MM/yy - </source>
-        <translation type="vanished">dd/MM/yy - </translation>
-    </message>
-    <message>
-        <source>d/M/yy - </source>
-        <translation type="vanished">d/M/yy - </translation>
-    </message>
-    <message>
-        <source>dd/MM/yyyy - </source>
-        <translation type="vanished">dd/MM/yyyy - </translation>
-    </message>
-    <message>
-        <source>d/M/yyyy - </source>
-        <translation type="vanished">d/M/yyyy - </translation>
-    </message>
-    <message>
-        <source>yyyy-MM-dd - </source>
-        <translation type="vanished">yyyy-MM-dd - </translation>
-    </message>
-    <message>
-        <source>yy-MM-dd - </source>
-        <translation type="vanished">yy-MM-dd - </translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="69"/>
         <source>Time Format</source>
         <translation>Формат времени</translation>
-    </message>
-    <message>
-        <source>HH:mm:ss - </source>
-        <translation type="vanished">HH:mm:ss - </translation>
-    </message>
-    <message>
-        <source>HH:mm:ss a - </source>
-        <translation type="vanished">HH:mm:ss a - </translation>
-    </message>
-    <message>
-        <source>HH:mm - </source>
-        <translation type="vanished">HH:mm - </translation>
-    </message>
-    <message>
-        <source>HH:mm a - </source>
-        <translation type="vanished">HH:mm a - </translation>
-    </message>
-    <message>
-        <source>hh:mm:ss - </source>
-        <translation type="vanished">hh:mm:ss - </translation>
-    </message>
-    <message>
-        <source>hh:mm:ss a- </source>
-        <translation type="vanished">hh:mm:ss a- </translation>
-    </message>
-    <message>
-        <source>h:mm:ss a - </source>
-        <translation type="vanished">h:mm:ss a - </translation>
-    </message>
-    <message>
-        <source>hh:mm - </source>
-        <translation type="vanished">hh:mm - </translation>
-    </message>
-    <message>
-        <source>hh:mm a - </source>
-        <translation type="vanished">hh:mm a - </translation>
-    </message>
-    <message>
-        <source>h:mm a - </source>
-        <translation type="vanished">h:mm a - </translation>
     </message>
 </context>
 <context>
@@ -2025,33 +1907,6 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <location filename="../src/gui/browserWidgets/locationeditor.cpp" line="50"/>
         <source>View on map</source>
         <translation>Смотреть на карте</translation>
-    </message>
-</context>
-<context>
-    <name>LogViewer</name>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">Закрыть</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation type="vanished">Обновить</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="vanished">Сохранить</translation>
-    </message>
-    <message>
-        <source>Save Logs</source>
-        <translation type="vanished">Сохранить логи</translation>
-    </message>
-    <message>
-        <source>Save Log</source>
-        <translation type="vanished">Сохранить лог</translation>
-    </message>
-    <message>
-        <source>NixNote Log (*.log);;All Files (*.*)</source>
-        <translation type="vanished">NixNote Log (*.log);;Все файлы (*.*)</translation>
     </message>
 </context>
 <context>
@@ -3036,10 +2891,6 @@ Unable to decrypt.</source>
         <source>Untitled Note</source>
         <translation>Безымянная заметка</translation>
     </message>
-    <message>
-        <source>NixNote - </source>
-        <translation type="vanished">NixNote - </translation>
-    </message>
 </context>
 <context>
     <name>NTableView</name>
@@ -3578,17 +3429,9 @@ Do you wish to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Remove Formatting</source>
-        <translation type="vanished">Удалить форматирование</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nwebview.cpp" line="82"/>
         <source>Copy Note URL</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Background Color</source>
-        <translation type="vanished">Цвет фона</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="89"/>
@@ -3761,17 +3604,9 @@ Do you wish to continue?</source>
         <translation>Синхронизировать</translation>
     </message>
     <message>
-        <source>Print</source>
-        <translation type="vanished">Печать</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="338"/>
         <source>Delete</source>
         <translation>Удалить</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">Закрыть</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1837"/>
@@ -3794,10 +3629,6 @@ Do you wish to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Email</source>
-        <translation type="vanished">Email</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="351"/>
         <source>Email the current note</source>
         <translation type="unfinished"></translation>
@@ -3817,10 +3648,6 @@ Do you wish to continue?</source>
         <location filename="../src/nixnote.cpp" line="2373"/>
         <source>Log in to Evernote</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NixNote</source>
-        <translation type="vanished">NixNote</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1755"/>
@@ -4288,17 +4115,6 @@ Are you sure you want to continue?</source>
         <source>Advanced</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Debugging</source>
-        <translation type="obsolete">Отладка</translation>
-    </message>
-</context>
-<context>
-    <name>QApplication</name>
-    <message>
-        <source>%1 x %2 pixels </source>
-        <translation type="vanished">%1 x %2 пикселей </translation>
-    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -4582,10 +4398,6 @@ Are you sure you want to continue?</source>
 </context>
 <context>
     <name>SpellCheckDialog</name>
-    <message>
-        <source>Spell Check</source>
-        <translation type="obsolete">Проверка орфографии</translation>
-    </message>
     <message>
         <location filename="../src/dialog/spellcheckdialog.cpp" line="52"/>
         <source>Suggestion</source>

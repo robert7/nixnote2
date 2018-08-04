@@ -13,12 +13,6 @@
         <source>Version: </source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
-        <translation type="vanished">&lt;span align=&quot;center&quot;&gt;&lt;p&gt;Český překlad Miloš Kožina, 2015.&lt;br&gt;
-Chybějící překlady, chyby a náměty na vylepšení &lt;br&gt;
-posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/span&gt;</translation>
-    </message>
 </context>
 <context>
     <name>AccountDialog</name>
@@ -265,15 +259,6 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
         <translation>Zobrazovat počty u složek a štítků</translation>
     </message>
     <message>
-        <source>Auto-Hide editor toolbar</source>
-        <translatorcomment>TODO: ověřit v GUI</translatorcomment>
-        <translation type="vanished">Automaticky skrývat nástroje editoru</translation>
-    </message>
-    <message>
-        <source>Disable note editing on statup</source>
-        <translation type="vanished">Vypnout editaci poznámky při startu</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="50"/>
         <source>Disable note editing on startup</source>
         <translation type="unfinished"></translation>
@@ -318,27 +303,11 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show/Hide NixNote</source>
-        <translation type="vanished">Zobrazit/Skrýt NixNote</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="64"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="69"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="74"/>
         <source>New Text Note</source>
         <translation>Nová poznámka</translation>
-    </message>
-    <message>
-        <source>New Quick Note</source>
-        <translation type="vanished">Rychlá poznámka</translation>
-    </message>
-    <message>
-        <source>Screen Capture</source>
-        <translation type="vanished">Snímat obrazovku</translation>
-    </message>
-    <message>
-        <source>Open New Tab</source>
-        <translation type="vanished">Otevřít nový panel</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="63"/>
@@ -609,14 +578,6 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
         <translation>Nemohu se připojit ke sdílené paměti.  Není spuštěný další NixNote?</translation>
     </message>
     <message>
-        <source>Type DELETE to very: </source>
-        <translation type="vanished">Napište &quot;DELETE&quot; pro potvrzení smazání:</translation>
-    </message>
-    <message>
-        <source>No resospnse received from NixNote.</source>
-        <translation type="vanished">Neobdržena žádná odezva z NixNote.</translation>
-    </message>
-    <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="315"/>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="452"/>
         <source> has been created.
@@ -776,33 +737,9 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
         <translation>Chybějící URL úložiště pro přilinkovaný poznámkový blok.</translation>
     </message>
     <message>
-        <source>API rate limit exceeded.  Please try again in </source>
-        <translation type="vanished">Překročen limit rychlosti API.  Prosím zkuste to znovu za </translation>
-    </message>
-    <message>
-        <source> minutes.</source>
-        <translation type="vanished"> minut(y).</translation>
-    </message>
-    <message>
-        <source> minute.</source>
-        <translation type="vanished"> minutu.</translation>
-    </message>
-    <message>
         <location filename="../src/communication/communicationmanager.cpp" line="1042"/>
         <source>API rate limit exceeded.</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>EDAMSystemException </source>
-        <translation type="vanished">Systémová chyba protokolu EDAM </translation>
-    </message>
-    <message>
-        <source>EDAMSystemException: Unknown error</source>
-        <translation type="vanished">Systémová chyba protokolu EDAM: Neznámá chyba</translation>
-    </message>
-    <message>
-        <source>EDAMNotFoundException: Note not found</source>
-        <translation type="vanished">Chyba protokolu EDAM (nenalezeno): Poznámka nenalezena</translation>
     </message>
 </context>
 <context>
@@ -846,13 +783,6 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
     </message>
 </context>
 <context>
-    <name>DateDelegate</name>
-    <message>
-        <source>Today</source>
-        <translation type="vanished">Dnes</translation>
-    </message>
-</context>
-<context>
     <name>DateEditor</name>
     <message>
         <location filename="../src/gui/browserWidgets/dateeditor.cpp" line="38"/>
@@ -876,10 +806,6 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="35"/>
         <source>Disable image search highlighting.</source>
         <translation>Vypnout zvýraznění obrázků při hledání.</translation>
-    </message>
-    <message>
-        <source>Strict note checking.</source>
-        <translation type="vanished">Striktní kontrola poznámky.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="34"/>
@@ -915,34 +841,6 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="64"/>
         <source>Auto-Save Interval (in seconds).</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message Level</source>
-        <translation type="vanished">Úroveň logování</translation>
-    </message>
-    <message>
-        <source>Trace</source>
-        <translation type="vanished">Trasování (trace)</translation>
-    </message>
-    <message>
-        <source>Debug</source>
-        <translation type="vanished">Ladění (debug)</translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation type="vanished">Info</translation>
-    </message>
-    <message>
-        <source>Warnings</source>
-        <translation type="vanished">Varování (warnings)</translation>
-    </message>
-    <message>
-        <source>Errors</source>
-        <translation type="vanished">Chyby (errors)</translation>
-    </message>
-    <message>
-        <source>Fatal</source>
-        <translation type="vanished">Fatální chyby (fatal)</translation>
     </message>
 </context>
 <context>
@@ -1054,14 +952,6 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="278"/>
         <source>Insert Date Time</source>
         <translation>Vložit Datum a Čas</translation>
-    </message>
-    <message>
-        <source>Shift Right</source>
-        <translation type="vanished">Odsadit vpravo</translation>
-    </message>
-    <message>
-        <source>Shift Left</source>
-        <translation type="vanished">Odsadit vlevo (zrušit odsazení)</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
@@ -1178,10 +1068,6 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="260"/>
         <source>Left Justify</source>
         <translation>Zarovnat vlevo</translation>
-    </message>
-    <message>
-        <source>Center</source>
-        <translation type="vanished">Zarovnat na střed</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="255"/>
@@ -1617,17 +1503,6 @@ Prosím upřesněte nastavení v nabídce &quot;Předvolby&quot;.</translation>
     </message>
 </context>
 <context>
-    <name>ExternalBrowse</name>
-    <message>
-        <source>NixNote</source>
-        <translation type="vanished">NixNote</translation>
-    </message>
-    <message>
-        <source>NixNote - </source>
-        <translation type="vanished">NixNote - </translation>
-    </message>
-</context>
-<context>
     <name>ExtractNotes</name>
     <message>
         <location filename="../src/cmdtools/extractnotes.cpp" line="41"/>
@@ -1644,11 +1519,6 @@ Prosím upřesněte nastavení v nabídce &quot;Předvolby&quot;.</translation>
         <location filename="../src/cmdtools/extractnotes.cpp" line="65"/>
         <source>Type DELETE to verify: </source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type DELETE to very: </source>
-        <translatorcomment>TODO: ověřit v GUI</translatorcomment>
-        <translation type="vanished">Napište &quot;DELETE&quot; pro potvrzení smazání:</translation>
     </message>
 </context>
 <context>
@@ -1993,89 +1863,9 @@ Seznam např. na http://www.w3schools.com/charsets/ .</translation>
         <translation>Formát data</translation>
     </message>
     <message>
-        <source>MM/dd/yy - </source>
-        <translation type="vanished">MM/dd/rr - </translation>
-    </message>
-    <message>
-        <source>MM/dd/yyyy - </source>
-        <translation type="vanished">MM/dd/rrrr - </translation>
-    </message>
-    <message>
-        <source>M/dd/yyyy - </source>
-        <translation type="vanished">M/dd/rrrr - </translation>
-    </message>
-    <message>
-        <source>M/d/yyyy - </source>
-        <translation type="vanished">M/d/rrrr - </translation>
-    </message>
-    <message>
-        <source>dd/MM/yy - </source>
-        <translation type="vanished">dd/MM/rr - </translation>
-    </message>
-    <message>
-        <source>d/M/yy - </source>
-        <translation type="vanished">d/M/rr - </translation>
-    </message>
-    <message>
-        <source>dd/MM/yyyy - </source>
-        <translation type="vanished">dd/MM/rrrr - </translation>
-    </message>
-    <message>
-        <source>d/M/yyyy - </source>
-        <translation type="vanished">d/M/rrrr - </translation>
-    </message>
-    <message>
-        <source>yyyy-MM-dd - </source>
-        <translation type="vanished">rrrr-MM-dd - </translation>
-    </message>
-    <message>
-        <source>yy-MM-dd - </source>
-        <translation type="vanished">rr-MM-dd - </translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="69"/>
         <source>Time Format</source>
         <translation>Formát času</translation>
-    </message>
-    <message>
-        <source>HH:mm:ss - </source>
-        <translation type="vanished">HH:mm:ss - </translation>
-    </message>
-    <message>
-        <source>HH:mm:ss a - </source>
-        <translation type="vanished">HH:mm:ss a- </translation>
-    </message>
-    <message>
-        <source>HH:mm - </source>
-        <translation type="vanished">HH:mm - </translation>
-    </message>
-    <message>
-        <source>HH:mm a - </source>
-        <translation type="vanished">HH:mm a - </translation>
-    </message>
-    <message>
-        <source>hh:mm:ss - </source>
-        <translation type="vanished">hh:mm:ss - </translation>
-    </message>
-    <message>
-        <source>hh:mm:ss a- </source>
-        <translation type="vanished">hh:mm:ss a- </translation>
-    </message>
-    <message>
-        <source>h:mm:ss a - </source>
-        <translation type="vanished">h:mm:ss a - </translation>
-    </message>
-    <message>
-        <source>hh:mm - </source>
-        <translation type="vanished">hh:mm - </translation>
-    </message>
-    <message>
-        <source>hh:mm a - </source>
-        <translation type="vanished">hh:mm a - </translation>
-    </message>
-    <message>
-        <source>h:mm a - </source>
-        <translation type="vanished">h:mm a - </translation>
     </message>
 </context>
 <context>
@@ -2135,38 +1925,7 @@ Seznam např. na http://www.w3schools.com/charsets/ .</translation>
     </message>
 </context>
 <context>
-    <name>LogViewer</name>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">Zavřít</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation type="vanished">Aktualizovat</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="vanished">Uložit</translation>
-    </message>
-    <message>
-        <source>Save Logs</source>
-        <translation type="vanished">Uložit logy</translation>
-    </message>
-    <message>
-        <source>Save Log</source>
-        <translation type="vanished">Uložit log</translation>
-    </message>
-    <message>
-        <source>NixNote Log (*.log);;All Files (*.*)</source>
-        <translation type="vanished">NixNote Log (*.log);;Všechny soubory (*.*)</translation>
-    </message>
-</context>
-<context>
     <name>LoginDialog</name>
-    <message>
-        <source>NixNote Login</source>
-        <translation type="vanished">NixNote přihlášení</translation>
-    </message>
     <message>
         <location filename="../src/dialog/logindialog.cpp" line="44"/>
         <source>Userid</source>
@@ -2398,14 +2157,6 @@ Seznam např. na http://www.w3schools.com/charsets/ .</translation>
         <translation>Včera</translation>
     </message>
     <message>
-        <source>Unable to Save</source>
-        <translation type="vanished">Uložení selhalo</translation>
-    </message>
-    <message>
-        <source>Unable to save this note.  Either tidy isn&apos;t installed or the note is too complex to save.</source>
-        <translation type="vanished">Nepodařilo se uložit tuto poznámku. Buď není nainstalován balíček &quot;tidy&quot; nebo je poznámka příliš složitá pro uložení.</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1271"/>
         <source>Insert your code here.</source>
         <translation type="unfinished"></translation>
@@ -2583,10 +2334,6 @@ Dešifrování selhalo.</translation>
         <translation>Obnovit databázi ze zálohy</translation>
     </message>
     <message>
-        <source>Export selected notes to a file</source>
-        <translation type="vanished">Exportovat vybrané poznámky do souboru</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="108"/>
         <source>Import notes from an export file</source>
         <translation>Naimportuje poznámky z exportního souboru</translation>
@@ -2600,10 +2347,6 @@ Dešifrování selhalo.</translation>
         <location filename="../src/gui/nmainmenubar.cpp" line="148"/>
         <source>Open/Close Notebooks</source>
         <translation>Otevřít/zavřít poznámkové bloky</translation>
-    </message>
-    <message>
-        <source>Close the program</source>
-        <translation type="vanished">Ukončí běh této aplikace</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="177"/>
@@ -2646,10 +2389,6 @@ Dešifrování selhalo.</translation>
         <translation>Obnovení &amp;databáze</translation>
     </message>
     <message>
-        <source>&amp;Export Notes</source>
-        <translation type="vanished">&amp;Export poznámek</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="107"/>
         <source>&amp;Import notes</source>
         <translation>&amp;Import poznámek</translation>
@@ -2668,10 +2407,6 @@ Dešifrování selhalo.</translation>
         <location filename="../src/gui/nmainmenubar.cpp" line="147"/>
         <source>&amp;Open/Close Notebooks</source>
         <translation>&amp;Otevřít/zavřít poznámkové bloky</translation>
-    </message>
-    <message>
-        <source>E&amp;xit</source>
-        <translation type="vanished">U&amp;končit</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="181"/>
@@ -2859,10 +2594,6 @@ Dešifrování selhalo.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New &amp;Webcam Note</source>
-        <translation type="vanished">Nová poznámka z &amp;Webkamery</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="398"/>
         <source>Dupl&amp;icate Note</source>
         <translation>&amp;Duplikovat poznámku</translation>
@@ -2908,38 +2639,14 @@ Dešifrování selhalo.</translation>
         <translation>O&amp;dpojit</translation>
     </message>
     <message>
-        <source>Pause &amp;Indexing</source>
-        <translation type="vanished">Pozastavit &amp;indexování databáze</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="457"/>
         <source>Temporarily pause indexing</source>
         <translation>Dočasně pozastavit indexování databáze</translation>
     </message>
     <message>
-        <source>Disable &amp;Editing</source>
-        <translation type="vanished">Vypnout &amp;editaci poznámky</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="465"/>
         <source>Temporarily disable note editing</source>
         <translation>Dočasně vypnout editaci poznámky</translation>
-    </message>
-    <message>
-        <source>A&amp;ccount</source>
-        <translation type="vanished">&amp;Účet</translation>
-    </message>
-    <message>
-        <source>&amp;Reindex Database</source>
-        <translation type="vanished">Zin&amp;dexovat databázi</translation>
-    </message>
-    <message>
-        <source>&amp;User&apos;s Guide</source>
-        <translation type="vanished">&amp;Uživatelská příručka</translation>
-    </message>
-    <message>
-        <source>Shortcuts</source>
-        <translation type="obsolete">Zkratky</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="546"/>
@@ -3002,14 +2709,6 @@ Dešifrování selhalo.</translation>
         <translation>Odpojit od Evernote</translation>
     </message>
     <message>
-        <source>Account information</source>
-        <translation type="vanished">Informace o účtu</translation>
-    </message>
-    <message>
-        <source>&amp;Database Status</source>
-        <translation type="vanished">Stav &amp;databáze</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="482"/>
         <source>Database Status</source>
         <translation>Stav databáze</translation>
@@ -3018,10 +2717,6 @@ Dešifrování selhalo.</translation>
         <location filename="../src/gui/nmainmenubar.cpp" line="475"/>
         <source>Reindex all notes</source>
         <translation>Zindexovat všechny poznámky</translation>
-    </message>
-    <message>
-        <source>&amp;Import Folders</source>
-        <translation type="vanished">Složky s automatickým &amp;importem</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="498"/>
@@ -3034,37 +2729,9 @@ Dešifrování selhalo.</translation>
         <translation>Nápo&amp;věda</translation>
     </message>
     <message>
-        <source>Open the user manual.</source>
-        <translation type="vanished">Otevřít uživatelskou příručku.</translation>
-    </message>
-    <message>
-        <source>Message &amp;Log</source>
-        <translation type="vanished">&amp;Log</translation>
-    </message>
-    <message>
-        <source>&amp;Evernote Account Page</source>
-        <translation type="vanished">&amp;Evernote účet v prohlížeči</translation>
-    </message>
-    <message>
-        <source>Evernote &amp;Support</source>
-        <translation type="vanished">&amp;Podpora Evernote</translation>
-    </message>
-    <message>
-        <source>Evernote &amp;Trunk</source>
-        <translation type="vanished">Everno&amp;te App Center v prohlížeči</translation>
-    </message>
-    <message>
-        <source>Evernote User &amp;Forum</source>
-        <translation type="vanished">Uživatelské &amp;fórum Evernote</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="554"/>
         <source>&amp;About</source>
         <translation>O &amp;aplikaci</translation>
-    </message>
-    <message>
-        <source>System Default</source>
-        <translation type="vanished">Výchozí systémové</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="534"/>
@@ -3127,34 +2794,6 @@ Dešifrování selhalo.</translation>
         <translation>&amp;Informace o motivu</translation>
     </message>
     <message>
-        <source>View information about the current theme.</source>
-        <translation type="vanished">Zobrazit informace o současném motivu.</translation>
-    </message>
-    <message>
-        <source>Go to your Evernote account page.</source>
-        <translation type="vanished">Otevřít Váš Evernote účet v prohlížeči.</translation>
-    </message>
-    <message>
-        <source>Go to Evernote&apos;s support page</source>
-        <translation type="vanished">Otevřít Evernote podporu v prohlížeči</translation>
-    </message>
-    <message>
-        <source>Yinxiang Biji Support</source>
-        <translation type="vanished">Yinxiang Biji podpora</translation>
-    </message>
-    <message>
-        <source>Go to Yinxiang Biji&apos;s support page</source>
-        <translation type="vanished">Otevřít Yinxiang Biji podporu v prohlížeči</translation>
-    </message>
-    <message>
-        <source>Go to Evernote Trunk</source>
-        <translation type="vanished">Otevřít Evernote App Center v prohlížeči</translation>
-    </message>
-    <message>
-        <source>Go to the Evernote user support forum.</source>
-        <translation type="vanished">Otevřít Evernote uživatelské fórum v prohlížeči.</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="555"/>
         <source>About</source>
         <translation>O aplikaci</translation>
@@ -3181,10 +2820,6 @@ Dešifrování selhalo.</translation>
         <location filename="../src/gui/nnotebookview.cpp" line="103"/>
         <source>Add to stack</source>
         <translation>Přidat do skupiny</translation>
-    </message>
-    <message>
-        <source>New stack</source>
-        <translation type="vanished">Nová skupina</translation>
     </message>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="116"/>
@@ -3273,10 +2908,6 @@ Dešifrování selhalo.</translation>
         <source>Untitled Note</source>
         <translation>Nová poznámka</translation>
     </message>
-    <message>
-        <source>NixNote - </source>
-        <translation type="vanished">NixNote - </translation>
-    </message>
 </context>
 <context>
     <name>NTableView</name>
@@ -3284,14 +2915,6 @@ Dešifrování selhalo.</translation>
         <location filename="../src/gui/ntableview.cpp" line="202"/>
         <source>Open Note</source>
         <translation>Otevřít poznámku</translation>
-    </message>
-    <message>
-        <source>Open Note In New Tab</source>
-        <translation type="vanished">Otevřít poznámku v novém panelu</translation>
-    </message>
-    <message>
-        <source>Open Note In New Window</source>
-        <translation type="vanished">Otevřít poznámku v novém okně</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="209"/>
@@ -3828,17 +3451,9 @@ Přejete si pokračovat?</translation>
         <translation>Vložit jako neformátovaný text</translation>
     </message>
     <message>
-        <source>Remove Formatting</source>
-        <translation type="vanished">Odstranit formátování</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nwebview.cpp" line="82"/>
         <source>Copy Note URL</source>
         <translation>Kopírovat URL poznámky</translation>
-    </message>
-    <message>
-        <source>Background Color</source>
-        <translation type="vanished">Barva pozadí</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="89"/>
@@ -3985,16 +3600,6 @@ Přejete si pokračovat?</translation>
 <context>
     <name>NixNote</name>
     <message>
-        <source>Tidy Not Found</source>
-        <translation type="vanished">Tidy nenalezeno</translation>
-    </message>
-    <message>
-        <source>Tidy is not found on this system.
-Until tidy is installed you cannot save any notes.</source>
-        <translation type="vanished">Program tidy nebyl nalezen v tomto počítači.
-Dokud nebude tidy nainstalován, nebude možné ukládat žádné poznámky.</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="281"/>
         <source>ToolBar</source>
         <translation>Nástrojová lišta</translation>
@@ -4021,43 +3626,9 @@ Dokud nebude tidy nainstalován, nebude možné ukládat žádné poznámky.</tr
         <translation>Synchronizace</translation>
     </message>
     <message>
-        <source>Print</source>
-        <translation type="vanished">Tisk</translation>
-    </message>
-    <message>
-        <source>New Text Note</source>
-        <translation type="vanished">Nová poznámka</translation>
-    </message>
-    <message>
-        <source>New Webcam Note</source>
-        <translation type="vanished">Nová poznámka z Webkamery</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="338"/>
         <source>Delete</source>
         <translation>Smazat</translation>
-    </message>
-    <message>
-        <source>Trunk</source>
-        <translatorcomment>TODO - OVĚŘIT V GUI</translatorcomment>
-        <translation type="vanished">Trunk TODO</translation>
-    </message>
-    <message>
-        <source>Usage</source>
-        <translation type="vanished">Kvóta</translation>
-    </message>
-    <message>
-        <source>Screen Capture</source>
-        <translatorcomment>TODO - OVĚŘIT V GUI</translatorcomment>
-        <translation type="vanished">Snímat obrazovku</translation>
-    </message>
-    <message>
-        <source>Show/Hide</source>
-        <translation type="vanished">Zobrazit/Skrýt</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">Zavřít</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1837"/>
@@ -4075,18 +3646,10 @@ Dokud nebude tidy nainstalován, nebude možné ukládat žádné poznámky.</tr
         <translation>Import poznámek</translation>
     </message>
     <message>
-        <source>NixNote Export (*.nnex);;All Files (*.*)</source>
-        <translation type="vanished">NixNote Export (*.nnex);;Všechny soubory (*.*)</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="346"/>
         <source>Print the current note</source>
         <translatorcomment>TODO: ověřit v GUI</translatorcomment>
         <translation>Tisknout tuto poznámku</translation>
-    </message>
-    <message>
-        <source>Email</source>
-        <translation type="vanished">Email</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="351"/>
@@ -4094,18 +3657,10 @@ Dokud nebude tidy nainstalován, nebude možné ukládat žádné poznámky.</tr
         <translation>Odeslat tuto poznámku emailem</translation>
     </message>
     <message>
-        <source>Quick Note</source>
-        <translation type="vanished">Rychlá poznámka</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="844"/>
         <source>Shortcut notes</source>
         <translatorcomment>TODO: ověřit v GUI</translatorcomment>
         <translation>Zkratky na poznámky</translation>
-    </message>
-    <message>
-        <source>Pinned Notes</source>
-        <translation type="vanished">Připnuté poznámky</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="851"/>
@@ -4117,10 +3672,6 @@ Dokud nebude tidy nainstalován, nebude možné ukládat žádné poznámky.</tr
         <location filename="../src/nixnote.cpp" line="2373"/>
         <source>Log in to Evernote</source>
         <translation>Přihlásit se k Evernote</translation>
-    </message>
-    <message>
-        <source>NixNote</source>
-        <translation type="vanished">NixNote</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1755"/>
@@ -4179,10 +3730,6 @@ prázdné databáze.  Obnova do databáze již obsahující
 data může způsobit problémy.
 
 Jste si jisti, že chcete pokračovat?</translation>
-    </message>
-    <message>
-        <source>NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)</source>
-        <translation type="vanished">NixNote Export (*.nnex);;Evernote Export (*.enex);;Všechny soubory (*.*)</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="330"/>
@@ -4283,14 +3830,6 @@ Jste si jisti, že chcete pokračovat?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This feature is only available to premium users.</source>
-        <translation type="vanished">Tato funkce je dostupná pouze pro prémiové uživatele.</translation>
-    </message>
-    <message>
-        <source>Premium Feature</source>
-        <translation type="vanished">Prémiová funkce</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="2414"/>
         <location filename="../src/nixnote.cpp" line="2421"/>
         <source>Error retrieving note.</source>
@@ -4324,14 +3863,6 @@ Jste si jisti, že chcete pokračovat?</translation>
         <translation>Poznámka obnovena</translation>
     </message>
     <message>
-        <source>No versions of this note can be found.</source>
-        <translation type="vanished">Nenalezeny žádné verze této poznámky.</translation>
-    </message>
-    <message>
-        <source>Note Not Found</source>
-        <translation type="vanished">Poznámka nenalezena</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="2662"/>
         <source>Note not found.</source>
         <translation>Poznámka nenalezena.</translation>
@@ -4355,14 +3886,6 @@ Jste si jisti, že chcete pokračovat?</translation>
         <location filename="../src/nixnote.cpp" line="3137"/>
         <source>Notes will be reindexed.</source>
         <translation>Poznámky budou zindexovány.</translation>
-    </message>
-    <message>
-        <source>Unable to find webcam or capture image.</source>
-        <translation type="vanished">Nemohu nalézt webkameru nebo se nepovedlo získat obraz.</translation>
-    </message>
-    <message>
-        <source>Webcam Error</source>
-        <translation type="vanished">Chyba webkamery</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3165"/>
@@ -4621,23 +4144,6 @@ Jste si jisti, že chcete pokračovat?</translation>
         <location filename="../src/dialog/preferences/preferencesdialog.cpp" line="135"/>
         <source>Advanced</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Debugging</source>
-        <translation type="vanished">Ladění</translation>
-    </message>
-</context>
-<context>
-    <name>QApplication</name>
-    <message>
-        <source>Use your mouse to draw a rectangle to screenshot or exit pressing
-any key or using the right or middle mouse buttons.</source>
-        <translation type="vanished">Nakreslete myší obdélník, ze kterého chcete udělat snímek
-nebo ukončete snímkování libovolnou klávesou či prostředním tlačítekm myši.</translation>
-    </message>
-    <message>
-        <source>%1 x %2 pixels </source>
-        <translation type="vanished">%1 x %2 pixelů </translation>
     </message>
 </context>
 <context>
@@ -4924,10 +4430,6 @@ nebo ukončete snímkování libovolnou klávesou či prostředním tlačítekm 
 <context>
     <name>SpellCheckDialog</name>
     <message>
-        <source>Spell Check</source>
-        <translation type="vanished">Kontrola pravopisu</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/spellcheckdialog.cpp" line="52"/>
         <source>Suggestion</source>
         <translation>Návrhy</translation>
@@ -4956,13 +4458,6 @@ nebo ukončete snímkování libovolnou klávesou či prostředním tlačítekm 
         <location filename="../src/dialog/spellcheckdialog.cpp" line="69"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
-    </message>
-</context>
-<context>
-    <name>SpellChecker</name>
-    <message>
-        <source>Unable to find dictionaries.  Is Huntspell installed?</source>
-        <translation type="vanished">Nepodařilo se nalézt slovníky.  Je Huntspell nainstalován?</translation>
     </message>
 </context>
 <context>
@@ -5056,10 +4551,6 @@ nebo ukončete snímkování libovolnou klávesou či prostředním tlačítekm 
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="73"/>
         <source>Popup message on sync errors.</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Note: Restart required</source>
-        <translation type="vanished">Poznámka: Vyžaduje restart aplikace</translation>
     </message>
 </context>
 <context>
