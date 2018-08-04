@@ -33,53 +33,20 @@ class LocalePreferences : public QWidget
 private:
     QGridLayout *mainLayout;
     QLabel *dateFormatLabel;
-    QComboBox *dateFormat;
+    QComboBox *dateFormatCombo;
     QLabel *timeFormatLabel;
-    QComboBox *timeFormat;
+    QComboBox *timeFormatCombo;
     QLabel *translationLabel;
     QComboBox *translationCombo;
-    int getDateFormat();
-    int getTimeFormat();
-    QString getTranslation();
 
-    // see also duplicate in Global - global.cpp
-    enum DateFormat {
-        MMddyy = 1,
-        MMddyyyy = 2,
-        Mddyyyy = 3,
-        Mdyyyy = 4,
-        ddMMyy = 5,
-        dMyy = 6,
-        ddMMyyyy = 7,
-        dMyyyy = 8,
-        yyyyMMdd = 9,
-        yyMMdd = 10,
-        yyMMdd2 = 11
-    };
-    enum TimeFormat {
-        HHmmss = 1,
-        HHmmssa = 2,
-        HHmm = 3,
-        HHmma = 4,
-        hhmmss = 5,
-        hhmmssa = 6,
-        hmmssa = 7,
-        hhmm = 8,
-        hhmma = 9,
-        hmma = 10
-    };
+    int getDateFormatNo();
+    int getTimeFormatNo();
+    QString getTranslation();
 
 public:
     explicit LocalePreferences(QWidget *parent = 0);
     ~LocalePreferences();
     void saveValues();
-    QString datefmt;
-    QString timefmt;
-
-signals:
-
-public slots:
-    
 };
 
 #endif // LOCALEPREFERENCES_H

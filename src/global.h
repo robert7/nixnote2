@@ -158,11 +158,7 @@ class IndexRunner;
 #define INI_GROUP_PROXY "Proxy"
 #define INI_GROUP_EMAIL "Email"
 #define INI_GROUP_PRINTER "Printer"
-
-
-
 #define QLOG_ASSERT(expr) if (expr) {} else { QLOG_FATAL() << "Assertion failed: " #expr; exit(16);}
-
 
 class Global : public QObject {
     Q_OBJECT
@@ -174,10 +170,26 @@ private:
     // Force notes search text to be lower case.  Useful for some non-ASCII languages.
     bool forceSearchLowerCase;
     bool forceSearchWithoutDiacritics;
-
     quentier::StringUtils stringUtils;
 
+    // Desired display date format
+    QString dateFormat;
+
+    // Desired display time format
+    QString timeFormat;
+
 public:
+    const QString &getDateFormat() const;
+    const QString &getTimeFormat() const;
+    QString getDateTimeFormat() const;
+    QString getTimeFormatByNo(int time) const;
+    QString getDateFormatByNo(int fmtNo) const;
+    QStringList getDateFormats() const;
+    QStringList getTimeFormats() const;
+
+    void setDateFormat(int fmtNo);
+    void setTimeFormat(int time);
+
     Global();           // Generic constructor
     virtual ~Global() {};          // destructor
 
@@ -195,6 +207,8 @@ public:
         ListViewWide = 1,
         listViewNarrow = 2
     };
+
+
 
     ListViewSetup listView;    // Current desired note list value
 
@@ -247,8 +261,6 @@ public:
     void setPopupOnSyncError(bool value);    // Set if we should do a popup on sync errors.
     void setBackgroundIndexing(bool value);                         // Should we do indexing in a separate thread?
     bool getBackgroundIndexing();                         // Should we do indexing in a separate thread?
-    QString dateFormat;                                   // Desired display date format
-    QString timeFormat;                                   // Desired display time format
     DatabaseConnection *db;                               // "default" DB connection for the main thread.
     bool javaFound;                                       // Have we found Java?
     bool forceUTF8;                                       // force UTF8 encoding

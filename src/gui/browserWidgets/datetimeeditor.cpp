@@ -55,7 +55,7 @@ DateTimeEditor::DateTimeEditor(QWidget *parent) :
 
     connect(this, SIGNAL(dateChanged(QDate)), this, SLOT(valueChanged()));
     connect(this, SIGNAL(timeChanged(QTime)), this, SLOT(valueChanged()));
-    this->setDisplayFormat(global.dateFormat + " " +global.timeFormat);
+    this->setDisplayFormat(global.getDateTimeFormat());
 
     hide();
 

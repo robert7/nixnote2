@@ -134,6 +134,7 @@ private:
 
     void setDirty(qint32 lid, bool dirty, bool setDateUpdated=true);
     void htmlCleanup(HtmlCleanupMode mode);
+    void insertDateTimeUsingFormat(const QString &format) const;
 
 
 public:
@@ -162,6 +163,8 @@ public:
     QShortcut *focusNoteShortcut;
     QShortcut *focusTitleShortcut;
     QShortcut *insertDatetimeShortcut;
+    QShortcut *insertDateShortcut;
+    QShortcut *insertTimeShortcut;
     QShortcut *fontColorShortcut;
     QShortcut *fontHighlightShortcut;
 
@@ -282,7 +285,11 @@ public slots:
     void focusTitle();
     void focusNote();
     void imageContextMenu(QString lid, QString filename);
+
     void insertDatetime();
+    void insertDate();
+    void insertTime();
+
     void attachFile();
     void attachFileSelected(QString filename);
 
@@ -352,6 +359,7 @@ private slots:
     void saveTimeCheck();
     void browserThreadStarted();
     void repositionAfterSourceEdit(bool);
+
 };
 
 #endif // NBROWSERWINDOW_H

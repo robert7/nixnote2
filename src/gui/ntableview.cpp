@@ -1704,16 +1704,16 @@ void NTableView::showPropertiesDialog() {
 
         prop.tableWidget->setItem(row, col++, new QTableWidgetItem(tr("Date Created")));
         prop.tableWidget->setItem(row++, col--, new QTableWidgetItem(
-            dateCreated.toString(global.dateFormat + QString(" ") + global.timeFormat)));
+            dateCreated.toString(global.getDateTimeFormat())));
 
         prop.tableWidget->setItem(row, col++, new QTableWidgetItem(tr("Date Updated")));
         prop.tableWidget->setItem(row++, col--, new QTableWidgetItem(
-            dateUpdated.toString(global.dateFormat + QString(" ") + global.timeFormat)));
+            dateUpdated.toString(global.getDateTimeFormat())));
 
         prop.tableWidget->setItem(row, col++, new QTableWidgetItem(tr("Date Deleted")));
         if (dateDeleted.toMSecsSinceEpoch() > 0) {
             prop.tableWidget->setItem(row++, col--, new QTableWidgetItem(
-                dateDeleted.toString(global.dateFormat + QString(" ") + global.timeFormat)));
+                dateDeleted.toString(global.getDateTimeFormat())));
         } else {
             col--;
             row++;
@@ -1722,7 +1722,7 @@ void NTableView::showPropertiesDialog() {
         prop.tableWidget->setItem(row, col++, new QTableWidgetItem(tr("Subject Date")));
         if (dateSubject.toMSecsSinceEpoch() > 0) {
             prop.tableWidget->setItem(row++, col--, new QTableWidgetItem(
-                dateSubject.toString(global.dateFormat + QString(" ") + global.timeFormat)));
+                dateSubject.toString(global.getDateTimeFormat())));
         } else {
             col--;
             row++;
@@ -1771,7 +1771,7 @@ void NTableView::showPropertiesDialog() {
         prop.tableWidget->setItem(row, col++, new QTableWidgetItem(tr("Reminder Due")));
         if (reminderDue.toMSecsSinceEpoch() > 0) {
             prop.tableWidget->setItem(row++, col--, new QTableWidgetItem(
-                reminderDue.toString(global.dateFormat + QString(" ") + global.timeFormat)));
+                reminderDue.toString(global.getDateTimeFormat())));
         } else {
             col--;
             row++;
@@ -1780,7 +1780,7 @@ void NTableView::showPropertiesDialog() {
         prop.tableWidget->setItem(row, col++, new QTableWidgetItem(tr("Reminder Completed")));
         if (reminderCompleted.toMSecsSinceEpoch() > 0) {
             prop.tableWidget->setItem(row++, col--, new QTableWidgetItem(
-                reminderCompleted.toString(global.dateFormat + QString(" ") + global.timeFormat)));
+                reminderCompleted.toString(global.getDateTimeFormat())));
         } else {
             col--;
             row++;

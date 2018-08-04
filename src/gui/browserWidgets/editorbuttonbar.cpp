@@ -54,7 +54,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     fullJustifyVisible = contextMenu->addAction(tr("Align Full"));
     rightJustifyVisible = contextMenu->addAction(tr("Align Right"));
     hlineVisible = contextMenu->addAction(tr("Horizontal Line"));
-    insertDatetimeVisible = contextMenu->addAction(tr("Insert Date && Time"));
+    insertDatetimeVisible = contextMenu->addAction(tr("Insert Date Time"));
     shiftRightVisible = contextMenu->addAction(tr("Intent/Shift Right"));
     shiftLeftVisible = contextMenu->addAction(tr("Outdent/Shift Left"));
     bulletListVisible = contextMenu->addAction(tr("Bullet List"));
@@ -264,11 +264,19 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     hlineButtonAction = this->addAction(global.getIconResource(":hlineIcon"),
                                         tr("Horizontal Line").append(tooltipInfo));
 
-    tooltipInfo = global.appendShortcutInfo(QString(), "Insert_DateTime");
+    tooltipInfo = tr("Insert Date Time")
+            .append(global.appendShortcutInfo(QString(), "Insert_DateTime"))
+            .append(QStringLiteral("\n"))
+            .append(tr("Insert Date"))
+            .append(global.appendShortcutInfo(QString(), "Insert_Date"))
+            .append(QStringLiteral("\n"))
+            .append(tr("Insert Time"))
+            .append(global.appendShortcutInfo(QString(), "Insert_Time"));
+
     insertDatetimeButtonWidget = new QToolButton(this);
     insertDatetimeButtonWidget->setIcon(global.getIconResource(":dateTime"));
-    insertDatetimeButtonWidget->setText(tr("Insert Date & Time"));
-    insertDatetimeButtonWidget->setToolTip(tr("Insert Date & Time").append(tooltipInfo));
+    insertDatetimeButtonWidget->setText(tr("Insert Date Time"));
+    insertDatetimeButtonWidget->setToolTip(tooltipInfo);
     insertDatetimeButtonAction = this->addWidget(insertDatetimeButtonWidget);
 
     shiftRightButtonShortcut = new QShortcut(this);

@@ -37,9 +37,10 @@ QString DateDelegate::displayText(const QVariant &value, const QLocale &locale) 
     QDateTime timestamp;
     timestamp.setTime_t(value.toLongLong()/1000);
 
-    if (timestamp.date() == QDate::currentDate())
-        return tr("Today") +" " + timestamp.time().toString(global.timeFormat);
-    return timestamp.toString(global.dateFormat + QString(" ") +global.timeFormat);
+    //    if (timestamp.date() == QDate::currentDate())
+    //        return tr("Today") +" " + timestamp.time().toString(global.getTimeFormat());
+
+    return timestamp.toString(global.getDateTimeFormat());
 }
 
 

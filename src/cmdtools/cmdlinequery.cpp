@@ -205,11 +205,11 @@ void CmdLineQuery::write(QList<qint32> lids, QString filename) {
                     line = line + lineBuilder(tags, formats[j], 20);
                 }
                 if (formats[j].startsWith("c")) {
-                    QString date = created.toString(global.dateFormat + QString(" ") +global.timeFormat);
+                    QString date = created.toString(global.getDateTimeFormat());
                     line = line + lineBuilder(date, formats[j], 20);
                 }
                 if (formats[j].startsWith("u")) {
-                    QString date = updated.toString(global.dateFormat + QString(" ") +global.timeFormat);
+                    QString date = updated.toString(global.getDateTimeFormat());
                     line = line + lineBuilder(date, formats[j], 20);
                 }
                 if (formats[j].startsWith("e")) {
@@ -227,13 +227,13 @@ void CmdLineQuery::write(QList<qint32> lids, QString filename) {
                 if (formats[j].startsWith("r")) {
                     QString date="";
                     if (reminderTime.toMSecsSinceEpoch() > 0)
-                        date = reminderTime.toString(global.dateFormat + QString(" ") +global.timeFormat);
+                        date = reminderTime.toString(global.getDateTimeFormat());
                     line = line + lineBuilder(date, formats[j], 20);
                 }
                 if (formats[j].startsWith("v")) {
                     QString date="";
                     if (reminderDoneTime.toMSecsSinceEpoch() > 0)
-                        date = reminderDoneTime.toString(global.dateFormat + QString(" ") +global.timeFormat);
+                        date = reminderDoneTime.toString(global.getDateTimeFormat());
                     line = line + lineBuilder(date, formats[j], 20);
                 }
                 if (j<formats.size()-1)

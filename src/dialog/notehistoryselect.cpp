@@ -93,7 +93,7 @@ void NoteHistorySelect::loadData(QList<NoteVersionId> &versions) {
             text = tr("Today") +" " + timestamp.time().toString(Qt::SystemLocaleShortDate);
         if (timestamp.date() == QDate::currentDate().addDays(-1))
             text = tr("Yesterday") +" " + timestamp.time().toString(Qt::SystemLocaleShortDate);
-        text = timestamp.toString(global.dateFormat + " " +global.timeFormat);
+        text = timestamp.toString(global.getDateTimeFormat());
 
         text = text + " : "+ versions.at(i).title;
         item->setText(text);
