@@ -1491,7 +1491,7 @@ QString Global::getDateFormatByNo(int fmtNo) const {
 QStringList Global::getDateFormats() const {
     return (QStringList() << "MM/dd/yy" << "MM/dd/yyyy" << "M/dd/yyyy" << "M/d/yyyy" << "dd/MM/yy"
                           << "d/M/yy" << "dd/MM/yyyy" << "d/M/yyyy" << "yyyy-MM-dd" << "yy-MM-dd"
-                          << "yyMMdd" << "MM.dd.yy" << "MM.dd.yyyy" << "M.d.yy" << "M.d.yyyy");
+                          << "yyMMdd" << "dd.MM.yy" << "dd.MM.yyyy" << "d.M.yy" << "d.M.yyyy");
 }
 
 QStringList Global::getTimeFormats() const {
