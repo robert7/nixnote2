@@ -232,7 +232,15 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 
 void Global::initializeSharedMemoryMapper(int accountId) {
     QLOG_ASSERT(globalSettings != nullptr);
+    QString key = getOrCreateMemoryKey();
 
+    key = key + QString::number(accountId);
+    QLOG_ASSERT(sharedMemory == nullptr);
+
+    sharedMemory = new CrossMemoryMapper(key);
+}
+
+QString Global::getOrCreateMemoryKey() const {
     globalSettings->beginGroup("MemoryKey");
     QString key = globalSettings->value("key", "").toString();
     if (key == "") {
@@ -240,11 +248,7 @@ void Global::initializeSharedMemoryMapper(int accountId) {
         globalSettings->setValue("key", key);
     }
     globalSettings->endGroup();
-
-    key = key + QString::number(accountId);
-    QLOG_ASSERT(sharedMemory == nullptr);
-
-    sharedMemory = new CrossMemoryMapper(key);
+    return key;
 }
 
 /**

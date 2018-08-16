@@ -223,9 +223,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     networkManager = new QNetworkAccessManager();
     connect(networkManager, SIGNAL(finished(QNetworkReply * )), this, SLOT(onNetworkManagerFinished(QNetworkReply * )));
 
-    QUuid uuid;
-    clientId = uuid.createUuid().toString().replace("{", "").replace("}", "");
-
+    clientId = global.getOrCreateMemoryKey();
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
 
