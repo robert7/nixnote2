@@ -784,12 +784,12 @@ void NBrowserWindow::setDirty(qint32 lid, bool dirty, bool setDateUpdated) {
 // A note's content was updated
 void NBrowserWindow::noteContentUpdated() {
     if (editor->isDirty) {
-        QLOG_DEBUG() << "noteContentUpdated: lid=" << this->lid << " - content modified";
+        QLOG_DEBUG() << "noteContentUpdated: setting dirty flag for lid=" << this->lid;
         setDirty(this->lid, true);
         editor->isDirty = false;
         emit(noteUpdated(this->lid));
     } else {
-        QLOG_DEBUG() << "noteContentUpdated: - content not modified";
+        QLOG_DEBUG() << "noteContentUpdated: - content not really modified";
     }
 }
 
@@ -1212,12 +1212,10 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode)
 
 
     editor->setFocus();
+    // this will set editor to dirty, signal "noteChanged" which will call noteContentUpdated()
+    editor->editAlert();
     microFocusChanged();
 
-    // mark as dirty
-    editor->isDirty = true;
-    // not really sure whenever we need both
-    noteContentUpdated();
     noteContentEdited();
 }
 

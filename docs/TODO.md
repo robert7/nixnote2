@@ -1,9 +1,6 @@
 # TODO / Roadmap
 ## 1
-* fix eu date formats (mm.dd => dd.mm)
-* for some reason dirty flag on simplify doesn't really work => fix
-* Check why some new notes land in "Conflict"
-  * seems to happen, when new note is created and edited more than one time before sync 
+* Check system tray in ubuntu live
 * Better status bar display on exceptions (shortcuts / 2 part status bar)
 * Check relevance evaluation in connection with diacritic removal 
 * PDF export
