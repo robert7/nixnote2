@@ -332,7 +332,7 @@ void Global::appendFilter(FilterCriteria *criteria) {
 bool Global::readSettingShowTrayIcon() {
     bool showTrayIcon;
     settings->beginGroup(INI_GROUP_APPEARANCE);
-    showTrayIcon = settings->value("showTrayIcon", false).toBool();
+    showTrayIcon = settings->value("showTrayIcon", true).toBool();
     settings->endGroup();
     return showTrayIcon;
 }
