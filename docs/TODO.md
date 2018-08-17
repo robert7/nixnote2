@@ -1,6 +1,7 @@
 # TODO / Roadmap
 ## 1
 * Check system tray in ubuntu live
++ Deleting tag crashes app
 * Better status bar display on exceptions (shortcuts / 2 part status bar)
 * Check relevance evaluation in connection with diacritic removal 
 * PDF export
