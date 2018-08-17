@@ -232,7 +232,15 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 
 void Global::initializeSharedMemoryMapper(int accountId) {
     QLOG_ASSERT(globalSettings != nullptr);
+    QString key = getOrCreateMemoryKey();
 
+    key = key + QString::number(accountId);
+    QLOG_ASSERT(sharedMemory == nullptr);
+
+    sharedMemory = new CrossMemoryMapper(key);
+}
+
+QString Global::getOrCreateMemoryKey() const {
     globalSettings->beginGroup("MemoryKey");
     QString key = globalSettings->value("key", "").toString();
     if (key == "") {
@@ -240,11 +248,7 @@ void Global::initializeSharedMemoryMapper(int accountId) {
         globalSettings->setValue("key", key);
     }
     globalSettings->endGroup();
-
-    key = key + QString::number(accountId);
-    QLOG_ASSERT(sharedMemory == nullptr);
-
-    sharedMemory = new CrossMemoryMapper(key);
+    return key;
 }
 
 /**
@@ -328,7 +332,7 @@ void Global::appendFilter(FilterCriteria *criteria) {
 bool Global::readSettingShowTrayIcon() {
     bool showTrayIcon;
     settings->beginGroup(INI_GROUP_APPEARANCE);
-    showTrayIcon = settings->value("showTrayIcon", false).toBool();
+    showTrayIcon = settings->value("showTrayIcon", true).toBool();
     settings->endGroup();
     return showTrayIcon;
 }
@@ -1491,7 +1495,7 @@ QString Global::getDateFormatByNo(int fmtNo) const {
 QStringList Global::getDateFormats() const {
     return (QStringList() << "MM/dd/yy" << "MM/dd/yyyy" << "M/dd/yyyy" << "M/d/yyyy" << "dd/MM/yy"
                           << "d/M/yy" << "dd/MM/yyyy" << "d/M/yyyy" << "yyyy-MM-dd" << "yy-MM-dd"
-                          << "yyMMdd" << "MM.dd.yy" << "MM.dd.yyyy" << "M.d.yy" << "M.d.yyyy");
+                          << "yyMMdd" << "dd.MM.yy" << "dd.MM.yyyy" << "d.M.yy" << "d.M.yyyy");
 }
 
 QStringList Global::getTimeFormats() const {

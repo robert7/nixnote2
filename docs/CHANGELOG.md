@@ -2,6 +2,13 @@
 * [Binary releases](https://github.com/robert7/nixnote2/releases)
 
 ## 2018-08
+### v2.1.0-beta-2
+* Fixed european date formats (wrong order of day/month)
+* Updated translation files with string from source code
+* Fixed: deleting tag crashes app
+* Fixed tray icon behaviour in some special cases (show trayicon now defaults to true)
+
+
 ### v2.1.0-beta-1
 * Various minor improvements and stabilisation
 * Fixed bug with media attachments

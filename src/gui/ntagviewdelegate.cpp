@@ -35,46 +35,44 @@ NTagViewDelegate::NTagViewDelegate(QObject *parent) :
 
 
 void NTagViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-#if QT_VERSION < 0x050000
-    QStyleOptionViewItemV4 options = option;
-#else
     QStyleOptionViewItem options = option;
-#endif
     initStyleOption(&options, index);
 
     options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
 
-    if (global.countBehavior == Global::CountNone)
+    if (global.countBehavior == Global::CountNone) {
         return;
+    }
 
     painter->save();
 
     qint32 lid = index.data(Qt::UserRole).toInt();
     if (lid > 0) {
-
-        NTagView  *tree = (NTagView*)options.widget;
+        NTagView *tree = (NTagView *) options.widget;
         NTagViewItem *item = tree->getItem(lid);
-        qint32 subTotal = item->subTotal;
-        qint32 total = item->total;
-        QString countString;
-        if (total == subTotal) {
-            countString = QString("(")+QString::number(total) + QString(")");
-        } else {
-            countString = QString("(")+QString::number(subTotal) +QString("/") +QString::number(total) + QString(")");
+        if (item) {
+            qint32 subTotal = item->subTotal;
+            qint32 total = item->total;
+            QString countString;
+            if (total == subTotal) {
+                countString = QString("(") + QString::number(total) + QString(")");
+            } else {
+                countString =
+                        QString("(") + QString::number(subTotal) + QString("/") + QString::number(total) + QString(")");
+            }
+
+            QSize iconSize = options.icon.actualSize(options.rect.size());
+            painter->translate(options.rect.left() + iconSize.width(), options.rect.top());
+            QRect clip(0, 0, options.rect.width() + iconSize.width(), options.rect.height());
+
+            painter->setClipRect(clip);
+            QFontMetrics fm = options.fontMetrics;
+            QFont f = options.font;
+            f.setBold(false);
+            painter->setFont(f);
+            painter->setPen(Qt::darkGray);
+            painter->drawText(10 + fm.width(index.data().toString() + QString(" ")), fm.ascent(), countString);
         }
-
-        QSize iconSize = options.icon.actualSize(options.rect.size());
-        painter->translate(options.rect.left()+iconSize.width(), options.rect.top());
-        QRect clip(0, 0, options.rect.width()+iconSize.width(), options.rect.height());
-
-        painter->setClipRect(clip);
-        QFontMetrics fm = options.fontMetrics;
-        QFont f = options.font;
-        f.setBold(false);
-        painter->setFont(f);
-        painter->setPen(Qt::darkGray);
-        painter->drawText(10+fm.width(index.data().toString()+QString(" ")),fm.ascent(),countString);
-//        painter->drawText(6+fm.width(index.data().toString()+QString("   ")),fm.ascent(),countString);
     }
     painter->restore();
 }

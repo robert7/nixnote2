@@ -208,8 +208,6 @@ public:
         listViewNarrow = 2
     };
 
-
-
     ListViewSetup listView;    // Current desired note list value
 
     int argc;                  // Initial argument count from the program start
@@ -453,6 +451,7 @@ public:
     bool isForceSearchWithoutDiacritics() const;
 
     QString normalizeTermForSearchAndIndex(QString s) const;
+    QString getOrCreateMemoryKey() const;
 
 signals:
     // global can send signal about updating status bar

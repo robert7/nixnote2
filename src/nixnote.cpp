@@ -223,9 +223,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     networkManager = new QNetworkAccessManager();
     connect(networkManager, SIGNAL(finished(QNetworkReply * )), this, SLOT(onNetworkManagerFinished(QNetworkReply * )));
 
-    QUuid uuid;
-    clientId = uuid.createUuid().toString().replace("{", "").replace("}", "");
-
+    clientId = global.getOrCreateMemoryKey();
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
 
@@ -531,13 +529,22 @@ void NixNote::setupGui() {
     // Setup the tray icon
     minimizeToTray = global.readSettingMinimizeToTray();
     closeToTray = global.readSettingCloseToTray();
+    bool forceSystemTrayAvailable = global.forceSystemTrayAvailable;
     bool isSystemTrayAvailable = QSystemTrayIcon::isSystemTrayAvailable();
-    QLOG_DEBUG() << "System tray available=" << isSystemTrayAvailable;
-    if (!isSystemTrayAvailable && global.forceSystemTrayAvailable) {
+    bool showTrayIcon = global.readSettingShowTrayIcon();
+    bool forceNoStartMimized = global.forceNoStartMimized;
+
+    QLOG_DEBUG() << "Tray status #1: isSystemTrayAvailable=" << isSystemTrayAvailable
+                 << ", minimizeToTray=" << minimizeToTray
+                 << ", closeToTray=" << closeToTray
+                 << ", forceSystemTrayAvailable=" << forceSystemTrayAvailable
+                 << ", showTrayIcon=" << showTrayIcon
+                 << ", forceNoStartMimized=" << forceNoStartMimized;
+
+    if (!isSystemTrayAvailable && forceSystemTrayAvailable) {
         QLOG_INFO() << "Overriding QSystemTrayIcon::isSystemTrayAvailable() per command line option.";
     }
-    if (!global.readSettingShowTrayIcon() || global.forceNoStartMimized ||
-        (!isSystemTrayAvailable && !global.forceSystemTrayAvailable)) {
+    if (!showTrayIcon || forceNoStartMimized || (!isSystemTrayAvailable && !forceSystemTrayAvailable)) {
         QLOG_DEBUG() << "Overriding close & minimize to tray because of command line or isSystemTrayAvailable";
         closeToTray = false;
         minimizeToTray = false;
@@ -545,8 +552,11 @@ void NixNote::setupGui() {
 
     trayIcon = new QSystemTrayIcon(global.getIconResource(":trayIcon"), this);
     trayIcon->setContextMenu(createTrayContexMenu());
-    if (global.readSettingShowTrayIcon()) {
-        QLOG_DEBUG() << "Showing tray icon";
+    QLOG_DEBUG() << "Tray status #2: showTrayIcon=" << showTrayIcon
+                 << ", closeToTray=" << closeToTray
+                 << ", minimizeToTray=" << minimizeToTray;
+
+    if (showTrayIcon) {
         trayIcon->show();
     }
     connect(trayIcon, SIGNAL(QSystemTrayIcon::activated(QSystemTrayIcon::ActivationReason)), this,
@@ -676,8 +686,8 @@ void NixNote::setupGui() {
 
     // Determine if we should start minimized
     QLOG_DEBUG() << "isSystemTrayAvailable:" << isSystemTrayAvailable;
-    if (global.startMinimized && !global.forceNoStartMimized &&
-        (isSystemTrayAvailable || global.forceSystemTrayAvailable)) {
+    if (global.startMinimized && !forceNoStartMimized &&
+        (isSystemTrayAvailable || forceSystemTrayAvailable)) {
         // TODO refactor
         QLOG_DEBUG() << "About to start minimized in system tray";
         this->setWindowState(Qt::WindowMinimized);
@@ -2804,30 +2814,16 @@ void NixNote::fastPrintNote() {
 //* the tray.
 //************************************************************
 void NixNote::showMainWindow() {
+    setWindowState(Qt::WindowActive);
     if (minimizeToTray || closeToTray) {
-        //if (isMinimized() || !isVisible()) {
-            setWindowState(Qt::WindowActive);
-            this->show();
-            this->raise();
-            this->showNormal();
-            this->activateWindow();
-            this->setFocus();
-            return;
-        // } else {
-        //     showMinimized();
-        //     this->setHidden(true);
-        //     return;
-        // }
+        this->show();
+        this->raise();
+        this->showNormal();
+        this->activateWindow();
+        this->setFocus();
     } else {
-        //if (isMinimized()) {
-            setWindowState(Qt::WindowActive);
-            this->showNormal();
-            this->setFocus();
-            return;
-        // } else {
-        //     this->showMinimized();
-        //     return;
-        // }
+        this->showNormal();
+        this->setFocus();
     }
 }
 
