@@ -50,27 +50,29 @@ void NTagViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     if (lid > 0) {
         NTagView *tree = (NTagView *) options.widget;
         NTagViewItem *item = tree->getItem(lid);
-        qint32 subTotal = item->subTotal;
-        qint32 total = item->total;
-        QString countString;
-        if (total == subTotal) {
-            countString = QString("(") + QString::number(total) + QString(")");
-        } else {
-            countString =
-                    QString("(") + QString::number(subTotal) + QString("/") + QString::number(total) + QString(")");
+        if (item) {
+            qint32 subTotal = item->subTotal;
+            qint32 total = item->total;
+            QString countString;
+            if (total == subTotal) {
+                countString = QString("(") + QString::number(total) + QString(")");
+            } else {
+                countString =
+                        QString("(") + QString::number(subTotal) + QString("/") + QString::number(total) + QString(")");
+            }
+
+            QSize iconSize = options.icon.actualSize(options.rect.size());
+            painter->translate(options.rect.left() + iconSize.width(), options.rect.top());
+            QRect clip(0, 0, options.rect.width() + iconSize.width(), options.rect.height());
+
+            painter->setClipRect(clip);
+            QFontMetrics fm = options.fontMetrics;
+            QFont f = options.font;
+            f.setBold(false);
+            painter->setFont(f);
+            painter->setPen(Qt::darkGray);
+            painter->drawText(10 + fm.width(index.data().toString() + QString(" ")), fm.ascent(), countString);
         }
-
-        QSize iconSize = options.icon.actualSize(options.rect.size());
-        painter->translate(options.rect.left() + iconSize.width(), options.rect.top());
-        QRect clip(0, 0, options.rect.width() + iconSize.width(), options.rect.height());
-
-        painter->setClipRect(clip);
-        QFontMetrics fm = options.fontMetrics;
-        QFont f = options.font;
-        f.setBold(false);
-        painter->setFont(f);
-        painter->setPen(Qt::darkGray);
-        painter->drawText(10 + fm.width(index.data().toString() + QString(" ")), fm.ascent(), countString);
     }
     painter->restore();
 }

@@ -5,6 +5,8 @@
 ### v2.1.0-beta-2
 * Fixed european date formats (wrong order of day/month)
 * Updated translation files with string from source code
+* Fixed: deleting tag crashes app
+
 
 ### v2.1.0-beta-1
 * Various minor improvements and stabilisation
