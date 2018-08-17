@@ -7,6 +7,7 @@
 * Updated translation files with string from source code
 * Fixed: deleting tag crashes app
 * Fixed tray icon behaviour in some special cases (show trayicon now defaults to true)
+* Added new menu option Help/Getting started
 
 
 ### v2.1.0-beta-1

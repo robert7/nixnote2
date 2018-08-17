@@ -511,6 +511,13 @@ void NMainMenuBar::setupHelpMenu() {
     connect(openProjectWebPageAction, SIGNAL(triggered()), this, SLOT(onOpenProjectWebPage()));
     helpMenu->addAction(openProjectWebPageAction);
 
+    QAction *openGettingStartedWebPageAction = new QAction(tr("&Getting started"), this);
+    openGettingStartedWebPageAction->setToolTip(tr("Open Getting started wiki page"));
+    connect(openGettingStartedWebPageAction, SIGNAL(triggered()), this, SLOT(onOpenGettingStartedWebPage()));
+    helpMenu->addAction(openGettingStartedWebPageAction);
+
+    helpMenu->addSeparator();
+
     themeInformationAction = new QAction(tr("Theme &Information"), this);
     // themeInformationAction->setToolTip(tr("View information about the current theme."));
     // connect(themeInformationAction, SIGNAL(triggered()), this, SLOT(openThemeInformation()));
@@ -567,6 +574,10 @@ void NMainMenuBar::setupShortcut(QAction *action, QString text) {
 
 void NMainMenuBar::onOpenProjectWebPage() {
     QDesktopServices::openUrl(QUrl(NN_GITHUB_WIKI_URL));
+}
+
+void NMainMenuBar::onOpenGettingStartedWebPage() {
+    QDesktopServices::openUrl(QUrl(NN_GITHUB_WIKI_URL "/Getting-started"));
 }
 
 void NMainMenuBar::setupThemeMenu() {
