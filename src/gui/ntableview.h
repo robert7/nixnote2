@@ -69,6 +69,7 @@ public:
     QAction *deleteNoteAction;
     QAction *restoreNoteAction;
     QAction *openNoteExternalWindowAction;
+    QAction *openNoteNewTabAction;
     QAction *copyNoteLinkAction;
     QAction *copyNoteAction;
     QAction *pinNoteAction;
@@ -115,11 +116,9 @@ public slots:
     void deleteSelectedNotes();
     void restoreSelectedNotes();
 
-    // disabled as for now
-    //void openNoteContextMenuTriggered();
-    //void openNoteNewTabTriggered();
-
+    void openNoteNewTabTriggered();
     void openNoteExternalWindowTriggered();
+
     void copyNoteLink();
     void toggleColumnVisible(int position, bool visible);
     void copyNote();

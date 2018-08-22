@@ -7,6 +7,8 @@
 * Updated translation files with string from source code
 * Fixed: deleting tag crashes app
 * Fixed tray icon behaviour in some special cases (show trayicon now defaults to true)
+* Added new menu option Help/Getting started
+* Restored option to open notes in new tab
 
 
 ### v2.1.0-beta-1

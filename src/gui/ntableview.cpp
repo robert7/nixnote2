@@ -204,6 +204,11 @@ NTableView::NTableView(QWidget *parent) :
     connect(openNoteExternalWindowAction, SIGNAL(triggered()), this, SLOT(openNoteExternalWindowTriggered()));
     openNoteExternalWindowAction->setFont(global.getGuiFont(font()));
 
+    openNoteNewTabAction = new QAction(tr("Open Note In New Tab"), this);
+    contextMenu->addAction(openNoteNewTabAction);
+    connect(openNoteNewTabAction, SIGNAL(triggered()), this, SLOT(openNoteNewTabTriggered()));
+    openNoteNewTabAction->setFont(global.getGuiFont(font()));
+
     contextMenu->addSeparator();
 
     addNoteAction = new QAction(tr("Add Note"), this);
@@ -1559,9 +1564,16 @@ void NTableView::mouseMoveEvent(QMouseEvent *event) {
 void NTableView::openNoteExternalWindowTriggered() {
     QList<qint32> lids;
     getSelectedLids(lids);
-    for (int i = 0; i < lids.size(); i++)
+    for (int i = 0; i < lids.size(); i++) {
         emit(openNoteExternalWindow(lids[i]));
+    }
 }
+
+
+void NTableView::openNoteNewTabTriggered() {
+    this->openSelectedLids(true);
+}
+
 
 void NTableView::createNewNote() {
     emit(newNote());
