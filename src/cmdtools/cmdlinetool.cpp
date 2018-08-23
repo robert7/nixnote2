@@ -48,11 +48,6 @@ int CmdLineTool::run(StartupConfig &config) {
 #if QT_VERSION < 0x050000
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 #endif
-
-    // Force info level messages only
-    QsLogging::Logger& logger = QsLogging::Logger::instance();
-    logger.setLoggingLevel(QsLogging::InfoLevel);
-
     QString errmsg(tr("Unable to attach to shared memory segment.  Is the other NixNote running?\n"));
     if (config.sync()) {
         // If the shared memory segment doesn't exist, we just do a sync & exit
