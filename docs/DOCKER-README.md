@@ -26,6 +26,7 @@ docker run -v $PROJECTDIR/appdir:/opt/nixnote2/appdir -it nixnote2/xenial /bin/b
 cd nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull
 # compile (debug mode) 
 ./development/build-with-qmake.sh /usr debug && ./development/create-AppImage.sh && mv *.AppImage appdir && chmod -R a+rwx appdir
+# done
 ```
 
 Now terminate session (Ctrl-D), to return to host

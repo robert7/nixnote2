@@ -1,5 +1,7 @@
 # TODO / Roadmap
 ## 1
+* change program name to nixnote21
+* fix "nixnote2 signalGui --shutdown" && "nixnote2 signalGui --show"
 * Better status bar display on exceptions (shortcuts / 2 part status bar)
 * Check relevance evaluation in connection with diacritic removal 
 * PDF export
