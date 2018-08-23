@@ -127,7 +127,9 @@ int main(int argc, char *argv[]) {
     global.argc = argc;
     global.argv = argv;
 
+    // note guiAvailable is passed by reference and can be modified by cmd line arguments
     int retval = startupConfig.init(argc, argv, guiAvailable);
+    QLOG_DEBUG() << "Startup config ret=" << retval << ", guiAvailable=" << guiAvailable;
     if (retval != 0) {
         return retval;
     }
