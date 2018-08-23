@@ -303,6 +303,8 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
 
     for (int i = 1; i < argc; i++) {
         QString parm(argv[i]);
+
+        QLOG_DEBUG() << "Param #" << i << ": " << parm;
         if (parm == "--help" || parm == "-?" || parm == "help" || parm == "--?") {
             printHelp();
             return 1;
@@ -312,16 +314,19 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             int level = parm.toInt();
             QLOG_INFO() << "Changed logLevel via command line option to " << level;
             setDebugLevel(level);
+            continue;
         }
         if (parm.startsWith("--noLogTimestamps", Qt::CaseSensitive)) {
             QLOG_INFO() << "Log timestamps turned off";
             QsLogging::Logger &logger = QsLogging::Logger::instance();
             logger.setDisplayTimestamp(false);
+            continue;
         }
         if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1);
             accountId = parm.toInt();
             QLOG_DEBUG() << "Set accountId via command line option to " << accountId;
+            continue;
         }
 
         // directory overrides
@@ -329,16 +334,19 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             parm = parm.section('=', 1, 1);
             configDir = parm;
             QLOG_INFO() << "Set configDir via command line to " + configDir;
+            continue;
         }
         if (parm.startsWith("--programDataDir=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1);
             programDataDir = parm;
             QLOG_INFO() << "Set programDataDir via command line to " + programDataDir;
+            continue;
         }
         if (parm.startsWith("--userDataDir=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1);
             userDataDir = parm;
             QLOG_INFO() << "Set userDataDir via command line to " + userDataDir;
+            continue;
         }
 
 
@@ -726,7 +734,7 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
 }
 
 void StartupConfig::activateCommand(int commandCode, bool commandValue) const {
-    QLOG_DEBUG() << "Setting command: " << commandCode << " to value=" << commandValue;
+    QLOG_DEBUG() << "Setting command: #" << commandCode << " to value=" << commandValue;
     command->setBit(commandCode, commandValue);
 }
 
