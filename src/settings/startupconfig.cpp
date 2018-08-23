@@ -382,19 +382,19 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             guiAvailable = false;
         }
         if (parm.startsWith("query")) {
-            activateCommand(STARTUP_QUERY);
+            activateCommand(STARTUP_QUERY, true);
             if (queryNotes == nullptr)
                 queryNotes = new CmdLineQuery();
             guiAvailable = false;
         }
         if (parm.startsWith("readNote")) {
-            activateCommand(STARTUP_READNOTE);
+            activateCommand(STARTUP_READNOTE, true);
             if (extractText == nullptr)
                 extractText = new ExtractNoteText();
             guiAvailable = false;
         }
         if (parm.startsWith("deleteNote")) {
-            activateCommand(STARTUP_DELETENOTE);
+            activateCommand(STARTUP_DELETENOTE, true);
             if (delNote == nullptr)
                 delNote = new DeleteNote();
             guiAvailable = false;
@@ -415,15 +415,15 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
                 alter = new AlterNote();
         }
         if (parm.startsWith("openNotebook")) {
-            activateCommand(STARTUP_OPENNOTEBOOK);
+            activateCommand(STARTUP_OPENNOTEBOOK, true);
             notebookList.clear();
         }
         if (parm.startsWith("closeNotebook")) {
-            activateCommand(STARTUP_CLOSENOTEBOOK);
+            activateCommand(STARTUP_CLOSENOTEBOOK, true);
             notebookList.clear();
         }
         if (parm.startsWith("sqlExec", Qt::CaseSensitive)) {
-            activateCommand(STARTUP_SQLEXEC);
+            activateCommand(STARTUP_SQLEXEC, true);
             guiAvailable = false;
         }
         if (parm.startsWith("signalGui")) {
@@ -712,12 +712,12 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
         QString value = QString(argv[i]);
         if (value == "--forceNoGui") {
             guiAvailable = false;
-            command->clearBit(STARTUP_GUI);
+            activateCommand(STARTUP_GUI, false);
             i = argc;
         }
         if (value == "--forceGui") {
             guiAvailable = true;
-            activateCommand(STARTUP_GUI);
+            activateCommand(STARTUP_GUI, true);
             i = argc;
         }
     }
