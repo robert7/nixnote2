@@ -1,15 +1,13 @@
-# NixNote2
+# NixNote v2.1
 ## Introduction
 
-Fork of [baumgarr/nixnote2](https://github.com/baumgarr/nixnote2) - An unofficial client of Evernote for Linux.
+Nixnote is: Evernote desktop client for Linux.
 
-This version contains the original code, selected changes merged from other forks and my changes. 
-
-* Wiki
-  * [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
-  * [New features in v2.1](https://github.com/robert7/nixnote2/wiki/New-features-in-v2.1)
+* [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
+* [New features in v2.1](https://github.com/robert7/nixnote2/wiki/New-features-in-v2.1)
+* [Blog](https://nixnotes-21.blogspot.com/)
 * [CHANGELOG](docs/CHANGELOG.md)
-* [Binary releases](https://github.com/robert7/nixnote2/releases)
+* [Howto install & binary downloads](https://github.com/robert7/nixnote2/releases)
 
 ## Building from source
 
@@ -23,7 +21,7 @@ that minor adjustments are needed for the all non linux builds.
 This should work out of the box, no fiddling with any dependencies
 is needed. The created binary image should work on all ~recent distributions (at least
 in theory).
-Basic docker familiarity with docker is probably quite helpful.
+Basic docker familiarity with docker is helpful.
 
 More info in: [DOCKER README](docs/DOCKER-README.md)   
 

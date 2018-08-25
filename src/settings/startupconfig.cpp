@@ -218,7 +218,6 @@ void StartupConfig::printHelp() {
                            + QString("          --show                       Show NixNote if hidden.\n")
                            + QString("          --synchronize                Synchronize with Evernote.\n")
                            + QString("          --shutdown                   Shutdown NixNote.\n")
-                           + QString("          --screenshot                 Start a screen capture.\n")
                            + QString(
         "          --openNote                   Open a note.  --id=<id> must be specified.\n")
                            + QString(
@@ -251,8 +250,8 @@ void StartupConfig::printHelp() {
                            + QString(
         "     " NN_APP_NAME " export --search=\"notebook:notes\" --output=/home/joe/exports.nnex\n\n")
                            + QString(
-        "     To signal NixNote to do a screenshot from the command line (NixNote must already be running).\n")
-                           + QString("     " NN_APP_NAME " signalGui --screenshot\n\n")
+        "     To signal NixNote to do a shutdown (NixNote must already be running).\n")
+                           + QString("     " NN_APP_NAME " signalGui --shutdown\n\n")
                            + QString("\n\n")
     );
 
@@ -303,6 +302,8 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
 
     for (int i = 1; i < argc; i++) {
         QString parm(argv[i]);
+
+        QLOG_DEBUG() << "Param #" << i << ": " << parm;
         if (parm == "--help" || parm == "-?" || parm == "help" || parm == "--?") {
             printHelp();
             return 1;
@@ -312,16 +313,19 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             int level = parm.toInt();
             QLOG_INFO() << "Changed logLevel via command line option to " << level;
             setDebugLevel(level);
+            continue;
         }
         if (parm.startsWith("--noLogTimestamps", Qt::CaseSensitive)) {
             QLOG_INFO() << "Log timestamps turned off";
             QsLogging::Logger &logger = QsLogging::Logger::instance();
             logger.setDisplayTimestamp(false);
+            continue;
         }
         if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1);
             accountId = parm.toInt();
-            QLOG_DEBUG() << "Set accountId via command line option to " + accountId;
+            QLOG_DEBUG() << "Set accountId via command line option to " << accountId;
+            continue;
         }
 
         // directory overrides
@@ -329,112 +333,117 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             parm = parm.section('=', 1, 1);
             configDir = parm;
             QLOG_INFO() << "Set configDir via command line to " + configDir;
+            continue;
         }
         if (parm.startsWith("--programDataDir=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1);
             programDataDir = parm;
             QLOG_INFO() << "Set programDataDir via command line to " + programDataDir;
+            continue;
         }
         if (parm.startsWith("--userDataDir=", Qt::CaseSensitive)) {
             parm = parm.section('=', 1, 1);
             userDataDir = parm;
             QLOG_INFO() << "Set userDataDir via command line to " + userDataDir;
+            continue;
         }
 
 
         if (parm.startsWith("addNote")) {
-            command->setBit(STARTUP_ADDNOTE, true);
+            activateCommand(STARTUP_ADDNOTE, true);
+            
             if (newNote == nullptr)
                 newNote = new AddNote();
             guiAvailable = false;
         }
         if (parm.startsWith("appendNote")) {
-            command->setBit(STARTUP_APPENDNOTE, true);
+            activateCommand(STARTUP_APPENDNOTE, true);
             if (newNote == nullptr)
                 newNote = new AddNote();
             guiAvailable = false;
         }
         if (parm.startsWith("emailNote")) {
-            command->setBit(STARTUP_EMAILNOTE, true);
+            activateCommand(STARTUP_EMAILNOTE, true);
             if (email == nullptr)
                 email = new EmailNote();
             guiAvailable = false;
         }
         if (parm.startsWith("export")) {
-            command->setBit(STARTUP_EXPORT, true);
+            activateCommand(STARTUP_EXPORT, true);
             if (exportNotes == nullptr)
                 exportNotes = new ExtractNotes();
             guiAvailable = false;
             exportNotes->backup = false;
         }
         if (parm.startsWith("import")) {
-            command->setBit(STARTUP_IMPORT, true);
+            activateCommand(STARTUP_IMPORT, true);
             if (importNotes == nullptr)
                 importNotes = new ImportNotes();
             guiAvailable = false;
         }
         if (parm.startsWith("backup")) {
-            command->setBit(STARTUP_BACKUP, true);
+            activateCommand(STARTUP_BACKUP, true);
             if (exportNotes == nullptr)
                 exportNotes = new ExtractNotes();
             exportNotes->backup = true;
             guiAvailable = false;
         }
         if (parm.startsWith("query")) {
-            command->setBit(STARTUP_QUERY);
+            activateCommand(STARTUP_QUERY, true);
             if (queryNotes == nullptr)
                 queryNotes = new CmdLineQuery();
             guiAvailable = false;
         }
         if (parm.startsWith("readNote")) {
-            command->setBit(STARTUP_READNOTE);
+            activateCommand(STARTUP_READNOTE, true);
             if (extractText == nullptr)
                 extractText = new ExtractNoteText();
             guiAvailable = false;
         }
         if (parm.startsWith("deleteNote")) {
-            command->setBit(STARTUP_DELETENOTE);
+            activateCommand(STARTUP_DELETENOTE, true);
             if (delNote == nullptr)
                 delNote = new DeleteNote();
             guiAvailable = false;
         }
         if (parm.startsWith("sync")) {
-            command->setBit(STARTUP_SYNC, true);
+            activateCommand(STARTUP_SYNC, true);
             guiAvailable = false;
         }
         if (parm.startsWith("show_window")) {
-            command->setBit(STARTUP_SHOW, true);
+            activateCommand(STARTUP_SHOW, true);
         }
         if (parm.startsWith("shutdown")) {
-            command->setBit(STARTUP_SHUTDOWN, true);
+            activateCommand(STARTUP_SHUTDOWN, true);
         }
         if (parm.startsWith("alterNote")) {
-            command->setBit(STARTUP_ALTERNOTE, true);
+            activateCommand(STARTUP_ALTERNOTE, true);
             if (alter == nullptr)
                 alter = new AlterNote();
         }
         if (parm.startsWith("openNotebook")) {
-            command->setBit(STARTUP_OPENNOTEBOOK);
+            activateCommand(STARTUP_OPENNOTEBOOK, true);
             notebookList.clear();
         }
         if (parm.startsWith("closeNotebook")) {
-            command->setBit(STARTUP_CLOSENOTEBOOK);
+            activateCommand(STARTUP_CLOSENOTEBOOK, true);
             notebookList.clear();
         }
         if (parm.startsWith("sqlExec", Qt::CaseSensitive)) {
-            command->setBit(STARTUP_SQLEXEC);
+            activateCommand(STARTUP_SQLEXEC, true);
             guiAvailable = false;
         }
         if (parm.startsWith("signalGui")) {
-            command->setBit(STARTUP_SIGNALGUI, true);
-            if (signalGui == nullptr)
+            activateCommand(STARTUP_SIGNALGUI, true);
+            if (signalGui == nullptr) {
                 signalGui = new SignalGui();
+            }
             guiAvailable = false;
         }
 
         // This should be last because it is the default
         if (parm.startsWith("start")) {
-            command->setBit(STARTUP_GUI, true);
+            activateCommand(STARTUP_GUI, true);
             guiAvailable = true;
         }
 
@@ -500,7 +509,7 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             }
         }
         if (command->at(STARTUP_GUI) || command->count(true) == 0) {
-            command->setBit(STARTUP_GUI, true);
+            activateCommand(STARTUP_GUI, true);
             if (parm.startsWith("--openNote=", Qt::CaseSensitive)) {
                 parm = parm.mid(11);
                 startupNoteLid = parm.toInt();
@@ -519,7 +528,7 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             }
             if (parm == "--syncAndExit") {
                 command->clear();
-                command->setBit(STARTUP_SYNC, true);
+                activateCommand(STARTUP_SYNC, true);
             }
             if (parm == "--enableIndexing") {
                 enableIndexing = true;
@@ -698,7 +707,7 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
 
 
     if (command->count(true) == 0)
-        command->setBit(STARTUP_GUI, true);
+        activateCommand(STARTUP_GUI, true);
 
     if (command->count(true) > 1) {
         QLOG_FATAL() << "\nInvalid options specified.  Only one command may be specified at a time.\n";
@@ -710,17 +719,22 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
         QString value = QString(argv[i]);
         if (value == "--forceNoGui") {
             guiAvailable = false;
-            command->clearBit(STARTUP_GUI);
+            activateCommand(STARTUP_GUI, false);
             i = argc;
         }
         if (value == "--forceGui") {
             guiAvailable = true;
-            command->setBit(STARTUP_GUI);
+            activateCommand(STARTUP_GUI, true);
             i = argc;
         }
     }
 
     return 0;
+}
+
+void StartupConfig::activateCommand(int commandCode, bool commandValue) const {
+    QLOG_DEBUG() << "Setting command: #" << commandCode << " to value=" << commandValue;
+    command->setBit(commandCode, commandValue);
 }
 
 bool StartupConfig::query() {

@@ -63,6 +63,7 @@ Makefile.Release
 
 cmake-build-debug/
 qmake-build-debug/
+docker-build-debug/
 qmake-build-release/
 
 # idea

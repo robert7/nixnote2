@@ -2,6 +2,9 @@
 * [Binary releases](https://github.com/robert7/nixnote2/releases)
 
 ## 2018-08
+### v2.1.0-beta-3
+* Fixed bug in command line argument handling which prevented command line "commands"
+
 ### v2.1.0-beta-2
 * Fixed european date formats (wrong order of day/month)
 * Updated translation files with string from source code

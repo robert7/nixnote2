@@ -31,7 +31,7 @@ TrayMenu::TrayMenu(QWidget *parent) :
 
     // QMenu: this signal is emitted just before the menu is shown to the user.
     connect(this, SIGNAL(aboutToShow()), this, SLOT(buildActionMenu()));
-    connect(this, SIGNAL(show()), this, SLOT(buildActionMenu()));
+    //connect(this, SIGNAL(show()), this, SLOT(buildActionMenu()));
 
     QString css = global.getThemeCss("trayMenuCss");
     if (css != "") {
@@ -54,7 +54,7 @@ void TrayMenu::setActionMenu(ActionMenuType type, QMenu *menu) {
 }
 
 void TrayMenu::buildActionMenu() {
-    QLOG_DEBUG() << "buildActionMenu";
+    QLOG_DEBUG() << "buildActionMenu (aboutToShow)";
 
     for (int i = actions.size() - 1; i >= 0; i--) {
         QAction *action = actions[i];

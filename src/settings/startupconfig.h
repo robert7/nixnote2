@@ -69,6 +69,9 @@ private:
 
     int accountId;
 
+    void activateCommand(int commandCode, bool commandValue) const;
+
+
 public:
     StartupConfig();
 
@@ -120,6 +123,7 @@ public:
 
     int init(int argc, char *argv[], bool &guiAvailable);
     void printHelp();
+
 };
 
 #endif // STARTUPCONFIG_H

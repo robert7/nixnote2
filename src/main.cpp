@@ -127,7 +127,9 @@ int main(int argc, char *argv[]) {
     global.argc = argc;
     global.argv = argv;
 
+    // note guiAvailable is passed by reference and can be modified by cmd line arguments
     int retval = startupConfig.init(argc, argv, guiAvailable);
+    QLOG_DEBUG() << "Startup config ret=" << retval << ", guiAvailable=" << guiAvailable;
     if (retval != 0) {
         return retval;
     }
@@ -189,13 +191,20 @@ int main(int argc, char *argv[]) {
 
     // If we want something other than the GUI, try let the CmdLineTool deal with it.
     if (!startupConfig.gui()) {
+        QLOG_INFO() << "About to handle command line arguments";
         global.purgeTemporaryFilesOnShutdown = startupConfig.purgeTemporaryFiles;
         CmdLineTool cmdline;
         startupConfig.purgeTemporaryFiles = false;
         int retval1 = cmdline.run(startupConfig);
-        if (global.sharedMemory->isAttached())
+        if (global.sharedMemory->isAttached()) {
             global.sharedMemory->detach();
-        QLOG_INFO() << "Exit: retcode=" << retval1;
+        }
+        if (retval1) {
+            QLOG_ERROR() << "Exit FAILURE: retcode=" << retval1;
+
+        } else {
+            QLOG_INFO() << "Exit OK: retcode=" << retval1;
+        }
         delete a;
 
         exit(retval1);

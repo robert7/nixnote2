@@ -22,34 +22,7 @@ RUN apt-get update && apt-get install -y git-core build-essential \
                               qt55base \
                               libpoppler-qt5-dev \
                               qttools5-dev-tools \
-  qt55tools qt55script qt55quick1 qt55webengine qt55webkit-examples qt55quickcontrols qt553d
-
- qt55-meta	5.5.1-1basyskom1	Stephan Binner (2015-10-15)
- qt553d	5.5.1-1basyskom2	Stephan Binner (2016-01-05)
- qt55base	5.5.1-1basyskom2	Stephan Binner (2016-01-04)
- qt55canvas3d	5.5.1-1basyskom2	Stephan Binner (2016-01-05)
- qt55connectivity	5.5.1-1basyskom2	Stephan Binner (2016-01-05)
- qt55declarative	5.5.1-1basyskom2	Stephan Binner (2016-01-04)
- qt55doc	5.5.1-1basyskom1	Stephan Binner (2015-10-15)
- qt55graphicaleffects	5.5.1-1basyskom2	Stephan Binner (2016-01-05)
- qt55imageformats	5.5.1-1basyskom2	Stephan Binner (2016-01-05)
- qt55location	5.5.1-1basyskom2	Stephan Binner (2016-01-05)
- qt55multimedia	5.5.1-1basyskom3	Stephan Binner (2016-01-05)
- qt55quick1	5.5.1-1basyskom2	Stephan Binner (2016-01-04)
- qt55quickcontrols	5.5.1-1basyskom2	Stephan Binner (2016-01-04)
- qt55script	5.5.1-1basyskom2	Stephan Binner (2016-01-04)
- qt55sensors	5.5.1-1basyskom2	Stephan Binner (2016-01-05)
- qt55serialport	5.5.1-1basyskom2	Stephan Binner (2016-01-05)
- qt55svg	5.5.1-1basyskom2	Stephan Binner (2016-01-04)
- qt55tools	5.5.1-1basyskom2	Stephan Binner (2016-01-05)
- qt55translations	5.5.1-1basyskom1	Stephan Binner (2015-10-15)
- qt55wayland	5.5.1-1basyskom2	Stephan Binner (2016-01-05)
- qt55webchannel	5.5.1-1basyskom2	Stephan Binner (2016-01-05)
- qt55webengine	5.5.1-1basyskom1	Stephan Binner (2015-10-15)
- qt55webkit-examples	5.5.1-1basyskom1	Stephan Binner (2015-10-15)
- qt55websockets	5.5.1-1basyskom2	Stephan Binner (2016-01-05)
- qt55x11extras	5.5.1-1basyskom2	Stephan Binner (2016-01-05)
- qt55xmlpatterns
+                              qt55tools qt55script qt55quick1 qt55webengine qt55webkit-examples qt55quickcontrols qt553d
 
 # install cmake
 RUN wget -nv "https://cmake.org/files/v3.8/${cmake_ver}.tar.gz" && \
@@ -81,7 +54,7 @@ RUN cd $wdir && git clone -b $git_branch "https://github.com/robert7/nixnote2.gi
         cd nixnote2 && \
         git checkout $git_rev
 
-# TODO: compile...
+# TODO: fix compile...
 
 CMD /bin/bash
 
