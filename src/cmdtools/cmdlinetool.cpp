@@ -56,7 +56,7 @@ int CmdLineTool::run(StartupConfig &config) {
             QLOG_DEBUG() << "Command: sync - attach failed => we'll handle the sync";
             return this->sync();
         }
-        global.sharedMemory->write(QString("SNCHRONIZE"));
+        global.sharedMemory->write(QString("SYNCHRONIZE"));
         global.sharedMemory->detach();
         return 1;
     }

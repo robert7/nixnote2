@@ -2564,22 +2564,32 @@ void NixNote::findReplaceAllInNotePressed() {
 //**************************************************************
 void NixNote::heartbeatTimerTriggered() {
     QByteArray data = global.sharedMemory->read();
+
+    //    if (data.startsWith("\x00")) {
+    //        // nothing to do
+    //        return;
+    //    } else {
+    //        QLOG_DEBUG() << "heartbeatTimerTriggered: " << data;
+    //    }
+
     if (data.startsWith("SYNCHRONIZE")) {
-        QLOG_DEBUG() << "Sync requested by shared memory segment.";
+        QLOG_INFO() << "SYNCHRONIZE requested by shared memory segment.";
         this->synchronize();
         return;
     }
-    if (data.startsWith("IMMEDIATE_SHUTDOWN")) {
-        QLOG_ERROR() << "Immediate shutdown requested by shared memory segment.";
+    else if (data.startsWith("IMMEDIATE_SHUTDOWN")) {
+        QLOG_INFO() << "IMMEDIATE_SHUTDOWN requested by shared memory segment.";
         this->quitNixNote();
         return;
     }
-    if (data.startsWith("SHOW_WINDOW")) {
+    else if (data.startsWith("SHOW_WINDOW")) {
+        QLOG_INFO() << "SHOW_WINDOW requested by shared memory segment.";
         this->raise();
         this->showMaximized();
         return;
     }
-    if (data.startsWith("QUERY:")) {
+    else if (data.startsWith("QUERY:")) {
+        QLOG_INFO() << "QUERY requested by shared memory segment.";
         QList<qint32> results;
         QString query = data.mid(6);
         QLOG_DEBUG() << query;
@@ -2619,17 +2629,20 @@ void NixNote::heartbeatTimerTriggered() {
 
         global.sharedMemory->write(xmlString);
     }
-    if (data.startsWith("OPEN_NOTE:")) {
+    else if (data.startsWith("OPEN_NOTE:")) {
+        QLOG_INFO() << "OPEN_NOTE requested by shared memory segment.";
         QString number = data.mid(10);
         qint32 note = number.toInt();
         NoteTable noteTable(global.db);
         if (noteTable.exists(note))
             this->openExternalNote(note);
     }
-    if (data.startsWith("NEW_NOTE")) {
+    else if (data.startsWith("NEW_NOTE")) {
+        QLOG_INFO() << "NEW_NOTE requested by shared memory segment.";
         this->newExternalNote();
     }
-    if (data.startsWith("CMDLINE_QUERY:")) {
+    else if (data.startsWith("CMDLINE_QUERY:")) {
+        QLOG_INFO() << "CMDLINE_QUERY requested by shared memory segment.";
         QString xml = data.mid(14);
         CmdLineQuery query;
         query.unwrap(xml.trimmed());
@@ -2641,26 +2654,30 @@ void NixNote::heartbeatTimerTriggered() {
         engine.filter(filter, &lids);
         query.write(lids, tmpFile);
     }
-    if (data.startsWith("DELETE_NOTE:")) {
+    else if (data.startsWith("DELETE_NOTE:")) {
+        QLOG_INFO() << "DELETE_NOTE requested by shared memory segment.";
         qint32 lid = data.mid(12).toInt();
         NoteTable noteTable(global.db);
         noteTable.deleteNote(lid, true);
         updateSelectionCriteria();
     }
-    if (data.startsWith("EMAIL_NOTE:")) {
+    else if (data.startsWith("EMAIL_NOTE:")) {
+        QLOG_INFO() << "EMAIL_NOTE requested by shared memory segment.";
         QString xml = data.mid(11);
         EmailNote email;
         email.unwrap(xml);
         email.sendEmail();
     }
-    if (data.startsWith("ALTER_NOTE:")) {
+    else if (data.startsWith("ALTER_NOTE:")) {
+        QLOG_INFO() << "ALTER_NOTE requested by shared memory segment.";
         QString xml = data.mid(11);
         AlterNote alter;
         alter.unwrap(xml);
         alter.alterNote();
         updateSelectionCriteria();
     }
-    if (data.startsWith("READ_NOTE:")) {
+    else if (data.startsWith("READ_NOTE:")) {
+        QLOG_INFO() << "READ_NOTE requested by shared memory segment.";
         QString xml = data.mid(10);
         ExtractNoteText data;
         data.unwrap(xml);
@@ -2677,33 +2694,24 @@ void NixNote::heartbeatTimerTriggered() {
         responseMapper.write(reply);
         responseMapper.detach();
     }
-    if (data.startsWith("SIGNAL_GUI:")) {
+    else if (data.startsWith("SIGNAL_GUI:")) {
+        QLOG_INFO() << "SIGNAL_GUI requested by shared memory segment.";
         QString cmd = data.mid(12);
         QLOG_DEBUG() << "COMMAND REQUESTED: " << cmd;
         if (cmd.startsWith("SYNCHRONIZE")) {
             this->synchronize();
         }
-        if (cmd.startsWith("SHUTDOWN")) {
-            this->close();
+        else if (cmd.startsWith("SHUTDOWN")) {
+            this->quitNixNote();
         }
-        if (cmd.startsWith("SHOW")) {
-            if (!isVisible())
-                this->showMainWindow();
-            this->raise();
-            this->activateWindow();
-            this->showNormal();
-            this->tabWindow->currentBrowser()->editor->setFocus();
+        else if (cmd.startsWith("SHOW")) {
+            this->showMainWindow();
         }
-        if (cmd.startsWith("NEW_NOTE")) {
+        else if (cmd.startsWith("NEW_NOTE")) {
+            // newNote() includes show window
             this->newNote();
-            if (!isVisible())
-                this->showMainWindow();
-            this->raise();
-            this->activateWindow();
-            this->showNormal();
-            this->tabWindow->currentBrowser()->editor->setFocus();
         }
-        if (cmd.startsWith("NEW_EXTERNAL_NOTE")) {
+        else if (cmd.startsWith("NEW_EXTERNAL_NOTE")) {
             this->newExternalNote();
             this->raise();
             this->activateWindow();
@@ -2713,7 +2721,7 @@ void NixNote::heartbeatTimerTriggered() {
                 tabWindow->lastExternal->browser->editor->setFocus();
             }
         }
-        if (cmd.startsWith("OPEN_EXTERNAL_NOTE")) {
+        else if (cmd.startsWith("OPEN_EXTERNAL_NOTE")) {
             cmd = cmd.mid(18);
             qint32 lid = cmd.toInt();
             this->openExternalNote(lid);
@@ -2724,7 +2732,7 @@ void NixNote::heartbeatTimerTriggered() {
             }
             return;
         }
-        if (cmd.startsWith("OPEN_NOTE")) {
+        else if (cmd.startsWith("OPEN_NOTE")) {
             bool newTab = false;
 
             this->showMainWindow();
@@ -2758,10 +2766,12 @@ void NixNote::heartbeatTimerTriggered() {
             this->activateWindow();
             this->showNormal();
             this->tabWindow->currentBrowser()->editor->setFocus();
+        } else {
+            QLOG_DEBUG() << "unhandled command";
         }
+    } else {
+        //QLOG_DEBUG() << "heartbeatTimerTriggered: unhandled command";
     }
-
-    //free(buffer); // Fixes memory leak
 }
 
 
@@ -2814,17 +2824,18 @@ void NixNote::fastPrintNote() {
 //* the tray.
 //************************************************************
 void NixNote::showMainWindow() {
+    QLOG_DEBUG() << "showMainWindow";
     setWindowState(Qt::WindowActive);
-    if (minimizeToTray || closeToTray) {
+    //if (minimizeToTray || closeToTray) {
         this->show();
         this->raise();
         this->showNormal();
         this->activateWindow();
         this->setFocus();
-    } else {
-        this->showNormal();
-        this->setFocus();
-    }
+    //} else {
+    //    this->showNormal();
+    //    this->setFocus();
+    //}
 }
 
 

@@ -3,6 +3,7 @@
 
 ## 2018-08
 ### v2.1.0-beta-3
+* Fixed bug in command line argument handling which prevented command line "commands"
 
 ### v2.1.0-beta-2
 * Fixed european date formats (wrong order of day/month)
