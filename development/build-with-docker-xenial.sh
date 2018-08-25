@@ -29,16 +29,9 @@ rm -rf appdir; mkdir appdir
 
 # start container (note: each call creates new container)
 docker run -v $PROJECTDIR/appdir:/opt/nixnote2/appdir -it nixnote2/xenial \
-   /bin/bash -c cd nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull
+   /bin/bash -c "cd nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull && ./development/build-with-qmake.sh /usr debug && ./development/create-AppImage.sh && mv *.AppImage appdir && chmod -R a+rwx appdir"
 
-
-
-# compile (debug mode)
-#./development/build-with-qmake.sh /usr debug \
-#  && ./development/create-AppImage.sh \
-#  && mv *.AppImage appdir \
-#  && chmod -R a+rwx appdir \
-#  && echo "Now you may terminate session (Ctrl-D), to return to host" \
-#  && echo "Then 'ls appdir/*.AppImage' # => this one file is your result binary"
+ls appdir/*.AppImage
+echo "If all got well then AppImage file in appdir is your binary"
 
 cd $PROJECTDIR
