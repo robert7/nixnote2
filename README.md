@@ -23,7 +23,7 @@ that minor adjustments are needed for the all non linux builds.
 This should work out of the box, no fiddling with any dependencies
 is needed. The created binary image should work on all ~recent distributions (at least
 in theory).
-Basic docker familiarity with docker is probably quite helpful.
+Basic docker familiarity with docker is helpful.
 
 More info in: [DOCKER README](docs/DOCKER-README.md)   
 
