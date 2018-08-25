@@ -50,8 +50,10 @@ int CmdLineTool::run(StartupConfig &config) {
 #endif
     QString errmsg(tr("Unable to attach to shared memory segment.  Is the other NixNote running?\n"));
     if (config.sync()) {
+        QLOG_DEBUG() << "Command: sync";
         // If the shared memory segment doesn't exist, we just do a sync & exit
         if (!global.sharedMemory->attach()) {
+            QLOG_DEBUG() << "Command: sync - attach failed => we'll handle the sync";
             return this->sync();
         }
         global.sharedMemory->write(QString("SNCHRONIZE"));
@@ -59,7 +61,9 @@ int CmdLineTool::run(StartupConfig &config) {
         return 1;
     }
     if (config.shutdown()) {
+        QLOG_DEBUG() << "Command: shutdown";
         if (!global.sharedMemory->attach()) {
+            QLOG_DEBUG() << "Command: shutdown - attach failed";
             std::cout << errmsg.toStdString();
             return 16;
         }
@@ -68,6 +72,7 @@ int CmdLineTool::run(StartupConfig &config) {
         return 1;
     }
     if (config.show()) {
+        QLOG_DEBUG() << "Command: show";
         if (!global.sharedMemory->attach()) {
             std::cout << errmsg.toStdString();
             return 16;
@@ -79,41 +84,53 @@ int CmdLineTool::run(StartupConfig &config) {
 
 
     if (config.addNote()) {
+        QLOG_DEBUG() << "Command: addNote";
         return addNote(config);
     }
 
     if (config.appendNote()) {
+        QLOG_DEBUG() << "Command: appendNote";
         return appendNote(config);
     }
 
     if (config.query()) {
+        QLOG_DEBUG() << "Command: query";
         return queryNotes(config);
     }
     if (config.deleteNote()) {
+        QLOG_DEBUG() << "Command: deleteNote";
         return deleteNote(config);
     }
     if (config.emailNote()) {
+        QLOG_DEBUG() << "Command: emailNote";
         return emailNote(config);
     }
     if (config.readNote()) {
+        QLOG_DEBUG() << "Command: readNote";
         return readNote(config);
     }
     if (config.exports() || config.backup()) {
+        QLOG_DEBUG() << "Command: backup";
         return exportNotes(config);
     }
     if (config.import()) {
+        QLOG_DEBUG() << "Command: importNotes";
         return importNotes(config);
     }
     if (config.alterNote()) {
+        QLOG_DEBUG() << "Command: alterNote";
         return alterNote(config);
     }
     if (config.openNotebook()) {
+        QLOG_DEBUG() << "Command: openNotebook";
         return openNotebook(config);
     }
     if (config.closeNotebook()) {
+        QLOG_DEBUG() << "Command: closeNotebook";
         return closeNotebook(config);
     }
     if (config.signalOtherGui()) {
+        QLOG_DEBUG() << "Command: signalOtherGui";
         return signalGui(config);
     }
     return 0;
@@ -789,6 +806,7 @@ int CmdLineTool::signalGui(StartupConfig config) {
 
     // Make sure another one is actually running. If not, we exit out.
     if (!global.sharedMemory->attach()) {
+        QLOG_DEBUG() << "Failed to attach";
         return 16;
     }
     if (config.signalGui->show)
