@@ -29,13 +29,10 @@ More info in: [DOCKER README](docs/DOCKER-README.md)
 * Install development dependencies - look in content of [this docker file](development/docker/Dockerfile.ubuntu_xenial)
   to see example what is needed for Ubuntu 16.04. If you use another distribution/version, 
   you need to find the right packages.
-* Qt: you can either get Qt packages for your distribution or as alternative you can download qt5 directly 
+* Qt: you can either get Qt packages for your distribution or as alternative you can download Qt 5 directly
   from [qt.io/download](https://www.qt.io/download). 
-  Currently **only supported version is Qt 5.5**. Building against 5.6+ needs source changes 
-  (this is on TODO list).
-* Get latest source from github... 
-  * I recommend using `master` branch. There maybe feature/* or release/* available, but this may 
-    not be stable. Anyway there isn't any guarantee for `master` branch either :-)
+* Get latest source from github...
+  * I recommend using `master` branch.
 * Build
 * Optional: create [AppImage package](https://appimage.org/) using [linuxdeployqt](https://github.com/probonopd/linuxdeployqt)
 
