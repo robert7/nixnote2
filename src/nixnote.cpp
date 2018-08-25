@@ -2847,7 +2847,10 @@ void NixNote::trayActivatedAction(int value) {
     // if (value == newQuickNote) this->newExternalNote();
 }
 
-// The tray icon was activated.  If it was double clicked we restore the gui.
+/**
+ * The tray icon was activated.  E.g. ff it was double clicked we restore the gui.
+ *
+ */
 void NixNote::onTrayActivated(QSystemTrayIcon::ActivationReason reason) {
     QLOG_DEBUG() << "onTrayActivated reason=" << reason;
 
