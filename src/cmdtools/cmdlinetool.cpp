@@ -58,7 +58,7 @@ int CmdLineTool::run(StartupConfig &config) {
         }
         global.sharedMemory->write(QString("SYNCHRONIZE"));
         global.sharedMemory->detach();
-        return 1;
+        return 0;
     }
     if (config.shutdown()) {
         QLOG_DEBUG() << "Command: shutdown";

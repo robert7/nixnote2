@@ -2565,13 +2565,6 @@ void NixNote::findReplaceAllInNotePressed() {
 void NixNote::heartbeatTimerTriggered() {
     QByteArray data = global.sharedMemory->read();
 
-    //    if (data.startsWith("\x00")) {
-    //        // nothing to do
-    //        return;
-    //    } else {
-    //        QLOG_DEBUG() << "heartbeatTimerTriggered: " << data;
-    //    }
-
     if (data.startsWith("SYNCHRONIZE")) {
         QLOG_INFO() << "SYNCHRONIZE requested by shared memory segment.";
         this->synchronize();
@@ -2762,14 +2755,17 @@ void NixNote::heartbeatTimerTriggered() {
             global.filterCriteria.push_back(newFilter);
             global.filterPosition++;
             this->openNote(newTab);
-            this->raise();
-            this->activateWindow();
-            this->showNormal();
-            this->tabWindow->currentBrowser()->editor->setFocus();
+
+            // this->raise();
+            // this->activateWindow();
+            // this->showNormal();
+            // this->tabWindow->currentBrowser()->editor->setFocus();
+            this->showMainWindow();
         } else {
             QLOG_DEBUG() << "unhandled command";
         }
     } else {
+        // not sure what all can mean "no command" (maybe later improve)
         //QLOG_DEBUG() << "heartbeatTimerTriggered: unhandled command";
     }
 }
@@ -2825,17 +2821,17 @@ void NixNote::fastPrintNote() {
 //************************************************************
 void NixNote::showMainWindow() {
     QLOG_DEBUG() << "showMainWindow";
-    setWindowState(Qt::WindowActive);
-    //if (minimizeToTray || closeToTray) {
-        this->show();
-        this->raise();
-        this->showNormal();
-        this->activateWindow();
-        this->setFocus();
-    //} else {
-    //    this->showNormal();
-    //    this->setFocus();
-    //}
+    this->setWindowState(Qt::WindowActive);
+    this->setWindowFlags(Qt::WindowStaysOnTopHint);
+
+    this->showNormal();            // Restores the widget after it has been maximized or minimized
+    this->show();                  // Shows the widget and its child widgets
+    this->raise();                 // Raises this widget to the top of the parent widget's stack
+    this->activateWindow();        // Sets the top-level widget containing this widget to be the active window
+    // Gives the keyboard input focus to this widget (or its focus proxy) if this widget or one of its parents is the active window
+    this->setFocus();
+    this->setWindowFlags(Qt::Window);
+    this->show();                  // Shows the widget and its child widgets
 }
 
 
