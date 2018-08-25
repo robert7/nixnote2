@@ -30,28 +30,58 @@ qrc_*.*
 # autosave files
 *.autosave
 
+# Vim backup files
+*~
+
 # the main program itself
-nixnote
 nixnote2
 
-#user files
+# Nixnote database backup files
+*.nnex
+
+# Makefiles
+Makefile*
+
+# user files
 *.pro.*
 
-#compiled translations
+# compiled translations
 translations/*.qm
 
-#Makefiles
+# Makefiles
 Makefile
 Makefile.Debug
 Makefile.Release
 
-#KDE workfile
+# KDE workfile
 .directory
 /.project
 
-#eclipse files
+# eclipse files
 .cproject
 .settings
 
-#QMake file
+cmake-build-debug/
+qmake-build-debug/
+qmake-build-release/
+
+# idea
+.idea/workspace.xml
+.idea/misc.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/watcherTasks.xml
+
+# QMake file
 .qmake.stash
+
+# created during the build:
+images/nixnote2.png
+
+# AppImage files
+*.AppImage
+appdir
+
+# build version file
+_build_dir_.txt
+build-version.txt

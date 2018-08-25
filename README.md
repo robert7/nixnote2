@@ -1,3 +1,5 @@
+# This is original 2.0.2 + very basic clion project
+
 # NixNote2
 
 ## Introduction
