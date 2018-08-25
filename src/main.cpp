@@ -200,7 +200,7 @@ int main(int argc, char *argv[]) {
             global.sharedMemory->detach();
         }
         if (retval1) {
-            QLOG_INFO() << "Exit FAILURE: retcode=" << retval1;
+            QLOG_ERROR() << "Exit FAILURE: retcode=" << retval1;
 
         } else {
             QLOG_INFO() << "Exit OK: retcode=" << retval1;

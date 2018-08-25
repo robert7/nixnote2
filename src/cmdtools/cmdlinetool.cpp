@@ -806,7 +806,7 @@ int CmdLineTool::signalGui(StartupConfig config) {
 
     // Make sure another one is actually running. If not, we exit out.
     if (!global.sharedMemory->attach()) {
-        QLOG_DEBUG() << "Failed to attach";
+        QLOG_DEBUG() << "Failed to attach to other instance";
         return 16;
     }
     if (config.signalGui->show)

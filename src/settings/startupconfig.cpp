@@ -218,7 +218,6 @@ void StartupConfig::printHelp() {
                            + QString("          --show                       Show NixNote if hidden.\n")
                            + QString("          --synchronize                Synchronize with Evernote.\n")
                            + QString("          --shutdown                   Shutdown NixNote.\n")
-                           + QString("          --screenshot                 Start a screen capture.\n")
                            + QString(
         "          --openNote                   Open a note.  --id=<id> must be specified.\n")
                            + QString(
@@ -251,8 +250,8 @@ void StartupConfig::printHelp() {
                            + QString(
         "     " NN_APP_NAME " export --search=\"notebook:notes\" --output=/home/joe/exports.nnex\n\n")
                            + QString(
-        "     To signal NixNote to do a screenshot from the command line (NixNote must already be running).\n")
-                           + QString("     " NN_APP_NAME " signalGui --screenshot\n\n")
+        "     To signal NixNote to do a shutdown (NixNote must already be running).\n")
+                           + QString("     " NN_APP_NAME " signalGui --shutdown\n\n")
                            + QString("\n\n")
     );
 
