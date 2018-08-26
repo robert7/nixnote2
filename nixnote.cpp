@@ -564,7 +564,8 @@ void NixNote::setupGui() {
     trayIcon->setVisible(global.showTrayIcon());
     if (trayIcon->isVisible())
         trayIcon->show();
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this,
+            SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
 
 
     // Setup timers
