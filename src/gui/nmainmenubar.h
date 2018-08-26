@@ -131,6 +131,7 @@ signals:
 public slots:
     void onOpenProjectWebPage();
     void onOpenGettingStartedWebPage();
+    void onOpenBlogWebPage();
     void openThemeInformation();
 };
 

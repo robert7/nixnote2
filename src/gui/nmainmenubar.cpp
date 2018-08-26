@@ -506,7 +506,7 @@ void NMainMenuBar::setupHelpMenu() {
     QFont f = global.getGuiFont(QFont());
     helpMenu->setFont(f);
 
-    openProjectWebPageAction = new QAction(tr("&Project web page"), this);
+    openProjectWebPageAction = new QAction(tr("&Project wiki"), this);
     openProjectWebPageAction->setToolTip(tr("Open NixNote wiki page with help/documentation/contact"));
     connect(openProjectWebPageAction, SIGNAL(triggered()), this, SLOT(onOpenProjectWebPage()));
     helpMenu->addAction(openProjectWebPageAction);
@@ -515,6 +515,11 @@ void NMainMenuBar::setupHelpMenu() {
     openGettingStartedWebPageAction->setToolTip(tr("Open Getting started wiki page"));
     connect(openGettingStartedWebPageAction, SIGNAL(triggered()), this, SLOT(onOpenGettingStartedWebPage()));
     helpMenu->addAction(openGettingStartedWebPageAction);
+
+    QAction *openBlogWebPageAction = new QAction(tr("&Blog"), this);
+    openBlogWebPageAction->setToolTip(tr("Open project related blog"));
+    connect(openBlogWebPageAction, SIGNAL(triggered()), this, SLOT(onOpenBlogWebPage()));
+    helpMenu->addAction(openBlogWebPageAction);
 
     helpMenu->addSeparator();
 
@@ -537,8 +542,8 @@ void NMainMenuBar::setupHelpMenu() {
     // temporarily off - as the themes are currently un-ripe/unfinished
     themeInformationAction->setVisible(false);
 
-    openMessageLogAction = new QAction(tr("Message &Log Info"), this);
-    openMessageLogAction->setToolTip(tr("View current program messages"));
+    openMessageLogAction = new QAction(tr("Data and &log location info"), this);
+    openMessageLogAction->setToolTip(tr("View location of program data and log file"));
     connect(openMessageLogAction, SIGNAL(triggered()), parent, SLOT(openMessageLogInfo()));
     helpMenu->addAction(openMessageLogAction);
 
@@ -578,6 +583,10 @@ void NMainMenuBar::onOpenProjectWebPage() {
 
 void NMainMenuBar::onOpenGettingStartedWebPage() {
     QDesktopServices::openUrl(QUrl(NN_GITHUB_WIKI_URL "/Getting-started"));
+}
+
+void NMainMenuBar::onOpenBlogWebPage() {
+    QDesktopServices::openUrl(QUrl("https://nixnotes-21.blogspot.com"));
 }
 
 void NMainMenuBar::setupThemeMenu() {

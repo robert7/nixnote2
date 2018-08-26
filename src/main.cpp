@@ -232,8 +232,9 @@ int main(int argc, char *argv[]) {
         global.sharedMemory->attach();
         global.sharedMemory->detach();
         if (!global.sharedMemory->allocate(512 * 1024)) {
-            QLOG_DEBUG() << "segment created";
+            QLOG_DEBUG() << "Shared memory segment created";
             if (startupConfig.startupNewNote) {
+                QLOG_DEBUG() << "Sending request NEW_NOTE";
                 global.sharedMemory->attach();
                 global.sharedMemory->write(QString("NEW_NOTE"));
                 global.sharedMemory->detach();
@@ -241,26 +242,30 @@ int main(int argc, char *argv[]) {
                 exit(0);  // Exit this one
             }
             if (startupConfig.startupNoteLid > 0) {
+                QString req("OPEN_NOTE" + QString::number(startupConfig.startupNoteLid) + " ");
+                QLOG_DEBUG() << "Sending request " << req;
                 global.sharedMemory->attach();
-                global.sharedMemory->write("OPEN_NOTE" + QString::number(startupConfig.startupNoteLid) + " ");
+                global.sharedMemory->write(req);
                 global.sharedMemory->detach();
                 delete a;
                 exit(0);  // Exit this one
             }
 
             // If we've gotten this far, we need to either stop this instance or stop the other
-            QLOG_DEBUG() << "Multiple instance found";
             global.settings->beginGroup(INI_GROUP_DEBUGGING);
             QString startup = global.settings->value("onMultipleInstances", "SHOW_OTHER").toString();
+            QLOG_DEBUG() << "Another running instance with same account detected - configured action: " << startup;
             global.settings->endGroup();
             global.sharedMemory->attach();
             if (startup == "SHOW_OTHER") {
+                QLOG_DEBUG() << "Trying to activate it..";
                 global.sharedMemory->write(QString("SHOW_WINDOW"));
                 global.sharedMemory->detach();
                 delete a;
                 return 0;  // Exit this one
             }
             if (startup == "STOP_OTHER") {
+                QLOG_DEBUG() << "Trying to shutdown it..";
                 global.sharedMemory->write(QString("IMMEDIATE_SHUTDOWN"));
                 memInitNeeded = false;
             }
