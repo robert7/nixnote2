@@ -243,6 +243,8 @@ void AppearancePreferences::saveValues() {
     global.setAutosetUsername(autosetUserid->isChecked());
     if (!autosetUserid->isChecked())
         global.full_username="";
+
+
     global.settings->beginGroup(INI_GROUP_APPEARANCE);
     global.settings->setValue("disableEditingOnStartup", disableEditingOnStartup->isChecked());
     global.settings->setValue("forceWebFonts", forceWebFonts->isChecked());
@@ -349,6 +351,8 @@ void AppearancePreferences::saveValues() {
 
     // Setup if the user wants to start NixNote the next time they login.
     global.settings->setValue("autoStart", autoStart->isChecked());
+
+
 #ifdef _WIN32
     QFileInfo fileInfo(QCoreApplication::applicationFilePath());
     QFile::remove(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
@@ -357,6 +361,9 @@ void AppearancePreferences::saveValues() {
     QString startFile =  QDir::homePath()+"/.config/autostart/" NN_APP_NAME ".desktop";
     dir.remove(startFile);
 #endif
+
+
+
     if (autoStart->isChecked()) {
 #ifdef _WIN32
         QFile::link(QCoreApplication::applicationFilePath(), QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
@@ -392,6 +399,8 @@ void AppearancePreferences::saveValues() {
         userIni.close();
 #endif
     }
+
+
 
     global.settings->endGroup();
 

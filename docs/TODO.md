@@ -1,7 +1,8 @@
 # TODO / Roadmap / Next steps
 ## 1
 * Add more sort options (currently limited to date last update)
-* Change internal program name to nixnote21
+* fix autostart handling (appearancepreferences.cpp saveValues())
+* ~ Change internal program name to nixnote21
 * Better status bar display on exceptions (shortcuts / 2 part status bar)
   * problem with "Count: ..." message covering last error
 * Check relevance evaluation in connection with diacritic removal 

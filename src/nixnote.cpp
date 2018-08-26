@@ -551,7 +551,8 @@ void NixNote::setupGui() {
     }
 
     trayIcon = new QSystemTrayIcon(global.getIconResource(":trayIcon"), this);
-    trayIcon->setContextMenu(createTrayContexMenu());
+    TrayMenu *trayIconContextMenu = createTrayContexMenu();
+    trayIcon->setContextMenu(trayIconContextMenu);
     QLOG_DEBUG() << "Tray status #2: showTrayIcon=" << showTrayIcon
                  << ", closeToTray=" << closeToTray
                  << ", minimizeToTray=" << minimizeToTray;

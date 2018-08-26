@@ -252,6 +252,7 @@ int main(int argc, char *argv[]) {
             }
 
             // If we've gotten this far, we need to either stop this instance or stop the other
+            // note: although this is configurable, there doesn't seem to be GUI preference for this
             global.settings->beginGroup(INI_GROUP_DEBUGGING);
             QString startup = global.settings->value("onMultipleInstances", "SHOW_OTHER").toString();
             QLOG_DEBUG() << "Another running instance with same account detected - configured action: " << startup;
