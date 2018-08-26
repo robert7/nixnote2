@@ -45,7 +45,11 @@ QString getDefaultProgramDirPath() {
         return appDirPath + "/Resources/";
     }
 #endif
+
     QString path = QCoreApplication::applicationDirPath();
+    QLOG_DEBUG() << "Default program dir path: applicationDirPath=" << path;
+    // note: for AppImage this returns something like "/tmp/.mount_nixnotHzLe8g/usr/bin"
+
     if (path.endsWith("/bin")) {
         // runs in std location
         path.chop(3); // remove 3 chars from end of string

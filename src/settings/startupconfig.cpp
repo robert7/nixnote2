@@ -297,6 +297,10 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
         guiAvailable = false;
 #endif // End windows check
 
+    // although this will contain the path used to start the binary (even in case of AppImage)
+    // if the app was started via system path, then the path will not be present
+    QLOG_DEBUG() << "Param #0: " << argv[0];
+
     for (int i = 1; i < argc; i++) {
         QString parm(argv[i]);
 
