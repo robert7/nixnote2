@@ -5,13 +5,12 @@ Nixnote is: Evernote desktop client for Linux.
 
 * [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
 * [New features in v2.1](https://github.com/robert7/nixnote2/wiki/New-features-in-v2.1)
-* [Blog](https://nixnotes-21.blogspot.com/)
 * [CHANGELOG](docs/CHANGELOG.md)
 * [Howto install & binary downloads](https://github.com/robert7/nixnote2/releases)
 
 ## Building from source
 
-Tha app is mainly targeted at Linux, but it should compile quite easily on Windows and 
+This app is mainly targeted at Linux, but it should compile quite easily on Windows and
 also macOS config is already present (see more detailed info bellow). As lot of refactoring
 has been made and I can't currently try anything else then linux, it is quite probable
 that minor adjustments are needed for the all non linux builds.

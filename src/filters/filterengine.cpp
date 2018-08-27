@@ -225,7 +225,7 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
                     selectedLids.removeAll(selectedLids[i]);
             }
             criteria->setSelectedNotes(selectedLids);
-            global.setMessage(QString("Count: ") + QString::number(goodLids.size()), 0);
+            //global.setMessage(QString("Count: ") + QString::number(goodLids.size()), 0);
         }
     } else {
         results->clear();

@@ -92,7 +92,6 @@ void StartupConfig::printHelp() {
                            + QString("          --forceSystemTrayAvailable   Force the program to accept that\n")
                            + QString("                                       the desktop supports tray icons.\n")
                            + QString("          --startMinimized             Force a startup with NixNote minimized\n")
-                           + QString("          --syncAndExit                Synchronize and exit the program.\n")
                            + QString(
         "  sync                                 Synchronize with Evernote without showing GUI.\n")
                            + QString("  shutdown                             If running, ask NixNote to shutdown\n")
@@ -229,8 +228,6 @@ void StartupConfig::printHelp() {
                            +
                            QString("          --newExternalNote            Create a new note in an external window.\n")
                            + QString("  Examples:\n\n")
-                           + QString("     To start NixNote, do a sync, and then exit.\n")
-                           + QString("     " NN_APP_NAME " start --syncAndExit\n\n")
                            + QString("     To start NixNote using a secondary account.\n")
                            + QString("     " NN_APP_NAME " --accountId=2\n\n")
                            + QString("     To close an open notebook.\n")
@@ -299,6 +296,10 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
     if (display.trimmed() == "")
         guiAvailable = false;
 #endif // End windows check
+
+    // although this will contain the path used to start the binary (even in case of AppImage)
+    // if the app was started via system path, then the path will not be present
+    QLOG_DEBUG() << "Param #0: " << argv[0];
 
     for (int i = 1; i < argc; i++) {
         QString parm(argv[i]);
@@ -525,10 +526,6 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             }
             if (parm == "--newNote") {
                 startupNewNote = true;
-            }
-            if (parm == "--syncAndExit") {
-                command->clear();
-                activateCommand(STARTUP_SYNC, true);
             }
             if (parm == "--enableIndexing") {
                 enableIndexing = true;

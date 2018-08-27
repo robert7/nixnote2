@@ -551,7 +551,8 @@ void NixNote::setupGui() {
     }
 
     trayIcon = new QSystemTrayIcon(global.getIconResource(":trayIcon"), this);
-    trayIcon->setContextMenu(createTrayContexMenu());
+    TrayMenu *trayIconContextMenu = createTrayContexMenu();
+    trayIcon->setContextMenu(trayIconContextMenu);
     QLOG_DEBUG() << "Tray status #2: showTrayIcon=" << showTrayIcon
                  << ", closeToTray=" << closeToTray
                  << ", minimizeToTray=" << minimizeToTray;
@@ -3274,14 +3275,16 @@ void NixNote::pauseIndexing(bool value) {
 // View the message log info
 void NixNote::openMessageLogInfo() {
     QMessageBox mb;
-    mb.information(this, tr("Log file info"),
-                   tr("Main app log file is located at:")
-                   + global.fileManager.getMainLogFileName()
-                   + ".\n\n"
-                   + tr("Please use some appropriate log viewer app to look at logs.") + "\n\n "
-                   + tr("If you want to create support issue, where log info is needed, please use DEBUG log level"
-                        " and post whole log inclusive subdirectory."
-                        " Just before posting make sure, that no private info, like private note text, is included inside.")
+    mb.information(this, tr("Application file(s) info"),
+                   tr("Config files are located at:") + global.fileManager.getConfigDir() + "\n"
+                   + tr("Note database files are located at:") + global.fileManager.getUserDataDir() + "\n\n"
+                   + tr("Main app log file is located at:") + global.fileManager.getMainLogFileName() + "\n"
+                   + "\n"
+                   + tr("See project wiki section FAQ (Menu Help/Project wiki) for more info how to:") + "\n"
+                   + tr("* change log level") + "\n"
+                   + tr("* look at log") + "\n"
+                   + tr("* how to add content of log file to github issue") + "\n"
+                   + tr("* how to change data location")
     );
 }
 

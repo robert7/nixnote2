@@ -2,8 +2,15 @@
 * [Binary releases](https://github.com/robert7/nixnote2/releases)
 
 ## 2018-08
-### v2.1.0-beta-3
+### v2.1.0-beta-3b
+* Temporarily removed the "Count: ...." message, as it could cover recent error message
+* Removed --syncAndExit option, as there is already another way to do it command line
+  parameter "sync"
+* Adjusted menu Help/Data and log location info to display active data/config paths
+
+### v2.1.0-beta-3a
 * Fixed bug in command line argument handling which prevented command line "commands"
+  e.g. "nixnote2 signalGui --shutdown" && "nixnote2 signalGui --show"
 
 ### v2.1.0-beta-2
 * Fixed european date formats (wrong order of day/month)
