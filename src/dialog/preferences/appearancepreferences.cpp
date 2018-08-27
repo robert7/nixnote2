@@ -193,6 +193,10 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
         dynamicTotals->setChecked(false);
 
     autoStart->setChecked(global.settings->value("autoStart", false).toBool());
+
+    // currently disabled
+    autoStart->setVisible(false);
+
     int defaultNotebook = global.settings->value("startupNotebook", UseLastViewedNotebook).toInt();
     defaultNotebookOnStartup->setCurrentIndex(defaultNotebook);
     showNoteListGrid->setChecked(global.settings->value("showNoteListGrid", false).toBool());
@@ -311,94 +315,96 @@ void AppearancePreferences::saveValues() {
     }
 
 
-    // See if the user has overridden the window icon
-#ifndef __APPLE__
-        //Copy the nixnote2.desktop so we can override the app icon
-        // Ideally, we could use QSettings since it is ini format, but
-        // it puts [Desktop Entry] as [Desktop%20Enry], which screws
-        // things up.
-        QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/" NN_APP_NAME ".desktop";
-        QFile systemIni(systemFile);
-        QStringList desktopData;
-
-        if (systemIni.open(QIODevice::ReadOnly)) {
-            QTextStream data(&systemIni);
-            QString line = data.readLine();
-            while (!line.isNull()) {
-                if (line.startsWith("Icon=")) {
-                    line = "Icon=" +global.getResourceFileName(global.resourceList,":windowIcon.png");
-                }
-                desktopData.append(line);
-                line = data.readLine();
-            }
-        }
-        systemIni.close();
-
-        // Now, write it back out
-        if (!desktopData.isEmpty()) {
-            QString userFile =  QDir::homePath()+"/.local/share/applications/" NN_APP_NAME ".desktop";
-            QFile userIni(userFile);
-            if (userIni.open(QIODevice::WriteOnly)) {
-                QTextStream data(&userIni);
-                for (int i=0; i<desktopData.size(); i++) {
-                    data << desktopData[i] << "\n";
-                }
-            }
-            userIni.close();
-        }
-#endif
-//    }
-
     // Setup if the user wants to start NixNote the next time they login.
     global.settings->setValue("autoStart", autoStart->isChecked());
 
-
-#ifdef _WIN32
-    QFileInfo fileInfo(QCoreApplication::applicationFilePath());
-    QFile::remove(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
-#else
-    QDir dir;
-    QString startFile =  QDir::homePath()+"/.config/autostart/" NN_APP_NAME ".desktop";
-    dir.remove(startFile);
-#endif
+    // this needs fixes for AppImage - for now autostart needs to be done manually ---------------------------------
 
 
+    //     // See if the user has overridden the window icon
+    // #ifndef __APPLE__
+    //         //Copy the nixnote2.desktop so we can override the app icon
+    //         // Ideally, we could use QSettings since it is ini format, but
+    //         // it puts [Desktop Entry] as [Desktop%20Enry], which screws
+    //         // things up.
+    //         QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/" NN_APP_NAME ".desktop";
+    //         QFile systemIni(systemFile);
+    //         QStringList desktopData;
+    //
+    //         if (systemIni.open(QIODevice::ReadOnly)) {
+    //             QTextStream data(&systemIni);
+    //             QString line = data.readLine();
+    //             while (!line.isNull()) {
+    //                 if (line.startsWith("Icon=")) {
+    //                     line = "Icon=" +global.getResourceFileName(global.resourceList,":windowIcon.png");
+    //                 }
+    //                 desktopData.append(line);
+    //                 line = data.readLine();
+    //             }
+    //         }
+    //         systemIni.close();
+    //
+    //         // Now, write it back out
+    //         if (!desktopData.isEmpty()) {
+    //             QString userFile =  QDir::homePath()+"/.local/share/applications/" NN_APP_NAME ".desktop";
+    //             QFile userIni(userFile);
+    //             if (userIni.open(QIODevice::WriteOnly)) {
+    //                 QTextStream data(&userIni);
+    //                 for (int i=0; i<desktopData.size(); i++) {
+    //                     data << desktopData[i] << "\n";
+    //                 }
+    //             }
+    //             userIni.close();
+    //         }
+    // #endif
+    // //    }
 
-    if (autoStart->isChecked()) {
-#ifdef _WIN32
-        QFile::link(QCoreApplication::applicationFilePath(), QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
-#elif !defined(__APPLE__)
-        //Copy the nixnote2.desktop to the ~/.config/autostart directory
-        QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/" NN_APP_NAME ".desktop";
-        QFile systemIni(systemFile);
-        QStringList desktopData;
-
-        if (systemIni.open(QIODevice::ReadOnly)) {
-            QTextStream data(&systemIni);
-            QString line = data.readLine();
-            while (!line.isNull()) {
-                if (line.startsWith("Icon=")) {
-                    line = "Icon=" +global.getResourceFileName(global.resourceList,":windowIcon.png");
-                }
-                desktopData.append(line);
-                line = data.readLine();
-            }
-        }
-        systemIni.close();
-
-        // Now, write it back out
-        QString userFile =  QDir::homePath()+"/.config/autostart/" NN_APP_NAME ".desktop";
-        QFile userIni(userFile);
-        if (userIni.open(QIODevice::WriteOnly)) {
-            QTextStream data(&userIni);
-            for (int i=0; i<desktopData.size(); i++) {
-                data << desktopData[i] << "\n";
-            }
-            data << "X-GNOME-Autostart-enabled=true";
-        }
-        userIni.close();
-#endif
-    }
+    // #ifdef _WIN32
+    //     QFileInfo fileInfo(QCoreApplication::applicationFilePath());
+    //     QFile::remove(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
+    // #else
+    //     QDir dir;
+    //     QString startFile =  QDir::homePath()+"/.config/autostart/" NN_APP_NAME ".desktop";
+    //     dir.remove(startFile);
+    // #endif
+    //
+    //
+    //
+    //     if (autoStart->isChecked()) {
+    // #ifdef _WIN32
+    //         QFile::link(QCoreApplication::applicationFilePath(), QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
+    // #elif !defined(__APPLE__)
+    //         //Copy the nixnote2.desktop to the ~/.config/autostart directory
+    //         QString systemFile = QLibraryInfo::location(QLibraryInfo::PrefixPath) + "/share/applications/" NN_APP_NAME ".desktop";
+    //         QFile systemIni(systemFile);
+    //         QStringList desktopData;
+    //
+    //         if (systemIni.open(QIODevice::ReadOnly)) {
+    //             QTextStream data(&systemIni);
+    //             QString line = data.readLine();
+    //             while (!line.isNull()) {
+    //                 if (line.startsWith("Icon=")) {
+    //                     line = "Icon=" +global.getResourceFileName(global.resourceList,":windowIcon.png");
+    //                 }
+    //                 desktopData.append(line);
+    //                 line = data.readLine();
+    //             }
+    //         }
+    //         systemIni.close();
+    //
+    //         // Now, write it back out
+    //         QString userFile =  QDir::homePath()+"/.config/autostart/" NN_APP_NAME ".desktop";
+    //         QFile userIni(userFile);
+    //         if (userIni.open(QIODevice::WriteOnly)) {
+    //             QTextStream data(&userIni);
+    //             for (int i=0; i<desktopData.size(); i++) {
+    //                 data << desktopData[i] << "\n";
+    //             }
+    //             data << "X-GNOME-Autostart-enabled=true";
+    //         }
+    //         userIni.close();
+    // #endif
+    //     }
 
 
 
