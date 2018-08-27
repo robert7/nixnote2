@@ -20,7 +20,7 @@ win32:RC_ICONS += "$$PWD/images/windowIcon.ico"
 mac {
     TARGET = NixNote2
 } else {
-    TARGET = nixnote2
+    TARGET = nixnote21
 }
 TEMPLATE = app
 RESOURCES = NixNote2.qrc
@@ -38,20 +38,20 @@ OBJECTS_DIR = $${DESTDIR}
 MOC_DIR = $${DESTDIR}
 
 TRANSLATIONS = \
-    translations/nixnote2_cs_CZ.ts \
-    translations/nixnote2_de.ts    \
-    translations/nixnote2_en_GB.ts \
-    translations/nixnote2_ca.ts    \
-    translations/nixnote2_da.ts    \
-    translations/nixnote2_es.ts    \
-    translations/nixnote2_ja.ts    \
-    translations/nixnote2_pt.ts    \
-    translations/nixnote2_sk.ts    \
-    translations/nixnote2_zh_TW.ts \
-    translations/nixnote2_fr.ts    \
-    translations/nixnote2_pl.ts    \
-    translations/nixnote2_ru.ts    \
-    translations/nixnote2_zh_CN.ts
+    translations/nixnote21_cs_CZ.ts \
+    translations/nixnote21_de.ts    \
+    translations/nixnote21_en_GB.ts \
+    translations/nixnote21_ca.ts    \
+    translations/nixnote21_da.ts    \
+    translations/nixnote21_es.ts    \
+    translations/nixnote21_ja.ts    \
+    translations/nixnote21_pt.ts    \
+    translations/nixnote21_sk.ts    \
+    translations/nixnote21_zh_TW.ts \
+    translations/nixnote21_fr.ts    \
+    translations/nixnote21_pl.ts    \
+    translations/nixnote21_ru.ts    \
+    translations/nixnote21_zh_CN.ts
 
 
 SOURCES += \
