@@ -14,7 +14,7 @@ unix:!mac:LIBS += -lpthread -g -rdynamic
 win32:INCLUDEPATH += "$$PWD/winlib/includes/poppler/qt5"
 win32:INCLUDEPATH += "$$PWD/winlib/includes"
 win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
-win32:RC_ICONS += "$$PWD/images/windowIcon.ico"
+win32:RC_ICONS += "$$PWD/resources/images/windowIcon.ico"
 
 
 mac {
@@ -23,7 +23,7 @@ mac {
     TARGET = nixnote21
 }
 TEMPLATE = app
-RESOURCES = NixNote2.qrc
+RESOURCES = NixNote21.qrc
 
 UI_DIR = .
 
@@ -487,8 +487,11 @@ message("Target binary: $${binary.files}")
 desktop.path = $${PREFIX}/share/applications
 desktop.files = $${TARGET}.desktop
 
+icons.path = $${PREFIX}/share/icons
+icons.files = resources/icons/*
+
 images.path = $${PREFIX}/share/$$TARGET/images
-images.files = images/*
+images.files = resources/images/*
 
 java.path = $${PREFIX}/share/$$TARGET/java
 java.files = java/*
@@ -496,8 +499,8 @@ java.files = java/*
 help.path = $${PREFIX}/share/$$TARGET/help
 help.files = help/*
 
-resources.path = $${PREFIX}/share/$$TARGET
-resources.files = $$PWD/shortcuts.txt $$PWD/themes.ini $$PWD/LICENSE $$PWD/colors.txt \
+textfiles.path = $${PREFIX}/share/$$TARGET
+textfiles.files = $$PWD/shortcuts.txt $$PWD/themes.ini $$PWD/LICENSE $$PWD/colors.txt \
                   $${DESTDIR}/build-version.txt $$PWD/version.txt
 
 # compile the translation files:
@@ -524,7 +527,7 @@ mac {
     # we go for an appbundle that contains all resources (except
     # the shared library dependencies - use macdeployqt for those).
     images.path = Contents/Resources
-    images.files = images
+    images.files = resources/images
     java.path = Contents/Resources
     java.files = java
     mactranslations.path = Contents/Resources/translations
@@ -538,5 +541,5 @@ mac {
 } else {
     translations.path = $${PREFIX}/share/$$TARGET/translations
     translations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
-    INSTALLS = binary desktop images java translations help resources
+        INSTALLS = binary desktop images java translations help textfiles icons
 }
