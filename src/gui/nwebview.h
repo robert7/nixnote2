@@ -58,7 +58,7 @@ public:
     QAction *cutAction;
     QAction *copyAction;
     QAction *pasteAction;
-    QAction *removeFormattingAction;
+    //QAction *removeFormattingAction;
     QAction *htmlTidyAction;
     QAction *htmlSimplifyAction;
     QAction *insertDateTimeAction;
