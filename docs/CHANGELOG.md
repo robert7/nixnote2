@@ -2,6 +2,16 @@
 * [Binary releases](https://github.com/robert7/nixnote2/releases)
 
 ## 2018-08
+### v2.1.0-beta-3c
+* Changed internal name of nixnote binary to nixnote21; this fixes some problem with not
+  displayed icons
+* Removed logic which should activate "autostart" (as it currently doesn't work with
+  AppImage packaging; this can be done manually; see wiki)
+* Optimized "show" main window logic
+* "Simplify formatting" has now kbd shortcut (Ctrl-Space)
+* Fixed potential log file access conflict if 2 instances were running
+
+
 ### v2.1.0-beta-3b
 * Temporarily removed the "Count: ...." message, as it could cover recent error message
 * Removed --syncAndExit option, as there is already another way to do it command line

@@ -1231,6 +1231,10 @@ void NBrowserWindow::htmlTidy() {
  * Simplify - same as before save.
  */
 void NBrowserWindow::htmlSimplify() {
+    // this also may help a bit (but only if the text is selected I suppose)
+    // a bit hack; maybe improve later
+    removeFormatButtonPressed();
+
     htmlCleanup(HtmlCleanupMode::Simplify);
 }
 

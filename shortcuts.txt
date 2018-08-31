@@ -54,7 +54,7 @@ Edit_Delete_Table_Row                           // Delete a table row
 Edit_Insert_Table_Row                           // Insert a table row
 Edit_Insert_Table_Column                        // Insert a table row
 Edit_Delete_Table_Column                        // Delete a table row
-Edit_HTML_Simplify            Ctrl-Space        // Simplify formatting
+Edit_HTML_Simplify            Ctrl+Space        // Simplify formatting
 
 Edit_Insert_Hyperlink         Ctrl+K            // Insert a hyperlink (Popup menu)
 Edit_Insert_Todo                                // Insert a todo checkbox (Popup menu)
