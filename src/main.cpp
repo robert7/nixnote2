@@ -210,19 +210,6 @@ int main(int argc, char *argv[]) {
         exit(retval1);
     }
 
-    QString logPath = global.fileManager.getMainLogFileName();
-    QsLogging::DestinationPtr fileDestination(
-        QsLogging::DestinationFactory::MakeFileDestination(logPath));
-    logger.addDestination(fileDestination.get());
-
-    // from now on logging goes also to log file (up to here only to terminal)
-
-    QLOG_INFO().noquote() << NN_APP_DISPLAY_NAME " " << versionStr << ", build at " << __DATE__ << " at " << __TIME__
-                          << ", with Qt" << QT_VERSION_STR << " running on " << qVersion();
-    if (logger.loggingLevel() > 1) {
-        QLOG_INFO() << "To get more detailed startup logging use --logLevel=1";
-    }
-
     // Create a shared memory region.  We use this to communicate
     // with any other instance that may be running.  If another instance
     // is found we need to either show that one or kill this one.
@@ -277,6 +264,20 @@ int main(int argc, char *argv[]) {
         global.sharedMemory->clearMemory();
     }
 
+
+    // activate logging in file
+    QString logPath = global.fileManager.getMainLogFileName();
+    QsLogging::DestinationPtr fileDestination(
+            QsLogging::DestinationFactory::MakeFileDestination(logPath));
+    logger.addDestination(fileDestination.get());
+
+    // from now on logging goes also to log file (up to here only to terminal)
+
+    QLOG_INFO().noquote() << NN_APP_DISPLAY_NAME " " << versionStr << ", build at " << __DATE__ << " at " << __TIME__
+                          << ", with Qt" << QT_VERSION_STR << " running on " << qVersion();
+    if (logger.loggingLevel() > 1) {
+        QLOG_INFO() << "To get more detailed startup logging use --logLevel=1";
+    }
     global.fileManager.setupFileAttachmentLogging();
 
 #ifndef _WIN32
