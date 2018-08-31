@@ -98,14 +98,16 @@ FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString
 
     if (this->configDir.isEmpty()) {
         // default config path
-        this->configDir = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
+        QString stdPath = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
+        this->configDir = fixStandardPath(stdPath);
         QLOG_DEBUG() << "Setting up standard config path: " << this->configDir;
     }
     createDirOrCheckWriteable(this->configDir);
 
     if (this->userDataDir.isEmpty()) {
         // default config path
-        this->userDataDir = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+        QString stdPath = slashTerminatePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+        this->userDataDir = fixStandardPath(stdPath);
         QLOG_DEBUG() << "Setting up standard user data path: " << this->userDataDir;
     }
     createDirOrCheckWriteable(this->userDataDir);
@@ -191,6 +193,20 @@ QString FileManager::slashTerminatePath(QString path) {
     if (!path.endsWith(QDir::separator())) {
         return path + QDir::separator();
     }
+
+    return path;
+}
+
+/**
+ * This should change the used app name in the app name which we want to have for config paths.
+ * As we for some time used "nixnote2" (and we may return to it eventually)
+ * let don't change the path, even if we changed the app name.
+ *
+ * @param path
+ * @return fixed path
+ */
+QString FileManager::fixStandardPath(QString &path) const {
+    path = path.replace("/" NN_APP_NAME "/", "/" NN_APP_NAME_CONFIG_PATHS "/") ;
     return path;
 }
 

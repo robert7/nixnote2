@@ -105,8 +105,14 @@ class IndexRunner;
 #define SET_MESSAGE_TIMEOUT_LONGER 15000
 #define DEFAULT_THEME_NAME "Default"
 
+// app binary name
+#define NN_APP_NAME "nixnote21"
+
 // app name for config paths
-#define NN_APP_NAME "nixnote2"
+// WARNING DON'T CHANGE THIS TO ANYTHING else then "nixnote2" without knowing what it influence (e.g. existing paths of users)
+#define NN_APP_NAME_CONFIG_PATHS "nixnote2"
+
+
 // string to be displayed with program version (current version will be appended)
 #define NN_APP_DISPLAY_NAME "NixNote"
 // string to be displayed without program version
