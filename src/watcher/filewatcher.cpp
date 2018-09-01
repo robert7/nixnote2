@@ -43,6 +43,8 @@ extern Global global;
 FileWatcher::FileWatcher(QString dir, ScanType type, qint32 notebookLid, bool subdirs, QObject *parent) :
     QFileSystemWatcher(parent)
 {
+    QLOG_DEBUG() << "Setting up file watcher on directory " << dir << " subdirs=" << subdirs;
+
     this->notebookLid = notebookLid;
     this->dir = dir;
     this->scanType = type;
@@ -57,40 +59,54 @@ FileWatcher::FileWatcher(QString dir, ScanType type, qint32 notebookLid, bool su
 void FileWatcher::saveDirectory(QString dir){
     QStringList files;
     QStringList dirs;
+
+    QLOG_DEBUG() << "Change in directory " << dir << " detected.. Proceed with file import";
+
     setupSubDirectories(dirs, files, dir);
     for (int i=0; i<files.size(); i++) {
-        if (!saveFiles.contains(files[i]) || scanType == ImportDelete) {
-            saveFiles.append(files[i]);
-            saveFile(files[i]);
+
+        QString filename = files[i];
+        if (filename.contains(".tmp", Qt::CaseInsensitive)) {
+            QLOG_DEBUG() << "Ignoring file " << filename;
+            continue;
+        } else {
+            QLOG_DEBUG() << "Importing file " << filename;
+        }
+
+        if (!saveFiles.contains(filename) || scanType == ImportDelete) {
+            saveFiles.append(filename);
+            saveFile(filename);
         }
     }
 }
 
-void FileWatcher::saveFile(QString file) {
-    QFileInfo fileInfo(file);
+void FileWatcher::saveFile(QString filename) {
+    QFileInfo fileInfo(filename);
 
     // If we have a dbi import file
-    QLOG_DEBUG() << fileInfo.dir().absolutePath() + QDir::separator();
-    QLOG_DEBUG() << global.fileManager.getDbiDirPath();
+    QLOG_TRACE() << fileInfo.dir().absolutePath() + QDir::separator();
+    QLOG_TRACE() << global.fileManager.getDbiDirPath();
+
     if ((fileInfo.dir().absolutePath() + QDir::separator()) == global.fileManager.getDbiDirPath()) {
         BatchImport importer;
-        importer.import(file);
+        importer.import(filename);
         emit(nnexImported());
-        QFile f(file);
+        QFile f(filename);
         if (!f.remove()) {
-            QLOG_ERROR() << tr("Error removing file: ") << f.errorString();
+            QLOG_ERROR() << "Error removing file: " << filename << ", err: " << f.errorString();
         }
         return;
     }
 
 
     // If we have a user-import file
-    QFile f(file);
+    QFile f(filename);
     f.open(QIODevice::ReadOnly);
     QByteArray data = f.readAll();
     f.close();
-    if (f.size() == 0)
+    if (f.size() == 0) {
         return;
+    }
 
     Note newNote;
     NoteTable ntable(global.db);
@@ -102,7 +118,7 @@ void FileWatcher::saveFile(QString file) {
 
     // * Start setting up the new note
     newNote.guid = QString::number(lid);
-    newNote.title = file;
+    newNote.title = filename;
 
     NotebookTable bookTable(global.db);
     QString notebook;
@@ -115,7 +131,7 @@ void FileWatcher::saveFile(QString file) {
     NoteAttributes na;
 // Windows Check
 #ifndef _WIN32
-    na.sourceURL = "file://" + file;
+    na.sourceURL = "file://" + filename;
 #else
     na.sourceURL = "file:///"+file;
 #endif  // end Windows check
@@ -148,7 +164,7 @@ void FileWatcher::saveFile(QString file) {
         newNoteBody.append(newNote.content);
 
     MimeReference mimeRef;
-    QString mime = mimeRef.getMimeFromFileName(file);
+    QString mime = mimeRef.getMimeFromFileName(filename);
     QString enMedia =QString("<en-media hash=\"") +hash.toHex() +QString("\" border=\"0\"")
             +QString(" type=\"" +mime +"\" ")
             +QString("/>");
@@ -184,10 +200,12 @@ void FileWatcher::saveFile(QString file) {
     emit(fileImported(noteLid, lid));
 
     if (scanType == FileWatcher::ImportDelete) {
+        QLOG_DEBUG() << "Removing file " << filename;
+
         bool retval = f.remove();
         int count = 100;
         while (!retval && count > 0) {
-            QLOG_ERROR() << tr("Error removing file:") << f.RemoveError;
+            QLOG_ERROR() << "Error removing file: " << filename << ", err: " << f.errorString();
             count--;
         }
     }

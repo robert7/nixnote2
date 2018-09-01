@@ -58,7 +58,7 @@ signals:
     void nnexImported();
     
 public slots:
-    void saveFile(QString file);
+    void saveFile(QString filename);
     void saveDirectory(QString dir);
     
 };

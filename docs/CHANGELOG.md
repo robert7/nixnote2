@@ -2,6 +2,13 @@
 * [Binary releases](https://github.com/robert7/nixnote2/releases)
 
 ## 2018-08
+
+### v2.1.0-beta-3d
+* Improved logging in "Import folders"
+* Quick fix/workaroung for import of unfinished file in "Import folders" - files
+  with ".tmp" in file name are ignored; thus file can be copied as ".tmp", then
+  renamed
+
 ### v2.1.0-beta-3c
 * Changed internal name of nixnote binary to nixnote21; this fixes some problem with not
   displayed icons

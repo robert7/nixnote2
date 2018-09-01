@@ -53,6 +53,8 @@ void FileWatcherManager::signalImported() {
 void FileWatcherManager::setup() {
     this->reset();
 
+    QLOG_DEBUG() << "FileWatcherManager::setup()";
+
     // Setup the dbi file for batch creation of notes
     FileWatcher *dbi = new FileWatcher(global.fileManager.getDbiDirPath(), FileWatcher::ImportDelete, 0, false, 0);
     connect(dbi, SIGNAL(nnexImported()), this, SLOT(signalImported()));
