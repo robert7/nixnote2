@@ -1131,7 +1131,7 @@ void NixNote::quitNixNote() {
  */
 void NixNote::closeShortcut() {
     if (closeToTray && isVisible())
-        showMainWindow();
+        showMainWindow(); // wtf?
     else
         quitNixNote();
 }
@@ -2045,10 +2045,6 @@ void NixNote::resetView() {
 // Create a new note
 //*****************************
 void NixNote::newNote() {
-    // in case its called from systray, the main window may be hidden
-    showMainWindow();
-
-
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
                           QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
                           QString(
@@ -2699,7 +2695,7 @@ void NixNote::heartbeatTimerTriggered() {
             this->quitNixNote();
         }
         else if (cmd.startsWith("SHOW")) {
-            this->showMainWindow();
+            this->restoreAndShowMainWindow();
         }
         else if (cmd.startsWith("NEW_NOTE")) {
             // newNote() includes show window
@@ -2729,7 +2725,7 @@ void NixNote::heartbeatTimerTriggered() {
         else if (cmd.startsWith("OPEN_NOTE")) {
             bool newTab = false;
 
-            this->showMainWindow();
+            this->restoreAndShowMainWindow();
 
             if (cmd.startsWith("OPEN_NOTE_NEW_TAB")) {
                 newTab = true;
@@ -2757,11 +2753,7 @@ void NixNote::heartbeatTimerTriggered() {
             global.filterPosition++;
             this->openNote(newTab);
 
-            // this->raise();
-            // this->activateWindow();
-            // this->showNormal();
-            // this->tabWindow->currentBrowser()->editor->setFocus();
-            this->showMainWindow();
+            this->restoreAndShowMainWindow();
         } else {
             QLOG_DEBUG() << "unhandled command";
         }
@@ -2816,14 +2808,13 @@ void NixNote::fastPrintNote() {
 }
 
 
-//***********************************************************
-//* Toggle the window visibility.  Used when closing to
-//* the tray.
-//************************************************************
+/**
+ * Toggle the window visibility.  Used when closing to
+ * the tray.
+ */
 void NixNote::showMainWindow() {
     QLOG_DEBUG() << "showMainWindow";
     this->setWindowState(Qt::WindowActive);
-    this->setWindowFlags(Qt::WindowStaysOnTopHint);
 
     this->showNormal();            // Restores the widget after it has been maximized or minimized
     this->show();                  // Shows the widget and its child widgets
@@ -2831,6 +2822,20 @@ void NixNote::showMainWindow() {
     this->activateWindow();        // Sets the top-level widget containing this widget to be the active window
     // Gives the keyboard input focus to this widget (or its focus proxy) if this widget or one of its parents is the active window
     this->setFocus();
+    this->show();                  // Shows the widget and its child widgets
+}
+
+/**
+ * This is more strong version which should also recover window, if open but not minimized.
+ * May have side effects.
+ */
+void NixNote::restoreAndShowMainWindow() {
+    QLOG_DEBUG() << "restoreAndShowMainWindow";
+    setWindowFlags(Qt::WindowStaysOnTopHint); // recovery from "behind other window" - may have side effects
+
+    // normal "show"
+    showMainWindow();
+
     this->setWindowFlags(Qt::Window);
     this->show();                  // Shows the widget and its child widgets
 }
@@ -2840,9 +2845,9 @@ void NixNote::trayActivatedAction(int value) {
     //int newQuickNote = 3;
 
     if (value == TRAY_ACTION_SHOW) {
-        showMainWindow();
+        restoreAndShowMainWindow();
     } else if (value == TRAY_ACTION_NEWNOTE) {
-        showMainWindow();
+        restoreAndShowMainWindow();
         newNote();
     }
     // if (value == newQuickNote) this->newExternalNote();

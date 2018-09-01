@@ -86,10 +86,10 @@ NWebView::NWebView(NBrowserWindow *parent) :
 
     contextMenu->addSeparator();
 
-    removeFormattingAction = new QAction(tr("Remove formatting (light)"), this);
-    global.setupShortcut(removeFormattingAction, "Edit_Remove_Formatting");
-    contextMenu->addAction(removeFormattingAction);
-    connect(removeFormattingAction, SIGNAL(triggered()), parent, SLOT(removeFormatButtonPressed()));
+    // removeFormattingAction = new QAction(tr("Remove formatting (light)"), this);
+    // global.setupShortcut(removeFormattingAction, "Edit_Remove_Formatting");
+    // contextMenu->addAction(removeFormattingAction);
+    // connect(removeFormattingAction, SIGNAL(triggered()), parent, SLOT(removeFormatButtonPressed()));
 
     htmlTidyAction = new QAction(tr("Tidy HTML"), this);
     global.setupShortcut(htmlTidyAction, "Edit_HTML_Tidy");
@@ -97,7 +97,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     //contextMenu->addAction(htmlTidyAction);
     connect(htmlTidyAction, SIGNAL(triggered()), parent, SLOT(htmlTidy()));
 
-    htmlSimplifyAction = new QAction(tr("Simplify formatting (strong)"), this);
+    htmlSimplifyAction = new QAction(tr("Simplify formatting"), this);
     global.setupShortcut(htmlSimplifyAction, "Edit_HTML_Simplify");
     contextMenu->addAction(htmlSimplifyAction);
     connect(htmlSimplifyAction, SIGNAL(triggered()), parent, SLOT(htmlSimplify()));

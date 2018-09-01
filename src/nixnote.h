@@ -183,6 +183,7 @@ private:
     QString selectExportPDFFileName();
     void trayActivatedAction(int value);
     TrayMenu *createTrayContexMenu();
+    void restoreAndShowMainWindow();
 
 public:
     NixNote(QWidget *parent = 0);  // Constructor

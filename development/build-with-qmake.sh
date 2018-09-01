@@ -1,7 +1,6 @@
 #!/bin/bash
 QT_DIR=${1}
 BUILD_TYPE=${2}
-PROG=nixnote2
 
 function error_exit {
     echo "***********error_exit***********"

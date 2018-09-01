@@ -54,6 +54,7 @@ Edit_Delete_Table_Row                           // Delete a table row
 Edit_Insert_Table_Row                           // Insert a table row
 Edit_Insert_Table_Column                        // Insert a table row
 Edit_Delete_Table_Column                        // Delete a table row
+Edit_HTML_Simplify            Ctrl+Space        // Simplify formatting
 
 Edit_Insert_Hyperlink         Ctrl+K            // Insert a hyperlink (Popup menu)
 Edit_Insert_Todo                                // Insert a todo checkbox (Popup menu)
@@ -144,3 +145,4 @@ Focus_Search                  F6                // Focus on the search field
 Focus_Notebook                Alt+Shift+B       // Focus on the notebook
 Focus_Font                                      // Focus on the font drop down
 Focus_Font_Size                                 // Focus on the font size drop down
+

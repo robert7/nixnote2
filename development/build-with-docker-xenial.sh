@@ -26,6 +26,7 @@ fi
 
 # start container (note: each call creates new container)
 time docker run \
+   --rm \
    -v $PROJECTDIR/appdir:/opt/nixnote2/appdir \
    -v $PROJECTDIR/docker-build-debug:/opt/nixnote2/qmake-build-debug \
    -it nixnote2/xenial \

@@ -516,11 +516,6 @@ void NMainMenuBar::setupHelpMenu() {
     connect(openGettingStartedWebPageAction, SIGNAL(triggered()), this, SLOT(onOpenGettingStartedWebPage()));
     helpMenu->addAction(openGettingStartedWebPageAction);
 
-    QAction *openBlogWebPageAction = new QAction(tr("&Blog"), this);
-    openBlogWebPageAction->setToolTip(tr("Open project related blog"));
-    connect(openBlogWebPageAction, SIGNAL(triggered()), this, SLOT(onOpenBlogWebPage()));
-    helpMenu->addAction(openBlogWebPageAction);
-
     helpMenu->addSeparator();
 
     themeInformationAction = new QAction(tr("Theme &Information"), this);
@@ -583,10 +578,6 @@ void NMainMenuBar::onOpenProjectWebPage() {
 
 void NMainMenuBar::onOpenGettingStartedWebPage() {
     QDesktopServices::openUrl(QUrl(NN_GITHUB_WIKI_URL "/Getting-started"));
-}
-
-void NMainMenuBar::onOpenBlogWebPage() {
-    QDesktopServices::openUrl(QUrl("https://nixnotes-21.blogspot.com"));
 }
 
 void NMainMenuBar::setupThemeMenu() {
