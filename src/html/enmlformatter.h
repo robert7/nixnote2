@@ -69,9 +69,6 @@ private:
     void removeInvalidAttributes(QWebElement &node);
     void fixANode(QWebElement e);
     void fixObjectNode(QWebElement &e);
-    // void scanTags();
-    // void fixNode(const QDomNode &node);
-    void postXmlFix();
     void fixSpanNode(QWebElement &e);
     void fixDivNode(QWebElement &e);
     void fixPreNode(QWebElement &e);

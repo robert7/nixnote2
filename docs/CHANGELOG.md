@@ -3,13 +3,13 @@
 
 ## 2018-08
 
-### v2.1.0-beta-3d
+### v2.1.0-beta-3
+* Added few sort options (menu View)
+* Fixed to-do enml cleanup
 * Improved logging in "Import folders"
-* Quick fix/workaroung for import of unfinished file in "Import folders" - files
+* Quick fix/workaround for import of unfinished file in "Import folders" - files
   with ".tmp" in file name are ignored; thus file can be copied as ".tmp", then
   renamed
-
-### v2.1.0-beta-3c
 * Changed internal name of nixnote binary to nixnote21; this fixes some problem with not
   displayed icons
 * Removed logic which should activate "autostart" (as it currently doesn't work with
@@ -17,15 +17,10 @@
 * Optimized "show" main window logic
 * "Simplify formatting" has now kbd shortcut (Ctrl-Space)
 * Fixed potential log file access conflict if 2 instances were running
-
-
-### v2.1.0-beta-3b
 * Temporarily removed the "Count: ...." message, as it could cover recent error message
 * Removed --syncAndExit option, as there is already another way to do it command line
   parameter "sync"
 * Adjusted menu Help/Data and log location info to display active data/config paths
-
-### v2.1.0-beta-3a
 * Fixed bug in command line argument handling which prevented command line "commands"
   e.g. "nixnote2 signalGui --shutdown" && "nixnote2 signalGui --show"
 

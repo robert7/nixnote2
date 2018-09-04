@@ -39,6 +39,9 @@ private:
     void setupToolsMenu();
     void setupHelpMenu();
     void setupShortcut(QAction *action, QString text);
+    void createThemeMenu(QMenu *parentMenu);
+    void createSortMenu(QMenu *parentMenu);
+    void addSortAction(QMenu *menu, QActionGroup *menuActionGroup, const QFont &f, QString name, QString code);
 
 public:
     QList<QAction*> userAccountActions;
@@ -50,7 +53,7 @@ public:
     QMenu *toolsMenu;
     QMenu *helpMenu;
     QMenu *findReplaceMenu;
-    QMenu *themeMenu;
+    QMenu *sortMenu;
 
     QAction *quitAction;
     QAction *openCloseAction;
@@ -124,9 +127,11 @@ public:
 
     explicit NMainMenuBar(QWidget *parent = 0);
     void addUserAccount(QAction *action);
-    void setupThemeMenu();
 
 signals:
+
+private slots:
+    void onSortMenuTriggered();
 
 public slots:
     void onOpenProjectWebPage();

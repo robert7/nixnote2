@@ -256,9 +256,7 @@ void NMainMenuBar::setupEditMenu() {
 
     editMenu->addSeparator();
 
-    setupThemeMenu();
-    editMenu->addMenu(themeMenu);
-    themeMenu->setFont(f);
+    createThemeMenu(editMenu);
 
     preferencesAction = new QAction(tr("Preferences"), this);
     preferencesAction->setMenuRole(QAction::PreferencesRole);
@@ -381,6 +379,7 @@ void NMainMenuBar::setupViewMenu() {
     viewStatusbar->setCheckable(true);
     connect(viewStatusbar, SIGNAL(triggered()), parent, SLOT(toggleStatusbar()));
 
+    createSortMenu(viewMenu);
 }
 
 
@@ -547,7 +546,6 @@ void NMainMenuBar::setupHelpMenu() {
     connect(openShortcutsDialogAction, SIGNAL(triggered(bool)), parent, SLOT(openShortcutsDialog()));
     helpMenu->addAction(openShortcutsDialogAction);
 
-
     helpMenu->addSeparator();
 
     aboutQtAction = new QAction(tr("About &Qt"), this);
@@ -580,8 +578,72 @@ void NMainMenuBar::onOpenGettingStartedWebPage() {
     QDesktopServices::openUrl(QUrl(NN_GITHUB_WIKI_URL "/Getting-started"));
 }
 
-void NMainMenuBar::setupThemeMenu() {
-    themeMenu = editMenu->addMenu(tr("Theme"));
+void NMainMenuBar::createSortMenu(QMenu *parentMenu) {
+    sortMenu = parentMenu->addMenu(tr("Sort notes by"));
+
+    QFont f = global.getGuiFont(QFont());
+    QActionGroup *menuActionGroup = new QActionGroup(this);
+    menuActionGroup->setExclusive(true);
+
+    addSortAction(sortMenu, menuActionGroup, f, tr("Relevance, Date updated [desc]"), INI_VALUE_SORTORDER_DEFAULT);
+    addSortAction(sortMenu, menuActionGroup, f, tr("Relevance, Date updated [asc]"), "relevance desc, dateUpdated asc");
+
+    addSortAction(sortMenu, menuActionGroup, f, tr("Relevance, Date created [desc]"), "relevance desc, dateCreated desc");
+    addSortAction(sortMenu, menuActionGroup, f, tr("Relevance, Date created [asc]"), "relevance desc, dateCreated asc");
+
+    addSortAction(sortMenu, menuActionGroup, f, tr("Relevance, Title [desc]"), "relevance desc, title desc");
+    addSortAction(sortMenu, menuActionGroup, f, tr("Relevance, Title [asc]"), "relevance desc, title asc");
+    sortMenu->addSeparator();
+
+    addSortAction(sortMenu, menuActionGroup, f, tr("Date updated [desc]"), "dateUpdated desc");
+    addSortAction(sortMenu, menuActionGroup, f, tr("Date updated [asc]"), "dateUpdated asc");
+
+    addSortAction(sortMenu, menuActionGroup, f, tr("Date created [desc]"), "dateCreated desc");
+    addSortAction(sortMenu, menuActionGroup, f, tr("Date created [asc]"), "dateCreated asc");
+
+    addSortAction(sortMenu, menuActionGroup, f, tr("Title [desc]"), "title desc");
+    addSortAction(sortMenu, menuActionGroup, f, tr("Title [asc]"), "title asc");
+
+    addSortAction(sortMenu, menuActionGroup, f, tr("Size [desc]"), "size desc, dateUpdated desc");
+    addSortAction(sortMenu, menuActionGroup, f, tr("Has todo [desc]"), "hasTodo desc, dateUpdated desc");
+    addSortAction(sortMenu, menuActionGroup, f, tr("Unsynced first"), "isDirty desc, dateUpdated desc");
+
+    sortMenu->setFont(f);
+}
+
+void NMainMenuBar::addSortAction(QMenu *menu, QActionGroup *menuActionGroup, const QFont &f, QString name,
+                                 QString code) {
+    QString currentSortOrder = global.getSortOrder();
+
+    QAction *action = new QAction(name, this);
+    action->setData(code);
+    action->setCheckable(true);
+    if (QString::compare(code, currentSortOrder) == 0) {
+        action->setChecked(true);
+    }
+
+    action->setFont(f);
+    menuActionGroup->addAction(action);
+    connect(action, SIGNAL(triggered()), this, SLOT(onSortMenuTriggered()));
+    menu->addAction(action);
+}
+
+void NMainMenuBar::onSortMenuTriggered() {
+    QAction *pAction = qobject_cast<QAction *>(sender());
+    if (!pAction) {
+        return;
+    }
+    QString data = pAction->data().toString();
+    QLOG_DEBUG() << "sort action data= " << data;
+    global.setSortOrder(data);
+
+    // refresh result set
+    parent->updateSelectionCriteria(false);
+}
+
+
+void NMainMenuBar::createThemeMenu(QMenu *parentMenu) {
+    QMenu *menu = parentMenu->addMenu(tr("Theme"));
     QStringList list = global.getThemeNames();
     QFont f = global.getGuiFont(QFont());
 
@@ -608,7 +670,8 @@ void NMainMenuBar::setupThemeMenu() {
         }
         themeActions.append(themeAction);
     }
-    themeMenu->addActions(themeActions);
+    menu->addActions(themeActions);
+    menu->setFont(f);
 }
 
 

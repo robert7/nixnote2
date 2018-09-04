@@ -321,6 +321,11 @@ void EnmlFormatter::rebuildNoteEnml() {
         return;
     }
     removeHtmlHeader();
+
+    //QRegularExpression reInput("<!--.*-->");
+    //content.replace(reInput, "");
+
+
     content.prepend(DEFAULT_HTML_HEAD);
     content.prepend(DEFAULT_HTML_TYPE);
 
@@ -378,10 +383,11 @@ void EnmlFormatter::rebuildNoteEnml() {
     tidyHtml(HtmlCleanupMode::Tidy);
 
 
+    /// TEMPORARY POST TIDY HACK - this is how it shouldn't be done
     /// TEMPORARY POST TIDY HACK
-    /// TEMPORARY POST TIDY HACK
-    content.replace(HTML_COMMENT_START "<en-media", "<en-media");
-    content.replace("</en-media>" HTML_COMMENT_END, "</en-media>");
+    content.replace(HTML_COMMENT_START, "");
+    content.replace(HTML_COMMENT_END, "");
+
     /// TEMPORARY POST TIDY HACK
     /// TEMPORARY POST TIDY HACK
 
@@ -395,15 +401,12 @@ void EnmlFormatter::rebuildNoteEnml() {
         b.clear();
         b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>");
-        //b.append("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
         b.append(content);
         content.clear();
         content = b.replace("<body", "<en-note");
         content = b.replace("</body>", "</en-note>");
     }
 
-    // content = content.replace("<hr>", "<hr/>");
-    // content = content.replace("<br>", "<br/>");
 
     QLOG_DEBUG_FILE("fmt-enml-final.xml", getContent());
     QLOG_INFO() << "===== Finished rebuilding note ENML";
@@ -441,9 +444,16 @@ void EnmlFormatter::fixInputNode(QWebElement &node) {
     node.removeAttribute("style");
     node.removeAttribute("type");
     removeInvalidAttributes(node);
-    if (checked)
+    if (checked) {
         node.setAttribute("checked", "true");
-    node.setOuterXml(node.toOuterXml().replace("<input", "<en-todo").replace("</input", "</en-todo"));
+    }
+
+    // quite a hack
+    QRegularExpression reInput("<input([^>]*)>");
+    node.setOuterXml(
+            node.toOuterXml()
+                    .replace(reInput, HTML_COMMENT_START "<en-todo \\1 />" HTML_COMMENT_END)
+    );
 }
 
 
@@ -855,80 +865,6 @@ void EnmlFormatter::fixPreNode(QWebElement &node) {
     node.removeAttribute("wrap");
     checkAttributes(node, attrs + pre);
 }
-
-
-void EnmlFormatter::postXmlFix() {
-    // int pos;
-
-    // EXTRACT
-    // content = content.replace("<hr>", "<hr/>");
-    // content = content.replace("<br>", "<br/>");
-
-
-    /////// DON'T DELETE THIS
-    //
-    // // Fix the <br> tags
-    // content = content.replace("<br clear=\"none\">", "<br/>");
-    // pos = content.indexOf("<br");
-    // if (pos != -1) {
-    //     QLOG_DEBUG() << "postXmlFix: 'br' found.  Beginning fix";
-    // }
-    // while (pos != -1) {
-    //     int endPos = content.indexOf(">", pos);
-    //     int tagEndPos = content.indexOf("/>", pos);
-    //
-    //     // Check the next /> end tag.  If it is beyond the end
-    //     // of the current tag or if it doesn't exist then we
-    //     // need to fix the end of the img
-    //     if (tagEndPos == -1 || tagEndPos > endPos) {
-    //         content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
-    //     }
-    //     pos = content.indexOf("<br", pos + 1);
-    // }
-
-    /////// DON'T DELETE THIS
-    //
-    // // Fix <en-todo> tags
-    // content = content.replace("</en-todo>", "");
-    // pos = content.indexOf("<en-todo");
-    // if (pos != -1) {
-    //     QLOG_DEBUG() << "postXmlFix: 'en-todo'.  Beginning fix";
-    // }
-    // while (pos != -1) {
-    //     int endPos = content.indexOf(">", pos);
-    //     int tagEndPos = content.indexOf("/>", pos);
-    //
-    //     // Check the next /> end tag.  If it is beyond the end
-    //     // of the current tag or if it doesn't exist then we
-    //     // need to fix the end of the img
-    //     if (tagEndPos == -1 || tagEndPos > endPos) {
-    //         content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
-    //     }
-    //     pos = content.indexOf("<en-todo", pos + 1);
-    // }
-
-    /////// DON'T DELETE THIS
-    //
-    // // Fix <en-media> tags
-    // content = content.replace("</en-media>", "");
-    // pos = content.indexOf("<en-media");
-    // if (pos != -1) {
-    //     QLOG_DEBUG() << "postXmlFix: 'en-media'.  Beginning fix";
-    // }
-    // while (pos != -1) {
-    //     int endPos = content.indexOf(">", pos);
-    //     int tagEndPos = content.indexOf("/>", pos);
-    //
-    //     // Check the next /> end tag.  If it is beyond the end
-    //     // of the current tag or if it doesn't exist then we
-    //     // need to fix the end of the img
-    //     if (tagEndPos == -1 || tagEndPos > endPos) {
-    //         content = content.mid(0, endPos) + QByteArray("/>") + content.mid(endPos + 1);
-    //     }
-    //     pos = content.indexOf("<en-media", pos + 1);
-    // }
-}
-
 
 QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
     int endPos, startPos, endData, slotStart, slotEnd;
