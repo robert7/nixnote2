@@ -131,7 +131,7 @@ public:
 signals:
 
 private slots:
-    void onSortMenuTriggered(bool checked);
+    void onSortMenuTriggered();
 
 public slots:
     void onOpenProjectWebPage();

@@ -146,6 +146,10 @@ class IndexRunner;
 #define NN_GITHUB_WIKI_URL NN_GITHUB_REPO_URL "/wiki"
 
 #define INI_GROUP_APPEARANCE "Appearance"
+#define INI_VALUE_SORTORDER "sortOrder"
+#define INI_VALUE_SORTORDER_DEFAULT "relevance desc, dateUpdated desc"
+
+
 #define INI_GROUP_COL_HIDDEN_WIDE "ColumnHidden-Wide"
 #define INI_GROUP_COL_POS_WIDE "ColumnPosition-Wide"
 #define INI_GROUP_COL_WIDTH_WIDE "ColumnWidth-Wide"
@@ -183,6 +187,8 @@ private:
 
     // Desired display time format
     QString timeFormat;
+
+    QString sortOrder;
 
 public:
     const QString &getDateFormat() const;
@@ -242,10 +248,15 @@ public:
     ShortcutKeys *shortcutKeys;            // Keyboard shortcuts defined by the user
     QList<qint32> expungedResources;       // List of expunged resource LIDs
     QFileSystemWatcher *resourceWatcher;    // Watcher for file system directories.  New files here will create anote
+
     bool readSettingShowTrayIcon();                   // Should we show the tray icon?
     bool readSettingCloseToTray();                    // Close it to the tray.  We really just hide it.
     bool readSettingMinimizeToTray();                 // Minimize it to tray rather than the task list.  We really just hide it.
+    QString readSettingSortOrder();
+
     void saveSettingMinimizeToTray(bool value);    // Set if we should minimize it to the tray
+    void saveSettingSortOrder(QString value);
+
     void setCloseToTray(bool value);       // Set if we should close it to the tray
     bool showNoteListGrid();               // Should we whow the table grid?
     bool alternateNoteListColors();        // Should we alternate the table colors?
@@ -458,6 +469,9 @@ public:
 
     QString normalizeTermForSearchAndIndex(QString s) const;
     QString getOrCreateMemoryKey() const;
+
+    const QString getSortOrder() const;
+    void setSortOrder(const QString &sortOrder);
 
 signals:
     // global can send signal about updating status bar

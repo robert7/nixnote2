@@ -270,6 +270,8 @@ void NixNote::setupGui() {
         setWindowIcon(wIcon);
     }
 
+    global.setSortOrder(global.readSettingSortOrder());
+
     //QLOG_TRACE() << "Setting up menu bar";
     searchText = new LineEdit();
     menuBar = new NMainMenuBar(this);

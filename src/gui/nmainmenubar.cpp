@@ -585,7 +585,7 @@ void NMainMenuBar::createSortMenu(QMenu *parentMenu) {
     QActionGroup *menuActionGroup = new QActionGroup(this);
     menuActionGroup->setExclusive(true);
 
-    addSortAction(sortMenu, menuActionGroup, f, tr("Relevance, Date updated [desc]"), "relevance desc, dateUpdated desc");
+    addSortAction(sortMenu, menuActionGroup, f, tr("Relevance, Date updated [desc]"), INI_VALUE_SORTORDER_DEFAULT);
     addSortAction(sortMenu, menuActionGroup, f, tr("Relevance, Date updated [asc]"), "relevance desc, dateUpdated asc");
 
     addSortAction(sortMenu, menuActionGroup, f, tr("Relevance, Date created [desc]"), "relevance desc, dateCreated desc");
@@ -604,26 +604,41 @@ void NMainMenuBar::createSortMenu(QMenu *parentMenu) {
     addSortAction(sortMenu, menuActionGroup, f, tr("Title [desc]"), "title desc");
     addSortAction(sortMenu, menuActionGroup, f, tr("Title [asc]"), "title asc");
 
+    addSortAction(sortMenu, menuActionGroup, f, tr("Size [desc]"), "size desc, dateUpdated desc");
+    addSortAction(sortMenu, menuActionGroup, f, tr("Has todo [desc]"), "hasTodo desc, dateUpdated desc");
+    addSortAction(sortMenu, menuActionGroup, f, tr("Unsynced first"), "isDirty desc, dateUpdated desc");
+
     sortMenu->setFont(f);
 }
 
-void NMainMenuBar::addSortAction(QMenu *menu, QActionGroup *menuActionGroup, const QFont &f, QString name, QString code) {
+void NMainMenuBar::addSortAction(QMenu *menu, QActionGroup *menuActionGroup, const QFont &f, QString name,
+                                 QString code) {
+    QString currentSortOrder = global.getSortOrder();
+
     QAction *action = new QAction(name, this);
     action->setData(code);
     action->setCheckable(true);
+    if (QString::compare(code, currentSortOrder) == 0) {
+        action->setChecked(true);
+    }
+
     action->setFont(f);
     menuActionGroup->addAction(action);
-    connect(action, SIGNAL(triggered(bool)), this, SLOT(onSortMenuTriggered(bool)));
+    connect(action, SIGNAL(triggered()), this, SLOT(onSortMenuTriggered()));
     menu->addAction(action);
 }
 
-void NMainMenuBar::onSortMenuTriggered(bool checked) {
-    QAction *pAction = qobject_cast<QAction*>(sender());
+void NMainMenuBar::onSortMenuTriggered() {
+    QAction *pAction = qobject_cast<QAction *>(sender());
     if (!pAction) {
         return;
     }
     QString data = pAction->data().toString();
     QLOG_DEBUG() << "sort action data= " << data;
+    global.setSortOrder(data);
+
+    // refresh result set
+    parent->updateSelectionCriteria(false);
 }
 
 

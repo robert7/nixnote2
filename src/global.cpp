@@ -357,6 +357,13 @@ bool Global::readSettingCloseToTray() {
     return showTrayIcon;
 }
 
+QString Global::readSettingSortOrder() {
+    QString value;
+    settings->beginGroup(INI_GROUP_APPEARANCE);
+    value = settings->value(INI_VALUE_SORTORDER, INI_VALUE_SORTORDER_DEFAULT).toString();
+    settings->endGroup();
+    return value;
+}
 
 // Save the user request to minimize to the tray
 void Global::saveSettingMinimizeToTray(bool value) {
@@ -364,6 +371,14 @@ void Global::saveSettingMinimizeToTray(bool value) {
     settings->setValue("minimizeToTray", value);
     settings->endGroup();
 }
+
+void Global::saveSettingSortOrder(QString value) {
+    settings->beginGroup(INI_GROUP_APPEARANCE);
+    settings->setValue(INI_VALUE_SORTORDER, value);
+    settings->endGroup();
+}
+
+
 
 
 // Save the user's request to close to the tray
@@ -1523,3 +1538,11 @@ QString Global::getDateTimeFormat() const {
     return getDateFormat() + QStringLiteral(" ") + getTimeFormat();
 }
 
+const QString Global::getSortOrder() const {
+    return Global::sortOrder;
+}
+
+void Global::setSortOrder(const QString &sortOrder) {
+    Global::sortOrder = sortOrder;
+    saveSettingSortOrder(sortOrder);
+}

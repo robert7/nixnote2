@@ -58,9 +58,8 @@ NoteModel::NoteModel(QObject *parent)
 }
 
 QString NoteModel::orderByClause() const {
-    QString order("order by relevance desc, dateUpdated desc");
+    QString order("order by " + global.getSortOrder());
     QLOG_DEBUG() << "Sort order: " << order;
-    // TODO: add more sort options
     return order;
 }
 
