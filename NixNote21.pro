@@ -1,4 +1,4 @@
-# currently additionally  PKG_CONFIG_PATH=$$PWD/../libs/usr/lib/pkgconfig is needed
+# currently additionally  PKG_CONFIG_PATH=/opt/tidy56/libs/usr/lib/pkgconfig is needed
 
 
 QT += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
@@ -6,7 +6,7 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 unix {
     CONFIG += link_pkgconfig
     PKGCONFIG += poppler-qt5 libcurl tidy
-    QMAKE_RPATHDIR += $$PWD/../libs/lib
+    QMAKE_RPATHDIR += /opt/tidy56/lib
 }
 
 unix:!mac:LIBS += -lpthread -g -rdynamic
