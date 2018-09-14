@@ -1,0 +1,296 @@
+NixNote (2.1.0-beta3) unstable; urgency=low
+  * Added few sort options (menu View)
+  * Fixed to-do enml cleanup
+  * Improved logging in "Import folders"
+  * Quick fix/workaround for import of unfinished file in "Import folders" - files
+    with ".tmp" in file name are ignored; thus file can be copied as ".tmp", then
+    renamed
+  * Changed internal name of nixnote binary to nixnote21; this fixes some problem with not
+    displayed icons
+  * Removed logic which should activate "autostart" (as it currently doesn't work with
+    AppImage packaging; this can be done manually; see wiki)
+  * Optimized "show" main window logic
+  * "Simplify formatting" has now kbd shortcut (Ctrl-Space)
+  * Fixed potential log file access conflict if 2 instances were running
+  * Temporarily removed the "Count: ...." message, as it could cover recent error message
+  * Removed --syncAndExit option, as there is already another way to do it command line
+    parameter "sync"
+  * Adjusted menu Help/Data and log location info to display active data/config paths
+  * Fixed bug in command line argument handling which prevented command line "commands"
+    e.g. "nixnote2 signalGui --shutdown" && "nixnote2 signalGui --show"
+  * Debian packaging
+ -- Robert Spiegel <nightingale7@gmail.com>  Tue, 04 Sep 2018 12:00:00 -0400
+
+NixNote (2.1.0-beta2) unstable; urgency=low
+  * Fixed european date formats (wrong order of day/month)
+  * Updated translation files with string from source code
+  * Fixed: deleting tag crashes app
+  * Fixed tray icon behaviour in some special cases (show trayicon now defaults to true)
+  * Added new menu option Help/Getting started
+  * Restored option to open notes in new tab
+ -- Robert Spiegel <nightingale7@gmail.com>  Sat, 22 Aug 2018 12:00:00 -0400
+
+NixNote (2.1.0-beta1) unstable; urgency=low
+  * Various minor improvements and stabilisation
+  * Fixed bug with media attachments
+  * Improved HTML Simplify
+  * Removed both webcam and screenshoot functionality (there are better tools for bot actions)
+  * Show/Hide is now simplified to "Show" as previously it could lead to inconsistent behaviour
+  * Sys Tray menu functionality cleanup
+  * New feature search and index without [diacritics](https://en.wikipedia.org/wiki/Diacritic). This is highly
+    useful for some eastern european languages. As this requires reindexing whole database, activation currently
+    needs to be done manually (I'll write later some Howto)
+  * Remove "auto hide toolbar option", as it was not working correctly
+  * PDF export improvements
+    * fixed: PDF export file picker stays in background after first PDF export.. then stays hidden=>confusing
+    * OK dialog is useless
+    * fixed: Filedialog should add pdf extension
+  * Insert Date/Time now respect locale settings; added shortcut for Insert Date and Insert Time
+    few more european date formats added
+  * Adjusted middle mouse click behaviour (middle click now opens in new window)
+ -- Robert Spiegel <nightingale7@gmail.com>  Sat, 04 Aug 2018 12:00:00 -0400
+
+NixNote (2.1.0-alfa10) unstable; urgency=low
+  * Simplified content of the Help menu. Removed unrelevant items. "Message Log Info" now shows
+    log file location & instructions.
+  * Further stabilisation of html cleanup.
+  * Duplicate note will now mark note as "- copy".
+  * Added "Simplify html" to clean html garbage e.g. after paste from some web page.
+    So far only very experimental version. Discards images. Will be improved later.
+ -- Robert Spiegel <nightingale7@gmail.com>  Fri, 13 Jul 2018 12:00:00 -0400
+
+NixNote (2.1.0-alfa8) unstable; urgency=low
+  * Added **docker build**. Creating binaries ouf of source is now very straightforward.
+  * Improved reporting and logging of errors (mainly for sync errors). The messages may be now
+    more technical (can be improved later), but should at least display always and more
+    details are in log.
+ -- Robert Spiegel <nightingale7@gmail.com>  Fri, 06 Jul 2018 12:00:00 -0400
+
+NixNote (2.1.0-alfa7) unstable; urgency=low
+  * **Redesigned html cleanup** to prevent sync errors. Now newest html tidy libray is used (currently v.5.6).
+    Before system level tidy executable was used, which could be like 9 years old.
+    Pasting ~any html content into note should work now. Although sometimes images are not recognised.
+    Images need to be attached manually (e.g. by drag & drop.)
+  * Improved exception handling and logging. Removed log level setting in gui. Log level may now be set
+    from command line using e.g. --logLevel=1 for debug level.
+  * Changed some setting defaults - e.g. which columns are initially shown (default "title" only).
+    Settings can be changed in preferences and are preserved on next run (same as before).
+ -- Robert Spiegel <nightingale7@gmail.com>  Fri, 06 Jul 2018 12:00:00 -0400
+
+NixNote (2.1.0-alfa6) unstable; urgency=low
+  * [AppImage packaging](https://appimage.org/) using [linuxdeployqt](https://github.com/probonopd/linuxdeployqt).
+    This should allow easy deployment "anywhere" no worry about missing dependencies
+    and later use newest libraries.
+  * Focus on search box after "all notes"
+  * **Title column in note table view now display compound information** - Title + sync needed + relevance hint.
+    (Sync is signalized by triangle at begin, if the note is found "more relevant" in search its displaed
+    bold). May be later made configurable.
+    Main aim is to be able to hide all other columns. Sorting is relevance+date update - so you may
+    just display title column & hide all others. See: [compound title preview](https://www.dropbox.com/sh/62lnikzyf4r0sa2/AADMk-EHBwvBt7G5bOga9tyia?dl=0&preview=RS-6-compound-title.png)
+  * Removed function of opening notes in new tabs - doesn't work stable and is only confusing. Could be
+    re-added back later (commit id 6149a745d014f55352b2e6cad8ff4637414861b7).
+  * Improved logging in case there is problem with resources (and note is set to read only in nixnote).
+ -- Robert Spiegel <nightingale7@gmail.com>  Fri, 06 Jul 2018 12:00:00 -0400
+
+NixNote (2.1.0-alfa5) unstable; urgency=low
+  * Minor improvement in font color/background color (highlight selection).
+    Tooltip now shows how to use. Keyboard shortcuts possible (default Ctrl-d, Ctrl-Shift-H). Context
+    menu option added. Color buttons will preserve state across program restart.
+  * Tooltips with kbd shortcut info for all editor and main toolbar icons added.
+  * Few more default kbd shortcuts added.
+  * Remove hardcoded build in kbd shortcuts (now all comes from shortcuts.ini)
+  * Changed theme handling - now all themes come from ini file (incl. of the Default theme). This is
+    similar to shortcuts.txt.
+  * Clear search text, after click on "All notes".
+  * Restructured main toolbar.
+  * Renamed theme.ini to themes.ini because of structure changes prevent loading of legacy user themes
+    (they will need minor fixes to work with new version). To make things easier, now all CSS is inline.
+    Loading from file my be reintroduced later.
+ -- Robert Spiegel <nightingale7@gmail.com>  Mon, 02 Jul 2018 12:00:00 -0400
+
+NixNote (2.1.0-alfa4) unstable; urgency=low
+  * Merged changes from [jeffkowalski/Nixnote2](https://github.com/jeffkowalski/Nixnote2)
+    and [RJVB/nixnote2](https://github.com/RJVB/nixnote2) - **various fixes, build config for macOS**
+  * **Rewrite of the path handling logic after merge. Now standard compliant path for config and user data are used.**
+  * Program has 3 directory paths "config dir", "program data dir" (like images), "user data" (database logs)
+ -- Robert Spiegel <nightingale7@gmail.com>  Mon, 25 Jun 2018 12:00:00 -0400
+
+NixNote (2.1.0-alfa3) unstable; urgency=low
+  * Added simple search term relevance evaluation and sorting for free text search.
+  * Some note editing and toolbar tweeks (color picker has now restricted list of colors).
+ -- Robert Spiegel <nightingale7@gmail.com>  Mon, 18 Jun 2018 12:00:00 -0400
+
+NixNote (2.1.0-alfa1) unstable; urgency=low
+  * Fixed [#363](https://github.com/baumgarr/nixnote2/issues/363) (**Unknown Tag record key: 1004/1006**)
+  * Fixed minor error in date (copy of "fixed Date Format setting item bug for yy-MM-dd format" by julee)
+  * Added new compact date format yyMMdd
+  * Discarded ellipsis in date columns to allow more compact display
+  * Fixed fix text typos
+ -- Robert Spiegel <nightingale7@gmail.com>  Mon, 06 Jun 2018 12:00:00 -0400
+
+NixNote (2.0.2) stable; urgency=low
+  * Added the ability to code user exit routines.
+  * Added <pre> opton to enter pre-formatted text.
+  * Changed UTF-8 encoding to be the default option.
+  * Better C++11 compatibility.                    
+  * Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Tue, 12 Sep 2017 12:00:00 -0400
+
+
+NixNote (2.0.1) stable; urgency=low
+  * Add the ability to customize some aspects of a table
+    within a note.
+  * Added an auto-save interval. This can be customized 
+    in the preferences dialog.
+  * Add the ability to fully justify text.
+  * Add "double click" tray option. May not work on all
+    Window managers & isn't recommended with the 
+    "single click" option.
+  * Add the ability to specify the db location via a 
+    --condigDir command line option.
+  * Add option to intercept SIGHUP on Linux.
+  * Add option to clear & mark complete multiple reminders
+    from the note list.
+  * Added support for reminder search syntax & attribute filters. 
+  * Add support for new plugin locations.
+  * Chinese translation improvements.
+  * Performance improvements & Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Thu, 9 Mar 2017 12:00:00 -0400
+
+
+NixNote (2.0) stable; urgency=low
+  * Added the ability to export a note as a PDF.
+  * Added the ability to alter the default notebook.
+  * Added a new material theme.
+  * Ctrl+S will automatically save a note that has been changed.
+  * Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Tue, 7 Feb 2017 12:00:00 -0400
+
+
+NixNote (2.0-beta-11) stable; urgency=low
+  * Added the ability to paste multiple attachments at a time.
+  * Added the ability to force a reindexing of a specific note.
+  * Added the ability to disable font preview in the editor 
+    dialog.
+  * Added the ability to enable/disable note reminders from
+    the command line.
+  * Added the ability to re-download a specific note from 
+    Evernote.
+  * Added a "test" button on the email preferences dialog.
+  * Added socks5 proxy support.
+  * Added the experimental option to force UTF8 encoding if 
+    not specified by Evernote.
+  * Added a dialog box to show which the currently defined
+    shortcuts.
+  * Added "About Qt" dialog box.
+  * Added a command to open the Github page.
+  * Added the ability to use find/replace shortcuts in an
+    external window.
+  * Added the ability to automatically restart after the
+    API rate limit has been exceeded (experimental).
+  * Added the option to show a popup on sync errors.
+  * Added better Qt5 support.
+  * Better support for Windows builds.
+  * Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Wed, 28 Dec 2016 12:00:00 -0400
+
+NixNote (2.0-beta-10) stable; urgency=low
+  * Splt Hunspell into a plugin.
+  * Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Sun, 18 Sep 2016 12:00:00 -0400
+
+
+NixNote (2.0-beta-9) stable; urgency=low
+  * Added the ability to append to an existing note via the 
+    command line.
+  * Added the ability to disable or customize thumnail intervals.
+  * Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Sun, 14 Aug 2016 12:00:00 -0400
+
+
+NixNote (2.0-beta-8) stable; urgency=low
+  * Added the ability to open and close a notebook via the
+    command line.
+  * Separated the webcam into a separate plugin so 
+    opencv is not required.
+  * Added a few new shortcuts.
+  * Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Sat, 25 Jun 2016 12:00:00 -0400
+
+
+NixNote (2.0-beta-7) stable; urgency=low
+  * Added the ability to create a Table of Contents from 
+    selected notes.
+  * More aggressive cleanup of notes to remove invalid
+    attributes.
+  * Note synchronization no longer stops after the first
+    failure.
+  * Added more command line options.
+  * Added the option to automatically add a username to 
+    new notes.
+  * Updated Czech translation.
+  * Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Fri, 18 Dec 2015 18:00:00 -0400
+
+
+NixNote (2.0-beta-6) stable; urgency=low
+  * Added a "Presentation Mode" that hides almost 
+    everything except the editor, the attributes bar, 
+    and the tabs of open notes.
+  * Added the ability to customize the editor's 
+    default font & background color via the theme.ini.  
+    This is for people who were experiencing problems 
+    with darker themes.  A "Dark Editor" theme has 
+    also been included as an example.
+  * The default for viewing PDFs intline has been 
+    changed to "no" due to a weird error with Gnome.  
+  * A lot of different command line options have been   
+    added. This also makes nixnot2-cmd obsolete.  
+  * Added the option to disable PDF local indexing.  
+    This only impacts new/modified PDFs.  Data received 
+    from Evernote is still searched.
+  * Better mesasges when a note sync fails.
+  * Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Wed, 09 Dec 2015 20:00:00 -0400
+
+
+NixNote (2.0-beta-5) stable; urgency=low
+  * Added the ability to email notes.
+  * Searching will now highlight PDF results.
+  * Added Print Preview & the ability to only print s
+    elected text.
+  * Notes that are marked as shortcuts are now visible 
+    in the tray icon.
+  * Added the option to use notify-send instead of Qt's 
+    popup notification.
+  * A colors.txt file can be added to customize note
+    background color options.
+  * Basic support for nixnote2-cmd utility.
+  * Various GUI enhancements.
+  * Lots of bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Mon, 16 Nov 2015 14:00:00 -0400
+
+
+NixNote (2.0-beta-4) stable; urgency=low
+  * Added the ability to auto-hide the editor tool bar.
+  * Added the ability to show/hide more GUI componennts.
+  * Added the ability to customize tray icon actions.               
+  * Added more command line options.
+  * Various GUI enhancements.
+  * Lots of bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Tue, 13 Oct 2015 14:00:00 -0400
+
+
+NixNote (2.0-beta-3) stable; urgency=low
+  * Added the ability to change GUI fonts & font sizes.
+  * Added the ability to change GUI icons.
+  * Added the option to only show popup notices if a sync fails.
+  * Added debug option to disable tag name sorting to bypass 
+    non-ASCII character bug.
+  * Lots of bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Sat, 04 Apr 2015 14:00:00 -0400
+
+
+NixNote (2.0-beta-2) stable; urgency=low
+  * Beta 2.  Lots of bug fixes and removal of Thrift.
+-- Randy Baumgarte <randy@fbn.cx> Sat, 26 Apr 2014 14:00:00 -0400
