@@ -1,12 +1,14 @@
-# currently additionally  PKG_CONFIG_PATH=$$PWD/../libs/usr/lib/pkgconfig is needed
+TIDY_DIR=/opt/tidy56
 
 
 QT += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 unix {
     CONFIG += link_pkgconfig
-    PKGCONFIG += poppler-qt5 libcurl tidy
-    QMAKE_RPATHDIR += $$PWD/../libs/lib
+    PKGCONFIG += poppler-qt5 libcurl
+    QMAKE_RPATHDIR += $$TIDY_DIR/lib
+    LIBS += -L$$TIDY_DIR/lib -ltidy
+    INCLUDEPATH += $$TIDY_DIR/include
 }
 
 unix:!mac:LIBS += -lpthread -g -rdynamic
@@ -503,6 +505,10 @@ textfiles.path = $${PREFIX}/share/$$TARGET
 textfiles.files = $$PWD/shortcuts.txt $$PWD/themes.ini $$PWD/LICENSE $$PWD/colors.txt \
                   $${DESTDIR}/build-version.txt $$PWD/version.txt
 
+man.path = $${PREFIX}/share/man/man1
+man.files = docs/nixnote21.1
+
+
 # compile the translation files:
 isEmpty(QMAKE_LRELEASE) {
     win32:LANGREL = $$[QT_INSTALL_BINS]\lrelease.exe
@@ -515,7 +521,8 @@ langrel.commands = \
     $$LANGREL -compress -nounfinished -removeidentical ${QMAKE_FILE_IN} -qm $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
 langrel.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += langrel
-# this launches the actual work:
+
+# this launches the actual work
 PRE_TARGETDEPS += compiler_langrel_make_all
 
 
@@ -541,5 +548,6 @@ mac {
 } else {
     translations.path = $${PREFIX}/share/$$TARGET/translations
     translations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
-        INSTALLS = binary desktop images java translations help textfiles icons
+
+    INSTALLS = binary desktop images java translations help textfiles icons man
 }
