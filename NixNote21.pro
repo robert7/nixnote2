@@ -503,6 +503,10 @@ textfiles.path = $${PREFIX}/share/$$TARGET
 textfiles.files = $$PWD/shortcuts.txt $$PWD/themes.ini $$PWD/LICENSE $$PWD/colors.txt \
                   $${DESTDIR}/build-version.txt $$PWD/version.txt
 
+man.path = $${PREFIX}/share/man/man1
+man.files = docs/nixnote21.1
+
+
 # compile the translation files:
 isEmpty(QMAKE_LRELEASE) {
     win32:LANGREL = $$[QT_INSTALL_BINS]\lrelease.exe
@@ -515,7 +519,8 @@ langrel.commands = \
     $$LANGREL -compress -nounfinished -removeidentical ${QMAKE_FILE_IN} -qm $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
 langrel.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += langrel
-# this launches the actual work:
+
+# this launches the actual work
 PRE_TARGETDEPS += compiler_langrel_make_all
 
 
@@ -541,5 +546,6 @@ mac {
 } else {
     translations.path = $${PREFIX}/share/$$TARGET/translations
     translations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
-        INSTALLS = binary desktop images java translations help textfiles icons
+
+    INSTALLS = binary desktop images java translations help textfiles icons man
 }
