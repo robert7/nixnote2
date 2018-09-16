@@ -1,9 +1,7 @@
-TIDY_DIR=/opt/tidy56
-
-
 QT += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 unix {
+    TIDY_DIR=/opt/tidy56
     CONFIG += link_pkgconfig
     PKGCONFIG += poppler-qt5 libcurl
     QMAKE_RPATHDIR += $$TIDY_DIR/lib
@@ -514,7 +512,7 @@ isEmpty(QMAKE_LRELEASE) {
     win32:LANGREL = $$[QT_INSTALL_BINS]\lrelease.exe
     else:LANGREL = $$[QT_INSTALL_BINS]/lrelease
 }
-TRANSLATION_TARGET_DIR = $${OUT_PWD}/translations
+TRANSLATION_TARGET_DIR = $${DESTDIR}/translations
 langrel.input = TRANSLATIONS
 langrel.output = $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
 langrel.commands = \
@@ -549,7 +547,7 @@ mac {
 } else {
     translations.path = $${PREFIX}/share/$$TARGET/translations
     translations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
-    
+
     message("translations.path=$$translations.path")
     message("translations.files=$$translations.files")
 
