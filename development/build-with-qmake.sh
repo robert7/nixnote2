@@ -67,7 +67,4 @@ fi
 
 ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr || error_exit "qmake"
 make || error_exit "make"
-
-# this is a bit hack: we rerun qmake, to generate "install" incl. just created created binary
-${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr || error_exit "qmake (2nd)"
 make install || error_exit "make install"

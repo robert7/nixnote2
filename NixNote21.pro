@@ -482,6 +482,7 @@ isEmpty(PREFIX) {
 
 binary.path = $${PREFIX}/bin
 binary.files = $${DESTDIR}/$${TARGET}
+binary.CONFIG = no_check_exist
 message("Target binary: $${binary.files}")
 
 desktop.path = $${PREFIX}/share/applications
@@ -517,9 +518,7 @@ langrel.input = TRANSLATIONS
 langrel.output = $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
 langrel.commands = \
     $$LANGREL -compress -nounfinished -removeidentical ${QMAKE_FILE_IN} \
-          -qm $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm && \
-    mkdir -p $${PREFIX}/share/$$TARGET/translations && \
-    cp $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm $${PREFIX}/share/$$TARGET/translations
+          -qm $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
 langrel.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += langrel
 
@@ -548,11 +547,12 @@ mac {
     QMAKE_BUNDLE_DATA += images java mactranslations help
     INSTALLS = binary
 } else {
-    #translations.path = $${PREFIX}/share/$$TARGET/translations
-    #translations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
+    translations.path = $${PREFIX}/share/$$TARGET/translations
+    translations.files = $$TRANSLATION_TARGET_DIR/*.qm
+    translations.CONFIG = no_check_exist
 
     #message("translations.path=$$translations.path")
     #message("translations.files=$$translations.files")
 
-    INSTALLS = binary desktop images java help textfiles icons man
+    INSTALLS = binary desktop images java help textfiles icons man translations
 }
