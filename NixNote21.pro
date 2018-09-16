@@ -525,8 +525,6 @@ QMAKE_EXTRA_COMPILERS += langrel
 # this launches the actual work
 PRE_TARGETDEPS += compiler_langrel_make_all
 
-#message("TRANSLATION_TARGET_DIR=$$TRANSLATION_TARGET_DIR")
-
 mac {
     # TODO 6.2018 this will need minor adjustments
 
@@ -547,12 +545,9 @@ mac {
     QMAKE_BUNDLE_DATA += images java mactranslations help
     INSTALLS = binary
 } else {
-    translations.path = $${PREFIX}/share/$$TARGET/translations
-    translations.files = $$TRANSLATION_TARGET_DIR/*.qm
+    translations.path = $${PREFIX}/share/$$TARGET
+    translations.files = $$TRANSLATION_TARGET_DIR
     translations.CONFIG = no_check_exist
-
-    #message("translations.path=$$translations.path")
-    #message("translations.files=$$translations.files")
 
     INSTALLS = binary desktop images java help textfiles icons man translations
 }
