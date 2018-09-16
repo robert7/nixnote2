@@ -479,7 +479,7 @@ win32:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions
 win32:DEFINES += SMTP_BUILD
 
 isEmpty(PREFIX) {
- PREFIX = /usr/local
+  PREFIX = /usr
 }
 
 binary.path = $${PREFIX}/bin
