@@ -441,7 +441,6 @@ void NMainMenuBar::setupToolsMenu() {
     synchronizeAction = new QAction(tr("&Synchronize"), this);
     synchronizeAction->setToolTip(tr("Synchronize with Evernote"));
     connect(synchronizeAction, SIGNAL(triggered()), parent, SLOT(synchronize()));
-    setupShortcut(synchronizeAction, QString("Tools_Synchronize"));
     toolsMenu->addAction(synchronizeAction);
 
     disconnectAction = new QAction(tr("&Disconnect"), this);
