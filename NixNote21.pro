@@ -5,10 +5,10 @@ QT += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qm
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 unix {
     CONFIG += link_pkgconfig
-    PKGCONFIG += libcurl
+    PKGCONFIG += poppler-qt5 libcurl
     QMAKE_RPATHDIR += $$TIDY_DIR/lib
-    LIBS += -L$$TIDY_DIR/lib -ltidy -lpoppler-qt5
-    INCLUDEPATH += $$TIDY_DIR/include /usr/include/poppler/qt5 /usr/include/poppler
+    LIBS += -L$$TIDY_DIR/lib -ltidy
+    INCLUDEPATH += $$TIDY_DIR/include
 }
 
 unix:!mac:LIBS += -lpthread -g -rdynamic
