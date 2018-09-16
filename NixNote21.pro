@@ -1,9 +1,7 @@
-TIDY_DIR=/opt/tidy56
-
-
 QT += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 unix {
+    TIDY_DIR=/opt/tidy56
     CONFIG += link_pkgconfig
     PKGCONFIG += poppler-qt5 libcurl
     QMAKE_RPATHDIR += $$TIDY_DIR/lib
@@ -514,18 +512,21 @@ isEmpty(QMAKE_LRELEASE) {
     win32:LANGREL = $$[QT_INSTALL_BINS]\lrelease.exe
     else:LANGREL = $$[QT_INSTALL_BINS]/lrelease
 }
-TRANSLATION_TARGET_DIR = $${OUT_PWD}/translations
+TRANSLATION_TARGET_DIR = $${DESTDIR}/translations
 langrel.input = TRANSLATIONS
 langrel.output = $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
 langrel.commands = \
-    $$LANGREL -compress -nounfinished -removeidentical ${QMAKE_FILE_IN} -qm $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
+    $$LANGREL -compress -nounfinished -removeidentical ${QMAKE_FILE_IN} \
+          -qm $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm && \
+    mkdir -p $${PREFIX}/share/$$TARGET/translations && \
+    cp $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm $${PREFIX}/share/$$TARGET/translations
 langrel.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += langrel
 
 # this launches the actual work
 PRE_TARGETDEPS += compiler_langrel_make_all
 
-message("TRANSLATION_TARGET_DIR=$$TRANSLATION_TARGET_DIR")
+#message("TRANSLATION_TARGET_DIR=$$TRANSLATION_TARGET_DIR")
 
 mac {
     # TODO 6.2018 this will need minor adjustments
@@ -547,11 +548,11 @@ mac {
     QMAKE_BUNDLE_DATA += images java mactranslations help
     INSTALLS = binary
 } else {
-    translations.path = $${PREFIX}/share/$$TARGET/translations
-    translations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
-    
-    message("translations.path=$$translations.path")
-    message("translations.files=$$translations.files")
+    #translations.path = $${PREFIX}/share/$$TARGET/translations
+    #translations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
 
-    INSTALLS = binary desktop images java translations help textfiles icons man
+    #message("translations.path=$$translations.path")
+    #message("translations.files=$$translations.files")
+
+    INSTALLS = binary desktop images java help textfiles icons man
 }
