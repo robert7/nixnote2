@@ -36,8 +36,8 @@ More info in: [DOCKER README](docs/DOCKER-README.md)
 * Optional: create [AppImage package](https://appimage.org/) using [linuxdeployqt](https://github.com/probonopd/linuxdeployqt)
 
 ```bash
-# replace path in 1st parameter with Qt root 
-./development/build-with-qmake.sh /d/dev/Qt/5.5/gcc_64 debug
+# replace path in 1st parameter with Qt root (`/usr` will use system Qt)
+./development/build-with-qmake.sh /usr debug
 ```
 If all got OK, you should have "qmake-build-debug/nixnote2" binary available now 
 (and also a deployment copy in appdir). 
@@ -50,15 +50,21 @@ I suggest running from "appdir" (./appdir/usr/appdir/nixnote2).
 ```
 
 Preparation steps
-* Build tidy library
+* You can either install the html-tidy56 package from my PPA or build yourself from source.
+  To simplify things, the path fixed to /opt/tidy56. Of course this can be changed, but would
+  require minor tweaks in the qmake project file.
+* Install from PPA:
+  * first [add PPA](https://launchpad.net/~robert7/+archive/ubuntu/nixnote21)
+  * then `sudo apt install tidy-html56`
+* Build tidy library from source:
   * clone [source code](https://github.com/htacg/tidy-html5) switch to master branch
   * follow [build instructions](https://github.com/htacg/tidy-html5/blob/next/README/BUILD.md)
     * short version:
     * cd build/cmake
     * cmake ../..  -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
     * make                       
-    * make DESTDIR=../../../libs install
-    * library is now copied to ../../../libs                                                                                         
+    * make DESTDIR=/opt/tidy56 install
+    * library is now copied to /opt/tidy56/libs
 
 If it doesn't work: use docker build - or compare with docker recipe, what is different.
 
@@ -71,7 +77,7 @@ in path handling. Pull request is welcome.
 ```bash
 mkdir build
 cd build
-qmake ../nixnote2/NixNote2.pro
+qmake ../nixnote2/NixNote21.pro
 make
 ```
 
@@ -86,7 +92,7 @@ deployed anywhere:
 
 ```bash
 > cd build
-> macdeployqt NixNote2.app [-no-strip]
+> macdeployqt NixNote21.app [-no-strip]
 ```
 
 As far as I can tell this will find and copy all required dependencies into the app bundle and modify them so they
