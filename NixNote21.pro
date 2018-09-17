@@ -491,6 +491,9 @@ desktop.files = $${TARGET}.desktop
 icons.path = $${PREFIX}/share/icons
 icons.files = resources/icons/*
 
+pixmaps.path = $${PREFIX}/share/pixmaps
+pixmaps.files = resources/icons/hicolor/100x100/apps/nixnote21.png
+
 images.path = $${PREFIX}/share/$$TARGET/images
 images.files = resources/images/*
 
@@ -549,5 +552,5 @@ mac {
     translations.files = $$TRANSLATION_TARGET_DIR
     translations.CONFIG = no_check_exist
 
-    INSTALLS = binary desktop images java help textfiles icons man translations
+    INSTALLS = binary desktop images java help textfiles icons man translations pixmaps
 }
