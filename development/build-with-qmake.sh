@@ -40,15 +40,8 @@ fi
 #  rm -rf ${BUILD_DIR}
 #fi
 
-VERSION="$(cat version.txt)-$(git rev-parse --short HEAD)"
-# for simplicity now create in both dirs
-echo $VERSION >${BUILD_DIR}/build-version.txt
-# this may not be needed, if we run from "appdir" during development
-echo $VERSION >build-version.txt
-
 echo $QT_DIR >${BUILD_DIR}/qt-dir.txt
 echo "${BUILD_DIR}">_build_dir_.txt
-echo Building version: ${VERSION}
 
 APPDIR=appdir
 if [ -d "${APPDIR}" ]; then
@@ -63,7 +56,6 @@ if [ ! -f "${QMAKE_BINARY}" ]; then
     echo "qmake binary (${QMAKE_BINARY}) not found!"
     exit 1
 fi
-
 
 ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr || error_exit "qmake"
 make || error_exit "make"

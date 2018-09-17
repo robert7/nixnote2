@@ -488,8 +488,8 @@ message("Target binary: $${binary.files}")
 desktop.path = $${PREFIX}/share/applications
 desktop.files = $${TARGET}.desktop
 
-icons.path = $${PREFIX}/share/icons
-icons.files = resources/icons/*
+#icons.path = $${PREFIX}/share/icons
+#icons.files = resources/icons/*
 
 pixmaps.path = $${PREFIX}/share/pixmaps
 pixmaps.files = resources/icons/hicolor/100x100/apps/nixnote21.png
@@ -505,7 +505,16 @@ help.files = help/*
 
 textfiles.path = $${PREFIX}/share/$$TARGET
 textfiles.files = $$PWD/shortcuts.txt $$PWD/themes.ini $$PWD/LICENSE $$PWD/colors.txt \
-                  $${DESTDIR}/build-version.txt $$PWD/version.txt
+                  $${DESTDIR}/version/build-version.txt $$PWD/version.txt
+textfiles.CONFIG = no_check_exist
+
+VERSION_FILES = .
+fullversion.input = VERSION_FILES
+fullversion.output  = $${DESTDIR}/version/build-version.txt
+fullversion.commands = echo "$(cat ${QMAKE_FILE_IN})-$(git rev-parse --short HEAD)" >${QMAKE_FILE_OUT}
+fullversion.CONFIG += no_link no_check_exist
+QMAKE_EXTRA_COMPILERS += fullversion
+PRE_TARGETDEPS += compiler_fullversion_make_all
 
 man.path = $${PREFIX}/share/man/man1
 man.files = docs/nixnote21.1
@@ -524,9 +533,8 @@ langrel.commands = \
           -qm $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
 langrel.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += langrel
-
-# this launches the actual work
 PRE_TARGETDEPS += compiler_langrel_make_all
+
 
 mac {
     # TODO 6.2018 this will need minor adjustments
@@ -552,5 +560,5 @@ mac {
     translations.files = $$TRANSLATION_TARGET_DIR
     translations.CONFIG = no_check_exist
 
-    INSTALLS = binary desktop images java help textfiles icons man translations pixmaps
+    INSTALLS = binary desktop images java help textfiles man translations pixmaps
 }
