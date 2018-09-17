@@ -1,5 +1,5 @@
 /*********************************************************************************
-NixNote - An open-source client for the Evernote service.
+NixNote - An open-source client f`or the Evernote service.
 Copyright (C) 2013 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "nbrowserwindow.h"
+#include "src/nixnote.h"
 #include "src/sql/notetable.h"
 #include "src/sql/notebooktable.h"
 #include "src/gui/browserWidgets/urleditor.h"
@@ -419,6 +420,9 @@ void NBrowserWindow::setupToolBar() {
 
     connect(buttonBar->formatCodeButtonAction, SIGNAL(triggered()), this, SLOT(formatCodeButtonPressed()));
     connect(buttonBar->formatCodeButtonShortcut, SIGNAL(activated()), this, SLOT(formatCodeButtonPressed()));
+
+    // this sync button doesn't need a shortcut; the main app window shortcut is global
+    connect(buttonBar->syncButtonAction, SIGNAL(triggered()), this, SLOT(syncButtonPressed()));
 }
 
 // Load the note content into the window
@@ -1265,7 +1269,7 @@ void NBrowserWindow::alignCenterButtonPressed() {
 }
 
 
-// The center align button was pressed
+// The format code button was pressed
 void NBrowserWindow::formatCodeButtonPressed() {
 
     QString text = editor->selectedText();
@@ -1285,6 +1289,10 @@ void NBrowserWindow::formatCodeButtonPressed() {
 
 }
 
+// The sync button was pressed
+void NBrowserWindow::syncButtonPressed() {
+    NixNote::get()->synchronize();
+}
 
 // The full align button was pressed
 void NBrowserWindow::alignFullButtonPressed() {

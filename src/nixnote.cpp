@@ -104,6 +104,9 @@ extern Global global;
 
 class SyncRunner;
 
+// Define/allocate the singleton instance pointer
+NixNote *NixNote::singleton;
+
 //*************************************************
 //* This is the main class that is used to start
 //* everything else.
@@ -224,6 +227,8 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     connect(networkManager, SIGNAL(finished(QNetworkReply * )), this, SLOT(onNetworkManagerFinished(QNetworkReply * )));
 
     clientId = global.getOrCreateMemoryKey();
+    // Set the static singleton instance pointer (q.v. get())
+    singleton = this;
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
 
@@ -257,6 +262,13 @@ NixNote::~NixNote() {
 //    delete leftPanel;
 }
 
+
+//****************************************************************
+//* Public static method to get the singleton instance of NixNote
+//****************************************************************
+NixNote *NixNote::get() {
+    return singleton;
+}
 
 //****************************************************************
 //* Setup the user interface
@@ -316,11 +328,13 @@ void NixNote::setupGui() {
 
     toolBar->addSeparator();
 
-    syncButton = toolBar->addAction(
-        global.getIconResource(":synchronizeIcon"),
-        global.appendShortcutInfo(tr("Sync"), "Tools_Synchronize")
-    );
+    // Sync shortcut moved from the menu, to this toolbar button
+    // This enables it to apply globally in all app windows
+    syncButtonShortcut = new QShortcut(this);
+    syncButton = toolBar->addAction(global.getIconResource(":synchronizeIcon"), tr("Sync"));
+    syncButton->setToolTip(tr("Sync") + global.setupShortcut(syncButtonShortcut, "Tools_Synchronize"));
     syncButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
+    syncButtonShortcut->setContext(Qt::ApplicationShortcut); // Make sync key work in all app windows
 
     homeButtonShortcut = new QShortcut(this);
     homeButton = toolBar->addAction(global.getIconResource(":homeIcon"), tr("All Notes"));
@@ -355,6 +369,7 @@ void NixNote::setupGui() {
 
 
     connect(syncButton, SIGNAL(triggered()), this, SLOT(synchronize()));
+    connect(syncButtonShortcut, SIGNAL(activated()), this, SLOT(synchronize()));
 
     connect(homeButton, SIGNAL(triggered()), this, SLOT(resetView()));
     connect(homeButtonShortcut, SIGNAL(activated()), this, SLOT(resetView()));

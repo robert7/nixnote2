@@ -80,6 +80,7 @@ class NixNote : public QMainWindow
     Q_OBJECT
 
 private:
+    static NixNote *singleton;  // static pointer to singleton instance of this class
     QTranslator *nixnoteTranslator;
     QWebView *pdfExportWindow;
     DatabaseConnection *db;  // The database connection
@@ -161,6 +162,7 @@ private:
     QShortcut *downNoteShortcut;
     QShortcut *upNoteShortcut;
     QShortcut *homeButtonShortcut;
+    QShortcut *syncButtonShortcut;
     QShortcut *leftArrowButtonShortcut;
     QShortcut *rightArrowButtonShortcut;
 
@@ -188,6 +190,7 @@ private:
 public:
     NixNote(QWidget *parent = 0);  // Constructor
     ~NixNote();   //Destructor
+    static NixNote *get();      // Public Singleton getter
     SyncRunner syncRunner;
     QThread syncThread;
     QThread indexThread;

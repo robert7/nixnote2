@@ -36,6 +36,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     // read state of the colors from init file
     getButtonbarColorState();
 
+    // Note window toolbar pop-up menu to pick what appears on toolbar
     contextMenu = new QMenu();
     undoVisible = contextMenu->addAction(tr("Undo"));
     redoVisible = contextMenu->addAction(tr("Redo"));
@@ -68,6 +69,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     insertTableButtonVisible = contextMenu->addAction(tr("Insert Table"));
     htmlEntitiesButtonVisible = contextMenu->addAction(tr("HTML Entities"));
     formatCodeButtonVisible = contextMenu->addAction(tr("Format Code Block"));
+    syncButtonVisible = contextMenu->addAction(tr("Sync"));
 
     undoVisible->setCheckable(true);
     redoVisible->setCheckable(true);
@@ -102,6 +104,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     htmlEntitiesButtonVisible->setCheckable(true);
     insertDatetimeVisible->setCheckable(true);
     formatCodeButtonVisible->setCheckable(true);
+    syncButtonVisible->setCheckable(true);
 
     connect(undoVisible, SIGNAL(triggered()), this, SLOT(toggleUndoButtonVisible()));
     connect(redoVisible, SIGNAL(triggered()), this, SLOT(toggleRedoButtonVisible()));
@@ -134,6 +137,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(spellCheckButtonVisible, SIGNAL(triggered()), this, SLOT(toggleSpellCheckButtonVisible()));
     connect(htmlEntitiesButtonVisible, SIGNAL(triggered()), this, SLOT(toggleHtmlEntitiesButtonVisible()));
     connect(formatCodeButtonVisible, SIGNAL(triggered()), this, SLOT(toggleFormatCodeButtonVisible()));
+    connect(syncButtonVisible, SIGNAL(triggered()), this, SLOT(toggleSyncButtonVisible()));
 
     // note editor toolbar items begin
     fontNames = new FontNameComboBox(this);
@@ -324,6 +328,9 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     formatCodeButtonAction = this->addAction(global.getIconResource(":formatCodeIcon"),
                                              tr("Format Code Block").append(tooltipInfo));
 
+    // this sync button doesn't need a shortcut; the main app window shortcut is global
+    syncButtonAction = this->addAction(global.getIconResource(":synchronizeIcon"), tr("Sync"));
+
     QString css = global.getThemeCss("editorButtonBarCss");
     if (css != "")
         this->setStyleSheet(css);
@@ -353,6 +360,7 @@ EditorButtonBar::~EditorButtonBar() {
     delete fontVisible;
     delete fontSizeVisible;
     delete todoVisible;
+    delete syncButtonVisible;
 }
 
 
@@ -459,6 +467,9 @@ void EditorButtonBar::saveButtonbarState() {
     value = formatCodeButtonAction->isVisible();
     global.settings->setValue("formatCodeButtonVisible", value);
 
+    value = syncButtonAction->isVisible();
+    global.settings->setValue("syncButtonVisible", value);
+
     QString valueS = fontColorMenuWidget->getCurrentColorName();
     global.settings->setValue("fontColor", valueS);
     valueS = highlightColorMenuWidget->getCurrentColorName();
@@ -564,6 +575,8 @@ void EditorButtonBar::getButtonbarState() {
     formatCodeButtonAction->setVisible(global.settings->value("formatCodeButtonVisible", false).toBool());
     formatCodeButtonVisible->setChecked(formatCodeButtonAction->isVisible());
 
+    syncButtonAction->setVisible(global.settings->value("syncButtonVisible", true).toBool());
+    syncButtonVisible->setChecked(syncButtonAction->isVisible());
 
     global.settings->endGroup();
 }
@@ -733,6 +746,10 @@ void EditorButtonBar::toggleFormatCodeButtonVisible() {
     saveButtonbarState();
 }
 
+void EditorButtonBar::toggleSyncButtonVisible() {
+    syncButtonAction->setVisible(syncButtonVisible->isChecked());
+    saveButtonbarState();
+}
 
 // Load the list of font names
 void EditorButtonBar::loadFontNames() {
@@ -839,4 +856,5 @@ void EditorButtonBar::reloadIcons() {
     insertTableButtonAction->setIcon(global.getIconResource(":gridIcon"));
     htmlEntitiesButtonAction->setIcon(global.getIconResource(":htmlentitiesIcon"));
     formatCodeButtonAction->setIcon(global.getIconResource(":formatCodeIcon"));
+    syncButtonAction->setIcon(global.getIconResource(":synchronizeIcon"));
 }

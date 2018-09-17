@@ -69,6 +69,7 @@ public:
     QAction *subscriptVisible;
     QAction *superscriptVisible;
     QAction *formatCodeButtonVisible;
+    QAction *syncButtonVisible;
 
     QAction *removeFormatButtonAction;
     QShortcut * removeFormatButtonShortcut;
@@ -130,8 +131,8 @@ public:
     QAction *htmlEntitiesButtonAction;
     QShortcut *htmlEntitiesButtonShortcut;
     QAction *formatCodeButtonAction;
-
     QShortcut *formatCodeButtonShortcut;
+    QAction *syncButtonAction;
 
     FontNameComboBox *fontNames;
     FontSizeComboBox *fontSizes;
@@ -193,6 +194,7 @@ public slots:
     void loadFontSizeComboBox(QString font);
     void loadFontNames();
     void toggleFormatCodeButtonVisible();
+    void toggleSyncButtonVisible();
 
 };
 

@@ -1,6 +1,7 @@
 #!/bin/bash
 QT_DIR=${1}
 BUILD_TYPE=${2}
+CLEAN=${3}
 
 function error_exit {
     echo "***********error_exit***********"
@@ -24,21 +25,21 @@ if [ ! -f src/main.cpp ]; then
   exit 1
 fi
 
-
-
 if [ -z "${BUILD_TYPE}" ]; then
     BUILD_TYPE=debug
 fi
 BUILD_DIR=qmake-build-${BUILD_TYPE}
+
+if [ ! -z "${CLEAN}" ]; then
+  echo "Clean build: ${BUILD_DIR}"
+  if [ -d "${BUILD_DIR}" ]; then
+    rm -rf ${BUILD_DIR}
+  fi
+fi
+
 if [ ! -d "${BUILD_DIR}" ]; then
   mkdir ${BUILD_DIR}
 fi
-
-
-# maybe later add with "clean" parameter
-#if [ -d "${BUILD_DIR}" ]; then
-#  rm -rf ${BUILD_DIR}
-#fi
 
 echo $QT_DIR >${BUILD_DIR}/qt-dir.txt
 echo "${BUILD_DIR}">_build_dir_.txt
@@ -58,5 +59,5 @@ if [ ! -f "${QMAKE_BINARY}" ]; then
 fi
 
 ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr || error_exit "qmake"
-make || error_exit "make"
+make -j8 || error_exit "make"
 make install || error_exit "make install"
