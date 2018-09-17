@@ -1,0 +1,10 @@
+tidy documentation can be found in the tidy manpage.
+
+more documentation can be found at the following links:
+* Tidy - http://www.html-tidy.org/documentation/
+* Accessibility - http://www.html-tidy.org/accessibility/
+
+config file is /etc/tidy.conf or ~/.tidyrc
+
+--
+Jason Thomas

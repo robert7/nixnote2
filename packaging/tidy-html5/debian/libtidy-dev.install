@@ -1,0 +1,4 @@
+debian/usr/share/doc/tidy/changelog /usr/share/doc/libtidy-dev/
+usr/include/* /usr/include/tidy/
+usr/lib/libtidy.so
+usr/lib/libtidys.a

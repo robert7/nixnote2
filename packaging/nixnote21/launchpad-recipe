@@ -1,0 +1,3 @@
+# git-build-recipe format 0.4 deb-version {debversion}~{time}
+lp:nixnote21 master
+nest-part packaging lp:~robert7/nixnote21/+git/nixnote21-packaging nixnote21/debian debian master

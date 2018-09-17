@@ -1,0 +1,3 @@
+debian/usr/share/doc/tidy/changelog /usr/share/doc/tidy/
+debian/tidy.conf /etc/
+usr/bin/tidy

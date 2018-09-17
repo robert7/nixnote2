@@ -1,0 +1,30 @@
+#!/bin/sh
+
+set -e
+
+# Prepare to move a conffile without triggering a dpkg question
+prep_mv_conffile() {
+    PKGNAME="$1"
+    CONFFILE="$2"
+
+    if [ -e "$CONFFILE" ]; then
+        md5sum="`md5sum \"$CONFFILE\" | sed -e \"s/ .*//\"`"
+        old_md5sum="`dpkg-query -W -f='${Conffiles}' $PKGNAME | sed -n -e \"\\\\' $CONFFILE'{s/ obsolete$//;s/.* //p}\"`"
+        if [ "$md5sum" = "$old_md5sum" ]; then
+            rm -f "$CONFFILE"
+        fi
+    fi
+}
+
+LASTVERSION=20051018-1
+
+case "$1" in
+install|upgrade)
+    if dpkg --compare-versions "$2" le "$LASTVERSION"; then
+        prep_mv_conffile tidy "/etc/tidy/tidy.conf"
+    fi
+esac
+
+#DEBHELPER#
+
+exit 0

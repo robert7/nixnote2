@@ -1,0 +1,3 @@
+debian/usr/share/doc/tidy/changelog /usr/share/doc/libtidy5/
+debian/usr/share/lintian/overrides/libtidy5 /usr/share/lintian/overrides/
+usr/lib/libtidy.so.*

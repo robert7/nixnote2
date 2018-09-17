@@ -1,0 +1,474 @@
+tidy-html5 (1:5.6.0-1) unstable; urgency=low
+
+  * New upstream version 5.6.0
+  * Remove all patches; they have been merged upstream
+  * For detailed changelog with list of authors see: http://binaries.html-tidy.org/release_notes/5.6.0.html
+  
+ -- Robert Spiegel <nightingale7@gmail.com>  Thu, 13 Sep 2018 08:00:00 +0200
+
+
+tidy-html5 (1:5.2.0-2) unstable; urgency=low
+
+  * Team upload.
+
+  [ Jason Thomas ]
+  * Add define for TIDY_CONFIG_FILE & TIDY_USER_CONFIG_FILE (Closes: #830066)
+  * Remove debian/tidy.1 and use tidy.1 built from source
+
+  [ Steve Langasek ]
+  * Drop dependency on libdmalloc-dev to a Suggests:, not actually used without
+    an extra #define. (Closes: #829147)
+
+  [ Daniel James ]
+  * Update copyright notice after clarification with upstream
+  * Remove obsolete instructions for building tarballs from CVS
+  * Improve package descriptions in control file (Closes: #429582,
+    Closes: #829182)
+  * Copy upstream changelog to standard location (Closes: #355042,
+    Closes: #461655)
+  * Add machine-readable copyright file crediting University of Toronto
+  * Reinstate Jason Thomas as maintainer.
+
+  [ Pino Toscano ]
+  * Backport upstream commit 27143cc88e1d7cda7f08bdc4d78ce68dabf7575c to fix
+    build on non-Linux architectures; patch
+    upstream_Set-HAS_FUTIME-0-on-any-GNU-libc-platform.patch. (Closes: #828632)
+  * Backport upstream commit 10281040ca6b3a54db7880eed9c67957d11622eb to avoid
+    crashing in tidyCleanAndRepair if document was not loaded; patch
+    upstream_Avoid-crash-in-tidyCleanAndRepair-if-document-was-no.patch.
+
+  [ Mattia Rizzolo ]
+  * d/rules: wrap long line.
+  * d/rules: enable parallel building
+
+ -- Daniel James <daniel@64studio.com>  Thu, 04 Aug 2016 09:55:19 +0000
+
+tidy-html5 (1:5.2.0-1.1) unstable; urgency=medium
+
+  [ Gianfranco Costamagna ]
+  * Install all headers to /usr/include/tidy/ to unbreak abiword
+  * Add libdmalloc-dev dependency for libtidy-dev, needed for dmalloc.h
+    include
+
+  [ Ondřej Surý ]
+  * Non-maintainer upload
+  * Fix the wrong Replaces for shared libraries
+  * Add Breaks/Replaces between libtidy-dev and libtidy-0.99-0
+    (Closes: #827716)
+  * Remove Pre-Depends on pre-wheezy dpkg version
+  * Add compatibility headers back (Closes: #827891)
+  * Add Vcs-* to collab-maint
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 28 Jun 2016 15:36:42 +0200
+
+tidy-html5 (1:5.2.0-1) unstable; urgency=low
+
+  * New upstream release 5.2.0 (Closes: #655200, Closes: #810951)
+  * debian/control: changed libtidy-0.99-0 to libtidy5
+  * Update for modern packaging standards
+
+ -- Daniel James <daniel@64studio.com>  Thu, 05 May 2016 12:33:07 +0100
+
+tidy (20091223cvs-1.5) unstable; urgency=high
+
+  [ Alessandro Ghedini ]
+  * Fix heap buffer overflow and memory saturation on invalid HTML input
+    as per CVE-2015-5522 and CVE-2015-5523 (Closes: #792571)
+
+ -- Salvatore Bonaccorso <carnil@debian.org>  Mon, 20 Jul 2015 16:33:00 +0200
+
+tidy (20091223cvs-1.4) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Build using dh-autoreconf.
+
+ -- Matthias Klose <doko@ubuntu.com>  Fri, 08 Aug 2014 13:26:56 +0200
+
+tidy (20091223cvs-1.3) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Drop unnecessary build dep on automake1.9 and autoconf. (Closes:
+    #724441)
+
+ -- Eric Dorland <eric@debian.org>  Sat, 08 Mar 2014 21:16:26 -0500
+
+tidy (20091223cvs-1.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * For some reasons 20091223cvs-1.1 always gets rejected, probably due to
+    the special character in Loics name, but the upload get's rejected even
+    if I fix the previous changelog entry.  So let's see if creating a new
+    one fixes the issue.
+
+ -- Alexander Reichle-Schmehl <tolimar@debian.org>  Tue, 13 Dec 2011 15:19:30 +0100
+
+tidy (20091223cvs-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Apply patch by Loic Minier:
+    * New patch, 10format-warnings, fixes FTBFS with -Werror=format-security;
+      essentially calls to messageNode() declared printf-alike with a variable
+      fmt string, but no subsequent argument; the patch passes "%s" as format
+      and fmt as the only argument; this merely protects this class of calls,
+      but not the ones with e.g. always one argument or always two arguments.
+      Tested by running tidy on some text and HTML files; warnings still seem to
+      be output correctly; (Closes: #645300).
+    * Use CURDIR instead of CURDUR in rules.
+    * rules: only append to LD_LIBRARY_PATH, don't reset it, as fakeroot relies
+    on it.
+  * Set urgenceny to medium due to rc bug fix
+
+ -- Alexander Reichle-Schmehl <tolimar@debian.org>  Sat, 03 Dec 2011 10:57:47 +0100
+
+tidy (20091223cvs-1) unstable; urgency=low
+
+  * New cvs snapshot
+  * debian/compat: increased from 4 to 7
+  * debian/control:
+  - updated standards-version from 3.8.0.0 to 3.8.3.0
+  - updated build-depends on debhelper from 4 to 7
+  - libtidy-dev, added binary version for dependency on libtidy,
+    (>= ${binary:Version})
+  - tidy, updated binary version for dependency on libtidy,
+    (= ${binary:Version})
+
+ -- Jason Thomas <jason@debian.org>  Wed, 23 Dec 2009 12:19:13 +1100
+
+tidy (20081224cvs-1) unstable; urgency=low
+
+  * New cvs snapshot
+  * debian/control: add debhelper ${misc:Depends} to all packages
+  - add versioned depend on libtidy-0.99-0 (>= 20081224cvs-1) for tidy
+    (closes: #470764)
+  - add Homepage field
+  - update standards-version from 3.7.3.0 to 3.8.0.0
+  * debian/tidy-doc.doc-base: change section from App/Text to Web Development
+  * debian/tidy.postinst + tidy.preinst: set the -e flag
+  * debian/README.source: new, how to build source tarball from upstream
+  * debian/README.Debian: add urls to more documentation
+    (closes: #353912)
+  * debian/patches/03overview-tab-size.patch: add patch to fix tab-size
+    (closes: #353907)
+  * tidy doc has been built from same source as tidy for a while
+    (closes: #364960)
+  * debian/rules:
+    - add -xml-config to generated manpage
+    - clean up generated files
+    (closes: #471107)
+  * manpage: -latin0 options has correct info as of 20080116cvs-1
+    (closes: #506394 )
+
+ -- Jason Thomas <jason@debian.org>  Wed, 24 Dec 2008 13:25:54 +1100
+
+tidy (20080116cvs-2) unstable; urgency=low
+
+  * debian/control: build depends on xsltproc
+    (closes: #461608)
+  * debian/tidy.preinst,postinst: add code to move old config file
+    (closes: #461623)
+
+ -- Jason Thomas <jason@debian.org>  Sun, 20 Jan 2008 21:46:03 +1100
+
+tidy (20080116cvs-1) unstable; urgency=low
+
+  * New cvs snapshot
+    (closes: #364961, #435101)
+  * Re-generate patches
+    - 01config_file.patch
+    - tidy_20040811-1.diff renamed to 02FTBS_kfreebsd-gnu.patch
+  * We now generate the tidy manpage from the tidy binary.
+    (closes: #379464, #364963)
+  * Updated standards-version from 3.6.2.0 to 3.7.3.0
+  * debian/tidy.install - moved tidy.conf /etc/
+    (closes: #407833)
+  * sample tidy.conf now contains no entries, see manpage for examples
+
+ -- Jason Thomas <jason@debian.org>  Sat, 19 Jan 2008 19:27:58 +1100
+
+tidy (20051018-1) unstable; urgency=low
+
+  * New upstream release
+    (closes: #333444)
+  * debian/tidy.install: added debian/tidy.conf /etc/tidy/
+    (closes: #308883)
+  * debian/control: changed libtidy0 to libtidy-0.99-0
+  * updated manpage
+    (closes: #224427)
+
+ -- Jason Thomas <jason@debian.org>  Thu, 20 Oct 2005 10:26:07 +1000
+
+tidy (20050415-1) unstable; urgency=low
+
+  * New upstream release 
+
+ -- Jason Thomas <jason@debian.org>  Wed, 20 Apr 2005 11:22:49 +1000
+
+tidy (20040811-2) unstable; urgency=low
+
+  * debian/patches/tidy_20040811-1.diff: fixes FTBS on kfreebsd-gnu
+    (closes: #269524)
+
+ -- Jason Thomas <jason@debian.org>  Thu,  2 Sep 2004 10:32:22 +1000
+
+tidy (20040811-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Jason Thomas <jason@debian.org>  Thu, 19 Aug 2004 14:42:01 +1000
+
+tidy (20040720-1) unstable; urgency=low
+
+  * New upstream release
+    (closes: #259925)
+
+ -- Jason Thomas <jason@debian.org>  Thu, 22 Jul 2004 17:21:09 +1000
+
+tidy (20040312-2) unstable; urgency=low
+
+  * debian/libtidy0.install: add debian/tmp/usr/lib/libtidy.so symlink 
+    (closes: #247488)
+
+ -- Jason Thomas <jason@debian.org>  Sat, 15 May 2004 14:47:54 +1000
+
+tidy (20040312-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/rules: changed to use cdbs
+  * debian/control: build depends cdbs
+  * debian/makeclean: removed this as we now setup up the autoconf build
+    system before packaging. 
+
+ -- Jason Thomas <jason@debian.org>  Wed, 14 Apr 2004 23:55:38 +1000
+
+tidy (20031001-3) unstable; urgency=low
+
+  * debian/control: corrected sections for libtidy-dev and libtidy0 
+
+ -- Jason Thomas <jason@debian.org>  Wed, 10 Dec 2003 10:22:25 +1100
+
+tidy (20031001-2) unstable; urgency=low
+
+  * FTBS, added missing build-depends, autoconf, automake, libtool, perl 
+    (closes: #221378)
+  * debian/rules: changed debian/automake to 'perl debian/automake'
+
+ -- Jason Thomas <jason@debian.org>  Tue, 18 Nov 2003 10:08:53 +1100
+
+tidy (20031001-1) unstable; urgency=low
+
+  * New upstream release.
+  * Updated standards-version
+  * Created seperate libtidy0 and libtidy-dev package.
+    (closes: #183089)
+  * Changed the way we build to use autotools so we can get the shared libs
+
+ -- Jason Thomas <jason@debian.org>  Fri, 14 Nov 2003 16:51:01 +1100
+
+tidy (20030716-3) unstable; urgency=low
+
+  * debian/control: Suggests tidy-doc 
+    (closes: #204069)
+
+ -- Jason Thomas <jason@debian.org>  Mon, 25 Aug 2003 10:35:18 +1000
+
+tidy (20030716-2) unstable; urgency=low
+
+  * updated manpage
+    (closes: #194965, #196053, #200148)
+
+ -- Jason Thomas <jason@debian.org>  Thu, 31 Jul 2003 13:27:52 +1000
+
+tidy (20030716-1) unstable; urgency=low
+
+  * New upstream release.
+  * Move docs to tidy-docs package.
+  * Removed unneeded patches 03copyright.patch 04indent.patch
+  * Updated config patch
+  * Added mention of tidy-doc package to man page, and README.Debian 
+
+ -- Jason Thomas <jason@debian.org>  Wed, 30 Jul 2003 11:16:18 +1000
+
+tidy (20030305-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Jason Thomas <jason@debian.org>  Fri,  7 Mar 2003 11:53:16 +1100
+
+tidy (20030208-2) unstable; urgency=low
+
+  * Added temporary patch to fix indentation problem 
+
+ -- Jason Thomas <jason@debian.org>  Tue, 18 Feb 2003 09:58:35 +1100
+
+tidy (20030208-1) unstable; urgency=low
+
+  * New upstream version.
+  * removed manpage patch as upstream no longer includes manpage.
+  * created own manpage using help2man.
+  * updated standards version to 3.5.8
+  * increase debhelper build-depends to 4
+  * cleaned up debian/rules.
+  * removed unneeded tidy.conffiles
+  * fixed up lintian errors.
+
+ -- Jason Thomas <jason@debian.org>  Mon, 17 Feb 2003 12:28:29 +1100
+
+tidy (20020301-1) unstable; urgency=low
+
+  * New upstream version.
+  * fix '--add-xml-decl yes --add-xml-space yes' crash bug
+    thanks to  Cesar Eduardo Barros <cesarb@nitnet.com.br>
+    and upstream.
+    (closes: #137124)
+
+ -- Jason Thomas <jason@debian.org>  Fri,  8 Mar 2002 10:58:30 +1100
+
+tidy (20020202-1) unstable; urgency=low
+
+  * New upstream version.
+    (closes: #131908, #111026, #75554)
+  * changed to apply and remove patches at build time
+
+ -- Jason Thomas <jason@debian.org>  Mon,  4 Feb 2002 19:03:42 +1100
+
+tidy (20000804-5) unstable; urgency=low
+
+  * forgot to uncomment #define in platform.h which allows the use of
+    ~/.tidyrc
+    (closes: #105355)
+
+ -- Jason Thomas <jason@debian.org>  Thu, 16 Aug 2001 17:12:11 +1000
+
+tidy (20000804-4) unstable; urgency=low
+
+  * removed mention of GPL from debian/copyright
+    (closes: #106681)
+
+ -- Jason Thomas <jason@debian.org>  Fri, 27 Jul 2001 10:41:49 +1000
+
+tidy (20000804-3) unstable; urgency=low
+
+  * New maintainer
+  * Enabled default configuration file /etc/tidy.conf
+    and added default configuration file /etc/tidy.conf
+    and modified manpage to mention default configuration
+    ( closes: #95218 )
+  * configuration file supports '#' and '//' as comment.
+  * changed to use dh_installman
+  * remove debuging option from rules file, if anyone actually uses this let me
+    know
+  * changed to standards-version 3.5.5
+  * changed the copyright file
+  * changed debian rules file so it's more like the other packages I maintain.
+
+ -- Jason Thomas <jason@debian.org>  Thu, 14 Jun 2001 15:16:19 +1000
+
+tidy (20000804-2) unstable; urgency=low
+
+  * Orphaning.
+  * Moved to debhelper 3.
+  * Conforms to Standards version 3.5.4.
+
+ -- Matej Vela <vela@debian.org>  Wed,  2 May 2001 07:53:08 +0200
+
+tidy (20000804-1) unstable; urgency=low
+
+  * New upstream version.  Closes: Bug#79626.
+  * Conforms to Standards version 3.2.1:
+    * debian/rules: Supports `debug' and `nostrip' build options.
+  * debian/control: No longer suggests lynx because it doesn't seem
+    relevant.  (Feel free to contact me if you disagree.)
+
+ -- Matej Vela <vela@debian.org>  Mon, 18 Dec 2000 04:25:16 +0100
+
+tidy (20000430-1) unstable; urgency=low
+
+  * New upstream version.
+  * Overview.html: Link to tidy.c changed to point to copyright.
+    Closes: Bug#63647.
+  * debian/copyright: Updated.
+
+ -- Matej Vela <vela@debian.org>  Sat,  6 May 2000 12:05:22 +0200
+
+tidy (20000113-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Matej Vela <vela@debian.org>  Thu, 13 Jan 2000 19:15:52 +0100
+
+tidy (20000112-1) unstable; urgency=low
+
+  * New upstream version.
+  * Makefile: Corrected the clean target.
+
+ -- Matej Vela <vela@debian.org>  Thu, 13 Jan 2000 12:20:21 +0100
+
+tidy (19991130-1) unstable; urgency=low
+
+  * New upstream version.
+  * Conforms to Standards version 3.1.1.
+
+ -- Matej Vela <vela@debian.org>  Wed,  1 Dec 1999 07:50:50 +0100
+
+tidy (19991124-1) unstable; urgency=low
+
+  * New upstream version.
+  * Updated the manual page.
+  * Conforms to Standards version 3.1.0:
+    * debian/control: Added build dependancies.
+
+ -- Matej Vela <vela@debian.org>  Thu, 25 Nov 1999 18:36:31 +0100
+
+tidy (19991022-1) unstable; urgency=low
+
+  * New upstream version.  Closes: Bug#47241.
+  * Overview.html, release-notes.html: Removed references to grid.gif
+    and tidy.gif which are no longer included in the pristine source.
+
+ -- Matej Vela <vela@debian.org>  Sat, 23 Oct 1999 19:51:08 +0200
+
+tidy (19990927-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Matej Vela <vela@debian.org>  Wed, 29 Sep 1999 20:06:12 +0200
+
+tidy (19990726-3) unstable; urgency=low
+
+  * New maintainer.
+  * Wrote tidy(1).  Closes: Bug#41445.
+  * Using `-O2 -g -Wall' for CFLAGS as mandated by Policy.
+  * Added doc-base support.
+  * Makefile: Corrected the clean target.
+
+ -- Matej Vela <vela@debian.org>  Wed, 22 Sep 1999 12:38:30 +0200
+
+tidy (19990726-2) unstable; urgency=low
+
+  * Updated to Standards-Version: 3.0.1.1.
+
+ -- Johnie Ingram <johnie@debian.org>  Sat, 18 Sep 1999 04:26:04 -0500
+
+tidy (19990726-1) unstable; urgency=low
+
+  * New upstream version, closes: #41114.
+  * Corrected URL in copyright file, closes: #41102.
+  * Updated to Standards-Version 3.0.1.0.
+
+ -- Johnie Ingram <johnie@debian.org>  Thu,  5 Aug 1999 03:47:07 -0500
+
+tidy (19990415-1) unstable; urgency=low
+
+  * New upstream version, closes: #39020.
+
+ -- Johnie Ingram <johnie@debian.org>  Wed,  9 Jun 1999 12:54:06 -0400
+
+tidy (19981113-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Johnie Ingram <johnie@debian.org>  Fri, 11 Dec 1998 01:01:32 -0500
+
+Local variables:
+mode: debian-changelog
+End:

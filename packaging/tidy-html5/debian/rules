@@ -1,0 +1,14 @@
+#! /usr/bin/make -f
+
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+
+%:
+	echo -------- dh $@
+	dh $@ --parallel
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-DTIDY_CONSOLE_SHARED:BOOL=YES \
+		-DTIDY_COMPAT_HEADERS:BOOL=YES \
+		-DTIDY_CONFIG_FILE:STRING=/etc/tidy.conf \
+		-DTIDY_USER_CONFIG_FILE:STRING=~/.tidyrc \

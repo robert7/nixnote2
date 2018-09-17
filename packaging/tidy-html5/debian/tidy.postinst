@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -e
+
+# Move a conffile without triggering a dpkg question
+mv_conffile() {
+    OLDCONFFILE="$1"
+    NEWCONFFILE="$2"
+
+    if [ -e "$OLDCONFFILE" ]; then
+        echo "Preserving user changes to $NEWCONFFILE ..."
+        mv -f "$NEWCONFFILE" "$NEWCONFFILE".dpkg-new
+        mv -f "$OLDCONFFILE" "$NEWCONFFILE"
+    fi
+}
+
+case "$1" in
+configure)
+    if dpkg --compare-versions "$2" le "$LASTVERSION"; then
+        mv_conffile "/etc/tidy/tidy.conf" "/etc/tidy.conf"
+    fi
+esac
+
+#DEBHELPER#
+
+exit 0
