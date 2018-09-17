@@ -2,7 +2,14 @@
 
 ..work in progress :) as I try to figure out the magic behind debian packages
 
-Test run packaging (aproximate local simulation):
+Note: this was originally extra repository called "nixnote2-packaging"
+forked from https://github.com/artmg/nixnote2-packaging,
+but then I saw it would be easier when all is in one repository.
+So "packaging" is packaging info for all modules needed for nixnote21.
+
+To see packaging recipe in action - go to https://code.launchpad.net/~robert7/+recipe/nixnote21
+
+Test run/debug packaging (aproximate local simulation):
 ```bash
 # ppa is used for tidy-html56
 sudo add-apt-repository ppa:robert7/nixnote21
@@ -13,8 +20,8 @@ sudo apt -y install dh-make git git-build-recipe javahelper default-jdk \
    libqt5webkit5-dev libswscale-dev tidy-html56 qml qt5-qmake qtbase5-dev \
    qttools5-dev-tools build-essential pkg-config
 
-git clone https://github.com/robert7/nixnote2-packaging.git
-cd nixnote2-packaging
+git clone https://github.com/robert7/nixnote2.git
+cd nixnote2/packaging
 
 # test run part #1
 ./development/run-recipe.sh nixnote21 bionic
