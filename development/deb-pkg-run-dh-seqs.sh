@@ -19,7 +19,7 @@ if [ -z "${RECIPE_NAME}" ] || [ ! -d "${RECIPE_NAME}" ]; then
   exit 1
 fi
 
-DIR_WITH_RECIPE=build-${RECIPE_NAME}/launchpad-recipe
+DIR_WITH_RECIPE=build-pkg-${RECIPE_NAME}/launchpad-recipe-${RECIPE_NAME}
 if [ ! -d ${DIR_WITH_RECIPE} ]; then
   echo "Directory with recipe content doesn't exist (you should run run-recipe.sh before)"
   exit 1
