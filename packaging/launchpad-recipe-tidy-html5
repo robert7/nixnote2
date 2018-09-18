@@ -1,3 +1,0 @@
-# git-build-recipe format 0.4 deb-version {debversion}~robert7~{time}
-lp:tidy-html5-mirror 5.6.0
-nest-part packaging lp:nixnote21 packaging/tidy-html5/debian debian master
