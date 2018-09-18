@@ -3,7 +3,7 @@
 DEV_DIR=`dirname $0`
 . ${DEV_DIR}/common-include.sh
 
-for i in build* ; do
+for i in build-pkg-* ; do
   if [ -d $i ] ; then
      echo Clean: removing directory $i
      rm -rf $i || error_exit "rm directory \"$i\""
