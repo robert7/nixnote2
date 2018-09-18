@@ -511,7 +511,8 @@ textfiles.CONFIG = no_check_exist
 VERSION_FILES = .
 fullversion.input = VERSION_FILES
 fullversion.output  = $${DESTDIR}/version/build-version.txt
-fullversion.commands = echo "$(cat ${QMAKE_FILE_IN})-$(git rev-parse --short HEAD)" >${QMAKE_FILE_OUT}
+# echo "$(cat ${QMAKE_FILE_IN})-$(git rev-parse --short HEAD)" >${QMAKE_FILE_OUT}
+fullversion.commands = ./development/create-build-version.sh ${QMAKE_FILE_OUT}
 fullversion.CONFIG += no_link no_check_exist
 QMAKE_EXTRA_COMPILERS += fullversion
 PRE_TARGETDEPS += compiler_fullversion_make_all
