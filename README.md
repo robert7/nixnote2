@@ -1,7 +1,7 @@
 # NixNote v2.1
 ## Introduction
 
-Nixnote is: Evernote desktop client for Linux.
+Nixnote is Evernote desktop client for Linux.
 
 * [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
 * [New features in v2.1](https://github.com/robert7/nixnote2/wiki/New-features-in-v2.1)
@@ -41,9 +41,14 @@ More info in: [DOCKER README](docs/DOCKER-README.md)
 # replace path in 1st parameter with Qt root (`/usr` will use system Qt)
 ./development/build-with-qmake.sh /usr debug
 ```
-If all got OK, you should have "qmake-build-debug/nixnote2" binary available now 
+
+`build-with-qmake.sh` is just kind of convenience script. You can also build without it like:
+`qmake CONFIG+=debug PREFIX=appdir/usr`, then `make` & eventually `make install`.
+
+If all got OK, you should have "qmake-build-debug/nixnote21" binary available now
 (and also a deployment copy in appdir). 
-I suggest running from "appdir" (./appdir/usr/appdir/nixnote2).
+I suggest running from "appdir" (e.g. `./appdir/usr/appdir/nixnote21`).
+
 
 ```bash
 # Optional second step: if all got well you may try to create AppImage package
@@ -55,10 +60,10 @@ Preparation steps
 * You can either install the html-tidy56 package from my PPA or build yourself from source.
   To simplify things, the path fixed to /opt/tidy56. Of course this can be changed, but would
   require minor tweaks in the qmake project file.
-* Install from PPA:
+* Alternative 1: Install from PPA:
   * first [add PPA](https://launchpad.net/~robert7/+archive/ubuntu/nixnote21)
   * then `sudo apt install tidy-html56`
-* Build tidy library from source:
+* Alternative 2: Build tidy library from source:
   * clone [source code](https://github.com/htacg/tidy-html5) switch to master branch
   * follow [build instructions](https://github.com/htacg/tidy-html5/blob/next/README/BUILD.md)
     * short version:
@@ -101,5 +106,6 @@ As far as I can tell this will find and copy all required dependencies into the 
 can be loaded from inside that bundle (wherever it ends up).
 
 ### Windows
-Should work Windows, but minor tweaks will be needed to make it run. 
-I currently have no time for it. Pull request is welcome.
+Should work on Windows, but minor tweaks will be needed to make it run.
+I currently have no time for it. Pull request is welcome. No sure its worth the effort, as there is
+quite decent official Evernote client for Windows.
