@@ -7,8 +7,9 @@ Nixnote is Evernote desktop client for Linux.
 * [New features in v2.1](https://github.com/robert7/nixnote2/wiki/New-features-in-v2.1)
 * [CHANGELOG](https://github.com/robert7/nixnote2/blob/master/debian/changelog)
 * [Howto install & binary downloads](https://github.com/robert7/nixnote2/releases)
+  * For Ubuntu users its recommended to install native package from [NixNote PPA](https://github.com/robert7/nixnote2/wiki/NixNote-PPA) (although the AppImage version will also work).
   * For any linux distribution: [download AppImage, mark as executable & run](https://github.com/robert7/nixnote2/wiki/HowTo---Run-AppImage)
-  * As alternative to AppImage version Ubuntu users can install from [PPA](https://launchpad.net/~robert7/+archive/ubuntu/nixnote21) using `sudo add-apt-repository ppa:robert7/nixnote21 -y -u && sudo apt install nixnote21 -y`
+
 
 ## Building from source
 
