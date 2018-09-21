@@ -1,0 +1,50 @@
+Source: nixnote21
+Section: utils
+Priority: optional
+Maintainer: Robert Spiegel <nightingale7@gmail.com>
+Build-Depends:
+ debhelper (>= 9),
+ default-jdk,
+ javahelper,
+ build-essential,
+ pkg-config,
+ libboost-dev,
+ libcurl4-openssl-dev | libcurl-dev | libcurl4-nss-dev | libcurl4-gnutls-dev,
+ libhunspell-dev,
+ libpoppler-qt5-dev,
+ libqt5webkit5-dev,
+ libswscale-dev,
+ tidy-html56,
+ qml,
+ qt5-qmake,
+ qtbase5-dev,
+ qttools5-dev-tools,
+ git
+Standards-Version: 3.9.8
+Homepage: https://github.com/robert7/nixnote2
+
+Package: nixnote21
+Architecture: any
+Depends:
+ tidy-html56,
+ ${java:Depends},
+ ${misc:Depends},
+ ${shlibs:Depends},
+Recommends:
+ mimetex,
+ ${java:Recommends},
+Suggests:
+ cups,
+Description: Open Source Evernote client
+ NixNote is a client for the Evernote service (www.evernote.com).  It
+ will allow synchronization and editing of notes from your local
+ system.
+ .
+ Once known as "NeverNote", this software was rewritten in C++/Qt to
+ provide a native user experience.
+ .
+ This PPA package provides version 2.1+.
+ Partly forked from https://anonscm.debian.org/git/collab-maint/nixnote2.git
+ with deep gratitude to maintainer: Boyuan Yang <073plan@gmail.com>.
+ Further packaging forked from https://github.com/artmg/nixnote2-packaging
+ by Art Gallagher <launchpad@artmg.org>.
