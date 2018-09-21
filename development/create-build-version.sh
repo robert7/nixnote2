@@ -2,14 +2,24 @@
 
 OF=$1
 if [ -z "${OF}" ]; then
-  echo missing param1
+  echo "Missing param1 (output filename)"
   exit 1
 fi
 
 VERSION=$(cat version.txt)
-GITHASH=$(git rev-parse --short HEAD)
+GITHASH=$(xgit rev-parse --short HEAD)
+if [ -z "${GITHASH}" ] ; then
+  echo "Seems getting git version failed.."
+  echo "--"  
+  ls -la
+  echo "--"  
+  BUILDVER="${VERSION}"
+else 
+  BUILDVER="${VERSION}-${GITHASH}"
+fi
+
+
 echo Version: ${VERSION}
 echo Git hash: ${GITHASH}
 
-
-echo "${VERSION}-${GITHASH}" >${OF}
+echo "${BUILDVER}" >${OF}
