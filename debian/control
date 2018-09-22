@@ -6,7 +6,6 @@ Build-Depends:
  debhelper (>= 9),
  default-jdk,
  javahelper,
- build-essential,
  pkg-config,
  libboost-dev,
  libcurl4-openssl-dev | libcurl-dev | libcurl4-nss-dev | libcurl4-gnutls-dev,

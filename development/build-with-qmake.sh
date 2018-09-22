@@ -2,6 +2,7 @@
 QT_DIR=${1}
 BUILD_TYPE=${2}
 CLEAN=${3}
+TIDY_DIR=${4}
 
 function error_exit {
     echo "***********error_exit***********"
@@ -30,12 +31,27 @@ if [ -z "${BUILD_TYPE}" ]; then
 fi
 BUILD_DIR=qmake-build-${BUILD_TYPE}
 
-if [ ! -z "${CLEAN}" ]; then
+if [ "${CLEAN}" == "clean" ]; then
   echo "Clean build: ${BUILD_DIR}"
   if [ -d "${BUILD_DIR}" ]; then
     rm -rf ${BUILD_DIR}
   fi
 fi
+
+if [ -z "${TIDY_DIR}" ]; then
+   # system default
+   TIDY_DIR=/usr
+fi
+TIDY_LIB_DIR=${TIDY_DIR}/lib
+if [ ! -d "${TIDY_DIR}" ] || [ ! -d "${TIDY_LIB_DIR}" ]; then
+   echo "TIDY_DIR or TIDY_DIR/lib is not a directory"
+   exit 1
+fi
+echo "libtidy is expected in: ${TIDY_LIB_DIR}"
+
+
+
+
 
 if [ ! -d "${BUILD_DIR}" ]; then
   mkdir ${BUILD_DIR}
@@ -58,6 +74,21 @@ if [ ! -f "${QMAKE_BINARY}" ]; then
     exit 1
 fi
 
-${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr || error_exit "qmake"
+if [ "${TIDY_DIR}" == "/usr" ] ; then
+  # at least on ubuntu pkgconfig for "libtidy-dev" is not installed - so we provide default
+  # there could be better option
+  # check: env PKG_CONFIG_PATH=./development/pkgconfig pkg-config --libs --cflags tidy
+  CDIR=`pwd`
+  echo export PKG_CONFIG_PATH=${CDIR}/development/pkgconfig
+  export PKG_CONFIG_PATH=${CDIR}/development/pkgconfig
+elif [ -d ${TIDY_LIB_DIR}/pkgconfig ] ; then
+  echo export PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig
+  export PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig
+fi
+
+
+echo ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "qmake"
+${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "qmake"
+
 make -j8 || error_exit "make"
 make install || error_exit "make install"

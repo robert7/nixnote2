@@ -343,7 +343,7 @@ void NixNote::setupGui() {
 
     newNoteButton = toolBar->addAction(global.getIconResource(":newNoteIcon"), tr("New Note"));
     newNoteButton->setToolTip(global.appendShortcutInfo(tr("New Note"), "File_Note_Add"));
-    connect(newNoteButton, SIGNAL(clicked()), this, SLOT(newNote()));
+    connect(newNoteButton, SIGNAL(triggered()), this, SLOT(newNote()));
 
     toolBar->addSeparator();
 

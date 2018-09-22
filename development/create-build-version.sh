@@ -7,12 +7,12 @@ if [ -z "${OF}" ]; then
 fi
 
 VERSION=$(cat version.txt)
-GITHASH=$(xgit rev-parse --short HEAD)
+GITHASH=$(git rev-parse --short HEAD)
 if [ -z "${GITHASH}" ] ; then
   echo "Seems getting git version failed.."
-  echo "--"  
-  ls -la
-  echo "--"  
+  #echo "--"
+  #ls -la
+  #echo "--"
   BUILDVER="${VERSION}"
 else 
   BUILDVER="${VERSION}-${GITHASH}"

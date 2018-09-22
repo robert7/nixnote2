@@ -19,7 +19,6 @@ has been made and I can't currently try anything else then linux, it is quite pr
 that minor adjustments are needed for the all non linux builds.
 
 ### Linux - docker build
-**Recommended build** for all but advanced users is using docker. 
 This should work out of the box, no fiddling with any dependencies
 is needed. The created binary image should work on all ~recent distributions (at least
 in theory).
@@ -29,8 +28,9 @@ More info in: [DOCKER README](docs/DOCKER-README.md)
 
 ### Linux - manual build
 * Install development dependencies - look in content of [this docker file](development/docker/Dockerfile.ubuntu_xenial)
-  to see example what is needed for Ubuntu 16.04. If you use another distribution/version, 
-  you need to find the right packages.
+  of [debian/control](https://github.com/robert7/nixnote2/blob/master/debian/control)
+  to see example, what is needed for Ubuntu. If you use another distribution/version,
+  you may need adjust packages.
 * Qt: you can either get Qt packages for your distribution or as alternative you can download Qt 5 directly
   from [qt.io/download](https://www.qt.io/download). 
 * Get latest source from github...
@@ -45,6 +45,7 @@ More info in: [DOCKER README](docs/DOCKER-README.md)
 
 `build-with-qmake.sh` is just kind of convenience script. You can also build without it like:
 `qmake CONFIG+=debug PREFIX=appdir/usr`, then `make` & eventually `make install`.
+This suppose, you installed libtidy in system default location (recommended version is 5.6.0).
 
 If all got OK, you should have "qmake-build-debug/nixnote21" binary available now
 (and also a deployment copy in appdir). 
@@ -59,11 +60,10 @@ I suggest running from "appdir" (e.g. `./appdir/usr/appdir/nixnote21`).
 
 Preparation steps
 * You can either install the html-tidy56 package from my PPA or build yourself from source.
-  To simplify things, the path fixed to /opt/tidy56. Of course this can be changed, but would
-  require minor tweaks in the qmake project file.
 * Alternative 1: Install from PPA:
   * first [add PPA](https://launchpad.net/~robert7/+archive/ubuntu/nixnote21)
   * then `sudo apt install tidy-html56`
+  * in this case libtidy will install in /opt/tidy56
 * Alternative 2: Build tidy library from source:
   * clone [source code](https://github.com/htacg/tidy-html5) switch to master branch
   * follow [build instructions](https://github.com/htacg/tidy-html5/blob/next/README/BUILD.md)
@@ -72,7 +72,8 @@ Preparation steps
     * cmake ../..  -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
     * make                       
     * make DESTDIR=/opt/tidy56 install
-    * library is now copied to /opt/tidy56/libs
+    * library is now copied to /opt/tidy56/libs (if you use different directory, then pass it as 4th argument to
+      "build-with-qmake.sh".
 
 If it doesn't work: use docker build - or compare with docker recipe, what is different.
 

@@ -15,6 +15,7 @@ _VERSION=$(shell echo $(_DEBIAN_VERSION) | cut -d- -f 1)
 _PKGNAME=$(shell dpkg-parsechangelog | head -n 1 | cut -d ' ' -f 2)
 JAVA_HOME=/usr/lib/jvm/default-java
 CLASSPATH=.
+TIDY_LIB_DIR=/opt/tidy56/lib
 
 # https://github.com/aperezdc/cuacfmeego/blob/master/debian/rules
 QMAKE_OPTIONS = -makefile -nocache
@@ -33,6 +34,7 @@ QMAKE_OPTIONS += QMAKE_CXXFLAGS_RELEASE='$(CFLAGS)' \
 				QMAKE_CFLAGS_RELEASE='$(CFLAGS)' \
 				QMAKE_CFLAGS_DEBUG='$(CFLAGS)' \
 				QMAKE_STRIP=: \
+				QMAKE_RPATHDIR+=${TIDY_LIB_DIR}
 
 # main packaging script based on dh7 syntax
 %:
@@ -40,7 +42,7 @@ QMAKE_OPTIONS += QMAKE_CXXFLAGS_RELEASE='$(CFLAGS)' \
 	dh $@ --buildsystem=qmake --with javahelper
 
 override_dh_auto_configure:
-	qmake $(QMAKE_OPTIONS)
+	env PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig qmake $(QMAKE_OPTIONS)
 
 
 # build java jar file from source, discard upstream jar file

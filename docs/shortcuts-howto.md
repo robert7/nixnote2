@@ -1,8 +1,3 @@
-TODO: update this 
-
-----original text:
-
-
 I've tried to add the ability to customize your NixNote menu shortcuts,
 but I don't want to take the time to setup a new dialog box and all the
 junk that entails.  So, I chose a text file config instead.  Eventually I 
@@ -14,10 +9,15 @@ shortcuts.  If you are happy with those then you don't need to do a thing.
 
 If you want to customize your shortcuts then you need to do a little work.
 
-You should have a shortcuts_sample.txt file.  Copy this to shortcuts.txt 
-in your Nixnote home directory (~/.nixnote on Linux & OS-X and your user
-home directory on Windows).  This is the file that is read 
-when Nixnote starts.  Any changes to this file only happen at startup
+You should have a /usr/share/nixnote2/shortcuts.txt file.
+(Note if you use AppImage, you need to unpack it first to get the contents
+- e.g. ./NixNote2.AppImage --appimage-extract - see 
+https://github.com/robert7/nixnote2/wiki/HowTo---Run-AppImage-without-FUSE)*[]: 
+
+Copy this to shortcuts.txt
+in your Nixnote config directory (see menu Help/Data and log location info).
+This is the file that is read when Nixnote starts.
+Any changes to this file only happen at startup
 so if you change it you need to restart the program to see those changes.
 
 This file has three main columns.  
