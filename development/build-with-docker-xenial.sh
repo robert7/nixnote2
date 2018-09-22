@@ -16,11 +16,14 @@ cd $PROJECTDIR
 # create "builder" image
 docker build -t nixnote2/xenial -f ./development/docker/Dockerfile.ubuntu_xenial ./development/docker
 
-# delete appdir content
-rm -rf appdir
-mkdir appdir
+if [ ! -d appdir ] ; then
+  mkdir appdir
+fi
 
-if [ -d docker-build-debug ]; then
+# delete appdir content
+rm -rf appdir/*
+
+if [ ! -d docker-build-debug ]; then
   mkdir docker-build-debug
 fi
 
