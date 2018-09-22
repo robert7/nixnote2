@@ -106,11 +106,11 @@ class IndexRunner;
 #define DEFAULT_THEME_NAME "Default"
 
 // app binary name
-#define NN_APP_NAME "nixnote21"
+#define NN_APP_NAME "nixnote2"
 
 // app name for config paths
 // WARNING DON'T CHANGE THIS TO ANYTHING else then "nixnote2" without knowing what it influence (e.g. existing paths of users)
-#define NN_APP_NAME_CONFIG_PATHS "nixnote2"
+//#define NN_APP_NAME_CONFIG_PATHS "nixnote2"
 
 
 // string to be displayed with program version (current version will be appended)

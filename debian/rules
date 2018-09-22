@@ -53,7 +53,7 @@ override_jh_build:
 override_dh_installchangelogs:
 	echo override_dh_installchangelogs - skip
 
-# this tried to delete debian/nixnote21/usr/local/bin/nixnote21 which doesn't exist
+# this tried to delete debian/nixnote2/usr/local/bin/nixnote2 which doesn't exist
 override_dh_usrlocal:
 	echo override_dh_usrlocal - skip
 

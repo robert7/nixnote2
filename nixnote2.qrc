@@ -1,0 +1,71 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="passwordIcon">resources/images/password.png</file>
+        <file alias="homeIcon">resources/images/home.png</file>
+        <file alias="leftArrowIcon">resources/images/left_arrow.png</file>
+        <file alias="rightArrowIcon">resources/images/right_arrow.png</file>
+        <file alias="synchronizeIcon">resources/images/synchronize.png</file>
+        <file alias="filecloseIcon">resources/images/fileclose.png</file>
+        <file alias="tagIcon">resources/images/tag.png</file>
+        <file alias="searchIcon">resources/images/lens.png</file>
+        <file alias="trashIcon">resources/images/trash.png</file>
+        <file alias="attributesIcon">resources/images/attribute.png</file>
+        <file alias="upArrowSmallIcon">resources/images/up_arrow_small.png</file>
+        <file alias="downArrowSmallIcon">resources/images/down_arrow_small.png</file>
+        <file alias="undoIcon">resources/images/undo.png</file>
+        <file alias="redoIcon">resources/images/redo.png</file>
+        <file alias="boldIcon">resources/images/bold.png</file>
+        <file alias="bulletListIcon">resources/images/bulletList.png</file>
+        <file alias="copyIcon">resources/images/copy.png</file>
+        <file alias="cutIcon">resources/images/cut.png</file>
+        <file alias="hlineIcon">resources/images/hline.png</file>
+        <file alias="fontHighlightIcon">resources/images/fontHilight.png</file>
+        <file alias="fontColorIcon">resources/images/fontColor.png</file>
+        <file alias="shiftRightIcon">resources/images/indent.png</file>
+        <file alias="centerAlignIcon">resources/images/justifyCenter.png</file>
+        <file alias="leftAlignIcon">resources/images/justifyLeft.png</file>
+        <file alias="rightAlignIcon">resources/images/justifyRight.png</file>
+        <file alias="linkIcon">resources/images/link.png</file>
+        <file alias="numberListIcon">resources/images/numberList.png</file>
+        <file alias="shiftLeftIcon">resources/images/outdent.png</file>
+        <file alias="underlineIcon">resources/images/underline.png</file>
+        <file alias="strikethroughIcon">resources/images/strikethrough.png</file>
+        <file alias="spellCheckIcon">resources/images/spellCheck.png</file>
+        <file alias="pasteIcon">resources/images/paste.png</file>
+        <file alias="todoIcon">resources/images/todo.png</file>
+        <file alias="italicsIcon">resources/images/italic.png</file>
+        <file alias="newNoteIcon">resources/images/newNote.png</file>
+        <file alias="trunkIcon">resources/images/trunk.png</file>
+        <file alias="usageIcon">resources/images/usage.png</file>
+        <file alias="blackDotIcon">resources/images/black_dot.png</file>
+        <file alias="notebookSmallIcon">resources/images/notebookSmall.png</file>
+        <file alias="notebookLocalIcon">resources/images/local-notebook.png</file>
+        <file alias="notebookLinkedIcon">resources/images/linked-notebook.png</file>
+        <file alias="notebookConflictIcon">resources/images/notebook-conflict.png</file>
+        <file alias="notebookSharedIcon">resources/images/public-notebook.png</file>
+        <file alias="stackIcon">resources/images/stack.png</file>
+        <file alias="silhouetteIcon">resources/images/silhouette.png</file>
+        <file alias="eraserIcon">resources/images/eraser.png</file>
+        <file alias="gridIcon">resources/images/grid.png</file>
+        <file alias="navigationIcon">resources/images/navigation.png</file>
+        <file alias="splashLogoImage">resources/images/splash_logo.png</file>
+        <file alias="alarmclockIcon">resources/images/alarmclock.png</file>
+        <file alias="printerIcon">resources/images/printer.png</file>
+        <file alias="deleteIcon">resources/images/delete.png</file>
+        <file>resources/images/encrypt.png</file>
+        <file>resources/images/gps.png</file>
+        <file>resources/images/notebook_old.png</file>
+        <file alias="windowIcon">resources/images/windowIcon.png</file>
+        <file alias="expandedIcon">resources/images/expanded.png</file>
+        <file alias="collapsedIcon">resources/images/collapsed.png</file>
+        <file alias="htmlentitiesIcon">resources/images/htmlentities.png</file>
+        <file alias="favoritesIcon">resources/images/favorites.png</file>
+        <file alias="trayIcon">resources/images/trayicon.png</file>
+        <file alias="dateTime">resources/images/datetime.png</file>
+        <file alias="subscriptIcon">resources/images/subscript.png</file>
+        <file alias="superscriptIcon">resources/images/superscript.png</file>
+        <file alias="emailIcon">resources/images/emailIcon.png</file>
+        <file alias="fullAlignIcon">resources/images/justifyFull.png</file>
+        <file alias="formatCodeIcon">resources/images/formatCode.png</file>
+    </qresource>
+</RCC>

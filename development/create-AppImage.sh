@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROG=nixnote21
+PROG=nixnote2
 DESKTOP_FILE=appdir/usr/share/applications/${PROG}.desktop
 
 BUILD_DIR=$(cat _build_dir_.txt)
