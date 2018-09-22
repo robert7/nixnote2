@@ -39,7 +39,8 @@ if [ "${CLEAN}" == "clean" ]; then
 fi
 
 if [ -z "${TIDY_DIR}" ]; then
-   TIDY_DIR=/opt/tidy56
+   # system default
+   TIDY_DIR=/usr
 fi
 TIDY_LIB_DIR=${TIDY_DIR}/lib
 if [ ! -d "${TIDY_DIR}" ] || [ ! -d "${TIDY_LIB_DIR}" ]; then
@@ -73,13 +74,21 @@ if [ ! -f "${QMAKE_BINARY}" ]; then
     exit 1
 fi
 
-if [ -d ${TIDY_LIB_DIR}/pkgconfig ] ; then
+if [ "${TIDY_DIR}" == "/usr" ] ; then
+  # at least on ubuntu pkgconfig for "libtidy-dev" is not installed - so we provide default
+  # there could be better option
+  # check: env PKG_CONFIG_PATH=./development/pkgconfig pkg-config --libs --cflags tidy
+  CDIR=`pwd`
+  echo export PKG_CONFIG_PATH=${CDIR}/development/pkgconfig
+  export PKG_CONFIG_PATH=${CDIR}/development/pkgconfig
+elif [ -d ${TIDY_LIB_DIR}/pkgconfig ] ; then
   echo export PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig
   export PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig
 fi
 
-echo env ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "qmake"
-env ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "qmake"
+
+echo ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "qmake"
+${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "qmake"
 
 make -j8 || error_exit "make"
 make install || error_exit "make install"

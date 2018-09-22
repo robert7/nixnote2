@@ -1,10 +1,10 @@
 QT += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 unix {
-    TIDY_DIR=/opt/tidy56
     CONFIG += link_pkgconfig
     PKGCONFIG += poppler-qt5 libcurl tidy
 }
+
 
 unix:!mac:LIBS += -lpthread -g -rdynamic
 
