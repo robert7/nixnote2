@@ -3,10 +3,7 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 unix {
     TIDY_DIR=/opt/tidy56
     CONFIG += link_pkgconfig
-    PKGCONFIG += poppler-qt5 libcurl
-    QMAKE_RPATHDIR += $$TIDY_DIR/lib
-    LIBS += -L$$TIDY_DIR/lib -ltidy
-    INCLUDEPATH += $$TIDY_DIR/include
+    PKGCONFIG += poppler-qt5 libcurl tidy
 }
 
 unix:!mac:LIBS += -lpthread -g -rdynamic
@@ -508,6 +505,9 @@ textfiles.files = $$PWD/shortcuts.txt $$PWD/themes.ini $$PWD/LICENSE $$PWD/color
                   $${DESTDIR}/version/build-version.txt $$PWD/version.txt
 textfiles.CONFIG = no_check_exist
 
+docs.path = $${PREFIX}/share/doc/$$TARGET
+docs.files = $$PWD/debian/copyright $$PWD/debian/changelog $$PWD/README.md $$PWD/docs/shortcuts-howto.md $$PWD/docs/license.html
+
 VERSION_FILES = .
 fullversion.input = VERSION_FILES
 fullversion.output  = $${DESTDIR}/version/build-version.txt
@@ -561,5 +561,5 @@ mac {
     translations.files = $$TRANSLATION_TARGET_DIR
     translations.CONFIG = no_check_exist
 
-    INSTALLS = binary desktop images java help textfiles man translations pixmaps
+    INSTALLS = binary desktop images java help textfiles docs man translations pixmaps
 }
