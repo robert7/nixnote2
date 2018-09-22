@@ -1,9 +1,9 @@
-nixnote21 (2.1.0-beta4a) unstable; urgency=low
+NixNote (2.1.0-beta4a) unstable; urgency=low
   * Make the sync shortcut key global to all app windows, and add sync toolbar button to all editor windows
     Thanks to https://github.com/MRC01
  -- Robert Spiegel <nightingale7@gmail.com>  Tue, 18 Sep 2018 12:00:00 -0400
 
-nixnote21 (2.1.0-beta3) unstable; urgency=low
+NixNote (2.1.0-beta3) unstable; urgency=low
   * Added few sort options (menu View)
   * Fixed to-do enml cleanup
   * Improved logging in "Import folders"
@@ -26,7 +26,7 @@ nixnote21 (2.1.0-beta3) unstable; urgency=low
   * Debian packaging
  -- Robert Spiegel <nightingale7@gmail.com>  Tue, 04 Sep 2018 12:00:00 -0400
 
-nixnote21 (2.1.0-beta2) unstable; urgency=low
+NixNote (2.1.0-beta2) unstable; urgency=low
   * Fixed european date formats (wrong order of day/month)
   * Updated translation files with string from source code
   * Fixed: deleting tag crashes app
@@ -35,7 +35,7 @@ nixnote21 (2.1.0-beta2) unstable; urgency=low
   * Restored option to open notes in new tab
  -- Robert Spiegel <nightingale7@gmail.com>  Sat, 22 Aug 2018 12:00:00 -0400
 
-nixnote21 (2.1.0-beta1) unstable; urgency=low
+NixNote (2.1.0-beta1) unstable; urgency=low
   * Various minor improvements and stabilisation
   * Fixed bug with media attachments
   * Improved HTML Simplify
@@ -55,7 +55,7 @@ nixnote21 (2.1.0-beta1) unstable; urgency=low
   * Adjusted middle mouse click behaviour (middle click now opens in new window)
  -- Robert Spiegel <nightingale7@gmail.com>  Sat, 04 Aug 2018 12:00:00 -0400
 
-nixnote21 (2.1.0-alfa10) unstable; urgency=low
+NixNote (2.1.0-alfa10) unstable; urgency=low
   * Simplified content of the Help menu. Removed unrelevant items. "Message Log Info" now shows
     log file location & instructions.
   * Further stabilisation of html cleanup.
@@ -64,14 +64,14 @@ nixnote21 (2.1.0-alfa10) unstable; urgency=low
     So far only very experimental version. Discards images. Will be improved later.
  -- Robert Spiegel <nightingale7@gmail.com>  Fri, 13 Jul 2018 12:00:00 -0400
 
-nixnote21 (2.1.0-alfa8) unstable; urgency=low
+NixNote (2.1.0-alfa8) unstable; urgency=low
   * Added **docker build**. Creating binaries ouf of source is now very straightforward.
   * Improved reporting and logging of errors (mainly for sync errors). The messages may be now
     more technical (can be improved later), but should at least display always and more
     details are in log.
  -- Robert Spiegel <nightingale7@gmail.com>  Fri, 06 Jul 2018 12:00:00 -0400
 
-nixnote21 (2.1.0-alfa7) unstable; urgency=low
+NixNote (2.1.0-alfa7) unstable; urgency=low
   * **Redesigned html cleanup** to prevent sync errors. Now newest html tidy libray is used (currently v.5.6).
     Before system level tidy executable was used, which could be like 9 years old.
     Pasting ~any html content into note should work now. Although sometimes images are not recognised.
@@ -82,7 +82,7 @@ nixnote21 (2.1.0-alfa7) unstable; urgency=low
     Settings can be changed in preferences and are preserved on next run (same as before).
  -- Robert Spiegel <nightingale7@gmail.com>  Fri, 06 Jul 2018 12:00:00 -0400
 
-nixnote21 (2.1.0-alfa6) unstable; urgency=low
+NixNote (2.1.0-alfa6) unstable; urgency=low
   * [AppImage packaging](https://appimage.org/) using [linuxdeployqt](https://github.com/probonopd/linuxdeployqt).
     This should allow easy deployment "anywhere" no worry about missing dependencies
     and later use newest libraries.
@@ -97,7 +97,7 @@ nixnote21 (2.1.0-alfa6) unstable; urgency=low
   * Improved logging in case there is problem with resources (and note is set to read only in nixnote).
  -- Robert Spiegel <nightingale7@gmail.com>  Fri, 06 Jul 2018 12:00:00 -0400
 
-nixnote21 (2.1.0-alfa5) unstable; urgency=low
+NixNote (2.1.0-alfa5) unstable; urgency=low
   * Minor improvement in font color/background color (highlight selection).
     Tooltip now shows how to use. Keyboard shortcuts possible (default Ctrl-d, Ctrl-Shift-H). Context
     menu option added. Color buttons will preserve state across program restart.
@@ -113,19 +113,19 @@ nixnote21 (2.1.0-alfa5) unstable; urgency=low
     Loading from file my be reintroduced later.
  -- Robert Spiegel <nightingale7@gmail.com>  Mon, 02 Jul 2018 12:00:00 -0400
 
-nixnote21 (2.1.0-alfa4) unstable; urgency=low
+NixNote (2.1.0-alfa4) unstable; urgency=low
   * Merged changes from [jeffkowalski/Nixnote2](https://github.com/jeffkowalski/Nixnote2)
     and [RJVB/nixnote2](https://github.com/RJVB/nixnote2) - **various fixes, build config for macOS**
   * **Rewrite of the path handling logic after merge. Now standard compliant path for config and user data are used.**
   * Program has 3 directory paths "config dir", "program data dir" (like images), "user data" (database logs)
  -- Robert Spiegel <nightingale7@gmail.com>  Mon, 25 Jun 2018 12:00:00 -0400
 
-nixnote21 (2.1.0-alfa3) unstable; urgency=low
+NixNote (2.1.0-alfa3) unstable; urgency=low
   * Added simple search term relevance evaluation and sorting for free text search.
   * Some note editing and toolbar tweeks (color picker has now restricted list of colors).
  -- Robert Spiegel <nightingale7@gmail.com>  Mon, 18 Jun 2018 12:00:00 -0400
 
-nixnote21 (2.1.0-alfa1) unstable; urgency=low
+NixNote (2.1.0-alfa1) unstable; urgency=low
   * Fixed [#363](https://github.com/baumgarr/nixnote2/issues/363) (**Unknown Tag record key: 1004/1006**)
   * Fixed minor error in date (copy of "fixed Date Format setting item bug for yy-MM-dd format" by julee)
   * Added new compact date format yyMMdd

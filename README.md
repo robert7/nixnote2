@@ -47,9 +47,9 @@ More info in: [DOCKER README](docs/DOCKER-README.md)
 `qmake CONFIG+=debug PREFIX=appdir/usr`, then `make` & eventually `make install`.
 This suppose, you installed libtidy in system default location (recommended version is 5.6.0).
 
-If all got OK, you should have "qmake-build-debug/nixnote21" binary available now
+If all got OK, you should have "qmake-build-debug/nixnote2" binary available now
 (and also a deployment copy in appdir). 
-I suggest running from "appdir" (e.g. `./appdir/usr/appdir/nixnote21`).
+I suggest running from "appdir" (e.g. `./appdir/usr/appdir/nixnote2`).
 
 
 ```bash
@@ -61,8 +61,8 @@ I suggest running from "appdir" (e.g. `./appdir/usr/appdir/nixnote21`).
 Preparation steps
 * You can either install the html-tidy56 package from my PPA or build yourself from source.
 * Alternative 1: Install from PPA:
-  * first [add PPA](https://launchpad.net/~robert7/+archive/ubuntu/nixnote21)
-  * then `sudo apt install tidy-html56`
+  * first [add PPA](https://github.com/robert7/nixnote2/wiki/NixNote-PPA)
+  * then `sudo apt install tidy-html56` (note if you install nixnote2 from PPA, then tidy-html56 will be installed)
   * in this case libtidy will install in /opt/tidy56
 * Alternative 2: Build tidy library from source:
   * clone [source code](https://github.com/htacg/tidy-html5) switch to master branch
@@ -86,7 +86,7 @@ in path handling. Pull request is welcome.
 ```bash
 mkdir build
 cd build
-qmake ../nixnote2/NixNote21.pro
+qmake ../nixnote2/NixNote2.pro
 make
 ```
 
@@ -101,7 +101,7 @@ deployed anywhere:
 
 ```bash
 > cd build
-> macdeployqt NixNote21.app [-no-strip]
+> macdeployqt NixNote2.app [-no-strip]
 ```
 
 As far as I can tell this will find and copy all required dependencies into the app bundle and modify them so they

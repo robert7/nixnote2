@@ -2,8 +2,8 @@
 Name=NixNote
 Comment=Use with Evernote to remember everything
 GenericName=NixNote
-Exec=nixnote21
-Icon=nixnote21
+Exec=nixnote2
+Icon=nixnote2
 StartupNotify=true
 Terminal=false
 Type=Application
@@ -14,4 +14,4 @@ Actions=NewNote;
 [Desktop Action NewNote]
 Name=New Note
 Name[zh_CN]=新建笔记
-Exec=nixnote21 --newNote
+Exec=nixnote2 --newNote

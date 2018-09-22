@@ -206,7 +206,8 @@ QString FileManager::slashTerminatePath(QString path) {
  * @return fixed path
  */
 QString FileManager::fixStandardPath(QString &path) const {
-    path = path.replace("/" NN_APP_NAME "/", "/" NN_APP_NAME_CONFIG_PATHS "/") ;
+    // not needed anymore
+    //path = path.replace("/" NN_APP_NAME "/", "/" NN_APP_NAME_CONFIG_PATHS "/") ;
     return path;
 }
 

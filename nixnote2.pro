@@ -17,10 +17,10 @@ win32:RC_ICONS += "$$PWD/resources/images/windowIcon.ico"
 mac {
     TARGET = NixNote2
 } else {
-    TARGET = nixnote21
+    TARGET = nixnote2
 }
 TEMPLATE = app
-RESOURCES = NixNote21.qrc
+RESOURCES = nixnote2.qrc
 
 UI_DIR = .
 
@@ -35,20 +35,20 @@ OBJECTS_DIR = $${DESTDIR}
 MOC_DIR = $${DESTDIR}
 
 TRANSLATIONS = \
-    translations/nixnote21_cs_CZ.ts \
-    translations/nixnote21_de.ts    \
-    translations/nixnote21_en_GB.ts \
-    translations/nixnote21_ca.ts    \
-    translations/nixnote21_da.ts    \
-    translations/nixnote21_es.ts    \
-    translations/nixnote21_ja.ts    \
-    translations/nixnote21_pt.ts    \
-    translations/nixnote21_sk.ts    \
-    translations/nixnote21_zh_TW.ts \
-    translations/nixnote21_fr.ts    \
-    translations/nixnote21_pl.ts    \
-    translations/nixnote21_ru.ts    \
-    translations/nixnote21_zh_CN.ts
+    translations/nixnote2_cs_CZ.ts \
+    translations/nixnote2_de.ts    \
+    translations/nixnote2_en_GB.ts \
+    translations/nixnote2_ca.ts    \
+    translations/nixnote2_da.ts    \
+    translations/nixnote2_es.ts    \
+    translations/nixnote2_ja.ts    \
+    translations/nixnote2_pt.ts    \
+    translations/nixnote2_sk.ts    \
+    translations/nixnote2_zh_TW.ts \
+    translations/nixnote2_fr.ts    \
+    translations/nixnote2_pl.ts    \
+    translations/nixnote2_ru.ts    \
+    translations/nixnote2_zh_CN.ts
 
 
 SOURCES += \
@@ -485,11 +485,8 @@ message("Target binary: $${binary.files}")
 desktop.path = $${PREFIX}/share/applications
 desktop.files = $${TARGET}.desktop
 
-#icons.path = $${PREFIX}/share/icons
-#icons.files = resources/icons/*
-
 pixmaps.path = $${PREFIX}/share/pixmaps
-pixmaps.files = resources/icons/hicolor/100x100/apps/nixnote21.png
+pixmaps.files = resources/icons/nixnote21.png
 
 images.path = $${PREFIX}/share/$$TARGET/images
 images.files = resources/images/*
@@ -518,7 +515,7 @@ QMAKE_EXTRA_COMPILERS += fullversion
 PRE_TARGETDEPS += compiler_fullversion_make_all
 
 man.path = $${PREFIX}/share/man/man1
-man.files = docs/nixnote21.1
+man.files = docs/nixnote2.1
 
 
 # compile the translation files:
