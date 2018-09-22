@@ -423,6 +423,9 @@ void NBrowserWindow::setupToolBar() {
 
     // this sync button doesn't need a shortcut; the main app window shortcut is global
     connect(buttonBar->syncButtonAction, SIGNAL(triggered()), this, SLOT(syncButtonPressed()));
+
+    connect(buttonBar->emailButtonAction, SIGNAL(triggered()), this, SLOT(emailNote()));
+    connect(buttonBar->emailButtonShortcut, SIGNAL(activated()), this, SLOT(emailNote()));
 }
 
 // Load the note content into the window
