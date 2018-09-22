@@ -486,7 +486,7 @@ desktop.path = $${PREFIX}/share/applications
 desktop.files = $${TARGET}.desktop
 
 pixmaps.path = $${PREFIX}/share/pixmaps
-pixmaps.files = resources/icons/nixnote21.png
+pixmaps.files = resources/icons/nixnote2.png
 
 images.path = $${PREFIX}/share/$$TARGET/images
 images.files = resources/images/*

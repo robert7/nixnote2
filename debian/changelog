@@ -10,8 +10,6 @@ NixNote (2.1.0-beta3) unstable; urgency=low
   * Quick fix/workaround for import of unfinished file in "Import folders" - files
     with ".tmp" in file name are ignored; thus file can be copied as ".tmp", then
     renamed
-  * Changed internal name of nixnote binary to nixnote21; this fixes some problem with not
-    displayed icons
   * Removed logic which should activate "autostart" (as it currently doesn't work with
     AppImage packaging; this can be done manually; see wiki)
   * Optimized "show" main window logic
