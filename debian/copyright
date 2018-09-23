@@ -189,16 +189,12 @@ License: GPL-2+
 License: LGPL-2.1
                   GNU LESSER GENERAL PUBLIC LICENSE
                        Version 2.1, February 1999
-
  Copyright (C) 1991, 1999 Free Software Foundation, Inc.
  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
-
- [This is the first released version of the Lesser GPL.  It also counts
- as the successor of the GNU Library Public License, version 2, hence
- the version number 2.1.
  .
- On Debian systems, the full text of the LESSER GENERAL PUBLIC LICENSE
- License version 2 can be found in the file
+ For full text see https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+ .
+ On Debian systems, full text can be found in the file
  /usr/share/common-licenses/LGPL-2.1
