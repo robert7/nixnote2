@@ -302,6 +302,9 @@ int main(int argc, char *argv[]) {
     if (global.startMinimized)
         w->showMinimized();
 
+    // show message, if there is any configured
+    w->showAnnouncementMessage();
+
     // Setup the proxy
     QNetworkProxy proxy;
     if (global.isProxyEnabled()) {
