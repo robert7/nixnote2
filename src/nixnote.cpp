@@ -3726,3 +3726,13 @@ void NixNote::onExportAsPdfReady(bool) {
     printer.setOutputFileName(file);
     pdfExportWindow->print(&printer);
 }
+
+
+void NixNote::showAnnouncementMessage() {
+    // this can be used to some "critical" infos to users - normaly there should be no message
+    // QMessageBox::critical(
+    //         this, tr("Announcement"),
+    //         "msg text"
+    //         "\n\n"
+    //         "Sorry for additional inconvenience..");
+}

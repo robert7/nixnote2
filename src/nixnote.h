@@ -203,6 +203,7 @@ public:
     LineEdit *searchText;
     NTabWidget *tabWindow;
     bool hunspellPluginAvailable;
+    void showAnnouncementMessage();
 
 private slots:
     void onNetworkManagerFinished(QNetworkReply *reply);
