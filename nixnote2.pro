@@ -485,8 +485,11 @@ message("Target binary: $${binary.files}")
 desktop.path = $${PREFIX}/share/applications
 desktop.files = $${TARGET}.desktop
 
-pixmaps.path = $${PREFIX}/share/pixmaps
-pixmaps.files = resources/icons/nixnote2.png
+#pixmaps.path = $${PREFIX}/share/pixmaps
+#pixmaps.files = resources/icons/nixnote2.png
+
+icons.path = $${PREFIX}/share/icons
+icons.files = resources/icons/*
 
 images.path = $${PREFIX}/share/$$TARGET/images
 images.files = resources/images/*
@@ -558,5 +561,5 @@ mac {
     translations.files = $$TRANSLATION_TARGET_DIR
     translations.CONFIG = no_check_exist
 
-    INSTALLS = binary desktop images java help textfiles docs man translations pixmaps
+    INSTALLS = binary desktop images java help textfiles docs man translations icons
 }
