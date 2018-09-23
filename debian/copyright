@@ -13,15 +13,15 @@ Copyright: 2006-2016 Randy Baumgarte <randy@fbn.cx>,
            2018-2018 Robert Spiegel <nightingale7@gmail.com>
 License: GPL-2+
 
-Files: images/purple-theme/*
+Files: resources/images/purple-theme/*
 Copyright: Copyright Lexi Shriner
 License: GPL-2+
 
-Files: images/material-light/*
+Files: resources/images/material-light/*
 Copyright: Copyright Daniel Maurer
 License: GPL-2+
 
-Files: qevercloud/*
+Files: src/qevercloud/*
 Copyright: 2014 Sergey Skoblikov
 License: Expat
 
@@ -39,23 +39,18 @@ Files: java/src/cx/fbn/encrypt/EnCrypt.java
 Copyright: 2014 Randy Baumgarte <randy@fbn.cx>
 License: GPL-2
 
-Files: man/*
-Copyright: 2014-2016 Randy Baumgarte <randy@fbn.cx>
-           2015 Vincent Cheng <Vincentc1208@gmail.com>
-License: GPL-2+
-
-Files: dialog/faderdialog.h dialog/faderdialog.cpp
+Files: src/dialog/faderdialog.h dialog/faderdialog.cpp
 Copyright: d_stranz
 License: public-domain
  Unless stated otherwise by the author all code published on this site
  is public domain and can be used by anyone for anything without any
  affiliation to the original author.
 
-Files: logger/*
+Files: src/logger/*
 Copyright: 2010, Razvan Petru
 License: BSD-3-clause
 
-Files: email/*
+Files: src/email/*
 Copyright: 2011-2012 Tőkés Attila
 License: LGPL-2.1+
  This file is part of SmtpClient for Qt.
@@ -72,26 +67,27 @@ License: LGPL-2.1+
  .
  On Debian systems, the full text of the GNU Lesser General Public
  License version 2.1 can be found in the file
- /usr/share/common-licenses/LGPL-2.1.
+ /usr/share/common-licenses/LGPL-2.1
 
-Files: dialog/screencapture.h dialog/screencapture.cpp
-Copyright: 2009-2011 Artem 'DOOMer' Galichkin
-License: GPL-2+
 
-Files: gui/lineedit.h gui/lineedit.cpp
+Files: src/gui/lineedit.h src/gui/lineedit.cpp
 Copyright: 2007, Trolltech ASA <info@trolltech.com>
 License: custom1
  Use, modification and distribution is allowed without limitation,
  warranty, liability or support of any kind.
 
-Files: gui/flowlayout.h gui/flowlayout.cpp
+Files: src/gui/flowlayout.h src/gui/flowlayout.cpp
 Copyright: 2012, Nokia Corporation and/or its subsidiary(-ies).
 License: BSD-3-clause
 
-Files: xml/xmlhighlighter.h xml/xmlhighlighter.cpp
+Files: src/xml/xmlhighlighter.h src/xml/xmlhighlighter.cpp
 Copyright: 2006, J-P Nurmi
            2003, The KXMLEditor Team
 License: GPL-2
+
+Files: src/quentier/*
+Copyright: 2016, Dmitry Ivanov
+License: LGPL-2.1
 
 License: BSD-3-clause
  Redistribution and use in source and binary forms, with or without modification,
@@ -132,7 +128,7 @@ License: GPL-3
  .
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
- /usr/share/common-licenses/GPL-3.
+ /usr/share/common-licenses/GPL-3
 
 License: GPL-2
  This program is free software; you can redistribute it and/or modify
@@ -150,7 +146,7 @@ License: GPL-2
  .
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
- /usr/share/common-licenses/GPL-2.
+ /usr/share/common-licenses/GPL-2
 
 License: Expat
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -188,4 +184,21 @@ License: GPL-2+
  .
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
- /usr/share/common-licenses/GPL-2.
+ /usr/share/common-licenses/GPL-2
+
+License: LGPL-2.1
+                  GNU LESSER GENERAL PUBLIC LICENSE
+                       Version 2.1, February 1999
+
+ Copyright (C) 1991, 1999 Free Software Foundation, Inc.
+ 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+ [This is the first released version of the Lesser GPL.  It also counts
+ as the successor of the GNU Library Public License, version 2, hence
+ the version number 2.1.
+ .
+ On Debian systems, the full text of the LESSER GENERAL PUBLIC LICENSE
+ License version 2 can be found in the file
+ /usr/share/common-licenses/LGPL-2.1
