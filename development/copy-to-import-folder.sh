@@ -1,6 +1,7 @@
 #!/bin/bash
-# helper script for Import Folders
-# see https://github.com/robert7/nixnote2/issues/14
+# workaround helper script example for Import Folders
+#
+# actually this not needed anymore, see end of the https://github.com/robert7/nixnote2/issues/14
 
 
 if [ ! -f "$1" ]; then echo 1st param needs to be existing file!; exit 1; fi
