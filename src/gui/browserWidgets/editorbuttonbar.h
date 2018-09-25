@@ -70,6 +70,7 @@ public:
     QAction *superscriptVisible;
     QAction *formatCodeButtonVisible;
     QAction *syncButtonVisible;
+    QAction *emailButtonVisible;
 
     QAction *removeFormatButtonAction;
     QShortcut * removeFormatButtonShortcut;
@@ -133,6 +134,8 @@ public:
     QAction *formatCodeButtonAction;
     QShortcut *formatCodeButtonShortcut;
     QAction *syncButtonAction;
+    QAction *emailButtonAction;
+    QShortcut *emailButtonShortcut;
 
     FontNameComboBox *fontNames;
     FontSizeComboBox *fontSizes;
@@ -195,6 +198,7 @@ public slots:
     void loadFontNames();
     void toggleFormatCodeButtonVisible();
     void toggleSyncButtonVisible();
+    void toggleEmailButtonVisible();
 
 };
 
