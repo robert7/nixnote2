@@ -423,6 +423,9 @@ void NBrowserWindow::setupToolBar() {
 
     // this sync button doesn't need a shortcut; the main app window shortcut is global
     connect(buttonBar->syncButtonAction, SIGNAL(triggered()), this, SLOT(syncButtonPressed()));
+
+    connect(buttonBar->emailButtonAction, SIGNAL(triggered()), this, SLOT(emailNote()));
+    connect(buttonBar->emailButtonShortcut, SIGNAL(activated()), this, SLOT(emailNote()));
 }
 
 // Load the note content into the window
@@ -3202,7 +3205,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
             if (data.bodyHash.isSet())
                 hash = data.bodyHash;
         }
-        buffer.append("<object width=\"100%\" height=\"100%\" lid=\"" + QString::number(rlid) + "\" hash=\"");
+        buffer.append("<object style=\"width:100%; height: 600px\" lid=\"" + QString::number(rlid) + "\" hash=\"");
         buffer.append(hash.toHex());
         buffer.append("\" type=\"application/pdf\" />");
 

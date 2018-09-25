@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="nixnote2 (dev config)" type="CMakeRunConfiguration" factoryName="Application" singleton="true" PROGRAM_PARAMS="--logLevel=1 --configDir=$PROJECT_DIR$/../.nixnote-debug --noLogTimestamps " WORKING_DIR="file://$PROJECT_DIR$/appdir" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nixnote2" TARGET_NAME="nixnote2" CONFIG_NAME="Debug" RUN_PATH="$PROJECT_DIR$/appdir/usr/bin/nixnote21">
+  <configuration default="false" name="nixnote2 (dev config)" type="CMakeRunConfiguration" factoryName="Application" singleton="true" PROGRAM_PARAMS="--logLevel=1 --configDir=$PROJECT_DIR$/../.nixnote-debug --noLogTimestamps " WORKING_DIR="file://$PROJECT_DIR$/appdir" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nixnote2" TARGET_NAME="nixnote2" CONFIG_NAME="Debug" RUN_PATH="$PROJECT_DIR$/appdir/usr/bin/nixnote2">
     <method v="2" />
   </configuration>
 </component>

@@ -472,7 +472,10 @@ void EnmlFormatter::fixObjectNode(QWebElement &e) {
         e.removeAttribute("border");
         if (lid > 0) {
             resources.append(lid);
-            const QString xml = e.toOuterXml().replace("<object", "<en-media").replace("</object", "</en-media");
+            const QString xml = e.toOuterXml()
+                    // temp hack for tidy call
+                    .replace("<object", HTML_COMMENT_START "<en-media")
+                    .replace("</object>", "</en-media>" HTML_COMMENT_END);
             QLOG_DEBUG() << "Fixed object node holding pdf to " << xml;
             e.setOuterXml(xml);
         }

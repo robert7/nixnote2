@@ -37,7 +37,7 @@ QList<QWebPluginFactory::Plugin> PluginFactory::plugins() const
 
     QWebPluginFactory::Plugin plugin;
     plugin.name = "PDF file viewer";
-    plugin.description = "A CSV file Web plugin.";
+    plugin.description = "A PDF file Web plugin.";
     plugin.mimeTypes = QList<MimeType>() << mimeType;
 
     return QList<QWebPluginFactory::Plugin>() << plugin;

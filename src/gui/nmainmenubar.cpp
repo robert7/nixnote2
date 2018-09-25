@@ -59,7 +59,6 @@ void NMainMenuBar::setupFileMenu() {
     emailAction = new QAction(tr("Email Note"), this);
     emailAction->setToolTip(tr("Email a copy of this note"));
     connect(emailAction, SIGNAL(triggered()), parent, SLOT(emailNote()));
-    setupShortcut(emailAction, QString("File_Email"));
     fileMenu->addAction(emailAction);
 
 
