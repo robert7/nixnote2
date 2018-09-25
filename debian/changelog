@@ -1,6 +1,7 @@
 NixNote (2.1.0-beta4b) unstable; urgency=low
   * Make the sync and email shortcut key global to all app windows, and add sync and email toolbar buttons to
-    all editor windows
+    all editor windows.
+    This enables emailing and syncing from any open note window, instead of only from the main app screen.
     Thanks to @MRC01 (https://github.com/MRC01)
   * Debian packaging for PPA
   * Fixed display problem with PDFs attachments, when "Display PDFs inline" is on, fixed bug where PDF
