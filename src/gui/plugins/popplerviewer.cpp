@@ -73,7 +73,8 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
     finalPix.save(printImageFile);   // This is in case we want to print a note.  Otherwise it isn't used.
     scene->addItem(item);
 
-    view->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+    view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    //view->setStyleSheet("QGraphicsView { border: red 1px; }");
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     pageLabel->setText(tr("Page ") +QString::number(currentPage+1) + QString(tr(" of ") +QString::number(totalPages)));
@@ -89,10 +90,13 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
     buttonLayout->addWidget(pageLabel);
     buttonLayout->addWidget(pageRight);
     buttonLayout->addStretch(100);
+
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addLayout(buttonLayout);
     layout->addWidget(view);
     this->setLayout(layout);
+
+
     connect(pageRight, SIGNAL(clicked()), this, SLOT(pageRightPressed()));
     connect(pageLeft, SIGNAL(clicked()), this, SLOT(pageLeftPressed()));
     if (totalPages == 1) {

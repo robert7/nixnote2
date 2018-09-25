@@ -587,8 +587,9 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
         if (mimetype == "application/pdf") {
             QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) + ".pdf";
             Poppler::Document *doc = Poppler::Document::load(file);
-            if (doc != nullptr && doc->isLocked())
+            if (doc != nullptr && doc->isLocked()) {
                 pdfPreview = false;
+            }
         }
 
         if (mimetype == "application/pdf" && pdfPreview && !thumbnail) {
@@ -798,8 +799,7 @@ bool NoteFormatter::buildInkNote(QWebElement &docElem, QString &hash) {
 void NoteFormatter::modifyPdfTags(qint32 resLid, QWebElement &enmedia) {
     QLOG_TRACE_IN();
 
-    enmedia.setAttribute("width", "100%");
-    enmedia.setAttribute("height", "100%");
+    enmedia.setAttribute("style", "width:100%; height: 600px");
     enmedia.setAttribute("lid", QString::number(resLid));
     QString x = enmedia.toOuterXml();
     x.replace("en-media", "object");

@@ -3202,7 +3202,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
             if (data.bodyHash.isSet())
                 hash = data.bodyHash;
         }
-        buffer.append("<object width=\"100%\" height=\"100%\" lid=\"" + QString::number(rlid) + "\" hash=\"");
+        buffer.append("<object style=\"width:100%; height: 600px\" lid=\"" + QString::number(rlid) + "\" hash=\"");
         buffer.append(hash.toHex());
         buffer.append("\" type=\"application/pdf\" />");
 
