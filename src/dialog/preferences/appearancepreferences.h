@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define TRAY_ACTION_NOTHING 0
 #define TRAY_ACTION_SHOW 1
 #define TRAY_ACTION_NEWNOTE 2
+
 class AppearancePreferences : public QWidget
 {
     Q_OBJECT
@@ -43,7 +44,6 @@ private:
     QComboBox *defaultFontSizeChooser;
     QComboBox *defaultGuiFontSizeChooser;
     QComboBox *defaultGuiFontChooser;
-    QComboBox *traySingleClickAction;
     QComboBox *trayMiddleClickAction;
     QComboBox *trayDoubleClickAction;
     QComboBox *mouseMiddleClickAction;

@@ -577,9 +577,8 @@ void NixNote::setupGui() {
     if (showTrayIcon) {
         trayIcon->show();
     }
-    connect(trayIcon, SIGNAL(QSystemTrayIcon::activated(QSystemTrayIcon::ActivationReason)), this,
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this,
             SLOT(onTrayActivated(QSystemTrayIcon::ActivationReason)));
-
 
     // Setup timers
     QLOG_TRACE() << "Setting up timers";
@@ -867,7 +866,7 @@ TrayMenu *NixNote::createTrayContexMenu() {
     connect(showAction, SIGNAL(triggered()), this, SLOT(showMainWindow()));
 
     QAction *newNoteButton2 = trayIconContextMenu->addAction(tr("New note"));
-    connect(newNoteButton2, SIGNAL(triggered()), this, SLOT(newNote()));
+    connect(newNoteButton2, SIGNAL(triggered()), this, SLOT(restoreAndNewNote()));
 
     QMenu *favoritesMenu = trayIconContextMenu->addMenu(tr("Shortcut notes"));
     trayIconContextMenu->setActionMenu(TrayMenu::FavoriteNotesMenu, favoritesMenu);
@@ -2057,10 +2056,17 @@ void NixNote::resetView() {
     updateSelectionCriteria();
 }
 
+/**
+ * Restore & create a new note - this is called from systray.
+ */
+void NixNote::restoreAndNewNote() {
+    restoreAndShowMainWindow();
+    newNote();
+}
 
-//*****************************
-// Create a new note
-//*****************************
+/**
+ * Create a new note
+ */
 void NixNote::newNote() {
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
                           QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
@@ -2715,8 +2721,7 @@ void NixNote::heartbeatTimerTriggered() {
             this->restoreAndShowMainWindow();
         }
         else if (cmd.startsWith("NEW_NOTE")) {
-            // newNote() includes show window
-            this->newNote();
+            this->restoreAndNewNote();
         }
         else if (cmd.startsWith("NEW_EXTERNAL_NOTE")) {
             this->newExternalNote();
@@ -2859,15 +2864,13 @@ void NixNote::restoreAndShowMainWindow() {
 
 
 void NixNote::trayActivatedAction(int value) {
-    //int newQuickNote = 3;
+    QLOG_DEBUG() << "trayActivatedAction action=" << value;
 
     if (value == TRAY_ACTION_SHOW) {
         restoreAndShowMainWindow();
     } else if (value == TRAY_ACTION_NEWNOTE) {
-        restoreAndShowMainWindow();
-        newNote();
+        restoreAndNewNote();
     }
-    // if (value == newQuickNote) this->newExternalNote();
 }
 
 /**
@@ -2881,20 +2884,12 @@ void NixNote::onTrayActivated(QSystemTrayIcon::ActivationReason reason) {
         global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("trayDoubleClickAction", -1).toInt();
         global.settings->endGroup();
-
         trayActivatedAction(value);
     }
     else if (reason == QSystemTrayIcon::MiddleClick) {
         global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("trayMiddleClickAction", -1).toInt();
         global.settings->endGroup();
-        trayActivatedAction(value);
-    }
-    else if (reason == QSystemTrayIcon::Trigger) {
-        global.settings->beginGroup(INI_GROUP_APPEARANCE);
-        int value = global.settings->value("traySingleClickAction", -1).toInt();
-        global.settings->endGroup();
-
         trayActivatedAction(value);
     }
 }
