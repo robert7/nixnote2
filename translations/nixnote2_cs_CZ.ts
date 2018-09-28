@@ -306,7 +306,7 @@
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="64"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="69"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="74"/>
-        <source>New Text Note</source>
+        <source>New note</source>
         <translation>Nová poznámka</translation>
     </message>
     <message>
