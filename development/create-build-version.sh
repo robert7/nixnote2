@@ -1,8 +1,10 @@
 #!/bin/bash
 
-OF=$1
-if [ -z "${OF}" ]; then
-  echo "Missing param1 (output filename)"
+DESTDIR=$1
+echo $0: DESTDIR=${DESTDIR}
+
+if [ -z "${DESTDIR}" ]; then
+  echo "Missing param1 (DESTDIR)"
   exit 1
 fi
 
@@ -19,4 +21,7 @@ fi
 echo Version: ${VERSION}
 echo Git hash: ${GITHASH}
 
-echo "${BUILDVER}" >${OF}
+ODIR=${DESTDIR}/version
+mkdir -p ${ODIR}
+echo "${BUILDVER}" >${ODIR}/build-version.txt
+echo "${VERSION}" >${ODIR}/version.txt
