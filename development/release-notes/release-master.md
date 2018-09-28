@@ -1,4 +1,4 @@
-Newest "stable" build.
+Newest stable build.
 
 * [Release notes](https://github.com/robert7/nixnote2/wiki/Release-notes-v2.1)
 * [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
