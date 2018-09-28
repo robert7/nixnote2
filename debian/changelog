@@ -9,6 +9,7 @@ NixNote (2.1.0-beta4d) unstable; urgency=low
   * Travis CI build added (stable and development)
   * Fixed main window not showing on "new note" when invoked from systray - Issue #8
   * Fixed middle and double click action on system tray menu (remove click action as this can't work - as it shows tray menu)
+  * Fixed page number not decreasing in "PDF inline preview"
  -- Robert Spiegel <nightingale7@gmail.com>  Fri, 28 Sep 2018 12:00:00 -0400
 
 NixNote (2.1.0-beta3) unstable; urgency=low
