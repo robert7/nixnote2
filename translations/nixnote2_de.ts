@@ -298,7 +298,7 @@
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="62"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="67"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="72"/>
-        <source>Do Nothing</source>
+        <source>Do nothing</source>
         <translation>Nichts tun</translation>
     </message>
     <message>
