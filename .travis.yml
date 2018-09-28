@@ -27,7 +27,8 @@ script:
 
 after_success:
   - find appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
-  - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+  - #wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+  - wget -c https://raw.githubusercontent.com/robert7/uploadtool/temp/upload.sh
   - |
     if [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_BRANCH" == "develop" ]; then
        echo "We are building master or develop => upload"
@@ -37,7 +38,7 @@ after_success:
        RELEASE_NOTES=$(cat ./development/release-notes/release-$TRAVIS_BRANCH.md)
        export UPLOADTOOL_BODY="$RELEASE_NOTES\nTravis CI build log: https://travis-ci.com/$REPO_SLUG/builds/$TRAVIS_BUILD_ID/"
        mv debian/changelog debian/changelog.txt
-       bash upload.sh NixNote*.AppImage debian/changelog.txt
+       bash upload.sh NixNote*.AppImage debian/changelog.txt || exit 1
     fi
 
 branches:
