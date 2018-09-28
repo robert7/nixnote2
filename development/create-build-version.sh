@@ -6,13 +6,10 @@ if [ -z "${OF}" ]; then
   exit 1
 fi
 
-VERSION=$(cat version.txt)
+VERSION=$(head ./debian/changelog --lines=1|sed -E 's/^[^(]*\(([^)]*).*/\1/g')
 GITHASH=$(git rev-parse --short HEAD)
 if [ -z "${GITHASH}" ] ; then
   echo "Seems getting git version failed.."
-  #echo "--"
-  #ls -la
-  #echo "--"
   BUILDVER="${VERSION}"
 else 
   BUILDVER="${VERSION}-${GITHASH}"
