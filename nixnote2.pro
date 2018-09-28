@@ -502,7 +502,7 @@ help.files = help/*
 
 textfiles.path = $${PREFIX}/share/$$TARGET
 textfiles.files = $$PWD/shortcuts.txt $$PWD/themes.ini $$PWD/LICENSE $$PWD/colors.txt \
-                  $${DESTDIR}/version/build-version.txt $$PWD/version.txt
+                  $${DESTDIR}/version/build-version.txt $${DESTDIR}/version/version.txt
 textfiles.CONFIG = no_check_exist
 
 docs.path = $${PREFIX}/share/doc/$$TARGET
@@ -510,9 +510,9 @@ docs.files = $$PWD/debian/copyright $$PWD/debian/changelog $$PWD/README.md $$PWD
 
 VERSION_FILES = .
 fullversion.input = VERSION_FILES
-fullversion.output  = $${DESTDIR}/version/build-version.txt
+fullversion.output  = $${DESTDIR}
 # echo "$(cat ${QMAKE_FILE_IN})-$(git rev-parse --short HEAD)" >${QMAKE_FILE_OUT}
-fullversion.commands = ./development/create-build-version.sh ${QMAKE_FILE_OUT}
+fullversion.commands = ./development/create-build-version.sh $${DESTDIR}
 fullversion.CONFIG += no_link no_check_exist
 QMAKE_EXTRA_COMPILERS += fullversion
 PRE_TARGETDEPS += compiler_fullversion_make_all
