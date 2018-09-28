@@ -1,7 +1,4 @@
-EXPERIMENTAL Travis CI build - Development version - do not use yet
-
-Newest development build.
-May contain a slighly more changes, then stable build. See attached changelog.
+EXPERIMENTAL - DO NOT USE YET - Development version build - may contain a slighly more changes, then stable build. See attached changelog.
 
 
 
