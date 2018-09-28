@@ -1,0 +1,53 @@
+language: cpp
+compiler: gcc
+sudo: require
+dist: xenial
+
+before_install:
+  - sudo add-apt-repository ppa:nixnote/nixnote2-stable -y
+  - sudo apt-get update -qq
+
+install:
+  - |
+    sudo apt-get -y install git-core qt5-default build-essential \
+                            wget curl make pkg-config \
+                            libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev libcurl4-openssl-dev \
+                            libpoppler-qt5-dev libqt5webkit5-dev qt5-qmake qttools5-dev-tools libqt5sql5-sqlite \
+                            tidy-html56
+
+script:
+  - #ls -lR /opt/tidy56
+  - export TIDY_LIB_DIR=/opt/tidy56/lib
+  - export PKG_CONFIG_PATH=$TIDY_LIB_DIR/pkgconfig
+  - echo PKG_CONFIG_PATH=$PKG_CONFIG_PATH
+  - echo qmake CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR
+  - qmake CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR
+  - make -j$(nproc)
+  - make INSTALL_ROOT=appdir -j$(nproc) install ; find appdir/
+  - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+  - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
+  - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
+  - export VERSION=$(cat version.txt) # linuxdeployqt uses this for naming the file
+  - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -bundle-non-qt-libs
+  - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage
+
+after_success:
+  - find appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+  - #wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+  - wget -c https://raw.githubusercontent.com/robert7/uploadtool/temp/upload.sh
+  - |
+    if [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_BRANCH" == "develop" ]; then
+       echo "We are building master or develop => upload"
+       if [ "$TRAVIS_BRANCH" != "master" ] ; then
+         export UPLOADTOOL_SUFFIX=$TRAVIS_BRANCH
+       fi
+       RELEASE_NOTES=$(cat ./development/release-notes/release-$TRAVIS_BRANCH.md)
+       export UPLOADTOOL_BODY="$RELEASE_NOTES - Travis CI build log: https://travis-ci.com/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID/"
+       mv debian/changelog debian/changelog.txt
+       bash upload.sh NixNote*.AppImage debian/changelog.txt || exit 1
+    fi
+
+branches:
+  except:
+    - # Do not build tags that we create when we upload to GitHub Releases
+    - /^(?i:continuous)/
