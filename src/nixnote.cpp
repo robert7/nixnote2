@@ -2874,23 +2874,25 @@ void NixNote::trayActivatedAction(int value) {
 }
 
 /**
- * The tray icon was activated.  E.g. ff it was double clicked we restore the gui.
- *
+ * The tray icon was activated.  E.g. if it was double clicked we restore the gui.
  */
 void NixNote::onTrayActivated(QSystemTrayIcon::ActivationReason reason) {
-    QLOG_DEBUG() << "onTrayActivated reason=" << reason;
 
-    if (reason == QSystemTrayIcon::DoubleClick) {
+    if (reason == QSystemTrayIcon::DoubleClick || reason == QSystemTrayIcon::Trigger) {
+        QLOG_DEBUG() << "onTrayActivated reason=DoubleClick (" << reason << ")";
         global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("trayDoubleClickAction", -1).toInt();
         global.settings->endGroup();
         trayActivatedAction(value);
     }
     else if (reason == QSystemTrayIcon::MiddleClick) {
+        QLOG_DEBUG() << "onTrayActivated reason=MiddleClick (" << reason << ")";
         global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("trayMiddleClickAction", -1).toInt();
         global.settings->endGroup();
         trayActivatedAction(value);
+    } else {
+        QLOG_DEBUG() << "onTrayActivated unknowm reason=" << reason;
     }
 }
 

@@ -59,12 +59,12 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     fontPreviewInDialog->setChecked(global.previewFontsInDialog());
 
     trayMiddleClickAction = new QComboBox();
-    trayMiddleClickAction->addItem(tr("Do Nothing"), TRAY_ACTION_NOTHING);
+    trayMiddleClickAction->addItem(tr("Do nothing"), TRAY_ACTION_NOTHING);
     trayMiddleClickAction->addItem(tr("Show NixNote"), TRAY_ACTION_SHOW);
     trayMiddleClickAction->addItem(tr("New note"), TRAY_ACTION_NEWNOTE);
 
     trayDoubleClickAction = new QComboBox();
-    trayDoubleClickAction->addItem(tr("Do Nothing"), TRAY_ACTION_NOTHING);
+    trayDoubleClickAction->addItem(tr("Do nothing"), TRAY_ACTION_NOTHING);
     trayDoubleClickAction->addItem(tr("Show NixNote"), TRAY_ACTION_SHOW);
     trayDoubleClickAction->addItem(tr("New note"), TRAY_ACTION_NEWNOTE);
 
