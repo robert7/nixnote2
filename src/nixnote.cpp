@@ -3575,27 +3575,7 @@ void NixNote::presentationModeOff() {
 // the correct version expected. Load them if possible.
 void NixNote::loadPlugins() {
     QStringList dirList;
-    dirList.append(global.fileManager.getProgramDataDir());
-    dirList.append(global.fileManager.getProgramDataDir() + "plugins");
-    const QString prefixPath = QLibraryInfo::location(QLibraryInfo::PrefixPath);
-    dirList.append(prefixPath + "/lib/nixnote2/");
-#ifndef Q_OS_MAC_OS
-    if (prefixPath != "/usr") {
-        dirList.append("/usr/lib/nixnote2/");
-    }
-    if (prefixPath != "/usr/local") {
-        dirList.append("/usr/local/lib/nixnote2/");
-    }
-    dirList.append("/usr/local/lib");
-#endif
-#if defined(Q_OS_MACOS)
-    // support installing additional plugins in the standard locations where they might be found
-    dirList.append(QStandardPaths::locate(QStandardPaths::AppDataLocation, "plugins", QStandardPaths::LocateDirectory));
-#endif
-    if (prefixPath != "/usr") {
-        dirList.append(prefixPath + "/lib");
-    }
-    dirList.append("/usr/lib");
+    dirList.append(global.fileManager.getLibraryDirPath());
 
     // Start loading plugins
     for (int i = 0; i < dirList.size(); i++) {
@@ -3603,8 +3583,8 @@ void NixNote::loadPlugins() {
         QStringList filter;
         filter.append("libhunspellplugin.so");
         filter.append("libhunspellplugin.dylib");
-            foreach(QString
-                        fileName, pluginsDir.entryList(filter)) {
+                foreach(QString
+                                fileName, pluginsDir.entryList(filter)) {
                 QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
                 QObject *plugin = pluginLoader.instance();
 
@@ -3616,11 +3596,12 @@ void NixNote::loadPlugins() {
                         HunspellInterface *hunspellInterface;
                         hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
                         if (hunspellInterface != nullptr) {
+                            QLOG_INFO() << "libhunspellplugin loaded OK";
                             hunspellPluginAvailable = true;
                         }
                         delete hunspellInterface;
                     } else {
-                        QLOG_ERROR() << tr("Error loading Hunspell plugin: ") << pluginLoader.errorString();
+                        QLOG_ERROR() << "Error loading Hunspell plugin: " << pluginLoader.errorString();
                     }
                 }
             }

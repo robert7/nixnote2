@@ -80,6 +80,7 @@ private:
     void checkExistingWriteableDir(QDir dir);
     void createDirOrCheckWriteable(QDir dir);
     QString fixStandardPath(QString &path) const;
+    QString getDefaultProgramDirPath();
 
 public:
     FileManager();
@@ -126,6 +127,7 @@ public:
     void setupFileAttachmentLogging();
     void deleteTopLevelFiles(QDir dir, bool exitOnFail);
     QString getMainLogFileName() const { return this->getLogsDirPath("") + "messages.log"; }
+    QString getLibraryDirPath();
 
 };
 
