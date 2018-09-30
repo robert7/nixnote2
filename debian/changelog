@@ -1,4 +1,4 @@
-NixNote (2.1.0-beta4c) unstable; urgency=low
+NixNote (2.1.0-beta4d) unstable; urgency=low
   * Make the sync and email shortcut key global to all app windows, and add sync and email toolbar buttons to
     all editor windows.
     This enables emailing and syncing from any open note window, instead of only from the main app screen.
@@ -9,6 +9,9 @@ NixNote (2.1.0-beta4c) unstable; urgency=low
     * PDF removed from node after edit
     * Possible duplication after inserting new PDF
   * Travis CI build added (stable and development)
+  * Fixed main window not showing on "new note" when invoked from systray - Issue #8
+  * Fixed middle and double click action on system tray menu (remove click action as this can't work - as it shows tray menu)
+  * Fixed page number not decreasing in "PDF inline preview"
  -- Robert Spiegel <nightingale7@gmail.com>  Fri, 28 Sep 2018 12:00:00 -0400
 
 NixNote (2.1.0-beta3) unstable; urgency=low

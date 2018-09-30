@@ -227,6 +227,7 @@ public slots:
     void databaseBackup(bool backup=true);
     void resetView();
     void newNote();
+    void restoreAndNewNote();
     void newExternalNote();
     void disableEditing();
     void setSyncTimer();

@@ -61,6 +61,8 @@ private:
     void findNextPage(QStringList searchHits, QList<QRectF> *searchLocations);
     QPixmap highlightImage();
 
+    void updateCurrentPage();
+
 
 public:
     Poppler::Document *doc;

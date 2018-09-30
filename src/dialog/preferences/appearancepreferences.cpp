@@ -58,20 +58,15 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     fontPreviewInDialog  = new QCheckBox(tr("Preview fonts in editor dialog*"));
     fontPreviewInDialog->setChecked(global.previewFontsInDialog());
 
-    traySingleClickAction = new QComboBox();
-    traySingleClickAction->addItem(tr("Do Nothing"), TRAY_ACTION_NOTHING);
-    traySingleClickAction->addItem(tr("Show NixNote"), TRAY_ACTION_SHOW);
-    traySingleClickAction->addItem(tr("New Text Note"), TRAY_ACTION_NEWNOTE);
-
     trayMiddleClickAction = new QComboBox();
-    trayMiddleClickAction->addItem(tr("Do Nothing"), TRAY_ACTION_NOTHING);
+    trayMiddleClickAction->addItem(tr("Do nothing"), TRAY_ACTION_NOTHING);
     trayMiddleClickAction->addItem(tr("Show NixNote"), TRAY_ACTION_SHOW);
-    trayMiddleClickAction->addItem(tr("New Text Note"), TRAY_ACTION_NEWNOTE);
+    trayMiddleClickAction->addItem(tr("New note"), TRAY_ACTION_NEWNOTE);
 
     trayDoubleClickAction = new QComboBox();
-    trayDoubleClickAction->addItem(tr("Do Nothing"), 0);
-    trayDoubleClickAction->addItem(tr("Show NixNote"), 1);
-    trayDoubleClickAction->addItem(tr("New Text Note"), 2);
+    trayDoubleClickAction->addItem(tr("Do nothing"), TRAY_ACTION_NOTHING);
+    trayDoubleClickAction->addItem(tr("Show NixNote"), TRAY_ACTION_SHOW);
+    trayDoubleClickAction->addItem(tr("New note"), TRAY_ACTION_NEWNOTE);
 
     mouseMiddleClickAction = new QComboBox();
     //mouseMiddleClickAction->addItem(tr("Open New Tab"), MOUSE_MIDDLE_CLICK_NEW_TAB);
@@ -140,9 +135,6 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(new QLabel(tr("Middle Click Open Behavior")), row,0);
     mainLayout->addWidget(mouseMiddleClickAction, row++, 1);
 
-    mainLayout->addWidget(new QLabel(tr("Tray Icon Click Action")), row, 0);
-    mainLayout->addWidget(traySingleClickAction, row++, 1);
-
     mainLayout->addWidget(new QLabel(tr("Tray Icon Middle Click Action")), row, 0);
     mainLayout->addWidget(trayMiddleClickAction, row++, 1);
 
@@ -169,11 +161,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 
     disableEditingOnStartup->setChecked(global.settings->value("disableEditingOnStartup",false).toBool());
 
-    int idx  = global.settings->value("traySingleClickAction", 0).toInt();
-    idx = traySingleClickAction->findData(idx, Qt::UserRole);
-    traySingleClickAction->setCurrentIndex(idx);
-
-    idx  = global.settings->value("trayMiddleClickAction", 0).toInt();
+    int idx  = global.settings->value("trayMiddleClickAction", 0).toInt();
     idx = trayMiddleClickAction->findData(idx, Qt::UserRole);
     trayMiddleClickAction->setCurrentIndex(idx);
 
@@ -257,7 +245,6 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("mouseMiddleClickOpen", mouseMiddleClickAction->currentIndex());
 
     global.settings->setValue("trayDoubleClickAction", trayDoubleClickAction->currentIndex());
-    global.settings->setValue("traySingleClickAction", traySingleClickAction->currentIndex());
     global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentIndex());
 
     global.settings->setValue("systemNotifier", sysnotifier);

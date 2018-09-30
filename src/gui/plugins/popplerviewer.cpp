@@ -21,11 +21,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+
 #if QT_VERSION < 0x050000
 #include <poppler-qt4.h>
 #else
+
 #include <poppler-qt5.h>
+
 #endif
+
 #include <QGraphicsPixmapItem>
 #include <QImage>
 #include <QPushButton>
@@ -35,13 +39,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWidget *parent) :
-    QWidget(parent)
-{
+        QWidget(parent) {
     pageLabel = new QLabel(this);
     this->mimeType = mimeType;
     this->lid = reslid.toInt();
-    printImageFile = global.fileManager.getTmpDirPath() + QString::number(lid) +QString("-print.png");
-    QString file = global.fileManager.getDbaDirPath() + reslid +".pdf";
+    printImageFile = global.fileManager.getTmpDirPath() + QString::number(lid) + QString("-print.png");
+    QString file = global.fileManager.getDbaDirPath() + reslid + ".pdf";
     doc = Poppler::Document::load(file);
     if (doc == nullptr || doc->isLocked())
         return;
@@ -62,7 +65,7 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
     }
 
 
-    image = new QImage(doc->page(currentPage)->renderToImage());    
+    image = new QImage(doc->page(currentPage)->renderToImage());
 
     QPixmap finalPix = highlightImage();
 
@@ -77,7 +80,7 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
     //view->setStyleSheet("QGraphicsView { border: red 1px; }");
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
-    pageLabel->setText(tr("Page ") +QString::number(currentPage+1) + QString(tr(" of ") +QString::number(totalPages)));
+    updateCurrentPage();
 
     pageLeft = new QPushButton();
     pageRight = new QPushButton();
@@ -108,45 +111,60 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
 
 
 void PopplerViewer::pageRightPressed() {
-    if (currentPage+1 < totalPages) {
+    if (currentPage + 1 < totalPages) {
         currentPage++;
-        if (image != nullptr)
+        if (image != nullptr) {
             delete image;
+        }
+
         image = new QImage(doc->page(currentPage)->renderToImage());
         image->save(printImageFile);
-        if (item != nullptr)
+
+        if (item != nullptr) {
             delete item;
+        }
+
         QPixmap finalPix = highlightImage();
         item = new QGraphicsPixmapItem(finalPix);
         scene->addItem(item);
-        if (currentPage+1 == totalPages)
+        if (currentPage + 1 == totalPages) {
             pageRight->setEnabled(false);
-        if (currentPage>0)
+        }
+        if (currentPage > 0) {
             pageLeft->setEnabled(true);
-        pageLabel->setText(tr("Page ") +QString::number(currentPage+1) + QString(tr(" of ") +QString::number(totalPages)));
-
+        }
+        updateCurrentPage();
     }
-
 }
 
 void PopplerViewer::pageLeftPressed() {
-    if (currentPage>0) {
+    if (currentPage > 0) {
         currentPage--;
-        if (image != nullptr)
+        if (image != nullptr) {
             delete image;
+        }
         image = new QImage(doc->page(currentPage)->renderToImage());
-        if (item != nullptr)
+        if (item != nullptr) {
             delete item;
+        }
 
         QPixmap finalPix = highlightImage();
         item = new QGraphicsPixmapItem(finalPix);
 
         scene->addItem(item);
-        if (currentPage==0)
+        if (currentPage == 0) {
             pageLeft->setEnabled(false);
-        if (totalPages>1)
+        }
+        if (totalPages > 1) {
             pageRight->setEnabled(true);
+        }
+        updateCurrentPage();
     }
+}
+
+void PopplerViewer::updateCurrentPage() {
+    QString s = tr("Page ") + QString::number(currentPage + 1) + QString(tr(" of ") + QString::number(totalPages));
+    pageLabel->setText(s);
 }
 
 
@@ -158,12 +176,8 @@ void PopplerViewer::findNextPage(QStringList searchHits, QList<QRectF> *searchLo
     searchLocations->clear();
 
     while (page < doc->numPages() && !found) {
-        for (int i=0; i<searchHits.size(); i++) {
-//#if QT_VERSION < 0x050000
-//            QList<QRectF> results = doc->page(page)->search(searchHits[i], Poppler::Page::CaseInsensitive);
-//#else
+        for (int i = 0; i < searchHits.size(); i++) {
             QList<QRectF> results = doc->page(page)->search(searchHits[i], Poppler::Page::IgnoreCase);
-//#endif
             searchLocations->append(results);
             if (results.size() > 0) {
                 currentPage = page;
@@ -181,20 +195,20 @@ QPixmap PopplerViewer::highlightImage() {
     overlayPix.fill(Qt::transparent);
     QPainter p2(&overlayPix);
     p2.setBackgroundMode(Qt::TransparentMode);
-    p2.setRenderHint(QPainter::Antialiasing,true);
+    p2.setRenderHint(QPainter::Antialiasing, true);
     QColor yellow(Qt::yellow);
     p2.setBrush(yellow);
 
     QList<QRectF> searchLocations;
-    for (int i=0; i<searchHits.size(); i++) {
+    for (int i = 0; i < searchHits.size(); i++) {
 //        searchLocations.append(doc->page(currentPage)->search(searchHits[i], Poppler::Page::CaseInsensitive));
 //#if QT_VERSION < 0x050000
 //        searchLocations.append(doc->page(currentPage)->search(searchHits[i], Poppler::Page::CaseInsensitive));
 //#else
-        searchLocations.append(doc->page(currentPage)->search(searchHits[i],Poppler::Page::IgnoreCase));
+        searchLocations.append(doc->page(currentPage)->search(searchHits[i], Poppler::Page::IgnoreCase));
 //#endif
     }
-    for (int i=0; i<searchLocations.size(); i++) {
+    for (int i = 0; i < searchLocations.size(); i++) {
         QRectF highlightRect = searchLocations[i];
         p2.drawRect(highlightRect.x(), highlightRect.y(), highlightRect.width(), highlightRect.height());
     }
@@ -211,10 +225,10 @@ QPixmap PopplerViewer::highlightImage() {
     finalPix.fill(Qt::transparent);
     QPainter p3(&finalPix);
     p3.setBackgroundMode(Qt::TransparentMode);
-    p3.setRenderHint(QPainter::Antialiasing,true);
-    p3.drawPixmap(0,0,QPixmap::fromImage(*image));
+    p3.setRenderHint(QPainter::Antialiasing, true);
+    p3.drawPixmap(0, 0, QPixmap::fromImage(*image));
     p3.setOpacity(0.4);
-    p3.drawPixmap(0,0,overlayPix);
+    p3.drawPixmap(0, 0, overlayPix);
     p3.end();
     return finalPix;
 }
