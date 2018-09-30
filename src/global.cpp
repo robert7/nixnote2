@@ -143,19 +143,6 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 
     server = accountsManager->getServer();
 
-    // Cleanup any temporary files from the last time
-
-    QDir myDir(fileManager.getTmpDirPath());
-    // QStringList list = myDir.entryList();
-    // for (int i = 0; i < list.size(); i++) {
-    //     if (list[i] != "." && list[i] != "..") {
-    //         QString file = fileManager.getTmpDirPath() + list[i];
-    //         myDir.remove(file);
-    //     }
-    // }
-    fileManager.deleteTopLevelFiles(fileManager.getTmpDirPath(), true);
-
-
     settings->beginGroup(INI_GROUP_DEBUGGING);
     disableUploads = settings->value("disableUploads", false).toBool();
     nonAsciiSortBug = settings->value("nonAsciiSortBug", false).toBool();

@@ -151,7 +151,6 @@ int main(int argc, char *argv[]) {
 
     global.fileManager.setup(startupConfig.getConfigDir(), startupConfig.getUserDataDir(),
                              startupConfig.getProgramDataDir());
-    QString versionStr = global.fileManager.getProgramVersionPrintable();
 
     // first configure global settings file
     global.initializeGlobalSettings();
@@ -264,6 +263,8 @@ int main(int argc, char *argv[]) {
         global.sharedMemory->clearMemory();
     }
 
+    // Cleanup any temporary files from the last time
+    global.fileManager.deleteTopLevelFiles(global.fileManager.getTmpDirPath(), true);
 
     // activate logging in file
     QString logPath = global.fileManager.getMainLogFileName();
@@ -273,8 +274,9 @@ int main(int argc, char *argv[]) {
 
     // from now on logging goes also to log file (up to here only to terminal)
 
+    QString versionStr = global.fileManager.getProgramVersionPrintable();
     QLOG_INFO().noquote() << NN_APP_DISPLAY_NAME " " << versionStr << ", build at " << __DATE__ << " at " << __TIME__
-                          << ", with Qt" << QT_VERSION_STR << " running on " << qVersion();
+                          << ", with Qt " << QT_VERSION_STR << " running on " << qVersion();
     if (logger.loggingLevel() > 1) {
         QLOG_INFO() << "To get more detailed startup logging use --logLevel=1";
     }
