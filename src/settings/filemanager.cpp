@@ -153,10 +153,10 @@ void FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QS
     javaDirPath = slashTerminatePath(javaDir.path());
 
     QDir spellDirUser;
-    spellDirUser.setPath(programDataDir + "spell");
-    spellDirPathUser = slashTerminatePath(spellDirUser.path());
-    // TODO check after we fix the spellchecker
-    // checkExistingReadableDir(spellDirUser);
+    spellDirUser.setPath(this->configDir + "spell");
+    this->spellDirPathUser = slashTerminatePath(spellDirUser.path());
+    QLOG_DEBUG() << "Spellchecker path: " << spellDirPathUser;
+    createDirOrCheckWriteable(this->spellDirPathUser);
 
     translateDir.setPath(programDataDir + "translations");
     checkExistingReadableDir(translateDir);

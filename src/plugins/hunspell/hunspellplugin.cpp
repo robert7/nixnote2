@@ -30,8 +30,8 @@ HunspellPlugin::HunspellPlugin() {
 // want to take the time unless the user REALLY wants to use the spell checker.
 bool HunspellPlugin::initialize(QString programDictionary, QString userDictionary, QString &errMsg, QString language)  {
     checker = new SpellChecker();
-    qDebug() << "**** Setting up SpellChecker:" << checker << "with" << programDictionary
-        << "and" << userDictionary << "for language" << language;
+    qDebug().nospace() << "**** Setting up SpellChecker: " << checker << " with programDictionary=" << programDictionary
+        << " and userDictionary=" << userDictionary << " for language" << language;
     bool result = checker->setup(programDictionary, userDictionary, language);
     if (!result) {
         errMsg = tr("Error setting up spellchecker with programDictionary %1 and userDictionary %2 for language %3")

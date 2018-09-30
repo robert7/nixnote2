@@ -1,5 +1,5 @@
 /*********************************************************************************
-NixNote - An open-source client f`or the Evernote service.
+NixNote - An open-source client for the Evernote service.
 Copyright (C) 2013 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
@@ -3621,17 +3621,20 @@ void NBrowserWindow::spellCheckPressed() {
                 QApplication::clipboard()->setText(dialog.replacement);
                 pasteButtonPressed();
             }
+            QString userDictionary(global.fileManager.getSpellDirPathUser());
             if (dialog.changeLanguage) {
                 dialog.changeLanguage = false;
                 i--;
                 QString newLang;
                 int idx = dialog.language->currentIndex();
                 newLang = dialog.language->itemText(idx);
-                hunspellInterface->initialize(global.fileManager.getProgramDataDir(),
-                                              global.fileManager.getSpellDirPathUser(), newLang);
+
+                QString programDictionary(global.fileManager.getProgramDataDir());
+
+                hunspellInterface->initialize(programDictionary, userDictionary, newLang);
             }
             if (dialog.addToDictionaryPressed) {
-                hunspellInterface->addWord(global.fileManager.getSpellDirPathUser() + "user.lst", currentWord);
+                hunspellInterface->addWord(userDictionary + "user.lst", currentWord);
             }
         }
     }
@@ -3865,6 +3868,7 @@ void NBrowserWindow::setEditorStyle() {
     editor->settings()->setUserStyleSheetUrl(url);
 }
 
+// TODO REFACTOR .. this basically replicated in NixNote::loadPlugins
 
 void NBrowserWindow::loadPlugins() {
     hunspellPluginAvailable = false;
@@ -3886,14 +3890,22 @@ void NBrowserWindow::loadPlugins() {
                         hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
                         if (hunspellInterface) {
                             QString errMsg;
+
                             global.settings->beginGroup(INI_GROUP_LOCALE);
                             QString dict = global.settings->value("translation").toString();
                             global.settings->endGroup();
-                            hunspellPluginAvailable = hunspellInterface->initialize(
-                                global.fileManager.getProgramDataDir(),
-                                global.fileManager.getSpellDirPathUser(), errMsg, dict);
+
+                            QString programDictionary(global.fileManager.getProgramDataDir());
+                            QString userDictionary(global.fileManager.getSpellDirPathUser());
+
+                            QLOG_INFO() << "libhunspellplugin trying initialization for locale: " << dict
+                                        << ", programDictionary=" << programDictionary
+                                        << ", userDictionary=" << userDictionary;
+                            hunspellPluginAvailable = hunspellInterface->initialize(programDictionary, userDictionary,
+                                                                                    errMsg, dict);
+
                             if (!hunspellPluginAvailable) {
-                                QLOG_ERROR() << errMsg;
+                                QLOG_ERROR() << "libhunspellplugin initialization FAILED: " << errMsg;
                             }
                         }
                     } else {

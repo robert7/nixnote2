@@ -3568,7 +3568,7 @@ void NixNote::presentationModeOff() {
 
 
 //
-// TODO REFACTOR !
+// TODO REFACTOR .. this basically replicated in NBrowserWindow::loadPlugins
 //
 
 // Check to see if plugins are available and they match
@@ -3596,12 +3596,12 @@ void NixNote::loadPlugins() {
                         HunspellInterface *hunspellInterface;
                         hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
                         if (hunspellInterface != nullptr) {
-                            QLOG_INFO() << "libhunspellplugin loaded OK";
+                            QLOG_INFO() << "libhunspellplugin check OK";
                             hunspellPluginAvailable = true;
                         }
                         delete hunspellInterface;
                     } else {
-                        QLOG_ERROR() << "Error loading Hunspell plugin: " << pluginLoader.errorString();
+                        QLOG_ERROR() << "libhunspellplugin check FAILED: " << pluginLoader.errorString();
                     }
                 }
             }
