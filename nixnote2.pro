@@ -26,9 +26,11 @@ UI_DIR = .
 
 CONFIG(debug, debug|release) {
     DESTDIR = qmake-build-debug
+    BUILD_TYPE = debug
     message(Debug build!)
 } else {
     DESTDIR = qmake-build-release
+    BUILD_TYPE = release
     message(Release build!)
 }
 OBJECTS_DIR = $${DESTDIR}
@@ -482,6 +484,11 @@ binary.files = $${DESTDIR}/$${TARGET}
 binary.CONFIG = no_check_exist
 message("Target binary: $${binary.files}")
 
+libs.path = $${PREFIX}/lib/$${TARGET}
+libs.files = $${DESTDIR}/hunspellplugin/libhunspellplugin.so
+libs.CONFIG = no_check_exist
+message("Target libs: $${libs.files}")
+
 desktop.path = $${PREFIX}/share/applications
 desktop.files = $${TARGET}.desktop
 
@@ -511,11 +518,20 @@ docs.files = $$PWD/debian/copyright $$PWD/debian/changelog $$PWD/README.md $$PWD
 VERSION_FILES = .
 fullversion.input = VERSION_FILES
 fullversion.output  = $${DESTDIR}
-# echo "$(cat ${QMAKE_FILE_IN})-$(git rev-parse --short HEAD)" >${QMAKE_FILE_OUT}
 fullversion.commands = ./development/create-build-version.sh $${DESTDIR}
 fullversion.CONFIG += no_link no_check_exist
 QMAKE_EXTRA_COMPILERS += fullversion
 PRE_TARGETDEPS += compiler_fullversion_make_all
+
+SPELLPLUGIN_FILES = src/plugins/hunspell/hunspellplugin.cpp
+spellplugin.input = SPELLPLUGIN_FILES
+spellplugin.output  = $${DESTDIR}/hunspellplugin/libhunspellplugin.so
+spellplugin.commands = ./development/build-spellplugin.sh $${BUILD_TYPE} $${DESTDIR}
+spellplugin.CONFIG += no_link no_check_exist
+QMAKE_EXTRA_COMPILERS += spellplugin
+PRE_TARGETDEPS += compiler_spellplugin_make_all
+
+
 
 man.path = $${PREFIX}/share/man/man1
 man.files = docs/nixnote2.1
@@ -561,5 +577,5 @@ mac {
     translations.files = $$TRANSLATION_TARGET_DIR
     translations.CONFIG = no_check_exist
 
-    INSTALLS = binary desktop images java help textfiles docs man translations icons
+    INSTALLS = binary libs desktop images java help textfiles docs man translations icons
 }
