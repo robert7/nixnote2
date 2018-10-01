@@ -28,14 +28,17 @@ HunspellPlugin::HunspellPlugin() {
 
 // Initialize for use. I don't do it in the constructor because I don't 
 // want to take the time unless the user REALLY wants to use the spell checker.
-bool HunspellPlugin::initialize(QString programDictionary, QString userDictionary, QString &errMsg, QString language)  {
+bool HunspellPlugin::initialize(QString programDictionary, QString userDictionary, QString &errMsg, QString language) {
     checker = new SpellChecker();
-    qDebug().nospace() << "**** Setting up SpellChecker: " << checker << " with programDictionary=" << programDictionary
-        << " and userDictionary=" << userDictionary << " for language" << language;
+    qInfo().nospace() << SPELLCHECKER_PLUGIN ": setting up SpellChecker: " << checker << " with programDictionary="
+                      << programDictionary
+                      << " and userDictionary=" << userDictionary << " for language" << language;
     bool result = checker->setup(programDictionary, userDictionary, language);
     if (!result) {
-        errMsg = tr("Error setting up spellchecker with programDictionary %1 and userDictionary %2 for language %3")
-            .arg(programDictionary).arg(userDictionary).arg(checker->errorMsg);
+        errMsg = QStringLiteral(
+                SPELLCHECKER_PLUGIN
+                ": error setting up spellchecker with programDictionary %1 and userDictionary %2 for language %3")
+                .arg(programDictionary).arg(userDictionary).arg(checker->errorMsg);
     }
     return result;
 }

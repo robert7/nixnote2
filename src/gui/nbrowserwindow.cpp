@@ -52,6 +52,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/gui/browserWidgets/table/tablepropertiesdialog.h"
 #include "src/exits/exitmanager.h"
 #include "browserWidgets/editorbuttonbar.h"
+#include "src/plugins/hunspell/hunspellplugin.h"
 
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
@@ -3898,14 +3899,14 @@ void NBrowserWindow::loadPlugins() {
                             QString programDictionary(global.fileManager.getProgramDataDir());
                             QString userDictionary(global.fileManager.getSpellDirPathUser());
 
-                            QLOG_INFO() << "libhunspellplugin trying initialization for locale: " << dict
+                            QLOG_INFO() << SPELLCHECKER_PLUGIN ": trying initialization for locale: " << dict
                                         << ", programDictionary=" << programDictionary
                                         << ", userDictionary=" << userDictionary;
                             hunspellPluginAvailable = hunspellInterface->initialize(programDictionary, userDictionary,
                                                                                     errMsg, dict);
 
                             if (!hunspellPluginAvailable) {
-                                QLOG_ERROR() << "libhunspellplugin initialization FAILED: " << errMsg;
+                                QLOG_ERROR() << SPELLCHECKER_PLUGIN ": initialization FAILED: " << errMsg;
                             }
                         }
                     } else {

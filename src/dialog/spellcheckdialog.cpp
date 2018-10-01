@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/global.h"
 #include "spellcheckdialog.h"
 #include "src/plugins/hunspell/spellchecker.h"
+#include "src/plugins/hunspell/hunspellplugin.h"
 
 extern Global global;
 
@@ -188,14 +189,16 @@ void SpellCheckDialog::loadLanguages() {
     global.settings->beginGroup(INI_GROUP_LOCALE);
     QString dict = global.settings->value("translation").toString();
     global.settings->endGroup();
-    if (dict.trimmed() == "")
+    if (dict.trimmed() == "") {
         dict = QLocale::system().name();
+    }
 
     int k = language->findText(dict);
     if (k>=0)
         language->setCurrentIndex(k);
-    if (values.size() <=1)
-        language->setVisible(false);
+
+    //if (values.size() <=1)
+    //    language->setVisible(false);
 }
 
 

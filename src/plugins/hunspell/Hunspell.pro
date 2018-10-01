@@ -5,11 +5,11 @@ TEMPLATE = lib
 CONFIG(debug, debug|release) {
     DESTDIR = ../../../qmake-build-debug/hunspellplugin
     BUILD_TYPE = debug
-    message(hunspellplugin: Debug build!)
+    message($$TARGET: Debug build!)
 } else {
     DESTDIR = ../../../qmake-build-release/hunspellplugin
     BUILD_TYPE = release
-    message(hunspellplugin: Release build!)
+    message($$TARGET: Release build!)
 }
 OBJECTS_DIR = $${DESTDIR}
 MOC_DIR = $${DESTDIR}

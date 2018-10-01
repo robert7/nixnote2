@@ -48,4 +48,9 @@ public:
 
 #endif // end of windows check
 
+// name of the plugin used in logs
+#define SPELLCHECKER_PLUGIN "hunspellplugin"
+// library name
+#define SPELLCHECKER_PLUGIN_LIB "libhunspellplugin"
+
 #endif // HUNSPELLPLUGIN_H

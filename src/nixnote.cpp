@@ -65,13 +65,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/filters/filterengine.h"
 #include "src/global.h"
 #include "src/html/enmlformatter.h"
-//#include "src/oauth/oauthwindow.h"
-//#include "src/oauth/oauthtokenizer.h"
 #include "src/dialog/databasestatus.h"
 #include "src/dialog/adduseraccountdialog.h"
 #include "src/dialog/accountmaintenancedialog.h"
 #include "src/communication/communicationmanager.h"
 #include "src/utilities/encrypt.h"
+#include "src/plugins/hunspell/hunspellplugin.h"
 
 // Windows Check
 #ifndef _WIN32
@@ -3596,12 +3595,12 @@ void NixNote::loadPlugins() {
                         HunspellInterface *hunspellInterface;
                         hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
                         if (hunspellInterface != nullptr) {
-                            QLOG_INFO() << "libhunspellplugin check OK";
+                            QLOG_INFO() << SPELLCHECKER_PLUGIN ": check OK";
                             hunspellPluginAvailable = true;
                         }
                         delete hunspellInterface;
                     } else {
-                        QLOG_ERROR() << "libhunspellplugin check FAILED: " << pluginLoader.errorString();
+                        QLOG_ERROR() << SPELLCHECKER_PLUGIN ": check FAILED: " << pluginLoader.errorString();
                     }
                 }
             }

@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLibraryInfo>
 #include "src/logger/qslog.h"
 #include "src/logger/qslogdest.h"
+#include "src/plugins/hunspell/hunspellplugin.h"
 
 //*******************************************
 //* This class is used to find the location
@@ -155,7 +156,7 @@ void FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QS
     QDir spellDirUser;
     spellDirUser.setPath(this->configDir + "spell");
     this->spellDirPathUser = slashTerminatePath(spellDirUser.path());
-    QLOG_DEBUG() << "Spellchecker path: " << spellDirPathUser;
+    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": spell checker path: " << spellDirPathUser;
     createDirOrCheckWriteable(this->spellDirPathUser);
 
     translateDir.setPath(programDataDir + "translations");

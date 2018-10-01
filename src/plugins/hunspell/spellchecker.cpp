@@ -24,8 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLocale>
 #include <QTextStream>
 #include <QDebug>
-
 #include <hunspell.hxx>
+#include <hunspellplugin.h>
 
 SpellChecker::SpellChecker(QObject *parent) :
         QObject(parent) {
@@ -39,8 +39,9 @@ QString SpellChecker::findDictionary(QString file) {
     for (int i = 0; i < dictionaryPath.size(); ++i) {
         const QString dictFile = dictionaryPath[i] + file;
         QFile f(dictFile);
-        if (f.exists())
+        if (f.exists()) {
             return dictFile;
+        }
     }
     return QString();
 }
@@ -57,15 +58,20 @@ bool SpellChecker::setup(QString programDictionary, QString customDictionary, QS
     QString dic = findDictionary(locale + ".dic");
     if (dic.isEmpty() || aff.isEmpty()) {
         error = true;
-        errorMsg = tr("Unable to find dictionaries for locale %1. Is a Hunspell dictionary installed for %2?")
-                .arg(locale).arg(language);
-        qWarning() << errorMsg << "path=" << dictionaryPath;
+        QString msg(SPELLCHECKER_PLUGIN ": unable to find dictionaries for locale %1. Is a Hunspell dictionary installed for %2?");
+        errorMsg = msg.arg(locale).arg(language);
+        qWarning().nospace() << errorMsg << ", path=" << dictionaryPath;
+
         // don't bail out, we now have a language selector in the spellcheck dialog
     }
+    qInfo().nospace() << QStringLiteral(SPELLCHECKER_PLUGIN ": using dictionaries: aff=") << aff << ", dic=" << dic;
+
     hunspell = new Hunspell(aff.toStdString().c_str(), dic.toStdString().c_str());
 
     //Start adding custom words
-    QFile f(customDictionary + "user.lst");
+    QString customDictionaryFile(customDictionary + QStringLiteral("user.lst"));
+    QFile f(customDictionaryFile);
+    qInfo().nospace() << QStringLiteral(SPELLCHECKER_PLUGIN ": user dictionary=") << customDictionaryFile;
     if (f.exists()) {
         f.open(QIODevice::ReadOnly);
         QTextStream in(&f);
@@ -103,7 +109,7 @@ void SpellChecker::addWord(QString dictionary, QString word) {
     hunspell->add(word.toStdString().c_str());
 
     // Append to the end of the user dictionary
-    //Start adding custom words
+    // Start adding custom words
     QFile f(dictionary);
     f.open(QIODevice::Append);
     QTextStream out(&f);
