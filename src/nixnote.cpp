@@ -123,9 +123,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     if (css != "")
         this->setStyleSheet(css);
 
-    // Load any plugins
-    this->loadPlugins();
-
     nixnoteTranslator = new QTranslator();
     QString translation;
     global.settings->beginGroup(INI_GROUP_LOCALE);
@@ -3564,49 +3561,6 @@ void NixNote::presentationModeOff() {
     tabWindow->currentBrowser()->buttonBar->show();
     this->showMaximized();
 }
-
-
-//
-// TODO REFACTOR .. this basically replicated in NBrowserWindow::loadPlugins
-//
-
-// Check to see if plugins are available and they match
-// the correct version expected. Load them if possible.
-void NixNote::loadPlugins() {
-    QStringList dirList;
-    dirList.append(global.fileManager.getLibraryDirPath());
-
-    // Start loading plugins
-    for (int i = 0; i < dirList.size(); i++) {
-        QDir pluginsDir(dirList[i]);
-        QStringList filter;
-        filter.append("libhunspellplugin.so");
-        filter.append("libhunspellplugin.dylib");
-                foreach(QString
-                                fileName, pluginsDir.entryList(filter)) {
-                QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-                QObject *plugin = pluginLoader.instance();
-
-
-                // The Hunspell plugin isn't actually used here. We just use this as a
-                // check to be sure that the menu should be available.
-                if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
-                    if (plugin) {
-                        HunspellInterface *hunspellInterface;
-                        hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                        if (hunspellInterface != nullptr) {
-                            QLOG_INFO() << SPELLCHECKER_PLUGIN ": check OK";
-                            hunspellPluginAvailable = true;
-                        }
-                        delete hunspellInterface;
-                    } else {
-                        QLOG_ERROR() << SPELLCHECKER_PLUGIN ": check FAILED: " << pluginLoader.errorString();
-                    }
-                }
-            }
-    }
-}
-
 
 // Export selected notes as PDF files.
 void NixNote::onExportAsPdf() {

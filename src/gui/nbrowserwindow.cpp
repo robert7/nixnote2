@@ -3606,7 +3606,7 @@ void NBrowserWindow::spellCheckPressed() {
             ), " ")
             .replace(QRegularExpression("\\s+"), " "
             );
-    QLOG_INFO() << "spell plain after: " << plainText;
+    //QLOG_INFO() << "spell plain after: " << plainText;
 
     QStringList words = plainText.split(" ");
     QStringList ignoreWords;
@@ -3900,51 +3900,43 @@ void NBrowserWindow::setEditorStyle() {
     editor->settings()->setUserStyleSheetUrl(url);
 }
 
-// TODO REFACTOR .. this basically replicated in NixNote::loadPlugins
 
 void NBrowserWindow::loadPlugins() {
+    QString pluginPath(global.fileManager.getHunspellPluginPath());
+
     hunspellPluginAvailable = false;
+    if (pluginPath.isEmpty()) {
+        return;
+    }
 
-    QStringList dirList;
-    dirList.append(global.fileManager.getLibraryDirPath());
+    QLOG_INFO() << SPELLCHECKER_PLUGIN ": trying to open library: " << pluginPath;
+    QPluginLoader pluginLoader(pluginPath);
+    QObject *plugin = pluginLoader.instance();
+    QString errMsg;
+    if (plugin) {
+        hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
+        if (hunspellInterface) {
+            global.settings->beginGroup(INI_GROUP_LOCALE);
+            QString dict = global.settings->value("translation").toString();
+            global.settings->endGroup();
 
-    for (int i = 0; i < dirList.size(); i++) {
-        // Start loading plugins
-        QDir pluginsDir(dirList[i]);
-        QStringList filter;
-        filter.append("libhunspellplugin.so");
-        filter.append("libhunspellplugin.dylib");
-                foreach (QString fileName, pluginsDir.entryList(filter)) {
-                QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-                QObject *plugin = pluginLoader.instance();
-                if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
-                    if (plugin) {
-                        hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                        if (hunspellInterface) {
-                            QString errMsg;
+            QString programDictionary(global.fileManager.getProgramDataDir());
+            QString userDictionary(global.fileManager.getSpellDirPathUser());
 
-                            global.settings->beginGroup(INI_GROUP_LOCALE);
-                            QString dict = global.settings->value("translation").toString();
-                            global.settings->endGroup();
+            QLOG_INFO() << SPELLCHECKER_PLUGIN ": trying initialization for locale: " << dict
+                        << ", programDictionary=" << programDictionary
+                        << ", userDictionary=" << userDictionary;
+            hunspellPluginAvailable = hunspellInterface->initialize(programDictionary, userDictionary,
+                                                                    errMsg, dict);
+        }
+    } else {
+        errMsg = pluginLoader.errorString();
+    }
 
-                            QString programDictionary(global.fileManager.getProgramDataDir());
-                            QString userDictionary(global.fileManager.getSpellDirPathUser());
-
-                            QLOG_INFO() << SPELLCHECKER_PLUGIN ": trying initialization for locale: " << dict
-                                        << ", programDictionary=" << programDictionary
-                                        << ", userDictionary=" << userDictionary;
-                            hunspellPluginAvailable = hunspellInterface->initialize(programDictionary, userDictionary,
-                                                                                    errMsg, dict);
-
-                            if (!hunspellPluginAvailable) {
-                                QLOG_ERROR() << SPELLCHECKER_PLUGIN ": initialization FAILED: " << errMsg;
-                            }
-                        }
-                    } else {
-                        QLOG_ERROR() << pluginLoader.errorString();
-                    }
-                }
-            }
+    if (hunspellPluginAvailable) {
+        QLOG_INFO() << SPELLCHECKER_PLUGIN ": initialization OK";
+    } else {
+        QLOG_ERROR() << SPELLCHECKER_PLUGIN ": initialization FAILED: " << errMsg;
     }
 }
 
