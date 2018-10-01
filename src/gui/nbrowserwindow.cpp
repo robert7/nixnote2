@@ -3639,23 +3639,21 @@ void NBrowserWindow::spellCheckPressed() {
 
             if (result == DONE_IGNORE) {
                 continue;
-            }
-            else if (result == DONE_CANCEL) {
+            } else if (result == DONE_CANCEL) {
                 QLOG_DEBUG() << SPELLCHECKER_DLG ": got cancel";
                 break;
-            }
-            else if (result == DONE_IGNOREALL) {
+            } else if (result == DONE_IGNOREALL) {
                 QLOG_DEBUG() << SPELLCHECKER_DLG ": ignore all: " << currentWord;
                 ignoreWords.append(currentWord);
-            }
-            else if (result == DONE_REPLACE) {
-                QString replacement(dialog.replacement);
+            } else if (result == DONE_REPLACE) {
+                QString replacement(dialog.getReplacement());
                 QLOG_DEBUG() << SPELLCHECKER_DLG ": replacing by: " << replacement;
                 QApplication::clipboard()->setText(replacement);
                 pasteButtonPressed();
-            }
-            else if (result == DONE_CHANGELANGUAGE) {
-                i--;
+            } else if (result == DONE_CHANGELANGUAGE) {
+                // let restart the loop
+                i = 0;
+
                 QString newLang;
                 QString errMsg;
                 int idx = dialog.language->currentIndex();
@@ -3663,8 +3661,7 @@ void NBrowserWindow::spellCheckPressed() {
                 QLOG_DEBUG() << SPELLCHECKER_DLG ": switching language to " << newLang;
 
                 hunspellInterface->initialize(programDictionary, userDictionary, errMsg, newLang);
-            }
-            else if (result == DONE_ADDTODICTIONARY) {
+            } else if (result == DONE_ADDTODICTIONARY) {
                 QLOG_DEBUG() << SPELLCHECKER_DLG ": adding word to dictionary: " << currentWord;
                 hunspellInterface->addWord(userDictionary + "user.lst", currentWord);
             } else {
@@ -3678,8 +3675,7 @@ void NBrowserWindow::spellCheckPressed() {
     QKeyEvent key2(QEvent::KeyPress, Qt::Key_End, ctrl);
     editor->keyPressEvent(&key2);
 
-    //QMessageBox::information(this, tr("Spell Check Complete"), tr("Spell Check Complete."), QMessageBox::Ok);
-    global.setMessage(tr("Spell Check Complete"));
+    global.setMessage(tr("Spell check completed"));
 }
 
 

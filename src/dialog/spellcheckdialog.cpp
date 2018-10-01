@@ -133,6 +133,10 @@ void SpellCheckDialog::replacementChosen() {
     replacementWord->setText(suggestions->currentItem()->text());
 }
 
+QString SpellCheckDialog::getReplacement() {
+    return replacementWord->text();
+}
+
 void SpellCheckDialog::loadLanguages() {
     QStringList dictionaryPath = SpellChecker::dictionaryPaths();
 

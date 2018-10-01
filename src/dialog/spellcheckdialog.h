@@ -47,8 +47,8 @@ private:
 public:
     explicit SpellCheckDialog(QWidget *parent = 0);
     QComboBox       *language;
-    QString         replacement;
     void            setState(QString misspelled, QStringList suggestions);
+    QString         getReplacement();
 
 signals:
     
