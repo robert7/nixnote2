@@ -161,6 +161,8 @@ class IndexRunner;
 #define INI_GROUP_DEBUGGING "Debugging"
 #define INI_GROUP_SYNC "Sync"
 #define INI_GROUP_LOCALE "Locale"
+#define INI_VALUE_TRANSLATION "translation"
+
 #define INI_GROUP_SEARCH "Search"
 #define INI_GROUP_THUMBNAIL "Thumbnail"
 

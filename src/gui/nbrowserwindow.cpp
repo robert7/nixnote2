@@ -3575,7 +3575,7 @@ void NBrowserWindow::spellCheckPressed() {
     // Check if we have a plugin for Hunspell loaded. This could have been done at startup, but if this is
     // an external window we could need to load it again.
     if (!hunspellInterface) {
-        this->loadPlugins();
+        this->createSpellChecker();
     }
 
     // If we STILL don't have a plugin then it can't be loaded. Quit out
@@ -3614,8 +3614,6 @@ void NBrowserWindow::spellCheckPressed() {
 
     QLOG_DEBUG() << SPELLCHECKER_DLG ": starting spell check";
     SpellCheckDialog dialog(this);
-    QString userDictionary(global.fileManager.getSpellDirPathUser());
-    QString programDictionary(global.fileManager.getProgramDataDir());
 
     for (int i = 0; i < words.size(); i++) {
         QString currentWord = words[i];
@@ -3654,15 +3652,16 @@ void NBrowserWindow::spellCheckPressed() {
                 // let restart the loop
                 i = 0;
 
-                QString newLang;
-                QString errMsg;
                 int idx = dialog.language->currentIndex();
-                newLang = dialog.language->itemText(idx);
-                QLOG_DEBUG() << SPELLCHECKER_DLG ": switching language to " << newLang;
+                QString newLocale = dialog.language->itemText(idx);
+                QLOG_DEBUG() << SPELLCHECKER_DLG ": switching language to " << newLocale;
 
-                hunspellInterface->initialize(programDictionary, userDictionary, errMsg, newLang);
+
+                initializeSpellCheckerWithLocale(newLocale);
             } else if (result == DONE_ADDTODICTIONARY) {
                 QLOG_DEBUG() << SPELLCHECKER_DLG ": adding word to dictionary: " << currentWord;
+
+                // TODO user dict per locale !!
                 hunspellInterface->addWord(userDictionary + "user.lst", currentWord);
             } else {
                 QLOG_DEBUG() << SPELLCHECKER_DLG ": unrecognised result code: " << result;
@@ -3901,10 +3900,12 @@ void NBrowserWindow::setEditorStyle() {
 }
 
 
-void NBrowserWindow::loadPlugins() {
+void NBrowserWindow::createSpellChecker() {
     QString pluginPath(global.fileManager.getHunspellPluginPath());
 
-    hunspellPluginAvailable = false;
+    // no locale
+    this->currentSpellLocale = QString();
+
     if (pluginPath.isEmpty()) {
         return;
     }
@@ -3912,32 +3913,64 @@ void NBrowserWindow::loadPlugins() {
     QLOG_INFO() << SPELLCHECKER_PLUGIN ": trying to open library: " << pluginPath;
     QPluginLoader pluginLoader(pluginPath);
     QObject *plugin = pluginLoader.instance();
-    QString errMsg;
     if (plugin) {
         hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
         if (hunspellInterface) {
-            global.settings->beginGroup(INI_GROUP_LOCALE);
-            QString dict = global.settings->value("translation").toString();
-            global.settings->endGroup();
+            QString locale = getSpellCheckerLocaleFromSettings();
 
-            QString programDictionary(global.fileManager.getProgramDataDir());
-            QString userDictionary(global.fileManager.getSpellDirPathUser());
-
-            QLOG_INFO() << SPELLCHECKER_PLUGIN ": trying initialization for locale: " << dict
-                        << ", programDictionary=" << programDictionary
-                        << ", userDictionary=" << userDictionary;
-            hunspellPluginAvailable = hunspellInterface->initialize(programDictionary, userDictionary,
-                                                                    errMsg, dict);
+            bool ok = initializeSpellCheckerWithLocale(locale);
+            if (!ok) {
+                QString systemLocale = QLocale::system().name();
+                QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": system locale: " << systemLocale;
+                if (!locale.equals(systemLocale)) {
+                    ok = initializeSpellCheckerWithLocale(systemLocale);
+                    if (ok) {
+                        locale = systemLocale;
+                        saveSpellCheckerLocaleToSettings(locale);
+                    }
+                }
+            }
+            if (ok) {
+                this->currentSpellLocale =locale;
+            }
         }
     } else {
-        errMsg = pluginLoader.errorString();
+        QString errMsg = pluginLoader.errorString();
+        QLOG_ERROR() << SPELLCHECKER_PLUGIN ": initialization FAILED (pluginLoader): " << errMsg;
     }
 
-    if (hunspellPluginAvailable) {
+
+}
+
+bool NBrowserWindow::initializeSpellCheckerWithLocale(QString locale) {
+    QLOG_INFO() << SPELLCHECKER_PLUGIN ": trying initialization for locale: " << locale
+                << ", programDictionary=" << programDictionary
+                << ", userDictionary=" << userDictionary;
+
+    QString errMsg;
+    QString programDictionary(global.fileManager.getProgramDataDir());
+    QString userDictionary(global.fileManager.getSpellDirPathUser());
+
+    book result = hunspellInterface->initialize(programDictionary, userDictionary,
+                                                errMsg, locale);
+    if (result) {
         QLOG_INFO() << SPELLCHECKER_PLUGIN ": initialization OK";
     } else {
+        global.setMessage(tr("Failed to initialize spell checker for ") + locale);
         QLOG_ERROR() << SPELLCHECKER_PLUGIN ": initialization FAILED: " << errMsg;
     }
+    return result;
+}
+
+QString NBrowserWindow::getSpellCheckerLocaleFromSettings() {
+    global.settings->beginGroup(INI_GROUP_LOCALE);
+    QString locale = global.settings->value(INI_VALUE_TRANSLATION).toString();
+    global.settings->endGroup();
+    return locale;
+}
+
+void NBrowserWindow::saveSpellCheckerLocaleToSettings(QString locale) {
+
 }
 
 

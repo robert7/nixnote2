@@ -126,7 +126,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     nixnoteTranslator = new QTranslator();
     QString translation;
     global.settings->beginGroup(INI_GROUP_LOCALE);
-    translation = global.settings->value("translation", QLocale::system().name()).toString();
+    translation = global.settings->value(INI_VALUE_TRANSLATION, QLocale::system().name()).toString();
     global.settings->endGroup();
     translation = global.fileManager.getTranslateFilePath(NN_APP_NAME "_" + translation + ".qm");
     QLOG_DEBUG() << "Looking for translations: " << translation;
@@ -2950,18 +2950,6 @@ void NixNote::openPreferences() {
         }
 
         indexRunner.officeFound = global.synchronizeAttachments();
-
-        //        global.settings->beginGroup(INI_GROUP_LOCALE);
-        //        QString translation;
-        //        translation = global.settings->value("translation", QLocale::system().name()).toString();
-        //        global.settings->endGroup();
-        //        translation = global.fileManager.getTranslateFilePath("nixnote2_" + translation + ".qm");
-        //        QApplication::removeTranslator(nixnoteTranslator);
-        //        QLOG_DEBUG() << "Looking for transaltions: " << translation;
-        //        bool translationResult = nixnoteTranslator->load(translation);
-        //        QLOG_DEBUG() << "Translation loaded:" << translationResult;
-        //        QApplication::instance()->installTranslator(nixnoteTranslator);
-
     }
 }
 

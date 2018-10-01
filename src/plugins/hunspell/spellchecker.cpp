@@ -31,7 +31,7 @@ SpellChecker::SpellChecker(QObject *parent) :
         QObject(parent) {
     dictionaryPath = dictionaryPaths();
 
-    error = false;
+    hunspell = nullptr;
 }
 
 
@@ -49,29 +49,33 @@ QString SpellChecker::findDictionary(QString file) {
 
 bool SpellChecker::setup(QString programDictionary, QString customDictionary, QString language) {
     QString locale = QLocale::system().name();
-    if (!language.isEmpty())
+    if (!language.isEmpty()) {
         locale = language;
+    }
+
     dictionaryPath.prepend(programDictionary);
     dictionaryPath.prepend(customDictionary);
 
     QString aff = findDictionary(locale + ".aff");
     QString dic = findDictionary(locale + ".dic");
     if (dic.isEmpty() || aff.isEmpty()) {
-        error = true;
         QString msg(SPELLCHECKER_PLUGIN ": unable to find dictionaries for locale %1. Is a Hunspell dictionary installed for %2?");
         errorMsg = msg.arg(locale).arg(language);
         qWarning().nospace() << errorMsg << ", path=" << dictionaryPath;
-
-        // don't bail out, we now have a language selector in the spellcheck dialog
+        return false;
     }
     qInfo().nospace() << QStringLiteral(SPELLCHECKER_PLUGIN ": using dictionaries: aff=") << aff << ", dic=" << dic;
 
+    if (hunspell) {
+        delete hunspell;
+    }
     hunspell = new Hunspell(aff.toStdString().c_str(), dic.toStdString().c_str());
 
-    //Start adding custom words
+    // Start adding custom words
     QString customDictionaryFile(customDictionary + QStringLiteral("user.lst"));
     QFile f(customDictionaryFile);
     qInfo().nospace() << QStringLiteral(SPELLCHECKER_PLUGIN ": user dictionary=") << customDictionaryFile;
+
     if (f.exists()) {
         f.open(QIODevice::ReadOnly);
         QTextStream in(&f);
@@ -87,13 +91,14 @@ bool SpellChecker::setup(QString programDictionary, QString customDictionary, QS
 
 bool SpellChecker::spellCheck(QString word, QStringList &suggestions) {
     suggestions.clear();
-    if (Q_UNLIKELY(error)) {
+    if (!hunspell) {
         return false;
     }
     int isValid = hunspell->spell(word.toStdString());
     if (isValid) {
         return true;
     }
+    
     const auto suggested = hunspell->suggest(word.toStdString());
     for_each(suggested.begin(), suggested.end(), [&suggestions](const std::string &suggestion) {
         suggestions << QString::fromStdString(suggestion);
@@ -103,7 +108,7 @@ bool SpellChecker::spellCheck(QString word, QStringList &suggestions) {
 
 
 void SpellChecker::addWord(QString dictionary, QString word) {
-    if (Q_UNLIKELY(error)) {
+    if (!hunspell) {
         return;
     }
     hunspell->add(word.toStdString().c_str());

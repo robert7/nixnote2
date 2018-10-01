@@ -39,7 +39,6 @@ private:
     QStringList dictionaryPath;
     QString findDictionary(QString file);
     Hunspell *hunspell;
-    bool error;
 
 public:
     explicit SpellChecker(QObject *parent = 0);
