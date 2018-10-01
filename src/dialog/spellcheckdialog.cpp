@@ -27,17 +27,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
-SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, QWidget *parent) :
+SpellCheckDialog::SpellCheckDialog(QWidget *parent) :
         QDialog(parent) {
     QFont guiFont(global.getGuiFont(font()));
     QFont guiFontBold = guiFont;
     guiFontBold.setBold(true);
 
-    changeLanguage = false;
-    misspelledWord = misspelled;
     setWindowIcon(global.getIconResource(":spellCheckIcon"));
-    replacePressed = false;
-    cancelPressed = false;
     language = new QComboBox(this);
     QGridLayout *grid = new QGridLayout(this);
     setLayout(grid);
@@ -45,7 +41,6 @@ SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, 
     QGridLayout *buttonGrid = new QGridLayout(this);
 
     currentWord = new QLabel(this);
-    currentWord->setText(misspelledWord);
     currentWord->setFont(guiFontBold);
     replacementWord = new QLineEdit(this);
     this->suggestions = new QListWidget(this);
@@ -87,93 +82,56 @@ SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, 
     buttonGrid->setColumnStretch(3, 10);
     grid->addLayout(buttonGrid, 2, 1);
     this->replace->setEnabled(false);
-    this->suggestions->addItems(suggestions);
     this->setFont(guiFont);
     loadLanguages();
 
     connect(language, SIGNAL(currentIndexChanged(int)), this, SLOT(languageChangeRequested(int)));
 }
 
+void SpellCheckDialog::setState(QString misspelled, QStringList suggestions) {
+    misspelledWord = misspelled;
+    currentWord->setText(misspelledWord);
+
+    this->suggestions->clear();
+    this->suggestions->addItems(suggestions);
+
+    replacementWord->clear();
+}
+
+
 void SpellCheckDialog::cancelButtonPressed() {
-    replacePressed = false;
-    cancelPressed = true;
-    ignorePressed = false;
-    addToDictionaryPressed = false;
-    ignoreAllPressed = false;
-    this->changeLanguage = false;
-    close();
+    done(DONE_CANCEL);
 }
 
 
 void SpellCheckDialog::addToDictionaryButtonPressed() {
-    cancelPressed = false;
-    replacePressed = false;
-    ignorePressed = false;
-    ignoreAllPressed = false;
-    addToDictionaryPressed = true;
-    this->changeLanguage = false;
-    replacement = replacementWord->text();
-    close();
+    done(DONE_CANCEL);
 }
 
 void SpellCheckDialog::replaceButtonPressed() {
-    cancelPressed = false;
-    replacePressed = true;
-    ignorePressed = false;
-    ignoreAllPressed = false;
-    addToDictionaryPressed = false;
-    this->changeLanguage = false;
-    replacement = replacementWord->text();
-    close();
+    done(DONE_REPLACE);
 }
 
 void SpellCheckDialog::ignoreButtonPressed() {
-    cancelPressed = false;
-    replacePressed = false;
-    ignorePressed = true;
-    ignoreAllPressed = false;
-    addToDictionaryPressed = false;
-    this->changeLanguage = false;
-    replacement = replacementWord->text();
-    close();
+    done(DONE_IGNORE);
 }
 
 void SpellCheckDialog::ignoreAllButtonPressed() {
-    cancelPressed = false;
-    replacePressed = false;
-    ignorePressed = false;
-    ignoreAllPressed = true;
-    addToDictionaryPressed = false;
-    this->changeLanguage = false;
-    replacement = replacementWord->text();
-    close();
+    done(DONE_IGNOREALL);
 }
 
 
 void SpellCheckDialog::validateInput() {
-    if (replacementWord->text().trimmed() == "")
-        replace->setEnabled(false);
-    else
+    if (replacementWord->text().trimmed() == "") {
+        replace->setEnabled(false);}
+    else {
         replace->setEnabled(true);
+    }
 }
 
 void SpellCheckDialog::replacementChosen() {
     replacementWord->setText(suggestions->currentItem()->text());
 }
-
-// must be handled differently as close is used internally
-
-// void SpellCheckDialog::closeEvent(QCloseEvent *e) {
-//     replacePressed = false;
-//     cancelPressed = true;
-//     ignorePressed = false;
-//     addToDictionaryPressed = false;
-//     ignoreAllPressed = false;
-//     this->changeLanguage = false;
-//
-//     QDialog::closeEvent(e);
-// }
-
 
 void SpellCheckDialog::loadLanguages() {
     QStringList dictionaryPath = SpellChecker::dictionaryPaths();
@@ -211,11 +169,5 @@ void SpellCheckDialog::loadLanguages() {
 
 
 void SpellCheckDialog::languageChangeRequested(int) {
-    this->changeLanguage = true;
-    cancelPressed = false;
-    replacePressed = false;
-    ignorePressed = false;
-    ignoreAllPressed = true;
-    addToDictionaryPressed = false;
-    close();
+    done(DONE_CHANGELANGUAGE);
 }

@@ -3610,63 +3610,76 @@ void NBrowserWindow::spellCheckPressed() {
 
     QStringList words = plainText.split(" ");
     QStringList ignoreWords;
-    QStringList rwords;
-    bool finished = false;
+    QStringList suggestions;
 
-    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": starting spell check";
+    QLOG_DEBUG() << SPELLCHECKER_DLG ": starting spell check";
+    SpellCheckDialog dialog(this);
+    QString userDictionary(global.fileManager.getSpellDirPathUser());
+    QString programDictionary(global.fileManager.getProgramDataDir());
 
-    for (int i = 0; i < words.size() && !finished; i++) {
+    for (int i = 0; i < words.size(); i++) {
         QString currentWord = words[i];
-        if (currentWord.length() <= 1) {
-            // ignore one letter words
+        bool shouldBeIgnored = (currentWord.length() <= 1) || ignoreWords.contains(currentWord);
+        if (shouldBeIgnored) {
             continue;
         }
+
         // this could be too verbose, eventually switch to trace
-        QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": checking word: " << currentWord;
+        QLOG_DEBUG() << SPELLCHECKER_DLG ": checking word: " << currentWord;
 
         page->findText(currentWord);
-        rwords.clear();
-        if (!hunspellInterface->spellCheck(currentWord, rwords) && !ignoreWords.contains(currentWord)) {
-            SpellCheckDialog dialog(currentWord, rwords, this);
+        suggestions.clear();
+
+        if (!hunspellInterface->spellCheck(currentWord, suggestions)) {
+            dialog.setState(currentWord, suggestions);
+
             dialog.move(0, 0);
-            dialog.exec();
-            if (dialog.cancelPressed) {
-                finished = true;
+            int result = dialog.exec();
+            QLOG_DEBUG() << SPELLCHECKER_DLG ": dialog result: " << result;
+
+            if (result == DONE_IGNORE) {
+                continue;
             }
-            if (dialog.ignoreAllPressed) {
+            else if (result == DONE_CANCEL) {
+                QLOG_DEBUG() << SPELLCHECKER_DLG ": got cancel";
+                break;
+            }
+            else if (result == DONE_IGNOREALL) {
+                QLOG_DEBUG() << SPELLCHECKER_DLG ": ignore all: " << currentWord;
                 ignoreWords.append(currentWord);
             }
-            if (dialog.replacePressed) {
-                QApplication::clipboard()->setText(dialog.replacement);
+            else if (result == DONE_REPLACE) {
+                QString replacement(dialog.replacement);
+                QLOG_DEBUG() << SPELLCHECKER_DLG ": replacing by: " << replacement;
+                QApplication::clipboard()->setText(replacement);
                 pasteButtonPressed();
             }
-            QString userDictionary(global.fileManager.getSpellDirPathUser());
-            if (dialog.changeLanguage) {
-                dialog.changeLanguage = false;
+            else if (result == DONE_CHANGELANGUAGE) {
                 i--;
                 QString newLang;
+                QString errMsg;
                 int idx = dialog.language->currentIndex();
                 newLang = dialog.language->itemText(idx);
-                QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": switching language to " << newLang;
+                QLOG_DEBUG() << SPELLCHECKER_DLG ": switching language to " << newLang;
 
-                QString programDictionary(global.fileManager.getProgramDataDir());
-
-                hunspellInterface->initialize(programDictionary, userDictionary, newLang);
+                hunspellInterface->initialize(programDictionary, userDictionary, errMsg, newLang);
             }
-
-            if (dialog.addToDictionaryPressed) {
-                QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": adding word to dictionary: " << currentWord;
+            else if (result == DONE_ADDTODICTIONARY) {
+                QLOG_DEBUG() << SPELLCHECKER_DLG ": adding word to dictionary: " << currentWord;
                 hunspellInterface->addWord(userDictionary + "user.lst", currentWord);
+            } else {
+                QLOG_DEBUG() << SPELLCHECKER_DLG ": unrecognised result code: " << result;
             }
         }
     }
-    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": finished spell check";
+    QLOG_DEBUG() << SPELLCHECKER_DLG ": finished spell check";
 
     // Go to the end of the document & finish up
     QKeyEvent key2(QEvent::KeyPress, Qt::Key_End, ctrl);
     editor->keyPressEvent(&key2);
 
     //QMessageBox::information(this, tr("Spell Check Complete"), tr("Spell Check Complete."), QMessageBox::Ok);
+    global.setMessage(tr("Spell Check Complete"));
 }
 
 

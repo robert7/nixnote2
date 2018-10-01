@@ -45,18 +45,10 @@ private:
 
 
 public:
-    explicit SpellCheckDialog(QString misspelled, QStringList suggestions, QWidget *parent = 0);
+    explicit SpellCheckDialog(QWidget *parent = 0);
     QComboBox       *language;
-    bool            replacePressed;
-    bool            cancelPressed;
-    bool            ignorePressed;
-    bool            ignoreAllPressed;
-    bool            addToDictionaryPressed;
-    bool            changeLanguage;
     QString         replacement;
-
-protected:
-   //void closeEvent(QCloseEvent *) override;
+    void            setState(QString misspelled, QStringList suggestions);
 
 signals:
     
@@ -70,5 +62,19 @@ public slots:
     void cancelButtonPressed();
     void languageChangeRequested(int);
 };
+
+
+// 0
+#define DONE_CANCEL QDialog::Rejected
+// 1
+#define DONE_IGNORE QDialog::Accepted
+
+#define DONE_REPLACE             2
+#define DONE_IGNOREALL           3
+#define DONE_CHANGELANGUAGE      4
+#define DONE_ADDTODICTIONARY     5
+
+// dialog name for logs
+#define SPELLCHECKER_DLG "spellcheck dialog"
 
 #endif // SPELLCHECKDIALOG_H

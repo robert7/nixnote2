@@ -32,7 +32,7 @@ bool HunspellPlugin::initialize(QString programDictionary, QString userDictionar
     checker = new SpellChecker();
     qInfo().nospace() << SPELLCHECKER_PLUGIN ": setting up SpellChecker: " << checker << " with programDictionary="
                       << programDictionary
-                      << " and userDictionary=" << userDictionary << " for language" << language;
+                      << " and userDictionary=" << userDictionary << " for language=" << language;
     bool result = checker->setup(programDictionary, userDictionary, language);
     if (!result) {
         errMsg = QStringLiteral(
