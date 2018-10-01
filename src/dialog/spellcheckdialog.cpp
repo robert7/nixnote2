@@ -28,8 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, QWidget *parent) :
-    QDialog(parent)
-{
+        QDialog(parent) {
     changeLanguage = false;
     misspelledWord = misspelled;
     setWindowIcon(global.getIconResource(":spellCheckIcon"));
@@ -49,13 +48,13 @@ SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, 
     connect(replacementWord, SIGNAL(textChanged(QString)), this, SLOT(validateInput()));
     connect(this->suggestions, SIGNAL(itemSelectionChanged()), this, SLOT(replacementChosen()));
 
-    suggestionGrid->addWidget(currentWord, 1,1);
-    suggestionGrid->addWidget(new QLabel(tr("Suggestion"), this), 2,1);
-    suggestionGrid->addWidget(replacementWord, 3,1);
-    suggestionGrid->addWidget(this->suggestions, 4,1);
-    suggestionGrid->addWidget(language,5,1);
-    suggestionGrid->setContentsMargins(10,10,-10,-10);
-    grid->addLayout(suggestionGrid,1,1);
+    suggestionGrid->addWidget(currentWord, 1, 1);
+    suggestionGrid->addWidget(new QLabel(tr("Suggestion"), this), 2, 1);
+    suggestionGrid->addWidget(replacementWord, 3, 1);
+    suggestionGrid->addWidget(this->suggestions, 4, 1);
+    suggestionGrid->addWidget(language, 5, 1);
+    suggestionGrid->setContentsMargins(10, 10, -10, -10);
+    grid->addLayout(suggestionGrid, 1, 1);
 
     replace = new QPushButton(tr("Replace"));
     ignore = new QPushButton(tr("Ignore"));
@@ -70,18 +69,18 @@ SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, 
     QPushButton *cancelButton = new QPushButton(tr("Cancel"), this);
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelButtonPressed()));
 
-    suggestionGrid->addWidget(replace, 1,2);
-    suggestionGrid->addWidget(ignore, 2,2);
-    suggestionGrid->addWidget(ignoreAll, 3,2);
-    suggestionGrid->addWidget(addToDictionary, 4,2);
+    suggestionGrid->addWidget(replace, 1, 2);
+    suggestionGrid->addWidget(ignore, 2, 2);
+    suggestionGrid->addWidget(ignoreAll, 3, 2);
+    suggestionGrid->addWidget(addToDictionary, 4, 2);
     suggestionGrid->setAlignment(Qt::AlignTop);
 
-    buttonGrid->addWidget(new QLabel(this), 1,1);
-    buttonGrid->addWidget(cancelButton, 1,2);
-    buttonGrid->addWidget(new QLabel(this),1,3);
+    buttonGrid->addWidget(new QLabel(this), 1, 1);
+    buttonGrid->addWidget(cancelButton, 1, 2);
+    buttonGrid->addWidget(new QLabel(this), 1, 3);
     buttonGrid->setColumnStretch(1, 10);
-    buttonGrid->setColumnStretch(3,10);
-    grid->addLayout(buttonGrid, 2,1);
+    buttonGrid->setColumnStretch(3, 10);
+    grid->addLayout(buttonGrid, 2, 1);
     this->replace->setEnabled(false);
     this->suggestions->addItems(suggestions);
     this->setFont(global.getGuiFont(font()));
@@ -173,17 +172,17 @@ void SpellCheckDialog::loadLanguages() {
 
     QStringList values;
     // Start loading available language dictionaries
-    for (int i=0; i<dictionaryPath.size(); i++) {
+    for (int i = 0; i < dictionaryPath.size(); i++) {
         QDir spellDir(dictionaryPath[i]);
         QStringList filter;
         filter.append("*.aff");
         filter.append("*.dic");
-        foreach (QString fileName, spellDir.entryList(filter)) {
-           QString lang = fileName;
-           lang.chop(4);
-           if (!values.contains(lang))
-               values.append(lang);
-        }
+                foreach (QString fileName, spellDir.entryList(filter)) {
+                QString lang = fileName;
+                lang.chop(4);
+                if (!values.contains(lang))
+                    values.append(lang);
+            }
     }
     language->addItems(values);
     global.settings->beginGroup(INI_GROUP_LOCALE);
@@ -194,13 +193,13 @@ void SpellCheckDialog::loadLanguages() {
     }
 
     int k = language->findText(dict);
-    if (k>=0)
+    if (k >= 0)
         language->setCurrentIndex(k);
 
+    // for now let the combo shown, even if there is only one entry
     //if (values.size() <=1)
     //    language->setVisible(false);
 }
-
 
 
 void SpellCheckDialog::languageChangeRequested(int) {

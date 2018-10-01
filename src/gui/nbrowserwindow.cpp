@@ -88,7 +88,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 NBrowserWindow::NBrowserWindow(QWidget *parent) :
-    QWidget(parent) {
+        QWidget(parent) {
     // Setup a unique identifier for this editor instance.
     QUuid uuid;
     this->uuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
@@ -823,10 +823,10 @@ void NBrowserWindow::saveNoteContent() {
         formatter.rebuildNoteEnml();
         if (formatter.isFormattingError()) {
             QMessageBox::information(
-                this,
-                tr("Unable to reformat"),
-                QString(
-                    tr(NN_APP_DISPLAY_NAME_GUI " was unable to reformat the note in ENML. Note could not be saved."))
+                    this,
+                    tr("Unable to reformat"),
+                    QString(
+                            tr(NN_APP_DISPLAY_NAME_GUI " was unable to reformat the note in ENML. Note could not be saved."))
             );
             return;
         }
@@ -858,7 +858,7 @@ void NBrowserWindow::saveNoteContent() {
             NoteTable table(global.db);
             table.updateNoteContent(lid, formatter.getContent());
         } else
-            emit requestNoteContentUpdate(lid, formatter.getContent(), true);
+                emit requestNoteContentUpdate(lid, formatter.getContent(), true);
         editor->isDirty = false;
 
         if (thumbnailer == nullptr)
@@ -1105,7 +1105,7 @@ void NBrowserWindow::pasteWithoutFormatButtonPressed() {
                      + QString("           workingNode = workingNode.parentNode;")
                      + QString("   } ")
                      + QString(
-            "   workingNode.innerHTML = window.browserWindow.fixEncryptionPaste(workingNode.innerHTML);")
+                "   workingNode.innerHTML = window.browserWindow.fixEncryptionPaste(workingNode.innerHTML);")
                      + QString("} fixEncryption();");
         editor->page()->mainFrame()->evaluateJavaScript(js);
     }
@@ -1165,8 +1165,7 @@ void NBrowserWindow::removeFormatButtonPressed() {
 
 
 // TODO add enum
-void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode)
-{
+void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
     QLOG_DEBUG() << "html cleanup, mode " << mode;
     QWebElement rootElement = editor->editorPage->mainFrame()->documentElement();
     QString contents = rootElement.toOuterXml();
@@ -1199,8 +1198,7 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode)
             contents.replace(HTML_COMMENT_START, "");
             contents.replace(HTML_COMMENT_END, "");
         }
-    }
-    else {
+    } else {
         formatter.tidyHtml(mode);
         contents = formatter.getContent();
     };
@@ -1208,9 +1206,9 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode)
 
     if (formatter.isFormattingError()) {
         QMessageBox::information(
-            this,
-            tr("Unable to reformat"),
-            QString(tr("HTML cleanup failed."))
+                this,
+                tr("Unable to reformat"),
+                QString(tr("HTML cleanup failed."))
         );
         return;
     }
@@ -1258,7 +1256,7 @@ void NBrowserWindow::strikethroughButtonPressed() {
 // The horizontal line button was pressed
 void NBrowserWindow::horizontalLineButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('insertHorizontalRule', false, '');");
+            "document.execCommand('insertHorizontalRule', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1267,7 +1265,7 @@ void NBrowserWindow::horizontalLineButtonPressed() {
 // The center align button was pressed
 void NBrowserWindow::alignCenterButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('JustifyCenter', false, '');");
+            "document.execCommand('JustifyCenter', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1282,7 +1280,7 @@ void NBrowserWindow::formatCodeButtonPressed() {
     QString buffer;
     //    buffer.append("<pre style=\"font-family: Monaco, Menlo, Consolas, 'Courier New', monospace; font-size: 0.9em; border-radius: 4px; letter-spacing: 0.015em; padding: 1em; border: 1px solid #cccccc; background-color: #f8f8f8; overflow-x: auto;\">");
     buffer.append(
-        "<br/><pre style=\"font-family: Monaco, Menlo, Consolas, Courier New, monospace; font-size: 0.9em; border-radius: 4px; letter-spacing: 0.015em; padding: 1em; border: 1px solid #cccccc; background-color: #f8f8f8; overflow-x: auto;\">");
+            "<br/><pre style=\"font-family: Monaco, Menlo, Consolas, Courier New, monospace; font-size: 0.9em; border-radius: 4px; letter-spacing: 0.015em; padding: 1em; border: 1px solid #cccccc; background-color: #f8f8f8; overflow-x: auto;\">");
     buffer.append(text);
     buffer.append("</pre><br/>");
     QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(buffer);
@@ -1301,7 +1299,7 @@ void NBrowserWindow::syncButtonPressed() {
 // The full align button was pressed
 void NBrowserWindow::alignFullButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('JustifyFull', false, '');");
+            "document.execCommand('JustifyFull', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1310,7 +1308,7 @@ void NBrowserWindow::alignFullButtonPressed() {
 // The left align button was pressed
 void NBrowserWindow::alignLeftButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('JustifyLeft', false, '');");
+            "document.execCommand('JustifyLeft', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1319,7 +1317,7 @@ void NBrowserWindow::alignLeftButtonPressed() {
 // The align right button was pressed
 void NBrowserWindow::alignRightButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('JustifyRight', false, '');");
+            "document.execCommand('JustifyRight', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1328,7 +1326,7 @@ void NBrowserWindow::alignRightButtonPressed() {
 // The shift right button was pressed
 void NBrowserWindow::shiftRightButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('indent', false, '');");
+            "document.execCommand('indent', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1337,7 +1335,7 @@ void NBrowserWindow::shiftRightButtonPressed() {
 // The shift left button was pressed
 void NBrowserWindow::shiftLeftButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('outdent', false, '');");
+            "document.execCommand('outdent', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1346,7 +1344,7 @@ void NBrowserWindow::shiftLeftButtonPressed() {
 // The number list button was pressed
 void NBrowserWindow::numberListButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('InsertOrderedList', false, '');");
+            "document.execCommand('InsertOrderedList', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1355,7 +1353,7 @@ void NBrowserWindow::numberListButtonPressed() {
 // The bullet list button was pressed
 void NBrowserWindow::bulletListButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('InsertUnorderedList', false, '');");
+            "document.execCommand('InsertUnorderedList', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1374,10 +1372,10 @@ void NBrowserWindow::todoButtonPressed() {
     QString script_start = "document.execCommand('insertHtml', false, '";
     QString script_end = "');";
     QString todo =
-        "<input TYPE=\"CHECKBOX\" " +
-        QString("onMouseOver=\"style.cursor=\\'hand\\'\" ") +
-        QString(
-            "onClick=\"if(!checked) removeAttribute(\\'checked\\'); else setAttribute(\\'checked\\', \\'checked\\'); editorWindow.editAlert();\" />");
+            "<input TYPE=\"CHECKBOX\" " +
+            QString("onMouseOver=\"style.cursor=\\'hand\\'\" ") +
+            QString(
+                    "onClick=\"if(!checked) removeAttribute(\\'checked\\'); else setAttribute(\\'checked\\', \\'checked\\'); editorWindow.editAlert();\" />");
 
     QString selectedText = editor->selectedText().trimmed();
     QRegExp regex("\\r?\\n");
@@ -1389,7 +1387,7 @@ void NBrowserWindow::todoButtonPressed() {
         if (i == items.size() - 1)
             newLineChar = "";
         editor->page()->mainFrame()->evaluateJavaScript(
-            script_start + todo + items[i] + newLineChar + script_end);
+                script_start + todo + items[i] + newLineChar + script_end);
     }
     editor->setFocus();
     microFocusChanged();
@@ -1436,7 +1434,7 @@ void NBrowserWindow::fontSizeSelected(int index) {
     QString font = buttonBar->fontNames->itemText(idx);
 
     QString newText =
-        "<span style=\"font-size: " + QString::number(size) + "pt; font-family:" + font + ";\">" + text + "</span>";
+            "<span style=\"font-size: " + QString::number(size) + "pt; font-family:" + font + ";\">" + text + "</span>";
     QString script = QString("document.execCommand('insertHtml', false, '" + newText + "');");
     editor->page()->mainFrame()->evaluateJavaScript(script);
 
@@ -1459,7 +1457,7 @@ void NBrowserWindow::fontNameSelected(int index) {
     buttonBar->loadFontSizeComboBox(font);
     buttonBar->fontSizes->blockSignals(false);
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('fontName', false, '" + font + "');");
+            "document.execCommand('fontName', false, '" + font + "');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1471,7 +1469,7 @@ void NBrowserWindow::fontColorClicked() {
     QLOG_DEBUG() << "Setting text color to: " << buttonBar->fontColorMenuWidget->getCurrentColorName();
     if (color->isValid()) {
         this->editor->page()->mainFrame()->evaluateJavaScript(
-            "document.execCommand('foreColor', false, '" + color->name() + "');");
+                "document.execCommand('foreColor', false, '" + color->name() + "');");
         editor->setFocus();
         microFocusChanged();
         buttonBar->saveButtonbarState();
@@ -1486,7 +1484,7 @@ void NBrowserWindow::fontHighlightClicked() {
     QLOG_DEBUG() << "Setting text background color to: " << buttonBar->highlightColorMenuWidget->getCurrentColorName();
     if (color->isValid()) {
         this->editor->page()->mainFrame()->evaluateJavaScript(
-            "document.execCommand('backColor', false, '" + color->name() + "');");
+                "document.execCommand('backColor', false, '" + color->name() + "');");
         editor->setFocus();
         microFocusChanged();
         buttonBar->saveButtonbarState();
@@ -2003,7 +2001,7 @@ void NBrowserWindow::microFocusChanged() {
                  //+QString("      window.browserWindow.printNodeName(workingNode.nodeName);")
                  + QString("      if (workingNode.nodeName=='TABLE') {")
                  + QString(
-        "          if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea();")
+            "          if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea();")
                  + QString("      }")
                  + QString("      if (workingNode.nodeName=='PRE') window.browserWindow.setInsidePre();")
                  + QString("      if (workingNode.nodeName=='B') window.browserWindow.boldActive();")
@@ -2022,7 +2020,7 @@ void NBrowserWindow::microFocusChanged() {
                  + QString("      }")
                  + QString("      if (workingNode.nodeName=='SPAN') {")
                  + QString(
-        "         if (workingNode.getAttribute('style') == 'text-decoration: underline;') window.browserWindow.underlineActive();")
+            "         if (workingNode.getAttribute('style') == 'text-decoration: underline;') window.browserWindow.underlineActive();")
                  + QString("      }")
                  + QString("      workingNode = workingNode.parentNode;")
                  + QString("   }")
@@ -2212,7 +2210,7 @@ void NBrowserWindow::linkClicked(const QUrl url) {
         bool newTab = false;
         if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
             //if (global.getMiddleClickAction() == MOUSE_MIDDLE_CLICK_NEW_WINDOW)
-                newExternalWindow = true;
+            newExternalWindow = true;
             //else
             //    newTab = true;
         } else {
@@ -2231,7 +2229,7 @@ void NBrowserWindow::linkClicked(const QUrl url) {
     if (url.toString().startsWith("nnres:", Qt::CaseInsensitive)) {
         if (url.toString().endsWith("/vnd.evernote.ink")) {
             QMessageBox::information(this, tr("Unable Open"), QString(
-                tr("This is an ink note.\nInk notes are not supported since Evernote has not\n published any specifications on them\nand I'm too lazy to figure them out by myself.")));
+                    tr("This is an ink note.\nInk notes are not supported since Evernote has not\n published any specifications on them\nand I'm too lazy to figure them out by myself.")));
             return;
         }
         QString filepath = global.fileManager.getDbaDirPath();
@@ -2545,7 +2543,7 @@ void NBrowserWindow::editLatex(QString guid) {
         QString script_end = "');";
 
         editor->page()->mainFrame()->evaluateJavaScript(
-            script_start + buffer + script_end);
+                script_start + buffer + script_end);
     } else {
         QString oldHtml = editor->page()->mainFrame()->toHtml();
         int startPos = oldHtml.indexOf("<a");
@@ -2654,7 +2652,7 @@ void NBrowserWindow::insertImage(const QMimeData *mime) {
 
     // Insert the actual note
     editor->page()->mainFrame()->evaluateJavaScript(
-        script_start + buffer + script_end);
+            script_start + buffer + script_end);
 
     return;
 }
@@ -2968,7 +2966,7 @@ void NBrowserWindow::printNote() {
 
     global.settings->beginGroup(INI_GROUP_PRINTER);
     QPrinter::Orientation orientation = static_cast<QPrinter::Orientation>(global.settings->value(
-        "orientation").toUInt());
+            "orientation").toUInt());
     QString name = global.settings->value("printerName", "").toString();
     QPrinter::OutputFormat format = static_cast<QPrinter::OutputFormat>(global.settings->value("outputFormat",
                                                                                                0).toUInt());
@@ -3189,7 +3187,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
         // Insert the actual image
         editor->page()->mainFrame()->evaluateJavaScript(
-            script_start + buffer + script_end);
+                script_start + buffer + script_end);
         return;
     }
 
@@ -3212,7 +3210,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
         // Insert the actual image
         editor->page()->mainFrame()->evaluateJavaScript(
-            script_start + buffer + script_end);
+                script_start + buffer + script_end);
     }
 
     // If we have something other than an image or PDF
@@ -3244,7 +3242,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
     // Insert the actual attachment
     editor->page()->mainFrame()->evaluateJavaScript(
-        script_start + buffer + script_end);
+            script_start + buffer + script_end);
 }
 
 
@@ -3472,7 +3470,7 @@ void NBrowserWindow::encryptButtonPressed() {
     QString script_start = "document.execCommand('insertHtml', false, '";
     QString script_end = "');";
     editor->page()->mainFrame()->evaluateJavaScript(
-        script_start + buffer + script_end);
+            script_start + buffer + script_end);
 }
 
 
@@ -3597,7 +3595,11 @@ void NBrowserWindow::spellCheckPressed() {
     editor->keyPressEvent(&key);
     page->mainFrame()->setFocus();
 
-    QStringList words = page->mainFrame()->toPlainText().split(" ");
+    QString plainText(page->mainFrame()->toPlainText());
+    QRegularExpression reInput("[.!?\\-]");
+    plainText = plainText.replace(reInput, " ");
+
+    QStringList words = plainText.split(" ");
     QStringList ignoreWords;
     QStringList rwords;
     bool finished = false;
@@ -3644,7 +3646,7 @@ void NBrowserWindow::spellCheckPressed() {
     QKeyEvent key2(QEvent::KeyPress, Qt::Key_End, ctrl);
     editor->keyPressEvent(&key2);
 
-    QMessageBox::information(this, tr("Spell Check Complete"), tr("Spell Check Complete."), QMessageBox::Ok);
+    //QMessageBox::information(this, tr("Spell Check Complete"), tr("Spell Check Complete."), QMessageBox::Ok);
 }
 
 
@@ -3883,7 +3885,7 @@ void NBrowserWindow::loadPlugins() {
         QStringList filter;
         filter.append("libhunspellplugin.so");
         filter.append("libhunspellplugin.dylib");
-            foreach (QString fileName, pluginsDir.entryList(filter)) {
+                foreach (QString fileName, pluginsDir.entryList(filter)) {
                 QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
                 QObject *plugin = pluginLoader.instance();
                 if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
