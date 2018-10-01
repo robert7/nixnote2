@@ -28,14 +28,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <hunspell.hxx>
 
 SpellChecker::SpellChecker(QObject *parent) :
-    QObject(parent)
-{
+        QObject(parent) {
     dictionaryPath = dictionaryPaths();
 
     error = false;
 }
-
-
 
 
 QString SpellChecker::findDictionary(QString file) {
@@ -49,7 +46,6 @@ QString SpellChecker::findDictionary(QString file) {
 }
 
 
-
 bool SpellChecker::setup(QString programDictionary, QString customDictionary, QString language) {
     QString locale = QLocale::system().name();
     if (!language.isEmpty())
@@ -57,23 +53,23 @@ bool SpellChecker::setup(QString programDictionary, QString customDictionary, QS
     dictionaryPath.prepend(programDictionary);
     dictionaryPath.prepend(customDictionary);
 
-    QString aff = findDictionary(locale+".aff");
-    QString dic = findDictionary(locale+".dic");
+    QString aff = findDictionary(locale + ".aff");
+    QString dic = findDictionary(locale + ".dic");
     if (dic.isEmpty() || aff.isEmpty()) {
         error = true;
         errorMsg = tr("Unable to find dictionaries for locale %1. Is a Hunspell dictionary installed for %2?")
-            .arg(locale).arg(language);
+                .arg(locale).arg(language);
         qWarning() << errorMsg << "path=" << dictionaryPath;
         // don't bail out, we now have a language selector in the spellcheck dialog
     }
     hunspell = new Hunspell(aff.toStdString().c_str(), dic.toStdString().c_str());
 
     //Start adding custom words
-    QFile f(customDictionary+"user.lst");
+    QFile f(customDictionary + "user.lst");
     if (f.exists()) {
         f.open(QIODevice::ReadOnly);
         QTextStream in(&f);
-        while ( !in.atEnd() ) {
+        while (!in.atEnd()) {
             QString line = in.readLine();
             hunspell->add(line.toStdString().c_str());
         }
@@ -93,8 +89,9 @@ bool SpellChecker::spellCheck(QString word, QStringList &suggestions) {
         return true;
     }
     const auto suggested = hunspell->suggest(word.toStdString());
-    for_each (suggested.begin(), suggested.end(), [&suggestions](const std::string &suggestion) {
-            suggestions << QString::fromStdString(suggestion); });
+    for_each(suggested.begin(), suggested.end(), [&suggestions](const std::string &suggestion) {
+        suggestions << QString::fromStdString(suggestion);
+    });
     return false;
 }
 
