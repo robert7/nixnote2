@@ -575,7 +575,7 @@ void EditorButtonBar::getButtonbarState() {
     highlightColorAction->setVisible(global.settings->value("highlightButtonVisible", true).toBool());
     highlightVisible->setChecked(highlightColorAction->isVisible());
 
-    spellCheckButtonAction->setVisible(global.settings->value("spelLCheckButtonVisible", false).toBool());
+    spellCheckButtonAction->setVisible(global.settings->value("spellCheckButtonVisible", true).toBool());
     spellCheckButtonVisible->setChecked(spellCheckButtonAction->isVisible());
 
     htmlEntitiesButtonAction->setVisible(global.settings->value("htmlEntitiesButtonVisible", false).toBool());
