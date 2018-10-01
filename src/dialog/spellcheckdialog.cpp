@@ -29,6 +29,10 @@ extern Global global;
 
 SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, QWidget *parent) :
         QDialog(parent) {
+    QFont guiFont(global.getGuiFont(font()));
+    QFont guiFontBold = guiFont;
+    guiFontBold.setBold(true);
+
     changeLanguage = false;
     misspelledWord = misspelled;
     setWindowIcon(global.getIconResource(":spellCheckIcon"));
@@ -42,6 +46,7 @@ SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, 
 
     currentWord = new QLabel(this);
     currentWord->setText(misspelledWord);
+    currentWord->setFont(guiFontBold);
     replacementWord = new QLineEdit(this);
     this->suggestions = new QListWidget(this);
 
@@ -83,7 +88,7 @@ SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, 
     grid->addLayout(buttonGrid, 2, 1);
     this->replace->setEnabled(false);
     this->suggestions->addItems(suggestions);
-    this->setFont(global.getGuiFont(font()));
+    this->setFont(guiFont);
     loadLanguages();
 
     connect(language, SIGNAL(currentIndexChanged(int)), this, SLOT(languageChangeRequested(int)));
@@ -156,15 +161,18 @@ void SpellCheckDialog::replacementChosen() {
     replacementWord->setText(suggestions->currentItem()->text());
 }
 
+// must be handled differently as close is used internally
 
-//void SpellCheckDialog::closeEvent(QCloseEvent *e) {
-//    replacePressed = false;
-//    cancelPressed = true;
-//    ignorePressed = false;
-//    ignoreAllPressed = false;
-//    QDialog::closeEvent(e);
-//}
-
+// void SpellCheckDialog::closeEvent(QCloseEvent *e) {
+//     replacePressed = false;
+//     cancelPressed = true;
+//     ignorePressed = false;
+//     addToDictionaryPressed = false;
+//     ignoreAllPressed = false;
+//     this->changeLanguage = false;
+//
+//     QDialog::closeEvent(e);
+// }
 
 
 void SpellCheckDialog::loadLanguages() {

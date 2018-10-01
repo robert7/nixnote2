@@ -3596,30 +3596,46 @@ void NBrowserWindow::spellCheckPressed() {
     page->mainFrame()->setFocus();
 
     QString plainText(page->mainFrame()->toPlainText());
-    QRegularExpression reInput("[.!?\\-]");
-    plainText = plainText.replace(reInput, " ");
+    //QLOG_INFO() << "spell plain before: " << plainText;
+    plainText = plainText
+            .replace(QRegularExpression("\\s"), " ")
+            .replace(QRegularExpression("\\s-"), " ")
+            .replace(QRegularExpression("-\\s"), " ")
+            .replace(QRegularExpression(
+                    "[" + QRegularExpression::escape("/*\\;:()[]{}~#`§^′_$%&=\",.!?+") + "]"
+            ), " ")
+            .replace(QRegularExpression("\\s+"), " "
+            );
+    QLOG_INFO() << "spell plain after: " << plainText;
 
     QStringList words = plainText.split(" ");
     QStringList ignoreWords;
     QStringList rwords;
     bool finished = false;
 
-    global.settings->beginGroup(INI_GROUP_LOCALE);
-    QString dict = global.settings->value("translation").toString();
-    global.settings->endGroup();
+    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": starting spell check";
 
     for (int i = 0; i < words.size() && !finished; i++) {
         QString currentWord = words[i];
+        if (currentWord.length() <= 1) {
+            // ignore one letter words
+            continue;
+        }
+        // this could be too verbose, eventually switch to trace
+        QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": checking word: " << currentWord;
+
         page->findText(currentWord);
         rwords.clear();
         if (!hunspellInterface->spellCheck(currentWord, rwords) && !ignoreWords.contains(currentWord)) {
             SpellCheckDialog dialog(currentWord, rwords, this);
             dialog.move(0, 0);
             dialog.exec();
-            if (dialog.cancelPressed)
+            if (dialog.cancelPressed) {
                 finished = true;
-            if (dialog.ignoreAllPressed)
+            }
+            if (dialog.ignoreAllPressed) {
                 ignoreWords.append(currentWord);
+            }
             if (dialog.replacePressed) {
                 QApplication::clipboard()->setText(dialog.replacement);
                 pasteButtonPressed();
@@ -3631,16 +3647,20 @@ void NBrowserWindow::spellCheckPressed() {
                 QString newLang;
                 int idx = dialog.language->currentIndex();
                 newLang = dialog.language->itemText(idx);
+                QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": switching language to " << newLang;
 
                 QString programDictionary(global.fileManager.getProgramDataDir());
 
                 hunspellInterface->initialize(programDictionary, userDictionary, newLang);
             }
+
             if (dialog.addToDictionaryPressed) {
+                QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": adding word to dictionary: " << currentWord;
                 hunspellInterface->addWord(userDictionary + "user.lst", currentWord);
             }
         }
     }
+    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": finished spell check";
 
     // Go to the end of the document & finish up
     QKeyEvent key2(QEvent::KeyPress, Qt::Key_End, ctrl);

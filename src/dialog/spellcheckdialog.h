@@ -56,7 +56,7 @@ public:
     QString         replacement;
 
 protected:
-   //void closeEvent(QCloseEvent *e);
+   //void closeEvent(QCloseEvent *) override;
 
 signals:
     
