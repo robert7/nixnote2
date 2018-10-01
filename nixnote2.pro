@@ -27,11 +27,11 @@ UI_DIR = .
 CONFIG(debug, debug|release) {
     DESTDIR = qmake-build-debug
     BUILD_TYPE = debug
-    message(Debug build!)
+    message($$TARGET: Debug build!)
 } else {
     DESTDIR = qmake-build-release
     BUILD_TYPE = release
-    message(Release build!)
+    message($$TARGET: Release build!)
 }
 OBJECTS_DIR = $${DESTDIR}
 MOC_DIR = $${DESTDIR}
@@ -515,9 +515,9 @@ textfiles.CONFIG = no_check_exist
 docs.path = $${PREFIX}/share/doc/$$TARGET
 docs.files = $$PWD/debian/copyright $$PWD/debian/changelog $$PWD/README.md $$PWD/docs/shortcuts-howto.md $$PWD/docs/license.html
 
-VERSION_FILES = .
+VERSION_FILES = debian/changelog
 fullversion.input = VERSION_FILES
-fullversion.output  = $${DESTDIR}
+fullversion.output  = $${DESTDIR}/version/build-version.txt
 fullversion.commands = ./development/create-build-version.sh $${DESTDIR}
 fullversion.CONFIG += no_link no_check_exist
 QMAKE_EXTRA_COMPILERS += fullversion
