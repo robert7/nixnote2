@@ -2274,7 +2274,7 @@ Unable to decrypt.</source>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3630"/>
-        <source>Spell Check Complete</source>
+        <source>Spell check completed</source>
         <translation>Проверка орфографии завершена</translation>
     </message>
     <message>
@@ -2290,7 +2290,7 @@ Unable to decrypt.</source>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3630"/>
-        <source>Spell Check Complete.</source>
+        <source>Spell check completed.</source>
         <translation>Проверка орфографии завершена.</translation>
     </message>
 </context>

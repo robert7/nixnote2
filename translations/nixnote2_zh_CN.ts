@@ -2291,12 +2291,12 @@ Unable to decrypt.</source>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3630"/>
-        <source>Spell Check Complete</source>
+        <source>Spell check completed</source>
         <translation>拼写检查完成</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3630"/>
-        <source>Spell Check Complete.</source>
+        <source>Spell check completed.</source>
         <translation>拼写检查完成。</translation>
     </message>
 </context>
