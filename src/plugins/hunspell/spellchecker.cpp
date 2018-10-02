@@ -27,6 +27,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <hunspell.hxx>
 #include <hunspellplugin.h>
 
+#define P_QLOG_DEBUG qDebug().nospace
+#define P_QLOG_INFO qInfo().nospace
+#define P_QLOG_WARN qWarn().nospace
+
+
 SpellChecker::SpellChecker(QObject *parent) :
         QObject(parent) {
     dictionaryPath = dictionaryPaths();
@@ -47,24 +52,25 @@ QString SpellChecker::findDictionary(QString file) {
 }
 
 
-bool SpellChecker::setup(QString programDictionary, QString customDictionary, QString language) {
-    QString locale = QLocale::system().name();
-    if (!language.isEmpty()) {
-        locale = language;
+bool SpellChecker::setup(QString customDictionaryPath, QString locale) {
+    if (locale.isEmpty()) {
+        locale = QLocale::system().name();
     }
 
-    dictionaryPath.prepend(programDictionary);
-    dictionaryPath.prepend(customDictionary);
+    dictionaryPath.prepend(customDictionaryPath);
+    this->customDictionaryPath = customDictionaryPath;
+    this->locale = locale;
 
     QString aff = findDictionary(locale + ".aff");
     QString dic = findDictionary(locale + ".dic");
+
     if (dic.isEmpty() || aff.isEmpty()) {
-        QString msg(SPELLCHECKER_PLUGIN ": unable to find dictionaries for locale %1. Is a Hunspell dictionary installed for %2?");
-        errorMsg = msg.arg(locale).arg(language);
-        qWarning().nospace() << errorMsg << ", path=" << dictionaryPath;
+        qWarning().nospace() << (SPELLCHECKER_PLUGIN
+        ": unable to find dictionaries for locale ") << locale
+                << ", path=" << dictionaryPath;
         return false;
     }
-    qInfo().nospace() << QStringLiteral(SPELLCHECKER_PLUGIN ": using dictionaries: aff=") << aff << ", dic=" << dic;
+    P_QLOG_INFO() << SPELLCHECKER_PLUGIN << ": using dictionaries: aff=" << aff << ", dic=" << dic;
 
     if (hunspell) {
         delete hunspell;
@@ -72,20 +78,27 @@ bool SpellChecker::setup(QString programDictionary, QString customDictionary, QS
     hunspell = new Hunspell(aff.toStdString().c_str(), dic.toStdString().c_str());
 
     // Start adding custom words
-    QString customDictionaryFile(customDictionary + QStringLiteral("user.lst"));
+    QString customDictionaryFile(getCustomDictionaryFileName());
     QFile f(customDictionaryFile);
-    qInfo().nospace() << QStringLiteral(SPELLCHECKER_PLUGIN ": user dictionary=") << customDictionaryFile;
+    P_QLOG_INFO() << SPELLCHECKER_PLUGIN << ": adding words from user dictionary=" << customDictionaryFile;
 
+    int count = 0;
     if (f.exists()) {
         f.open(QIODevice::ReadOnly);
         QTextStream in(&f);
         while (!in.atEnd()) {
             QString line = in.readLine();
             hunspell->add(line.toStdString().c_str());
+            count++;
         }
         f.close();
     }
+    P_QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": " << count << " words added";
     return true;
+}
+
+QString SpellChecker::getCustomDictionaryFileName() {
+    return customDictionaryPath + "user-" + locale + ".lst";
 }
 
 
@@ -107,15 +120,18 @@ bool SpellChecker::spellCheck(QString word, QStringList &suggestions) {
 }
 
 
-void SpellChecker::addWord(QString dictionary, QString word) {
+void SpellChecker::addWord(QString word) {
     if (!hunspell) {
         return;
     }
+    QString customDictionaryFile(getCustomDictionaryFileName());
     hunspell->add(word.toStdString().c_str());
+
+    P_QLOG_DEBUG() << "Adding word " << word << " to user dictionary " << customDictionaryFile;
 
     // Append to the end of the user dictionary
     // Start adding custom words
-    QFile f(dictionary);
+    QFile f(customDictionaryFile);
     f.open(QIODevice::Append);
     QTextStream out(&f);
     out << word;

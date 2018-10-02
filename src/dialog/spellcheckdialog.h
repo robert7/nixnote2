@@ -41,11 +41,11 @@ private:
     QPushButton     *ignoreAll;
     QPushButton     *addToDictionary;
     QListWidget     *suggestions;
-    void            loadLanguages();
+    void            loadLanguages(QString selectedLocale);
 
 
 public:
-    explicit SpellCheckDialog(QWidget *parent = 0);
+    explicit SpellCheckDialog(QString selectedLocale, QWidget *parent = 0);
     QComboBox       *language;
     void            setState(QString misspelled, QStringList suggestions);
     QString         getReplacement();

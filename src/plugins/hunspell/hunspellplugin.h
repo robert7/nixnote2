@@ -41,9 +41,9 @@ private:
 
 public:
     HunspellPlugin();
-    bool initialize(QString programDictionary, QString userDictionary, QString &errMsg, QString language=QString()) override;
+    bool initialize(QString userDictionaryPath, QString &errMsg, QString language=QString()) override;
     bool spellCheck(QString word, QStringList &suggestions) override;
-    void addWord(QString dictionary, QString word) override;
+    void addWord(QString word) override;
 };
 
 #endif // end of windows check

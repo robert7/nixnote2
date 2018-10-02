@@ -27,8 +27,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
-SpellCheckDialog::SpellCheckDialog(QWidget *parent) :
+SpellCheckDialog::SpellCheckDialog(QString selectedLocale, QWidget *parent) :
         QDialog(parent) {
+    QLOG_DEBUG() << "Creating SpellCheckDialog for locale " << selectedLocale;
+
     QFont guiFont(global.getGuiFont(font()));
     QFont guiFontBold = guiFont;
     guiFontBold.setBold(true);
@@ -83,7 +85,7 @@ SpellCheckDialog::SpellCheckDialog(QWidget *parent) :
     grid->addLayout(buttonGrid, 2, 1);
     this->replace->setEnabled(false);
     this->setFont(guiFont);
-    loadLanguages();
+    loadLanguages(selectedLocale);
 
     connect(language, SIGNAL(currentIndexChanged(int)), this, SLOT(languageChangeRequested(int)));
 }
@@ -123,8 +125,8 @@ void SpellCheckDialog::ignoreAllButtonPressed() {
 
 void SpellCheckDialog::validateInput() {
     if (replacementWord->text().trimmed() == "") {
-        replace->setEnabled(false);}
-    else {
+        replace->setEnabled(false);
+    } else {
         replace->setEnabled(true);
     }
 }
@@ -137,7 +139,7 @@ QString SpellCheckDialog::getReplacement() {
     return replacementWord->text();
 }
 
-void SpellCheckDialog::loadLanguages() {
+void SpellCheckDialog::loadLanguages(QString selectedLocale) {
     QStringList dictionaryPath = SpellChecker::dictionaryPaths();
 
     QStringList values;
@@ -155,20 +157,11 @@ void SpellCheckDialog::loadLanguages() {
             }
     }
     language->addItems(values);
-    global.settings->beginGroup(INI_GROUP_LOCALE);
-    QString dict = global.settings->value(INI_VALUE_TRANSLATION).toString();
-    global.settings->endGroup();
-    if (dict.trimmed() == "") {
-        dict = QLocale::system().name();
-    }
 
-    int k = language->findText(dict);
-    if (k >= 0)
+    int k = language->findText(selectedLocale);
+    if (k >= 0) {
         language->setCurrentIndex(k);
-
-    // for now let the combo shown, even if there is only one entry
-    //if (values.size() <=1)
-    //    language->setVisible(false);
+    }
 }
 
 

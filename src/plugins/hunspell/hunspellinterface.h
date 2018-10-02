@@ -33,10 +33,9 @@ class HunspellInterface
 public:
     virtual ~HunspellInterface() {}
 
-    virtual bool initialize(QString programDictionary, QString userDictionary, QString &errMsg, QString language=QString()) = 0;
+    virtual bool initialize(QString userDictionaryPath, QString &errMsg, QString language=QString()) = 0;
     virtual bool spellCheck(QString word, QStringList &suggestions) = 0;
-    virtual void addWord(QString dictionary, QString word) = 0;
-
+    virtual void addWord(QString word) = 0;
 };
 
 Q_DECLARE_INTERFACE(HunspellInterface, "org.nixnote.NixNote2.HunspellInterface/2.0")
