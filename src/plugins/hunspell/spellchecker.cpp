@@ -98,7 +98,7 @@ bool SpellChecker::spellCheck(QString word, QStringList &suggestions) {
     if (isValid) {
         return true;
     }
-    
+
     const auto suggested = hunspell->suggest(word.toStdString());
     for_each(suggested.begin(), suggested.end(), [&suggestions](const std::string &suggestion) {
         suggestions << QString::fromStdString(suggestion);

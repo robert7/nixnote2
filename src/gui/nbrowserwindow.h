@@ -104,13 +104,13 @@ private:
 
     // object of interface
     HunspellInterface *hunspellInterface;
-
     QString currentSpellLocale;
 
     void createSpellChecker();
     bool initializeSpellCheckerWithLocale(QString local);
     QString getSpellCheckerLocaleFromSettings();
     void saveSpellCheckerLocaleToSettings(QString locale);
+    void spellCheckAddWordToUserDictionary(QString currentWord);
 
 
     // Shortcuts for context menu
