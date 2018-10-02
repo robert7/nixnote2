@@ -87,8 +87,9 @@ bool SpellChecker::setup(QString customDictionaryPath, QString locale) {
         f.open(QIODevice::ReadOnly);
         QTextStream in(&f);
         while (!in.atEnd()) {
-            QString line = in.readLine();
-            hunspell->add(line.toStdString().c_str());
+            QString word = in.readLine();
+            hunspell->add(word.toStdString().c_str());
+            P_QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": adding word: " << word;
             count++;
         }
         f.close();
@@ -134,6 +135,6 @@ void SpellChecker::addWord(QString word) {
     QFile f(customDictionaryFile);
     f.open(QIODevice::Append);
     QTextStream out(&f);
-    out << word;
+    out << word << "\n";
     f.close();
 }

@@ -100,14 +100,12 @@ void SpellCheckDialog::setState(QString misspelled, QStringList suggestions) {
     replacementWord->clear();
 }
 
-
 void SpellCheckDialog::cancelButtonPressed() {
     done(DONE_CANCEL);
 }
 
-
 void SpellCheckDialog::addToDictionaryButtonPressed() {
-    done(DONE_CANCEL);
+    done(DONE_ADDTODICTIONARY);
 }
 
 void SpellCheckDialog::replaceButtonPressed() {
@@ -163,7 +161,6 @@ void SpellCheckDialog::loadLanguages(QString selectedLocale) {
         language->setCurrentIndex(k);
     }
 }
-
 
 void SpellCheckDialog::languageChangeRequested(int) {
     done(DONE_CHANGELANGUAGE);
