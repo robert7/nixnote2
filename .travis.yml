@@ -22,18 +22,17 @@ script:
   - export PKG_CONFIG_PATH=$TIDY_LIB_DIR/pkgconfig
   - echo PKG_CONFIG_PATH=$PKG_CONFIG_PATH
   - echo qmake CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR
-  - qmake CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR
-  - ls
-  - ls -l ./development
-  - make -j$(nproc)
-  - make INSTALL_ROOT=appdir -j$(nproc) install ; find appdir/
-  - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
-  - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
-  - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
-  - # linuxdeployqt uses VERSION for naming the file
-  - export VERSION=$(cat appdir/usr/share/nixnote2/version.txt)
-  - #./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -bundle-non-qt-libs
-  - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage
+  - |
+    qmake CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR &&
+    ls -l ./development &&
+    make -j$(nproc) &&
+    make INSTALL_ROOT=appdir -j$(nproc) install &&
+    find appdir/ &&
+    wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" &&
+    chmod a+x linuxdeployqt-continuous-x86_64.AppImage &&
+    unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH &&
+    export VERSION=$(cat appdir/usr/share/nixnote2/version.txt) &&
+    ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage
 
 after_success:
   - find appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq

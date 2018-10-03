@@ -17,12 +17,12 @@
 # dump logs
 *.log
 core
- 
+
 # Deb/RPM/tar files
 *.tar.gz
 *.deb
 *.rpm
- 
+
 # moc_* files
 moc_*.*
 qrc_*.*
@@ -33,9 +33,6 @@ qrc_*.*
 # Vim backup files
 *~
 
-# the main program itself
-nixnote2
-
 # Nixnote database backup files
 *.nnex
 
@@ -45,14 +42,6 @@ Makefile*
 # user files
 *.pro.*
 
-# compiled translations
-translations/*.qm
-
-# Makefiles
-Makefile
-Makefile.Debug
-Makefile.Release
-
 # KDE workfile
 .directory
 /.project
@@ -61,11 +50,10 @@ Makefile.Release
 .cproject
 .settings
 
-cmake-build-debug/
-qmake-build-debug/
-docker-build-debug/
-qmake-build-release/
-build-**
+/cmake-build-*
+/qmake-build-*
+/docker-build-*
+/build-*
 
 # idea
 .idea/workspace.xml
@@ -77,13 +65,10 @@ build-**
 # QMake file
 .qmake.stash
 
-# created during the build:
-images/nixnote2.png
-
 # AppImage files
 *.AppImage
-appdir
+/appdir
 
-# build version file
-_build_dir_.txt
-build-version.txt
+/_build_dir_.txt
+
+
