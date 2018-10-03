@@ -2285,7 +2285,7 @@ Entschlüsselung nicht möglich.</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3572"/>
-        <source>Hunspell plugin not available or no dictionary for current locale</source>
+        <source>Hunspell not available or no dictionary for current locale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
