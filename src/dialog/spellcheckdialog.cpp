@@ -154,19 +154,34 @@ QString SpellCheckDialog::getReplacement() {
 void SpellCheckDialog::loadLanguages(QString selectedLocale) {
     QStringList dictionaryPath = SpellChecker::dictionaryPaths();
 
+    // locale regex
+    QRegExp localeRx("^[a-z]{2}_[A-Z]{2}$");
+
     QStringList values;
     // Start loading available language dictionaries
     for (int i = 0; i < dictionaryPath.size(); i++) {
-        QDir spellDir(dictionaryPath[i]);
+        QString spellDirName(dictionaryPath[i]);
+        QDir spellDir(spellDirName);
         QStringList filter;
         filter.append("*.aff");
         filter.append("*.dic");
-                foreach (QString fileName, spellDir.entryList(filter)) {
-                QString lang = fileName;
-                lang.chop(4);
-                if (!values.contains(lang))
-                    values.append(lang);
+
+        QStringList entryList(spellDir.entryList(filter));
+        for (const auto &fileName : entryList) {
+            QLOG_DEBUG() << "Found dictionary file: " << fileName << " in " << spellDirName;
+
+            QString lang = fileName;
+            lang.chop(4);
+            if (localeRx.indexIn(lang) != 0) {
+                QLOG_DEBUG() << "Ignoring " << lang << " (as unexpected format)";
+                continue;
             }
+            QLOG_DEBUG() << "Adding locale: " << lang;
+
+            if (!values.contains(lang)) {
+                values.append(lang);
+            }
+        }
     }
     language->addItems(values);
 

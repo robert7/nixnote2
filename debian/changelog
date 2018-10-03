@@ -1,4 +1,4 @@
-NixNote (2.1.0-beta4f) unstable; urgency=low
+NixNote (2.1.0-beta4g) unstable; urgency=low
   * Make the sync and email shortcut key global to all app windows, and add sync and email toolbar buttons to
     all editor windows.
     This enables emailing and syncing from any open note window, instead of only from the main app screen.
@@ -13,6 +13,7 @@ NixNote (2.1.0-beta4f) unstable; urgency=low
   * Default debug level is now INFO.
   * Spellchecking completely refactored and improved. The spell checker is now embedded (not a plugin).
     Dictionary locale (language) switching now works. User dictionaries are per locale.
+  * Improved scan of available hunspell dictionaries (e.g. ignore hyphenation dictionaries).
  -- Robert Spiegel <nightingale7@gmail.com>  Wed, 3 Oct 2018 12:00:00 -0400
 
 NixNote (2.1.0-beta3) unstable; urgency=low
