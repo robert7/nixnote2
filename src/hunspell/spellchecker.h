@@ -82,4 +82,7 @@ public slots:
 
 #endif // end of windows check
 
+// just some name for logs
+#define SPELLCHECKER_MODULE "Spellchecker"
+
 #endif // SPELLCHECKER_H

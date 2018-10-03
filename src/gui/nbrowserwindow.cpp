@@ -52,7 +52,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/gui/browserWidgets/table/tablepropertiesdialog.h"
 #include "src/exits/exitmanager.h"
 #include "browserWidgets/editorbuttonbar.h"
-#include "src/plugins/hunspell/hunspellplugin.h"
+#include "src/dialog/spellcheckdialog.h"
 
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
@@ -301,7 +301,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     saveTimer.setInterval(global.autoSaveInterval);
     saveTimer.start();
 
-    hunspellInterface = nullptr;
+    spellChecker = nullptr;
 
     QString css = global.getThemeCss("browserWindowCss");
     if (css != "")
@@ -3575,7 +3575,7 @@ void NBrowserWindow::spellCheckPressed() {
 
     // Check if we have a plugin for Hunspell loaded. This could have been done at startup, but if this is
     // an external window we could need to load it again.
-    if (!hunspellInterface) {
+    if (!spellChecker) {
         QLOG_DEBUG() << SPELLCHECKER_DLG ": About to create spell checker";
         this->createSpellChecker();
     }
@@ -3585,7 +3585,7 @@ void NBrowserWindow::spellCheckPressed() {
     if (currentSpellLocale.isEmpty()) {
         QLOG_DEBUG() << SPELLCHECKER_DLG ": Spell checker init was not successful - exit spell check";
         QMessageBox::critical(this, tr("Plugin Error"),
-                              tr("Hunspell plugin not available or no dictionary for current locale"), QMessageBox::Ok);
+                              tr("Hunspell not available or no dictionary for current locale"), QMessageBox::Ok);
         return;
     }
 
@@ -3636,7 +3636,7 @@ void NBrowserWindow::spellCheckPressed() {
         };
         suggestions.clear();
 
-        if (!hunspellInterface->spellCheck(currentWord, suggestions)) {
+        if (!spellChecker->spellCheck(currentWord, suggestions)) {
             dialog.setState(currentWord, suggestions);
 
             //dialog.move(0, 0);
@@ -3912,26 +3912,10 @@ void NBrowserWindow::setEditorStyle() {
 
 
 void NBrowserWindow::createSpellChecker() {
-    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": about to create spell checker";
-    QString pluginPath(global.fileManager.getHunspellPluginPath());
-
-    // no locale
-    if (pluginPath.isEmpty()) {
-        return;
-    }
-
+    QLOG_DEBUG() << SPELLCHECKER_MODULE ": about to create spell checker";
     // if interface doesn't exist, create it
-    if (!hunspellInterface) {
-        QLOG_INFO() << SPELLCHECKER_PLUGIN ": trying to open library: " << pluginPath;
-        QPluginLoader pluginLoader(pluginPath);
-        QObject *plugin = pluginLoader.instance();
-        if (plugin) {
-            hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-
-        } else {
-            QString errMsg = pluginLoader.errorString();
-            QLOG_ERROR() << SPELLCHECKER_PLUGIN ": load FAILED (pluginLoader): " << errMsg;
-        }
+    if (!spellChecker) {
+        spellChecker = new SpellChecker();
     }
 }
 
@@ -3941,29 +3925,29 @@ void NBrowserWindow::createSpellChecker() {
  */
 QString NBrowserWindow::initializeSpellCheckerInitial() {
     // if interface exists, then try to init with "current" locale
-    if (hunspellInterface) {
+    if (spellChecker) {
         QString locale = getSpellCheckerLocaleFromSettings();
         bool ok = initializeSpellCheckerWithLocale(locale);
 
         if (!ok) {
-            QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": failed init with locale=" << locale;
+            QLOG_DEBUG() << SPELLCHECKER_MODULE ": failed init with locale=" << locale;
 
             // TODO take first from list of available
 
             QString systemLocale = QLocale::system().name();
 
-            QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": system locale: " << systemLocale;
+            QLOG_DEBUG() << SPELLCHECKER_MODULE ": system locale: " << systemLocale;
             if (!QString::compare(locale, systemLocale, Qt::CaseInsensitive)) {
                 ok = initializeSpellCheckerWithLocale(systemLocale);
                 if (ok) {
-                    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": OK init with fallback locale=" << locale;
+                    QLOG_DEBUG() << SPELLCHECKER_MODULE ": OK init with fallback locale=" << locale;
                     locale = systemLocale;
                 }
             }
         }
         if (ok) {
             // on success set current locale
-            QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": OK setting current locale=" << locale;
+            QLOG_DEBUG() << SPELLCHECKER_MODULE ": OK setting current locale=" << locale;
             saveSpellCheckerLocaleToSettings(locale);
             return locale;
         }
@@ -3975,17 +3959,17 @@ bool NBrowserWindow::initializeSpellCheckerWithLocale(QString locale) {
     QString errMsg;
     QString userDictionaryPath(global.fileManager.getSpellDirPathUser());
 
-    QLOG_INFO() << SPELLCHECKER_PLUGIN ": trying initialization for locale: " << locale
+    QLOG_INFO() << SPELLCHECKER_MODULE ": trying initialization for locale: " << locale
                 << ", userDictionaryPath=" << userDictionaryPath;
 
 
-    bool result = hunspellInterface->initialize(userDictionaryPath, errMsg, locale);
+    bool result = spellChecker->setup(userDictionaryPath, locale);
     if (result) {
-        QLOG_INFO() << SPELLCHECKER_PLUGIN ": initialization OK";
+        QLOG_INFO() << SPELLCHECKER_MODULE ": initialization OK";
         saveSpellCheckerLocaleToSettings(locale);
     } else {
         global.setMessage(tr("Failed to initialize spell checker for ") + locale);
-        QLOG_ERROR() << SPELLCHECKER_PLUGIN ": initialization FAILED: " << errMsg;
+        QLOG_ERROR() << SPELLCHECKER_MODULE ": initialization FAILED: " << errMsg;
     }
     return result;
 }
@@ -4004,12 +3988,12 @@ QString NBrowserWindow::getSpellCheckerLocaleFromSettings() {
         locale = QLocale::system().name();
     }
 
-    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": got settings spell check locale=" << locale;
+    QLOG_DEBUG() << SPELLCHECKER_MODULE ": got settings spell check locale=" << locale;
     return locale;
 }
 
 void NBrowserWindow::saveSpellCheckerLocaleToSettings(QString locale) {
-    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": save settings spell check locale=" << locale;
+    QLOG_DEBUG() << SPELLCHECKER_MODULE ": save settings spell check locale=" << locale;
     global.settings->beginGroup(INI_GROUP_LOCALE);
     global.settings->setValue(INI_VALUE_SPELLCHECK_LOCALE, locale);
     global.settings->endGroup();
@@ -4017,11 +4001,11 @@ void NBrowserWindow::saveSpellCheckerLocaleToSettings(QString locale) {
 
 
 void NBrowserWindow::spellCheckAddWordToUserDictionary(QString currentWord) {
-    if (!hunspellInterface) {
+    if (!spellChecker) {
         // invalid state
         return;
     }
-    hunspellInterface->addWord( currentWord);
+    spellChecker->addWord( currentWord);
 }
 
 

@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLibraryInfo>
 #include "src/logger/qslog.h"
 #include "src/logger/qslogdest.h"
-#include "src/plugins/hunspell/hunspellplugin.h"
 
 //*******************************************
 //* This class is used to find the location
@@ -156,10 +155,8 @@ void FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QS
     QDir spellDirUser;
     spellDirUser.setPath(this->configDir + "spell");
     this->spellDirPathUser = slashTerminatePath(spellDirUser.path());
-    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": spell checker path: " << spellDirPathUser;
+    QLOG_DEBUG() << "Spell checker path: " << spellDirPathUser;
     createDirOrCheckWriteable(this->spellDirPathUser);
-
-    setupHunspellPlugin();
 
     translateDir.setPath(programDataDir + "translations");
     checkExistingReadableDir(translateDir);
@@ -449,43 +446,4 @@ void FileManager::setupFileAttachmentLogging() {
     logger.setFileLoggingPath(loggingAttachmentsPath);
 }
 
-/**
- * Check whenever plugin dynamic libray is available and working.
- * If yes: set hunspellPluginPath.
- */
-void FileManager::setupHunspellPlugin() {
-    QStringList dirList;
-    dirList.append(getLibraryDirPath());
-
-    // Start loading plugins
-    for (int i = 0; i < dirList.size(); i++) {
-        QDir pluginsDir(dirList[i]);
-        QStringList filter;
-        filter.append("libhunspellplugin.so");
-        filter.append("libhunspellplugin.dylib");
-                foreach(QString
-                                fileName, pluginsDir.entryList(filter)) {
-                QString pluginFilename(pluginsDir.absoluteFilePath(fileName));
-                QPluginLoader pluginLoader(pluginFilename);
-                QObject *plugin = pluginLoader.instance();
-
-
-                // The Hunspell plugin isn't actually used here. We just use this as a
-                // check to be sure that the menu should be available.
-                if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
-                    if (plugin) {
-                        HunspellInterface *hunspellInterface;
-                        hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                        if (hunspellInterface != nullptr) {
-                            QLOG_INFO() << SPELLCHECKER_PLUGIN ": check OK, plugin library: " << pluginFilename;
-                            hunspellPluginPath = pluginFilename;
-                        }
-                        delete hunspellInterface;
-                    } else {
-                        QLOG_ERROR() << SPELLCHECKER_PLUGIN ": check FAILED: " << pluginLoader.errorString();
-                    }
-                }
-            }
-    }
-}
 

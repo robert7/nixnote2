@@ -23,13 +23,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QFile>
 #include <QLocale>
 #include <QTextStream>
-#include <QDebug>
 #include <hunspell.hxx>
-#include <hunspellplugin.h>
+#include "src/logger/qslog.h"
 
-#define P_QLOG_DEBUG qDebug().nospace
-#define P_QLOG_INFO qInfo().nospace
-#define P_QLOG_WARN qWarn().nospace
 
 
 SpellChecker::SpellChecker(QObject *parent) :
@@ -65,12 +61,12 @@ bool SpellChecker::setup(QString customDictionaryPath, QString locale) {
     QString dic = findDictionary(locale + ".dic");
 
     if (dic.isEmpty() || aff.isEmpty()) {
-        qWarning().nospace() << (SPELLCHECKER_PLUGIN
+        qWarning().nospace() << (SPELLCHECKER_MODULE
         ": unable to find dictionaries for locale ") << locale
                 << ", path=" << dictionaryPath;
         return false;
     }
-    P_QLOG_INFO() << SPELLCHECKER_PLUGIN << ": using dictionaries: aff=" << aff << ", dic=" << dic;
+    QLOG_INFO() << SPELLCHECKER_MODULE << ": using dictionaries: aff=" << aff << ", dic=" << dic;
 
     if (hunspell) {
         delete hunspell;
@@ -80,7 +76,7 @@ bool SpellChecker::setup(QString customDictionaryPath, QString locale) {
     // Start adding custom words
     QString customDictionaryFile(getCustomDictionaryFileName());
     QFile f(customDictionaryFile);
-    P_QLOG_INFO() << SPELLCHECKER_PLUGIN << ": adding words from user dictionary=" << customDictionaryFile;
+    QLOG_INFO() << SPELLCHECKER_MODULE << ": adding words from user dictionary=" << customDictionaryFile;
 
     int count = 0;
     if (f.exists()) {
@@ -89,12 +85,12 @@ bool SpellChecker::setup(QString customDictionaryPath, QString locale) {
         while (!in.atEnd()) {
             QString word = in.readLine();
             hunspell->add(word.toStdString().c_str());
-            P_QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": adding word: " << word;
+            QLOG_DEBUG() << SPELLCHECKER_MODULE ": adding word: " << word;
             count++;
         }
         f.close();
     }
-    P_QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": " << count << " words added";
+    QLOG_DEBUG() << SPELLCHECKER_MODULE ": " << count << " words added";
     return true;
 }
 
@@ -140,7 +136,7 @@ void SpellChecker::addWord(QString word) {
     QString customDictionaryFile(getCustomDictionaryFileName());
     hunspell->add(word.toStdString().c_str());
 
-    P_QLOG_DEBUG() << "Adding word " << word << " to user dictionary " << customDictionaryFile;
+    QLOG_DEBUG() << "Adding word " << word << " to user dictionary " << customDictionaryFile;
 
     // Append to the end of the user dictionary
     // Start adding custom words

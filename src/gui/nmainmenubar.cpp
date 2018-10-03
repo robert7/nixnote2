@@ -408,14 +408,10 @@ void NMainMenuBar::setupNoteMenu() {
     noteMenu->addAction(reindexNoteAction);
     connect(reindexNoteAction, SIGNAL(triggered()), parent, SLOT(reindexCurrentNote()));
 
-    bool spellcheckPluginAvailable = !global.fileManager.getHunspellPluginPath().isEmpty();
-    if (spellcheckPluginAvailable) {
-        noteMenu->addSeparator();
-        spellCheckAction = new QAction(tr("&Spell Check"), noteMenu);
-        noteMenu->addAction(spellCheckAction);
-        connect(spellCheckAction, SIGNAL(triggered()), parent, SLOT(spellCheckCurrentNote()));
-    }
-
+    noteMenu->addSeparator();
+    spellCheckAction = new QAction(tr("&Spell Check"), noteMenu);
+    noteMenu->addAction(spellCheckAction);
+    connect(spellCheckAction, SIGNAL(triggered()), parent, SLOT(spellCheckCurrentNote()));
 
     noteMenu->addSeparator();
 

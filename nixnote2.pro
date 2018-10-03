@@ -2,7 +2,7 @@ QT += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qm
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 unix {
     CONFIG += link_pkgconfig
-    PKGCONFIG += poppler-qt5 libcurl tidy
+    PKGCONFIG += poppler-qt5 libcurl tidy hunspell
 }
 
 
@@ -185,6 +185,7 @@ SOURCES += \
     src/models/ntreemodel.cpp \
     src/oauth/oauthtokenizer.cpp \
     src/oauth/oauthwindow.cpp \
+    src/hunspell/spellchecker.cpp \
     src/qevercloud/AsyncResult.cpp \
     src/qevercloud/EventLoopFinisher.cpp \
     src/qevercloud/exceptions.cpp \
@@ -375,7 +376,7 @@ HEADERS  += \
     src/models/ntreemodel.h \
     src/oauth/oauthtokenizer.h \
     src/oauth/oauthwindow.h \
-    src/plugins/hunspell/hunspellinterface.h \
+    src/hunspell/spellchecker.h \
     src/qevercloud/AsyncResult.h \
     src/qevercloud/EventLoopFinisher.h \
     src/qevercloud/EverCloudException.h \
@@ -484,10 +485,10 @@ binary.files = $${DESTDIR}/$${TARGET}
 binary.CONFIG = no_check_exist
 message("Target binary: $${binary.files}")
 
-libs.path = $${PREFIX}/lib/$${TARGET}
-libs.files = $${DESTDIR}/hunspellplugin/libhunspellplugin.so
-libs.CONFIG = no_check_exist
-message("$$TARGET: Target libs: $${libs.files}")
+#libs.path = $${PREFIX}/lib/$${TARGET}
+#libs.files = $${DESTDIR}/hunspellplugin/libhunspellplugin.so
+#libs.CONFIG = no_check_exist
+#message("$$TARGET: Target libs: $${libs.files}")
 
 desktop.path = $${PREFIX}/share/applications
 desktop.files = $${TARGET}.desktop
@@ -523,14 +524,13 @@ fullversion.CONFIG += no_link no_check_exist
 QMAKE_EXTRA_COMPILERS += fullversion
 PRE_TARGETDEPS += compiler_fullversion_make_all
 
-SPELLPLUGIN_FILES = src/plugins/hunspell/hunspellplugin.cpp
-spellplugin.input = SPELLPLUGIN_FILES
-spellplugin.output  = $${DESTDIR}/hunspellplugin/libhunspellplugin.so
-spellplugin.commands = ./development/build-spellplugin.sh $${BUILD_TYPE} $${DESTDIR}
-spellplugin.CONFIG += no_link no_check_exist
-QMAKE_EXTRA_COMPILERS += spellplugin
-PRE_TARGETDEPS += compiler_spellplugin_make_all
-
+#SPELLPLUGIN_FILES = src/plugins/hunspell/hunspellplugin.cpp
+#spellplugin.input = SPELLPLUGIN_FILES
+#spellplugin.output  = $${DESTDIR}/hunspellplugin/libhunspellplugin.so
+#spellplugin.commands = ./development/build-spellplugin.sh $${BUILD_TYPE} $${DESTDIR}
+#spellplugin.CONFIG += no_link no_check_exist
+#QMAKE_EXTRA_COMPILERS += spellplugin
+#PRE_TARGETDEPS += compiler_spellplugin_make_all
 
 
 man.path = $${PREFIX}/share/man/man1
@@ -577,5 +577,5 @@ mac {
     translations.files = $$TRANSLATION_TARGET_DIR
     translations.CONFIG = no_check_exist
 
-    INSTALLS = binary libs desktop images java help textfiles docs man translations icons
+    INSTALLS = binary desktop images java help textfiles docs man translations icons
 }

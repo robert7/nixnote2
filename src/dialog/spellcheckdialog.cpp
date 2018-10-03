@@ -22,8 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "src/global.h"
 #include "spellcheckdialog.h"
-#include "src/plugins/hunspell/spellchecker.h"
-#include "src/plugins/hunspell/hunspellplugin.h"
+#include "src/hunspell/spellchecker.h"
 
 extern Global global;
 
