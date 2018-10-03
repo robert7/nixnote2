@@ -1164,7 +1164,6 @@ void NBrowserWindow::removeFormatButtonPressed() {
 }
 
 
-// TODO add enum
 void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
     QLOG_DEBUG() << "html cleanup, mode " << mode;
     QWebElement rootElement = editor->editorPage->mainFrame()->documentElement();
@@ -3604,7 +3603,7 @@ void NBrowserWindow::spellCheckPressed() {
     QLOG_DEBUG_FILE("spell-1.txt", plainText);
     //QLOG_INFO() << "spell plain before: " << plainText;
     plainText = plainText
-            .replace(QRegularExpression("\\s"), " ")
+            .replace(QRegularExpression("\\s|\\xa0"), " ") // \xa0 is &nbsp;
             .replace(QRegularExpression("\\s-"), " ")
             .replace(QRegularExpression("-\\s"), " ")
             .replace(QRegularExpression(
@@ -3640,7 +3639,7 @@ void NBrowserWindow::spellCheckPressed() {
         if (!hunspellInterface->spellCheck(currentWord, suggestions)) {
             dialog.setState(currentWord, suggestions);
 
-            dialog.move(0, 0);
+            //dialog.move(0, 0);
             int result = dialog.exec();
             QLOG_DEBUG() << SPELLCHECKER_DLG ": dialog result: " << result;
 

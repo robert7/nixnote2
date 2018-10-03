@@ -61,6 +61,7 @@ public slots:
     void addToDictionaryButtonPressed();
     void cancelButtonPressed();
     void languageChangeRequested(int);
+    void modalityButtonPressed();
 };
 
 

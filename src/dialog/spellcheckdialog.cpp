@@ -60,34 +60,45 @@ SpellCheckDialog::SpellCheckDialog(QString selectedLocale, QWidget *parent) :
 
     replace = new QPushButton(tr("Replace"));
     ignore = new QPushButton(tr("Ignore"));
+    ignore->setDefault(true);
     ignoreAll = new QPushButton(tr("Ignore All"));
     addToDictionary = new QPushButton(tr("Add To Dictionary"));
 
-    connect(replace, SIGNAL(clicked()), this, SLOT(replaceButtonPressed()));
-    connect(ignore, SIGNAL(clicked()), this, SLOT(ignoreButtonPressed()));
-    connect(ignoreAll, SIGNAL(clicked()), this, SLOT(ignoreAllButtonPressed()));
-    connect(addToDictionary, SIGNAL(clicked()), this, SLOT(addToDictionaryButtonPressed()));
-
-    QPushButton *cancelButton = new QPushButton(tr("Cancel"), this);
-    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelButtonPressed()));
 
     suggestionGrid->addWidget(replace, 1, 2);
     suggestionGrid->addWidget(ignore, 2, 2);
     suggestionGrid->addWidget(ignoreAll, 3, 2);
     suggestionGrid->addWidget(addToDictionary, 4, 2);
+
+    // did worked as I wanted
+    // QPushButton *modalityButton = new QPushButton(tr("Modality"), this);
+    // suggestionGrid->addWidget(modalityButton, 5, 2);
+
+    QPushButton *cancelButton = new QPushButton(tr("Cancel"), this);
+    suggestionGrid->addWidget(cancelButton, 5, 2);
+
     suggestionGrid->setAlignment(Qt::AlignTop);
 
-    buttonGrid->addWidget(new QLabel(this), 1, 1);
-    buttonGrid->addWidget(cancelButton, 1, 2);
-    buttonGrid->addWidget(new QLabel(this), 1, 3);
+    connect(replace, SIGNAL(clicked()), this, SLOT(replaceButtonPressed()));
+    connect(ignore, SIGNAL(clicked()), this, SLOT(ignoreButtonPressed()));
+    connect(ignoreAll, SIGNAL(clicked()), this, SLOT(ignoreAllButtonPressed()));
+    connect(addToDictionary, SIGNAL(clicked()), this, SLOT(addToDictionaryButtonPressed()));
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelButtonPressed()));
+    //connect(modalityButton, SIGNAL(clicked()), this, SLOT(modalityButtonPressed()));
+
+
     buttonGrid->setColumnStretch(1, 10);
     buttonGrid->setColumnStretch(3, 10);
+
     grid->addLayout(buttonGrid, 2, 1);
     this->replace->setEnabled(false);
     this->setFont(guiFont);
     loadLanguages(selectedLocale);
 
     connect(language, SIGNAL(currentIndexChanged(int)), this, SLOT(languageChangeRequested(int)));
+
+    // block all other windows (e.g. where the same note could be open)
+    this->setWindowModality(Qt::ApplicationModal);
 }
 
 void SpellCheckDialog::setState(QString misspelled, QStringList suggestions) {
@@ -102,6 +113,10 @@ void SpellCheckDialog::setState(QString misspelled, QStringList suggestions) {
 
 void SpellCheckDialog::cancelButtonPressed() {
     done(DONE_CANCEL);
+}
+
+void SpellCheckDialog::modalityButtonPressed() {
+    this->setWindowModality(Qt::NonModal);
 }
 
 void SpellCheckDialog::addToDictionaryButtonPressed() {
