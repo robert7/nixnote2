@@ -2,7 +2,8 @@
 CDIR=`pwd`
 BUILD_TYPE=$1
 DESTDIR=$2
-echo $0: BUILD_TYPE=$1, DESTDIR=$2
+echo "$0: BUILD_TYPE=$1, DESTDIR=$2"
+
 if [ -z "${DESTDIR}" ] || [ ! -d "${DESTDIR}" ] ; then
   echo "$0: wrong params: 1st param: config (debug/release), 2nd param: destination directory for build"
   exit 1
@@ -10,7 +11,7 @@ fi
 
 
 function error_exit {
-    echo "***********error_exit***********"
+    echo "$0: ***********error_exit***********"
     echo "***********" 1>&2
     echo "*********** Failed: $1" 1>&2
     echo "***********" 1>&2
@@ -18,9 +19,9 @@ function error_exit {
     exit 1
 }
 
-cd src/plugins/hunspell || error_exit "cd"
-qmake CONFIG+=${BUILD_TYPE} || error_exit "qmake"
-make || error_exit "make"
+cd src/plugins/hunspell || error_exit "$0 - cd"
+qmake CONFIG+=${BUILD_TYPE} || error_exit "$0 - qmake"
+make || error_exit "$0 - make"
 
 cd $CDIR
 

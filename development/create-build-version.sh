@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function error_exit {
-    echo "***********error_exit***********"
+    echo "$0: ***********error_exit***********"
     echo "***********" 1>&2
     echo "*********** Failed: $1" 1>&2
     echo "***********" 1>&2
@@ -32,6 +32,6 @@ echo Git hash: ${GITHASH}
 
 ODIR=${DESTDIR}/version
 
-mkdir -p ${ODIR} || error_exit "mkdir"
-echo "${BUILDVER}" >${ODIR}/build-version.txt || error_exit "echo build-version"
-echo "${VERSION}" >${ODIR}/version.txt || error_exit "echo version"
+mkdir -p ${ODIR} || error_exit "$0: mkdir"
+echo "${BUILDVER}" >${ODIR}/build-version.txt || error_exit "$0: echo build-version"
+echo "${VERSION}" >${ODIR}/version.txt || error_exit "$0: echo version"

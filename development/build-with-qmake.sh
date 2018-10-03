@@ -8,7 +8,7 @@ TIDY_DIR=${3}
 CDIR=`pwd`
 
 function error_exit {
-    echo "***********error_exit***********"
+    echo "$0: ***********error_exit***********"
     echo "***********" 1>&2
     echo "*********** Failed: $1" 1>&2
     echo "***********" 1>&2
@@ -17,7 +17,7 @@ function error_exit {
 }
 
 if [ ! -f src/main.cpp ]; then
-  echo "You seem to be in wrong directory. script MUST be run from the project directory."
+  echo "$0: You seem to be in wrong directory. script MUST be run from the project directory."
   exit 1
 fi
 
@@ -42,7 +42,7 @@ if [ ! -d "${TIDY_DIR}" ] || [ ! -d "${TIDY_LIB_DIR}" ]; then
    echo "TIDY_DIR or TIDY_DIR/lib is not a directory"
    exit 1
 fi
-echo "libtidy is expected in: ${TIDY_LIB_DIR}"
+echo "$0: libtidy is expected in: ${TIDY_LIB_DIR}"
 
 
 
@@ -77,8 +77,8 @@ elif [ -d ${TIDY_LIB_DIR}/pkgconfig ] ; then
 fi
 
 
-echo ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "qmake"
-${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "qmake"
+echo ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "$0: qmake"
+${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "$0: qmake"
 
-make -j8 || error_exit "make"
-make install || error_exit "make install"
+make -j8 || error_exit "$0: make"
+make install || error_exit "$0: make install"
