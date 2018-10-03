@@ -110,8 +110,7 @@ int main(int argc, char *argv[]) {
     // at very beginning we starting with info level to get basic startup info
     // log level is later adjusted by settings
 
-    // FOR ALFA VERSION TEMPORARY DEFAULT LOG LEVEL IS DEBUG
-    logger.setLoggingLevel(QsLogging::DebugLevel);
+    logger.setLoggingLevel(QsLogging::InfoLevel);
 
     QsLogging::DestinationPtr debugDestination(
         QsLogging::DestinationFactory::MakeDebugOutputDestination());
