@@ -39,13 +39,15 @@ private:
     QStringList dictionaryPath;
     QString findDictionary(QString file);
     Hunspell *hunspell;
-    bool error;
+    QString customDictionaryPath;
+    QString locale;
+    QString getCustomDictionaryFileName();
 
 public:
     explicit SpellChecker(QObject *parent = 0);
-    bool setup(QString programDictionary, QString customDictionary, QString language=QString());
+    bool setup(QString customDictionaryPath, QString language=QString());
     bool spellCheck(QString word, QStringList &suggestions);
-    void addWord(QString dictionary, QString word);
+    void addWord(QString word);
 
     static const QStringList dictionaryPaths()
     {

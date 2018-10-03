@@ -40,8 +40,7 @@ More info in: [DOCKER README](docs/DOCKER-README.md)
 * Optional: create [AppImage package](https://appimage.org/) using [linuxdeployqt](https://github.com/probonopd/linuxdeployqt)
 
 ```bash
-# replace path in 1st parameter with Qt root (`/usr` will use system Qt)
-./development/build-with-qmake.sh /usr debug
+./development/build-with-qmake.sh
 ```
 
 `build-with-qmake.sh` is just kind of convenience script. You can also build without it like:
@@ -55,7 +54,6 @@ I suggest running from "appdir" (e.g. `./appdir/usr/appdir/nixnote2`).
 
 ```bash
 # Optional second step: if all got well you may try to create AppImage package
-# may be a bit tricky - recommended for advanced users 
 ./development/create-AppImage.sh
 ```
 
@@ -73,7 +71,7 @@ Preparation steps
     * cmake ../..  -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
     * make                       
     * make DESTDIR=/opt/tidy56 install
-    * library is now copied to /opt/tidy56/libs (if you use different directory, then pass it as 4th argument to
+    * library is now copied to /opt/tidy56/libs (if you use different directory, then pass it as 3rd argument to
       "build-with-qmake.sh".
 
 If it doesn't work: use docker build - or compare with docker recipe, what is different.

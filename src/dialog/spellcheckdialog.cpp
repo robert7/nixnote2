@@ -22,18 +22,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "src/global.h"
 #include "spellcheckdialog.h"
-#include "src/utilities/spellchecker.h"
+#include "src/plugins/hunspell/spellchecker.h"
+#include "src/plugins/hunspell/hunspellplugin.h"
 
 extern Global global;
 
-SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, QWidget *parent) :
-    QDialog(parent)
-{
-    changeLanguage = false;
-    misspelledWord = misspelled;
+SpellCheckDialog::SpellCheckDialog(QString selectedLocale, QWidget *parent) :
+        QDialog(parent) {
+    QLOG_DEBUG() << "Creating SpellCheckDialog for locale " << selectedLocale;
+
+    QFont guiFont(global.getGuiFont(font()));
+    QFont guiFontBold = guiFont;
+    guiFontBold.setBold(true);
+
     setWindowIcon(global.getIconResource(":spellCheckIcon"));
-    replacePressed = false;
-    cancelPressed = false;
     language = new QComboBox(this);
     QGridLayout *grid = new QGridLayout(this);
     setLayout(grid);
@@ -41,171 +43,140 @@ SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, 
     QGridLayout *buttonGrid = new QGridLayout(this);
 
     currentWord = new QLabel(this);
-    currentWord->setText(misspelledWord);
+    currentWord->setFont(guiFontBold);
     replacementWord = new QLineEdit(this);
     this->suggestions = new QListWidget(this);
 
     connect(replacementWord, SIGNAL(textChanged(QString)), this, SLOT(validateInput()));
     connect(this->suggestions, SIGNAL(itemSelectionChanged()), this, SLOT(replacementChosen()));
 
-    suggestionGrid->addWidget(currentWord, 1,1);
-    suggestionGrid->addWidget(new QLabel(tr("Suggestion"), this), 2,1);
-    suggestionGrid->addWidget(replacementWord, 3,1);
-    suggestionGrid->addWidget(this->suggestions, 4,1);
-    suggestionGrid->addWidget(language,5,1);
-    suggestionGrid->setContentsMargins(10,10,-10,-10);
-    grid->addLayout(suggestionGrid,1,1);
+    suggestionGrid->addWidget(currentWord, 1, 1);
+    suggestionGrid->addWidget(new QLabel(tr("Suggestion"), this), 2, 1);
+    suggestionGrid->addWidget(replacementWord, 3, 1);
+    suggestionGrid->addWidget(this->suggestions, 4, 1);
+    suggestionGrid->addWidget(language, 5, 1);
+    suggestionGrid->setContentsMargins(10, 10, -10, -10);
+    grid->addLayout(suggestionGrid, 1, 1);
 
     replace = new QPushButton(tr("Replace"));
     ignore = new QPushButton(tr("Ignore"));
+    ignore->setDefault(true);
     ignoreAll = new QPushButton(tr("Ignore All"));
     addToDictionary = new QPushButton(tr("Add To Dictionary"));
+
+
+    suggestionGrid->addWidget(replace, 1, 2);
+    suggestionGrid->addWidget(ignore, 2, 2);
+    suggestionGrid->addWidget(ignoreAll, 3, 2);
+    suggestionGrid->addWidget(addToDictionary, 4, 2);
+
+    // did worked as I wanted
+    // QPushButton *modalityButton = new QPushButton(tr("Modality"), this);
+    // suggestionGrid->addWidget(modalityButton, 5, 2);
+
+    QPushButton *cancelButton = new QPushButton(tr("Cancel"), this);
+    suggestionGrid->addWidget(cancelButton, 5, 2);
+
+    suggestionGrid->setAlignment(Qt::AlignTop);
 
     connect(replace, SIGNAL(clicked()), this, SLOT(replaceButtonPressed()));
     connect(ignore, SIGNAL(clicked()), this, SLOT(ignoreButtonPressed()));
     connect(ignoreAll, SIGNAL(clicked()), this, SLOT(ignoreAllButtonPressed()));
     connect(addToDictionary, SIGNAL(clicked()), this, SLOT(addToDictionaryButtonPressed()));
-
-    QPushButton *cancelButton = new QPushButton(tr("Cancel"), this);
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelButtonPressed()));
+    //connect(modalityButton, SIGNAL(clicked()), this, SLOT(modalityButtonPressed()));
 
-    suggestionGrid->addWidget(replace, 1,2);
-    suggestionGrid->addWidget(ignore, 2,2);
-    suggestionGrid->addWidget(ignoreAll, 3,2);
-    suggestionGrid->addWidget(addToDictionary, 4,2);
-    suggestionGrid->setAlignment(Qt::AlignTop);
 
-    buttonGrid->addWidget(new QLabel(this), 1,1);
-    buttonGrid->addWidget(cancelButton, 1,2);
-    buttonGrid->addWidget(new QLabel(this),1,3);
     buttonGrid->setColumnStretch(1, 10);
-    buttonGrid->setColumnStretch(3,10);
-    grid->addLayout(buttonGrid, 2,1);
+    buttonGrid->setColumnStretch(3, 10);
+
+    grid->addLayout(buttonGrid, 2, 1);
     this->replace->setEnabled(false);
-    this->suggestions->addItems(suggestions);
-    this->setFont(global.getGuiFont(font()));
-    loadLanguages();
+    this->setFont(guiFont);
+    loadLanguages(selectedLocale);
 
     connect(language, SIGNAL(currentIndexChanged(int)), this, SLOT(languageChangeRequested(int)));
+
+    // block all other windows (e.g. where the same note could be open)
+    this->setWindowModality(Qt::ApplicationModal);
+}
+
+void SpellCheckDialog::setState(QString misspelled, QStringList suggestions) {
+    misspelledWord = misspelled;
+    currentWord->setText(misspelledWord);
+
+    this->suggestions->clear();
+    this->suggestions->addItems(suggestions);
+
+    replacementWord->clear();
 }
 
 void SpellCheckDialog::cancelButtonPressed() {
-    replacePressed = false;
-    cancelPressed = true;
-    ignorePressed = false;
-    addToDictionaryPressed = false;
-    ignoreAllPressed = false;
-    this->changeLanguage = false;
-    close();
+    done(DONE_CANCEL);
 }
 
+void SpellCheckDialog::modalityButtonPressed() {
+    this->setWindowModality(Qt::NonModal);
+}
 
 void SpellCheckDialog::addToDictionaryButtonPressed() {
-    cancelPressed = false;
-    replacePressed = false;
-    ignorePressed = false;
-    ignoreAllPressed = false;
-    addToDictionaryPressed = true;
-    this->changeLanguage = false;
-    replacement = replacementWord->text();
-    close();
+    done(DONE_ADDTODICTIONARY);
 }
 
 void SpellCheckDialog::replaceButtonPressed() {
-    cancelPressed = false;
-    replacePressed = true;
-    ignorePressed = false;
-    ignoreAllPressed = false;
-    addToDictionaryPressed = false;
-    this->changeLanguage = false;
-    replacement = replacementWord->text();
-    close();
+    done(DONE_REPLACE);
 }
 
 void SpellCheckDialog::ignoreButtonPressed() {
-    cancelPressed = false;
-    replacePressed = false;
-    ignorePressed = true;
-    ignoreAllPressed = false;
-    addToDictionaryPressed = false;
-    this->changeLanguage = false;
-    replacement = replacementWord->text();
-    close();
+    done(DONE_IGNORE);
 }
 
 void SpellCheckDialog::ignoreAllButtonPressed() {
-    cancelPressed = false;
-    replacePressed = false;
-    ignorePressed = false;
-    ignoreAllPressed = true;
-    addToDictionaryPressed = false;
-    this->changeLanguage = false;
-    replacement = replacementWord->text();
-    close();
+    done(DONE_IGNOREALL);
 }
 
 
 void SpellCheckDialog::validateInput() {
-    if (replacementWord->text().trimmed() == "")
+    if (replacementWord->text().trimmed() == "") {
         replace->setEnabled(false);
-    else
+    } else {
         replace->setEnabled(true);
+    }
 }
 
 void SpellCheckDialog::replacementChosen() {
     replacementWord->setText(suggestions->currentItem()->text());
 }
 
+QString SpellCheckDialog::getReplacement() {
+    return replacementWord->text();
+}
 
-//void SpellCheckDialog::closeEvent(QCloseEvent *e) {
-//    replacePressed = false;
-//    cancelPressed = true;
-//    ignorePressed = false;
-//    ignoreAllPressed = false;
-//    QDialog::closeEvent(e);
-//}
-
-
-
-void SpellCheckDialog::loadLanguages() {
+void SpellCheckDialog::loadLanguages(QString selectedLocale) {
     QStringList dictionaryPath = SpellChecker::dictionaryPaths();
 
     QStringList values;
     // Start loading available language dictionaries
-    for (int i=0; i<dictionaryPath.size(); i++) {
+    for (int i = 0; i < dictionaryPath.size(); i++) {
         QDir spellDir(dictionaryPath[i]);
         QStringList filter;
         filter.append("*.aff");
         filter.append("*.dic");
-        foreach (QString fileName, spellDir.entryList(filter)) {
-           QString lang = fileName;
-           lang.chop(4);
-           if (!values.contains(lang))
-               values.append(lang);
-        }
+                foreach (QString fileName, spellDir.entryList(filter)) {
+                QString lang = fileName;
+                lang.chop(4);
+                if (!values.contains(lang))
+                    values.append(lang);
+            }
     }
     language->addItems(values);
-    global.settings->beginGroup(INI_GROUP_LOCALE);
-    QString dict = global.settings->value("translation").toString();
-    global.settings->endGroup();
-    if (dict.trimmed() == "")
-        dict = QLocale::system().name();
 
-    int k = language->findText(dict);
-    if (k>=0)
+    int k = language->findText(selectedLocale);
+    if (k >= 0) {
         language->setCurrentIndex(k);
-    if (values.size() <=1)
-        language->setVisible(false);
+    }
 }
 
-
-
 void SpellCheckDialog::languageChangeRequested(int) {
-    this->changeLanguage = true;
-    cancelPressed = false;
-    replacePressed = false;
-    ignorePressed = false;
-    ignoreAllPressed = true;
-    addToDictionaryPressed = false;
-    close();
+    done(DONE_CHANGELANGUAGE);
 }

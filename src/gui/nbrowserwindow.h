@@ -102,10 +102,15 @@ private:
     QTimer saveTimer;
     QString attachFilePath;  // Save path of last selected attachment.
 
-    // Global plugins
-    bool hunspellPluginAvailable;
+    // object of interface
     HunspellInterface *hunspellInterface;
-    void loadPlugins();
+
+    void createSpellChecker();
+    bool initializeSpellCheckerWithLocale(QString local);
+    QString initializeSpellCheckerInitial();
+    QString getSpellCheckerLocaleFromSettings();
+    void saveSpellCheckerLocaleToSettings(QString locale);
+    void spellCheckAddWordToUserDictionary(QString currentWord);
 
 
     // Shortcuts for context menu

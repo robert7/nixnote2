@@ -1,3 +1,3 @@
 #!/bin/bash
 # convenience short cut
-./development/build-with-qmake.sh /usr debug noclean /opt/tidy56
+./development/build-with-qmake.sh debug noclean /opt/tidy56

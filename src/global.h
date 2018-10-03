@@ -158,9 +158,12 @@ class IndexRunner;
 #define INI_GROUP_COL_WIDTH_NARROW "ColumnWidth-Narrow"
 #define INI_GROUP_SAVE_STATE "SaveState"
 
-#define INI_GROUP_DEBUGGING "Debugging"
-#define INI_GROUP_SYNC "Sync"
-#define INI_GROUP_LOCALE "Locale"
+#define INI_GROUP_DEBUGGING         "Debugging"
+#define INI_GROUP_SYNC              "Sync"
+#define INI_GROUP_LOCALE            "Locale"
+#define INI_VALUE_TRANSLATION       "translation"
+#define INI_VALUE_SPELLCHECK_LOCALE "spellCheckLocale"
+
 #define INI_GROUP_SEARCH "Search"
 #define INI_GROUP_THUMBNAIL "Thumbnail"
 

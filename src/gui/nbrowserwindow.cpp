@@ -1,5 +1,5 @@
 /*********************************************************************************
-NixNote - An open-source client f`or the Evernote service.
+NixNote - An open-source client for the Evernote service.
 Copyright (C) 2013 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
@@ -52,6 +52,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/gui/browserWidgets/table/tablepropertiesdialog.h"
 #include "src/exits/exitmanager.h"
 #include "browserWidgets/editorbuttonbar.h"
+#include "src/plugins/hunspell/hunspellplugin.h"
 
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
@@ -87,7 +88,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 NBrowserWindow::NBrowserWindow(QWidget *parent) :
-    QWidget(parent) {
+        QWidget(parent) {
     // Setup a unique identifier for this editor instance.
     QUuid uuid;
     this->uuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
@@ -822,10 +823,10 @@ void NBrowserWindow::saveNoteContent() {
         formatter.rebuildNoteEnml();
         if (formatter.isFormattingError()) {
             QMessageBox::information(
-                this,
-                tr("Unable to reformat"),
-                QString(
-                    tr(NN_APP_DISPLAY_NAME_GUI " was unable to reformat the note in ENML. Note could not be saved."))
+                    this,
+                    tr("Unable to reformat"),
+                    QString(
+                            tr(NN_APP_DISPLAY_NAME_GUI " was unable to reformat the note in ENML. Note could not be saved."))
             );
             return;
         }
@@ -857,7 +858,7 @@ void NBrowserWindow::saveNoteContent() {
             NoteTable table(global.db);
             table.updateNoteContent(lid, formatter.getContent());
         } else
-            emit requestNoteContentUpdate(lid, formatter.getContent(), true);
+                emit requestNoteContentUpdate(lid, formatter.getContent(), true);
         editor->isDirty = false;
 
         if (thumbnailer == nullptr)
@@ -1104,7 +1105,7 @@ void NBrowserWindow::pasteWithoutFormatButtonPressed() {
                      + QString("           workingNode = workingNode.parentNode;")
                      + QString("   } ")
                      + QString(
-            "   workingNode.innerHTML = window.browserWindow.fixEncryptionPaste(workingNode.innerHTML);")
+                "   workingNode.innerHTML = window.browserWindow.fixEncryptionPaste(workingNode.innerHTML);")
                      + QString("} fixEncryption();");
         editor->page()->mainFrame()->evaluateJavaScript(js);
     }
@@ -1163,9 +1164,7 @@ void NBrowserWindow::removeFormatButtonPressed() {
 }
 
 
-// TODO add enum
-void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode)
-{
+void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
     QLOG_DEBUG() << "html cleanup, mode " << mode;
     QWebElement rootElement = editor->editorPage->mainFrame()->documentElement();
     QString contents = rootElement.toOuterXml();
@@ -1198,8 +1197,7 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode)
             contents.replace(HTML_COMMENT_START, "");
             contents.replace(HTML_COMMENT_END, "");
         }
-    }
-    else {
+    } else {
         formatter.tidyHtml(mode);
         contents = formatter.getContent();
     };
@@ -1207,9 +1205,9 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode)
 
     if (formatter.isFormattingError()) {
         QMessageBox::information(
-            this,
-            tr("Unable to reformat"),
-            QString(tr("HTML cleanup failed."))
+                this,
+                tr("Unable to reformat"),
+                QString(tr("HTML cleanup failed."))
         );
         return;
     }
@@ -1257,7 +1255,7 @@ void NBrowserWindow::strikethroughButtonPressed() {
 // The horizontal line button was pressed
 void NBrowserWindow::horizontalLineButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('insertHorizontalRule', false, '');");
+            "document.execCommand('insertHorizontalRule', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1266,7 +1264,7 @@ void NBrowserWindow::horizontalLineButtonPressed() {
 // The center align button was pressed
 void NBrowserWindow::alignCenterButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('JustifyCenter', false, '');");
+            "document.execCommand('JustifyCenter', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1281,7 +1279,7 @@ void NBrowserWindow::formatCodeButtonPressed() {
     QString buffer;
     //    buffer.append("<pre style=\"font-family: Monaco, Menlo, Consolas, 'Courier New', monospace; font-size: 0.9em; border-radius: 4px; letter-spacing: 0.015em; padding: 1em; border: 1px solid #cccccc; background-color: #f8f8f8; overflow-x: auto;\">");
     buffer.append(
-        "<br/><pre style=\"font-family: Monaco, Menlo, Consolas, Courier New, monospace; font-size: 0.9em; border-radius: 4px; letter-spacing: 0.015em; padding: 1em; border: 1px solid #cccccc; background-color: #f8f8f8; overflow-x: auto;\">");
+            "<br/><pre style=\"font-family: Monaco, Menlo, Consolas, Courier New, monospace; font-size: 0.9em; border-radius: 4px; letter-spacing: 0.015em; padding: 1em; border: 1px solid #cccccc; background-color: #f8f8f8; overflow-x: auto;\">");
     buffer.append(text);
     buffer.append("</pre><br/>");
     QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(buffer);
@@ -1300,7 +1298,7 @@ void NBrowserWindow::syncButtonPressed() {
 // The full align button was pressed
 void NBrowserWindow::alignFullButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('JustifyFull', false, '');");
+            "document.execCommand('JustifyFull', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1309,7 +1307,7 @@ void NBrowserWindow::alignFullButtonPressed() {
 // The left align button was pressed
 void NBrowserWindow::alignLeftButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('JustifyLeft', false, '');");
+            "document.execCommand('JustifyLeft', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1318,7 +1316,7 @@ void NBrowserWindow::alignLeftButtonPressed() {
 // The align right button was pressed
 void NBrowserWindow::alignRightButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('JustifyRight', false, '');");
+            "document.execCommand('JustifyRight', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1327,7 +1325,7 @@ void NBrowserWindow::alignRightButtonPressed() {
 // The shift right button was pressed
 void NBrowserWindow::shiftRightButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('indent', false, '');");
+            "document.execCommand('indent', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1336,7 +1334,7 @@ void NBrowserWindow::shiftRightButtonPressed() {
 // The shift left button was pressed
 void NBrowserWindow::shiftLeftButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('outdent', false, '');");
+            "document.execCommand('outdent', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1345,7 +1343,7 @@ void NBrowserWindow::shiftLeftButtonPressed() {
 // The number list button was pressed
 void NBrowserWindow::numberListButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('InsertOrderedList', false, '');");
+            "document.execCommand('InsertOrderedList', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1354,7 +1352,7 @@ void NBrowserWindow::numberListButtonPressed() {
 // The bullet list button was pressed
 void NBrowserWindow::bulletListButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('InsertUnorderedList', false, '');");
+            "document.execCommand('InsertUnorderedList', false, '');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1373,10 +1371,10 @@ void NBrowserWindow::todoButtonPressed() {
     QString script_start = "document.execCommand('insertHtml', false, '";
     QString script_end = "');";
     QString todo =
-        "<input TYPE=\"CHECKBOX\" " +
-        QString("onMouseOver=\"style.cursor=\\'hand\\'\" ") +
-        QString(
-            "onClick=\"if(!checked) removeAttribute(\\'checked\\'); else setAttribute(\\'checked\\', \\'checked\\'); editorWindow.editAlert();\" />");
+            "<input TYPE=\"CHECKBOX\" " +
+            QString("onMouseOver=\"style.cursor=\\'hand\\'\" ") +
+            QString(
+                    "onClick=\"if(!checked) removeAttribute(\\'checked\\'); else setAttribute(\\'checked\\', \\'checked\\'); editorWindow.editAlert();\" />");
 
     QString selectedText = editor->selectedText().trimmed();
     QRegExp regex("\\r?\\n");
@@ -1388,7 +1386,7 @@ void NBrowserWindow::todoButtonPressed() {
         if (i == items.size() - 1)
             newLineChar = "";
         editor->page()->mainFrame()->evaluateJavaScript(
-            script_start + todo + items[i] + newLineChar + script_end);
+                script_start + todo + items[i] + newLineChar + script_end);
     }
     editor->setFocus();
     microFocusChanged();
@@ -1435,7 +1433,7 @@ void NBrowserWindow::fontSizeSelected(int index) {
     QString font = buttonBar->fontNames->itemText(idx);
 
     QString newText =
-        "<span style=\"font-size: " + QString::number(size) + "pt; font-family:" + font + ";\">" + text + "</span>";
+            "<span style=\"font-size: " + QString::number(size) + "pt; font-family:" + font + ";\">" + text + "</span>";
     QString script = QString("document.execCommand('insertHtml', false, '" + newText + "');");
     editor->page()->mainFrame()->evaluateJavaScript(script);
 
@@ -1458,7 +1456,7 @@ void NBrowserWindow::fontNameSelected(int index) {
     buttonBar->loadFontSizeComboBox(font);
     buttonBar->fontSizes->blockSignals(false);
     this->editor->page()->mainFrame()->evaluateJavaScript(
-        "document.execCommand('fontName', false, '" + font + "');");
+            "document.execCommand('fontName', false, '" + font + "');");
     editor->setFocus();
     microFocusChanged();
 }
@@ -1470,7 +1468,7 @@ void NBrowserWindow::fontColorClicked() {
     QLOG_DEBUG() << "Setting text color to: " << buttonBar->fontColorMenuWidget->getCurrentColorName();
     if (color->isValid()) {
         this->editor->page()->mainFrame()->evaluateJavaScript(
-            "document.execCommand('foreColor', false, '" + color->name() + "');");
+                "document.execCommand('foreColor', false, '" + color->name() + "');");
         editor->setFocus();
         microFocusChanged();
         buttonBar->saveButtonbarState();
@@ -1485,7 +1483,7 @@ void NBrowserWindow::fontHighlightClicked() {
     QLOG_DEBUG() << "Setting text background color to: " << buttonBar->highlightColorMenuWidget->getCurrentColorName();
     if (color->isValid()) {
         this->editor->page()->mainFrame()->evaluateJavaScript(
-            "document.execCommand('backColor', false, '" + color->name() + "');");
+                "document.execCommand('backColor', false, '" + color->name() + "');");
         editor->setFocus();
         microFocusChanged();
         buttonBar->saveButtonbarState();
@@ -2002,7 +2000,7 @@ void NBrowserWindow::microFocusChanged() {
                  //+QString("      window.browserWindow.printNodeName(workingNode.nodeName);")
                  + QString("      if (workingNode.nodeName=='TABLE') {")
                  + QString(
-        "          if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea();")
+            "          if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea();")
                  + QString("      }")
                  + QString("      if (workingNode.nodeName=='PRE') window.browserWindow.setInsidePre();")
                  + QString("      if (workingNode.nodeName=='B') window.browserWindow.boldActive();")
@@ -2021,7 +2019,7 @@ void NBrowserWindow::microFocusChanged() {
                  + QString("      }")
                  + QString("      if (workingNode.nodeName=='SPAN') {")
                  + QString(
-        "         if (workingNode.getAttribute('style') == 'text-decoration: underline;') window.browserWindow.underlineActive();")
+            "         if (workingNode.getAttribute('style') == 'text-decoration: underline;') window.browserWindow.underlineActive();")
                  + QString("      }")
                  + QString("      workingNode = workingNode.parentNode;")
                  + QString("   }")
@@ -2211,7 +2209,7 @@ void NBrowserWindow::linkClicked(const QUrl url) {
         bool newTab = false;
         if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
             //if (global.getMiddleClickAction() == MOUSE_MIDDLE_CLICK_NEW_WINDOW)
-                newExternalWindow = true;
+            newExternalWindow = true;
             //else
             //    newTab = true;
         } else {
@@ -2230,7 +2228,7 @@ void NBrowserWindow::linkClicked(const QUrl url) {
     if (url.toString().startsWith("nnres:", Qt::CaseInsensitive)) {
         if (url.toString().endsWith("/vnd.evernote.ink")) {
             QMessageBox::information(this, tr("Unable Open"), QString(
-                tr("This is an ink note.\nInk notes are not supported since Evernote has not\n published any specifications on them\nand I'm too lazy to figure them out by myself.")));
+                    tr("This is an ink note.\nInk notes are not supported since Evernote has not\n published any specifications on them\nand I'm too lazy to figure them out by myself.")));
             return;
         }
         QString filepath = global.fileManager.getDbaDirPath();
@@ -2544,7 +2542,7 @@ void NBrowserWindow::editLatex(QString guid) {
         QString script_end = "');";
 
         editor->page()->mainFrame()->evaluateJavaScript(
-            script_start + buffer + script_end);
+                script_start + buffer + script_end);
     } else {
         QString oldHtml = editor->page()->mainFrame()->toHtml();
         int startPos = oldHtml.indexOf("<a");
@@ -2653,7 +2651,7 @@ void NBrowserWindow::insertImage(const QMimeData *mime) {
 
     // Insert the actual note
     editor->page()->mainFrame()->evaluateJavaScript(
-        script_start + buffer + script_end);
+            script_start + buffer + script_end);
 
     return;
 }
@@ -2967,7 +2965,7 @@ void NBrowserWindow::printNote() {
 
     global.settings->beginGroup(INI_GROUP_PRINTER);
     QPrinter::Orientation orientation = static_cast<QPrinter::Orientation>(global.settings->value(
-        "orientation").toUInt());
+            "orientation").toUInt());
     QString name = global.settings->value("printerName", "").toString();
     QPrinter::OutputFormat format = static_cast<QPrinter::OutputFormat>(global.settings->value("outputFormat",
                                                                                                0).toUInt());
@@ -3188,7 +3186,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
         // Insert the actual image
         editor->page()->mainFrame()->evaluateJavaScript(
-            script_start + buffer + script_end);
+                script_start + buffer + script_end);
         return;
     }
 
@@ -3211,7 +3209,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
         // Insert the actual image
         editor->page()->mainFrame()->evaluateJavaScript(
-            script_start + buffer + script_end);
+                script_start + buffer + script_end);
     }
 
     // If we have something other than an image or PDF
@@ -3243,7 +3241,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
     // Insert the actual attachment
     editor->page()->mainFrame()->evaluateJavaScript(
-        script_start + buffer + script_end);
+            script_start + buffer + script_end);
 }
 
 
@@ -3471,7 +3469,7 @@ void NBrowserWindow::encryptButtonPressed() {
     QString script_start = "document.execCommand('insertHtml', false, '";
     QString script_end = "');";
     editor->page()->mainFrame()->evaluateJavaScript(
-        script_start + buffer + script_end);
+            script_start + buffer + script_end);
 }
 
 
@@ -3573,74 +3571,121 @@ void NBrowserWindow::sendUrlUpdateSignal() {
 
 
 void NBrowserWindow::spellCheckPressed() {
+    QLOG_DEBUG() << SPELLCHECKER_DLG ": Starting spellcheck";
+
     // Check if we have a plugin for Hunspell loaded. This could have been done at startup, but if this is
     // an external window we could need to load it again.
     if (!hunspellInterface) {
-        this->loadPlugins();
+        QLOG_DEBUG() << SPELLCHECKER_DLG ": About to create spell checker";
+        this->createSpellChecker();
     }
 
     // If we STILL don't have a plugin then it can't be loaded. Quit out
-    if (!hunspellPluginAvailable) {
+    QString currentSpellLocale = initializeSpellCheckerInitial();
+    if (currentSpellLocale.isEmpty()) {
+        QLOG_DEBUG() << SPELLCHECKER_DLG ": Spell checker init was not successful - exit spell check";
         QMessageBox::critical(this, tr("Plugin Error"),
                               tr("Hunspell plugin not available or no dictionary for current locale"), QMessageBox::Ok);
         return;
     }
 
+    QLOG_DEBUG() << SPELLCHECKER_DLG ":Preparing page for spell check";
     QWebPage *page = editor->page();
     page->action(QWebPage::MoveToStartOfDocument);
     page->mainFrame()->setFocus();
 
     Qt::KeyboardModifier ctrl(Qt::ControlModifier);
-
     QKeyEvent key(QEvent::KeyPress, Qt::Key_Home, ctrl);
     editor->keyPressEvent(&key);
     page->mainFrame()->setFocus();
 
-    QStringList words = page->mainFrame()->toPlainText().split(" ");
+    QString plainText(page->mainFrame()->toPlainText());
+    QLOG_DEBUG_FILE("spell-1.txt", plainText);
+    //QLOG_INFO() << "spell plain before: " << plainText;
+    plainText = plainText
+            .replace(QRegularExpression("\\s|\\xa0"), " ") // \xa0 is &nbsp;
+            .replace(QRegularExpression("\\s-"), " ")
+            .replace(QRegularExpression("-\\s"), " ")
+            .replace(QRegularExpression(
+                    "[" + QRegularExpression::escape("/*\\;:()[]{}~#`§^′_$%&=\",.!?+") + "]"
+            ), " ")
+            .replace(QRegularExpression("\\s+"), " "
+            );
+    QLOG_DEBUG_FILE("spell-2.txt", plainText);
+
+    QStringList words = plainText.split(" ");
     QStringList ignoreWords;
-    QStringList rwords;
-    bool finished = false;
+    QStringList suggestions;
 
-    global.settings->beginGroup(INI_GROUP_LOCALE);
-    QString dict = global.settings->value("translation").toString();
-    global.settings->endGroup();
+    QLOG_DEBUG() << SPELLCHECKER_DLG ": creating dialog for locale=" << currentSpellLocale;
+    SpellCheckDialog dialog(currentSpellLocale, this);
 
-    for (int i = 0; i < words.size() && !finished; i++) {
-        QString currentWord = words[i];
-        page->findText(currentWord);
-        rwords.clear();
-        if (!hunspellInterface->spellCheck(currentWord, rwords) && !ignoreWords.contains(currentWord)) {
-            SpellCheckDialog dialog(currentWord, rwords, this);
-            dialog.move(0, 0);
-            dialog.exec();
-            if (dialog.cancelPressed)
-                finished = true;
-            if (dialog.ignoreAllPressed)
+    QLOG_DEBUG() << SPELLCHECKER_DLG ": Starting spell check loop";
+    for (int i = 0; i < words.size(); i++) {
+        QString currentWord = words[i].trimmed();
+        bool shouldBeIgnored = (currentWord.length() <= 1) || ignoreWords.contains(currentWord);
+        if (shouldBeIgnored) {
+            continue;
+        }
+
+        // this could be too verbose, eventually switch to trace
+        QLOG_DEBUG() << SPELLCHECKER_DLG ": checking word: " << currentWord;
+
+        if (!page->findText(currentWord)) {
+            QLOG_DEBUG() << SPELLCHECKER_DLG ": skip word: " << currentWord << " (as find failed)";
+        };
+        suggestions.clear();
+
+        if (!hunspellInterface->spellCheck(currentWord, suggestions)) {
+            dialog.setState(currentWord, suggestions);
+
+            //dialog.move(0, 0);
+            int result = dialog.exec();
+            QLOG_DEBUG() << SPELLCHECKER_DLG ": dialog result: " << result;
+
+            if (result == DONE_IGNORE) {
+                continue;
+            } else if (result == DONE_CANCEL) {
+                QLOG_DEBUG() << SPELLCHECKER_DLG ": got cancel";
+                break;
+            } else if (result == DONE_IGNOREALL) {
+                QLOG_DEBUG() << SPELLCHECKER_DLG ": ignore all: " << currentWord;
                 ignoreWords.append(currentWord);
-            if (dialog.replacePressed) {
-                QApplication::clipboard()->setText(dialog.replacement);
-                pasteButtonPressed();
-            }
-            if (dialog.changeLanguage) {
-                dialog.changeLanguage = false;
-                i--;
-                QString newLang;
+            } else if (result == DONE_REPLACE) {
+                QString replacement(dialog.getReplacement());
+                QLOG_DEBUG() << SPELLCHECKER_DLG ": replacing by: " << replacement;
+                QApplication::clipboard()->setText(replacement);
+                //1: pasteButtonPressed();
+                //2: this->editor->triggerPageAction(QWebPage::Paste);
+                page->triggerAction(QWebPage::Paste);
+
+            } else if (result == DONE_CHANGELANGUAGE) {
+                // let restart the loop
+                i = 0;
+
                 int idx = dialog.language->currentIndex();
-                newLang = dialog.language->itemText(idx);
-                hunspellInterface->initialize(global.fileManager.getProgramDataDir(),
-                                              global.fileManager.getSpellDirPathUser(), newLang);
-            }
-            if (dialog.addToDictionaryPressed) {
-                hunspellInterface->addWord(global.fileManager.getSpellDirPathUser() + "user.lst", currentWord);
+                QString newLocale = dialog.language->itemText(idx);
+                QLOG_DEBUG() << SPELLCHECKER_DLG ": switching language to " << newLocale;
+
+                if (initializeSpellCheckerWithLocale(newLocale)) {
+                    QLOG_DEBUG() << SPELLCHECKER_DLG ": switch OK";
+                }
+            } else if (result == DONE_ADDTODICTIONARY) {
+                QLOG_DEBUG() << SPELLCHECKER_DLG ": adding word to dictionary: " << currentWord;
+
+                spellCheckAddWordToUserDictionary(currentWord);
+            } else {
+                QLOG_DEBUG() << SPELLCHECKER_DLG ": unrecognised result code: " << result;
             }
         }
     }
+    QLOG_DEBUG() << SPELLCHECKER_DLG ": finished spell check";
 
     // Go to the end of the document & finish up
     QKeyEvent key2(QEvent::KeyPress, Qt::Key_End, ctrl);
     editor->keyPressEvent(&key2);
 
-    QMessageBox::information(this, tr("Spell Check Complete"), tr("Spell Check Complete."), QMessageBox::Ok);
+    global.setMessage(tr("Spell check completed"));
 }
 
 
@@ -3866,63 +3911,119 @@ void NBrowserWindow::setEditorStyle() {
 }
 
 
-void NBrowserWindow::loadPlugins() {
-    hunspellPluginAvailable = false;
+void NBrowserWindow::createSpellChecker() {
+    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": about to create spell checker";
+    QString pluginPath(global.fileManager.getHunspellPluginPath());
 
-    QStringList dirList;
-    dirList.append(global.fileManager.getProgramDataDir());
-    dirList.append(global.fileManager.getProgramDataDir() + "plugins");
-    const QString prefixPath = QLibraryInfo::location(QLibraryInfo::PrefixPath);
-    dirList.append(prefixPath + "/lib/nixnote2/");
-#ifndef Q_OS_MAC_OS
-    if (prefixPath != "/usr") {
-        dirList.append("/usr/lib/nixnote2/");
+    // no locale
+    if (pluginPath.isEmpty()) {
+        return;
     }
-    if (prefixPath != "/usr/local") {
-        dirList.append("/usr/local/lib/nixnote2/");
-    }
-    dirList.append("/usr/local/lib");
-#endif
-#if defined(Q_OS_MACOS)
-    // support installing additional plugins in the standard locations where they might be found
-    dirList.append(QStandardPaths::locate(QStandardPaths::AppDataLocation, "plugins", QStandardPaths::LocateDirectory));
-#endif
-    if (prefixPath != "/usr") {
-        dirList.append(prefixPath + "/lib");
-    }
-    dirList.append("/usr/lib");
 
-    for (int i = 0; i < dirList.size(); i++) {
-        // Start loading plugins
-        QDir pluginsDir(dirList[i]);
-        QStringList filter;
-        filter.append("libhunspellplugin.so");
-        filter.append("libhunspellplugin.dylib");
-            foreach (QString fileName, pluginsDir.entryList(filter)) {
-                QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-                QObject *plugin = pluginLoader.instance();
-                if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
-                    if (plugin) {
-                        hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                        if (hunspellInterface) {
-                            QString errMsg;
-                            global.settings->beginGroup(INI_GROUP_LOCALE);
-                            QString dict = global.settings->value("translation").toString();
-                            global.settings->endGroup();
-                            hunspellPluginAvailable = hunspellInterface->initialize(
-                                global.fileManager.getProgramDataDir(),
-                                global.fileManager.getSpellDirPathUser(), errMsg, dict);
-                            if (!hunspellPluginAvailable) {
-                                QLOG_ERROR() << errMsg;
-                            }
-                        }
-                    } else {
-                        QLOG_ERROR() << pluginLoader.errorString();
-                    }
-                }
-            }
+    // if interface doesn't exist, create it
+    if (!hunspellInterface) {
+        QLOG_INFO() << SPELLCHECKER_PLUGIN ": trying to open library: " << pluginPath;
+        QPluginLoader pluginLoader(pluginPath);
+        QObject *plugin = pluginLoader.instance();
+        if (plugin) {
+            hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
+
+        } else {
+            QString errMsg = pluginLoader.errorString();
+            QLOG_ERROR() << SPELLCHECKER_PLUGIN ": load FAILED (pluginLoader): " << errMsg;
+        }
     }
 }
+
+/**
+ * First time init from settings with retry fallback.
+ * @return current locale if OK
+ */
+QString NBrowserWindow::initializeSpellCheckerInitial() {
+    // if interface exists, then try to init with "current" locale
+    if (hunspellInterface) {
+        QString locale = getSpellCheckerLocaleFromSettings();
+        bool ok = initializeSpellCheckerWithLocale(locale);
+
+        if (!ok) {
+            QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": failed init with locale=" << locale;
+
+            // TODO take first from list of available
+
+            QString systemLocale = QLocale::system().name();
+
+            QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": system locale: " << systemLocale;
+            if (!QString::compare(locale, systemLocale, Qt::CaseInsensitive)) {
+                ok = initializeSpellCheckerWithLocale(systemLocale);
+                if (ok) {
+                    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": OK init with fallback locale=" << locale;
+                    locale = systemLocale;
+                }
+            }
+        }
+        if (ok) {
+            // on success set current locale
+            QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": OK setting current locale=" << locale;
+            saveSpellCheckerLocaleToSettings(locale);
+            return locale;
+        }
+    }
+    return QString();
+}
+
+bool NBrowserWindow::initializeSpellCheckerWithLocale(QString locale) {
+    QString errMsg;
+    QString userDictionaryPath(global.fileManager.getSpellDirPathUser());
+
+    QLOG_INFO() << SPELLCHECKER_PLUGIN ": trying initialization for locale: " << locale
+                << ", userDictionaryPath=" << userDictionaryPath;
+
+
+    bool result = hunspellInterface->initialize(userDictionaryPath, errMsg, locale);
+    if (result) {
+        QLOG_INFO() << SPELLCHECKER_PLUGIN ": initialization OK";
+        saveSpellCheckerLocaleToSettings(locale);
+    } else {
+        global.setMessage(tr("Failed to initialize spell checker for ") + locale);
+        QLOG_ERROR() << SPELLCHECKER_PLUGIN ": initialization FAILED: " << errMsg;
+    }
+    return result;
+}
+
+QString NBrowserWindow::getSpellCheckerLocaleFromSettings() {
+    global.settings->beginGroup(INI_GROUP_LOCALE);
+    QString locale = global.settings->value(INI_VALUE_SPELLCHECK_LOCALE).toString();
+    if (locale.isEmpty()) {
+        // fallback to translation
+        locale = global.settings->value(INI_VALUE_TRANSLATION).toString();
+    }
+    global.settings->endGroup();
+
+    if (locale.isEmpty()) {
+        // fallback if even translation isn't present
+        locale = QLocale::system().name();
+    }
+
+    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": got settings spell check locale=" << locale;
+    return locale;
+}
+
+void NBrowserWindow::saveSpellCheckerLocaleToSettings(QString locale) {
+    QLOG_DEBUG() << SPELLCHECKER_PLUGIN ": save settings spell check locale=" << locale;
+    global.settings->beginGroup(INI_GROUP_LOCALE);
+    global.settings->setValue(INI_VALUE_SPELLCHECK_LOCALE, locale);
+    global.settings->endGroup();
+}
+
+
+void NBrowserWindow::spellCheckAddWordToUserDictionary(QString currentWord) {
+    if (!hunspellInterface) {
+        // invalid state
+        return;
+    }
+    hunspellInterface->addWord( currentWord);
+}
+
 
 
 // Find shortcut activated

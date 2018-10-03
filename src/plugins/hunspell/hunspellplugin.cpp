@@ -20,22 +20,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <iostream>
 #include <QDebug>
-
 #include "hunspellplugin.h"
+
 HunspellPlugin::HunspellPlugin() {
 
 }
 
 // Initialize for use. I don't do it in the constructor because I don't 
 // want to take the time unless the user REALLY wants to use the spell checker.
-bool HunspellPlugin::initialize(QString programDictionary, QString userDictionary, QString &errMsg, QString language)  {
+bool HunspellPlugin::initialize(QString userDictionaryPath, QString &errMsg, QString language) {
     checker = new SpellChecker();
-    qDebug() << "**** Setting up SpellChecker:" << checker << "with" << programDictionary
-        << "and" << userDictionary << "for language" << language;
-    bool result = checker->setup(programDictionary, userDictionary, language);
+    qInfo().nospace() << SPELLCHECKER_PLUGIN ": setting up SpellChecker: " << checker
+                      << " and userDictionary=" << userDictionaryPath << " for language=" << language;
+    bool result = checker->setup(userDictionaryPath, language);
     if (!result) {
-        errMsg = tr("Error setting up spellchecker with programDictionary %1 and userDictionary %2 for language %3")
-            .arg(programDictionary).arg(userDictionary).arg(checker->errorMsg);
+        errMsg = QStringLiteral(
+                SPELLCHECKER_PLUGIN
+                ": error setting up spellchecker with and userDictionary %1 for language %2")
+                .arg(userDictionaryPath).arg(checker->errorMsg);
     }
     return result;
 }
@@ -45,8 +47,8 @@ bool HunspellPlugin::spellCheck(QString word, QStringList &suggestions) {
 }
 
 
-void HunspellPlugin::addWord(QString dictionary, QString word) {
-    return checker->addWord(dictionary, word);
+void HunspellPlugin::addWord(QString word) {
+    return checker->addWord(word);
 }
 
 #if QT_VERSION < 0x050000

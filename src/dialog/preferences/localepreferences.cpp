@@ -84,7 +84,7 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     mainLayout->addWidget(restartLabel,3,0);
 
     global.settings->beginGroup(INI_GROUP_LOCALE);
-    QString translationi = global.settings->value("translation", "").toString();
+    QString translationi = global.settings->value(INI_VALUE_TRANSLATION, "").toString();
     int datei = global.settings->value("dateFormat", 1).toInt();
     int timei = global.settings->value("timeFormat", 1).toInt();
     global.settings->endGroup();
@@ -112,7 +112,7 @@ void LocalePreferences::saveValues() {
     QString translation = getTranslation();
 
     global.settings->beginGroup(INI_GROUP_LOCALE);
-    global.settings->setValue("translation", translation);
+    global.settings->setValue(INI_VALUE_TRANSLATION, translation);
     global.settings->setValue("dateFormat", dateFormat);
     global.settings->setValue("timeFormat", timeFormat);
     global.settings->endGroup();

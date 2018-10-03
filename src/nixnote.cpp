@@ -65,13 +65,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/filters/filterengine.h"
 #include "src/global.h"
 #include "src/html/enmlformatter.h"
-//#include "src/oauth/oauthwindow.h"
-//#include "src/oauth/oauthtokenizer.h"
 #include "src/dialog/databasestatus.h"
 #include "src/dialog/adduseraccountdialog.h"
 #include "src/dialog/accountmaintenancedialog.h"
 #include "src/communication/communicationmanager.h"
 #include "src/utilities/encrypt.h"
+#include "src/plugins/hunspell/hunspellplugin.h"
 
 // Windows Check
 #ifndef _WIN32
@@ -124,13 +123,10 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     if (css != "")
         this->setStyleSheet(css);
 
-    // Load any plugins
-    this->loadPlugins();
-
     nixnoteTranslator = new QTranslator();
     QString translation;
     global.settings->beginGroup(INI_GROUP_LOCALE);
-    translation = global.settings->value("translation", QLocale::system().name()).toString();
+    translation = global.settings->value(INI_VALUE_TRANSLATION, QLocale::system().name()).toString();
     global.settings->endGroup();
     translation = global.fileManager.getTranslateFilePath(NN_APP_NAME "_" + translation + ".qm");
     QLOG_DEBUG() << "Looking for translations: " << translation;
@@ -2954,18 +2950,6 @@ void NixNote::openPreferences() {
         }
 
         indexRunner.officeFound = global.synchronizeAttachments();
-
-        //        global.settings->beginGroup(INI_GROUP_LOCALE);
-        //        QString translation;
-        //        translation = global.settings->value("translation", QLocale::system().name()).toString();
-        //        global.settings->endGroup();
-        //        translation = global.fileManager.getTranslateFilePath("nixnote2_" + translation + ".qm");
-        //        QApplication::removeTranslator(nixnoteTranslator);
-        //        QLOG_DEBUG() << "Looking for transaltions: " << translation;
-        //        bool translationResult = nixnoteTranslator->load(translation);
-        //        QLOG_DEBUG() << "Translation loaded:" << translationResult;
-        //        QApplication::instance()->installTranslator(nixnoteTranslator);
-
     }
 }
 
@@ -3565,68 +3549,6 @@ void NixNote::presentationModeOff() {
     tabWindow->currentBrowser()->buttonBar->show();
     this->showMaximized();
 }
-
-
-//
-// TODO REFACTOR !
-//
-
-// Check to see if plugins are available and they match
-// the correct version expected. Load them if possible.
-void NixNote::loadPlugins() {
-    QStringList dirList;
-    dirList.append(global.fileManager.getProgramDataDir());
-    dirList.append(global.fileManager.getProgramDataDir() + "plugins");
-    const QString prefixPath = QLibraryInfo::location(QLibraryInfo::PrefixPath);
-    dirList.append(prefixPath + "/lib/nixnote2/");
-#ifndef Q_OS_MAC_OS
-    if (prefixPath != "/usr") {
-        dirList.append("/usr/lib/nixnote2/");
-    }
-    if (prefixPath != "/usr/local") {
-        dirList.append("/usr/local/lib/nixnote2/");
-    }
-    dirList.append("/usr/local/lib");
-#endif
-#if defined(Q_OS_MACOS)
-    // support installing additional plugins in the standard locations where they might be found
-    dirList.append(QStandardPaths::locate(QStandardPaths::AppDataLocation, "plugins", QStandardPaths::LocateDirectory));
-#endif
-    if (prefixPath != "/usr") {
-        dirList.append(prefixPath + "/lib");
-    }
-    dirList.append("/usr/lib");
-
-    // Start loading plugins
-    for (int i = 0; i < dirList.size(); i++) {
-        QDir pluginsDir(dirList[i]);
-        QStringList filter;
-        filter.append("libhunspellplugin.so");
-        filter.append("libhunspellplugin.dylib");
-            foreach(QString
-                        fileName, pluginsDir.entryList(filter)) {
-                QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-                QObject *plugin = pluginLoader.instance();
-
-
-                // The Hunspell plugin isn't actually used here. We just use this as a
-                // check to be sure that the menu should be available.
-                if (fileName == "libhunspellplugin.so" || fileName == "libhunspellplugin.dylib") {
-                    if (plugin) {
-                        HunspellInterface *hunspellInterface;
-                        hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                        if (hunspellInterface != nullptr) {
-                            hunspellPluginAvailable = true;
-                        }
-                        delete hunspellInterface;
-                    } else {
-                        QLOG_ERROR() << tr("Error loading Hunspell plugin: ") << pluginLoader.errorString();
-                    }
-                }
-            }
-    }
-}
-
 
 // Export selected notes as PDF files.
 void NixNote::onExportAsPdf() {

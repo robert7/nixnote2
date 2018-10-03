@@ -167,7 +167,6 @@ private:
     QShortcut *rightArrowButtonShortcut;
 
 private:
-    void loadPlugins();
     void setupGui();
     void setupNoteList();
     void setupSearchTree();
@@ -202,8 +201,7 @@ public:
     bool event(QEvent *event);
     LineEdit *searchText;
     NTabWidget *tabWindow;
-    bool hunspellPluginAvailable;
-    void showAnnouncementMessage();
+void showAnnouncementMessage();
 
 private slots:
     void onNetworkManagerFinished(QNetworkReply *reply);

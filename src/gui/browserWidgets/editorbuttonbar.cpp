@@ -575,7 +575,9 @@ void EditorButtonBar::getButtonbarState() {
     highlightColorAction->setVisible(global.settings->value("highlightButtonVisible", true).toBool());
     highlightVisible->setChecked(highlightColorAction->isVisible());
 
-    spellCheckButtonAction->setVisible(global.settings->value("spelLCheckButtonVisible", false).toBool());
+    bool spellcheckPluginAvailable = !global.fileManager.getHunspellPluginPath().isEmpty();
+    bool spellCheckVisible = global.settings->value("spellCheckButtonVisible", true).toBool() && spellcheckPluginAvailable;
+    spellCheckButtonAction->setVisible(spellCheckVisible);
     spellCheckButtonVisible->setChecked(spellCheckButtonAction->isVisible());
 
     htmlEntitiesButtonAction->setVisible(global.settings->value("htmlEntitiesButtonVisible", false).toBool());
