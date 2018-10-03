@@ -1,5 +1,6 @@
 NixNote (2.1.0-beta4e) unstable; urgency=low
-  * Spellchecking completely refactored. The spell check plugin is now included by default.
+  * Spellchecking completely refactored and improved. The spell checker is now embedded (not a plugin).
+    Dictionary locale (language) switching now works. User dictionaries are per locale.
   * Default debug level is now INFO.
  -- Robert Spiegel <nightingale7@gmail.com>  Wed, 3 Oct 2018 12:00:00 -0400
 

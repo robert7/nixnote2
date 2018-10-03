@@ -58,8 +58,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/gui/browserWidgets/reminderbutton.h"
 #include "src/html/thumbnailer.h"
 #include "src/email/mimemessage.h"
-#include "src/plugins/hunspell/hunspellinterface.h"
-#include "src/plugins/hunspell/hunspellplugin.h"
+#include "src/hunspell/spellchecker.h"
 #include "src/gui/findreplace.h"
 #include "src/threads/browserrunner.h"
 #include "src/html/enmlformatter.h"
@@ -103,7 +102,7 @@ private:
     QString attachFilePath;  // Save path of last selected attachment.
 
     // object of interface
-    HunspellInterface *hunspellInterface;
+    SpellChecker *spellChecker;
 
     void createSpellChecker();
     bool initializeSpellCheckerWithLocale(QString local);
@@ -367,5 +366,6 @@ private slots:
     void repositionAfterSourceEdit(bool);
 
 };
+
 
 #endif // NBROWSERWINDOW_H

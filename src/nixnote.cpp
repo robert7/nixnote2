@@ -70,7 +70,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/dialog/accountmaintenancedialog.h"
 #include "src/communication/communicationmanager.h"
 #include "src/utilities/encrypt.h"
-#include "src/plugins/hunspell/hunspellplugin.h"
 
 // Windows Check
 #ifndef _WIN32

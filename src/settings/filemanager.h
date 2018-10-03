@@ -72,8 +72,6 @@ private:
     QString translateDirPath;
     QDir translateDir;
 
-    QString hunspellPluginPath;
-
 private:
     QsLogging::DestinationPtr fileLoggingDestination;
 
@@ -84,7 +82,6 @@ private:
     void createDirOrCheckWriteable(QDir dir);
     QString fixStandardPath(QString &path) const;
     QString getDefaultProgramDirPath();
-    void setupHunspellPlugin();
 
 public:
     FileManager();
@@ -132,11 +129,6 @@ public:
     void deleteTopLevelFiles(QDir dir, bool exitOnFail);
     QString getMainLogFileName() const { return this->getLogsDirPath("") + "messages.log"; }
     QString getLibraryDirPath();
-
-    const QString &getHunspellPluginPath() const {
-        return hunspellPluginPath;
-    }
-
 };
 
 #endif // FILEMANAGER_H
