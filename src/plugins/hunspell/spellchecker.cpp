@@ -108,15 +108,27 @@ bool SpellChecker::spellCheck(QString word, QStringList &suggestions) {
     if (!hunspell) {
         return false;
     }
-    int isValid = hunspell->spell(word.toStdString());
+    int isValid = hunspell->spell(word.toStdString().c_str());
     if (isValid) {
         return true;
     }
 
-    const auto suggested = hunspell->suggest(word.toStdString());
+#ifdef HUNSPELL_16_PLUS
+    // currently not used, as I don't know how to easily detect the version
+
+    const auto suggested = hunspell->suggest(word.toStdString().c_str());
     for_each(suggested.begin(), suggested.end(), [&suggestions](const std::string &suggestion) {
         suggestions << QString::fromStdString(suggestion);
     });
+#else
+    // deprecated in 1.6 - but needed for 1.3
+    char **wlst;
+    int ns = hunspell->suggest(&wlst,word.toStdString().c_str());
+    for (int i=0; i < ns; i++) {
+        suggestions.append(QString::fromStdString(wlst[i]));
+    }
+#endif
+
     return false;
 }
 
