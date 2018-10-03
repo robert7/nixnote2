@@ -487,7 +487,7 @@ message("Target binary: $${binary.files}")
 libs.path = $${PREFIX}/lib/$${TARGET}
 libs.files = $${DESTDIR}/hunspellplugin/libhunspellplugin.so
 libs.CONFIG = no_check_exist
-message("Target libs: $${libs.files}")
+message("$$TARGET: Target libs: $${libs.files}")
 
 desktop.path = $${PREFIX}/share/applications
 desktop.files = $${TARGET}.desktop

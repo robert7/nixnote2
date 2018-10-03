@@ -26,7 +26,6 @@ gcc {
 }
 
 linux:QMAKE_CXXFLAGS += -std=c++11 -g -O2  -Wformat -Werror=format-security
-linux:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
 
 g++4 {
   # this is a guess, but "stack-protector-strong" may not be available yet
