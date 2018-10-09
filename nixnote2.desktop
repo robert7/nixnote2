@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=NixNote
+Name=NixNote2
 Comment=Use with Evernote to remember everything
-GenericName=NixNote
+GenericName=NixNote2
 Exec=nixnote2
 Icon=nixnote2
 StartupNotify=true

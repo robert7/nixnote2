@@ -12,8 +12,8 @@ if [ ! -f "$DESKTOP_FILE" ]; then
     exit 1
 fi
 
-export VERSION=$(cat appdir/usr/share/nixnote2/version.txt)
-echo Version: ${VERSION}
+export VERSIONX=$(cat appdir/usr/share/nixnote2/version.txt)
+echo Version: ${VERSIONX}
 
 #CMD="linuxdeployqt $DESKTOP_FILE -bundle-non-qt-libs"
 #echo About to run: $CMD
