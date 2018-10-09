@@ -44,10 +44,10 @@ after_success:
          export UPLOADTOOL_SUFFIX=$TRAVIS_BRANCH
        fi
        RELEASE_NOTES=$(cat ./development/release-notes/release-$TRAVIS_BRANCH.md)
-       export UPLOADTOOL_BODY="$RELEASE_NOTES - Travis CI build log: https://travis-ci.com/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID/"
-       #export VERSION=$(cat appdir/usr/share/nixnote2/version.txt)
+       export VERSION=$(cat appdir/usr/share/nixnote2/version.txt)
+       export UPLOADTOOL_BODY="$RELEASE_NOTES - Version: **${VERSION}** - [Travis CI build log](https://travis-ci.com/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID/)."
        mv debian/changelog debian/changelog.txt
-       bash upload.sh NixNote2.AppImage debian/changelog*.txt || exit 1
+       bash upload.sh NixNote*.AppImage debian/changelog*.txt || exit 1
     fi
 
 branches:

@@ -3167,9 +3167,9 @@ void NBrowserWindow::attachFileSelected(QString filename) {
                 hash = d.bodyHash;
         }
         buffer.append("<img src=\"file://");
-#ifdef _WIN32
-        buffer.append("/");
-#endif
+        #ifdef _WIN32
+                buffer.append("/");
+        #endif
         buffer.append(path);
         buffer.append("\" type=\"");
         buffer.append(mime);
@@ -3185,14 +3185,13 @@ void NBrowserWindow::attachFileSelected(QString filename) {
         buffer.append("\">");
 
         // Insert the actual image
-        editor->page()->mainFrame()->evaluateJavaScript(
-                script_start + buffer + script_end);
+        editor->page()->mainFrame()->evaluateJavaScript(script_start + buffer + script_end);
         return;
     }
 
-    if (mime == "application/pdf" && global.pdfPreview) {
-        // The resource is done, now we need to add it to the
-        // note body
+    bool isPdfWithInlineDisplay = mime == "application/pdf" && global.pdfPreview;
+    if (isPdfWithInlineDisplay) {
+        // The resource is done, now we need to add it to the note body
         QString g = QString::number(rlid) + extension;
 
         // do the actual insert into the note
@@ -3200,48 +3199,52 @@ void NBrowserWindow::attachFileSelected(QString filename) {
         QByteArray hash;
         if (newRes.data.isSet()) {
             Data data = newRes.data;
-            if (data.bodyHash.isSet())
+            if (data.bodyHash.isSet()) {
                 hash = data.bodyHash;
+            }
         }
+        // PDF iniline preview object
         buffer.append("<object style=\"width:100%; height: 600px\" lid=\"" + QString::number(rlid) + "\" hash=\"");
         buffer.append(hash.toHex());
         buffer.append("\" type=\"application/pdf\" />");
 
         // Insert the actual image
-        editor->page()->mainFrame()->evaluateJavaScript(
-                script_start + buffer + script_end);
+        editor->page()->mainFrame()->evaluateJavaScript(script_start + buffer + script_end);
+    } else {
+        // if we already inserted the "object", then skip "img" tag, as this would duplicate the PDF
+
+        // If we have something other than an image or PDF
+        // First get the icon for this type of file
+        AttachmentIconBuilder builder;
+        QString g = global.fileManager.getDbaDirPath() + QString::number(rlid) + extension;
+        QString tmpFile = builder.buildIcon(rlid, filename);
+
+
+        // do the actual insert into the note
+        QString buffer;
+        buffer.append("<a en-tag=\"en-media\" ");
+        buffer.append("lid=\"" + QString::number(rlid) + QString("\" "));
+        buffer.append("type=\"" + mime + "\" ");
+        buffer.append("hash=\"" + hash.toHex() + "\" ");
+        buffer.append("href=\"nnres:" + g + "\" ");
+        buffer.append("oncontextmenu=\"window.browserWindow.resourceContextMenu(&apos");
+        buffer.append(g + QString("&apos);\" "));
+        buffer.append(">");
+
+        buffer.append("<img en-tag=\"temporary\" title=\"" + QFileInfo(filename).fileName() + "\" ");
+        buffer.append("src=\"file://");
+        buffer.append("/");
+        buffer.append("<img en-tag=\"temporary\" title=\"" + QFileInfo(filename).fileName() + "\" ");
+        buffer.append("src=\"file://");
+        #ifdef _WIN32
+        buffer.append("/");
+        #endif
+        buffer.append(tmpFile);
+        buffer.append("\" />");
+        buffer.append("</a>");
+        buffer.replace("\'", "&quot;");
+        editor->page()->mainFrame()->evaluateJavaScript(script_start + buffer + script_end);
     }
-
-    // If we have something other than an image or PDF
-    // First get the icon for this type of file
-    AttachmentIconBuilder builder;
-    QString g = global.fileManager.getDbaDirPath() + QString::number(rlid) + extension;
-    QString tmpFile = builder.buildIcon(rlid, filename);
-
-    // do the actual insert into the note
-    QString buffer;
-    buffer.append("<a en-tag=\"en-media\" ");
-    buffer.append("lid=\"" + QString::number(rlid) + QString("\" "));
-    buffer.append("type=\"" + mime + "\" ");
-    buffer.append("hash=\"" + hash.toHex() + "\" ");
-    buffer.append("href=\"nnres:" + g + "\" ");
-    buffer.append("oncontextmenu=\"window.browserWindow.resourceContextMenu(&apos");
-    buffer.append(g + QString("&apos);\" "));
-    buffer.append(">");
-
-    buffer.append("<img en-tag=\"temporary\" title=\"" + QFileInfo(filename).fileName() + "\" ");
-    buffer.append("src=\"file://");
-#ifdef _WIN32
-    buffer.append("/");
-#endif
-    buffer.append(tmpFile);
-    buffer.append("\" />");
-    buffer.append("</a>");
-    buffer.replace("\'", "&quot;");
-
-    // Insert the actual attachment
-    editor->page()->mainFrame()->evaluateJavaScript(
-            script_start + buffer + script_end);
 }
 
 
