@@ -6,11 +6,31 @@ Nixnote is Evernote desktop client for Linux.
 * [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
 * [New features in v2.1](https://github.com/robert7/nixnote2/wiki/New-features-in-v2.1)
 * [CHANGELOG](https://github.com/robert7/nixnote2/blob/master/debian/changelog)
-* [Howto install & binary downloads](https://github.com/robert7/nixnote2/releases)
-  * For Ubuntu users its recommended to install native package from [NixNote PPA](https://github.com/robert7/nixnote2/wiki/NixNote-PPA) (although the AppImage version will also work).
-  * For any linux distribution: [download AppImage, mark as executable & run](https://github.com/robert7/nixnote2/wiki/HowTo---Run-AppImage)
+* [Contributing](CONTRIBUTING.md)
 
 Travis CI [![Build Status](https://travis-ci.com/robert7/nixnote2.svg?branch=master)](https://travis-ci.com/robert7/nixnote2)
+
+## Packages
+### Ubuntu
+NixNote PPA - reflects the latest [stable release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#stable-releases). More information can be found on [NixNote PPA wiki page](https://github.com/robert7/nixnote2/wiki/NixNote-PPA). Installation commands:
+
+```
+sudo add-apt-repository ppa:nixnote/nixnote2-stable -y -u
+sudo apt install nixnote2 -y`
+```
+
+### Arch Linux
+AUR package [nixnote2-git](https://aur.archlinux.org/packages/nixnote2-git/)
+builds the latest [stable release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#stable-releases).
+
+### AppImage
+This is suitable to any ~recent linux distribution.
+Installation is trivial - download AppImage file, mark as executable & run.
+More information can be found on [NixNote AppImage wiki page](https://github.com/robert7/nixnote2/wiki/HowTo---Run-AppImage).
+
+Two builds are available:
+* [Stable build](https://github.com/robert7/nixnote2/releases/tag/continuous) - it reflects the latest [stable release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#stable-releases) - tip of the `master` branch - same as the PPA or AUR version.
+* [Development build](https://github.com/robert7/nixnote2/releases/tag/continuous-develop) - it reflects the latest [development release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#development-releases) - tip of the `develop` branch..
 
 ## Building from source
 
@@ -40,8 +60,7 @@ More info in: [DOCKER README](docs/DOCKER-README.md)
 * Optional: create [AppImage package](https://appimage.org/) using [linuxdeployqt](https://github.com/probonopd/linuxdeployqt)
 
 ```bash
-# replace path in 1st parameter with Qt root (`/usr` will use system Qt)
-./development/build-with-qmake.sh /usr debug
+./development/build-with-qmake.sh
 ```
 
 `build-with-qmake.sh` is just kind of convenience script. You can also build without it like:
@@ -55,7 +74,6 @@ I suggest running from "appdir" (e.g. `./appdir/usr/appdir/nixnote2`).
 
 ```bash
 # Optional second step: if all got well you may try to create AppImage package
-# may be a bit tricky - recommended for advanced users 
 ./development/create-AppImage.sh
 ```
 
@@ -73,7 +91,7 @@ Preparation steps
     * cmake ../..  -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
     * make                       
     * make DESTDIR=/opt/tidy56 install
-    * library is now copied to /opt/tidy56/libs (if you use different directory, then pass it as 4th argument to
+    * library is now copied to /opt/tidy56/libs (if you use different directory, then pass it as 3rd argument to
       "build-with-qmake.sh".
 
 If it doesn't work: use docker build - or compare with docker recipe, what is different.

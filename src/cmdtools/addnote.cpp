@@ -55,7 +55,7 @@ void AddNote::write(QString uuid) {
 
 
     if (!xmlFile.open(QIODevice::WriteOnly)) {
-        qDebug() << "Unable to open file.";
+        QLOG_WARN() << "Unable to open file.";
         return;
     }
 

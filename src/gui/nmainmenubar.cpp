@@ -408,14 +408,10 @@ void NMainMenuBar::setupNoteMenu() {
     noteMenu->addAction(reindexNoteAction);
     connect(reindexNoteAction, SIGNAL(triggered()), parent, SLOT(reindexCurrentNote()));
 
-    if (parent->hunspellPluginAvailable) {
-        noteMenu->addSeparator();
-        spellCheckAction = new QAction(tr("&Spell Check"), noteMenu);
-        // setupShortcut(spellCheckAction, QString("Tools_Spell_Check"));  This shortcut is done by the editor button bar
-        noteMenu->addAction(spellCheckAction);
-        connect(spellCheckAction, SIGNAL(triggered()), parent, SLOT(spellCheckCurrentNote()));
-    }
-
+    noteMenu->addSeparator();
+    spellCheckAction = new QAction(tr("&Spell Check"), noteMenu);
+    noteMenu->addAction(spellCheckAction);
+    connect(spellCheckAction, SIGNAL(triggered()), parent, SLOT(spellCheckCurrentNote()));
 
     noteMenu->addSeparator();
 

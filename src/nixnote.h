@@ -52,7 +52,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //#include "src/oauth/oauthwindow.h"
 #include "src/html/thumbnailer.h"
 #include "src/reminders/remindermanager.h"
-#include "src/plugins/hunspell/hunspellinterface.h"
 
 //****************************************
 //* This is the main NixNote class that
@@ -167,7 +166,6 @@ private:
     QShortcut *rightArrowButtonShortcut;
 
 private:
-    void loadPlugins();
     void setupGui();
     void setupNoteList();
     void setupSearchTree();
@@ -202,8 +200,7 @@ public:
     bool event(QEvent *event);
     LineEdit *searchText;
     NTabWidget *tabWindow;
-    bool hunspellPluginAvailable;
-    void showAnnouncementMessage();
+void showAnnouncementMessage();
 
 private slots:
     void onNetworkManagerFinished(QNetworkReply *reply);

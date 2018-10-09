@@ -36,7 +36,7 @@ FileManager::FileManager() = default;
 
 // Return the path the program data.
 //
-QString getDefaultProgramDirPath() {
+QString FileManager::getDefaultProgramDirPath() {
 #ifdef Q_OS_MACOS
     QString appDirPath = QCoreApplication::applicationDirPath();
     if (appDirPath.endsWith(".app/Contents/MacOS")) {
@@ -55,13 +55,33 @@ QString getDefaultProgramDirPath() {
         path.chop(3); // remove 3 chars from end of string
         return path + "share/" + NN_APP_NAME;
     } else {
-        return QDir(path + "/..").absolutePath();
+        QLOG_ERROR() << "Binary needs to be started from 'appdir' directory...";
+        QLOG_ERROR() << "E.g. use something like: cd $$PROJECT_DIR; ./appdir/usr/bin/nixnote2";
+        exit(16);
+
+        // unsupported - as this would add additional complexity
+        // while debugging I recommend starting from $PROJECT_DIR using something like: ./appdir/usr/bin/nixnote2
+        //return QDir(path + "/..").absolutePath();
     }
 }
 
 
-void
-FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir) {
+QString FileManager::getLibraryDirPath() {
+    QString path = QCoreApplication::applicationDirPath();
+    QLOG_DEBUG() << "Default program dir path: applicationDirPath=" << path;
+    // note: for AppImage this returns something like "/tmp/.mount_nixnotHzLe8g/usr/bin"
+
+    if (path.endsWith("/bin")) {
+        // runs in std location
+        path.chop(3); // remove 3 chars from end of string
+        return path + "lib/" + NN_APP_NAME;
+    } else {
+        QLOG_ERROR() << "Binary needs to be started from application directory...";
+        exit(16);
+    }
+}
+
+void FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString startupProgramDataDir) {
     if (!startupConfigDir.isEmpty()) {
         startupConfigDir = slashTerminatePath(startupConfigDir);
     }
@@ -133,10 +153,10 @@ FileManager::setup(QString startupConfigDir, QString startupUserDataDir, QString
     javaDirPath = slashTerminatePath(javaDir.path());
 
     QDir spellDirUser;
-    spellDirUser.setPath(programDataDir + "spell");
-    spellDirPathUser = slashTerminatePath(spellDirUser.path());
-    // TODO check after we fix the spellchecker
-    // checkExistingReadableDir(spellDirUser);
+    spellDirUser.setPath(this->configDir + "spell");
+    this->spellDirPathUser = slashTerminatePath(spellDirUser.path());
+    QLOG_DEBUG() << "Spell checker path: " << spellDirPathUser;
+    createDirOrCheckWriteable(this->spellDirPathUser);
 
     translateDir.setPath(programDataDir + "translations");
     checkExistingReadableDir(translateDir);
@@ -425,7 +445,5 @@ void FileManager::setupFileAttachmentLogging() {
 
     logger.setFileLoggingPath(loggingAttachmentsPath);
 }
-
-
 
 

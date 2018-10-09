@@ -1,28 +1,23 @@
 #!/bin/bash
-QT_DIR=${1}
-BUILD_TYPE=${2}
-CLEAN=${3}
-TIDY_DIR=${4}
+# here we expected that the particular version of qmake, you want to use  is found on PATH
+# so if you want to use something different then default - make sure you adjust path before calling this script
+
+BUILD_TYPE=${1}
+CLEAN=${2}
+TIDY_DIR=${3}
+CDIR=`pwd`
 
 function error_exit {
-    echo "***********error_exit***********"
+    echo "$0: ***********error_exit***********"
     echo "***********" 1>&2
     echo "*********** Failed: $1" 1>&2
     echo "***********" 1>&2
-    #cd ${CDIR}
+    cd ${CDIR}
     exit 1
 }
 
-if [ -z ${QT_DIR} ]; then
-    echo "Missing argument(s).."
-    echo "1st argument need to be the Qr root directory."
-    echo "    Note: Qt root is where './bin/qmake' is.."
-    echo "2nd argument is debug|release (defaults to debug)"
-    echo "Example: $0 /d/dev/Qt/5.5/gcc_64 debug"
-    exit 1
-fi
 if [ ! -f src/main.cpp ]; then
-  echo "You seem to be in wrong directory. script MUST be run from the project directory."
+  echo "$0: You seem to be in wrong directory. script MUST be run from the project directory."
   exit 1
 fi
 
@@ -47,7 +42,7 @@ if [ ! -d "${TIDY_DIR}" ] || [ ! -d "${TIDY_LIB_DIR}" ]; then
    echo "TIDY_DIR or TIDY_DIR/lib is not a directory"
    exit 1
 fi
-echo "libtidy is expected in: ${TIDY_LIB_DIR}"
+echo "$0: libtidy is expected in: ${TIDY_LIB_DIR}"
 
 
 
@@ -57,7 +52,6 @@ if [ ! -d "${BUILD_DIR}" ]; then
   mkdir ${BUILD_DIR}
 fi
 
-echo $QT_DIR >${BUILD_DIR}/qt-dir.txt
 echo "${BUILD_DIR}">_build_dir_.txt
 
 APPDIR=appdir
@@ -67,12 +61,8 @@ if [ -d "${APPDIR}" ]; then
 fi
 
 
-QMAKE_BINARY=${QT_DIR}/bin/qmake
+QMAKE_BINARY=qmake
 
-if [ ! -f "${QMAKE_BINARY}" ]; then
-    echo "qmake binary (${QMAKE_BINARY}) not found!"
-    exit 1
-fi
 
 if [ "${TIDY_DIR}" == "/usr" ] ; then
   # at least on ubuntu pkgconfig for "libtidy-dev" is not installed - so we provide default
@@ -87,8 +77,8 @@ elif [ -d ${TIDY_LIB_DIR}/pkgconfig ] ; then
 fi
 
 
-echo ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "qmake"
-${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "qmake"
+echo ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "$0: qmake"
+${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "$0: qmake"
 
-make -j8 || error_exit "make"
-make install || error_exit "make install"
+make -j8 || error_exit "$0: make"
+make install || error_exit "$0: make install"

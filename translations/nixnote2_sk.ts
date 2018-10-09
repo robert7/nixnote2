@@ -2255,7 +2255,7 @@ Unable to decrypt.</source>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3572"/>
-        <source>Hunspell plugin not available or no dictionary for current locale</source>
+        <source>Hunspell not available or no dictionary for current locale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2271,7 +2271,7 @@ Unable to decrypt.</source>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3630"/>
-        <source>Spell Check Complete</source>
+        <source>Spell check completed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2287,7 +2287,7 @@ Unable to decrypt.</source>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3630"/>
-        <source>Spell Check Complete.</source>
+        <source>Spell check completed.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

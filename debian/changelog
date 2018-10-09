@@ -1,18 +1,20 @@
-NixNote (2.1.0-beta4d) unstable; urgency=low
+NixNote (2.1.0-beta4g) unstable; urgency=low
   * Make the sync and email shortcut key global to all app windows, and add sync and email toolbar buttons to
     all editor windows.
     This enables emailing and syncing from any open note window, instead of only from the main app screen.
-    Thanks to @MRC01 (https://github.com/MRC01)
-  * Debian packaging for PPA
-  * Fixed few issues related to "Display PDFs inline"
-    * Display problem - PDF displayed in very small window
-    * PDF removed from node after edit
-    * Possible duplication after inserting new PDF
-  * Travis CI build added (stable and development)
-  * Fixed main window not showing on "new note" when invoked from systray - Issue #8
-  * Fixed middle and double click action on system tray menu (remove click action as this can't work - as it shows tray menu)
-  * Fixed page number not decreasing in "PDF inline preview"
- -- Robert Spiegel <nightingale7@gmail.com>  Fri, 28 Sep 2018 12:00:00 -0400
+    Thanks to @MRC01 (https://github.com/MRC01).
+  * Debian packaging for PPA.
+  * Fixed display problem with PDFs attachments, when "Display PDFs inline" is on, fixed bug where PDF
+    attachment was deleted from note (with display inline mode).
+  * Travis CI build added (stable and development).
+  * Fixed main window not showing on "new note" when invoked from systray - (Issue #8).
+  * Fixed middle and double click action on system tray menu (remove click action as this can't work - as it shows tray menu).
+  * Fixed page number not decreasing in "PDF inline preview".
+  * Default debug level is now INFO.
+  * Spellchecking completely refactored and improved. The spell checker is now embedded (not a plugin).
+    Dictionary locale (language) switching now works. User dictionaries are per locale.
+  * Improved scan of available hunspell dictionaries (e.g. ignore hyphenation dictionaries).
+ -- Robert Spiegel <nightingale7@gmail.com>  Wed, 3 Oct 2018 12:00:00 -0400
 
 NixNote (2.1.0-beta3) unstable; urgency=low
   * Added few sort options (menu View)
