@@ -1651,11 +1651,12 @@ void NBrowserWindow::insertTableButtonPressed() {
     QString tableStyle = "style=\"-evernote-table:true;border-collapse:collapse;width:%1;table-layout:fixed;margin-left:0px;\"";
     QString cellStyle = "style=\"border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:33.33%;\"";
 
-    QString newHTML = QString("<table border=\"1px\" width=\"") + QString::number(width);
+
     QString widthString = QString::number(width);
-    if (percent)
+    if (percent) {
         widthString = widthString + "%";
-    newHTML = "<table " + tableStyle.arg(widthString) + "<tbody>";
+    }
+    QString newHTML = "<table " + tableStyle.arg(widthString) + "><tbody>";
 
     for (int i = 0; i < rows; i++) {
         newHTML = newHTML + "<tr>";
