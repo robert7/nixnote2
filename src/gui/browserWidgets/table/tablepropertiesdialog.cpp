@@ -206,29 +206,29 @@ void TablePropertiesDialog::okButtonClicked() {
 
 // Generate a preview of the table from user selected values
 void TablePropertiesDialog::generatePreview() {
-    QString cellCss = "style='"+getCellCss()+ "'";
-    QString html = "<html><body><table style='"+
-                     getTableCss()+"'"+
-                     "><tr><td "+
-                     cellCss+
-                     ">"+tr("Row 1 Cell 1")+"</td><td "+
-                     cellCss+
-                     ">"+tr("Row 1 Cell 2")+"</td><td "+
-                     cellCss+
-                     ">"+tr("Row 1 Cell 3")+"</td></tr><tr><td "+
-                     cellCss+
-                     ">"+tr("Row 2 Cell 1")+"</td><td "+
-                     cellCss+
-                     ">"+tr("Row 2 Cell 2")+"</td><td "+
-                     cellCss+
-                     ">"+tr("Row 2 Cell 3")+"</td></tr><tr><td "+
-                     cellCss+
-                     ">"+tr("Row 3 Cell 1")+"</td><td "+
-                     cellCss+
-                     ">"+tr("Row 3 Cell 2")+"</td><td "+
-                     cellCss+
-                     ">"+tr("Row 3 Cell 3")+"</td></tr>"+
-                     "</table></body></html>";
+    QString cellCss = "style='" + getCellCss() + "'";
+    QString html = "<html><body><table style='" +
+                   getTableCss() + "'" +
+                   "><tr><td " +
+                   cellCss +
+                   ">" + tr("Row 1 Cell 1") + "</td><td " +
+                   cellCss +
+                   ">" + tr("Row 1 Cell 2") + "</td><td " +
+                   cellCss +
+                   ">" + tr("Row 1 Cell 3") + "</td></tr><tr><td " +
+                   cellCss +
+                   ">" + tr("Row 2 Cell 1") + "</td><td " +
+                   cellCss +
+                   ">" + tr("Row 2 Cell 2") + "</td><td " +
+                   cellCss +
+                   ">" + tr("Row 2 Cell 3") + "</td></tr><tr><td " +
+                   cellCss +
+                   ">" + tr("Row 3 Cell 1") + "</td><td " +
+                   cellCss +
+                   ">" + tr("Row 3 Cell 2") + "</td><td " +
+                   cellCss +
+                   ">" + tr("Row 3 Cell 3") + "</td></tr>" +
+                   "</table></body></html>";
     preview->setHtml(html);
 }
 
