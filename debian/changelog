@@ -1,4 +1,4 @@
-NixNote (2.1.0-beta4h) unstable; urgency=low
+NixNote (2.1.0-beta4i) unstable; urgency=low
   * Make the sync and email shortcut key global to all app windows, and add sync and email toolbar buttons to
     all editor windows.
     This enables emailing and syncing from any open note window, instead of only from the main app screen.
@@ -16,6 +16,7 @@ NixNote (2.1.0-beta4h) unstable; urgency=low
   * Improved scan of available hunspell dictionaries (e.g. ignore hyphenation dictionaries).
   * Fixed "New Note" button creating 2 new notes - Issue #34
   * Fixed note inserted table html - Issue #27
+  * Fixed build not stripping the binary in release build
  -- Robert Spiegel <nightingale7@gmail.com>  Wed, 11 Oct 2018 12:00:00 -0400
 
 NixNote (2.1.0-beta3) unstable; urgency=low

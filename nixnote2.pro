@@ -32,6 +32,7 @@ CONFIG(debug, debug|release) {
     DESTDIR = qmake-build-release
     BUILD_TYPE = release
     message($$TARGET: Release build!)
+    QMAKE_POST_LINK=strip $${DESTDIR}/$${TARGET}
 }
 OBJECTS_DIR = $${DESTDIR}
 MOC_DIR = $${DESTDIR}
@@ -537,6 +538,7 @@ langrel.commands = \
 langrel.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += langrel
 PRE_TARGETDEPS += compiler_langrel_make_all
+
 
 
 mac {
