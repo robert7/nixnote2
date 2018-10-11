@@ -518,7 +518,7 @@ fullversion.output  = $${DESTDIR}/version/build-version.txt
 fullversion.commands = ./development/create-build-version.sh $${DESTDIR}
 fullversion.CONFIG += no_link no_check_exist
 QMAKE_EXTRA_COMPILERS += fullversion
-PRE_TARGETDEPS += compiler_fullversion_make_all
+PRE_TARGETDEPS += $$DESTDIR/version/build-version.txt
 
 man.path = $${PREFIX}/share/man/man1
 man.files = docs/nixnote2.1
@@ -537,7 +537,7 @@ langrel.commands = \
           -qm $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
 langrel.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += langrel
-PRE_TARGETDEPS += compiler_langrel_make_all
+PRE_TARGETDEPS += $$TRANSLATION_TARGET_DIR/nixnote2_cs_CZ.qm
 
 
 
