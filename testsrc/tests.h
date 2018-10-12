@@ -13,7 +13,7 @@ public:
     virtual ~Tests() {};
 
 private slots:
-    void toUpper();
+    void enmlFormat();
 };
 
 #endif // NIXNOTE2_TESTS_H
