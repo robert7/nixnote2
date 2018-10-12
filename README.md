@@ -64,7 +64,7 @@ More info in: [DOCKER README](docs/DOCKER-README.md)
 ```
 
 `build-with-qmake.sh` is just kind of convenience script. You can also build without it like:
-`qmake CONFIG+=debug PREFIX=appdir/usr`, then `ich make install`.
+`qmake CONFIG+=debug PREFIX=appdir/usr`, then `make && make install`.
 This suppose, you installed libtidy in system default location (recommended version is 5.6.0).
 
 If all got OK, you should have "qmake-build-debug/nixnote2" binary available now
@@ -78,11 +78,10 @@ I suggest running from "appdir" (e.g. `./appdir/usr/appdir/nixnote2`).
 ```
 
 Preparation steps
-* You can either install the html-tidy56 package from my PPA or build yourself from source.
-* Alternative 1: Install from PPA:
-  * first [add PPA](https://github.com/robert7/nixnote2/wiki/NixNote-PPA)
-  * then `sudo apt install nixnote2-tidy` (note if you install nixnote2 from PPA, then nixnote2-tidy will be installed)
-  * in this case libtidy will install in /usr/lib/nixnote2/tidy
+* You can either install the `nixnote2-tidy` package from NixNote PPA or build yourself from source.
+* Alternative 1: Install nixnote from [PPA](https://github.com/robert7/nixnote2/wiki/NixNote-PPA):
+  * ..this includes nixnote2-tidy package
+  * in this case libtidy is installed in /usr/lib/nixnote2/tidy
 * Alternative 2: Build tidy library from source:
   * clone [source code](https://github.com/htacg/tidy-html5) switch to master branch
   * follow [build instructions](https://github.com/htacg/tidy-html5/blob/next/README/BUILD.md)
@@ -94,7 +93,7 @@ Preparation steps
     * library is now copied to /some/directory/lib (/some/directory/lib should be then passed as 3rd argument to
       build-with-qmake.sh)
 
-If it doesn't work: use docker build - or compare with docker recipe, what is different.
+If it doesn't work: use docker build - or compare with docker recipe, what is different - e.g. missing dependency package.
 
 ### macOS
 
