@@ -68,9 +68,6 @@ private:
     void removeInvalidAttributes(QWebElement &node);
     void fixANode(QWebElement e);
     void fixObjectNode(QWebElement &e);
-    void fixSpanNode(QWebElement &e);
-    void fixDivNode(QWebElement &e);
-    void fixPreNode(QWebElement &e);
     void removeInvalidUnicode();
     QByteArray fixEncryptionTags(QByteArray newContent);
 
@@ -95,8 +92,10 @@ private:
     QStringList hr;
     QStringList img;
     QStringList ins;
+    QStringList input;
     QStringList li;
     QStringList map;
+    QStringList object;
     QStringList ol;
     QStringList pre;
     QStringList q;
@@ -107,11 +106,12 @@ private:
     QStringList ul;
     bool formattingError;
     void checkAttributes(QWebElement &element, QStringList valid);
-
-public:
     QList<qint32> resources;
 
+public:
     explicit EnmlFormatter(QString html);
+
+    QList<qint32> getResources() const { return resources; }
     QString getContent() const;
     QByteArray getContentBytes() const;
 

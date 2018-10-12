@@ -114,6 +114,8 @@ EnmlFormatter::EnmlFormatter(QString html) :
     hr.append("size");
     hr.append("width");
 
+    input.append("checked");
+
     img.append("src");
     img.append("alt");
     img.append("name");
@@ -135,6 +137,8 @@ EnmlFormatter::EnmlFormatter(QString html) :
 
     map.append("title");
     map.append("name");
+
+    object.append("type");
 
     ol.append("type");
     ol.append("compact");
@@ -369,12 +373,6 @@ void EnmlFormatter::rebuildNoteEnml() {
                         fixObjectNode(element);
                     } else if (tagname == "img") {
                         fixImgNode(element);
-                    } else if (tagname == "span") {
-                        fixSpanNode(element);
-                    } else if (tagname == "div") {
-                        fixDivNode(element);
-                    } else if (tagname == "pre") {
-                        fixPreNode(element);
                     }
                 }
         }
@@ -446,8 +444,8 @@ void EnmlFormatter::fixInputNode(QWebElement &node) {
     if (node.hasAttribute("checked")) {
         checked = true;
     }
-    node.removeAttribute("style");
-    node.removeAttribute("type");
+    //node.removeAttribute("style");
+    //node.removeAttribute("type");
     removeInvalidAttributes(node);
     if (checked) {
         node.setAttribute("checked", "true");
@@ -462,19 +460,17 @@ void EnmlFormatter::fixInputNode(QWebElement &node) {
 }
 
 
-void EnmlFormatter::fixSpanNode(QWebElement &e) {
-    checkAttributes(e, attrs);
-}
-
-
 void EnmlFormatter::fixObjectNode(QWebElement &e) {
     QString type = e.attribute("type", "");
     if (type == "application/pdf") {
         qint32 lid = e.attribute("lid", "0").toInt();
-        e.removeAttribute("width");
-        e.removeAttribute("height");
-        e.removeAttribute("lid");
-        e.removeAttribute("border");
+        removeInvalidAttributes(e);
+
+        // e.removeAttribute("width");
+        // e.removeAttribute("height");
+        // e.removeAttribute("lid");
+        // e.removeAttribute("border");
+
         if (lid > 0) {
             resources.append(lid);
             const QString xml = e.toOuterXml()
@@ -484,7 +480,6 @@ void EnmlFormatter::fixObjectNode(QWebElement &e) {
             QLOG_DEBUG() << "Fixed object node holding pdf to " << xml;
             e.setOuterXml(xml);
         }
-        removeInvalidAttributes(e);
     } else {
         QLOG_DEBUG() << "Fixed unknown object node by removing it";
         e.removeFromDocument();
@@ -501,6 +496,7 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         QString cipher = e.attribute("cipher", "RC2");
         QString hint = e.attribute("hint", "");
         QString length = e.attribute("length", "64");
+
         e.removeAttribute("onmouseover");
         e.removeAttribute("name");
         e.removeAttribute("alt");
@@ -508,6 +504,7 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         e.removeAttribute("contenteditable");
         e.removeAttribute("style");
         removeInvalidAttributes(e);
+
         e.setInnerXml(encrypted);
         const QString xml = HTML_COMMENT_START "en-crypt cipher=\"" + cipher + "\" length=\"" +
                             length + "\" hint=\"" + hint
@@ -538,21 +535,20 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         const QString xml = e.toOuterXml().replace("<img", HTML_COMMENT_START "<en-media").append("</en-media>" HTML_COMMENT_END);
         e.setOuterXml(xml);
         QLOG_DEBUG() << "Fixed img node to: " << xml;
-        // zda sa ze nefunguje uz - a mozno ani netreba
-        //checkAttributes(e, attrs + img);
     }
 }
 
 
 void EnmlFormatter::fixANode(QWebElement e) {
     QString enTag = e.attribute("en-tag", "").toLower();
+    QString lid = e.attribute("lid");
+    removeInvalidAttributes(e);
     if (enTag == "en-media") {
-        resources.append(e.attribute("lid").toInt());
-        e.removeAttribute("style");
-        e.removeAttribute("href");
-        e.removeAttribute("title");
-        e.removeAttribute("data-saferedirecturl");
-        removeInvalidAttributes(e);
+        resources.append(lid.toInt());
+        // e.removeAttribute("style");
+        // e.removeAttribute("href");
+        // e.removeAttribute("title");
+        // e.removeAttribute("data-saferedirecturl");
 
         e.removeAllChildren();
         QString xml = e.toOuterXml();
@@ -564,15 +560,15 @@ void EnmlFormatter::fixANode(QWebElement e) {
 
     QString latex = e.attribute("href", "");
     if (latex.toLower().startsWith("latex:///")) {
-        removeInvalidAttributes(e);
+        //removeInvalidAttributes(e);
         QString formula = e.attribute("title");
         const QString attr = QString("http://latex.codecogs.com/gif.latex?%1").arg(formula);
         QLOG_DEBUG() << "Fixed latex attr to " << attr;
         e.setAttribute("href", attr);
     }
 
-    removeInvalidAttributes(e);
-    checkAttributes(e, attrs + focus + a);
+    //removeInvalidAttributes(e);
+    //checkAttributes(e, attrs + focus + a);
 }
 
 // https://dev.evernote.com/doc/articles/enml.php#prohibited
@@ -599,7 +595,9 @@ bool EnmlFormatter::isAttributeValid(QString attribute) {
             || (attribute == "src")
             || (attribute == "en-new")
             || (attribute == "guid")
-            || (attribute == "lid");
+            || (attribute == "lid")
+            || (attribute == "cipher")
+            || (attribute == "hint");
     return !isInvalid;
 }
 
@@ -607,6 +605,13 @@ bool EnmlFormatter::isAttributeValid(QString attribute) {
 bool EnmlFormatter::checkEndFixElement(QWebElement e) {
     QString element = e.tagName().toLower();
     //QLOG_DEBUG() << "Checking tag " << element;
+
+    // this removes all generally prohibited attributes
+    bool needSpecialCare = (element == "a") || (element == "object")|| (element == "img");
+    if (!needSpecialCare) {
+        // leave out for attribute which have internal attributes like "lid"
+        removeInvalidAttributes(e);
+    }
 
     if (element == "a") {
         checkAttributes(e, attrs + focus + a);
@@ -664,6 +669,8 @@ bool EnmlFormatter::checkEndFixElement(QWebElement e) {
         checkAttributes(e, attrs + hr);
     } else if (element == "i") {
         checkAttributes(e, attrs);
+    } else if (element == "input") {
+        checkAttributes(e, attrs);// TODO
     } else if (element == "img") {
         checkAttributes(e, attrs + img);
     } else if (element == "ins") {
@@ -674,6 +681,8 @@ bool EnmlFormatter::checkEndFixElement(QWebElement e) {
         checkAttributes(e, attrs + li);
     } else if (element == "map") {
         checkAttributes(e, i18n + map);
+    } else if (element == "object") {
+        checkAttributes(e, attrs); // TODO
     } else if (element == "ol") {
         checkAttributes(e, attrs + ol);
     } else if (element == "p") {
@@ -744,20 +753,6 @@ void EnmlFormatter::removeInvalidAttributes(QWebElement &node) {
             node.removeAttribute(a);
         }
     }
-}
-
-
-void EnmlFormatter::fixDivNode(QWebElement &node) {
-    // Remove any invalid attributes
-    node.removeAttribute("class");
-    checkAttributes(node, attrs + textAlign);
-}
-
-
-void EnmlFormatter::fixPreNode(QWebElement &node) {
-    // Remove any invalid attributes
-    node.removeAttribute("wrap");
-    checkAttributes(node, attrs + pre);
 }
 
 QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {

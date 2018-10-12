@@ -834,7 +834,7 @@ void NBrowserWindow::saveNoteContent() {
 
         // get a list of lids found in the note.
         // Purge anything that is no longer needed.
-        QList<qint32> validLids = formatter.resources;
+        QList<qint32> validLids = formatter.getResources();
         QList<qint32> oldLids;
         ResourceTable resTable(global.db);
         resTable.getResourceList(oldLids, lid);
