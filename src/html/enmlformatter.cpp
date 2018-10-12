@@ -28,13 +28,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <iostream>
 
 #include "enmlformatter.h"
-#include "src/sql/resourcetable.h"
 #include "src/utilities/encrypt.h"
-
+#include "src/logger/qslog.h"
 
 using namespace std;
-
-extern Global global;
 
 /* Constructor. */
 EnmlFormatter::EnmlFormatter(
