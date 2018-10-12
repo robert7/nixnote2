@@ -65,7 +65,7 @@ int EnCrypt::runner(QString &result, QString text, QString passphrase, QString m
 
     // Run the Java program to decrypt the text.  This is an extremely ugly
     // hack, but I haven't been able to get anything else to work.
-    QString jar = global.fileManager.getJavaDirPath("") + "crypto.jar";
+    QString jar = global.fileManager.getCryptoJarPath();
 
     QProcess javaProcess;
     QStringList args;

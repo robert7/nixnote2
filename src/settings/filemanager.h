@@ -114,6 +114,9 @@ public:
     QString getImageDirPath(QString relativePath);
     QDir getJavaDirFile(QString relativePath);
     QString getJavaDirPath(QString relativePath);
+
+    QString getCryptoJarPath() { return this->getJavaDirPath("") + QStringLiteral("crypto.jar"); }
+
     QDir getLogsDirFile(QString relativePath);
     QString getLogsDirPath(QString relativePath) const;
     //    QString getQssDirPath(QString relativePath);
