@@ -819,7 +819,7 @@ void NBrowserWindow::saveNoteContent() {
 
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
 
-        EnmlFormatter formatter(contents, global.guiAvailable, global.passwordSafe);
+        EnmlFormatter formatter(contents, global.guiAvailable, global.passwordSafe, global.fileManager.getCryptoJarPath());
         formatter.rebuildNoteEnml();
         if (formatter.isFormattingError()) {
             QMessageBox::information(
@@ -1170,7 +1170,7 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
     QString contents = rootElement.toOuterXml();
     bool isSimplify = mode == HtmlCleanupMode::Simplify;
 
-    EnmlFormatter formatter(contents, global.guiAvailable, global.passwordSafe);
+    EnmlFormatter formatter(contents, global.guiAvailable, global.passwordSafe, global.fileManager.getCryptoJarPath());
 
     if (isSimplify) {
         formatter.tidyHtml(HtmlCleanupMode::Tidy);
@@ -3350,7 +3350,7 @@ void NBrowserWindow::decryptText(QString id, QString text, QString hint, QString
         return;
     }
 
-    EnCrypt crypt;
+    EnCrypt crypt(global.fileManager.getCryptoJarPath());
     QString plainText = "";
     QUuid uuid;
     QString slot = uuid.createUuid().toString().replace("{", "").replace("}", "");
@@ -3429,7 +3429,7 @@ void NBrowserWindow::removeEncryption(QString id, QString plainText, bool perman
 
 
 void NBrowserWindow::encryptButtonPressed() {
-    EnCrypt encrypt;
+    EnCrypt encrypt(global.fileManager.getCryptoJarPath());
 
     QString text = editor->selectedText();
     if (text.trimmed() == "")
@@ -3442,7 +3442,7 @@ void NBrowserWindow::encryptButtonPressed() {
         return;
     }
 
-    EnCrypt crypt;
+    EnCrypt crypt(global.fileManager.getCryptoJarPath());
     QString encrypted;
     int rc = crypt.encrypt(encrypted, text, dialog.getPassword().trimmed());
 

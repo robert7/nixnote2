@@ -37,10 +37,12 @@ using namespace std;
 EnmlFormatter::EnmlFormatter(
         QString html,
         bool guiAvailable,
-        QHash<QString, QPair<QString, QString> > passwordSafe
+        QHash<QString, QPair<QString, QString> > passwordSafe,
+        QString cryptoJarPath
 ) : QObject(nullptr) {
     this->guiAvailable = guiAvailable;
     this->passwordSafe = passwordSafe;
+    this->cryptoJarPath = cryptoJarPath;
 
     setContent(html);
 
@@ -775,7 +777,7 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
         QPair<QString, QString> pair = passwordSafe.value(slot);
         QString password = pair.first;
         QString hint = pair.second;
-        EnCrypt crypt;
+        EnCrypt crypt(cryptoJarPath);
         QString encrypted;
         crypt.encrypt(encrypted, text, password);
 

@@ -200,7 +200,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     // Check for Java and verify encryption works
     QString test = "Test Message";
     QString result;
-    EnCrypt encrypt;
+    EnCrypt encrypt(global.fileManager.getCryptoJarPath());
     if (!encrypt.encrypt(result, test, test)) {
         if (!encrypt.decrypt(result, result, test)) {
             if (result == test) {

@@ -107,9 +107,10 @@ private:
     QList<qint32> resources;
     bool guiAvailable;
     QHash< QString, QPair <QString, QString> > passwordSafe;
+    QString cryptoJarPath;
 
 public:
-    explicit EnmlFormatter(QString html, bool guiAvailable, QHash< QString, QPair <QString, QString> > passwordSafe);
+    explicit EnmlFormatter(QString html, bool guiAvailable, QHash< QString, QPair <QString, QString> > passwordSafe, QString cryptoJarPath);
 
     QList<qint32> getResources() const { return resources; }
     QString getContent() const;
