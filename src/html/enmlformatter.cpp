@@ -354,6 +354,13 @@ void EnmlFormatter::rebuildNoteEnml() {
                 foreach(QWebElement
                             element, anchors) {
                     QString tagname = element.tagName().toLower();
+
+                    if (!checkEndFixElement(element)) {
+                        QLOG_DEBUG() << "Removing element: " << tagname;
+                        element.removeFromDocument();
+                        continue;
+                    }
+
                     if (tagname == "input") {
                         fixInputNode(element);
                     } else if (tagname == "a") {
@@ -368,9 +375,6 @@ void EnmlFormatter::rebuildNoteEnml() {
                         fixDivNode(element);
                     } else if (tagname == "pre") {
                         fixPreNode(element);
-                    } else if (!isElementValid(element)) {
-                        QLOG_DEBUG() << "Removing element: " << tagname;
-                        element.removeFromDocument();
                     }
                 }
         }
@@ -439,8 +443,9 @@ QStringList EnmlFormatter::findAllTags(QWebElement &element) {
 
 void EnmlFormatter::fixInputNode(QWebElement &node) {
     bool checked = false;
-    if (node.hasAttribute("checked"))
+    if (node.hasAttribute("checked")) {
         checked = true;
+    }
     node.removeAttribute("style");
     node.removeAttribute("type");
     removeInvalidAttributes(node);
@@ -450,10 +455,10 @@ void EnmlFormatter::fixInputNode(QWebElement &node) {
 
     // quite a hack
     QRegularExpression reInput("<input([^>]*)>");
-    node.setOuterXml(
-            node.toOuterXml()
-                    .replace(reInput, HTML_COMMENT_START "<en-todo \\1 />" HTML_COMMENT_END)
-    );
+    QString markup = node.toOuterXml();
+    markup = markup.replace(reInput, HTML_COMMENT_START "<en-todo \\1 />" HTML_COMMENT_END);
+    //QLOG_DEBUG() << "en-todo markup: " << markup;
+    node.setOuterXml(markup);
 }
 
 
@@ -571,276 +576,161 @@ void EnmlFormatter::fixANode(QWebElement e) {
 }
 
 // https://dev.evernote.com/doc/articles/enml.php#prohibited
+// A number of attributes are also disallowed from the supported XHTML elements:
+//   id
+//   class
+//   on*
+//   accesskey
+//   data
+//   dynsrc
+//   tabindex
+//
 bool EnmlFormatter::isAttributeValid(QString attribute) {
-    return !(attribute.startsWith("on")
-             || (attribute == "id")
-             || (attribute == "class")
-             || (attribute == "accesskey")
-             || (attribute == "data")
-             || (attribute == "dynsrc")
-             || (attribute == "tabindex")
-             // These are things that are NixNote specific
-             || (attribute == "en-tag")
-             || (attribute == "src")
-             || (attribute == "en-new")
-             || (attribute == "guid")
-             || (attribute == "lid"));
+    bool isInvalid =
+            attribute.startsWith("on")
+            || (attribute == "id")
+            || (attribute == "class")
+            || (attribute == "accesskey")
+            || (attribute == "data")
+            || (attribute == "dynsrc")
+            || (attribute == "tabindex")
+            // These are things that are NixNote specific
+            || (attribute == "en-tag")
+            || (attribute == "src")
+            || (attribute == "en-new")
+            || (attribute == "guid")
+            || (attribute == "lid");
+    return !isInvalid;
 }
 
 
-bool EnmlFormatter::isElementValid(QWebElement e) {
+bool EnmlFormatter::checkEndFixElement(QWebElement e) {
     QString element = e.tagName().toLower();
     //QLOG_DEBUG() << "Checking tag " << element;
+
     if (element == "a") {
         checkAttributes(e, attrs + focus + a);
-        return true;
-    }
-    if (element == "abbr") {
+    } else if (element == "abbr") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "acronym") {
+    } else if (element == "acronym") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "address") {
+    } else if (element == "address") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "area") {
+    } else if (element == "area") {
         checkAttributes(e, attrs + focus + area);
-        return true;
-    }
-    if (element == "b") {
+    } else if (element == "b") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "bdo") {
+    } else if (element == "bdo") {
         checkAttributes(e, coreattrs + bdo);
-        return true;
-    }
-    if (element == "big") {
+    } else if (element == "big") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "blockquote") {
+    } else if (element == "blockquote") {
         checkAttributes(e, attrs + blockQuote);
-        return true;
-    }
-    if (element == "br") {
+    } else if (element == "br") {
         checkAttributes(e, coreattrs + br);
-        return true;
-    }
-    if (element == "caption") {
+    } else if (element == "caption") {
         checkAttributes(e, attrs + caption);
-        return true;
-    }
-    if (element == "center") {
+    } else if (element == "center") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "cite") {
+    } else if (element == "cite") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "code") {
+    } else if (element == "code") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "col") {
+    } else if (element == "col") {
         checkAttributes(e, attrs + cellHalign + cellValign + col);
-        return true;
-    }
-    if (element == "colgroup") {
+    } else if (element == "colgroup") {
         checkAttributes(e, attrs + cellHalign + cellValign + colGroup);
-        return true;
-    }
-    if (element == "dd") {
+    } else if (element == "dd") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "del") {
+    } else if (element == "del") {
         checkAttributes(e, attrs + del);
-        return true;
-    }
-    if (element == "dfn") {
+    } else if (element == "dfn") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "div") {
+    } else if (element == "div") {
         checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "dl") {
+    } else if (element == "dl") {
         checkAttributes(e, attrs + dl);
-        return true;
-    }
-    if (element == "dt") {
+    } else if (element == "dt") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "em") {
+    } else if (element == "em") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "en-media") return true;
-    if (element == "en-crypt") return true;
-    if (element == "en-todo") return true;
-    if (element == "en-note") return true;
-    if (element == "font") {
+    } else if ((element == "en-media") || (element == "en-crypt") || (element == "en-todo") || (element == "en-note")) {
+    } else if (element == "font") {
         checkAttributes(e, coreattrs + i18n + font);
-        return true;
-    }
-    if (element == "h1") {
+    } else if ((element == "h1") || (element == "h2") || (element == "h3") || (element == "h4") || (element == "h5") ||
+               (element == "h6")) {
         checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "h2") {
-        checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "h3") {
-        checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "h4") {
-        checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "h5") {
-        checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "h6") {
-        checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "hr") {
+    } else if (element == "hr") {
         checkAttributes(e, attrs + hr);
-        return true;
-    }
-    if (element == "i") {
+    } else if (element == "i") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "img") {
+    } else if (element == "img") {
         checkAttributes(e, attrs + img);
-        return true;
-    }
-    if (element == "ins") {
+    } else if (element == "ins") {
         checkAttributes(e, attrs + ins);
-        return true;
-    }
-    if (element == "kbd") {
+    } else if (element == "kbd") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "li") {
+    } else if (element == "li") {
         checkAttributes(e, attrs + li);
-        return true;
-    }
-    if (element == "map") {
+    } else if (element == "map") {
         checkAttributes(e, i18n + map);
-        return true;
-    }
-    if (element == "ol") {
+    } else if (element == "ol") {
         checkAttributes(e, attrs + ol);
-        return true;
-    }
-    if (element == "p") {
+    } else if (element == "p") {
         checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "pre") {
+    } else if (element == "pre") {
         checkAttributes(e, attrs + pre);
-        return true;
-    }
-    if (element == "q") {
+    } else if (element == "q") {
         checkAttributes(e, attrs + q);
-        return true;
-    }
-    if (element == "s") {
+    } else if (element == "s") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "samp") {
+    } else if (element == "samp") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "small") {
+    } else if (element == "small") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "span") {
+    } else if (element == "span") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "strike") {
+    } else if (element == "strike") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "strong") {
+    } else if (element == "strong") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "sub") {
+    } else if (element == "sub") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "sup") {
+    } else if (element == "sup") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "table") {
+    } else if (element == "table") {
         checkAttributes(e, attrs + table);
-        return true;
-    }
-    if (element == "tbody") {
+    } else if (element == "tbody") {
         checkAttributes(e, attrs + cellHalign + cellValign);
-        return true;
-    }
-    if (element == "td") {
+    } else if (element == "td") {
         checkAttributes(e, attrs + cellValign + cellHalign + td);
-        return true;
-    }
-    if (element == "tfoot") {
+    } else if (element == "tfoot") {
         checkAttributes(e, attrs + cellHalign + cellValign);
-        return true;
-    }
-    if (element == "th") {
+    } else if (element == "th") {
         checkAttributes(e, attrs + cellHalign + cellValign + th);
-        return true;
-    }
-    if (element == "thread") {
+    } else if (element == "thread") {
         checkAttributes(e, attrs + cellHalign + cellValign);
-        return true;
-    }
-    if (element == "title") return true;
-    if (element == "tr") {
+    } else if (element == "title") {
+
+    } else if (element == "tr") {
         checkAttributes(e, attrs + cellHalign + cellValign + tr_);
-        return true;
-    }
-    if (element == "tt") {
+    } else if (element == "tt") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "u") {
+    } else if (element == "u") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "ul") {
+    } else if (element == "ul") {
         checkAttributes(e, attrs + ul);
-        return true;
-    }
-    if (element == "var") {
+    } else if (element == "var") {
         checkAttributes(e, attrs);
-        return true;
+    } else if (element == "xmp") {
+
+    } else {
+        QLOG_DEBUG() << "WARNING: " << element << " is invalid .. will be removed";
+        return false;
+
     }
-    if (element == "xmp") return true;
-
-    QLOG_DEBUG() << "WARNING: " << element << " is invalid";
-    return false;
-
+    // could be fixed, but now is valid
+    return true;
 }
 
 
@@ -850,6 +740,7 @@ void EnmlFormatter::removeInvalidAttributes(QWebElement &node) {
     for (int i = 0; i < attributes.size(); i++) {
         QString a = attributes[i];
         if (!isAttributeValid(a)) {
+            QLOG_DEBUG() << "tag " <<node.tagName() << " removing  invalid attribute " << a;
             node.removeAttribute(a);
         }
     }

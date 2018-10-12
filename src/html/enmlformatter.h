@@ -59,11 +59,10 @@ class EnmlFormatter : public QObject
     Q_OBJECT
 private:
     QByteArray content;
+
     bool isAttributeValid(QString attribute);
-    bool isElementValid(QWebElement e);
-    // void scanTags(QWebElement &element);
+    bool checkEndFixElement(QWebElement e);
     void fixImgNode(QWebElement &element);
-    //void fixEnCryptNode(QWebElement &element);
     void fixInputNode(QWebElement &element);
     QStringList findAllTags(QWebElement &element);
     void removeInvalidAttributes(QWebElement &node);
