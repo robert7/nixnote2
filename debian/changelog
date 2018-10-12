@@ -1,4 +1,4 @@
-NixNote (2.1.0-beta4g) unstable; urgency=low
+NixNote (2.1.0-beta4j) unstable; urgency=low
   * Make the sync and email shortcut key global to all app windows, and add sync and email toolbar buttons to
     all editor windows.
     This enables emailing and syncing from any open note window, instead of only from the main app screen.
@@ -14,7 +14,11 @@ NixNote (2.1.0-beta4g) unstable; urgency=low
   * Spellchecking completely refactored and improved. The spell checker is now embedded (not a plugin).
     Dictionary locale (language) switching now works. User dictionaries are per locale.
   * Improved scan of available hunspell dictionaries (e.g. ignore hyphenation dictionaries).
- -- Robert Spiegel <nightingale7@gmail.com>  Wed, 3 Oct 2018 12:00:00 -0400
+  * Fixed "New Note" button creating 2 new notes - Issue #34
+  * Fixed note inserted table html - Issue #27
+  * Fixed build not stripping the binary in release build
+  * Switched from tidy-html56 PPA package to nixnote2-tidy
+ -- Robert Spiegel <nightingale7@gmail.com>  Thu, 12 Oct 2018 12:00:00 -0400
 
 NixNote (2.1.0-beta3) unstable; urgency=low
   * Added few sort options (menu View)

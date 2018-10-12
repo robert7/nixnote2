@@ -335,10 +335,8 @@ void NixNote::setupGui() {
     homeButton = toolBar->addAction(global.getIconResource(":homeIcon"), tr("All Notes"));
     homeButton->setToolTip(tr("All Notes") + global.setupShortcut(homeButtonShortcut, "View_All_Notes"));
 
-
     newNoteButton = toolBar->addAction(global.getIconResource(":newNoteIcon"), tr("New Note"));
     newNoteButton->setToolTip(global.appendShortcutInfo(tr("New Note"), "File_Note_Add"));
-    connect(newNoteButton, SIGNAL(triggered()), this, SLOT(newNote()));
 
     toolBar->addSeparator();
 

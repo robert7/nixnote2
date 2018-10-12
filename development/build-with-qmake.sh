@@ -4,7 +4,7 @@
 
 BUILD_TYPE=${1}
 CLEAN=${2}
-TIDY_DIR=${3}
+TIDY_LIB_DIR=${3}
 CDIR=`pwd`
 
 function error_exit {
@@ -33,13 +33,12 @@ if [ "${CLEAN}" == "clean" ]; then
   fi
 fi
 
-if [ -z "${TIDY_DIR}" ]; then
+if [ -z "${TIDY_LIB_DIR}" ]; then
    # system default
-   TIDY_DIR=/usr
+   TIDY_LIB_DIR=/usr/lib
 fi
-TIDY_LIB_DIR=${TIDY_DIR}/lib
-if [ ! -d "${TIDY_DIR}" ] || [ ! -d "${TIDY_LIB_DIR}" ]; then
-   echo "TIDY_DIR or TIDY_DIR/lib is not a directory"
+if [ ! -d "${TIDY_LIB_DIR}" ]; then
+   echo "TIDY_LIB_DIR (${TIDY_LIB_DIR}) is not a directory"
    exit 1
 fi
 echo "$0: libtidy is expected in: ${TIDY_LIB_DIR}"
@@ -80,5 +79,5 @@ fi
 echo ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "$0: qmake"
 ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "$0: qmake"
 
-make -j8 || error_exit "$0: make"
-make install || error_exit "$0: make install"
+make -j$(nproc) || error_exit "$0: make"
+make -j$(nproc) install || error_exit "$0: make install"
