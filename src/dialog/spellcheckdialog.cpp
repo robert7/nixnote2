@@ -19,14 +19,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 #include <QGridLayout>
-
 #include "src/global.h"
 #include "spellcheckdialog.h"
 #include "src/hunspell/spellchecker.h"
 
 extern Global global;
 
-SpellCheckDialog::SpellCheckDialog(QString selectedLocale, QWidget *parent) :
+SpellCheckDialog::SpellCheckDialog(QString selectedLocale, QStringList availableSpellLocales, QWidget *parent) :
         QDialog(parent) {
     QLOG_DEBUG() << "Creating SpellCheckDialog for locale " << selectedLocale;
 
@@ -92,7 +91,7 @@ SpellCheckDialog::SpellCheckDialog(QString selectedLocale, QWidget *parent) :
     grid->addLayout(buttonGrid, 2, 1);
     this->replace->setEnabled(false);
     this->setFont(guiFont);
-    loadLanguages(selectedLocale);
+    loadLanguages(selectedLocale, availableSpellLocales);
 
     connect(language, SIGNAL(currentIndexChanged(int)), this, SLOT(languageChangeRequested(int)));
 
@@ -151,39 +150,10 @@ QString SpellCheckDialog::getReplacement() {
     return replacementWord->text();
 }
 
-void SpellCheckDialog::loadLanguages(QString selectedLocale) {
-    QStringList dictionaryPath = SpellChecker::dictionaryPaths();
 
-    // locale regex
-    QRegExp localeRx("^[a-z]{2}_[A-Z]{2}$");
 
-    QStringList values;
-    // Start loading available language dictionaries
-    for (int i = 0; i < dictionaryPath.size(); i++) {
-        QString spellDirName(dictionaryPath[i]);
-        QDir spellDir(spellDirName);
-        QStringList filter;
-        filter.append("*.aff");
-        filter.append("*.dic");
-
-        QStringList entryList(spellDir.entryList(filter));
-        for (const auto &fileName : entryList) {
-            QLOG_DEBUG() << "Found dictionary file: " << fileName << " in " << spellDirName;
-
-            QString lang = fileName;
-            lang.chop(4);
-            if (localeRx.indexIn(lang) != 0) {
-                QLOG_DEBUG() << "Ignoring " << lang << " (as unexpected format)";
-                continue;
-            }
-            QLOG_DEBUG() << "Adding locale: " << lang;
-
-            if (!values.contains(lang)) {
-                values.append(lang);
-            }
-        }
-    }
-    language->addItems(values);
+void SpellCheckDialog::loadLanguages(QString selectedLocale, QStringList availableSpellLocales) {
+    language->addItems(availableSpellLocales);
 
     int k = language->findText(selectedLocale);
     if (k >= 0) {

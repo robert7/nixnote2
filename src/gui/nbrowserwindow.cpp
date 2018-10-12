@@ -3622,7 +3622,8 @@ void NBrowserWindow::spellCheckPressed() {
     QStringList suggestions;
 
     QLOG_DEBUG() << SPELLCHECKER_DLG ": creating dialog for locale=" << currentSpellLocale;
-    SpellCheckDialog dialog(currentSpellLocale, this);
+    QStringList availableLocales = spellChecker->availableSpellLocales();
+    SpellCheckDialog dialog(currentSpellLocale, availableLocales, this);
 
     QLOG_DEBUG() << SPELLCHECKER_DLG ": Starting spell check loop";
     for (int i = 0; i < words.size(); i++) {
@@ -3934,18 +3935,21 @@ QString NBrowserWindow::initializeSpellCheckerInitial() {
         bool ok = initializeSpellCheckerWithLocale(locale);
 
         if (!ok) {
-            QLOG_DEBUG() << SPELLCHECKER_MODULE ": failed init with locale=" << locale;
+            QLOG_WARN() << SPELLCHECKER_MODULE ": failed init with locale=" << locale;
 
-            // TODO take first from list of available
-
-            QString systemLocale = QLocale::system().name();
-
-            QLOG_DEBUG() << SPELLCHECKER_MODULE ": system locale: " << systemLocale;
-            if (!QString::compare(locale, systemLocale, Qt::CaseInsensitive)) {
-                ok = initializeSpellCheckerWithLocale(systemLocale);
-                if (ok) {
-                    QLOG_DEBUG() << SPELLCHECKER_MODULE ": OK init with fallback locale=" << locale;
-                    locale = systemLocale;
+            // get list of all available locales
+            QStringList availableLocales = spellChecker->availableSpellLocales();
+            if (!availableLocales.isEmpty()) {
+                // first locale from list
+                QString availableLocales1 = availableLocales.first();
+                QLOG_INFO() << SPELLCHECKER_MODULE ": first availablelocale: " << availableLocales1;
+                if (QString::compare(locale, availableLocales1, Qt::CaseInsensitive) != 0) {
+                    QLOG_INFO() << SPELLCHECKER_MODULE ": will retry init with: " << availableLocales1;
+                    ok = initializeSpellCheckerWithLocale(availableLocales1);
+                    if (ok) {
+                        QLOG_INFO() << SPELLCHECKER_MODULE ": OK init with fallback locale=" << locale;
+                        locale = availableLocales1;
+                    }
                 }
             }
         }
@@ -3956,11 +3960,11 @@ QString NBrowserWindow::initializeSpellCheckerInitial() {
             return locale;
         }
     }
+    QLOG_ERROR() << SPELLCHECKER_MODULE ": failed init";
     return QString();
 }
 
 bool NBrowserWindow::initializeSpellCheckerWithLocale(QString locale) {
-    QString errMsg;
     QString userDictionaryPath(global.fileManager.getSpellDirPathUser());
 
     QLOG_INFO() << SPELLCHECKER_MODULE ": trying initialization for locale: " << locale
@@ -3973,7 +3977,7 @@ bool NBrowserWindow::initializeSpellCheckerWithLocale(QString locale) {
         saveSpellCheckerLocaleToSettings(locale);
     } else {
         global.setMessage(tr("Failed to initialize spell checker for ") + locale);
-        QLOG_ERROR() << SPELLCHECKER_MODULE ": initialization FAILED: " << errMsg;
+        QLOG_ERROR() << SPELLCHECKER_MODULE ": initialization FAILED for locale: " << locale;
     }
     return result;
 }
