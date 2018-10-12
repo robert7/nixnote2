@@ -15,7 +15,7 @@ _VERSION=$(shell echo $(_DEBIAN_VERSION) | cut -d- -f 1)
 _PKGNAME=$(shell dpkg-parsechangelog | head -n 1 | cut -d ' ' -f 2)
 JAVA_HOME=/usr/lib/jvm/default-java
 CLASSPATH=.
-TIDY_LIB_DIR=/opt/tidy56/lib
+TIDY_LIB_DIR=/usr/lib/nixnote2/tidy
 
 # https://github.com/aperezdc/cuacfmeego/blob/master/debian/rules
 QMAKE_OPTIONS = -makefile -nocache
