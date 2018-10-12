@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define ENMLFORMATTER_H
 
 #include <QObject>
-
 #include <QtWebKit>
 #include <QObject>
 #include <QTemporaryFile>
@@ -34,7 +33,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtXml>
 
 using namespace std;
-
 
 enum HtmlCleanupMode {
     Tidy = 0,
@@ -107,9 +105,11 @@ private:
     bool formattingError;
     void checkAttributes(QWebElement &element, QStringList valid);
     QList<qint32> resources;
+    bool guiAvailable;
+    QHash< QString, QPair <QString, QString> > passwordSafe;
 
 public:
-    explicit EnmlFormatter(QString html);
+    explicit EnmlFormatter(QString html, bool guiAvailable, QHash< QString, QPair <QString, QString> > passwordSafe);
 
     QList<qint32> getResources() const { return resources; }
     QString getContent() const;

@@ -18,10 +18,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-#include "enmlformatter.h"
-#include "src/sql/resourcetable.h"
-#include "src/global.h"
-#include "src/utilities/encrypt.h"
 #include <QFileIconProvider>
 #include <QWebPage>
 #include <QWebFrame>
@@ -31,13 +27,23 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <tidybuffio.h>
 #include <iostream>
 
+#include "enmlformatter.h"
+#include "src/sql/resourcetable.h"
+#include "src/utilities/encrypt.h"
+
+
 using namespace std;
 
 extern Global global;
 
 /* Constructor. */
-EnmlFormatter::EnmlFormatter(QString html) :
-    QObject(nullptr) {
+EnmlFormatter::EnmlFormatter(
+        QString html,
+        bool guiAvailable,
+        QHash<QString, QPair<QString, QString> > passwordSafe
+) : QObject(nullptr) {
+    this->guiAvailable = guiAvailable;
+    this->passwordSafe = passwordSafe;
 
     setContent(html);
 
@@ -340,7 +346,7 @@ void EnmlFormatter::rebuildNoteEnml() {
     content = fixEncryptionTags(content);
 
     QLOG_DEBUG_FILE("fmt-pre-dt-check.html", getContent());
-    if (global.guiAvailable) {
+    if (guiAvailable) {
         QWebPage page;
         QEventLoop loop;
         page.mainFrame()->setContent(getContentBytes());
@@ -769,7 +775,7 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
         endPos = newContent.indexOf("</table>", i + 1) + 8;
 
         // Encrypt the text
-        QPair<QString, QString> pair = global.passwordSafe.value(slot);
+        QPair<QString, QString> pair = passwordSafe.value(slot);
         QString password = pair.first;
         QString hint = pair.second;
         EnCrypt crypt;

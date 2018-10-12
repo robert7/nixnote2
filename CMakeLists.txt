@@ -215,6 +215,7 @@ set (nixnote2_src
         src/xml/xmlhighlighter.cpp
         src/quentier/utility/StringUtils.cpp
         src/quentier/utility/StringUtils_p.cpp
+        testsrc/tests.cpp
 )
 set (nixnote2_hdr
         src/application.h
@@ -417,6 +418,7 @@ set (nixnote2_hdr
         src/xml/xmlhighlighter.h
         src/quentier/utility/StringUtils.h
         src/quentier/utility/StringUtils_p.h
+        testsrc/tests.h
 )
 
 qt5_wrap_cpp(nixnote2_hdr_moc ${nixnote2_hdr})

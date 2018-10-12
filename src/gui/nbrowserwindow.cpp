@@ -819,7 +819,7 @@ void NBrowserWindow::saveNoteContent() {
 
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
 
-        EnmlFormatter formatter(contents);
+        EnmlFormatter formatter(contents, global.guiAvailable, global.passwordSafe);
         formatter.rebuildNoteEnml();
         if (formatter.isFormattingError()) {
             QMessageBox::information(
@@ -1170,7 +1170,7 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
     QString contents = rootElement.toOuterXml();
     bool isSimplify = mode == HtmlCleanupMode::Simplify;
 
-    EnmlFormatter formatter(contents);
+    EnmlFormatter formatter(contents, global.guiAvailable, global.passwordSafe);
 
     if (isSimplify) {
         formatter.tidyHtml(HtmlCleanupMode::Tidy);
