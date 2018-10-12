@@ -43,10 +43,6 @@ if [ ! -d "${TIDY_LIB_DIR}" ]; then
 fi
 echo "$0: libtidy is expected in: ${TIDY_LIB_DIR}"
 
-
-
-
-
 if [ ! -d "${BUILD_DIR}" ]; then
   mkdir ${BUILD_DIR}
 fi
@@ -62,8 +58,7 @@ fi
 
 QMAKE_BINARY=qmake
 
-
-if [ "${TIDY_DIR}" == "/usr" ] ; then
+if [ "${TIDY_LIB_DIR}" == "/usr/lib" ] ; then
   # at least on ubuntu pkgconfig for "libtidy-dev" is not installed - so we provide default
   # there could be better option
   # check: env PKG_CONFIG_PATH=./development/pkgconfig pkg-config --libs --cflags tidy
