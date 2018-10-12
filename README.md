@@ -81,8 +81,8 @@ Preparation steps
 * You can either install the html-tidy56 package from my PPA or build yourself from source.
 * Alternative 1: Install from PPA:
   * first [add PPA](https://github.com/robert7/nixnote2/wiki/NixNote-PPA)
-  * then `sudo apt install tidy-html56` (note if you install nixnote2 from PPA, then tidy-html56 will be installed)
-  * in this case libtidy will install in /opt/tidy56
+  * then `sudo apt install nixnote2-tidy` (note if you install nixnote2 from PPA, then nixnote2-tidy will be installed)
+  * in this case libtidy will install in /usr/lib/nixnote2/tidy
 * Alternative 2: Build tidy library from source:
   * clone [source code](https://github.com/htacg/tidy-html5) switch to master branch
   * follow [build instructions](https://github.com/htacg/tidy-html5/blob/next/README/BUILD.md)
@@ -90,9 +90,9 @@ Preparation steps
     * cd build/cmake
     * cmake ../..  -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
     * make                       
-    * make DESTDIR=/opt/tidy56 install
-    * library is now copied to /opt/tidy56/libs (if you use different directory, then pass it as 3rd argument to
-      "build-with-qmake.sh".
+    * make DESTDIR=/some/directory install
+    * library is now copied to /some/directory/lib (/some/directory/lib should be then passed as 3rd argument to
+      build-with-qmake.sh)
 
 If it doesn't work: use docker build - or compare with docker recipe, what is different.
 
