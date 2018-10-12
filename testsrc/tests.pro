@@ -9,8 +9,15 @@ PKGCONFIG += tidy
 TARGET = tests
 TEMPLATE = app
 
-SOURCES += tests.cpp ../src/html/enmlformatter.cpp
-HEADERS += tests.h ../src/html/enmlformatter.h
+SOURCES += tests.cpp \
+           ../src/html/enmlformatter.cpp \
+           ../src/logger/qslog.cpp \
+           ../src/utilities/encrypt.cpp
+
+HEADERS += tests.h \
+           ../src/html/enmlformatter.h \
+           ../src/logger/qslog.h \
+           ../src/utilities/encrypt.h
 
 CONFIG(debug, debug|release) {
     DESTDIR = qmake-build-debug

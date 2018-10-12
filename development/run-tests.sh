@@ -15,7 +15,7 @@ function error_exit {
     exit 1
 }
 
-if [ ! -f tests.cpp ]; then
+if [ ! -f testsrc/tests.cpp ]; then
   echo "$0: You seem to be in wrong directory. script MUST be run from the project/testsrc directory."
   exit 1
 fi
@@ -60,5 +60,5 @@ elif [ -d ${TIDY_LIB_DIR}/pkgconfig ] ; then
   export PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig
 fi
 
-${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} && make && ./qmake-build-${BUILD_TYPE}/tests
+${QMAKE_BINARY} testsrc/tests.pro CONFIG+=${BUILD_TYPE} && make && ./qmake-build-${BUILD_TYPE}/tests
 
