@@ -1,5 +1,64 @@
 #!/bin/bash
 
-TYPE=debug
-qmake CONFIG+=${TYPE} && make && ./qmake-build-${TYPE}/tests
+
+BUILD_TYPE=${1}
+CLEAN=${2}
+TIDY_LIB_DIR=${3}
+CDIR=`pwd`
+
+function error_exit {
+    echo "$0: ***********error_exit***********"
+    echo "***********" 1>&2
+    echo "*********** Failed: $1" 1>&2
+    echo "***********" 1>&2
+    cd ${CDIR}
+    exit 1
+}
+
+if [ ! -f tests.cpp ]; then
+  echo "$0: You seem to be in wrong directory. script MUST be run from the project/testsrc directory."
+  exit 1
+fi
+
+if [ -z "${BUILD_TYPE}" ]; then
+    BUILD_TYPE=debug
+fi
+BUILD_DIR=qmake-build-${BUILD_TYPE}
+
+if [ "${CLEAN}" == "clean" ]; then
+  echo "Clean build: ${BUILD_DIR}"
+  if [ -d "${BUILD_DIR}" ]; then
+    rm -rf ${BUILD_DIR}
+  fi
+fi
+
+if [ -z "${TIDY_LIB_DIR}" ]; then
+   # system default
+   TIDY_LIB_DIR=/usr/lib
+fi
+if [ ! -d "${TIDY_LIB_DIR}" ]; then
+   echo "TIDY_LIB_DIR (${TIDY_LIB_DIR}) is not a directory"
+   exit 1
+fi
+echo "$0: libtidy is expected in: ${TIDY_LIB_DIR}"
+
+if [ ! -d "${BUILD_DIR}" ]; then
+  mkdir ${BUILD_DIR}
+fi
+
+QMAKE_BINARY=qmake
+
+if [ "${TIDY_LIB_DIR}" == "/usr/lib" ] ; then
+  # at least on ubuntu pkgconfig for "libtidy-dev" is not installed - so we provide default
+  # there could be better option
+  # check: env PKG_CONFIG_PATH=./development/pkgconfig pkg-config --libs --cflags tidy
+  CDIR=`pwd`
+  echo export PKG_CONFIG_PATH=${CDIR}/../development/pkgconfig
+  export PKG_CONFIG_PATH=${CDIR}/development/pkgconfig
+elif [ -d ${TIDY_LIB_DIR}/pkgconfig ] ; then
+  echo export PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig
+  export PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig
+fi
+
+${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} && make && ./qmake-build-${BUILD_TYPE}/tests
 

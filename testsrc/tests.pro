@@ -1,12 +1,16 @@
 message("Out path: $${OUT_PWD}")
 
-QT += core gui widgets sql testlib
+QT += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml testlib
+
+CONFIG += link_pkgconfig
+PKGCONFIG += tidy
+
 
 TARGET = tests
 TEMPLATE = app
 
-SOURCES += tests.cpp 
-HEADERS += tests.h 
+SOURCES += tests.cpp ../src/html/enmlformatter.cpp
+HEADERS += tests.h ../src/html/enmlformatter.h
 
 CONFIG(debug, debug|release) {
     DESTDIR = qmake-build-debug
