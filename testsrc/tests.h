@@ -26,6 +26,7 @@ private slots:
 
     private slots:
     void enmlNixnoteEncryptTest();
+    void enmlNixnoteTableTest();
 };
 
 #endif // NIXNOTE2_TESTS_H

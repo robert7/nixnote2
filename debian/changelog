@@ -1,4 +1,4 @@
-NixNote (2.1.0-beta4k) unstable; urgency=low
+NixNote (2.1.0-beta4l) unstable; urgency=low
   * Make the sync and email shortcut key global to all app windows, and add sync and email toolbar buttons to
     all editor windows.
     This enables emailing and syncing from any open note window, instead of only from the main app screen.
@@ -19,6 +19,8 @@ NixNote (2.1.0-beta4k) unstable; urgency=low
   * Fixed build not stripping the binary in release build
   * Switched from tidy-html56 PPA package to nixnote2-tidy
   * Spellchecker now checks all available locale and in case of problem does a fallback to the first one - Issue #25
+  * !!DANGER!! Refactoring and further improvement of note html cleanup and conversion to ENML
+  * Simple working solution with encrypted notes (with the existing 64bit "medium" security RC2 cipher implemented in nixnote)
  -- Robert Spiegel <nightingale7@gmail.com>  Thu, 12 Oct 2018 12:00:00 -0400
 
 NixNote (2.1.0-beta3) unstable; urgency=low

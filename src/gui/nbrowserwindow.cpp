@@ -3421,7 +3421,7 @@ void NBrowserWindow::decryptText(QString id, QString text, QString hint, QString
 void NBrowserWindow::removeEncryption(QString id, QString plainText, bool permanent, QString slot) {
     // TODO fix the editable version
     if (!permanent) {
-        plainText = " <table class=\"" + HTML_TEMP_TABLE_CLASS + "\" slot=\""
+        plainText = " <table class=\"" HTML_TEMP_TABLE_CLASS "\" slot=\""
                     + slot
                     + "\""
                     + "border=1 width=100%><tbody><tr><td>"

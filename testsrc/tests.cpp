@@ -199,20 +199,39 @@ void Tests::enmlNixnoteObjectTest() {
 
 void Tests::enmlNixnoteEncryptTest() {
     {
+        // table contains plain text -> will be removed
+        // img with encrypted part will be converted
         QString src(
-                R"R(<div><table border="1" width="100%" class=")R"
+                R"R(<table border="1" width="100%" class=")R"
                 HTML_TEMP_TABLE_CLASS
                 R"R("> <tbody> <tr> <td><br> aaaaa</td> </tr></tbody>)R"
-                R"R(</table><img en-tag="en-crypt" cipher="RC2" hint="qq" length="64" alt="bGHOocsWJD4Id76YevNUb29Lxi7/aCAI" src="file:///usr/share/nixnote2/images/encrypt.png" id="crypt1" onmouseover="style.cursor='hand'" onclick="window.browserWindow.decryptText('crypt1', 'bGHOocsWJD4Id76YevNUb29Lxi7/aCAI', 'qq', 'RC2', 64);" style="display:block"></div>)R"
+                R"R(</table><div><img en-tag="en-crypt" cipher="RC2" hint="qq" length="64" alt="bGHOocsWJD4Id76YevNUb29Lxi7/aCAI" src="file:///usr/share/nixnote2/images/encrypt.png" id="crypt1" onmouseover="style.cursor='hand'" onclick="window.browserWindow.decryptText('crypt1', 'bGHOocsWJD4Id76YevNUb29Lxi7/aCAI', 'qq', 'RC2', 64);" style="display:block"></div>)R"
                 );
         QString result(
                 R"R(<div><en-crypt cipher="RC2" length="64" hint="qq">bGHOocsWJD4Id76YevNUb29Lxi7/aCAI</en-crypt></div>)R");
-        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+        const QString &r1 = formatToEnml(src);
+        const QString &r2 = addEnmlEnvelope(result);
+        QCOMPARE(r1, r2);
     }
 }
 
 
-
+void Tests::enmlNixnoteTableTest() {
+    {
+        // first table is temporyry => should be deleted
+        // then next table should stay; whitespace normalised and "style" attr removed
+        QString src(
+                R"R(<div><table border="1" width="100%" class=")R"
+                HTML_TEMP_TABLE_CLASS
+                R"R("> <tbody> <tr> <td><br> aaaaa</td> </tr></tbody>)R"
+                R"R(</table></div>)R"
+                R"R(<div><table border="1" width="100%" class="abcd"> <tbody> <tr> <td><br> aa  aaa</td> </tr></tbody></table></div>)R"
+        );
+        QString result(
+                R"R(<div><table border="1" width="100%"><tbody><tr><td><br />aa aaa</td></tr></tbody></table></div>)R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+}
 
 
 //
