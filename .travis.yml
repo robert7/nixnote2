@@ -22,6 +22,7 @@ script:
   - export PKG_CONFIG_PATH=$TIDY_LIB_DIR/pkgconfig
   - echo PKG_CONFIG_PATH=$PKG_CONFIG_PATH
   - echo qmake CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR
+  - ### ./qmake-build-release-t/tests &&
   - |
     qmake CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR &&
     ls -l ./development &&
@@ -30,7 +31,6 @@ script:
     find appdir/ &&
     qmake testsrc/tests.pro CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR &&
     make &&
-    ./qmake-build-release-t/tests &&
     wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" &&
     chmod a+x linuxdeployqt-continuous-x86_64.AppImage &&
     unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH &&

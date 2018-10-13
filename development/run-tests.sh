@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# compile and run tests - convenience shortcut only
 
 BUILD_TYPE=${1}
 CLEAN=${2}
@@ -60,5 +60,8 @@ elif [ -d ${TIDY_LIB_DIR}/pkgconfig ] ; then
   export PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig
 fi
 
-(${QMAKE_BINARY} testsrc/tests.pro CONFIG+=${BUILD_TYPE} && make && ./${BUILD_DIR}/tests) || error_exit "tests"
+(${QMAKE_BINARY} testsrc/tests.pro CONFIG+=${BUILD_TYPE} QMAKE_RPATHDIR+=${TIDY_LIB_DIR} \
+   && make \
+   && ./${BUILD_DIR}/tests \
+) || error_exit "tests"
 
