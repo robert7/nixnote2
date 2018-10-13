@@ -4,6 +4,8 @@
 
 #include "tests.h"
 #include "../src/html/enmlformatter.h"
+#include "../src/logger/qslog.h"
+#include "../src/logger/qslogdest.h"
 
 Tests::Tests(QObject *parent) :
         QObject(parent) {
@@ -60,18 +62,46 @@ void Tests::enmlTidyTest() {
         QString result("aa4");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
+    // raw string literals: https://en.cppreference.com/w/cpp/language/string_literal
     {
         // defined attribute is NOT deleted
-        QString src(R"(<div style="something: 1">aa5</div>)");
-        QString result(R"(<div style="something: 1">aa5</div>)");
+        QString src(R"R(<div style="something: 1">aa5</div>)R");
+        QString result(R"R(<div style="something: 1">aa5</div>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
     {
-        // undefined attribute is deleted
-        QString src(R"(<div style="something: 1" abcd="something: 1">aa6</div>)");
-        QString result(R"(<div style="something: 1">aa6</div>)");
+        // undefined attributes are deleted
+        QString src(R"R(<div style="something: 1" abcd="something: 1" lid="12" onclick="alert('hey'\)">aa6</div>)R");
+        QString result(R"R(<div style="something: 1">aa6</div>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
 }
 
-QTEST_MAIN(Tests)
+QT_BEGIN_NAMESPACE
+QTEST_ADD_GPU_BLACKLIST_SUPPORT_DEFS
+
+QT_END_NAMESPACE
+int main(int argc, char *argv[]) {
+    // Setup the QLOG functions for debugging & messages
+    // we need to do it at very beginning, else we lose the startup messages
+    QsLogging::Logger &logger = QsLogging::Logger::instance();
+    // at very beginning we starting with info level to get basic startup info
+    // log level is later adjusted by settings
+
+    logger.setLoggingLevel(QsLogging::DebugLevel);
+
+    QsLogging::DestinationPtr debugDestination(
+            QsLogging::DestinationFactory::MakeDebugOutputDestination());
+    logger.addDestination(debugDestination.get());
+
+    QApplication app(argc, argv);
+    app.setAttribute(Qt::AA_Use96Dpi, true);
+
+    QTEST_DISABLE_KEYPAD_NAVIGATION
+    QTEST_ADD_GPU_BLACKLIST_SUPPORT
+
+    Tests tc;
+
+    QTEST_SET_MAIN_SOURCE_PATH
+    return QTest::qExec(&tc, argc, argv);
+}
