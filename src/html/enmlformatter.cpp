@@ -781,8 +781,6 @@ bool EnmlFormatter::checkEndFixElement(QWebElement e) {
         checkAttributes(e, attrs + cellHalign + cellValign + th);
     } else if (element == "thread") {
         checkAttributes(e, attrs + cellHalign + cellValign);
-    } else if (element == "title") {
-
     } else if (element == "tr") {
         checkAttributes(e, attrs + cellHalign + cellValign + tr_);
     } else if (element == "tt") {

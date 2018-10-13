@@ -27,10 +27,10 @@ HEADERS += tests.h \
            ../src/utilities/encrypt.h
 
 CONFIG(debug, debug|release) {
-    DESTDIR = qmake-build-debug
+    DESTDIR = qmake-build-debug-t
     message($$TARGET: Debug build!)
 } else {
-    DESTDIR = qmake-build-release
+    DESTDIR = qmake-build-release-t
     message($$TARGET: Release build!)
 }
 OBJECTS_DIR = $${DESTDIR}

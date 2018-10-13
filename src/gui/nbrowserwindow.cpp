@@ -1178,12 +1178,19 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
         if (isOK) {
             contents = formatter.getContent();
 
+            // hardcore hack :(
+
             // http://doc.qt.io/qt-5/qstring.html#replace-12
             QRegularExpression reImg("(<img [^>]*>)");
             QRegularExpression reA("(<a [^>]*>)");
+            QRegularExpression reObject("(<object [^>]*>)");
 
             contents.replace(reA, HTML_COMMENT_START "\\1" HTML_COMMENT_END);
             contents.replace("</a>", HTML_COMMENT_START "</a>" HTML_COMMENT_END);
+
+            contents.replace(reObject, HTML_COMMENT_START "\\1" HTML_COMMENT_END);
+            contents.replace("</object>", HTML_COMMENT_START "</object>" HTML_COMMENT_END);
+
             contents.replace(reImg, HTML_COMMENT_START "\\1" HTML_COMMENT_END);
             formatter.setContent(contents);
             QLOG_DEBUG_FILE("simplify1.html", formatter.getContent());
@@ -1212,8 +1219,8 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
         return;
     }
     // equals to setContent(html, "text/html", baseUrl).
+    QLOG_DEBUG_FILE("htmlCleanup.html", contents);
     editor->setHtml(contents);
-    QLOG_DEBUG_FILE("editor.html", contents);
 
 
     editor->setFocus();

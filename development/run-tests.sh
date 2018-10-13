@@ -23,7 +23,7 @@ fi
 if [ -z "${BUILD_TYPE}" ]; then
     BUILD_TYPE=debug
 fi
-BUILD_DIR=qmake-build-${BUILD_TYPE}
+BUILD_DIR=qmake-build-${BUILD_TYPE}-t
 
 if [ "${CLEAN}" == "clean" ]; then
   echo "Clean build: ${BUILD_DIR}"
@@ -60,5 +60,5 @@ elif [ -d ${TIDY_LIB_DIR}/pkgconfig ] ; then
   export PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig
 fi
 
-(${QMAKE_BINARY} testsrc/tests.pro CONFIG+=${BUILD_TYPE} && make && ./qmake-build-${BUILD_TYPE}/tests) || error_exit "tests"
+(${QMAKE_BINARY} testsrc/tests.pro CONFIG+=${BUILD_TYPE} && make && ./${BUILD_DIR}/tests) || error_exit "tests"
 
