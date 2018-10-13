@@ -33,6 +33,29 @@ CONFIG(debug, debug|release) {
 OBJECTS_DIR = $${DESTDIR}
 MOC_DIR = $${DESTDIR}
 
+
+# get g++ version
+gcc {
+    COMPILER_VERSION = $$system($$QMAKE_CXX " -dumpversion")
+    COMPILER_MAJOR_VERSION1 = $$split(COMPILER_VERSION, ".")
+    COMPILER_MAJOR_VERSION = $$first(COMPILER_MAJOR_VERSION1)
+    message("$$TARGET: Compiler version $$COMPILER_MAJOR_VERSION")
+    COMPILER_CONFIG = g++$$COMPILER_MAJOR_VERSION
+    message("$$TARGET: Adding compiler config $$COMPILER_CONFIG")
+    CONFIG += $$COMPILER_CONFIG
+}
+
+linux:QMAKE_CXXFLAGS += -std=c++11 -g -O2  -Wformat -Werror=format-security
+linux:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
+
+g++4 {
+  # this is a guess, but "stack-protector-strong" may not be available yet
+  QMAKE_CXXFLAGS += -fstack-protector
+} else {
+  QMAKE_CXXFLAGS += -fstack-protector-strong
+}
+
+
 isEmpty(PREFIX) {
  PREFIX = /usr
 }

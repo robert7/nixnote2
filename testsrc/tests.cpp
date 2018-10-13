@@ -1,6 +1,8 @@
 #include <QtTest/QtTest>
 #include <QObject>
 #include <QString>
+#include <QHash>
+#include <QPair>
 
 #include "tests.h"
 #include "../src/html/enmlformatter.h"
