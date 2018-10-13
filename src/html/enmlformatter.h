@@ -48,8 +48,7 @@ enum HtmlCleanupMode {
 
 #define HTML_COMMENT_START "<!-- "
 #define HTML_COMMENT_END " -->"
-
-
+#define HTML_TEMP_TABLE_CLASS "en-crypt-temp"
 
 
 class EnmlFormatter : public QObject
@@ -61,13 +60,14 @@ private:
     bool isAttributeValid(QString attribute);
     bool checkEndFixElement(QWebElement e);
     void fixImgNode(QWebElement &element);
+    void fixTableNode(QWebElement &e);
     void fixInputNode(QWebElement &e);
     QStringList findAllTags(QWebElement &element);
     void removeInvalidAttributes(QWebElement &node);
     void fixANode(QWebElement e);
     void fixObjectNode(QWebElement &e);
     void removeInvalidUnicode();
-    QByteArray fixEncryptionTags(QByteArray newContent);
+    //QByteArray fixEncryptionTags(QByteArray newContent);
 
     QStringList coreattrs;
     QStringList i18n;

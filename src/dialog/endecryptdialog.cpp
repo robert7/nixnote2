@@ -31,6 +31,10 @@ extern Global global;
 EnDecryptDialog::EnDecryptDialog(QWidget *parent) :
     QDialog(parent)
 {
+    QFont guiFont(global.getGuiFont(font()));
+    QFont guiFontBold = guiFont;
+    //guiFontBold.setBold(true);
+
     okPressed = false;
     setWindowTitle(tr("Decrypt"));
     setWindowIcon(global.getIconResource(":passwordIcon"));
@@ -56,7 +60,12 @@ EnDecryptDialog::EnDecryptDialog(QWidget *parent) :
     passwordGrid->addWidget(hint, 2, 2);
     rememberPassword = new QCheckBox(this);
     permanentlyDecrypt = new QCheckBox(this);
-    passwordGrid->addWidget(new QLabel(tr("Permanently Decrypt")), 3,1);
+
+    QLabel *labelPermDecrypt = new QLabel(tr("Permanently Decrypt"));
+    //labelPermDecrypt->setFont(guiFontBold);
+    passwordGrid->addWidget(labelPermDecrypt, 3, 1);
+
+    
     passwordGrid->addWidget(permanentlyDecrypt, 3,2);
     passwordGrid->addWidget(new QLabel(tr("Remember Password")), 4,1);
     passwordGrid->addWidget(rememberPassword, 4,2);
@@ -75,7 +84,7 @@ EnDecryptDialog::EnDecryptDialog(QWidget *parent) :
     grid->setSizeConstraint( QLayout::SetFixedSize );
 
     password->setEchoMode(QLineEdit::Password);
-    this->setFont(global.getGuiFont(font()));
+    this->setFont(guiFont);
 }
 
 

@@ -3346,7 +3346,9 @@ void NBrowserWindow::decryptText(QString id, QString text, QString hint, QString
     if (cipher != "RC2") {
         QMessageBox::critical(this, tr("Decryption Error"),
                               tr("Unknown encryption method.\n"
-                                 "Unable to decrypt."));
+                                 "Unable to decrypt.")
+                              + "\n" + cipher
+        );
         return;
     }
 
@@ -3360,6 +3362,8 @@ void NBrowserWindow::decryptText(QString id, QString text, QString hint, QString
         QString password = global.passwordRemember.at(i).first;
         int rc = crypt.decrypt(plainText, text, password, cipher, len);
         if (rc == 0) {
+            QLOG_DEBUG() << "Successful decrypt with session password #" << (i+1);
+
             QPair<QString, QString> newEntry;
             newEntry.first = id;
             newEntry.second = global.passwordRemember.at(i).second;
@@ -3369,43 +3373,70 @@ void NBrowserWindow::decryptText(QString id, QString text, QString hint, QString
         }
     }
 
+    QLOG_DEBUG() << "About to show decrypt dialog";
 
     EnDecryptDialog dialog;
-    if (hint.trimmed() != "")
+    if (hint.trimmed() != "") {
         dialog.hint->setText(hint);
+    }
+
+    QString pwd;
     while (plainText == "" || !dialog.okPressed) {
         dialog.exec();
         if (!dialog.okPressed) {
+            QLOG_DEBUG() << "Failed to decrypt (dialog cancel)";
             return;
         }
-        int rc = crypt.decrypt(plainText, text, dialog.password->text().trimmed());
+        pwd = dialog.password->text().trimmed();
+        
+        int rc = crypt.decrypt(plainText, text, pwd);
         if (rc == EnCrypt::Invalid_Key) {
-//            QMessageBox.warning(this, tr("Incorrect Password"), tr("The password entered is not correct"));
+           //QMessageBox.warning(this, tr("Incorrect Password"), tr("The password entered is not correct"));
         }
     }
+
+    //const QString hint = dialog.hint->text().trimmed();
+
     QPair<QString, QString> passwordPair;
-    passwordPair.first = dialog.password->text().trimmed();
-    passwordPair.second = dialog.hint->text().trimmed();
+    passwordPair.first = pwd;
+    passwordPair.second = hint;
     global.passwordSafe.insert(slot, passwordPair);
-    bool permanentlyDecrypt = dialog.permanentlyDecrypt->isChecked();
+
+    bool isPernamentDecrypt = dialog.permanentlyDecrypt->isChecked();
+    bool permanentlyDecrypt = isPernamentDecrypt;
     removeEncryption(id, plainText, permanentlyDecrypt, slot);
+
     bool rememberPassword = dialog.rememberPassword->isChecked();
+    
     if (rememberPassword) {
         QPair<QString, QString> pair;
-        pair.first = dialog.password->text().trimmed();
-        pair.second = dialog.hint->text().trimmed();
+        pair.first = pwd;
+        pair.second = hint;
+        QLOG_DEBUG() << "Appending password to session store";
         global.passwordRemember.append(pair);
     }
 }
 
 
 void NBrowserWindow::removeEncryption(QString id, QString plainText, bool permanent, QString slot) {
+    // TODO fix the editable version
     if (!permanent) {
-        plainText = " <table class=\"en-crypt-temp\" slot=\""
+        plainText = " <table class=\"" + HTML_TEMP_TABLE_CLASS + "\" slot=\""
                     + slot
                     + "\""
                     + "border=1 width=100%><tbody><tr><td>"
                     + plainText + "</td></tr></tbody></table>";
+
+        QMimeData* mimeData = new QMimeData;
+        mimeData->setData("text/html", plainText.toUtf8());
+
+        QApplication::clipboard()->setMimeData(mimeData, QClipboard::Clipboard);
+        this->editor->triggerPageAction(QWebPage::Paste);
+
+        // currently readonly - as edit encrypted is unstable
+        editor->page()->setContentEditable(false);
+
+        return;
     }
 
     QString html = editor->page()->mainFrame()->toHtml();
@@ -3420,8 +3451,9 @@ void NBrowserWindow::removeEncryption(QString id, QString plainText, bool perman
             text = text.mid(0, imagePos) + plainText + text.mid(endPos + 1);
             editor->page()->mainFrame()->setHtml(text);
             editor->reload();
-            if (permanent)
+            if (permanent) {
                 contentChanged();
+            }
         }
         imagePos = text.indexOf("<img", imagePos + 1);
     }
@@ -3429,11 +3461,12 @@ void NBrowserWindow::removeEncryption(QString id, QString plainText, bool perman
 
 
 void NBrowserWindow::encryptButtonPressed() {
-    EnCrypt encrypt(global.fileManager.getCryptoJarPath());
+    //EnCrypt encrypt(global.fileManager.getCryptoJarPath());
 
     QString text = editor->selectedText();
-    if (text.trimmed() == "")
+    if (text.trimmed() == "") {
         return;
+    }
     text = text.replace("\n", "<br/>");
 
     EnCryptDialog dialog;
@@ -3456,11 +3489,13 @@ void NBrowserWindow::encryptButtonPressed() {
                   + dialog.getHint().replace("'", "\\'") + "\" length=\"64\" ");
     buffer.append("contentEditable=\"false\" alt=\"");
     buffer.append(encrypted);
+
 #ifndef _WIN32
     buffer.append("\" src=\"file://").append(global.fileManager.getImageDirPath("encrypt.png") + "\"");
 #else
     buffer.append("\" src=\"file:///").append(global.fileManager.getImageDirPath("encrypt.png") +"\"");
 #endif
+
     global.cryptCounter++;
     buffer.append(" id=\"crypt" + QString::number(global.cryptCounter) + "\"");
     buffer.append(" onMouseOver=\"style.cursor=\\'hand\\'\"");
@@ -3472,8 +3507,7 @@ void NBrowserWindow::encryptButtonPressed() {
 
     QString script_start = "document.execCommand('insertHtml', false, '";
     QString script_end = "');";
-    editor->page()->mainFrame()->evaluateJavaScript(
-            script_start + buffer + script_end);
+    editor->page()->mainFrame()->evaluateJavaScript(script_start + buffer + script_end);
 }
 
 

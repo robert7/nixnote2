@@ -43,6 +43,8 @@ EnmlFormatter::EnmlFormatter(
         QString cryptoJarPath
 ) : QObject(nullptr) {
     this->guiAvailable = guiAvailable;
+
+    // actually currently NOT used, as we donÄt support editable encrypted areas
     this->passwordSafe = passwordSafe;
     this->cryptoJarPath = cryptoJarPath;
 
@@ -226,8 +228,11 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
     TidyBuffer errbuf = {nullptr};
     int rc = -1;
 
+    //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "tidy1";
+
     // Initialize "document"
     TidyDoc tdoc = tidyCreate();
+    //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "tidy2";
 
     // Convert to XHTML
     Bool ok = tidyOptSetBool(tdoc, TidyXhtmlOut, yes);
@@ -258,7 +263,7 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
             rc = tidyOptSetBool(tdoc, TidyStrictTagsAttr, yes);
         }
     }
-
+    //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "tidy3";
 
     if (ok) {
         rc = tidySetCharEncoding(tdoc, "utf8");
@@ -267,6 +272,7 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
         // Capture diagnostics
         rc = tidySetErrorBuffer(tdoc, &errbuf);
     }
+    //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "tidy4";
     if (rc >= 0) {
         // Parse the input
         rc = tidyParseString(tdoc, content.constData());
@@ -283,7 +289,7 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
     if (rc > 1) {
         rc = (tidyOptSetBool(tdoc, TidyForceOutput, yes) ? rc : -1);
     }
-
+    //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "tidy5";
     if (rc >= 0) {
         // pretty print
         rc = tidySaveBuffer(tdoc, &output);
@@ -353,7 +359,8 @@ void EnmlFormatter::rebuildNoteEnml() {
     content.replace("<form>", "");
     content.replace("</form>", "");
 
-    content = fixEncryptionTags(content);
+    // this was for editable encrypted areas - currently not supported
+    //content = fixEncryptionTags(content);
 
     QLOG_DEBUG_FILE("fmt-pre-dt-check.html", getContent());
     if (guiAvailable) {
@@ -389,6 +396,8 @@ void EnmlFormatter::rebuildNoteEnml() {
                         fixObjectNode(element);
                     } else if (tagname == "img") {
                         fixImgNode(element);
+                    } else if (tagname == "table") {
+                        fixTableNode(element);
                     }
                 }
         }
@@ -515,6 +524,16 @@ void EnmlFormatter::fixObjectNode(QWebElement &e) {
     } else {
         QLOG_WARN() << ENML_MODULE_LOGPREFIX "fixed unknown <object> node by removing it";
         e.removeFromDocument();
+    }
+}
+
+// this is a temporary quick solution
+void EnmlFormatter::fixTableNode(QWebElement &e) {
+    QString className = e.attribute("class", "").toLower();
+    if (className == HTML_TEMP_TABLE_CLASS) { ;
+        // Temporary table.  If so, remove it
+        e.removeFromDocument();
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "processing tag 'table' removed temporary element";
     }
 }
 
@@ -786,42 +805,42 @@ void EnmlFormatter::removeInvalidAttributes(QWebElement &node) {
     }
 }
 
-QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
-    int endPos, startPos, endData, slotStart, slotEnd;
-    QByteArray eTag = "<table class=\"en-crypt-temp\"";
-    for (int i = newContent.indexOf(eTag); i != -1; i = newContent.indexOf(eTag, i + 1)) {
-        slotStart = newContent.indexOf("slot", i + 1) + 6;
-        slotEnd = newContent.indexOf("\"", slotStart + 1);
-        QString slot = newContent.mid(slotStart, slotEnd - slotStart);
-        slot = slot.replace("\"", "");
-        startPos = newContent.indexOf("<td>", i + 1) + 4;
-        endData = newContent.indexOf("</td>", startPos);
-        QString text = newContent.mid(startPos, endData - startPos);
-        endPos = newContent.indexOf("</table>", i + 1) + 8;
-
-        // Encrypt the text
-        QPair<QString, QString> pair = passwordSafe.value(slot);
-        QString password = pair.first;
-        QString hint = pair.second;
-        EnCrypt crypt(cryptoJarPath);
-        QString encrypted;
-        crypt.encrypt(encrypted, text, password);
-
-        // replace the table with an en-crypt tag.
-        QByteArray start = newContent.mid(0, i - 1);
-        QByteArray end = newContent.mid(endPos);
-        newContent.clear();
-        newContent.append(start);
-        newContent.append(QByteArray("<en-crypt cipher=\"RC2\" length=\"64\" hint=\""));
-        newContent.append(hint.toLocal8Bit());
-        newContent.append(QByteArray("\">"));
-        newContent.append(encrypted.toLocal8Bit());
-        newContent.append(QByteArray("</en-crypt>"));
-        newContent.append(end);
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "rewritten 'en-crypt' tag";
-    }
-    return newContent;
-}
+// QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
+//     int endPos, startPos, endData, slotStart, slotEnd;
+//     QByteArray eTag = "<table class=\"en-crypt-temp\"";
+//     for (int i = newContent.indexOf(eTag); i != -1; i = newContent.indexOf(eTag, i + 1)) {
+//         slotStart = newContent.indexOf("slot", i + 1) + 6;
+//         slotEnd = newContent.indexOf("\"", slotStart + 1);
+//         QString slot = newContent.mid(slotStart, slotEnd - slotStart);
+//         slot = slot.replace("\"", "");
+//         startPos = newContent.indexOf("<td>", i + 1) + 4;
+//         endData = newContent.indexOf("</td>", startPos);
+//         QString text = newContent.mid(startPos, endData - startPos);
+//         endPos = newContent.indexOf("</table>", i + 1) + 8;
+//
+//         // Encrypt the text
+//         QPair<QString, QString> pair = passwordSafe.value(slot);
+//         QString password = pair.first;
+//         QString hint = pair.second;
+//         EnCrypt crypt(cryptoJarPath);
+//         QString encrypted;
+//         crypt.encrypt(encrypted, text, password);
+//
+//         // replace the table with an en-crypt tag.
+//         QByteArray start = newContent.mid(0, i - 1);
+//         QByteArray end = newContent.mid(endPos);
+//         newContent.clear();
+//         newContent.append(start);
+//         newContent.append(QByteArray("<en-crypt cipher=\"RC2\" length=\"64\" hint=\""));
+//         newContent.append(hint.toLocal8Bit());
+//         newContent.append(QByteArray("\">"));
+//         newContent.append(encrypted.toLocal8Bit());
+//         newContent.append(QByteArray("</en-crypt>"));
+//         newContent.append(end);
+//         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "rewritten 'en-crypt' tag";
+//     }
+//     return newContent;
+// }
 
 
 /**
