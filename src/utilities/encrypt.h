@@ -33,13 +33,14 @@ private:
     string string_to_hex(const std::string& input);
     string hex_to_string(const std::string& input);
     int runner(QString &result, QString text, QString passphrase, QString method,  int keylen);
+    QString cryptoJarPath;
 
 public:
-    EnCrypt();
+    EnCrypt(QString cryptoJarPath);
     enum CryptoResults {
         Java_Not_Found = 255,
         Invalid_Arguments = 16,
-        Invaid_Method = 14,
+        Invalid_Method = 14,
         Invalid_Key = 4
     };
 

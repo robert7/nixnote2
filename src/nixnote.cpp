@@ -200,12 +200,20 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     // Check for Java and verify encryption works
     QString test = "Test Message";
     QString result;
-    EnCrypt encrypt;
+    EnCrypt encrypt(global.fileManager.getCryptoJarPath());
     if (!encrypt.encrypt(result, test, test)) {
         if (!encrypt.decrypt(result, result, test)) {
-            if (result == test)
+            if (result == test) {
                 global.javaFound = true;
+                QLOG_INFO() << "encrypt available";
+            } else {
+                QLOG_WARN() << "encrypt.decrypt failed (different result)";
+            }
+        } else {
+            QLOG_WARN() << "encrypt.decrypt failed";
         }
+    } else {
+        QLOG_WARN() << "encrypt.encrypt failed";
     }
 
     // Initialize pdfExportWindow to null. We don't fully set this up in case the person requests it.

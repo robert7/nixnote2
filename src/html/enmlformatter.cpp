@@ -18,10 +18,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-#include "enmlformatter.h"
-#include "src/sql/resourcetable.h"
-#include "src/global.h"
-#include "src/utilities/encrypt.h"
 #include <QFileIconProvider>
 #include <QWebPage>
 #include <QWebFrame>
@@ -31,19 +27,33 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <tidybuffio.h>
 #include <iostream>
 
+#include "enmlformatter.h"
+#include "src/utilities/encrypt.h"
+#include "src/logger/qslog.h"
+
+#define ENML_MODULE_LOGPREFIX "enml-cleanup: "
+
 using namespace std;
 
-extern Global global;
-
 /* Constructor. */
-EnmlFormatter::EnmlFormatter(QString html) :
-    QObject(nullptr) {
+EnmlFormatter::EnmlFormatter(
+        QString html,
+        bool guiAvailable,
+        QHash<QString, QPair<QString, QString> > passwordSafe,
+        QString cryptoJarPath
+) : QObject(nullptr) {
+    this->guiAvailable = guiAvailable;
+
+    // actually currently NOT used, as we donÄt support editable encrypted areas
+    this->passwordSafe = passwordSafe;
+    this->cryptoJarPath = cryptoJarPath;
 
     setContent(html);
 
     // initial state without error
     formattingError = false;
 
+    // just this two
     coreattrs.append("style");
     coreattrs.append("title");
 
@@ -54,6 +64,7 @@ EnmlFormatter::EnmlFormatter(QString html) :
     focus.append("accesskey");
     focus.append("tabindex");
 
+    // attrs are core+i18n
     attrs.append(coreattrs);
     attrs.append(i18n);
 
@@ -75,6 +86,10 @@ EnmlFormatter::EnmlFormatter(QString html) :
     a.append("shape");
     a.append("coords");
     a.append("target");
+    // nixnote internal
+    a.append("hash");
+    a.append("en-tag");
+    a.append("lid");
 
     area.append("shape");
     area.append("coords");
@@ -88,7 +103,6 @@ EnmlFormatter::EnmlFormatter(QString html) :
     bdo.append("dir");
 
     blockQuote.append("cite");
-
 
     br.append("clear");
 
@@ -114,6 +128,9 @@ EnmlFormatter::EnmlFormatter(QString html) :
     hr.append("size");
     hr.append("width");
 
+    input.append("checked");
+    input.append("type");
+
     img.append("src");
     img.append("alt");
     img.append("name");
@@ -126,6 +143,12 @@ EnmlFormatter::EnmlFormatter(QString html) :
     img.append("border");
     img.append("hspace");
     img.append("vspace");
+    // nixnote internal
+    img.append("hash");
+    img.append("lid");
+    img.append("en-tag");
+    img.append("type");
+    img.append("hint");
 
     ins.append("cite");
     ins.append("datetime");
@@ -135,6 +158,11 @@ EnmlFormatter::EnmlFormatter(QString html) :
 
     map.append("title");
     map.append("name");
+
+    object.append("type");
+    // nixnote internal
+    object.append("hash");
+    object.append("lid");
 
     ol.append("type");
     ol.append("compact");
@@ -150,6 +178,7 @@ EnmlFormatter::EnmlFormatter(QString html) :
     table.append("cellpadding");
     table.append("align");
     table.append("bgcolor");
+    table.append("class");
 
     td.append("abbr");
     td.append("rowspan");
@@ -202,8 +231,11 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
     TidyBuffer errbuf = {nullptr};
     int rc = -1;
 
+    //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "tidy1";
+
     // Initialize "document"
     TidyDoc tdoc = tidyCreate();
+    //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "tidy2";
 
     // Convert to XHTML
     Bool ok = tidyOptSetBool(tdoc, TidyXhtmlOut, yes);
@@ -234,7 +266,7 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
             rc = tidyOptSetBool(tdoc, TidyStrictTagsAttr, yes);
         }
     }
-
+    //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "tidy3";
 
     if (ok) {
         rc = tidySetCharEncoding(tdoc, "utf8");
@@ -243,6 +275,7 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
         // Capture diagnostics
         rc = tidySetErrorBuffer(tdoc, &errbuf);
     }
+    //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "tidy4";
     if (rc >= 0) {
         // Parse the input
         rc = tidyParseString(tdoc, content.constData());
@@ -259,7 +292,7 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
     if (rc > 1) {
         rc = (tidyOptSetBool(tdoc, TidyForceOutput, yes) ? rc : -1);
     }
-
+    //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "tidy5";
     if (rc >= 0) {
         // pretty print
         rc = tidySaveBuffer(tdoc, &output);
@@ -272,7 +305,7 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
         if (rc > 0) {
             QString tidyErrors((char *) errbuf.bp);
             tidyErrors.replace("\n", "; ");
-            QLOG_INFO() << "Tidy DONE: diagnostics: " << tidyErrors;
+            QLOG_INFO() << ENML_MODULE_LOGPREFIX "tidy DONE: diagnostics: " << tidyErrors;
         }
         // results
         content.append((char *) output.bp);
@@ -280,7 +313,7 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
         //content = content.replace("</body>", "<br/>tidy ok</body>");
     } else {
         formattingError = true;
-        QLOG_ERROR() << "Tidy FAILED: severe error occurred, code=" << rc;
+        QLOG_ERROR() << ENML_MODULE_LOGPREFIX "tidy FAILED: severe error occurred, code=" << rc;
     }
     QLOG_DEBUG_FILE("fmt-post-tidy.html", getContent());
 
@@ -291,7 +324,7 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
 
 /**
  * Remove html header.
- * Automaticalled before tidy.
+ * Called before tidy.
  */
 void EnmlFormatter::removeHtmlHeader() {
     // remove all before body
@@ -308,7 +341,7 @@ void EnmlFormatter::removeHtmlHeader() {
  * Take the WebKit HTML and transform it into ENML
  * */
 void EnmlFormatter::rebuildNoteEnml() {
-    QLOG_INFO() << "===== Rebuilding note ENML";
+    QLOG_INFO() << ENML_MODULE_LOGPREFIX "===== rebuilding note ENML";
     QLOG_DEBUG_FILE("fmt-html-input.html", getContent());
 
     // list of referenced LIDs
@@ -317,14 +350,10 @@ void EnmlFormatter::rebuildNoteEnml() {
 
     tidyHtml(HtmlCleanupMode::Tidy);
     if (isFormattingError()) {
-        QLOG_ERROR() << "Got no output from tidy - cleanup failed";
+        QLOG_ERROR() << ENML_MODULE_LOGPREFIX "got no output from tidy - cleanup failed";
         return;
     }
     removeHtmlHeader();
-
-    //QRegularExpression reInput("<!--.*-->");
-    //content.replace(reInput, "");
-
 
     content.prepend(DEFAULT_HTML_HEAD);
     content.prepend(DEFAULT_HTML_TYPE);
@@ -333,10 +362,11 @@ void EnmlFormatter::rebuildNoteEnml() {
     content.replace("<form>", "");
     content.replace("</form>", "");
 
-    content = fixEncryptionTags(content);
+    // this was for editable encrypted areas - currently not supported
+    //content = fixEncryptionTags(content);
 
     QLOG_DEBUG_FILE("fmt-pre-dt-check.html", getContent());
-    if (global.guiAvailable) {
+    if (guiAvailable) {
         QWebPage page;
         QEventLoop loop;
         page.mainFrame()->setContent(getContentBytes());
@@ -348,12 +378,19 @@ void EnmlFormatter::rebuildNoteEnml() {
 
         for (int i = 0; i < tags.size(); i++) {
             QString tag = tags[i];
-            QLOG_DEBUG() << "== processing tag " << tag;
+            QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "== processing tag " << tag;
 
             QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
                 foreach(QWebElement
                             element, anchors) {
                     QString tagname = element.tagName().toLower();
+
+                    if (!checkEndFixElement(element)) {
+                        // was logged already
+                        element.removeFromDocument();
+                        continue;
+                    }
+
                     if (tagname == "input") {
                         fixInputNode(element);
                     } else if (tagname == "a") {
@@ -362,15 +399,8 @@ void EnmlFormatter::rebuildNoteEnml() {
                         fixObjectNode(element);
                     } else if (tagname == "img") {
                         fixImgNode(element);
-                    } else if (tagname == "span") {
-                        fixSpanNode(element);
-                    } else if (tagname == "div") {
-                        fixDivNode(element);
-                    } else if (tagname == "pre") {
-                        fixPreNode(element);
-                    } else if (!isElementValid(element)) {
-                        QLOG_DEBUG() << "Removing element: " << tagname;
-                        element.removeFromDocument();
+                    } else if (tagname == "table") {
+                        fixTableNode(element);
                     }
                 }
         }
@@ -403,13 +433,14 @@ void EnmlFormatter::rebuildNoteEnml() {
         b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>");
         b.append(content);
         content.clear();
+
         content = b.replace("<body", "<en-note");
         content = b.replace("</body>", "</en-note>");
     }
 
 
     QLOG_DEBUG_FILE("fmt-enml-final.xml", getContent());
-    QLOG_INFO() << "===== Finished rebuilding note ENML";
+    QLOG_INFO() << ENML_MODULE_LOGPREFIX "===== finished rebuilding note ENML";
 }
 
 
@@ -432,57 +463,84 @@ QStringList EnmlFormatter::findAllTags(QWebElement &element) {
             i = -1;
         }
     }
-    QLOG_DEBUG() << "Findall tags: " << tags;
+    QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "find all tags: " << tags;
     return tags;
 }
 
 
-void EnmlFormatter::fixInputNode(QWebElement &node) {
+void EnmlFormatter::fixInputNode(QWebElement &e) {
+    QString type = e.attribute("type", "");
+    if (type != "checkbox") {
+        QLOG_WARN() << ENML_MODULE_LOGPREFIX "fixed unknown <input> node by removing it";
+        e.removeFromDocument();
+        return;
+    }
+
     bool checked = false;
-    if (node.hasAttribute("checked"))
+    if (e.hasAttribute("checked")) {
         checked = true;
-    node.removeAttribute("style");
-    node.removeAttribute("type");
-    removeInvalidAttributes(node);
+    }
+
+    removeInvalidAttributes(e);
+    // those 2 are additionaly needed (as they pass the basic checks)
+    e.removeAttribute("style");
+    e.removeAttribute("type");
+
     if (checked) {
-        node.setAttribute("checked", "true");
+        e.setAttribute("checked", "true");
     }
 
     // quite a hack
     QRegularExpression reInput("<input([^>]*)>");
-    node.setOuterXml(
-            node.toOuterXml()
-                    .replace(reInput, HTML_COMMENT_START "<en-todo \\1 />" HTML_COMMENT_END)
-    );
-}
-
-
-void EnmlFormatter::fixSpanNode(QWebElement &e) {
-    checkAttributes(e, attrs);
+    QString markup = e.toOuterXml();
+    markup = markup.replace(reInput, HTML_COMMENT_START "<en-todo\\1/>" HTML_COMMENT_END);
+    e.setOuterXml(markup);
 }
 
 
 void EnmlFormatter::fixObjectNode(QWebElement &e) {
     QString type = e.attribute("type", "");
+    QString hash = e.attribute("hash", "");
     if (type == "application/pdf") {
         qint32 lid = e.attribute("lid", "0").toInt();
-        e.removeAttribute("width");
-        e.removeAttribute("height");
+        removeInvalidAttributes(e);
+
         e.removeAttribute("lid");
-        e.removeAttribute("border");
+        e.removeAttribute("style");
+
+        // this is to order is specific way (this makes tests easier)
+        e.removeAttribute("type");
+        e.removeAttribute("hash");
+        e.setAttribute("type", type);
+        e.setAttribute("hash", hash);
+
+
         if (lid > 0) {
             resources.append(lid);
             const QString xml = e.toOuterXml()
                     // temp hack for tidy call
                     .replace("<object", HTML_COMMENT_START "<en-media")
                     .replace("</object>", "</en-media>" HTML_COMMENT_END);
-            QLOG_DEBUG() << "Fixed object node holding pdf to " << xml;
+            QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed object node holding pdf to " << xml;
             e.setOuterXml(xml);
         }
-        removeInvalidAttributes(e);
     } else {
-        QLOG_DEBUG() << "Fixed unknown object node by removing it";
+        QLOG_WARN() << ENML_MODULE_LOGPREFIX "fixed unknown <object> node by removing it";
         e.removeFromDocument();
+    }
+}
+
+// this is a temporary quick solution
+void EnmlFormatter::fixTableNode(QWebElement &e) {
+    QString className = e.attribute("class", "").toLower();
+    removeInvalidAttributes(e);
+    if (className == HTML_TEMP_TABLE_CLASS) { ;
+        // Temporary table.  If so, remove it
+        e.removeFromDocument();
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "processing tag 'table' removed temporary element";
+    } else {
+        // as we let class through because of the temp.node
+        e.removeAttribute("class");
     }
 }
 
@@ -496,23 +554,16 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         QString cipher = e.attribute("cipher", "RC2");
         QString hint = e.attribute("hint", "");
         QString length = e.attribute("length", "64");
-        e.removeAttribute("onmouseover");
-        e.removeAttribute("name");
-        e.removeAttribute("alt");
-        e.removeAttribute("en-tag");
-        e.removeAttribute("contenteditable");
-        e.removeAttribute("style");
-        removeInvalidAttributes(e);
-        e.setInnerXml(encrypted);
-        const QString xml = HTML_COMMENT_START "en-crypt cipher=\"" + cipher + "\" length=\"" +
+
+        const QString xml = HTML_COMMENT_START "<en-crypt cipher=\"" + cipher + "\" length=\"" +
                             length + "\" hint=\"" + hint
-                            + "\">" + encrypted + "</en-crypt" HTML_COMMENT_END;
+                            + "\">" + encrypted + "</en-crypt>" HTML_COMMENT_END;
         e.setOuterXml(xml);
-        QLOG_DEBUG() << "Processing tag 'img', type=en-crypt' - fixed img node to " << xml;
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "processing tag 'img', type=en-crypt' - fixed img node to " << xml;
     } else if (enType == "temporary") { ;
         // Temporary image.  If so, remove it
         e.removeFromDocument();
-        QLOG_DEBUG() << "Processing tag 'img', type=temporary' - fixed temporary img node by deleting it";
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "processing tag 'img', type=temporary' - fixed temporary img node by deleting it";
     } else {
         // If we've gotten this far, we have an en-media tag
 
@@ -522,325 +573,232 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         QString hash = e.attribute("hash");
         QLOG_DEBUG() << "Processing tag 'img', type=" << type << ", hash=" << hash;
         if ((lid <= 0) || (hash.isEmpty())) {
-            QLOG_DEBUG() << "Deleting invalid 'img' tag";
+            QLOG_WARN() << ENML_MODULE_LOGPREFIX "deleting invalid 'img' tag";
             e.removeFromDocument();
             return;
         }
+
+        // added 13.10.2018 not really sure if its better idea to leave as it is or remove
+        e.removeAttribute("style");
+        e.removeAttribute("hint");
+
+        // this is to order is specific way (this makes tests easier)
+        e.removeAttribute("type");
+        e.removeAttribute("hash");
+        e.setAttribute("type", type);
+        e.setAttribute("hash", hash);
 
         resources.append(lid);
         removeInvalidAttributes(e);
         // temp hack for tidy call
         const QString xml = e.toOuterXml().replace("<img", HTML_COMMENT_START "<en-media").append("</en-media>" HTML_COMMENT_END);
         e.setOuterXml(xml);
-        QLOG_DEBUG() << "Fixed img node to: " << xml;
-        // zda sa ze nefunguje uz - a mozno ani netreba
-        //checkAttributes(e, attrs + img);
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed img node to: " << xml;
     }
 }
 
 
 void EnmlFormatter::fixANode(QWebElement e) {
     QString enTag = e.attribute("en-tag", "").toLower();
+    QString lid = e.attribute("lid");
+    removeInvalidAttributes(e);
     if (enTag == "en-media") {
-        resources.append(e.attribute("lid").toInt());
+        resources.append(lid.toInt());
         e.removeAttribute("style");
         e.removeAttribute("href");
         e.removeAttribute("title");
-        e.removeAttribute("data-saferedirecturl");
-        removeInvalidAttributes(e);
 
         e.removeAllChildren();
         QString xml = e.toOuterXml();
         xml.replace("<a", HTML_COMMENT_START "<en-media");
         xml.replace("</a>", "</en-media>" HTML_COMMENT_END);
-        QLOG_DEBUG() << "Fixed link node to " << xml;
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed link node to " << xml;
         e.setOuterXml(xml);
     }
 
     QString latex = e.attribute("href", "");
     if (latex.toLower().startsWith("latex:///")) {
-        removeInvalidAttributes(e);
+        //removeInvalidAttributes(e);
         QString formula = e.attribute("title");
         const QString attr = QString("http://latex.codecogs.com/gif.latex?%1").arg(formula);
-        QLOG_DEBUG() << "Fixed latex attr to " << attr;
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed latex attr to " << attr;
         e.setAttribute("href", attr);
     }
 
-    removeInvalidAttributes(e);
-    checkAttributes(e, attrs + focus + a);
+    //removeInvalidAttributes(e);
+    //checkAttributes(e, attrs + focus + a);
 }
 
 // https://dev.evernote.com/doc/articles/enml.php#prohibited
+// A number of attributes are also disallowed from the supported XHTML elements:
+//   id
+//   class
+//   on*
+//   accesskey
+//   data
+//   dynsrc
+//   tabindex
+//
 bool EnmlFormatter::isAttributeValid(QString attribute) {
-    return !(attribute.startsWith("on")
-             || (attribute == "id")
-             || (attribute == "class")
-             || (attribute == "accesskey")
-             || (attribute == "data")
-             || (attribute == "dynsrc")
-             || (attribute == "tabindex")
-             // These are things that are NixNote specific
-             || (attribute == "en-tag")
-             || (attribute == "src")
-             || (attribute == "en-new")
-             || (attribute == "guid")
-             || (attribute == "lid"));
+    bool isInvalid =
+            attribute.startsWith("on")
+            || (attribute == "id")
+            || (attribute == "class")
+            || (attribute == "accesskey")
+            || (attribute == "data")
+            || (attribute == "dynsrc")
+            || (attribute == "tabindex")
+            // These are things that are NixNote specific
+            || (attribute == "en-tag")
+            || (attribute == "src")
+            || (attribute == "en-new")
+            || (attribute == "guid")
+            || (attribute == "lid")
+            || (attribute == "cipher")
+            || (attribute == "hint");
+    return !isInvalid;
 }
 
 
-bool EnmlFormatter::isElementValid(QWebElement e) {
+bool EnmlFormatter::checkEndFixElement(QWebElement e) {
     QString element = e.tagName().toLower();
     //QLOG_DEBUG() << "Checking tag " << element;
+
+    // this removes all generally prohibited attributes
+    bool needSpecialCare =
+            (element == "a")
+            || (element == "object")
+            || (element == "img")
+            || (element == "table");
+    if (!needSpecialCare) {
+        // leave out for attribute which have internal attributes like "lid"
+        removeInvalidAttributes(e);
+    }
+
     if (element == "a") {
         checkAttributes(e, attrs + focus + a);
-        return true;
-    }
-    if (element == "abbr") {
+    } else if (element == "abbr") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "acronym") {
+    } else if (element == "acronym") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "address") {
+    } else if (element == "address") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "area") {
+    } else if (element == "area") {
         checkAttributes(e, attrs + focus + area);
-        return true;
-    }
-    if (element == "b") {
+    } else if (element == "b") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "bdo") {
+    } else if (element == "bdo") {
         checkAttributes(e, coreattrs + bdo);
-        return true;
-    }
-    if (element == "big") {
+    } else if (element == "big") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "blockquote") {
+    } else if (element == "blockquote") {
         checkAttributes(e, attrs + blockQuote);
-        return true;
-    }
-    if (element == "br") {
+    } else if (element == "br") {
         checkAttributes(e, coreattrs + br);
-        return true;
-    }
-    if (element == "caption") {
+    } else if (element == "caption") {
         checkAttributes(e, attrs + caption);
-        return true;
-    }
-    if (element == "center") {
+    } else if (element == "center") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "cite") {
+    } else if (element == "cite") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "code") {
+    } else if (element == "code") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "col") {
+    } else if (element == "col") {
         checkAttributes(e, attrs + cellHalign + cellValign + col);
-        return true;
-    }
-    if (element == "colgroup") {
+    } else if (element == "colgroup") {
         checkAttributes(e, attrs + cellHalign + cellValign + colGroup);
-        return true;
-    }
-    if (element == "dd") {
+    } else if (element == "dd") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "del") {
+    } else if (element == "del") {
         checkAttributes(e, attrs + del);
-        return true;
-    }
-    if (element == "dfn") {
+    } else if (element == "dfn") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "div") {
+    } else if (element == "div") {
         checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "dl") {
+    } else if (element == "dl") {
         checkAttributes(e, attrs + dl);
-        return true;
-    }
-    if (element == "dt") {
+    } else if (element == "dt") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "em") {
+    } else if (element == "em") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "en-media") return true;
-    if (element == "en-crypt") return true;
-    if (element == "en-todo") return true;
-    if (element == "en-note") return true;
-    if (element == "font") {
+    } else if ((element == "en-media") || (element == "en-crypt") || (element == "en-todo") || (element == "en-note")) {
+    } else if (element == "font") {
         checkAttributes(e, coreattrs + i18n + font);
-        return true;
-    }
-    if (element == "h1") {
+    } else if ((element == "h1") || (element == "h2") || (element == "h3") || (element == "h4") || (element == "h5") ||
+               (element == "h6")) {
         checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "h2") {
-        checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "h3") {
-        checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "h4") {
-        checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "h5") {
-        checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "h6") {
-        checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "hr") {
+    } else if (element == "hr") {
         checkAttributes(e, attrs + hr);
-        return true;
-    }
-    if (element == "i") {
+    } else if (element == "i") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "img") {
+    } else if (element == "input") {
+        checkAttributes(e, attrs + input);
+    } else if (element == "img") {
         checkAttributes(e, attrs + img);
-        return true;
-    }
-    if (element == "ins") {
+    } else if (element == "ins") {
         checkAttributes(e, attrs + ins);
-        return true;
-    }
-    if (element == "kbd") {
+    } else if (element == "kbd") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "li") {
+    } else if (element == "li") {
         checkAttributes(e, attrs + li);
-        return true;
-    }
-    if (element == "map") {
+    } else if (element == "map") {
         checkAttributes(e, i18n + map);
-        return true;
-    }
-    if (element == "ol") {
+    } else if (element == "object") {
+        checkAttributes(e, attrs + object);
+    } else if (element == "ol") {
         checkAttributes(e, attrs + ol);
-        return true;
-    }
-    if (element == "p") {
+    } else if (element == "p") {
         checkAttributes(e, attrs + textAlign);
-        return true;
-    }
-    if (element == "pre") {
+    } else if (element == "pre") {
         checkAttributes(e, attrs + pre);
-        return true;
-    }
-    if (element == "q") {
+    } else if (element == "q") {
         checkAttributes(e, attrs + q);
-        return true;
-    }
-    if (element == "s") {
+    } else if (element == "s") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "samp") {
+    } else if (element == "samp") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "small") {
+    } else if (element == "small") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "span") {
+    } else if (element == "span") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "strike") {
+    } else if (element == "strike") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "strong") {
+    } else if (element == "strong") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "sub") {
+    } else if (element == "sub") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "sup") {
+    } else if (element == "sup") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "table") {
+    } else if (element == "table") {
         checkAttributes(e, attrs + table);
-        return true;
-    }
-    if (element == "tbody") {
+    } else if (element == "tbody") {
         checkAttributes(e, attrs + cellHalign + cellValign);
-        return true;
-    }
-    if (element == "td") {
+    } else if (element == "td") {
         checkAttributes(e, attrs + cellValign + cellHalign + td);
-        return true;
-    }
-    if (element == "tfoot") {
+    } else if (element == "tfoot") {
         checkAttributes(e, attrs + cellHalign + cellValign);
-        return true;
-    }
-    if (element == "th") {
+    } else if (element == "th") {
         checkAttributes(e, attrs + cellHalign + cellValign + th);
-        return true;
-    }
-    if (element == "thread") {
+    } else if (element == "thread") {
         checkAttributes(e, attrs + cellHalign + cellValign);
-        return true;
-    }
-    if (element == "title") return true;
-    if (element == "tr") {
+    } else if (element == "tr") {
         checkAttributes(e, attrs + cellHalign + cellValign + tr_);
-        return true;
-    }
-    if (element == "tt") {
+    } else if (element == "tt") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "u") {
+    } else if (element == "u") {
         checkAttributes(e, attrs);
-        return true;
-    }
-    if (element == "ul") {
+    } else if (element == "ul") {
         checkAttributes(e, attrs + ul);
-        return true;
-    }
-    if (element == "var") {
+    } else if (element == "var") {
         checkAttributes(e, attrs);
-        return true;
+    } else if (element == "xmp") {
+
+    } else {
+        QLOG_WARN() << ENML_MODULE_LOGPREFIX << element << " is invalid .. will be removed";
+        return false;
     }
-    if (element == "xmp") return true;
-
-    QLOG_DEBUG() << "WARNING: " << element << " is invalid";
-    return false;
-
+    // possibly fixed, but now is valid
+    return true;
 }
 
 
@@ -850,61 +808,48 @@ void EnmlFormatter::removeInvalidAttributes(QWebElement &node) {
     for (int i = 0; i < attributes.size(); i++) {
         QString a = attributes[i];
         if (!isAttributeValid(a)) {
+            QLOG_WARN() << ENML_MODULE_LOGPREFIX "removeInvalidAttributes - tag " << node.tagName().toLower() << " removing  invalid attribute " << a;
             node.removeAttribute(a);
         }
     }
 }
 
-
-void EnmlFormatter::fixDivNode(QWebElement &node) {
-    // Remove any invalid attributes
-    node.removeAttribute("class");
-    checkAttributes(node, attrs + textAlign);
-}
-
-
-void EnmlFormatter::fixPreNode(QWebElement &node) {
-    // Remove any invalid attributes
-    node.removeAttribute("wrap");
-    checkAttributes(node, attrs + pre);
-}
-
-QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
-    int endPos, startPos, endData, slotStart, slotEnd;
-    QByteArray eTag = "<table class=\"en-crypt-temp\"";
-    for (int i = newContent.indexOf(eTag); i != -1; i = newContent.indexOf(eTag, i + 1)) {
-        slotStart = newContent.indexOf("slot", i + 1) + 6;
-        slotEnd = newContent.indexOf("\"", slotStart + 1);
-        QString slot = newContent.mid(slotStart, slotEnd - slotStart);
-        slot = slot.replace("\"", "");
-        startPos = newContent.indexOf("<td>", i + 1) + 4;
-        endData = newContent.indexOf("</td>", startPos);
-        QString text = newContent.mid(startPos, endData - startPos);
-        endPos = newContent.indexOf("</table>", i + 1) + 8;
-
-        // Encrypt the text
-        QPair<QString, QString> pair = global.passwordSafe.value(slot);
-        QString password = pair.first;
-        QString hint = pair.second;
-        EnCrypt crypt;
-        QString encrypted;
-        crypt.encrypt(encrypted, text, password);
-
-        // replace the table with an en-crypt tag.
-        QByteArray start = newContent.mid(0, i - 1);
-        QByteArray end = newContent.mid(endPos);
-        newContent.clear();
-        newContent.append(start);
-        newContent.append(QByteArray("<en-crypt cipher=\"RC2\" length=\"64\" hint=\""));
-        newContent.append(hint.toLocal8Bit());
-        newContent.append(QByteArray("\">"));
-        newContent.append(encrypted.toLocal8Bit());
-        newContent.append(QByteArray("</en-crypt>"));
-        newContent.append(end);
-        QLOG_DEBUG() << "Rewritten 'en-crypt' tag";
-    }
-    return newContent;
-}
+// QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
+//     int endPos, startPos, endData, slotStart, slotEnd;
+//     QByteArray eTag = "<table class=\"en-crypt-temp\"";
+//     for (int i = newContent.indexOf(eTag); i != -1; i = newContent.indexOf(eTag, i + 1)) {
+//         slotStart = newContent.indexOf("slot", i + 1) + 6;
+//         slotEnd = newContent.indexOf("\"", slotStart + 1);
+//         QString slot = newContent.mid(slotStart, slotEnd - slotStart);
+//         slot = slot.replace("\"", "");
+//         startPos = newContent.indexOf("<td>", i + 1) + 4;
+//         endData = newContent.indexOf("</td>", startPos);
+//         QString text = newContent.mid(startPos, endData - startPos);
+//         endPos = newContent.indexOf("</table>", i + 1) + 8;
+//
+//         // Encrypt the text
+//         QPair<QString, QString> pair = passwordSafe.value(slot);
+//         QString password = pair.first;
+//         QString hint = pair.second;
+//         EnCrypt crypt(cryptoJarPath);
+//         QString encrypted;
+//         crypt.encrypt(encrypted, text, password);
+//
+//         // replace the table with an en-crypt tag.
+//         QByteArray start = newContent.mid(0, i - 1);
+//         QByteArray end = newContent.mid(endPos);
+//         newContent.clear();
+//         newContent.append(start);
+//         newContent.append(QByteArray("<en-crypt cipher=\"RC2\" length=\"64\" hint=\""));
+//         newContent.append(hint.toLocal8Bit());
+//         newContent.append(QByteArray("\">"));
+//         newContent.append(encrypted.toLocal8Bit());
+//         newContent.append(QByteArray("</en-crypt>"));
+//         newContent.append(end);
+//         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "rewritten 'en-crypt' tag";
+//     }
+//     return newContent;
+// }
 
 
 /**
@@ -925,10 +870,9 @@ void EnmlFormatter::removeInvalidUnicode() {
  */
 void EnmlFormatter::checkAttributes(QWebElement &element, QStringList valid) {
     QStringList attrs = element.attributeNames();
-    QString tagname = element.tagName().toLower();;
     for (int i = 0; i < attrs.size(); i++) {
         if (!valid.contains(attrs[i])) {
-            QLOG_DEBUG() << "Removing invalid attribute " << tagname << " " << attrs[i];
+            QLOG_WARN() << ENML_MODULE_LOGPREFIX "checkAttributes - tag " << element.tagName().toLower() << " removing invalid attribute " << attrs[i];
             element.removeAttribute(attrs[i]);
         }
     }

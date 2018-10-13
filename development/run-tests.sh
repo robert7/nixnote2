@@ -1,6 +1,5 @@
 #!/bin/bash
-# here we expected that the particular version of qmake, you want to use  is found on PATH
-# so if you want to use something different then default - make sure you adjust path before calling this script
+
 
 BUILD_TYPE=${1}
 CLEAN=${2}
@@ -16,15 +15,15 @@ function error_exit {
     exit 1
 }
 
-if [ ! -f src/main.cpp ]; then
-  echo "$0: You seem to be in wrong directory. script MUST be run from the project directory."
+if [ ! -f testsrc/tests.cpp ]; then
+  echo "$0: You seem to be in wrong directory. script MUST be run from the project/testsrc directory."
   exit 1
 fi
 
 if [ -z "${BUILD_TYPE}" ]; then
     BUILD_TYPE=debug
 fi
-BUILD_DIR=qmake-build-${BUILD_TYPE}
+BUILD_DIR=qmake-build-${BUILD_TYPE}-t
 
 if [ "${CLEAN}" == "clean" ]; then
   echo "Clean build: ${BUILD_DIR}"
@@ -47,15 +46,6 @@ if [ ! -d "${BUILD_DIR}" ]; then
   mkdir ${BUILD_DIR}
 fi
 
-echo "${BUILD_DIR}">_build_dir_.txt
-
-APPDIR=appdir
-if [ -d "${APPDIR}" ]; then
-  rm -rf ${APPDIR}
-  rm *.AppImage 2>/dev/null
-fi
-
-
 QMAKE_BINARY=qmake
 
 if [ "${TIDY_LIB_DIR}" == "/usr/lib" ] ; then
@@ -63,16 +53,12 @@ if [ "${TIDY_LIB_DIR}" == "/usr/lib" ] ; then
   # there could be better option
   # check: env PKG_CONFIG_PATH=./development/pkgconfig pkg-config --libs --cflags tidy
   CDIR=`pwd`
-  echo export PKG_CONFIG_PATH=${CDIR}/development/pkgconfig
+  echo export PKG_CONFIG_PATH=${CDIR}/../development/pkgconfig
   export PKG_CONFIG_PATH=${CDIR}/development/pkgconfig
 elif [ -d ${TIDY_LIB_DIR}/pkgconfig ] ; then
   echo export PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig
   export PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig
 fi
 
+(${QMAKE_BINARY} testsrc/tests.pro CONFIG+=${BUILD_TYPE} && make && ./${BUILD_DIR}/tests) || error_exit "tests"
 
-echo ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "$0: qmake"
-${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "$0: qmake"
-
-make -j$(nproc) || error_exit "$0: make"
-make -j$(nproc) install || error_exit "$0: make install"

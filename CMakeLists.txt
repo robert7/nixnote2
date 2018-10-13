@@ -14,6 +14,7 @@
 
 cmake_minimum_required (VERSION 3.0.2)
 project (nixnote2)
+add_definitions(-std=c++11)
 
 find_package (Qt5Widgets REQUIRED)
 find_package (Qt5Gui REQUIRED)
@@ -215,6 +216,7 @@ set (nixnote2_src
         src/xml/xmlhighlighter.cpp
         src/quentier/utility/StringUtils.cpp
         src/quentier/utility/StringUtils_p.cpp
+        testsrc/tests.cpp
 )
 set (nixnote2_hdr
         src/application.h
@@ -417,17 +419,17 @@ set (nixnote2_hdr
         src/xml/xmlhighlighter.h
         src/quentier/utility/StringUtils.h
         src/quentier/utility/StringUtils_p.h
+        testsrc/tests.h
 )
 
 qt5_wrap_cpp(nixnote2_hdr_moc ${nixnote2_hdr})
 
 include_directories (${PROJECT_SOURCE_DIR})
 include_directories (${PROJECT_BINARY_DIR})
-#include_directories (${PROJECT_SOURCE_DIR}/../libs)
 include_directories(${TIDY_INCLUDE_DIRS})
 
-add_executable(nixnote2
-        ${nixnote2_src}
-        ${nixnote2_hdr_moc}
-        )
-target_link_libraries (nixnote2 Qt5::Widgets Qt5::Sql Qt5::Gui Qt5::Network Qt5:WebKit Qt5:WebKitWidgets)
+add_executable(nixnote2 ${nixnote2_src} ${nixnote2_hdr_moc})
+add_executable(tests ${nixnote2_src} ${nixnote2_hdr_moc})
+
+target_link_libraries(nixnote2 Qt5::Widgets Qt5::Sql Qt5::Gui Qt5::Network Qt5:WebKit Qt5:WebKitWidgets)
+target_link_libraries(tests Qt5::Widgets Qt5::Sql Qt5::Gui Qt5::Network Qt5:WebKit Qt5:WebKitWidgets)

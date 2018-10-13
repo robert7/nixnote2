@@ -147,7 +147,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
 
     contextMenu->addSeparator();
 
-    encryptAction = new QAction(tr("Encrypted Selected Text"), this);
+    encryptAction = new QAction(tr("Encrypt Selected Text"), this);
     contextMenu->addAction(encryptAction);
     global.setupShortcut(encryptAction, "Edit_Encrypt_Text");
     connect(encryptAction, SIGNAL(triggered()), parent, SLOT(encryptButtonPressed()));
