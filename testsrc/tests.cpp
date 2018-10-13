@@ -48,6 +48,11 @@ void Tests::enmlTidyTest() {
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
     {
+        QString src("<DIV>bb1</DIV>");
+        QString result("<div>bb1</div>");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+    {
         QString src("aa2</div>");
         QString result("aa2");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
@@ -77,21 +82,28 @@ void Tests::enmlTidyTest() {
     }
 }
 
+void Tests::enmlNixnoteSpecialsTest() {
+    {
+        QString src("<input>");
+        QString result("<en-todo  />");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+    {
+        QString src(R"R(<input checked="checked" type="checkbox" onclick="if(!checked) removeAttribute('checked'); else setAttribute('checked', 'checked'); editorWindow.editAlert();" style="cursor: hand;">)R");
+        QString result(R"R(<en-todo  />)R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+}
+
+
 QT_BEGIN_NAMESPACE
 QTEST_ADD_GPU_BLACKLIST_SUPPORT_DEFS
-
 QT_END_NAMESPACE
+
 int main(int argc, char *argv[]) {
-    // Setup the QLOG functions for debugging & messages
-    // we need to do it at very beginning, else we lose the startup messages
     QsLogging::Logger &logger = QsLogging::Logger::instance();
-    // at very beginning we starting with info level to get basic startup info
-    // log level is later adjusted by settings
-
-    logger.setLoggingLevel(QsLogging::DebugLevel);
-
-    QsLogging::DestinationPtr debugDestination(
-            QsLogging::DestinationFactory::MakeDebugOutputDestination());
+    logger.setLoggingLevel(QsLogging::WarnLevel);
+    QsLogging::DestinationPtr debugDestination(QsLogging::DestinationFactory::MakeDebugOutputDestination());
     logger.addDestination(debugDestination.get());
 
     QApplication app(argc, argv);

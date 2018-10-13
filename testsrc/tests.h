@@ -18,6 +18,7 @@ public:
 private slots:
     void enmlBasicTest();
     void enmlTidyTest();
+    void enmlNixnoteSpecialsTest();
 };
 
 #endif // NIXNOTE2_TESTS_H
