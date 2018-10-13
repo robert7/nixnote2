@@ -155,6 +155,9 @@ EnmlFormatter::EnmlFormatter(
     map.append("name");
 
     object.append("type");
+    // nixnote internal
+    object.append("hash");
+    object.append("lid");
 
     ol.append("type");
     ol.append("compact");
@@ -382,7 +385,7 @@ void EnmlFormatter::rebuildNoteEnml() {
                     } else if (tagname == "a") {
                         fixANode(element);
                     } else if (tagname == "object") {
-                        fixObjectNode(element); // TODO
+                        fixObjectNode(element);
                     } else if (tagname == "img") {
                         fixImgNode(element);
                     }
@@ -484,14 +487,20 @@ void EnmlFormatter::fixInputNode(QWebElement &e) {
 
 void EnmlFormatter::fixObjectNode(QWebElement &e) {
     QString type = e.attribute("type", "");
+    QString hash = e.attribute("hash", "");
     if (type == "application/pdf") {
         qint32 lid = e.attribute("lid", "0").toInt();
         removeInvalidAttributes(e);
 
-        // e.removeAttribute("width");
-        // e.removeAttribute("height");
-        // e.removeAttribute("lid");
-        // e.removeAttribute("border");
+        e.removeAttribute("lid");
+        e.removeAttribute("style");
+
+        // this is to order is specific way (this makes tests easier)
+        e.removeAttribute("type");
+        e.removeAttribute("hash");
+        e.setAttribute("type", type);
+        e.setAttribute("hash", hash);
+
 
         if (lid > 0) {
             resources.append(lid);
@@ -550,6 +559,15 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
             e.removeFromDocument();
             return;
         }
+
+        // added 13.10.2018 not really sure if its better idea to leave as it is or remove
+        e.removeAttribute("style");
+
+        // this is to order is specific way (this makes tests easier)
+        e.removeAttribute("type");
+        e.removeAttribute("hash");
+        e.setAttribute("type", type);
+        e.setAttribute("hash", hash);
 
         resources.append(lid);
         removeInvalidAttributes(e);
