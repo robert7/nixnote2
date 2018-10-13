@@ -23,17 +23,32 @@ fi
 # delete appdir content
 rm -rf appdir/*
 
-if [ ! -d docker-build-debug ]; then
-  mkdir docker-build-debug
+BUILD_TYPE=release
+
+if [ ! -d docker-build-${BUILD_TYPE} ]; then
+  mkdir docker-build-${BUILD_TYPE}
 fi
 
 # start container (note: each call creates new container)
+
+# ./development/build-with-qmake.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy
+
+# to try manually:
+#
+# docker run --rm  -it nixnote2/xenial /bin/bash
+#  then
+#    PROJECTBRANCH=feature/rc1
+#    BUILD_TYPE=release
+#    ...copy command..
+# --------------------
+
 time docker run \
    --rm \
    -v $PROJECTDIR/appdir:/opt/nixnote2/appdir \
-   -v $PROJECTDIR/docker-build-debug:/opt/nixnote2/qmake-build-debug \
+   -v $PROJECTDIR/docker-build-${BUILD_TYPE}:/opt/nixnote2/qmake-build-${BUILD_TYPE} \
+   -v $PROJECTDIR/docker-build-${BUILD_TYPE}-t:/opt/nixnote2/qmake-build-${BUILD_TYPE}-t \
    -it nixnote2/xenial \
-   /bin/bash -c "cd nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull && ./development/build-with-qmake.sh release noclean /usr/lib/nixnote2/tidy && ./development/run-tests.sh release noclean /usr/lib/nixnote2/tidy && ./development/create-AppImage.sh && mv *.AppImage appdir && chmod -R a+rwx appdir"
+cd   /bin/bash -c "cd nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull && ./development/run-tests.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy && ./development/create-AppImage.sh && mv *.AppImage appdir && chmod -R a+rwx appdir"
 
 ls appdir/*.AppImage
 echo "If all got well then AppImage file in appdir is your binary"
