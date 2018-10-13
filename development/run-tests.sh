@@ -62,6 +62,6 @@ fi
 
 (${QMAKE_BINARY} testsrc/tests.pro CONFIG+=${BUILD_TYPE} QMAKE_RPATHDIR+=${TIDY_LIB_DIR} \
    && make \
-   && ./${BUILD_DIR}/tests \
+   && ./${BUILD_DIR}/tests -platform offscreen \
 ) || error_exit "tests"
 
