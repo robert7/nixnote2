@@ -197,7 +197,15 @@ void Tests::enmlNixnoteObjectTest() {
     }
 }
 
-
+void Tests::enmlNixnoteEncryptTest() {
+    {
+        QString src(
+                R"R(<div><img en-tag="en-crypt" cipher="RC2" hint="qq" length="64" alt="bGHOocsWJD4Id76YevNUb29Lxi7/aCAI" src="file:///usr/share/nixnote2/images/encrypt.png" id="crypt1" onmouseover="style.cursor='hand'" onclick="window.browserWindow.decryptText('crypt1', 'bGHOocsWJD4Id76YevNUb29Lxi7/aCAI', 'qq', 'RC2', 64);" style="display:block"></div>)R");
+        QString result(
+                R"R(<div><en-crypt cipher="RC2" length="64" hint="qq">bGHOocsWJD4Id76YevNUb29Lxi7/aCAI</en-crypt></div>)R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+}
 
 
 

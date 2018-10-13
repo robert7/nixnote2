@@ -144,6 +144,7 @@ EnmlFormatter::EnmlFormatter(
     img.append("lid");
     img.append("en-tag");
     img.append("type");
+    img.append("hint");
 
     ins.append("cite");
     ins.append("datetime");
@@ -528,18 +529,9 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         QString hint = e.attribute("hint", "");
         QString length = e.attribute("length", "64");
 
-        e.removeAttribute("onmouseover");
-        e.removeAttribute("name");
-        e.removeAttribute("alt");
-        e.removeAttribute("en-tag");
-        e.removeAttribute("contenteditable");
-        e.removeAttribute("style");
-        removeInvalidAttributes(e);
-
-        e.setInnerXml(encrypted);
-        const QString xml = HTML_COMMENT_START "en-crypt cipher=\"" + cipher + "\" length=\"" +
+        const QString xml = HTML_COMMENT_START "<en-crypt cipher=\"" + cipher + "\" length=\"" +
                             length + "\" hint=\"" + hint
-                            + "\">" + encrypted + "</en-crypt" HTML_COMMENT_END;
+                            + "\">" + encrypted + "</en-crypt>" HTML_COMMENT_END;
         e.setOuterXml(xml);
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "processing tag 'img', type=en-crypt' - fixed img node to " << xml;
     } else if (enType == "temporary") { ;
@@ -562,6 +554,7 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 
         // added 13.10.2018 not really sure if its better idea to leave as it is or remove
         e.removeAttribute("style");
+        e.removeAttribute("hint");
 
         // this is to order is specific way (this makes tests easier)
         e.removeAttribute("type");

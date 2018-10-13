@@ -15,16 +15,17 @@ public:
     Q_INVOKABLE explicit Tests(QObject *parent=Q_NULLPTR);
     virtual ~Tests() {};
 
-// comment out to debug the last test
+// comment out to debug the only the last test
 private slots:
     void enmlBasicTest();
     void enmlTidyTest();
     void enmlNixnoteTodoTest();
     void enmlNixnoteImageTest();
-
-private slots:
     void enmlNixnoteLinkTest();
     void enmlNixnoteObjectTest();
+
+    private slots:
+    void enmlNixnoteEncryptTest();
 };
 
 #endif // NIXNOTE2_TESTS_H
