@@ -53,6 +53,7 @@ EnmlFormatter::EnmlFormatter(
     // initial state without error
     formattingError = false;
 
+    // just this two
     coreattrs.append("style");
     coreattrs.append("title");
 
@@ -63,6 +64,7 @@ EnmlFormatter::EnmlFormatter(
     focus.append("accesskey");
     focus.append("tabindex");
 
+    // attrs are core+i18n
     attrs.append(coreattrs);
     attrs.append(i18n);
 
@@ -176,6 +178,7 @@ EnmlFormatter::EnmlFormatter(
     table.append("cellpadding");
     table.append("align");
     table.append("bgcolor");
+    table.append("class");
 
     td.append("abbr");
     td.append("rowspan");
@@ -530,10 +533,14 @@ void EnmlFormatter::fixObjectNode(QWebElement &e) {
 // this is a temporary quick solution
 void EnmlFormatter::fixTableNode(QWebElement &e) {
     QString className = e.attribute("class", "").toLower();
+    removeInvalidAttributes(e);
     if (className == HTML_TEMP_TABLE_CLASS) { ;
         // Temporary table.  If so, remove it
         e.removeFromDocument();
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "processing tag 'table' removed temporary element";
+    } else {
+        // as we let class through because of the temp.node
+        e.removeAttribute("class");
     }
 }
 
@@ -658,7 +665,11 @@ bool EnmlFormatter::checkEndFixElement(QWebElement e) {
     //QLOG_DEBUG() << "Checking tag " << element;
 
     // this removes all generally prohibited attributes
-    bool needSpecialCare = (element == "a") || (element == "object")|| (element == "img");
+    bool needSpecialCare =
+            (element == "a")
+            || (element == "object")
+            || (element == "img")
+            || (element == "table");
     if (!needSpecialCare) {
         // leave out for attribute which have internal attributes like "lid"
         removeInvalidAttributes(e);
