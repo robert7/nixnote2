@@ -61,7 +61,7 @@ private:
     bool isAttributeValid(QString attribute);
     bool checkEndFixElement(QWebElement e);
     void fixImgNode(QWebElement &element);
-    void fixInputNode(QWebElement &element);
+    void fixInputNode(QWebElement &e);
     QStringList findAllTags(QWebElement &element);
     void removeInvalidAttributes(QWebElement &node);
     void fixANode(QWebElement e);

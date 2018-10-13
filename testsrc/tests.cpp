@@ -23,14 +23,41 @@ QString Tests::formatToEnml(QString source) {
     QString cryptoJarPath;
     EnmlFormatter formatter(source, guiAvailable, passwordSafe, cryptoJarPath);
     formatter.rebuildNoteEnml();
-    return formatter.getContent().replace("\n", "");
+
+    QString resourceStr;
+    QList<qint32> resources = formatter.getResources();
+    for (const auto &resource : resources) {
+        if (!resourceStr.isEmpty()) {
+            resourceStr.append(",");
+        }
+        resourceStr.append(QString::number(resource));
+    }
+
+    QString res = formatter.getContent().replace("\n", "");
+    if (!resourceStr.isEmpty()) {
+        res.append(" " + resourceStr);
+    }
+    return res;
 }
 
-QString Tests::addEnmlEnvelope(QString source) {
-    return QStringLiteral(
-                   "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'><en-note>")
-           + source
-           + QStringLiteral("</en-note>");
+QString Tests::addEnmlEnvelope(QString source, QString resources, QString bodyAttrs) {
+    QString res(
+            QStringLiteral(
+                    R"R(<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>)R"
+            ));
+    res.append("<en-note");
+    if (!bodyAttrs.isEmpty()) {
+        res.append(" " + bodyAttrs);
+    }
+    res.append(">");
+
+    res.append(source);
+    res.append(QStringLiteral("</en-note>"));
+
+    if (!resources.isEmpty()) {
+        res.append(" " + resources);
+    }
+    return res;
 }
 
 void Tests::enmlBasicTest() {
@@ -40,85 +67,133 @@ void Tests::enmlBasicTest() {
     QString src2("<div>aa</div>");
     QCOMPARE(formatToEnml(src2), addEnmlEnvelope(src2));
 
-    QString src3("<html><head><title>xx</title></head><body><div>aa</div></body></html>");
+    QString src3(
+            R"R(<html style="xx:1"><head style="xx:1"><title style="xx:1">xx</title></head><body style="word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;"><div>aa</div></body></html>)R");
     QString src3r("<div>aa</div>");
-    QCOMPARE(formatToEnml(src3), addEnmlEnvelope(src3r));
-}
-
-void Tests::enmlTidyTest() {
-    {
-        QString src("<div>aa1</xdiv>");
-        QString result("<div>aa1</div>");
-        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
-    }
-    {
-        QString src("<DIV>bb1</DIV>");
-        QString result("<div>bb1</div>");
-        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
-    }
-    {
-        QString src("aa2</div>");
-        QString result("aa2");
-        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
-    }
-    {
-        QString src("<html>aa3</div>");
-        QString result("aa3");
-        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
-    }
-    {
-        QString src("<table <tr>aa4</td>");
-        QString result("aa4");
-        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
-    }
-    // raw string literals: https://en.cppreference.com/w/cpp/language/string_literal
-    {
-        // defined attribute is NOT deleted
-        QString src(R"R(<div style="something: 1">aa5</div>)R");
-        QString result(R"R(<div style="something: 1">aa5</div>)R");
-        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
-    }
-    {
-        // undefined attributes are deleted
-        QString src(R"R(<div style="something: 1" abcd="something: 1" lid="12" onclick="alert('hey'\)">aa6</div>)R");
-        QString result(R"R(<div style="something: 1">aa6</div>)R");
-        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
-    }
-}
-
-void Tests::enmlNixnoteSpecialsTest() {
-    {
-        QString src("<input>");
-        QString result("<en-todo/>");
-        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    QCOMPARE(formatToEnml(src3),
+             addEnmlEnvelope(src3r,
+                             QString(),
+                             QString(R"R(style="word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;")R")
+             ));
     }
 
-    {
-        QString src(R"R(<input checked="checked" type="checkbox" onclick="if(!checked) removeAttribute('checked'); else setAttribute('checked', 'checked'); editorWindow.editAlert();" style="cursor: hand;">)R");
-        QString result(R"R(<en-todo checked="true"/>)R");
-        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    void Tests::enmlTidyTest() {
+        {
+            QString src("<div>aa1</xdiv>");
+            QString result("<div>aa1</div>");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+        }
+        {
+            QString src("<DIV>bb1</DIV>");
+            QString result("<div>bb1</div>");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+        }
+        {
+            QString src("aa2</div>");
+            QString result("aa2");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+        }
+        {
+            QString src("<html>aa3</div>");
+            QString result("aa3");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+        }
+        {
+            QString src("<table <tr>aa4</td>");
+            QString result("aa4");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+        }
+        // raw string literals: https://en.cppreference.com/w/cpp/language/string_literal
+        {
+            // defined attribute is NOT deleted
+            QString src(R"R(<div style="something: 1">aa5</div>)R");
+            QString result(R"R(<div style="something: 1">aa5</div>)R");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+        }
+        {
+            // undefined attributes are deleted
+            QString src(
+                    R"R(<div style="something: 1" abcd="something: 1" lid="12" onclick="alert('hey'\)">aa6</div>)R");
+            QString result(R"R(<div style="something: 1">aa6</div>)R");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+        }
     }
-}
+
+    void Tests::enmlNixnoteTodoTest() {
+        {
+            QString src("<input>");
+            QString result("");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+        }
+        {
+            QString src(R"R(<input  type="checkbox"  >)R");
+            QString result("<en-todo/>");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+        }
+        {
+            QString src(R"R(<input  type="checkbox"  role="button">)R");
+            QString result("<en-todo/>");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+        }
+        {
+            QString src(
+                    R"R(<input checked="checked" type="checkbox" onclick="if(!checked) removeAttribute('checked'); else setAttribute('checked', 'checked'); editorWindow.editAlert();" style="cursor: hand;">)R");
+            QString result(R"R(<en-todo checked="true"/>)R");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+        }
+    }
 
 
-QT_BEGIN_NAMESPACE
-QTEST_ADD_GPU_BLACKLIST_SUPPORT_DEFS
-QT_END_NAMESPACE
+    void Tests::enmlNixnoteImageTest() {
+        {
+            QString src(
+                    R"R(<img src="file:///home/robert7/.nixnote/db-2/dba/45875.png" type="image/png" hash="8926e14a9c5e1b6314f28ca950543f3e" oncontextmenu="window.browser.imageContextMenu('45875', '45875.png');" en-tag="en-media" style="cursor: default;" lid="45875">)R");
+            QString result(
+                    R"R(<en-media type="image/png" hash="8926e14a9c5e1b6314f28ca950543f3e" style="cursor: default;"></en-media>)R");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45875")));
+        }
+    }
 
-int main(int argc, char *argv[]) {
-    QsLogging::Logger &logger = QsLogging::Logger::instance();
-    logger.setLoggingLevel(QsLogging::WarnLevel);
-    QsLogging::DestinationPtr debugDestination(QsLogging::DestinationFactory::MakeDebugOutputDestination());
-    logger.addDestination(debugDestination.get());
+    void Tests::enmlNixnoteLinkTest() {
+        {
+            QString src(
+                    R"R(<a type="application/pdf" hash="3a3fe16e6e4216802f41c40a3af59856" href="nnres:/home/robert7/.nixnote/db-2/dba/45877.pdf" oncontextmenu="window.browserWindow.resourceContextMenu('/home/robert7/.nixnote/tmp-2/45877------.pdf');" en-tag="en-media" lid="45877" title="nnres:/home/robert7/.nixnote/db-2/dba/45877.pdf">)R");
+            QString result(
+                    R"R(<en-media type="application/pdf" hash="3a3fe16e6e4216802f41c40a3af59856"></en-media>)R");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45877")));
+        }
+        {
+            QString src(
+                    R"R(<a en-tag="en-media" lid="45878" type="application/vnd.oasis.opendocument.spreadsheet" hash="2bb10cc981690fc6b87e50b825667bbb" href="nnres:/home/robert7/.nixnote/db-2/dba/45878.ods" oncontextmenu="window.browserWindow.resourceContextMenu(&amp;apos/home/robert7/.nixnote/db-2/dba/45878.ods&amp;apos);"><img en-tag="temporary" title="qs-qs.ods" src="file:///&lt;img en-tag=" temporary"=""></a><br>)R");
+            QString result(
+                    R"R(<en-media type="application/vnd.oasis.opendocument.spreadsheet" hash="2bb10cc981690fc6b87e50b825667bbb"></en-media><br />)R");
+            QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45878")));
+        }
+    }
 
-    QApplication app(argc, argv);
-    app.setAttribute(Qt::AA_Use96Dpi, true);
 
-    QTEST_DISABLE_KEYPAD_NAVIGATION
-    QTEST_ADD_GPU_BLACKLIST_SUPPORT
 
-    Tests tc;
+//
 
-    QTEST_SET_MAIN_SOURCE_PATH
-    return QTest::qExec(&tc, argc, argv);
-}
+    QT_BEGIN_NAMESPACE
+    QTEST_ADD_GPU_BLACKLIST_SUPPORT_DEFS
+
+    QT_END_NAMESPACE
+
+    int main(int argc, char *argv[]) {
+        QsLogging::Logger &logger = QsLogging::Logger::instance();
+        logger.setLoggingLevel(QsLogging::WarnLevel);
+        QsLogging::DestinationPtr debugDestination(QsLogging::DestinationFactory::MakeDebugOutputDestination());
+        logger.addDestination(debugDestination.get());
+
+        QApplication app(argc, argv);
+        app.setAttribute(Qt::AA_Use96Dpi, true);
+
+        QTEST_DISABLE_KEYPAD_NAVIGATION
+        QTEST_ADD_GPU_BLACKLIST_SUPPORT
+
+        Tests tc;
+
+        QTEST_SET_MAIN_SOURCE_PATH
+        return QTest::qExec(&tc, argc, argv);
+    }

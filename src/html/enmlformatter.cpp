@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/utilities/encrypt.h"
 #include "src/logger/qslog.h"
 
+#define ENML_MODULE_LOGPREFIX "enml-cleanup: "
+
 using namespace std;
 
 /* Constructor. */
@@ -80,6 +82,10 @@ EnmlFormatter::EnmlFormatter(
     a.append("shape");
     a.append("coords");
     a.append("target");
+    // nixnote internal
+    a.append("hash");
+    a.append("en-tag");
+    a.append("lid");
 
     area.append("shape");
     area.append("coords");
@@ -93,7 +99,6 @@ EnmlFormatter::EnmlFormatter(
     bdo.append("dir");
 
     blockQuote.append("cite");
-
 
     br.append("clear");
 
@@ -134,6 +139,11 @@ EnmlFormatter::EnmlFormatter(
     img.append("border");
     img.append("hspace");
     img.append("vspace");
+    // nixnote internal
+    img.append("hash");
+    img.append("lid");
+    img.append("en-tag");
+    img.append("type");
 
     ins.append("cite");
     ins.append("datetime");
@@ -282,7 +292,7 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
         if (rc > 0) {
             QString tidyErrors((char *) errbuf.bp);
             tidyErrors.replace("\n", "; ");
-            QLOG_INFO() << "Tidy DONE: diagnostics: " << tidyErrors;
+            QLOG_INFO() << ENML_MODULE_LOGPREFIX "tidy DONE: diagnostics: " << tidyErrors;
         }
         // results
         content.append((char *) output.bp);
@@ -290,7 +300,7 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
         //content = content.replace("</body>", "<br/>tidy ok</body>");
     } else {
         formattingError = true;
-        QLOG_ERROR() << "Tidy FAILED: severe error occurred, code=" << rc;
+        QLOG_ERROR() << ENML_MODULE_LOGPREFIX "tidy FAILED: severe error occurred, code=" << rc;
     }
     QLOG_DEBUG_FILE("fmt-post-tidy.html", getContent());
 
@@ -301,7 +311,7 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
 
 /**
  * Remove html header.
- * Automaticalled before tidy.
+ * Called before tidy.
  */
 void EnmlFormatter::removeHtmlHeader() {
     // remove all before body
@@ -318,7 +328,7 @@ void EnmlFormatter::removeHtmlHeader() {
  * Take the WebKit HTML and transform it into ENML
  * */
 void EnmlFormatter::rebuildNoteEnml() {
-    QLOG_INFO() << "===== Rebuilding note ENML";
+    QLOG_INFO() << ENML_MODULE_LOGPREFIX "===== rebuilding note ENML";
     QLOG_DEBUG_FILE("fmt-html-input.html", getContent());
 
     // list of referenced LIDs
@@ -327,14 +337,10 @@ void EnmlFormatter::rebuildNoteEnml() {
 
     tidyHtml(HtmlCleanupMode::Tidy);
     if (isFormattingError()) {
-        QLOG_ERROR() << "Got no output from tidy - cleanup failed";
+        QLOG_ERROR() << ENML_MODULE_LOGPREFIX "got no output from tidy - cleanup failed";
         return;
     }
     removeHtmlHeader();
-
-    //QRegularExpression reInput("<!--.*-->");
-    //content.replace(reInput, "");
-
 
     content.prepend(DEFAULT_HTML_HEAD);
     content.prepend(DEFAULT_HTML_TYPE);
@@ -358,7 +364,7 @@ void EnmlFormatter::rebuildNoteEnml() {
 
         for (int i = 0; i < tags.size(); i++) {
             QString tag = tags[i];
-            QLOG_DEBUG() << "== processing tag " << tag;
+            QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "== processing tag " << tag;
 
             QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
                 foreach(QWebElement
@@ -366,7 +372,7 @@ void EnmlFormatter::rebuildNoteEnml() {
                     QString tagname = element.tagName().toLower();
 
                     if (!checkEndFixElement(element)) {
-                        QLOG_DEBUG() << "Removing element: " << tagname;
+                        // was logged already
                         element.removeFromDocument();
                         continue;
                     }
@@ -376,7 +382,7 @@ void EnmlFormatter::rebuildNoteEnml() {
                     } else if (tagname == "a") {
                         fixANode(element);
                     } else if (tagname == "object") {
-                        fixObjectNode(element);
+                        fixObjectNode(element); // TODO
                     } else if (tagname == "img") {
                         fixImgNode(element);
                     }
@@ -411,13 +417,14 @@ void EnmlFormatter::rebuildNoteEnml() {
         b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>");
         b.append(content);
         content.clear();
+
         content = b.replace("<body", "<en-note");
         content = b.replace("</body>", "</en-note>");
     }
 
 
     QLOG_DEBUG_FILE("fmt-enml-final.xml", getContent());
-    QLOG_INFO() << "===== Finished rebuilding note ENML";
+    QLOG_INFO() << ENML_MODULE_LOGPREFIX "===== finished rebuilding note ENML";
 }
 
 
@@ -440,32 +447,38 @@ QStringList EnmlFormatter::findAllTags(QWebElement &element) {
             i = -1;
         }
     }
-    QLOG_DEBUG() << "Findall tags: " << tags;
+    QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "find all tags: " << tags;
     return tags;
 }
 
 
-void EnmlFormatter::fixInputNode(QWebElement &node) {
+void EnmlFormatter::fixInputNode(QWebElement &e) {
+    QString type = e.attribute("type", "");
+    if (type != "checkbox") {
+        QLOG_WARN() << ENML_MODULE_LOGPREFIX "fixed unknown <input> node by removing it";
+        e.removeFromDocument();
+        return;
+    }
+
     bool checked = false;
-    if (node.hasAttribute("checked")) {
+    if (e.hasAttribute("checked")) {
         checked = true;
     }
 
-    removeInvalidAttributes(node);
+    removeInvalidAttributes(e);
     // those 2 are additionaly needed (as they pass the basic checks)
-    node.removeAttribute("style");
-    node.removeAttribute("type");
+    e.removeAttribute("style");
+    e.removeAttribute("type");
 
     if (checked) {
-        node.setAttribute("checked", "true");
+        e.setAttribute("checked", "true");
     }
 
     // quite a hack
     QRegularExpression reInput("<input([^>]*)>");
-    QString markup = node.toOuterXml();
+    QString markup = e.toOuterXml();
     markup = markup.replace(reInput, HTML_COMMENT_START "<en-todo\\1/>" HTML_COMMENT_END);
-    //QLOG_DEBUG() << "en-todo markup: " << markup;
-    node.setOuterXml(markup);
+    e.setOuterXml(markup);
 }
 
 
@@ -486,11 +499,11 @@ void EnmlFormatter::fixObjectNode(QWebElement &e) {
                     // temp hack for tidy call
                     .replace("<object", HTML_COMMENT_START "<en-media")
                     .replace("</object>", "</en-media>" HTML_COMMENT_END);
-            QLOG_DEBUG() << "Fixed object node holding pdf to " << xml;
+            QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed object node holding pdf to " << xml;
             e.setOuterXml(xml);
         }
     } else {
-        QLOG_DEBUG() << "Fixed unknown object node by removing it";
+        QLOG_WARN() << ENML_MODULE_LOGPREFIX "fixed unknown <object> node by removing it";
         e.removeFromDocument();
     }
 }
@@ -519,11 +532,11 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
                             length + "\" hint=\"" + hint
                             + "\">" + encrypted + "</en-crypt" HTML_COMMENT_END;
         e.setOuterXml(xml);
-        QLOG_DEBUG() << "Processing tag 'img', type=en-crypt' - fixed img node to " << xml;
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "processing tag 'img', type=en-crypt' - fixed img node to " << xml;
     } else if (enType == "temporary") { ;
         // Temporary image.  If so, remove it
         e.removeFromDocument();
-        QLOG_DEBUG() << "Processing tag 'img', type=temporary' - fixed temporary img node by deleting it";
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "processing tag 'img', type=temporary' - fixed temporary img node by deleting it";
     } else {
         // If we've gotten this far, we have an en-media tag
 
@@ -533,7 +546,7 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         QString hash = e.attribute("hash");
         QLOG_DEBUG() << "Processing tag 'img', type=" << type << ", hash=" << hash;
         if ((lid <= 0) || (hash.isEmpty())) {
-            QLOG_DEBUG() << "Deleting invalid 'img' tag";
+            QLOG_WARN() << ENML_MODULE_LOGPREFIX "deleting invalid 'img' tag";
             e.removeFromDocument();
             return;
         }
@@ -543,7 +556,7 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         // temp hack for tidy call
         const QString xml = e.toOuterXml().replace("<img", HTML_COMMENT_START "<en-media").append("</en-media>" HTML_COMMENT_END);
         e.setOuterXml(xml);
-        QLOG_DEBUG() << "Fixed img node to: " << xml;
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed img node to: " << xml;
     }
 }
 
@@ -554,16 +567,15 @@ void EnmlFormatter::fixANode(QWebElement e) {
     removeInvalidAttributes(e);
     if (enTag == "en-media") {
         resources.append(lid.toInt());
-        // e.removeAttribute("style");
-        // e.removeAttribute("href");
-        // e.removeAttribute("title");
-        // e.removeAttribute("data-saferedirecturl");
+        e.removeAttribute("style");
+        e.removeAttribute("href");
+        e.removeAttribute("title");
 
         e.removeAllChildren();
         QString xml = e.toOuterXml();
         xml.replace("<a", HTML_COMMENT_START "<en-media");
         xml.replace("</a>", "</en-media>" HTML_COMMENT_END);
-        QLOG_DEBUG() << "Fixed link node to " << xml;
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed link node to " << xml;
         e.setOuterXml(xml);
     }
 
@@ -572,7 +584,7 @@ void EnmlFormatter::fixANode(QWebElement e) {
         //removeInvalidAttributes(e);
         QString formula = e.attribute("title");
         const QString attr = QString("http://latex.codecogs.com/gif.latex?%1").arg(formula);
-        QLOG_DEBUG() << "Fixed latex attr to " << attr;
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed latex attr to " << attr;
         e.setAttribute("href", attr);
     }
 
@@ -743,11 +755,10 @@ bool EnmlFormatter::checkEndFixElement(QWebElement e) {
     } else if (element == "xmp") {
 
     } else {
-        QLOG_DEBUG() << "WARNING: " << element << " is invalid .. will be removed";
+        QLOG_WARN() << ENML_MODULE_LOGPREFIX << element << " is invalid .. will be removed";
         return false;
-
     }
-    // could be fixed, but now is valid
+    // possibly fixed, but now is valid
     return true;
 }
 
@@ -758,7 +769,7 @@ void EnmlFormatter::removeInvalidAttributes(QWebElement &node) {
     for (int i = 0; i < attributes.size(); i++) {
         QString a = attributes[i];
         if (!isAttributeValid(a)) {
-            QLOG_DEBUG() << "tag " <<node.tagName() << " removing  invalid attribute " << a;
+            QLOG_WARN() << ENML_MODULE_LOGPREFIX "removeInvalidAttributes - tag " << node.tagName().toLower() << " removing  invalid attribute " << a;
             node.removeAttribute(a);
         }
     }
@@ -796,7 +807,7 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
         newContent.append(encrypted.toLocal8Bit());
         newContent.append(QByteArray("</en-crypt>"));
         newContent.append(end);
-        QLOG_DEBUG() << "Rewritten 'en-crypt' tag";
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "rewritten 'en-crypt' tag";
     }
     return newContent;
 }
@@ -820,10 +831,9 @@ void EnmlFormatter::removeInvalidUnicode() {
  */
 void EnmlFormatter::checkAttributes(QWebElement &element, QStringList valid) {
     QStringList attrs = element.attributeNames();
-    QString tagname = element.tagName().toLower();;
     for (int i = 0; i < attrs.size(); i++) {
         if (!valid.contains(attrs[i])) {
-            QLOG_DEBUG() << "Removing invalid attribute " << tagname << " " << attrs[i];
+            QLOG_WARN() << ENML_MODULE_LOGPREFIX "checkAttributes - tag " << element.tagName().toLower() << " removing invalid attribute " << attrs[i];
             element.removeAttribute(attrs[i]);
         }
     }

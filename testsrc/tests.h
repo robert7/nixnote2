@@ -9,16 +9,21 @@ class Tests: public QObject
 
 private:
     QString formatToEnml(QString source);
-    QString addEnmlEnvelope(QString source);
+    QString addEnmlEnvelope(QString source, QString resources = QString(), QString bodyAttrs = QString());
 
 public:
     Q_INVOKABLE explicit Tests(QObject *parent=Q_NULLPTR);
     virtual ~Tests() {};
 
+// comment out to debug the last test
 private slots:
     void enmlBasicTest();
     void enmlTidyTest();
-    void enmlNixnoteSpecialsTest();
+    void enmlNixnoteTodoTest();
+    void enmlNixnoteImageTest();
+
+private slots:
+    void enmlNixnoteLinkTest();
 };
 
 #endif // NIXNOTE2_TESTS_H

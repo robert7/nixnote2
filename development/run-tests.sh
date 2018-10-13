@@ -60,5 +60,5 @@ elif [ -d ${TIDY_LIB_DIR}/pkgconfig ] ; then
   export PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig
 fi
 
-${QMAKE_BINARY} testsrc/tests.pro CONFIG+=${BUILD_TYPE} && make && ./qmake-build-${BUILD_TYPE}/tests
+(${QMAKE_BINARY} testsrc/tests.pro CONFIG+=${BUILD_TYPE} && make && ./qmake-build-${BUILD_TYPE}/tests) || error_exit "tests"
 
