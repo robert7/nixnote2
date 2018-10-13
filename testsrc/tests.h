@@ -7,13 +7,17 @@ class Tests: public QObject
 {
     Q_OBJECT
 
-public:
+private:
+    QString formatToEnml(QString source);
+    QString addEnmlEnvelope(QString source);
 
+public:
     Q_INVOKABLE explicit Tests(QObject *parent=Q_NULLPTR);
     virtual ~Tests() {};
 
 private slots:
-    void enmlFormat();
+    void enmlBasicTest();
+    void enmlTidyTest();
 };
 
 #endif // NIXNOTE2_TESTS_H
