@@ -1,6 +1,6 @@
 message("Out path: $${OUT_PWD}")
 
-QT += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml testlib
+QT += core widgets printsupport webkit webkitwidgets sql network xml dbus qml testlib
 
 CONFIG += link_pkgconfig
 PKGCONFIG += tidy
