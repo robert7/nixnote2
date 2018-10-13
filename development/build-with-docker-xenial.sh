@@ -31,7 +31,7 @@ fi
 
 # start container (note: each call creates new container)
 
-# ./development/build-with-qmake.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy
+
 
 # to try manually:
 #
@@ -42,13 +42,16 @@ fi
 #    ...copy command..
 # --------------------
 
+# later put this back
+# ./development/build-with-qmake.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy
+
 time docker run \
    --rm \
    -v $PROJECTDIR/appdir:/opt/nixnote2/appdir \
    -v $PROJECTDIR/docker-build-${BUILD_TYPE}:/opt/nixnote2/qmake-build-${BUILD_TYPE} \
    -v $PROJECTDIR/docker-build-${BUILD_TYPE}-t:/opt/nixnote2/qmake-build-${BUILD_TYPE}-t \
    -it nixnote2/xenial \
-cd   /bin/bash -c "cd nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull && ./development/run-tests.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy && ./development/create-AppImage.sh && mv *.AppImage appdir && chmod -R a+rwx appdir"
+      /bin/bash -c "cd nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull && ./development/run-tests.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy && ./development/create-AppImage.sh && mv *.AppImage appdir && chmod -R a+rwx appdir"
 
 ls appdir/*.AppImage
 echo "If all got well then AppImage file in appdir is your binary"
