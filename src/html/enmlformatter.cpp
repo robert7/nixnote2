@@ -120,6 +120,7 @@ EnmlFormatter::EnmlFormatter(
     hr.append("width");
 
     input.append("checked");
+    input.append("type");
 
     img.append("src");
     img.append("alt");
@@ -449,9 +450,12 @@ void EnmlFormatter::fixInputNode(QWebElement &node) {
     if (node.hasAttribute("checked")) {
         checked = true;
     }
-    //node.removeAttribute("style");
-    //node.removeAttribute("type");
+
     removeInvalidAttributes(node);
+    // those 2 are additionaly needed (as they pass the basic checks)
+    node.removeAttribute("style");
+    node.removeAttribute("type");
+
     if (checked) {
         node.setAttribute("checked", "true");
     }
@@ -459,7 +463,7 @@ void EnmlFormatter::fixInputNode(QWebElement &node) {
     // quite a hack
     QRegularExpression reInput("<input([^>]*)>");
     QString markup = node.toOuterXml();
-    markup = markup.replace(reInput, HTML_COMMENT_START "<en-todo \\1 />" HTML_COMMENT_END);
+    markup = markup.replace(reInput, HTML_COMMENT_START "<en-todo\\1/>" HTML_COMMENT_END);
     //QLOG_DEBUG() << "en-todo markup: " << markup;
     node.setOuterXml(markup);
 }
@@ -675,7 +679,7 @@ bool EnmlFormatter::checkEndFixElement(QWebElement e) {
     } else if (element == "i") {
         checkAttributes(e, attrs);
     } else if (element == "input") {
-        checkAttributes(e, attrs);// TODO
+        checkAttributes(e, attrs + input);
     } else if (element == "img") {
         checkAttributes(e, attrs + img);
     } else if (element == "ins") {
@@ -687,7 +691,7 @@ bool EnmlFormatter::checkEndFixElement(QWebElement e) {
     } else if (element == "map") {
         checkAttributes(e, i18n + map);
     } else if (element == "object") {
-        checkAttributes(e, attrs); // TODO
+        checkAttributes(e, attrs + object);
     } else if (element == "ol") {
         checkAttributes(e, attrs + ol);
     } else if (element == "p") {

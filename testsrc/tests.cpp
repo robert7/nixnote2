@@ -9,6 +9,8 @@
 #include "../src/logger/qslog.h"
 #include "../src/logger/qslogdest.h"
 
+#define SET_LOGLEVEL_DEBUG QsLogging::Logger &logger = QsLogging::Logger::instance(); logger.setLoggingLevel(QsLogging::DebugLevel);
+
 Tests::Tests(QObject *parent) :
         QObject(parent) {
 
@@ -87,12 +89,13 @@ void Tests::enmlTidyTest() {
 void Tests::enmlNixnoteSpecialsTest() {
     {
         QString src("<input>");
-        QString result("<en-todo  />");
+        QString result("<en-todo/>");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
+
     {
         QString src(R"R(<input checked="checked" type="checkbox" onclick="if(!checked) removeAttribute('checked'); else setAttribute('checked', 'checked'); editorWindow.editAlert();" style="cursor: hand;">)R");
-        QString result(R"R(<en-todo  />)R");
+        QString result(R"R(<en-todo checked="true"/>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
 }

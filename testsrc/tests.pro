@@ -5,6 +5,9 @@ QT += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qm
 CONFIG += link_pkgconfig
 PKGCONFIG += tidy
 
+# -g flag needed for linker - https://stackoverflow.com/questions/5244509/no-debugging-symbols-found-when-using-gdb
+LIBS += -g
+
 
 TARGET = tests
 TEMPLATE = app
