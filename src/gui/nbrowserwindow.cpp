@@ -3241,9 +3241,6 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
         buffer.append("<img en-tag=\"temporary\" title=\"" + QFileInfo(filename).fileName() + "\" ");
         buffer.append("src=\"file://");
-        buffer.append("/");
-        buffer.append("<img en-tag=\"temporary\" title=\"" + QFileInfo(filename).fileName() + "\" ");
-        buffer.append("src=\"file://");
         #ifdef _WIN32
         buffer.append("/");
         #endif
