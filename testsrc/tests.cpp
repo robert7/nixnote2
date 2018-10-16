@@ -231,6 +231,7 @@ void Tests::enmlNixnoteEncryptTest() {
                 );
         QString result(
                 R"R(<div><en-crypt cipher="RC2" length="64" hint="qq">bGHOocsWJD4Id76YevNUb29Lxi7/aCAI</en-crypt></div>)R");
+
         const QString r1 = formatToEnml(src);
         const QString r2 = addEnmlEnvelope(result);
         QCOMPARE(r1, r2);
@@ -256,7 +257,23 @@ void Tests::enmlNixnoteTableTest() {
 }
 
 
-//
+void Tests::enmlHtml5TagsTest() {
+    {
+        QString src(
+                R"R(<header><span>aa</span></header><article class="abd" style="color: red"><span>aa2</span></article>)R");
+        QString result(
+                R"R(<div><span>aa</span></div><div><span>aa2</span></div>)R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+    {
+        QString src(
+                R"R(<xxx><span>aa</span></xxx>)R");
+        QString result(
+                R"R(<span>aa</span>)R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+}
+
 
 QT_BEGIN_NAMESPACE
 QTEST_ADD_GPU_BLACKLIST_SUPPORT_DEFS
