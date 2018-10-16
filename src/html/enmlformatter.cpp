@@ -618,7 +618,8 @@ void EnmlFormatter::fixANode(QWebElement &e) {
     } else if (href.toLower().startsWith("latex:///")) {
         QString formula = e.attribute("title");
         const QString attr = QString("http://latex.codecogs.com/gif.latex?%1").arg(formula);
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed latex attr to " << attr;
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed latex a tag to " << e.toOuterXml();
+        e.removeAttribute("title");
         e.setAttribute("href", attr);
     } else if (href.isEmpty()) {
         QLOG_WARN() << ENML_MODULE_LOGPREFIX " a tag with empty href => removing";
