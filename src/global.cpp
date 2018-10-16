@@ -727,10 +727,12 @@ QString Global::getThemeCss(QString key) {
 
 // Get the default GUI font
 QFont Global::getGuiFont(QFont f) {
-    if (defaultGuiFont != "")
+    if (defaultGuiFont != "") {
         f.setFamily(defaultGuiFont);
-    if (defaultGuiFontSize > 0)
+    }
+    if (defaultGuiFontSize > 0) {
         f.setPointSize(defaultGuiFontSize);
+    }
     return f;
 }
 
