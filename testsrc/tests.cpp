@@ -166,6 +166,7 @@ void Tests::enmlNixnoteLinkTest() {
                 R"R(<en-media type="application/pdf" hash="3a3fe16e6e4216802f41c40a3af59856"></en-media>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45877")));
     }
+    
     // xls+zip
     {
         QString src(
@@ -177,6 +178,7 @@ void Tests::enmlNixnoteLinkTest() {
         const QString &r2 = addEnmlEnvelope(result, QStringLiteral("45878,45880"));
         QCOMPAREX(r1, r2); //note use string, not expressions
     }
+
     // zip
     {
         QString src(
@@ -184,6 +186,15 @@ void Tests::enmlNixnoteLinkTest() {
         QString result(
                 R"R(<en-media type="application/zip" hash="eb57834ba58527ea4d4422f7fbf4498c"></en-media>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45880")));
+    }
+
+    // link with id attribute
+    {
+        QString src(
+                R"R(<a name="articlesContList/0001_first" id="articlesContList/0001_first"></a>)R");
+        QString result(
+                R"R()R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
 }
 

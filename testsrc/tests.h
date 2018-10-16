@@ -21,12 +21,12 @@ private slots:
     void enmlTidyTest();
     void enmlNixnoteTodoTest();
     void enmlNixnoteImageTest();
-    void enmlNixnoteLinkTest();
     void enmlNixnoteObjectTest();
-
-    private slots:
     void enmlNixnoteEncryptTest();
     void enmlNixnoteTableTest();
+
+private slots:
+    void enmlNixnoteLinkTest();
 };
 
 #endif // NIXNOTE2_TESTS_H

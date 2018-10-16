@@ -385,7 +385,7 @@ void EnmlFormatter::rebuildNoteEnml() {
                             element, anchors) {
                     QString tagname = element.tagName().toLower();
 
-                    if (!checkEndFixElement(element)) {
+                    if (!checkAndFixElement(element)) {
                         // was logged already
                         element.removeFromDocument();
                         continue;
@@ -598,9 +598,10 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 }
 
 
-void EnmlFormatter::fixANode(QWebElement e) {
+void EnmlFormatter::fixANode(QWebElement &e) {
     QString enTag = e.attribute("en-tag", "").toLower();
     QString lid = e.attribute("lid");
+    QString href = e.attribute("href", "");
     removeInvalidAttributes(e);
     if (enTag == "en-media") {
         resources.append(lid.toInt());
@@ -614,19 +615,17 @@ void EnmlFormatter::fixANode(QWebElement e) {
         xml.replace("</a>", "</en-media>" HTML_COMMENT_END);
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed link node to " << xml;
         e.setOuterXml(xml);
-    }
-
-    QString latex = e.attribute("href", "");
-    if (latex.toLower().startsWith("latex:///")) {
-        //removeInvalidAttributes(e);
+    } else if (href.toLower().startsWith("latex:///")) {
         QString formula = e.attribute("title");
         const QString attr = QString("http://latex.codecogs.com/gif.latex?%1").arg(formula);
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed latex attr to " << attr;
         e.setAttribute("href", attr);
+    } else if (href.isEmpty()) {
+        QLOG_WARN() << ENML_MODULE_LOGPREFIX " a tag with empty href => removing";
+        e.removeFromDocument();
+    } else {
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " standard a tag: " << e.toOuterXml();
     }
-
-    //removeInvalidAttributes(e);
-    //checkAttributes(e, attrs + focus + a);
 }
 
 // https://dev.evernote.com/doc/articles/enml.php#prohibited
@@ -660,7 +659,7 @@ bool EnmlFormatter::isAttributeValid(QString attribute) {
 }
 
 
-bool EnmlFormatter::checkEndFixElement(QWebElement e) {
+bool EnmlFormatter::checkAndFixElement(QWebElement &e) {
     QString element = e.tagName().toLower();
     //QLOG_DEBUG() << "Checking tag " << element;
 
@@ -802,14 +801,15 @@ bool EnmlFormatter::checkEndFixElement(QWebElement e) {
 }
 
 
-void EnmlFormatter::removeInvalidAttributes(QWebElement &node) {
+void EnmlFormatter::removeInvalidAttributes(QWebElement &e) {
     // Remove any invalid attributes
-    QStringList attributes = node.attributeNames();
+    QStringList attributes = e.attributeNames();
     for (int i = 0; i < attributes.size(); i++) {
         QString a = attributes[i];
         if (!isAttributeValid(a)) {
-            QLOG_WARN() << ENML_MODULE_LOGPREFIX "removeInvalidAttributes - tag " << node.tagName().toLower() << " removing  invalid attribute " << a;
-            node.removeAttribute(a);
+            QLOG_WARN() << ENML_MODULE_LOGPREFIX "removeInvalidAttributes - tag " << e.tagName().toLower()
+                        << " removing  invalid attribute " << a;
+            e.removeAttribute(a);
         }
     }
 }
