@@ -22,7 +22,8 @@ NixNote (2.1.0-beta4k) unstable; urgency=low
   * Refactoring and further improvement of note html cleanup and conversion to ENML
   * Simple working solution with encrypted notes (with the existing 64bit "medium" security RC2 cipher implemented in nixnote v2.0)
   * Fixed problem with a tag having "id" attribute (but no href attribute)
-  * Improved formatting of LaTex formula; bit the whole functionality is not very stable (marked in UI as "experimental")
+  * Improved formatting of LaTeX formula; unfortunately the whole functionality is not very stable (=> marked in UI as "experimental")
+    See Issue #46
   * Fixed problem with html5 tags (like article, header, ...)
   * Fixed gui font size for search box and after switch in narrow/wide mode
   * Fixed attachment paste inserting bad markup for temporary image
