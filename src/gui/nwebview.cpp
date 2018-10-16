@@ -178,7 +178,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     connect(attachFileAction, SIGNAL(triggered()),parent, SLOT(attachFile()));
     contextMenu->addSeparator();
 
-    insertLatexAction = new QAction(tr("Insert LaTeX Formula"), this);
+    insertLatexAction = new QAction(tr("Insert LaTeX Formula (experimental/unstable)"), this);
     contextMenu->addAction(insertLatexAction);
     global.setupShortcut(insertLatexAction, "Edit_Insert_Latex");
     connect(insertLatexAction, SIGNAL(triggered()),parent, SLOT(insertLatexButtonPressed()));

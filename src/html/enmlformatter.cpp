@@ -385,7 +385,7 @@ void EnmlFormatter::rebuildNoteEnml() {
                             element, anchors) {
                     QString tagname = element.tagName().toLower();
 
-                    if (!checkEndFixElement(element)) {
+                    if (!checkAndFixElement(element)) {
                         // was logged already
                         element.removeFromDocument();
                         continue;
@@ -598,9 +598,10 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 }
 
 
-void EnmlFormatter::fixANode(QWebElement e) {
+void EnmlFormatter::fixANode(QWebElement &e) {
     QString enTag = e.attribute("en-tag", "").toLower();
     QString lid = e.attribute("lid");
+    QString href = e.attribute("href", "");
     removeInvalidAttributes(e);
     if (enTag == "en-media") {
         resources.append(lid.toInt());
@@ -614,19 +615,18 @@ void EnmlFormatter::fixANode(QWebElement e) {
         xml.replace("</a>", "</en-media>" HTML_COMMENT_END);
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed link node to " << xml;
         e.setOuterXml(xml);
-    }
-
-    QString latex = e.attribute("href", "");
-    if (latex.toLower().startsWith("latex:///")) {
-        //removeInvalidAttributes(e);
+    } else if (href.toLower().startsWith("latex:///")) {
         QString formula = e.attribute("title");
         const QString attr = QString("http://latex.codecogs.com/gif.latex?%1").arg(formula);
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed latex attr to " << attr;
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed latex a tag to " << e.toOuterXml();
+        e.removeAttribute("title");
         e.setAttribute("href", attr);
+    } else if (href.isEmpty()) {
+        QLOG_WARN() << ENML_MODULE_LOGPREFIX " a tag with empty href => removing";
+        e.removeFromDocument();
+    } else {
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " standard a tag: " << e.toOuterXml();
     }
-
-    //removeInvalidAttributes(e);
-    //checkAttributes(e, attrs + focus + a);
 }
 
 // https://dev.evernote.com/doc/articles/enml.php#prohibited
@@ -660,156 +660,160 @@ bool EnmlFormatter::isAttributeValid(QString attribute) {
 }
 
 
-bool EnmlFormatter::checkEndFixElement(QWebElement e) {
-    QString element = e.tagName().toLower();
+bool EnmlFormatter::checkAndFixElement(QWebElement &e) {
+    QString tagName = e.tagName().toLower();
     //QLOG_DEBUG() << "Checking tag " << element;
 
     // this removes all generally prohibited attributes
     bool needSpecialCare =
-            (element == "a")
-            || (element == "object")
-            || (element == "img")
-            || (element == "table");
+            (tagName == "a")
+            || (tagName == "object")
+            || (tagName == "img")
+            || (tagName == "table");
     if (!needSpecialCare) {
         // leave out for attribute which have internal attributes like "lid"
         removeInvalidAttributes(e);
     }
 
-    if (element == "a") {
+    if (tagName == "a") {
         checkAttributes(e, attrs + focus + a);
-    } else if (element == "abbr") {
+    } else if (tagName == "abbr") {
         checkAttributes(e, attrs);
-    } else if (element == "acronym") {
+    } else if (tagName == "acronym") {
         checkAttributes(e, attrs);
-    } else if (element == "address") {
+    } else if (tagName == "address") {
         checkAttributes(e, attrs);
-    } else if (element == "area") {
+    } else if (tagName == "area") {
         checkAttributes(e, attrs + focus + area);
-    } else if (element == "b") {
+    } else if (tagName == "b") {
         checkAttributes(e, attrs);
-    } else if (element == "bdo") {
+    } else if (tagName == "bdo") {
         checkAttributes(e, coreattrs + bdo);
-    } else if (element == "big") {
+    } else if (tagName == "big") {
         checkAttributes(e, attrs);
-    } else if (element == "blockquote") {
+    } else if (tagName == "blockquote") {
         checkAttributes(e, attrs + blockQuote);
-    } else if (element == "br") {
+    } else if (tagName == "br") {
         checkAttributes(e, coreattrs + br);
-    } else if (element == "caption") {
+    } else if (tagName == "caption") {
         checkAttributes(e, attrs + caption);
-    } else if (element == "center") {
+    } else if (tagName == "center") {
         checkAttributes(e, attrs);
-    } else if (element == "cite") {
+    } else if (tagName == "cite") {
         checkAttributes(e, attrs);
-    } else if (element == "code") {
+    } else if (tagName == "code") {
         checkAttributes(e, attrs);
-    } else if (element == "col") {
+    } else if (tagName == "col") {
         checkAttributes(e, attrs + cellHalign + cellValign + col);
-    } else if (element == "colgroup") {
+    } else if (tagName == "colgroup") {
         checkAttributes(e, attrs + cellHalign + cellValign + colGroup);
-    } else if (element == "dd") {
+    } else if (tagName == "dd") {
         checkAttributes(e, attrs);
-    } else if (element == "del") {
+    } else if (tagName == "del") {
         checkAttributes(e, attrs + del);
-    } else if (element == "dfn") {
+    } else if (tagName == "dfn") {
         checkAttributes(e, attrs);
-    } else if (element == "div") {
+    } else if (tagName == "div") {
         checkAttributes(e, attrs + textAlign);
-    } else if (element == "dl") {
+    } else if (tagName == "dl") {
         checkAttributes(e, attrs + dl);
-    } else if (element == "dt") {
+    } else if (tagName == "dt") {
         checkAttributes(e, attrs);
-    } else if (element == "em") {
+    } else if (tagName == "em") {
         checkAttributes(e, attrs);
-    } else if ((element == "en-media") || (element == "en-crypt") || (element == "en-todo") || (element == "en-note")) {
-    } else if (element == "font") {
+    } else if ((tagName == "en-media") || (tagName == "en-crypt") || (tagName == "en-todo") || (tagName == "en-note")) {
+    } else if (tagName == "font") {
         checkAttributes(e, coreattrs + i18n + font);
-    } else if ((element == "h1") || (element == "h2") || (element == "h3") || (element == "h4") || (element == "h5") ||
-               (element == "h6")) {
+    } else if ((tagName == "h1") || (tagName == "h2") || (tagName == "h3") || (tagName == "h4") || (tagName == "h5") ||
+               (tagName == "h6")) {
         checkAttributes(e, attrs + textAlign);
-    } else if (element == "hr") {
+    } else if (tagName == "hr") {
         checkAttributes(e, attrs + hr);
-    } else if (element == "i") {
+    } else if (tagName == "i") {
         checkAttributes(e, attrs);
-    } else if (element == "input") {
+    } else if (tagName == "input") {
         checkAttributes(e, attrs + input);
-    } else if (element == "img") {
+    } else if (tagName == "img") {
         checkAttributes(e, attrs + img);
-    } else if (element == "ins") {
+    } else if (tagName == "ins") {
         checkAttributes(e, attrs + ins);
-    } else if (element == "kbd") {
+    } else if (tagName == "kbd") {
         checkAttributes(e, attrs);
-    } else if (element == "li") {
+    } else if (tagName == "li") {
         checkAttributes(e, attrs + li);
-    } else if (element == "map") {
+    } else if (tagName == "map") {
         checkAttributes(e, i18n + map);
-    } else if (element == "object") {
+    } else if (tagName == "object") {
         checkAttributes(e, attrs + object);
-    } else if (element == "ol") {
+    } else if (tagName == "ol") {
         checkAttributes(e, attrs + ol);
-    } else if (element == "p") {
+    } else if (tagName == "p") {
         checkAttributes(e, attrs + textAlign);
-    } else if (element == "pre") {
+    } else if (tagName == "pre") {
         checkAttributes(e, attrs + pre);
-    } else if (element == "q") {
+    } else if (tagName == "q") {
         checkAttributes(e, attrs + q);
-    } else if (element == "s") {
+    } else if (tagName == "s") {
         checkAttributes(e, attrs);
-    } else if (element == "samp") {
+    } else if (tagName == "samp") {
         checkAttributes(e, attrs);
-    } else if (element == "small") {
+    } else if (tagName == "small") {
         checkAttributes(e, attrs);
-    } else if (element == "span") {
+    } else if (tagName == "span") {
         checkAttributes(e, attrs);
-    } else if (element == "strike") {
+    } else if (tagName == "strike") {
         checkAttributes(e, attrs);
-    } else if (element == "strong") {
+    } else if (tagName == "strong") {
         checkAttributes(e, attrs);
-    } else if (element == "sub") {
+    } else if (tagName == "sub") {
         checkAttributes(e, attrs);
-    } else if (element == "sup") {
+    } else if (tagName == "sup") {
         checkAttributes(e, attrs);
-    } else if (element == "table") {
+    } else if (tagName == "table") {
         checkAttributes(e, attrs + table);
-    } else if (element == "tbody") {
+    } else if (tagName == "tbody") {
         checkAttributes(e, attrs + cellHalign + cellValign);
-    } else if (element == "td") {
+    } else if (tagName == "td") {
         checkAttributes(e, attrs + cellValign + cellHalign + td);
-    } else if (element == "tfoot") {
+    } else if (tagName == "tfoot") {
         checkAttributes(e, attrs + cellHalign + cellValign);
-    } else if (element == "th") {
+    } else if (tagName == "th") {
         checkAttributes(e, attrs + cellHalign + cellValign + th);
-    } else if (element == "thread") {
+    } else if (tagName == "thread") {
         checkAttributes(e, attrs + cellHalign + cellValign);
-    } else if (element == "tr") {
+    } else if (tagName == "tr") {
         checkAttributes(e, attrs + cellHalign + cellValign + tr_);
-    } else if (element == "tt") {
+    } else if (tagName == "tt") {
         checkAttributes(e, attrs);
-    } else if (element == "u") {
+    } else if (tagName == "u") {
         checkAttributes(e, attrs);
-    } else if (element == "ul") {
+    } else if (tagName == "ul") {
         checkAttributes(e, attrs + ul);
-    } else if (element == "var") {
+    } else if (tagName == "var") {
         checkAttributes(e, attrs);
-    } else if (element == "xmp") {
+    } else if (tagName == "xmp") {
 
     } else {
-        QLOG_WARN() << ENML_MODULE_LOGPREFIX << element << " is invalid .. will be removed";
-        return false;
+        QString inner = e.toInnerXml();
+        e.replace("<div>" + inner + "</div>");
+
+        QLOG_WARN() << ENML_MODULE_LOGPREFIX << tagName << " is invalid .. will be change to a 'div'";
+        return true;
     }
     // possibly fixed, but now is valid
     return true;
 }
 
 
-void EnmlFormatter::removeInvalidAttributes(QWebElement &node) {
+void EnmlFormatter::removeInvalidAttributes(QWebElement &e) {
     // Remove any invalid attributes
-    QStringList attributes = node.attributeNames();
+    QStringList attributes = e.attributeNames();
     for (int i = 0; i < attributes.size(); i++) {
         QString a = attributes[i];
         if (!isAttributeValid(a)) {
-            QLOG_WARN() << ENML_MODULE_LOGPREFIX "removeInvalidAttributes - tag " << node.tagName().toLower() << " removing  invalid attribute " << a;
-            node.removeAttribute(a);
+            QLOG_WARN() << ENML_MODULE_LOGPREFIX "removeInvalidAttributes - tag " << e.tagName().toLower()
+                        << " removing  invalid attribute " << a;
+            e.removeAttribute(a);
         }
     }
 }

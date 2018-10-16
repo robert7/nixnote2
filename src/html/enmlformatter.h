@@ -58,13 +58,13 @@ private:
     QByteArray content;
 
     bool isAttributeValid(QString attribute);
-    bool checkEndFixElement(QWebElement e);
+    bool checkAndFixElement(QWebElement &e);
     void fixImgNode(QWebElement &element);
     void fixTableNode(QWebElement &e);
     void fixInputNode(QWebElement &e);
     QStringList findAllTags(QWebElement &element);
-    void removeInvalidAttributes(QWebElement &node);
-    void fixANode(QWebElement e);
+    void removeInvalidAttributes(QWebElement &e);
+    void fixANode(QWebElement &e);
     void fixObjectNode(QWebElement &e);
     void removeInvalidUnicode();
     //QByteArray fixEncryptionTags(QByteArray newContent);

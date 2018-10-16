@@ -166,6 +166,7 @@ void Tests::enmlNixnoteLinkTest() {
                 R"R(<en-media type="application/pdf" hash="3a3fe16e6e4216802f41c40a3af59856"></en-media>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45877")));
     }
+
     // xls+zip
     {
         QString src(
@@ -173,10 +174,11 @@ void Tests::enmlNixnoteLinkTest() {
         QString result(
                 R"R(<en-media type="application/vnd.oasis.opendocument.spreadsheet" hash="2bb10cc981690fc6b87e50b825667bbb"></en-media><br /><en-media type="application/zip" hash="eb57834ba58527ea4d4422f7fbf4498c"></en-media>)R");
 
-        const QString &r1 = formatToEnml(src);
-        const QString &r2 = addEnmlEnvelope(result, QStringLiteral("45878,45880"));
+        const QString r1 = formatToEnml(src);
+        const QString r2 = addEnmlEnvelope(result, QStringLiteral("45878,45880"));
         QCOMPAREX(r1, r2); //note use string, not expressions
     }
+
     // zip
     {
         QString src(
@@ -184,6 +186,26 @@ void Tests::enmlNixnoteLinkTest() {
         QString result(
                 R"R(<en-media type="application/zip" hash="eb57834ba58527ea4d4422f7fbf4498c"></en-media>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45880")));
+    }
+
+    // link with id attribute
+    {
+        QString src(
+                R"R(<a name="articlesContList/0001_first" id="articlesContList/0001_first"></a>)R");
+        QString result(
+                R"R()R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+
+    // latex
+    {
+        QString src(
+                R"R(<a onmouseover="cursor:'hand'" title="xfrac{+y}{+z^}" href="latex:///45913"><img src="file:///home/robert7/.nixnote/db-2/dba/45913.gif" type="image/gif" hash="69cb83339ee2fb3f008492f82f98cbbc" oncontextmenu="window.browser.imageContextMenu('45913', '/home/robert7/.nixnote/db-2/dba/45913.gif');" en-tag="en-latex" lid="45913"></a><br><div><div>)R");
+        QString result(
+                R"R(<a href="http://latex.codecogs.com/gif.latex?xfrac{+y}{+z^}"><en-media type="image/gif" hash="69cb83339ee2fb3f008492f82f98cbbc"></en-media></a><br />)R");
+        const QString r1 = formatToEnml(src);
+        const QString r2 = addEnmlEnvelope(result, "45913");
+        QCOMPAREX(r1, r2); //note use string, not expressions
     }
 }
 
@@ -209,8 +231,9 @@ void Tests::enmlNixnoteEncryptTest() {
                 );
         QString result(
                 R"R(<div><en-crypt cipher="RC2" length="64" hint="qq">bGHOocsWJD4Id76YevNUb29Lxi7/aCAI</en-crypt></div>)R");
-        const QString &r1 = formatToEnml(src);
-        const QString &r2 = addEnmlEnvelope(result);
+
+        const QString r1 = formatToEnml(src);
+        const QString r2 = addEnmlEnvelope(result);
         QCOMPARE(r1, r2);
     }
 }
@@ -234,7 +257,23 @@ void Tests::enmlNixnoteTableTest() {
 }
 
 
-//
+void Tests::enmlHtml5TagsTest() {
+    {
+        QString src(
+                R"R(<header><span>aa</span></header><article class="abd" style="color: red"><span>aa2</span></article>)R");
+        QString result(
+                R"R(<div><span>aa</span></div><div><span>aa2</span></div>)R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+    {
+        QString src(
+                R"R(<xxx><span>aa</span></xxx>)R");
+        QString result(
+                R"R(<span>aa</span>)R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+}
+
 
 QT_BEGIN_NAMESPACE
 QTEST_ADD_GPU_BLACKLIST_SUPPORT_DEFS
