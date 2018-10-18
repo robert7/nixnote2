@@ -2,8 +2,9 @@
 PROJECTBRANCH=${1}
 PROJECTDIR=`pwd`
 
-DOCKERTAG=nixnote2/xenial
-DOCKERFILE=./development/docker/Dockerfile.ubuntu_xenial
+DOCKERMODIFIER=_qt562
+DOCKERTAG=nixnote2/xenial${DOCKERMODIFIER}
+DOCKERFILE=./development/docker/Dockerfile.ubuntu_xenial${DOCKERMODIFIER}
 
 if [ ! -f src/main.cpp ]; then
   echo "You seem to be in wrong directory. script MUST be run from the project directory."
@@ -17,6 +18,9 @@ fi
 cd $PROJECTDIR
 # create "builder" image
 docker build -t ${DOCKERTAG} -f ${DOCKERFILE} ./development/docker
+
+# uncommend to stop after creating the image (e.g. you want to do the build manually)
+#exit 1
 
 if [ ! -d appdir ] ; then
   mkdir appdir
