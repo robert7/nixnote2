@@ -40,6 +40,7 @@ public:
     ~CrossMemoryMapper();
 
     void setKey(QString &key);
+    const QString &getKey() const;
 
     bool allocate(int size);
     bool detach();

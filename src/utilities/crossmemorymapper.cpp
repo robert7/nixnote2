@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "crossmemorymapper.h"
 #include <iostream>
+#include "src/logger/qslog.h"
 
 CrossMemoryMapper::CrossMemoryMapper(QObject *parent) :
     QObject(parent) {
@@ -46,12 +47,16 @@ CrossMemoryMapper::~CrossMemoryMapper() {
 }
 
 bool CrossMemoryMapper::allocate(int size) {
-    if (key == "")
+    if (key == "") {
+        QLOG_ERROR() << "Shared memory can't be created: no key!";
         return false;
+    }
     if (!sharedMemory->create(size, QSharedMemory::ReadWrite)) {
+        QLOG_WARN() << "Shared memory failed to allocate, key: " << key;
         return false;
     }
     buffer = (char *) malloc(static_cast<size_t>(getSharedMemorySize()));
+    QLOG_DEBUG() << "Shared memory allocated, key: " << key;
     return true;
 }
 
@@ -78,19 +83,28 @@ bool CrossMemoryMapper::unlock() {
 
 
 bool CrossMemoryMapper::attach() {
-    if (key == "")
+    if (key == "") {
+        QLOG_ERROR() << "Shared memory can't be attached: no key!";
         return false;
-    if (sharedMemory == nullptr)
+    }
+    if (sharedMemory == nullptr) {
+        QLOG_ERROR() << "Shared memory can't be attached: nullptr!";
         return false;
-    if (buffer == nullptr)
+    }
+    if (buffer == nullptr) {
         buffer = (char *) malloc(getSharedMemorySize());
-    return sharedMemory->attach();
+    }
+    bool ret = sharedMemory->attach();
+    QLOG_DEBUG() << "Shared memory attach, key: " << key << ", result: " << ret;
+    return ret;
 }
 
 
 bool CrossMemoryMapper::detach() {
     sharedMemory->unlock();
-    return sharedMemory->detach();
+    bool ret = sharedMemory->detach();
+    QLOG_DEBUG() << "Shared memory detach, key: " << key << ", result: " << ret;
+    return ret;
 }
 
 
@@ -132,4 +146,8 @@ bool CrossMemoryMapper::isAttached() {
     if (sharedMemory == nullptr)
         return false;
     return sharedMemory->isAttached();
+}
+
+const QString &CrossMemoryMapper::getKey() const {
+    return key;
 }
