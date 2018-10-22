@@ -188,14 +188,15 @@ int main(int argc, char *argv[]) {
 
 
     // If we want something other than the GUI, try let the CmdLineTool deal with it.
+    CrossMemoryMapper *sharedMemory = global.sharedMemory;
     if (!startupConfig.gui()) {
         QLOG_INFO() << "About to handle command line arguments";
         global.purgeTemporaryFilesOnShutdown = startupConfig.purgeTemporaryFiles;
         CmdLineTool cmdline;
         startupConfig.purgeTemporaryFiles = false;
         int retval1 = cmdline.run(startupConfig);
-        if (global.sharedMemory->isAttached()) {
-            global.sharedMemory->detach();
+        if (sharedMemory->isAttached()) {
+            sharedMemory->detach();
         }
         if (retval1) {
             QLOG_ERROR() << "Exit FAILURE: retcode=" << retval1;
@@ -212,26 +213,32 @@ int main(int argc, char *argv[]) {
     // with any other instance that may be running.  If another instance
     // is found we need to either show that one or kill this one.
     bool memInitNeeded = true;
-    if (!global.sharedMemory->allocate(512 * 1024)) {
+    if (!sharedMemory->allocate(512 * 1024)) {
+        // failed to create new memory segment (#1)
+
         // Attach to it and detach.  This is done in case it crashed.
-        global.sharedMemory->attach();
-        global.sharedMemory->detach();
-        if (!global.sharedMemory->allocate(512 * 1024)) {
-            QLOG_DEBUG() << "Shared memory segment created";
+        sharedMemory->attach();
+        sharedMemory->detach();
+
+        if (!sharedMemory->allocate(512 * 1024)) {
+            // failed to create new memory segment (#2)
+            QLOG_INFO() << "New shared memory segment could not be created.";
+            QLOG_INFO() << "We assume another instance with the same configuration is running, instance key:" << sharedMemory->getKey();
+
             if (startupConfig.startupNewNote) {
                 QLOG_DEBUG() << "Sending request NEW_NOTE";
-                global.sharedMemory->attach();
-                global.sharedMemory->write(QString("NEW_NOTE"));
-                global.sharedMemory->detach();
+                sharedMemory->attach();
+                sharedMemory->write(QString("NEW_NOTE"));
+                sharedMemory->detach();
                 delete a;
                 exit(0);  // Exit this one
             }
             if (startupConfig.startupNoteLid > 0) {
                 QString req("OPEN_NOTE" + QString::number(startupConfig.startupNoteLid) + " ");
                 QLOG_DEBUG() << "Sending request " << req;
-                global.sharedMemory->attach();
-                global.sharedMemory->write(req);
-                global.sharedMemory->detach();
+                sharedMemory->attach();
+                sharedMemory->write(req);
+                sharedMemory->detach();
                 delete a;
                 exit(0);  // Exit this one
             }
@@ -240,26 +247,29 @@ int main(int argc, char *argv[]) {
             // note: although this is configurable, there doesn't seem to be GUI preference for this
             global.settings->beginGroup(INI_GROUP_DEBUGGING);
             QString startup = global.settings->value("onMultipleInstances", "SHOW_OTHER").toString();
-            QLOG_DEBUG() << "Another running instance with same account detected - configured action: " << startup;
             global.settings->endGroup();
-            global.sharedMemory->attach();
+
+            QLOG_INFO() << "Another running instance with same account detected - configured action: " << startup
+                        << " instance key:" << sharedMemory->getKey();;
+
+            sharedMemory->attach();
             if (startup == "SHOW_OTHER") {
-                QLOG_DEBUG() << "Trying to activate it..";
-                global.sharedMemory->write(QString("SHOW_WINDOW"));
-                global.sharedMemory->detach();
+                QLOG_INFO() << "Trying to activate it..";
+                sharedMemory->write(QString("SHOW_WINDOW"));
+                sharedMemory->detach();
                 delete a;
                 return 0;  // Exit this one
             }
             if (startup == "STOP_OTHER") {
-                QLOG_DEBUG() << "Trying to shutdown it..";
-                global.sharedMemory->write(QString("IMMEDIATE_SHUTDOWN"));
+                QLOG_INFO() << "Trying to shutdown it..";
+                sharedMemory->write(QString("IMMEDIATE_SHUTDOWN"));
                 memInitNeeded = false;
             }
         }
     }
 
     if (memInitNeeded) {
-        global.sharedMemory->clearMemory();
+        sharedMemory->clearMemory();
     }
 
     // Cleanup any temporary files from the last time
@@ -336,8 +346,8 @@ int main(int argc, char *argv[]) {
 
     QLOG_DEBUG() << "Launching";
     int rc = a->exec();
-    if (global.sharedMemory->isAttached())
-        global.sharedMemory->detach();
+    if (sharedMemory->isAttached())
+        sharedMemory->detach();
     QLOG_DEBUG() << "Deleting NixNote instance";
     delete w;
     QLOG_DEBUG() << "Quitting application instance";
