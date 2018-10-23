@@ -52,6 +52,7 @@ Makefile*
 
 /cmake-build-*
 /qmake-build-*
+testsrc/qmake-build-*
 /docker-build-*
 /build-*
 

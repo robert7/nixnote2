@@ -24,10 +24,13 @@ script:
   - echo qmake CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR
   - |
     qmake CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR &&
-    ls -l ./development &&
-    make -j$(nproc) &&
-    make INSTALL_ROOT=appdir -j$(nproc) install &&
-    find appdir/ &&
+      ls -l ./development &&
+      make -j$(nproc) &&
+      make INSTALL_ROOT=appdir -j$(nproc) install &&
+      find appdir/ &&
+    qmake testsrc/tests.pro CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR &&
+      make &&
+      ./qmake-build-release-t/tests -platform offscreen &&
     wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" &&
     chmod a+x linuxdeployqt-continuous-x86_64.AppImage &&
     unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH &&
@@ -46,8 +49,8 @@ after_success:
        RELEASE_NOTES=$(cat ./development/release-notes/release-$TRAVIS_BRANCH.md)
        export VERSION=$(cat appdir/usr/share/nixnote2/version.txt)
        export UPLOADTOOL_BODY="$RELEASE_NOTES - Version: **${VERSION}** - [Travis CI build log](https://travis-ci.com/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID/)."
-       mv debian/changelog debian/changelog.txt
-       bash upload.sh NixNote*.AppImage debian/changelog*.txt || exit 1
+       #mv debian/changelog debian/changelog.txt
+       bash upload.sh NixNote*.AppImage || exit 1
     fi
 
 branches:

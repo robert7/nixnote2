@@ -44,10 +44,11 @@ private:
     QString getCustomDictionaryFileName();
 
 public:
-    explicit SpellChecker(QObject *parent = 0);
-    bool setup(QString customDictionaryPath, QString language=QString());
-    bool spellCheck(QString word, QStringList &suggestions);
-    void addWord(QString word);
+    explicit        SpellChecker(QObject *parent = 0);
+    bool            setup(QString customDictionaryPath, QString language=QString());
+    bool            spellCheck(QString word, QStringList &suggestions);
+    void            addWord(QString word);
+    QStringList     availableSpellLocales();
 
     static const QStringList dictionaryPaths()
     {

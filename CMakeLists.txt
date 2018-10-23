@@ -14,6 +14,7 @@
 
 cmake_minimum_required (VERSION 3.0.2)
 project (nixnote2)
+add_definitions(-std=c++11)
 
 find_package (Qt5Widgets REQUIRED)
 find_package (Qt5Gui REQUIRED)
@@ -26,11 +27,6 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(TIDY REQUIRED tidy)
 
 set (nixnote2_src
-        src/main.cpp
-        src/global.cpp
-        src/hunspell/spellchecker.cpp
-)
-set (nixnote2_hdr
         src/application.cpp
         src/global.cpp
         src/main.cpp
@@ -220,17 +216,220 @@ set (nixnote2_hdr
         src/xml/xmlhighlighter.cpp
         src/quentier/utility/StringUtils.cpp
         src/quentier/utility/StringUtils_p.cpp
+        testsrc/tests.cpp
+)
+set (nixnote2_hdr
+        src/application.h
+        src/nixnote.h
+        src/global.h
+        src/cmdtools/addnote.h
+        src/cmdtools/alternote.h
+        src/cmdtools/cmdlinequery.h
+        src/cmdtools/cmdlinetool.h
+        src/cmdtools/deletenote.h
+        src/cmdtools/emailnote.h
+        src/cmdtools/extractnotes.h
+        src/cmdtools/extractnotetext.h
+        src/cmdtools/importnotes.h
+        src/cmdtools/signalgui.h
+        src/communication/communicationerror.h
+        src/communication/communicationmanager.h
+        src/dialog/aboutdialog.h
+        src/dialog/accountdialog.h
+        src/dialog/accountmaintenancedialog.h
+        src/dialog/adduseraccountdialog.h
+        src/dialog/closenotebookdialog.h
+        src/dialog/databasestatus.h
+        src/dialog/emaildialog.h
+        src/dialog/encryptdialog.h
+        src/dialog/endecryptdialog.h
+        src/dialog/faderdialog.h
+        src/dialog/htmlentitiesdialog.h
+        src/dialog/insertlatexdialog.h
+        src/dialog/insertlinkdialog.h
+        src/dialog/locationdialog.h
+        src/dialog/logindialog.h
+        src/dialog/notebookproperties.h
+        src/dialog/notehistoryselect.h
+        src/dialog/noteproperties.h
+        src/dialog/preferences/appearancepreferences.h
+        src/dialog/preferences/debugpreferences.h
+        src/dialog/preferences/emailpreferences.h
+        src/dialog/preferences/exitpreferences.h
+        src/dialog/preferences/localepreferences.h
+        src/dialog/preferences/preferencesdialog.h
+        src/dialog/preferences/searchpreferences.h
+        src/dialog/preferences/syncpreferences.h
+        src/dialog/preferences/thumbnailpreferences.h
+        src/dialog/remindersetdialog.h
+        src/dialog/savedsearchproperties.h
+        src/dialog/shortcutdialog.h
+        src/dialog/spellcheckdialog.h
+        src/dialog/tabledialog.h
+        src/dialog/tagproperties.h
+        src/dialog/watchfolderadd.h
+        src/dialog/watchfolderdialog.h
+        src/email/emailaddress.h
+        src/email/mimeattachment.h
+        src/email/mimecontentformatter.h
+        src/email/mimefile.h
+        src/email/mimehtml.h
+        src/email/mimeinlinefile.h
+        src/email/mimemessage.h
+        src/email/mimemultipart.h
+        src/email/mimepart.h
+        src/email/mimetext.h
+        src/email/quotedprintable.h
+        src/email/smtpclient.h
+        src/email/smtpexports.h
+        src/exits/exitmanager.h
+        src/exits/exitpoint.h
+        src/filters/filtercriteria.h
+        src/filters/filterengine.h
+        src/filters/notesortfilterproxymodel.h
+        src/filters/remotequery.h
+        src/gui/browserWidgets/authoreditor.h
+        src/gui/browserWidgets/colormenu.h
+        src/gui/browserWidgets/dateeditor.h
+        src/gui/browserWidgets/datetimeeditor.h
+        src/gui/browserWidgets/editorbuttonbar.h
+        src/gui/browserWidgets/expandbutton.h
+        src/gui/browserWidgets/fontnamecombobox.h
+        src/gui/browserWidgets/fontsizecombobox.h
+        src/gui/browserWidgets/locationeditor.h
+        src/gui/browserWidgets/notebookmenubutton.h
+        src/gui/browserWidgets/ntitleeditor.h
+        src/gui/browserWidgets/reminderbutton.h
+        src/gui/browserWidgets/table/tablepropertiesdialog.h
+        src/gui/browserWidgets/tageditor.h
+        src/gui/browserWidgets/tageditornewtag.h
+        src/gui/browserWidgets/tagviewer.h
+        src/gui/browserWidgets/urleditor.h
+        src/gui/datedelegate.h
+        src/gui/externalbrowse.h
+        src/gui/favoritesview.h
+        src/gui/favoritesviewdelegate.h
+        src/gui/favoritesviewitem.h
+        src/gui/findreplace.h
+        src/gui/flowlayout.h
+        src/gui/imagedelegate.h
+        src/gui/lineedit.h
+        src/gui/nattributetree.h
+        src/gui/nbrowserwindow.h
+        src/gui/nmainmenubar.h
+        src/gui/nnotebookview.h
+        src/gui/nnotebookviewdelegate.h
+        src/gui/nnotebookviewitem.h
+        src/gui/nsearchview.h
+        src/gui/nsearchviewitem.h
+        src/gui/ntableview.h
+        src/gui/ntableviewheader.h
+        src/gui/ntabwidget.h
+        src/gui/ntagview.h
+        src/gui/ntagviewdelegate.h
+        src/gui/ntagviewitem.h
+        src/gui/ntrashtree.h
+        src/gui/ntrashviewdelegate.h
+        src/gui/numberdelegate.h
+        src/gui/nwebpage.h
+        src/gui/nwebview.h
+        src/gui/plugins/pluginfactory.h
+        src/gui/plugins/popplergraphicsview.h
+        src/gui/plugins/popplerviewer.h
+        src/gui/reminderorderdelegate.h
+        src/gui/shortcutkeys.h
+        src/gui/traymenu.h
+        src/gui/treewidgeteditor.h
+        src/gui/truefalsedelegate.h
+        src/gui/widgetpanel.h
+        src/logger/qsdebugoutput.h
+        src/logger/qslog.h
+        src/logger/qslogdest.h
+        src/models/notecache.h
+        src/models/notemodel.h
+        src/models/ntreemodel.h
+        src/oauth/oauthtokenizer.h
+        src/oauth/oauthwindow.h
+        src/hunspell/spellchecker.h
+        src/qevercloud/AsyncResult.h
+        src/qevercloud/EventLoopFinisher.h
+        src/qevercloud/EverCloudException.h
+        src/qevercloud/exceptions.h
+        src/qevercloud/generated/constants.h
+        src/qevercloud/generated/EDAMErrorCode.h
+        src/qevercloud/generated/services.h
+        src/qevercloud/generated/types.h
+        src/qevercloud/generated/types_impl.h
+        src/qevercloud/globals.h
+        src/qevercloud/http.h
+        src/qevercloud/impl.h
+        src/qevercloud/include/QEverCloud.h
+        src/qevercloud/include/QEverCloudOAuth.h
+        src/qevercloud/oauth.h
+        src/qevercloud/Optional.h
+        src/qevercloud/public.h
+        src/qevercloud/qt4helpers.h
+        src/qevercloud/thrift.h
+        src/qevercloud/thumbnail.h
+        src/reminders/reminderevent.h
+        src/reminders/remindermanager.h
+        src/settings/accountsmanager.h
+        src/settings/colorsettings.h
+        src/settings/filemanager.h
+        src/settings/startupconfig.h
+        src/sql/configstore.h
+        src/sql/databaseconnection.h
+        src/sql/databaseupgrade.h
+        src/sql/datastore.h
+        src/sql/favoritesrecord.h
+        src/sql/favoritestable.h
+        src/sql/filewatchertable.h
+        src/sql/linkednotebooktable.h
+        src/sql/notebooktable.h
+        src/sql/notemetadata.h
+        src/sql/notetable.h
+        src/sql/nsqlquery.h
+        src/sql/resourcetable.h
+        src/sql/searchtable.h
+        src/sql/sharednotebooktable.h
+        src/sql/tagtable.h
+        src/sql/usertable.h
+        src/html/attachmenticonbuilder.h
+        src/html/enmlformatter.h
+        src/html/noteformatter.h
+        src/html/tagscanner.h
+        src/html/thumbnailer.h
+        src/threads/browserrunner.h
+        src/threads/counterrunner.h
+        src/threads/indexrunner.h
+        src/threads/syncrunner.h
+        src/utilities/crossmemorymapper.h
+        src/utilities/debugtool.h
+        src/utilities/encrypt.h
+        src/utilities/mimereference.h
+        src/utilities/noteindexer.h
+        src/utilities/nuuid.h
+        src/utilities/pixelconverter.h
+        src/watcher/filewatcher.h
+        src/watcher/filewatchermanager.h
+        src/xml/batchimport.h
+        src/xml/exportdata.h
+        src/xml/importdata.h
+        src/xml/importenex.h
+        src/xml/xmlhighlighter.h
+        src/quentier/utility/StringUtils.h
+        src/quentier/utility/StringUtils_p.h
+        testsrc/tests.h
 )
 
 qt5_wrap_cpp(nixnote2_hdr_moc ${nixnote2_hdr})
 
 include_directories (${PROJECT_SOURCE_DIR})
 include_directories (${PROJECT_BINARY_DIR})
-#include_directories (${PROJECT_SOURCE_DIR}/../libs)
 include_directories(${TIDY_INCLUDE_DIRS})
 
-add_executable(nixnote2
-        ${nixnote2_src}
-        ${nixnote2_hdr_moc}
-        )
-target_link_libraries (nixnote2 Qt5::Widgets Qt5::Sql Qt5::Gui Qt5::Network Qt5:WebKit Qt5:WebKitWidgets)
+add_executable(nixnote2 ${nixnote2_src} ${nixnote2_hdr_moc})
+add_executable(tests ${nixnote2_src} ${nixnote2_hdr_moc})
+
+target_link_libraries(nixnote2 Qt5::Widgets Qt5::Sql Qt5::Gui Qt5::Network Qt5:WebKit Qt5:WebKitWidgets)
+target_link_libraries(tests Qt5::Widgets Qt5::Sql Qt5::Gui Qt5::Network Qt5:WebKit Qt5:WebKitWidgets)

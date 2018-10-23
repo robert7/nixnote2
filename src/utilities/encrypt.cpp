@@ -17,23 +17,22 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-#include "encrypt.h"
-#include <QString>
 #include <algorithm>
 #include <stdexcept>
-#include "src/global.h"
+#include <QString>
 #include <QCryptographicHash>
+#include <QProcess>
 
-extern Global global;
-
-
+#include "encrypt.h"
+#include "src/logger/qslog.h"
 
 //#define MY_CIPHER_MODE EVP_rc2_cbc()    // RC2 CBC mode
 
 using namespace std;
 
-EnCrypt::EnCrypt()
+EnCrypt::EnCrypt(QString cryptoJarPath)
 {
+    this->cryptoJarPath = cryptoJarPath;
 }
 
 
@@ -45,7 +44,7 @@ int EnCrypt::decrypt(QString &result, QString text, QString passphrase, QString 
 
     if (cipher == "RC2")
         return this->runner(result, text, passphrase, "decrypt-rc2", length);
-    return this->Invaid_Method;
+    return this->Invalid_Method;
 }
 
 
@@ -57,7 +56,7 @@ int EnCrypt::encrypt(QString &result, QString text, QString passphrase, QString 
 
     if (cipher == "RC2")
         return this->runner(result, text, passphrase, "encrypt-rc2", length);
-    return this->Invaid_Method;
+    return this->Invalid_Method;
 }
 
 
@@ -65,12 +64,11 @@ int EnCrypt::runner(QString &result, QString text, QString passphrase, QString m
 
     // Run the Java program to decrypt the text.  This is an extremely ugly
     // hack, but I haven't been able to get anything else to work.
-    QString jar = global.fileManager.getJavaDirPath("") + "crypto.jar";
 
     QProcess javaProcess;
     QStringList args;
     args.append("-jar");
-    args.append(jar);
+    args.append(cryptoJarPath);
     args.append(method);
     args.append(passphrase);
     args.append(QString::number(keylen));

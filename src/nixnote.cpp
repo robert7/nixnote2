@@ -146,10 +146,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     connect(&heartbeatTimer, SIGNAL(timeout()), this, SLOT(heartbeatTimerTriggered()));
     heartbeatTimer.start();
 
-    QFont f = this->font();
-    //f.setPointSize(8);
-    global.getGuiFont(f);
-    this->setFont(f);
+    this->setFont(global.getGuiFont(this->font()));
 
     db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
 
@@ -200,12 +197,20 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     // Check for Java and verify encryption works
     QString test = "Test Message";
     QString result;
-    EnCrypt encrypt;
+    EnCrypt encrypt(global.fileManager.getCryptoJarPath());
     if (!encrypt.encrypt(result, test, test)) {
         if (!encrypt.decrypt(result, result, test)) {
-            if (result == test)
+            if (result == test) {
                 global.javaFound = true;
+                QLOG_INFO() << "encrypt available";
+            } else {
+                QLOG_WARN() << "encrypt.decrypt failed (different result)";
+            }
+        } else {
+            QLOG_WARN() << "encrypt.decrypt failed";
         }
+    } else {
+        QLOG_WARN() << "encrypt.encrypt failed";
     }
 
     // Initialize pdfExportWindow to null. We don't fully set this up in case the person requests it.
@@ -276,11 +281,14 @@ void NixNote::setupGui() {
     if (!wIcon.isNull()) {
         setWindowIcon(wIcon);
     }
+    QFont guiFont(global.getGuiFont(font()));
 
     global.setSortOrder(global.readSettingSortOrder());
 
     //QLOG_TRACE() << "Setting up menu bar";
     searchText = new LineEdit();
+    searchText->setFont(guiFont);
+
     menuBar = new NMainMenuBar(this);
     setMenuBar(menuBar);
 
@@ -297,7 +305,7 @@ void NixNote::setupGui() {
     menuBar->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     toolBar->setFloatable(true);
     toolBar->setMovable(true);
-    toolBar->setFont(global.getGuiFont(toolBar->font()));
+    toolBar->setFont(guiFont);
     toolBar->setAllowedAreas(Qt::BottomToolBarArea | Qt::TopToolBarArea);
     //toolBar->addSeparator();
 
@@ -3066,6 +3074,9 @@ void NixNote::viewNoteListWide() {
     noteTableView->setColumnsVisible();
     noteTableView->repositionColumns();
     noteTableView->resizeColumns();
+
+    // a bit hack again - displaying all notes will reset font size which wasn't ok before
+    resetView();
 }
 
 
@@ -3088,6 +3099,9 @@ void NixNote::viewNoteListNarrow() {
     noteTableView->setColumnsVisible();
     noteTableView->repositionColumns();
     noteTableView->resizeColumns();
+
+    // a bit hack again - displaying all notes will reset font size which wasn't ok before
+    resetView();
 }
 
 

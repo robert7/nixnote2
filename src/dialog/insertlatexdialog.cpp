@@ -29,7 +29,7 @@ InsertLatexDialog::InsertLatexDialog(QWidget *parent) :
     QDialog(parent)
 {
     wasOkPressed = false;
-    setWindowTitle(tr("Insert LaTeX Formula"));
+    setWindowTitle(tr("Insert LaTeX Formula (experimental/unstable)"));
     //setWindowIcon(new QIcon(iconPath+"link.png"));
     QGridLayout *grid = new QGridLayout(this);
     QGridLayout *input = new QGridLayout(this);

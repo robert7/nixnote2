@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define ENMLFORMATTER_H
 
 #include <QObject>
-
 #include <QtWebKit>
 #include <QObject>
 #include <QTemporaryFile>
@@ -34,7 +33,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtXml>
 
 using namespace std;
-
 
 enum HtmlCleanupMode {
     Tidy = 0,
@@ -50,8 +48,7 @@ enum HtmlCleanupMode {
 
 #define HTML_COMMENT_START "<!-- "
 #define HTML_COMMENT_END " -->"
-
-
+#define HTML_TEMP_TABLE_CLASS "en-crypt-temp"
 
 
 class EnmlFormatter : public QObject
@@ -59,21 +56,18 @@ class EnmlFormatter : public QObject
     Q_OBJECT
 private:
     QByteArray content;
+
     bool isAttributeValid(QString attribute);
-    bool isElementValid(QWebElement e);
-    // void scanTags(QWebElement &element);
+    bool checkAndFixElement(QWebElement &e);
     void fixImgNode(QWebElement &element);
-    //void fixEnCryptNode(QWebElement &element);
-    void fixInputNode(QWebElement &element);
+    void fixTableNode(QWebElement &e);
+    void fixInputNode(QWebElement &e);
     QStringList findAllTags(QWebElement &element);
-    void removeInvalidAttributes(QWebElement &node);
-    void fixANode(QWebElement e);
+    void removeInvalidAttributes(QWebElement &e);
+    void fixANode(QWebElement &e);
     void fixObjectNode(QWebElement &e);
-    void fixSpanNode(QWebElement &e);
-    void fixDivNode(QWebElement &e);
-    void fixPreNode(QWebElement &e);
     void removeInvalidUnicode();
-    QByteArray fixEncryptionTags(QByteArray newContent);
+    //QByteArray fixEncryptionTags(QByteArray newContent);
 
     QStringList coreattrs;
     QStringList i18n;
@@ -96,8 +90,10 @@ private:
     QStringList hr;
     QStringList img;
     QStringList ins;
+    QStringList input;
     QStringList li;
     QStringList map;
+    QStringList object;
     QStringList ol;
     QStringList pre;
     QStringList q;
@@ -108,11 +104,15 @@ private:
     QStringList ul;
     bool formattingError;
     void checkAttributes(QWebElement &element, QStringList valid);
+    QList<qint32> resources;
+    bool guiAvailable;
+    QHash< QString, QPair <QString, QString> > passwordSafe;
+    QString cryptoJarPath;
 
 public:
-    QList<qint32> resources;
+    explicit EnmlFormatter(QString html, bool guiAvailable, QHash< QString, QPair <QString, QString> > passwordSafe, QString cryptoJarPath);
 
-    explicit EnmlFormatter(QString html);
+    QList<qint32> getResources() const { return resources; }
     QString getContent() const;
     QByteArray getContentBytes() const;
 

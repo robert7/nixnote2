@@ -26,7 +26,10 @@ extern Global global;
 EnCryptDialog::EnCryptDialog(QWidget *parent) :
     QDialog(parent)
 {
-
+    QFont guiFont(global.getGuiFont(font()));
+    QFont guiFontBold = guiFont;
+    guiFontBold.setBold(true);
+    
     wasOkPressed = false;
     setWindowTitle(tr("Encrypt Text"));
     //setWindowIcon(new QIcon(iconPath+"password.png"));
@@ -55,6 +58,10 @@ EnCryptDialog::EnCryptDialog(QWidget *parent) :
     input->setContentsMargins(10, 10,  -10, -10);
     grid->addLayout(input, 1,1);
 
+    QLabel *labelInfo = new QLabel(tr("**64bit RC2 cipher ~ medium security**"));
+    input->addWidget(labelInfo, 5, 1);
+    labelInfo->setFont(guiFontBold);
+
     msgGrid->addWidget(&error, 1, 1);
     grid->addLayout(msgGrid, 2, 1);
 
@@ -71,7 +78,7 @@ EnCryptDialog::EnCryptDialog(QWidget *parent) :
     connect(&password, SIGNAL(textChanged(QString)), this, SLOT(validateInput()));
     connect(&password2, SIGNAL(textChanged(QString)), this, SLOT(validateInput()));
     connect(&hint, SIGNAL(textChanged(QString)), this, SLOT(validateInput()));
-    this->setFont(global.getGuiFont(font()));
+    this->setFont(guiFont);
 
 }
 

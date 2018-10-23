@@ -3476,7 +3476,7 @@ Do you wish to continue?</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="150"/>
-        <source>Encrypted Selected Text</source>
+        <source>Encrypt Selected Text</source>
         <translation></translation>
     </message>
     <message>
