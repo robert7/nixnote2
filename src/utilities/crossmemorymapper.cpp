@@ -48,15 +48,15 @@ CrossMemoryMapper::~CrossMemoryMapper() {
 
 bool CrossMemoryMapper::allocate(int size) {
     if (key == "") {
-        QLOG_ERROR() << "Shared memory can't be created: no key!";
+        QLOG_ERROR() << "Shared memory segment can't be created: no key!";
         return false;
     }
     if (!sharedMemory->create(size, QSharedMemory::ReadWrite)) {
-        QLOG_WARN() << "Shared memory failed to allocate, key: " << key;
+        QLOG_WARN() << "Shared memory segment failed to allocate, instance key: " << key;
         return false;
     }
     buffer = (char *) malloc(static_cast<size_t>(getSharedMemorySize()));
-    QLOG_DEBUG() << "Shared memory allocated, key: " << key;
+    QLOG_INFO() << "Shared memory segment allocated, instance key: " << key;
     return true;
 }
 
@@ -84,18 +84,18 @@ bool CrossMemoryMapper::unlock() {
 
 bool CrossMemoryMapper::attach() {
     if (key == "") {
-        QLOG_ERROR() << "Shared memory can't be attached: no key!";
+        QLOG_ERROR() << "Shared memory segment can't be attached: no key!";
         return false;
     }
     if (sharedMemory == nullptr) {
-        QLOG_ERROR() << "Shared memory can't be attached: nullptr!";
+        QLOG_ERROR() << "Shared memory segment can't be attached: nullptr!";
         return false;
     }
     if (buffer == nullptr) {
         buffer = (char *) malloc(getSharedMemorySize());
     }
     bool ret = sharedMemory->attach();
-    QLOG_DEBUG() << "Shared memory attach, key: " << key << ", result: " << ret;
+    QLOG_DEBUG() << "Shared memory segment attach, instance key: " << key << ", result: " << ret;
     return ret;
 }
 
@@ -103,7 +103,7 @@ bool CrossMemoryMapper::attach() {
 bool CrossMemoryMapper::detach() {
     sharedMemory->unlock();
     bool ret = sharedMemory->detach();
-    QLOG_DEBUG() << "Shared memory detach, key: " << key << ", result: " << ret;
+    QLOG_DEBUG() << "Shared memory segment detach, instance key: " << key << ", result: " << ret;
     return ret;
 }
 
