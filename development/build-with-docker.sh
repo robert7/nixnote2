@@ -48,7 +48,13 @@ fi
 #      ...copy command from bellow & paste..
 # --------------------
 
-# for beineri PPA add: source /opt/qt*/bin/qt*-env.sh
+# **TEMPORARY** for beineri PPA recompile #################
+# PROJECTBRANCH=feature/rc1;BUILD_TYPE=release
+# source /opt/qt*/bin/qt*-env.sh
+# git fetch && git checkout $PROJECTBRANCH && git pull  && ./development/build-with-qmake.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy
+# unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
+# ./development/create-AppImage.sh
+# mv *.AppImage appdir2 && chmod -R a+rwx appdir/*.AppImage
 
 time docker run \
    --rm \
@@ -56,7 +62,7 @@ time docker run \
    -v $PROJECTDIR/docker-build-${BUILD_TYPE}:/opt/nixnote2/qmake-build-${BUILD_TYPE} \
    -v $PROJECTDIR/docker-build-${BUILD_TYPE}-t:/opt/nixnote2/qmake-build-${BUILD_TYPE}-t \
    -it ${DOCKERTAG} \
-      /bin/bash -c "cd nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull  && ./development/build-with-qmake.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy && ./development/run-tests.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy && ./development/create-AppImage.sh && mv *.AppImage appdir && chmod -R a+rwx appdir"
+      /bin/bash -c "cd nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull  && ./development/build-with-qmake.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy && ./development/run-tests.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy && ./development/create-AppImage.sh && mv *.AppImage appdir && chmod -R a+rwx appdir/*.AppImage"
 
 ls appdir/*.AppImage
 echo "If all got well then AppImage file in appdir is your binary"

@@ -1,4 +1,4 @@
-NixNote (2.1.0-beta4l) unstable; urgency=low
+NixNote (2.1.0-beta4) unstable; urgency=low
   * Make the sync and email shortcut key global to all app windows, and add sync and email toolbar buttons to
     all editor windows.
     This enables emailing and syncing from any open note window, instead of only from the main app screen.
@@ -28,7 +28,7 @@ NixNote (2.1.0-beta4l) unstable; urgency=low
   * Fixed gui font size for search box and after switch in narrow/wide mode
   * Fixed attachment paste inserting bad markup for temporary image
   * Improved logging in case of other conflicting nixnote instance detected
- -- Robert Spiegel <nightingale7@gmail.com>  Mon, 22 Oct 2018 12:00:00 -0400
+ -- Robert Spiegel <nightingale7@gmail.com>  Tue, 23 Oct 2018 12:00:00 -0400
 
 NixNote (2.1.0-beta3) unstable; urgency=low
   * Added few sort options (menu View)
