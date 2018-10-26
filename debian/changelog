@@ -1,6 +1,7 @@
 NixNote (2.1.0-beta5a) unstable; urgency=low
   * Minor logging improvement in case app is run from wrong directory.
- -- Robert Spiegel <nightingale7@gmail.com>  Thu, 24 Oct 2018 12:00:00 -0400
+  * Added sort by "tags" option
+ -- Robert Spiegel <nightingale7@gmail.com>  Fri, 26 Oct 2018 12:00:00 -0400
 
 
 NixNote (2.1.0-beta4) unstable; urgency=low

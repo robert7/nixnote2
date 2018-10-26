@@ -598,6 +598,8 @@ void NMainMenuBar::createSortMenu(QMenu *parentMenu) {
     addSortAction(sortMenu, menuActionGroup, f, tr("Title [desc]"), "title desc");
     addSortAction(sortMenu, menuActionGroup, f, tr("Title [asc]"), "title asc");
 
+    addSortAction(sortMenu, menuActionGroup, f, tr("Tags [asc]"), "tags asc");
+
     addSortAction(sortMenu, menuActionGroup, f, tr("Size [desc]"), "size desc, dateUpdated desc");
     addSortAction(sortMenu, menuActionGroup, f, tr("Has todo [desc]"), "hasTodo desc, dateUpdated desc");
     addSortAction(sortMenu, menuActionGroup, f, tr("Unsynced first"), "isDirty desc, dateUpdated desc");
