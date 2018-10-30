@@ -130,12 +130,14 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     translation = global.fileManager.getTranslateFilePath(NN_APP_NAME "_" + translation + ".qm");
     QLOG_DEBUG() << "Looking for translations: " << translation;
     bool translationResult = nixnoteTranslator->load(translation);
-    QLOG_DEBUG() << "Translation loaded:" << translationResult;
+    QLOG_DEBUG() << "Translation loaded: " << translationResult << ", installing translator";
     QApplication::instance()->installTranslator(nixnoteTranslator);
+    QLOG_DEBUG() << "done";
 
     connect(&syncThread, SIGNAL(started()), this, SLOT(syncThreadStarted()));
     connect(&counterThread, SIGNAL(started()), this, SLOT(counterThreadStarted()));
     connect(&indexThread, SIGNAL(started()), this, SLOT(indexThreadStarted()));
+
     counterThread.start(QThread::LowestPriority);
     syncThread.start(QThread::LowPriority);
     indexThread.start(QThread::LowestPriority);
@@ -151,20 +153,21 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
 
     // Setup the sync thread
-    QLOG_TRACE() << "Setting up counter thread";
+    QLOG_DEBUG() << "Setting up counter thread";
     connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
 
     // Setup the counter thread
-    QLOG_TRACE() << "Setting up sync thread";
+    QLOG_DEBUG() << "Setting up sync thread";
     connect(this, SIGNAL(syncRequested()), &syncRunner, SLOT(synchronize()));
     connect(&syncRunner, SIGNAL(setMessage(QString, int)), this, SLOT(setMessage(QString, int)));
 
-    QLOG_TRACE() << "Setting up GUI";
+    QLOG_DEBUG() << "Setting up GUI";
     global.filterPosition = 0;
     this->setupGui();
+    QLOG_DEBUG() << "GUI setup done";
 
     global.resourceWatcher = new QFileSystemWatcher(this);
-    QLOG_TRACE() << "Connecting signals";
+    QLOG_DEBUG() << "Connecting signals";
     connect(favoritesTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(tagTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(notebookTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
@@ -195,6 +198,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
 
 
     // Check for Java and verify encryption works
+    QLOG_DEBUG() << "encryption selftest";
     QString test = "Test Message";
     QString result;
     EnCrypt encrypt(global.fileManager.getCryptoJarPath());
@@ -202,7 +206,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
         if (!encrypt.decrypt(result, result, test)) {
             if (result == test) {
                 global.javaFound = true;
-                QLOG_INFO() << "encrypt available";
+                QLOG_DEBUG() << "encrypt available";
             } else {
                 QLOG_WARN() << "encrypt.decrypt failed (different result)";
             }
@@ -277,22 +281,24 @@ void NixNote::setupGui() {
     // Setup the GUI
     //this->setStyleSheet("background-color: white;");
     //statusBar();    setWindowTitle(tr(NN_APP_DISPLAY_NAME_GUI));
+    QLOG_DEBUG() << "setupGui: Setting up window icon";
     const auto wIcon = QIcon(global.getIconResource(":windowIcon"));
     if (!wIcon.isNull()) {
         setWindowIcon(wIcon);
     }
+    QLOG_DEBUG() << "Font setup";
     QFont guiFont(global.getGuiFont(font()));
 
     global.setSortOrder(global.readSettingSortOrder());
 
-    //QLOG_TRACE() << "Setting up menu bar";
     searchText = new LineEdit();
     searchText->setFont(guiFont);
 
+    QLOG_DEBUG() << "Setting up menu bar";
     menuBar = new NMainMenuBar(this);
     setMenuBar(menuBar);
 
-    QLOG_TRACE() << "Setting up tool bar";
+    QLOG_DEBUG() << "Setting up tool bar";
     toolBar = addToolBar(tr("ToolBar"));
     QString css = global.getThemeCss("mainToolbarCss");
     if (css != "")
@@ -380,7 +386,7 @@ void NixNote::setupGui() {
     connect(newNoteButton, SIGNAL(triggered()), this, SLOT(newNote()));
     connect(emailButton, SIGNAL(triggered()), this, SLOT(emailNote()));
 
-    QLOG_TRACE() << "Adding main splitter";
+    QLOG_DEBUG() << "Adding main splitter";
     mainSplitter = new QSplitter(Qt::Horizontal);
     setCentralWidget(mainSplitter);
 
@@ -413,7 +419,7 @@ void NixNote::setupGui() {
     connect(tabWindow, SIGNAL(updateNoteTitle(QString, qint32, QString)), favoritesTreeView,
             SLOT(updateShortcutName(QString, qint32, QString)));
 
-    QLOG_TRACE() << "Setting up left panel";
+    QLOG_DEBUG() << "Setting up left panel";
     leftPanel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     leftScroll = new QScrollArea();
     leftScroll->setWidgetResizable(true);
@@ -426,7 +432,7 @@ void NixNote::setupGui() {
     mainSplitter->setStretchFactor(0, 1);
     mainSplitter->setStretchFactor(1, 3);
 
-    QLOG_TRACE() << "Resetting left side widgets";
+    QLOG_DEBUG() << "Resetting left side widgets";
     tagTreeView->resetSize();
     searchTreeView->resetSize();
     attributeTree->resetSize();
@@ -434,7 +440,7 @@ void NixNote::setupGui() {
 
     // Restore the window state
     global.startMinimized = false;
-    QLOG_TRACE() << "Restoring window state";
+    QLOG_DEBUG() << "Restoring window state";
     global.settings->beginGroup(INI_GROUP_APPEARANCE);
     int selectionBehavior = global.settings->value("startupNotebook",
                                                    AppearancePreferences::UseLastViewedNotebook).toInt();
@@ -582,13 +588,13 @@ void NixNote::setupGui() {
             SLOT(onTrayActivated(QSystemTrayIcon::ActivationReason)));
 
     // Setup timers
-    QLOG_TRACE() << "Setting up timers";
+    QLOG_DEBUG() << "Setting up timers";
     setSyncTimer();
     connect(&syncTimer, SIGNAL(timeout()), this, SLOT(syncTimerExpired()));
     connect(&syncButtonTimer, SIGNAL(timeout()), this, SLOT(updateSyncButton()));
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(syncButtonReset()));
 
-    QLOG_TRACE() << "Setting up more connections for tab windows & threads";
+    QLOG_DEBUG() << "Setting up more connections for tab windows & threads";
     // Setup so we refresh whenever the sync is done.
     //    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria(bool)));
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(notifySyncComplete()));
@@ -931,7 +937,7 @@ void NixNote::indexThreadStarted() {
 //* view a specific note
 //******************************************************************************
 void NixNote::setupNoteList() {
-    QLOG_TRACE() << "Starting NixNote.setupNoteList()";
+    QLOG_DEBUG() << "Starting NixNote.setupNoteList()";
 
     // Setup a generic widget to hold the search & note table
     topRightWidget = new QWidget(this);
@@ -968,7 +974,7 @@ void NixNote::noteSynchronized(qint32 lid, bool value) {
 //* This function sets up the user's search tree
 //*****************************************************************************
 void NixNote::setupSearchTree() {
-    QLOG_TRACE() << "Starting NixNote.setupSearchTree()";
+    QLOG_DEBUG() << "Starting NixNote.setupSearchTree()";
 
     leftSeparator3 = new QLabel();
     leftSeparator3->setTextFormat(Qt::RichText);
@@ -988,7 +994,7 @@ void NixNote::setupSearchTree() {
 //* This function sets up the user's tag tree
 //*****************************************************************************
 void NixNote::setupTagTree() {
-    QLOG_TRACE() << "Starting NixNote.setupTagTree()";
+    QLOG_DEBUG() << "Starting NixNote.setupTagTree()";
 
     leftSeparator2 = new QLabel();
     leftSeparator2->setTextFormat(Qt::RichText);
@@ -1017,7 +1023,7 @@ void NixNote::setupTagTree() {
 //* This function sets up the attribute search tree
 //*****************************************************************************
 void NixNote::setupAttributeTree() {
-    QLOG_TRACE() << "Starting NixNote.setupAttributeTree()";
+    QLOG_DEBUG() << "Starting NixNote.setupAttributeTree()";
 
     leftseparator4 = new QLabel();
     leftseparator4->setTextFormat(Qt::RichText);
@@ -1034,7 +1040,7 @@ void NixNote::setupAttributeTree() {
 //* This function sets up the trash
 //*****************************************************************************
 void NixNote::setupTrashTree() {
-    QLOG_TRACE() << "Starting NixNote.setupTrashTree()";
+    QLOG_DEBUG() << "Starting NixNote.setupTrashTree()";
 
     leftSeparator5 = new QLabel();
     leftSeparator5->setTextFormat(Qt::RichText);
@@ -1052,7 +1058,7 @@ void NixNote::setupTrashTree() {
 //* This function sets up the user's synchronized notebook tree
 //*****************************************************************************
 void NixNote::setupFavoritesTree() {
-    QLOG_TRACE() << "Starting NixNote.setupFavoritesdNotebookTree()";
+    QLOG_DEBUG() << "Starting NixNote.setupFavoritesdNotebookTree()";
     favoritesTreeView = new FavoritesView(leftPanel);
     leftPanel->addFavoritesView(favoritesTreeView);
 
@@ -1079,7 +1085,7 @@ void NixNote::setupFavoritesTree() {
 //* This function sets up the user's synchronized notebook tree
 //*****************************************************************************
 void NixNote::setupSynchronizedNotebookTree() {
-    QLOG_TRACE() << "Starting NixNote.setupSynchronizedNotebookTree()";
+    QLOG_DEBUG() << "Starting NixNote.setupSynchronizedNotebookTree()";
     notebookTreeView = new NNotebookView(leftPanel);
     leftPanel->addNotebookView(notebookTreeView);
     connect(&syncRunner, SIGNAL(notebookUpdated(qint32, QString, QString, bool, bool)), notebookTreeView,
@@ -1099,7 +1105,7 @@ void NixNote::setupSynchronizedNotebookTree() {
 //* This function sets up the tab window that is used by the browser
 //*****************************************************************************
 void NixNote::setupTabWindow() {
-    QLOG_TRACE() << "Starting NixNote.setupTabWindow()";
+    QLOG_DEBUG() << "Starting NixNote.setupTabWindow()";
     tabWindow = new NTabWidget(this, &syncRunner, notebookTreeView, tagTreeView);
     QWidget *tabPanel = new QWidget(this);
     tabPanel->setLayout(new QVBoxLayout());
@@ -1128,7 +1134,6 @@ void NixNote::setupTabWindow() {
     connect(menuBar->pasteAsTextAction, SIGNAL(triggered()), tabWindow, SLOT(pasteAsTextButtonPressed()));
     connect(menuBar->selectAllAction, SIGNAL(triggered()), tabWindow, SLOT(selectAllButtonPressed()));
     connect(menuBar->viewExtendedInformation, SIGNAL(triggered()), tabWindow, SLOT(viewExtendedInformation()));
-
 
     QLOG_TRACE() << "Exiting NixNote.setupTabWindow()";
 }
