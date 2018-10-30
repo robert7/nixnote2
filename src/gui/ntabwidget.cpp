@@ -64,9 +64,9 @@ NTabWidget::NTabWidget(NixNote *p, SyncRunner *s, NNotebookView *n, NTagView *t)
     connect(htmlEntities, SIGNAL(entityClicked(QString)), this, SLOT(htmlEntitiesClicked(QString)));
 
     QString css = global.getThemeCss("noteTabCss");
-    if (css != "")
+    if (css != "") {
         this->setStyleSheet(css);
-
+    }
 }
 
 NTabWidget::~NTabWidget() {

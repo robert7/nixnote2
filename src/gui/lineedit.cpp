@@ -22,8 +22,10 @@ extern Global global;
      filterPosition = -1;
 
      QString css = global.getThemeCss("searchInputCss");
-     if (css == "")
-         css = "QLineEdit { padding-right: %1px; }";
+     QLOG_DEBUG() << "LineEdit::LineEdit init with css: " << css;
+     if (css.isEmpty()) {
+         css = "QLineEdit { padding-right: 1px; }";
+     }
      setStyleSheet(css);
 
 #if QT_VERSION > 0x050000
