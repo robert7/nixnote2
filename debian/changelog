@@ -1,6 +1,7 @@
 NixNote (2.1.0-beta5a) unstable; urgency=low
   * Minor logging improvement in case app is run from wrong directory.
   * Added sort by "tags" option
+  * Added "Date" mime mail header field (applied patch by https://github.com/the02, Issue #52)
  -- Robert Spiegel <nightingale7@gmail.com>  Fri, 26 Oct 2018 12:00:00 -0400
 
 
