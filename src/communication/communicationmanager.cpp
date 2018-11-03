@@ -451,6 +451,8 @@ qint32 CommunicationManager::expungeNotebook(Guid guid) {
 
 // Upload a note to Evernote
 qint32 CommunicationManager::uploadNote(Note &note, QString token) {
+    QLOG_DEBUG() << "uploadNote " << note.guid << ", " << note.title;
+
     if (token == "") {
         token = authToken;
     }
