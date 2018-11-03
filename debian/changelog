@@ -1,3 +1,11 @@
+NixNote (2.1.0-beta5b) unstable; urgency=low
+  * Minor logging improvement in case app is run from wrong directory.
+  * Added sort by "tags" option
+  * Added "Date" mime mail header field (applied patch by https://github.com/the02, Issue #52)
+  * Fixed problem with "Could not parse stylesheet of object XY" warning (invalid default css for searchInputCss)
+ -- Robert Spiegel <nightingale7@gmail.com>  Tue, 30 Oct 2018 12:00:00 -0400
+
+
 NixNote (2.1.0-beta4) unstable; urgency=low
   * Make the sync and email shortcut key global to all app windows, and add sync and email toolbar buttons to
     all editor windows.

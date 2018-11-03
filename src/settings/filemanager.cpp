@@ -55,8 +55,12 @@ QString FileManager::getDefaultProgramDirPath() {
         path.chop(3); // remove 3 chars from end of string
         return path + "share/" + NN_APP_NAME;
     } else {
-        QLOG_ERROR() << "Binary needs to be started from 'appdir' directory...";
-        QLOG_ERROR() << "E.g. use something like: cd $$PROJECT_DIR; ./appdir/usr/bin/nixnote2";
+        QLOG_ERROR() << "Binary needs to be started from application directory...";
+        QLOG_ERROR() << "Expected runtime pathname is $SOMEDIR/bin/" NN_APP_NAME
+                        ", then application data is expected in "
+                        "$SOMEDIR/share/" NN_APP_NAME;
+        QLOG_ERROR() << "E.g. use something like: cd $PROJECT_DIR/appdir; ./usr/bin/" NN_APP_NAME
+                        ". Or you may use --programDataDir command line option for manual override.";
         exit(16);
 
         // unsupported - as this would add additional complexity

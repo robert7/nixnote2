@@ -92,7 +92,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     // Setup a unique identifier for this editor instance.
     QUuid uuid;
     this->uuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
-
+    QLOG_DEBUG() << "Creating NBrowserWindow uuid: " << this->uuid;
 
     browserThread = new QThread();
     connect(browserThread, SIGNAL(started()), this, SLOT(browserThreadStarted()));
@@ -304,9 +304,9 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     spellChecker = nullptr;
 
     QString css = global.getThemeCss("browserWindowCss");
-    if (css != "")
+    if (css != "") {
         this->setStyleSheet(css);
-
+    }
 }
 
 
