@@ -1,3 +1,9 @@
+NixNote (2.1.1-b) stable; urgency=low
+  * Chinese translation update; thanks to https://github.com/hosiet
+  * Fixed problem with missing translations files in final build
+  * Fixed typo in readme and added logging when opening note attachments
+ -- Robert Spiegel <nightingale7@gmail.com>  Sat, 10 Nov 2018 12:00:00 -0400
+
 NixNote (2.1.0) stable; urgency=low
   * Minor logging improvement in case app is run from wrong directory.
   * Added sort by "tags" option

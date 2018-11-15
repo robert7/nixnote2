@@ -2246,7 +2246,7 @@ void NBrowserWindow::linkClicked(const QUrl url) {
 #endif // End windows check
         QString fullName = url.toString().mid(6).replace(filepath, "");
         filepath = filepath.replace("\\", "/");
-        QLOG_DEBUG() << global.fileManager.getDbaDirPath();
+        QLOG_DEBUG() << "linkClicked: dba path="<< global.fileManager.getDbaDirPath();
         int index = fullName.lastIndexOf(".");
         QString guid = "";
         if (index != -1) {
@@ -2270,9 +2270,12 @@ void NBrowserWindow::linkClicked(const QUrl url) {
         fileUrl = fileUrl.replace("\\", "/");
 #endif // End windows check
         global.resourceWatcher->addPath(fileUrl);
+        QLOG_DEBUG() << "Opening attachment file url=" << fileUrl;
         QDesktopServices::openUrl(fileUrl);
         return;
     }
+
+    QLOG_DEBUG() << "Opening attachment url=" << url;
     QDesktopServices::openUrl(url);
 }
 

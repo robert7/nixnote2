@@ -37,23 +37,6 @@ CONFIG(debug, debug|release) {
 OBJECTS_DIR = $${DESTDIR}
 MOC_DIR = $${DESTDIR}
 
-TRANSLATIONS = \
-    translations/nixnote2_cs_CZ.ts \
-    translations/nixnote2_de.ts    \
-    translations/nixnote2_en_GB.ts \
-    translations/nixnote2_ca.ts    \
-    translations/nixnote2_da.ts    \
-    translations/nixnote2_es.ts    \
-    translations/nixnote2_ja.ts    \
-    translations/nixnote2_pt.ts    \
-    translations/nixnote2_sk.ts    \
-    translations/nixnote2_zh_TW.ts \
-    translations/nixnote2_fr.ts    \
-    translations/nixnote2_pl.ts    \
-    translations/nixnote2_ru.ts    \
-    translations/nixnote2_zh_CN.ts
-
-
 SOURCES += \
     src/application.cpp \
     src/global.cpp \
@@ -524,12 +507,45 @@ man.path = $${PREFIX}/share/man/man1
 man.files = docs/nixnote2.1
 
 
-# compile the translation files:
+# compile the translation files
+
+TRANSLATIONS = \
+    translations/nixnote2_cs_CZ.ts \
+    translations/nixnote2_de.ts    \
+    translations/nixnote2_en_GB.ts \
+    translations/nixnote2_ca.ts    \
+    translations/nixnote2_da.ts    \
+    translations/nixnote2_es.ts    \
+    translations/nixnote2_ja.ts    \
+    translations/nixnote2_pt.ts    \
+    translations/nixnote2_sk.ts    \
+    translations/nixnote2_zh_TW.ts \
+    translations/nixnote2_fr.ts    \
+    translations/nixnote2_pl.ts    \
+    translations/nixnote2_ru.ts    \
+    translations/nixnote2_zh_CN.ts
+
+TRANSLATION_TARGET_DIR = $${DESTDIR}/translations
+TRANSLATIONS_OUT = \
+    $$TRANSLATION_TARGET_DIR/nixnote2_cs_CZ.qm \
+    $$TRANSLATION_TARGET_DIR/nixnote2_de.qm    \
+    $$TRANSLATION_TARGET_DIR/nixnote2_en_GB.qm \
+    $$TRANSLATION_TARGET_DIR/nixnote2_ca.qm    \
+    $$TRANSLATION_TARGET_DIR/nixnote2_da.qm    \
+    $$TRANSLATION_TARGET_DIR/nixnote2_es.qm    \
+    $$TRANSLATION_TARGET_DIR/nixnote2_ja.qm    \
+    $$TRANSLATION_TARGET_DIR/nixnote2_pt.qm    \
+    $$TRANSLATION_TARGET_DIR/nixnote2_sk.qm    \
+    $$TRANSLATION_TARGET_DIR/nixnote2_zh_TW.qm \
+    $$TRANSLATION_TARGET_DIR/nixnote2_fr.qm    \
+    $$TRANSLATION_TARGET_DIR/nixnote2_pl.qm    \
+    $$TRANSLATION_TARGET_DIR/nixnote2_ru.qm    \
+    $$TRANSLATION_TARGET_DIR/nixnote2_zh_CN.qm
+
 isEmpty(QMAKE_LRELEASE) {
     win32:LANGREL = $$[QT_INSTALL_BINS]\lrelease.exe
     else:LANGREL = $$[QT_INSTALL_BINS]/lrelease
 }
-TRANSLATION_TARGET_DIR = $${DESTDIR}/translations
 langrel.input = TRANSLATIONS
 langrel.output = $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
 langrel.commands = \
@@ -537,7 +553,7 @@ langrel.commands = \
           -qm $$TRANSLATION_TARGET_DIR/${QMAKE_FILE_BASE}.qm
 langrel.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += langrel
-PRE_TARGETDEPS += $$TRANSLATION_TARGET_DIR/nixnote2_cs_CZ.qm
+PRE_TARGETDEPS += $$TRANSLATIONS_OUT
 
 
 

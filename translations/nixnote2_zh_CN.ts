@@ -11,7 +11,7 @@
     <message>
         <location filename="../src/dialog/aboutdialog.cpp" line="46"/>
         <source>Version: </source>
-        <translation type="unfinished"></translation>
+        <translation>版本：</translation>
     </message>
 </context>
 <context>
@@ -138,7 +138,7 @@
     <message>
         <location filename="../src/dialog/accountmaintenancedialog.cpp" line="38"/>
         <source>Remove Authorization</source>
-        <translation type="unfinished"></translation>
+        <translation>删除授权</translation>
     </message>
     <message>
         <location filename="../src/dialog/accountmaintenancedialog.cpp" line="63"/>
@@ -258,7 +258,7 @@
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="50"/>
         <source>Disable note editing on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>禁用启动时编辑笔记</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="51"/>
@@ -309,7 +309,7 @@
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="68"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="73"/>
         <source>Show NixNote</source>
-        <translation type="unfinished"></translation>
+        <translation>显示 NixNote</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="78"/>
@@ -721,7 +721,7 @@
     <message>
         <location filename="../src/communication/communicationmanager.cpp" line="502"/>
         <source>Error in sync: </source>
-        <translation type="unfinished"></translation>
+        <translation>同步时出错：</translation>
     </message>
     <message>
         <location filename="../src/communication/communicationmanager.cpp" line="588"/>
@@ -731,7 +731,7 @@
     <message>
         <location filename="../src/communication/communicationmanager.cpp" line="1042"/>
         <source>API rate limit exceeded.</source>
-        <translation type="unfinished"></translation>
+        <translation>超出了 API 频率限制。</translation>
     </message>
 </context>
 <context>
@@ -1010,12 +1010,12 @@
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="270"/>
         <source>Insert Date</source>
-        <translation type="unfinished"></translation>
+        <translation>插入日期</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="273"/>
         <source>Insert Time</source>
-        <translation type="unfinished"></translation>
+        <translation>插入日期</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="285"/>
@@ -1384,7 +1384,7 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/exits/exitmanager.cpp" line="62"/>
         <source>Unknown script version. Disabling exit.</source>
-        <translation type="unfinished"></translation>
+        <translation>未知脚本版本。将禁用退出。</translation>
     </message>
     <message>
         <location filename="../src/exits/exitmanager.cpp" line="68"/>
@@ -1544,7 +1544,7 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/watcher/filewatcher.cpp" line="190"/>
         <source>Error removing file:</source>
-        <translation type="unfinished"></translation>
+        <translation>删除文件出错：</translation>
     </message>
     <message>
         <location filename="../src/watcher/filewatcher.cpp" line="269"/>
@@ -1556,13 +1556,13 @@ Please specify server settings in the Preferences menu.</source>
         <location filename="../src/watcher/filewatcher.cpp" line="322"/>
         <location filename="../src/watcher/filewatcher.cpp" line="324"/>
         <source>Tag was not found:</source>
-        <translation type="unfinished"></translation>
+        <translation>标签未找到：</translation>
     </message>
     <message>
         <location filename="../src/watcher/filewatcher.cpp" line="338"/>
         <location filename="../src/watcher/filewatcher.cpp" line="340"/>
         <source>Notebook was not found:</source>
-        <translation type="unfinished"></translation>
+        <translation>笔记本未找到：</translation>
     </message>
 </context>
 <context>
@@ -1764,7 +1764,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="40"/>
         <source>&lt;System Default&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;系统默认&gt;</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="41"/>
@@ -1784,17 +1784,17 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="44"/>
         <source>German</source>
-        <translation type="unfinished"></translation>
+        <translation>德语</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="45"/>
         <source>English (US)</source>
-        <translation type="unfinished"></translation>
+        <translation>英语（美国）</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="46"/>
         <source>English (UK)</source>
-        <translation type="unfinished"></translation>
+        <translation>英语（英国）</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="47"/>
@@ -1824,7 +1824,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="52"/>
         <source>Russian</source>
-        <translation type="unfinished"></translation>
+        <translation>俄语</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="53"/>
@@ -1834,17 +1834,17 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="54"/>
         <source>Chinese</source>
-        <translation type="unfinished"></translation>
+        <translation>中文</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="55"/>
         <source>Chinese (Taiwan)</source>
-        <translation type="unfinished"></translation>
+        <translation>中文（台湾）</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="56"/>
         <source>*Note: Restart required</source>
-        <translation type="unfinished">注意：需要重新启动</translation>
+        <translation>* 注意：需要重新启动</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="59"/>
@@ -2149,7 +2149,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <location filename="../src/gui/nbrowserwindow.cpp" line="819"/>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1204"/>
         <source>Unable to reformat</source>
-        <translation type="unfinished"></translation>
+        <translation>无法重新格式化</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1205"/>
@@ -2159,7 +2159,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1271"/>
         <source>Insert your code here.</source>
-        <translation type="unfinished"></translation>
+        <translation>在此插入您的代码。</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1956"/>
@@ -2276,7 +2276,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3572"/>
         <source>Hunspell not available or no dictionary for current locale</source>
-        <translation type="unfinished"></translation>
+        <translation>Hunspell 不可用或当前地区语言没有对应词典</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="4080"/>
@@ -2287,7 +2287,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="4144"/>
         <source>Notebook was not found:</source>
-        <translation type="unfinished"></translation>
+        <translation>笔记本未找到：</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3630"/>
@@ -2680,12 +2680,12 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="155"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>退出</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="156"/>
         <source>Quit the program</source>
-        <translation type="unfinished"></translation>
+        <translation>退出程序</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="438"/>
@@ -2740,17 +2740,17 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="464"/>
         <source>Disable &amp;editing</source>
-        <translation type="unfinished"></translation>
+        <translation>禁用编辑(&amp;E)</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="474"/>
         <source>&amp;Reindex database</source>
-        <translation type="unfinished"></translation>
+        <translation>重新索引数据库(&amp;R)</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="481"/>
         <source>&amp;Database status</source>
-        <translation type="unfinished"></translation>
+        <translation>数据库状态(&amp;D)</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="489"/>
@@ -2770,7 +2770,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="509"/>
         <source>&amp;Project web page</source>
-        <translation type="unfinished"></translation>
+        <translation>项目主页(&amp;P)</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="510"/>
@@ -3460,17 +3460,17 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="108"/>
         <source>Note Background Color</source>
-        <translation type="unfinished"></translation>
+        <translation>笔记背景颜色</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="123"/>
         <source>Set text color</source>
-        <translation type="unfinished"></translation>
+        <translation>设置文本颜色</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="128"/>
         <source>Set text background color</source>
-        <translation type="unfinished"></translation>
+        <translation>设置文本背景颜色</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="136"/>
@@ -3897,7 +3897,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="3271"/>
         <source>Log file info</source>
-        <translation type="unfinished"></translation>
+        <translation>日志文件信息</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3272"/>
@@ -4377,7 +4377,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="77"/>
         <source>=&gt; currently can be only enabled manually</source>
-        <translation type="unfinished"></translation>
+        <translation>=&gt; 目前只能手动启用</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="78"/>

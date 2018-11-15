@@ -415,7 +415,7 @@ bool NWebView::event(QEvent *event)
 
     }
     if (event->type() == QEvent::MouseButtonDblClick) {
-        QLOG_DEBUG() << "DOUBLE CLICK!!!";
+        QLOG_DEBUG() << "NWebView::event: DOUBLE CLICK!!!";
     }
     return QWebView::event(event);
 }
