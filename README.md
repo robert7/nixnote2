@@ -16,7 +16,7 @@ NixNote PPA - reflects the latest [stable release](https://github.com/robert7/ni
 
 ```
 sudo add-apt-repository ppa:nixnote/nixnote2-stable -y -u
-sudo apt install nixnote2 -y`
+sudo apt install nixnote2 -y
 ```
 
 ### Arch Linux
