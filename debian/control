@@ -27,6 +27,7 @@ Package: nixnote2
 Architecture: any
 Depends:
  nixnote2-tidy,
+ libqt5sql5-sqlite,
  ${java:Depends},
  ${misc:Depends},
  ${shlibs:Depends},
