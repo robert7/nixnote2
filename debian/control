@@ -12,6 +12,7 @@ Build-Depends:
  libhunspell-dev,
  libpoppler-qt5-dev,
  libqt5webkit5-dev,
+ libqt5sql5-sqlite,
  libswscale-dev,
  nixnote2-tidy,
  qml,
