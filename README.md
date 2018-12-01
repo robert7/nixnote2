@@ -15,7 +15,8 @@ Travis CI [![Build Status](https://travis-ci.com/robert7/nixnote2.svg?branch=mas
 NixNote PPA - reflects the latest [stable release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#stable-releases). More information can be found on [NixNote PPA wiki page](https://github.com/robert7/nixnote2/wiki/NixNote-PPA). Installation commands:
 
 ```
-sudo add-apt-repository ppa:nixnote/nixnote2-stable -y -u
+sudo add-apt-repository ppa:nixnote/nixnote2-stable -y
+sudo apt update
 sudo apt install nixnote2 -y
 ```
 
