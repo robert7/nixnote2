@@ -76,3 +76,5 @@ ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_L
 
 make -j$(nproc) || error_exit "$0: make"
 make -j$(nproc) install || error_exit "$0: make install"
+
+cp changelog.txt debian/changelog
