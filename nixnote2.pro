@@ -482,7 +482,7 @@ images.path = $${PREFIX}/share/$$TARGET/images
 images.files = resources/images/*
 
 java.path = $${PREFIX}/share/$$TARGET/java
-java.files = java/*
+java.files = java/crypto.jar
 
 help.path = $${PREFIX}/share/$$TARGET/help
 help.files = help/*

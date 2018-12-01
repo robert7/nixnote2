@@ -47,7 +47,9 @@ override_dh_auto_configure:
 
 # build java jar file from source, discard upstream jar file
 override_jh_build:
-	jh_build -N --main=cx.fbn.encrypt.Crypto --javacopts="-source 1.6 -target 1.6"
+	echo override_jh_build - skip
+	# turned off for now; should not be needed
+	#jh_build -N --main=cx.fbn.encrypt.Crypto --javacopts="-source 1.6 -target 1.6"
 
 # note: this tried to copy changelog.txt which doesn't exist; off for now
 override_dh_installchangelogs:
