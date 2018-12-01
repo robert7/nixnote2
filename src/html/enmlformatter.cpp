@@ -23,8 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QWebFrame>
 #include <QIcon>
 #include <QMessageBox>
-#include <tidy.h>
-#include <tidybuffio.h>
+#include <tidy/tidy.h>
+#include <tidy/tidybuffio.h>
 #include <iostream>
 
 #include "enmlformatter.h"
