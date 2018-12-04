@@ -1,4 +1,4 @@
-NixNote (2.1.1-e) stable; urgency=low
+NixNote (2.1.1-f) stable; urgency=low
   * Chinese translation update; thanks to https://github.com/hosiet
   * Fixed problem with missing translations files in final build
   * Fixed typo in readme and added logging when opening note attachments
@@ -6,7 +6,9 @@ NixNote (2.1.1-e) stable; urgency=low
   * For the java encryption code just the "jar" file is now installed
   * Fixed path to tidy include files
   * "changelog.txt" now contains the changelog and "debian/changelog" it is a copy of it
- -- Robert Spiegel <nightingale7@gmail.com>  Sat, 10 Nov 2018 12:00:00 -0400
+  * Fixed few text typos; thanks to https://github.com/hosiet
+  * Added few resolutions of app icon
+ -- Robert Spiegel <nightingale7@gmail.com>  Tue, 4 Dec 2018 12:00:00 -0400
 
 NixNote (2.1.0) stable; urgency=low
   * Minor logging improvement in case app is run from wrong directory.
