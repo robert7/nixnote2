@@ -98,7 +98,7 @@ private:
 
     int cellFontColorR;                            // cell font red value
     int cellFontColorG;                            // cell font green value
-    int cellFontColorB;                            // cell font blue vaule
+    int cellFontColorB;                            // cell font blue value
 
     int cellPaddingSize;                          // Current cell padding sizes
 

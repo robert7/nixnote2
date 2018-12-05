@@ -48,7 +48,7 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     translationCombo->addItem(tr("French"), "fr");
     translationCombo->addItem(tr("Japanese"), "ja");
     translationCombo->addItem(tr("Polish"), "pl");
-    translationCombo->addItem(tr("Portugese"), "pt");
+    translationCombo->addItem(tr("Portuguese"), "pt");
     translationCombo->addItem(tr("Russian"), "ru");
     translationCombo->addItem(tr("Slovak"), "sk");
     translationCombo->addItem(tr("Chinese"), "zh_CN");

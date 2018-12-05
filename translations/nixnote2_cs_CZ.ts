@@ -1829,7 +1829,7 @@ Seznam např. na http://www.w3schools.com/charsets/ .</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="51"/>
-        <source>Portugese</source>
+        <source>Portuguese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
