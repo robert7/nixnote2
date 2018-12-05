@@ -493,9 +493,9 @@ textfiles.files = $$PWD/shortcuts.txt $$PWD/themes.ini $$PWD/LICENSE $$PWD/color
 textfiles.CONFIG = no_check_exist
 
 docs.path = $${PREFIX}/share/doc/$$TARGET
-docs.files = $$PWD/debian/copyright $$PWD/debian/changelog $$PWD/README.md $$PWD/docs/shortcuts-howto.md $$PWD/docs/license.html
+docs.files = $$PWD/debian/copyright $$PWD/changelog.txt $$PWD/README.md $$PWD/docs/shortcuts-howto.md $$PWD/docs/license.html
 
-VERSION_FILES = debian/changelog
+VERSION_FILES = $$PWD/changelog.txt
 fullversion.input = VERSION_FILES
 fullversion.output  = $${DESTDIR}/version/build-version.txt
 fullversion.commands = ./development/create-build-version.sh $${DESTDIR}
