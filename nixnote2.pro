@@ -32,7 +32,7 @@ CONFIG(debug, debug|release) {
     DESTDIR = qmake-build-release
     BUILD_TYPE = release
     message($$TARGET: Release build!)
-    QMAKE_POST_LINK=strip $${DESTDIR}/$${TARGET}
+    QMAKE_POST_LINK=$$QMAKE_STRIP $${DESTDIR}/$${TARGET}
 }
 OBJECTS_DIR = $${DESTDIR}
 MOC_DIR = $${DESTDIR}
