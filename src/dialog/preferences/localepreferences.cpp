@@ -40,19 +40,20 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     translationCombo->addItem(tr("<System Default>"), QLocale::system().name());
     translationCombo->addItem(tr("Catalan"), "ca");
     translationCombo->addItem(tr("Czech"), "cs_CZ");
+    translationCombo->addItem(tr("Chinese"), "zh_CN");
+    translationCombo->addItem(tr("Chinese (Taiwan)"), "zh_TW");
     translationCombo->addItem(tr("Danish"), "da");
     translationCombo->addItem(tr("German"), "de");
     translationCombo->addItem(tr("English (US)"), "en_US");
     translationCombo->addItem(tr("English (UK)"), "en_GB");
-    translationCombo->addItem(tr("Spanish"), "es");
     translationCombo->addItem(tr("French"), "fr");
     translationCombo->addItem(tr("Japanese"), "ja");
+    translationCombo->addItem(tr("Italian"), "it");
     translationCombo->addItem(tr("Polish"), "pl");
     translationCombo->addItem(tr("Portuguese"), "pt");
     translationCombo->addItem(tr("Russian"), "ru");
     translationCombo->addItem(tr("Slovak"), "sk");
-    translationCombo->addItem(tr("Chinese"), "zh_CN");
-    translationCombo->addItem(tr("Chinese (Taiwan)"), "zh_TW");
+    translationCombo->addItem(tr("Spanish"), "es");
     QLabel *restartLabel = new QLabel(tr("*Note: Restart required"),this);
 
 
