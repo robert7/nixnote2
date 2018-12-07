@@ -1703,13 +1703,9 @@ See http://www.w3schools.com/charsets/ for list.</source>
 <context>
     <name>InsertLatexDialog</name>
     <message>
-        <source>Insert LaTeX Formula</source>
-        <translation type="vanished">插入 LaTeX 公式</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="32"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
-        <translation type="unfinished"></translation>
+        <source>Insert LaTeX Formula</source>
+        <translation>插入 LaTeX 公式</translation>
     </message>
     <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="42"/>
@@ -3594,17 +3590,13 @@ Do you wish to continue?</source>
         <translation>附加檔案</translation>
     </message>
     <message>
+        <location filename="../src/gui/nwebview.cpp" line="181"/>
         <source>Insert LaTeX Formula</source>
-        <translation type="vanished">插入 LaTeX 公式</translation>
+        <translation>插入 LaTeX 公式</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="100"/>
         <source>Simplify formatting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nwebview.cpp" line="181"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

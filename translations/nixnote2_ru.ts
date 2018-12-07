@@ -1703,13 +1703,9 @@ See http://www.w3schools.com/charsets/ for list.</source>
 <context>
     <name>InsertLatexDialog</name>
     <message>
-        <source>Insert LaTeX Formula</source>
-        <translation type="vanished">Вставить формулу LaTeX</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="32"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
-        <translation type="unfinished"></translation>
+        <source>Insert LaTeX Formula</source>
+        <translation>Вставить формулу LaTeX</translation>
     </message>
     <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="42"/>
@@ -2295,10 +2291,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1217"/>
         <source>HTML cleanup failed.</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Spell check completed.</source>
-        <translation type="vanished">Проверка орфографии завершена.</translation>
     </message>
 </context>
 <context>
@@ -3601,17 +3593,13 @@ Do you wish to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/gui/nwebview.cpp" line="181"/>
         <source>Insert LaTeX Formula</source>
-        <translation type="vanished">Вставить формулу LaTeX</translation>
+        <translation>Вставить формулу LaTeX</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="100"/>
         <source>Simplify formatting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nwebview.cpp" line="181"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

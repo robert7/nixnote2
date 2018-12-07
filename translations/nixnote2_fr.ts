@@ -363,10 +363,6 @@
         <translation>Action du bouton du milieu</translation>
     </message>
     <message>
-        <source>Tray Icon Click Action</source>
-        <translation type="vanished">Action du clic sur l&apos;icône de la zone de notification</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="138"/>
         <source>Tray Icon Middle Click Action</source>
         <translation>Action du clic du milieu sur l&apos;icône de la zone de notification</translation>
@@ -1708,13 +1704,9 @@ Voir http://www.w3schools.com/charsets/ pour la liste.</translation>
 <context>
     <name>InsertLatexDialog</name>
     <message>
-        <source>Insert LaTeX Formula</source>
-        <translation type="vanished">Insérer une formule LaTeX</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="32"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
-        <translation type="unfinished"></translation>
+        <source>Insert LaTeX Formula</source>
+        <translation>Insérer une formule LaTeX</translation>
     </message>
     <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="42"/>
@@ -2300,10 +2292,6 @@ Impossible de déchiffrer.</translation>
         <source>HTML cleanup failed.</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Spell check completed.</source>
-        <translation type="vanished">Vérification orthographique terminée.</translation>
-    </message>
 </context>
 <context>
     <name>NMainMenuBar</name>
@@ -2831,10 +2819,6 @@ Impossible de déchiffrer.</translation>
         <location filename="../src/gui/nmainmenubar.cpp" line="553"/>
         <source>&amp;About</source>
         <translation>&amp;À propos</translation>
-    </message>
-    <message>
-        <source>View current program messages</source>
-        <translation type="vanished">Voir les messages actuels du programme</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="334"/>
@@ -3610,17 +3594,13 @@ Do you wish to continue?</source>
         <translation>Attacher un fichier</translation>
     </message>
     <message>
+        <location filename="../src/gui/nwebview.cpp" line="181"/>
         <source>Insert LaTeX Formula</source>
-        <translation type="vanished">Insérer une formule LaTeX</translation>
+        <translation>Insérer une formule LaTeX</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="100"/>
         <source>Simplify formatting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nwebview.cpp" line="181"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

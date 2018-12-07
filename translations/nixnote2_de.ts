@@ -373,10 +373,6 @@
         <translation>Mittelklick-Aktion</translation>
     </message>
     <message>
-        <source>Tray Icon Click Action</source>
-        <translation type="vanished">Taskleisten-Symbol Klick-Aktion</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="138"/>
         <source>Tray Icon Middle Click Action</source>
         <translation>Taskleisten-Symbol Mittelklick-Aktion</translation>
@@ -1558,10 +1554,6 @@ Bitte in den Einstellungen die entsprechenden Angaben machen.</translation>
 <context>
     <name>FileWatcher</name>
     <message>
-        <source>Error removing file: </source>
-        <translation type="vanished">Fehler beim Entfernen der Datei:</translation>
-    </message>
-    <message>
         <location filename="../src/watcher/filewatcher.cpp" line="287"/>
         <location filename="../src/watcher/filewatcher.cpp" line="313"/>
         <source>Calling exit </source>
@@ -1723,13 +1715,9 @@ Siehe Liste unter http://www.w3schools.com/charsets/.</translation>
 <context>
     <name>InsertLatexDialog</name>
     <message>
-        <source>Insert LaTeX Formula</source>
-        <translation type="vanished">Ein LaTeX Formular einfügen</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="32"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
-        <translation type="unfinished"></translation>
+        <source>Insert LaTeX Formula</source>
+        <translation>Ein LaTeX Formular einfügen</translation>
     </message>
     <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="42"/>
@@ -2320,10 +2308,6 @@ Entschlüsselung nicht möglich.</translation>
         <source>Spell check completed</source>
         <translation>Die Rechtschreibprüfung wurde abgeschlossen</translation>
     </message>
-    <message>
-        <source>Spell check completed.</source>
-        <translation type="vanished">Die Rechtschreibprüfung wurde abgeschlossen.</translation>
-    </message>
 </context>
 <context>
     <name>NMainMenuBar</name>
@@ -2851,10 +2835,6 @@ Entschlüsselung nicht möglich.</translation>
         <location filename="../src/gui/nmainmenubar.cpp" line="553"/>
         <source>&amp;About</source>
         <translation>&amp;Über</translation>
-    </message>
-    <message>
-        <source>View current program messages</source>
-        <translation type="vanished">Zeige die aktuellen Programm-Benachrichtigungen</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="334"/>
@@ -3633,17 +3613,13 @@ Möchtest Du fortfahren?</translation>
         <translation>Datei anhängen</translation>
     </message>
     <message>
+        <location filename="../src/gui/nwebview.cpp" line="181"/>
         <source>Insert LaTeX Formula</source>
-        <translation type="vanished">LaTeX Formular einfügen</translation>
+        <translation>LaTeX Formular einfügen</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="100"/>
         <source>Simplify formatting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nwebview.cpp" line="181"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3945,10 +3921,6 @@ Wollen Sie wirklich fortfahren?</translation>
         <location filename="../src/nixnote.cpp" line="3306"/>
         <source>* how to change data location</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error loading Hunspell plugin: </source>
-        <translation type="vanished">Fehler beim Laden des Hunspell-Plugins:</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3637"/>

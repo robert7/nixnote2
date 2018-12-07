@@ -370,10 +370,6 @@
         <translation>Chování prostředního tlačítka při otevírání</translation>
     </message>
     <message>
-        <source>Tray Icon Click Action</source>
-        <translation type="vanished">Kliknutí na ikonu v systémové části panelu</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="138"/>
         <source>Tray Icon Middle Click Action</source>
         <translation>Kliknutí prostředním tlačítkem na ikonu v systémové části panelu</translation>
@@ -1721,13 +1717,9 @@ Seznam např. na http://www.w3schools.com/charsets/ .</translation>
 <context>
     <name>InsertLatexDialog</name>
     <message>
-        <source>Insert LaTeX Formula</source>
-        <translation type="vanished">Vložit LaTex vzorec</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="32"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
-        <translation type="unfinished"></translation>
+        <source>Insert LaTeX Formula</source>
+        <translation>Vložit LaTex vzorec</translation>
     </message>
     <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="42"/>
@@ -2317,10 +2309,6 @@ Dešifrování selhalo.</translation>
         <source>HTML cleanup failed.</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Spell check completed.</source>
-        <translation type="vanished">Kontrola pravopisu dokončena.</translation>
-    </message>
 </context>
 <context>
     <name>NMainMenuBar</name>
@@ -2848,10 +2836,6 @@ Dešifrování selhalo.</translation>
         <location filename="../src/gui/nmainmenubar.cpp" line="553"/>
         <source>&amp;About</source>
         <translation>O &amp;aplikaci</translation>
-    </message>
-    <message>
-        <source>View current program messages</source>
-        <translation type="vanished">Zobrazit aktuální logy programu</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="334"/>
@@ -3631,17 +3615,13 @@ Přejete si pokračovat?</translation>
         <translation>Přiložit soubor</translation>
     </message>
     <message>
+        <location filename="../src/gui/nwebview.cpp" line="181"/>
         <source>Insert LaTeX Formula</source>
-        <translation type="vanished">Vložit LaTex vzorec</translation>
+        <translation>Vložit LaTex vzorec</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="100"/>
         <source>Simplify formatting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nwebview.cpp" line="181"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -13,10 +13,6 @@
         <source>Version: </source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
-        <translation type="vanished">Localizzazione in italiano a cura di Rino Russo, rinorusso@gmail.com</translation>
-    </message>
 </context>
 <context>
     <name>AccountDialog</name>
@@ -259,10 +255,6 @@
         <translation type="unfinished">Mostra totali di Taccuini e Tags</translation>
     </message>
     <message>
-        <source>Auto-Hide editor toolbar</source>
-        <translation type="vanished">Nascondi automaticamente la toolbar di modifica</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="51"/>
         <source>Focus on Note Title on New Note</source>
         <translation type="unfinished"></translation>
@@ -286,26 +278,6 @@
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="56"/>
         <source>Set author on new notes.</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show/Hide NixNote</source>
-        <translation type="vanished">Mostra/Nascondi NixNote</translation>
-    </message>
-    <message>
-        <source>New Text Note</source>
-        <translation type="vanished">Nuova Nota Testo</translation>
-    </message>
-    <message>
-        <source>New Quick Note</source>
-        <translation type="vanished">Nuova Nota Rapida</translation>
-    </message>
-    <message>
-        <source>Screen Capture</source>
-        <translation type="vanished">Cattura Schermo</translation>
-    </message>
-    <message>
-        <source>Open New Tab</source>
-        <translation type="vanished">Apri Nuova Scheda</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="50"/>
@@ -786,36 +758,9 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Total Notes:</source>
-        <translation type="vanished">Note totali: </translation>
-    </message>
-    <message>
-        <source>Total Resources:</source>
-        <translation type="vanished">Risorse totali: </translation>
-    </message>
-    <message>
-        <source>Unindexed Notes:</source>
-        <translation type="vanished">Note non indicizzate: </translation>
-    </message>
-    <message>
-        <source>Unindexed Resources:</source>
-        <translation type="vanished">Risorse non indicizzate: </translation>
-    </message>
-    <message>
-        <source>Thumbnails Needed:</source>
-        <translation type="vanished">Miniature richeiste: </translation>
-    </message>
-    <message>
         <location filename="../src/dialog/databasestatus.cpp" line="60"/>
         <source>OK</source>
         <translation></translation>
-    </message>
-</context>
-<context>
-    <name>DateDelegate</name>
-    <message>
-        <source>Today</source>
-        <translation type="vanished">Oggi</translation>
     </message>
 </context>
 <context>
@@ -983,18 +928,6 @@
         <translation>Linea orizzontale</translation>
     </message>
     <message>
-        <source>Insert Date &amp;&amp; Time</source>
-        <translation type="vanished">Inserisci Data &amp;&amp; Orario</translation>
-    </message>
-    <message>
-        <source>Shift Right</source>
-        <translation type="vanished">Sposta a destra</translation>
-    </message>
-    <message>
-        <source>Shift Left</source>
-        <translation type="vanished">Sposta a sinistra</translation>
-    </message>
-    <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="61"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="302"/>
         <source>Bullet List</source>
@@ -1068,10 +1001,6 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="257"/>
         <source>Fully Justify</source>
         <translation>Giustifica completo</translation>
-    </message>
-    <message>
-        <source>Insert Date &amp; Time</source>
-        <translation type="vanished">Inserisci Data &amp; Orario</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="311"/>
@@ -1776,13 +1705,9 @@ Info su http://www.w3schools.com/charsets/. </translation>
 <context>
     <name>InsertLatexDialog</name>
     <message>
-        <source>Insert LaTeX Formula</source>
-        <translation type="vanished">Inserisci Formula LaTeX</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="32"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
-        <translation type="unfinished"></translation>
+        <source>Insert LaTeX Formula</source>
+        <translation>Inserisci Formula LaTeX</translation>
     </message>
     <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="42"/>
@@ -1983,29 +1908,6 @@ Info su http://www.w3schools.com/charsets/. </translation>
         <location filename="../src/gui/browserWidgets/locationeditor.cpp" line="50"/>
         <source>View on map</source>
         <translation>Mostra nella mappa</translation>
-    </message>
-</context>
-<context>
-    <name>LogViewer</name>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">Chiudi</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation type="vanished">Aggiorna</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="vanished">Salva</translation>
-    </message>
-    <message>
-        <source>Save Logs</source>
-        <translation type="vanished">Salva Logs</translation>
-    </message>
-    <message>
-        <source>Save Log</source>
-        <translation type="vanished">Salva Log</translation>
     </message>
 </context>
 <context>
@@ -2241,10 +2143,6 @@ Info su http://www.w3schools.com/charsets/. </translation>
         <translation>Ieri</translation>
     </message>
     <message>
-        <source>Unable to Save</source>
-        <translation type="vanished">Impossibile salvare</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="827"/>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1216"/>
         <source>Unable to reformat</source>
@@ -2396,18 +2294,6 @@ Unable to decrypt.</source>
         <source>Notebook was not found:</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Hunspell plugin not found or could not be loaded.</source>
-        <translation type="vanished">Plugin Hunspell non trovato o non caricato correttamente.</translation>
-    </message>
-    <message>
-        <source>Spell Check Complete</source>
-        <translation type="vanished">Controllo ortografico Completo</translation>
-    </message>
-    <message>
-        <source>Spell Check Complete.</source>
-        <translation type="vanished">Controllo Ortografico Completo.</translation>
-    </message>
 </context>
 <context>
     <name>NMainMenuBar</name>
@@ -2457,10 +2343,6 @@ Unable to decrypt.</source>
         <translation>Apri/Chiudi taccuini</translation>
     </message>
     <message>
-        <source>Close the program</source>
-        <translation type="vanished">Chiudi il programma</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="176"/>
         <source>&amp;Edit</source>
         <translation>&amp;Modifica</translation>
@@ -2501,10 +2383,6 @@ Unable to decrypt.</source>
         <translation>&amp;Ripristina backup database</translation>
     </message>
     <message>
-        <source>&amp;Import Notes</source>
-        <translation type="vanished">&amp;Importa Note</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="136"/>
         <source>&amp;Add Another User...</source>
         <translation>&amp;Aggiungi un altro account...</translation>
@@ -2518,10 +2396,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/nmainmenubar.cpp" line="146"/>
         <source>&amp;Open/Close Notebooks</source>
         <translation>&amp;Apri/Chiudi Taccuini</translation>
-    </message>
-    <message>
-        <source>E&amp;xit</source>
-        <translation type="vanished">E&amp;sci</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="180"/>
@@ -2714,10 +2588,6 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New &amp;Webcam Note</source>
-        <translation type="vanished">Nuova Nota da &amp;Webcam</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="396"/>
         <source>Dupl&amp;icate Note</source>
         <translation>Dupl&amp;ica Nota</translation>
@@ -2761,10 +2631,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/nmainmenubar.cpp" line="441"/>
         <source>&amp;Disconnect</source>
         <translation>&amp;Disconnetti</translation>
-    </message>
-    <message>
-        <source>Pause &amp;Indexing</source>
-        <translation type="vanished">&amp;S&amp;ospendi Indicizzazione</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="450"/>
@@ -3133,10 +2999,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/ntableview.cpp" line="208"/>
         <source>Open Note In New Tab</source>
         <translation>Apri Nota in una nuova Scheda</translation>
-    </message>
-    <message>
-        <source>Open Note In New Window</source>
-        <translation type="vanished">Apri Nota in una nuova Finestra</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="215"/>
@@ -3671,17 +3533,9 @@ Vuoi continuare?</translation>
         <translation>Incolla come Testo Non Formattato</translation>
     </message>
     <message>
-        <source>Remove Formatting</source>
-        <translation type="vanished">Rimuovi Formattazione</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nwebview.cpp" line="82"/>
         <source>Copy Note URL</source>
         <translation>Copia URL della Nota</translation>
-    </message>
-    <message>
-        <source>Background Color</source>
-        <translation type="vanished">Colore di sfondo</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="136"/>
@@ -3692,14 +3546,6 @@ Vuoi continuare?</translation>
         <location filename="../src/gui/nwebview.cpp" line="143"/>
         <source>HTML Entities</source>
         <translation></translation>
-    </message>
-    <message>
-        <source>Encrypted Selected Text</source>
-        <translation type="vanished">Cripta Testo Selezionato</translation>
-    </message>
-    <message>
-        <source>Insert Date &amp;&amp; Time</source>
-        <translation type="vanished">Inserisci Data &amp;&amp; Orario</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="160"/>
@@ -3722,8 +3568,9 @@ Vuoi continuare?</translation>
         <translation>Allega File</translation>
     </message>
     <message>
+        <location filename="../src/gui/nwebview.cpp" line="181"/>
         <source>Insert LaTeX Formula</source>
-        <translation type="vanished">Inserisci Formula LaTeX</translation>
+        <translation>Inserisci Formula LaTeX</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="94"/>
@@ -3758,11 +3605,6 @@ Vuoi continuare?</translation>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="155"/>
         <source>Insert Date Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nwebview.cpp" line="181"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3835,16 +3677,6 @@ Vuoi continuare?</translation>
 <context>
     <name>NixNote</name>
     <message>
-        <source>Tidy Not Found</source>
-        <translation type="vanished">Tidy non è stato trovato</translation>
-    </message>
-    <message>
-        <source>Tidy is not found on this system.
-Until tidy is installed you cannot save any notes.</source>
-        <translation type="vanished">Tidy non è stato trovato in questo sistema.
-Se non installi tidy, non puoi salvare nessuna nota.</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="302"/>
         <source>ToolBar</source>
         <translation type="unfinished"></translation>
@@ -3872,41 +3704,9 @@ Se non installi tidy, non puoi salvare nessuna nota.</translation>
         <translation>Sincronizza</translation>
     </message>
     <message>
-        <source>Print</source>
-        <translation type="vanished">Stampa</translation>
-    </message>
-    <message>
-        <source>New Text Note</source>
-        <translation type="vanished">Nuova nota di Testo</translation>
-    </message>
-    <message>
-        <source>New Webcam Note</source>
-        <translation type="vanished">Nuova nota da Cebcam</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="359"/>
         <source>Delete</source>
         <translation>Elimina</translation>
-    </message>
-    <message>
-        <source>Trunk</source>
-        <translation type="vanished">Tronca</translation>
-    </message>
-    <message>
-        <source>Usage</source>
-        <translation type="vanished">Usato</translation>
-    </message>
-    <message>
-        <source>Screen Capture</source>
-        <translation type="vanished">Cattura schermo</translation>
-    </message>
-    <message>
-        <source>Show/Hide</source>
-        <translation type="vanished">Mostra/Nascondi</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">Chiudi</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1870"/>
@@ -3917,10 +3717,6 @@ Se non installi tidy, non puoi salvare nessuna nota.</translation>
         <location filename="../src/nixnote.cpp" line="1886"/>
         <source>Restore Database</source>
         <translation>Ripristino Database</translation>
-    </message>
-    <message>
-        <source>Import Notes</source>
-        <translation type="vanished">Importa Note</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="367"/>
@@ -4439,15 +4235,6 @@ Are you sure you want to continue?</source>
     </message>
 </context>
 <context>
-    <name>QApplication</name>
-    <message>
-        <source>Use your mouse to draw a rectangle to screenshot or exit pressing
-any key or using the right or middle mouse buttons.</source>
-        <translation type="vanished">Usa il mouse per selezionare un rettangolo dello schermo da catturare
-o esci premendo qualsiasi tasto o il tasto destro o centrale del mouse.</translation>
-    </message>
-</context>
-<context>
     <name>QObject</name>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="171"/>
@@ -4730,10 +4517,6 @@ o esci premendo qualsiasi tasto o il tasto destro o centrale del mouse.</transla
 <context>
     <name>SpellCheckDialog</name>
     <message>
-        <source>Spell Check</source>
-        <translation type="vanished">Controllo ortografico</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/spellcheckdialog.cpp" line="52"/>
         <source>Suggestion</source>
         <translation>Suggerimento</translation>
@@ -4859,18 +4642,6 @@ o esci premendo qualsiasi tasto o il tasto destro o centrale del mouse.</transla
 </context>
 <context>
     <name>SyncRunner</name>
-    <message>
-        <source>Beginning Sync</source>
-        <translation type="vanished">Avvio Sincronizzazione</translation>
-    </message>
-    <message>
-        <source>Downloading changes</source>
-        <translation type="vanished">Download delle modifiche</translation>
-    </message>
-    <message>
-        <source>Sync Complete Successfully</source>
-        <translation type="vanished">Sincronizzazione Completata con successo</translation>
-    </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="135"/>
         <source>Beginning sync</source>

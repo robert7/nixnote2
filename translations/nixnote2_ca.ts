@@ -1704,7 +1704,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <name>InsertLatexDialog</name>
     <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="32"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
+        <source>Insert LaTeX Formula</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3590,13 +3590,13 @@ Do you wish to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="100"/>
-        <source>Simplify formatting</source>
+        <location filename="../src/gui/nwebview.cpp" line="181"/>
+        <source>Insert LaTeX Formula</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="181"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
+        <location filename="../src/gui/nwebview.cpp" line="100"/>
+        <source>Simplify formatting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

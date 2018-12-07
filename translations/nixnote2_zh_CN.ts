@@ -364,10 +364,6 @@
         <translation>中键单击笔记</translation>
     </message>
     <message>
-        <source>Tray Icon Click Action</source>
-        <translation type="vanished">单击托盘图标</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="138"/>
         <source>Tray Icon Middle Click Action</source>
         <translation>中键单击托盘图标</translation>
@@ -1550,14 +1546,6 @@ Please specify server settings in the Preferences menu.</source>
 <context>
     <name>FileWatcher</name>
     <message>
-        <source>Error removing file: </source>
-        <translation type="vanished">删除文件出错：</translation>
-    </message>
-    <message>
-        <source>Error removing file:</source>
-        <translation type="vanished">删除文件出错：</translation>
-    </message>
-    <message>
         <location filename="../src/watcher/filewatcher.cpp" line="287"/>
         <location filename="../src/watcher/filewatcher.cpp" line="313"/>
         <source>Calling exit </source>
@@ -1719,13 +1707,9 @@ See http://www.w3schools.com/charsets/ for list.</source>
 <context>
     <name>InsertLatexDialog</name>
     <message>
-        <source>Insert LaTeX Formula</source>
-        <translation type="vanished">插入LaTeX公式</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="32"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
-        <translation type="unfinished"></translation>
+        <source>Insert LaTeX Formula</source>
+        <translation>插入LaTeX公式</translation>
     </message>
     <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="42"/>
@@ -2314,10 +2298,6 @@ Unable to decrypt.</source>
         <source>Spell check completed</source>
         <translation>拼写检查完成</translation>
     </message>
-    <message>
-        <source>Spell check completed.</source>
-        <translation type="vanished">拼写检查完成。</translation>
-    </message>
 </context>
 <context>
     <name>NMainMenuBar</name>
@@ -2847,10 +2827,6 @@ Unable to decrypt.</source>
         <translation>关于(&amp;A)</translation>
     </message>
     <message>
-        <source>View current program messages</source>
-        <translation type="vanished">显示当前程序消息</translation>
-    </message>
-    <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="334"/>
         <source>Show &amp;Attribute Filter</source>
         <translation>显示属性过滤器(&amp;A)</translation>
@@ -2889,10 +2865,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/nmainmenubar.cpp" line="490"/>
         <source>&amp;Import folders</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Project web page</source>
-        <translation type="vanished">项目主页(&amp;P)</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="503"/>
@@ -3630,17 +3602,13 @@ Do you wish to continue?</source>
         <translation>添加附件</translation>
     </message>
     <message>
+        <location filename="../src/gui/nwebview.cpp" line="181"/>
         <source>Insert LaTeX Formula</source>
-        <translation type="vanished">插入LaTeX公式</translation>
+        <translation>插入LaTeX公式</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="100"/>
         <source>Simplify formatting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nwebview.cpp" line="181"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3923,10 +3891,6 @@ Are you sure you want to continue?</source>
         <translation>该笔记从未和 Evernote 进行同步</translation>
     </message>
     <message>
-        <source>Error loading Hunspell plugin: </source>
-        <translation type="vanished">加载 Hunspell 插件出错：</translation>
-    </message>
-    <message>
         <location filename="../src/nixnote.cpp" line="3637"/>
         <source>PDF Export</source>
         <translation>PDF 导出</translation>
@@ -4059,10 +4023,6 @@ Are you sure you want to continue?</source>
         <location filename="../src/nixnote.cpp" line="3306"/>
         <source>* how to change data location</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Log file info</source>
-        <translation type="vanished">日志文件信息</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3300"/>

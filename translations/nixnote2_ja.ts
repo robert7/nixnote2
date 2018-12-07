@@ -1708,13 +1708,9 @@ See http://www.w3schools.com/charsets/ for list.</source>
 <context>
     <name>InsertLatexDialog</name>
     <message>
-        <source>Insert LaTeX Formula</source>
-        <translation type="vanished">LaTeX数式のインサート</translation>
-    </message>
-    <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="32"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
-        <translation type="unfinished"></translation>
+        <source>Insert LaTeX Formula</source>
+        <translation>LaTeX数式のインサート</translation>
     </message>
     <message>
         <location filename="../src/dialog/insertlatexdialog.cpp" line="42"/>
@@ -2299,10 +2295,6 @@ Unable to decrypt.</source>
         <source>HTML cleanup failed.</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Spell check completed.</source>
-        <translation type="vanished">スペルチェック完了。</translation>
-    </message>
 </context>
 <context>
     <name>NMainMenuBar</name>
@@ -2830,10 +2822,6 @@ Unable to decrypt.</source>
         <location filename="../src/gui/nmainmenubar.cpp" line="553"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>View current program messages</source>
-        <translation type="vanished">現在のプログラムメッセージを表示する</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="334"/>
@@ -3608,17 +3596,13 @@ Do you wish to continue?</source>
         <translation>ファイルの添付</translation>
     </message>
     <message>
+        <location filename="../src/gui/nwebview.cpp" line="181"/>
         <source>Insert LaTeX Formula</source>
-        <translation type="vanished">LaTeX数式の挿入</translation>
+        <translation>LaTeX数式の挿入</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="100"/>
         <source>Simplify formatting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nwebview.cpp" line="181"/>
-        <source>Insert LaTeX Formula (experimental/unstable)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
