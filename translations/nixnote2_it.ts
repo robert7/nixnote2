@@ -13,6 +13,11 @@
         <source>Version: </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../dialog/aboutdialog.cpp" line="53"/>
+        <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
+        <translation>Localizzazione in italiano a cura di Rino Russo, rinorusso@gmail.com</translation>
+    </message>
 </context>
 <context>
     <name>AccountDialog</name>

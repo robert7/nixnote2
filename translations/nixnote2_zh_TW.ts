@@ -13,6 +13,13 @@
         <source>Version: </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../dialog/aboutdialog.cpp" line="53"/>
+        <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
+        <translation>&lt;span align=&quot;center&quot;&gt;&lt;p&gt;正體中文翻譯：Iridium Cao, 2016。&lt;br&gt;
+有任何翻譯問題，請賜教！&lt;br&gt;
+電郵：&lt;i&gt;iridiumcao@gmail.com&lt;/i&gt;。&lt;/p&gt;&lt;/span&gt;</translation>
+    </message>
 </context>
 <context>
     <name>AccountDialog</name>
