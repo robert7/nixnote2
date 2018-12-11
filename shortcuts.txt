@@ -65,7 +65,7 @@ Edit_Encrypt_Text                               // Encrypt selected text (Popup 
 Edit_Insert_Table                               // Insert a table into a note (Popup menu)
 Edit_Attach_File                                // Attach a file
 Edit_Insert_Latex                               // Insert a LaTeX formula.
-Edit_Copy_Note_Url                              // Copy the current note URL to the clipboard
+Edit_Copy_Note_Url            Ctrl+Shift+K      // Copy the current note URL to the clipboard
 
 View_List_Narrow                                // View with the list on the side
 View_List_Wide                                  // View with the list on the top

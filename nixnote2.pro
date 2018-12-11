@@ -523,7 +523,8 @@ TRANSLATIONS = \
     translations/nixnote2_fr.ts    \
     translations/nixnote2_pl.ts    \
     translations/nixnote2_ru.ts    \
-    translations/nixnote2_zh_CN.ts
+    translations/nixnote2_zh_CN.ts \
+    translations/nixnote2_it.ts
 
 TRANSLATION_TARGET_DIR = $${DESTDIR}/translations
 TRANSLATIONS_OUT = \
@@ -540,7 +541,8 @@ TRANSLATIONS_OUT = \
     $$TRANSLATION_TARGET_DIR/nixnote2_fr.qm    \
     $$TRANSLATION_TARGET_DIR/nixnote2_pl.qm    \
     $$TRANSLATION_TARGET_DIR/nixnote2_ru.qm    \
-    $$TRANSLATION_TARGET_DIR/nixnote2_zh_CN.qm
+    $$TRANSLATION_TARGET_DIR/nixnote2_zh_CN.qm \
+    $$TRANSLATION_TARGET_DIR/nixnote2_it.qm
 
 isEmpty(QMAKE_LRELEASE) {
     win32:LANGREL = $$[QT_INSTALL_BINS]\lrelease.exe

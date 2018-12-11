@@ -48,9 +48,8 @@ AboutDialog::AboutDialog(QDialog *parent) :
     QString aboutFileName = programDataDir + "help/about.html";
     QString data = global.fileManager.readFile(aboutFileName);
 
-    #define TR_TX "Note to translators: For translation credit, change this message to your name & contact information and it will appear in the About dialog box. HTML Formatting is available."
-    QString translationInformation = tr(TR_TX);
-    QString translationStaticInformation = TR_TX;
+    QString translationInformation = tr("Note to translators: For translation credit, change this message to your name & contact information and it will appear in the About dialog box. HTML Formatting is available.");
+    QString translationStaticInformation = "Note to translators: For translation credit, change this message to your name & contact information and it will appear in the About dialog box. HTML Formatting is available.";
     if (translationInformation == translationStaticInformation) {
         data.replace("__TRANSLATION__", "");
     } else {
@@ -61,6 +60,7 @@ AboutDialog::AboutDialog(QDialog *parent) :
     data = data.replace("__LOGO__", "file://" + global.fileManager.getImageDirPath("") + "splash_logo.png");
 
     page->setHtml(data);
+
     connect(okButton, SIGNAL(clicked()), this, SLOT(close()));
     this->resize(600, 500);
     this->setFont(global.getGuiFont(font()));
