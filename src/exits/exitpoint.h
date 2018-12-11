@@ -56,7 +56,7 @@ public:
 signals:
 
 public slots:
-    void log(QString vaule);
+    void log(QString value);
 };
 
 
