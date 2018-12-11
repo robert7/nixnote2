@@ -1,9 +1,10 @@
-NixNote (2.1.2-b) stable; urgency=low
+NixNote (2.1.2-c) stable; urgency=low
   * Make project cross-buildable issue #67; from https://bugs.debian.org/915590
   * Added italian translation, thanks to Rino Russo
   * Synchronized translation files with source code, fixed missing display of translation credits
   * Added default shortcut "Ctrl+Shift+K" for "Copy the current note URL to the clipboard"
- -- Robert Spiegel <nightingale7@gmail.com>  Mon, 10 Dec 2018 09:43:51 +0100
+  * New app icon
+ -- Robert Spiegel <nightingale7@gmail.com>  Tue, 11 Dec 2018 10:49:21 +0100
 
 NixNote (2.1.1) stable; urgency=low
   * Chinese translation update; thanks to https://github.com/hosiet
