@@ -68,6 +68,7 @@ public slots:
     void saveExitButtonPressed(bool);
     void importDeleteExitButtonPressed(bool);
     void importKeepExitButtonPressed(bool);
+    void showInfo();
 };
 
 #endif // EXITPREFERENCES_H
