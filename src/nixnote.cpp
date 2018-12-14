@@ -1983,19 +1983,27 @@ void NixNote::notifySyncComplete() {
     global.settings->beginGroup(INI_GROUP_SYNC);
     bool apiRateLimitAutoRestart = global.settings->value("apiRateLimitAutoRestart", false).toBool();
     global.settings->endGroup();
-
-    // Do not show popup when automatic sync after error enabled
-    if (global.popupOnSyncError() && !apiRateLimitAutoRestart) {
-        QMessageBox::critical(0, tr("Sync Error"), tr("Sync error. See message log for details"));
-    }
-
     global.settings->beginGroup(INI_GROUP_SYNC);
     bool syncNotifications = global.settings->value("enableNotification", false).toBool();
     global.settings->endGroup();
+
+    bool popupOnSyncError = global.popupOnSyncError();
+    bool haveSyncError = syncRunner.error;
+
+    QLOG_DEBUG() << "notifySyncComplete: haveSyncError=" << haveSyncError
+                 << ", apiRateLimitAutoRestart=" << apiRateLimitAutoRestart
+                 << ", popupOnSyncError=" << popupOnSyncError
+                 << ", syncNotifications=" << syncNotifications;
+
+    if (haveSyncError && popupOnSyncError) {
+        QMessageBox::critical(this, tr("Sync Error"), tr("Sync error. See message log for details"));
+        return;
+    }
+
     if (!syncNotifications) {
         return;
     }
-    if (syncRunner.error) {
+    if (haveSyncError) {
         showMessage(tr("Sync Error"), tr("Sync completed with errors."));
     } else if (global.showGoodSyncMessagesInTray) {
         showMessage(tr("Sync Complete"), tr("Sync completed successfully."));

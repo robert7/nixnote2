@@ -7,6 +7,7 @@ NixNote (2.1.2-d) stable; urgency=low
   * Chinese translation update; thanks to https://github.com/hosiet
   * "Copy Note URL" title changed to "Copy Note Link" as it is the same function which had 2 names
   * Added alternative keyboard shortcut to quit the app (Alt+Q)
+  * Fixed: cursor jumps to search after sync - issue #59, improved sync error notifications
  -- Robert Spiegel <nightingale7@gmail.com>  Tue, 11 Dec 2018 10:49:21 +0100
 
 NixNote (2.1.1) stable; urgency=low
