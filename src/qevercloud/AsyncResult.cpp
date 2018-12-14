@@ -44,7 +44,7 @@ bool qevercloud::AsyncResult::waitForFinished(int timeout)
 void qevercloud::AsyncResult::start()
 {
     ReplyFetcher* f = new ReplyFetcher;
-    QObject::connect(f, QEC_SIGNAL(ReplyFetcher,replyFetched,QObject*),
+    QObject::connect(f, QEC_SIGNAL(ReplyFetcher,replyFetched,qevercloud::ReplyFetcher*),
                      this, QEC_SLOT(AsyncResult,onReplyFetched,QObject*));
     f->start(evernoteNetworkAccessManager(), request_, postData_);
 }

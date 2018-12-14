@@ -32,7 +32,7 @@ public:
     int httpStatusCode() {return httpStatusCode_;}
 
 signals:
-    void replyFetched(QObject*); // sends itself
+    void replyFetched(qevercloud::ReplyFetcher*); // sends itself
 
 private slots:
     void onFinished();
