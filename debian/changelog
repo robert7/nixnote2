@@ -1,5 +1,4 @@
-
-ixNote (2.1.2-d) stable; urgency=low
+NixNote (2.1.2-e) stable; urgency=low
   * Make project cross-buildable issue #67; from https://bugs.debian.org/915590
   * Added italian translation, thanks to Rino Russo
   * Synchronized translation files with source code, fixed missing display of translation credits
@@ -9,7 +8,9 @@ ixNote (2.1.2-d) stable; urgency=low
   * "Copy Note URL" title changed to "Copy Note Link" as it is the same function which had 2 names
   * Added alternative keyboard shortcut to quit the app (Alt+Q)
   * Fixed: cursor jumps to search after sync - issue #59, improved sync error notifications
- -- Robert Spiegel <nightingale7@gmail.com>  Fri, 14 Dec 2018 15:40:23 +0100
+  * Restored "sample_exits" (NixNote note scripting examples) from upstream repository
+  * Added button with wiki article link to "Preferences/Exits" with function description
+ -- Robert Spiegel <nightingale7@gmail.com>  Fri, 14 Dec 2018 17:00:00 +0100
 
 NixNote (2.1.1) stable; urgency=low
   * Chinese translation update; thanks to https://github.com/hosiet
@@ -18,7 +19,7 @@ NixNote (2.1.1) stable; urgency=low
   * Added dependency to libqt5sql5-sqlite in PPA build
   * For the java encryption code just the "jar" file is now installed
   * Fixed path to tidy include files
-  * "changelog.txt" now contains the changelog and "debian/changelog" it is a copy of it
+  * "changelog.txt" now contains list of changes and "debian/changelog" it is a copy of it
   * Fixed few text typos; thanks to https://github.com/hosiet
   * Added few resolutions of app icon
  -- Robert Spiegel <nightingale7@gmail.com>  Wed, 05 Dec 2018 14:20:03 +0100

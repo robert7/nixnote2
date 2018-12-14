@@ -472,9 +472,6 @@ message("Target binary: $${binary.files}")
 desktop.path = $${PREFIX}/share/applications
 desktop.files = $${TARGET}.desktop
 
-#pixmaps.path = $${PREFIX}/share/pixmaps
-#pixmaps.files = resources/icons/nixnote2.png
-
 icons.path = $${PREFIX}/share/icons
 icons.files = resources/icons/*
 
@@ -489,7 +486,8 @@ help.files = help/*
 
 textfiles.path = $${PREFIX}/share/$$TARGET
 textfiles.files = $$PWD/shortcuts.txt $$PWD/themes.ini $$PWD/LICENSE $$PWD/colors.txt \
-                  $${DESTDIR}/version/build-version.txt $${DESTDIR}/version/version.txt
+                  $${DESTDIR}/version/build-version.txt $${DESTDIR}/version/version.txt \
+                  $$PWD/resources/sample_exits
 textfiles.CONFIG = no_check_exist
 
 docs.path = $${PREFIX}/share/doc/$$TARGET

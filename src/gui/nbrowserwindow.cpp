@@ -4219,18 +4219,19 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
     QLOG_TRACE_IN();
     ExitPoint_NoteEdit *saveExit = new ExitPoint_NoteEdit();
 
-#if QT_VERSION >= 0x050000
     QJSEngine engine;
     QJSValue exit_s = engine.newQObject(saveExit);
     engine.globalObject().setProperty("note", exit_s);
+
     // Start loading values
-    QLOG_INFO() << tr("Calling exit ") << exit->getExitName();
+    QLOG_INFO() << "Calling exit " << exit->getExitName();
     saveExit->setExitName(exit->getExitName());
     saveExit->setTitle(this->noteTitle.text());
     saveExit->setNotebook(notebookMenu.notebookName);
     saveExit->setCreationDate(dateEditor.createdDate.dateTime().toMSecsSinceEpoch());
     saveExit->setUpdatedDate(dateEditor.updatedDate.dateTime().toMSecsSinceEpoch());
     saveExit->setSubjectDate(dateEditor.subjectDate.dateTime().toMSecsSinceEpoch());
+
     QStringList tags;
     tagEditor.getTags(tags);
     saveExit->setTags(tags);
@@ -4240,29 +4241,6 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
     saveExit->setExitReady();
     QJSValue retval = engine.evaluate(exit->getScript());
     QLOG_INFO() << "Return value from exit: " << retval.toString();
-#endif
-#if QT_VERSION < 0x050000
-    QScriptEngine scriptEngine;
-    QScriptValue exit_qs = scriptEngine.newQObject(saveExit);
-    scriptEngine.globalObject().setProperty("note", exit_qs);
-    // Start loading values
-    QLOG_INFO() << tr("Calling exit ") << exit->getExitName();
-    saveExit->setExitName(exit->getExitName());
-    saveExit->setTitle(this->noteTitle.text());
-    saveExit->setNotebook(notebookMenu.notebookName);
-    saveExit->setCreationDate(dateEditor.createdDate.dateTime().toMSecsSinceEpoch());
-    saveExit->setUpdatedDate(dateEditor.updatedDate.dateTime().toMSecsSinceEpoch());
-    saveExit->setSubjectDate(dateEditor.subjectDate.dateTime().toMSecsSinceEpoch());
-    QStringList tags;
-    tagEditor.getTags(tags);
-    saveExit->setTags(tags);
-    saveExit->setContents(editor->page()->mainFrame()->toHtml());
-
-    // Set exit ready & call it.
-    saveExit->setExitReady();
-    QScriptValue retval = scriptEngine.evaluate(exit->getScript());
-    QLOG_INFO() << "Return value from exit: " << retval.toString();
-#endif
 
     // Check for any changes.
     if (saveExit->isTitleModified()) {
@@ -4295,7 +4273,6 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
         this->editor->setContent(data);
     }
     editor->isDirty = saveExit->isContentsDirty();
-
     setDirty(this->lid, editor->isDirty, false);
 
     QLOG_TRACE_OUT();

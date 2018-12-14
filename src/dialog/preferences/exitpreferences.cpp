@@ -19,13 +19,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QFrame>
 #include <QSpacerItem>
+#include <QDesktopServices>
 #include "exitpreferences.h"
 #include "src/global.h"
 
 extern Global global;
 
-ExitPreferences::ExitPreferences(QWidget *parent) : QWidget(parent)
-{
+ExitPreferences::ExitPreferences(QWidget *parent) : QWidget(parent) {
     this->setFont(global.getGuiFont(font()));
 
     loadExitFile = new QLineEdit();
@@ -77,54 +77,56 @@ ExitPreferences::ExitPreferences(QWidget *parent) : QWidget(parent)
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+    int row = 0;
+
     QGridLayout *loadLayout = new QGridLayout();
-
-    int row=0;
     mainLayout->addLayout(loadLayout);
-    loadLayout->addWidget(loadExitFileLabel, row,0);
-    loadLayout->addWidget(loadExitFile, row,1);
-    loadLayout->addWidget(loadExitButton, row,2);
-    loadLayout->addWidget(loadExitEnabledCombo, row++,3);
-
-//    QFrame *hFrame = new QFrame();
-//    hFrame->setFrameShape(QFrame::HLine);
-//    mainLayout->addWidget(hFrame);
-
-//    mainLayout->addSpacerItem(new QSpacerItem(30,30));
+    loadLayout->addWidget(loadExitFileLabel, row, 0);
+    loadLayout->addWidget(loadExitFile, row, 1);
+    loadLayout->addWidget(loadExitButton, row, 2);
+    loadLayout->addWidget(loadExitEnabledCombo, row++, 3);
 
     QGridLayout *saveLayout = new QGridLayout();
     mainLayout->addLayout(saveLayout);
-    saveLayout->addWidget(saveExitFileLabel, row,0);
-    saveLayout->addWidget(saveExitFile, row,1);
-    saveLayout->addWidget(saveExitButton, row,2);
-    saveLayout->addWidget(saveExitEnabledCombo, row++,3);
+    saveLayout->addWidget(saveExitFileLabel, row, 0);
+    saveLayout->addWidget(saveExitFile, row, 1);
+    saveLayout->addWidget(saveExitButton, row, 2);
+    saveLayout->addWidget(saveExitEnabledCombo, row++, 3);
 
     QGridLayout *importKeepLayout = new QGridLayout();
     mainLayout->addLayout(importKeepLayout);
-    saveLayout->addWidget(importKeepFileLabel, row,0);
-    saveLayout->addWidget(importKeepFile, row,1);
-    saveLayout->addWidget(importKeepButton, row,2);
-    saveLayout->addWidget(importKeepEnabledCombo, row++,3);
+    saveLayout->addWidget(importKeepFileLabel, row, 0);
+    saveLayout->addWidget(importKeepFile, row, 1);
+    saveLayout->addWidget(importKeepButton, row, 2);
+    saveLayout->addWidget(importKeepEnabledCombo, row++, 3);
 
     QGridLayout *importDeleteLayout = new QGridLayout();
     mainLayout->addLayout(importDeleteLayout);
-    saveLayout->addWidget(importDeleteFileLabel, row,0);
-    saveLayout->addWidget(importDeleteFile, row,1);
-    saveLayout->addWidget(importDeleteButton, row,2);
-    saveLayout->addWidget(importDeleteEnabledCombo, row++,3);
+    saveLayout->addWidget(importDeleteFileLabel, row, 0);
+    saveLayout->addWidget(importDeleteFile, row, 1);
+    saveLayout->addWidget(importDeleteButton, row, 2);
+    saveLayout->addWidget(importDeleteEnabledCombo, row++, 3);
+
+    QPushButton *infoButton = new QPushButton(tr("More Info"));
+    connect(infoButton, SIGNAL(pressed()), this, SLOT(showInfo()));
+
+    QGridLayout *buttonLayout = new QGridLayout();
+    mainLayout->addLayout(buttonLayout);
+    buttonLayout->addWidget(infoButton);
 
     loadValues();
 }
 
-
+void ExitPreferences::showInfo() {
+    QDesktopServices::openUrl(QUrl(NN_GITHUB_WIKI_URL "/Scripting-(Exits)"));
+}
 
 void ExitPreferences::loadExitButtonPressed(bool value) {
     Q_UNUSED(value);
     QFileDialog f;
     loadExitFile->setText(f.getOpenFileName(this, tr("Select Exit File")));
-
 }
-
 
 
 void ExitPreferences::saveExitButtonPressed(bool value) {
@@ -135,8 +137,6 @@ void ExitPreferences::saveExitButtonPressed(bool value) {
 }
 
 
-
-
 void ExitPreferences::importDeleteExitButtonPressed(bool value) {
     Q_UNUSED(value);
     QFileDialog f;
@@ -144,14 +144,11 @@ void ExitPreferences::importDeleteExitButtonPressed(bool value) {
 }
 
 
-
-
 void ExitPreferences::importKeepExitButtonPressed(bool value) {
     Q_UNUSED(value);
     QFileDialog f;
     importKeepFile->setText(f.getOpenFileName(this, tr("Select Exit File")));
 }
-
 
 
 void ExitPreferences::saveValues() {
@@ -201,11 +198,9 @@ void ExitPreferences::saveValues() {
 }
 
 
-
-
 void ExitPreferences::loadValues() {
 
-    QString file="";
+    QString file = "";
     bool enabled = false;
 
     global.settings->beginGroup("ExitPoint_LoadNote");
