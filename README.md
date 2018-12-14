@@ -4,7 +4,7 @@
 Nixnote is Evernote desktop client for Linux.
 
 * [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
-* [New features in v2.1](https://github.com/robert7/nixnote2/wiki/New-features-in-v2.1)
+* [Features](https://github.com/robert7/nixnote2/wiki/Features)
 * [CHANGELOG](https://github.com/robert7/nixnote2/blob/master/debian/changelog)
 * [Contributing](CONTRIBUTING.md)
 

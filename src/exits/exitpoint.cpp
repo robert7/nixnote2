@@ -84,13 +84,6 @@ void ExitPoint::log(QString value) {
     QLOG_INFO() << value;
 }
 
-
-
-
-
-
-
-
 ExitPoint_NoteEdit::ExitPoint_NoteEdit(ExitPoint *parent) : ExitPoint(parent) {
     exitReady = false;
 
