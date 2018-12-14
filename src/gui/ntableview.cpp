@@ -235,6 +235,7 @@ NTableView::NTableView(QWidget *parent) :
     restoreNoteAction->setVisible(false);
 
     copyNoteLinkAction = new QAction(tr("Copy Note Link"), this);
+    global.setupShortcut(copyNoteLinkAction, "Edit_Copy_Note_Url");
     contextMenu->addAction(copyNoteLinkAction);
     copyNoteLinkAction->setFont(guiFont);
     connect(copyNoteLinkAction, SIGNAL(triggered()), this, SLOT(copyNoteLink()));
