@@ -155,14 +155,22 @@ void NMainMenuBar::setupFileMenu() {
     quitAction->setToolTip(tr("Quit the program"));
     connect(quitAction, SIGNAL(triggered()), parent, SLOT(quitNixNote()));
 
-    quitAction->setShortcut(QKeySequence::Close);
+    //quitAction->setShortcut(QKeySequence::Close);
     quitAction->setIcon(QIcon::fromTheme("exit"));
     setupShortcut(quitAction, QString("File_Exit"));
     fileMenu->addAction(quitAction);
 
+    // a bit hack, to add 2 keyboard shortcuts to quit the app
+    // https://stackoverflow.com/questions/27074722/qt-adding-non-menubar-keyboard-shortcut-to-qmainwindow
+    QAction *quitAction2 = new QAction(tr("Quit2"), this);
+    setupShortcut(quitAction2, QString("File_Exit2"));
+    connect(quitAction2, SIGNAL(triggered()), parent, SLOT(quitNixNote()));
+    parent->addAction(quitAction2);
+
     QString menuCss = global.getThemeCss("menuCss");
-    if (menuCss != "")
+    if (menuCss != "") {
         this->setStyleSheet(menuCss);
+    }
 }
 
 
@@ -558,8 +566,9 @@ void NMainMenuBar::setupHelpMenu() {
 }
 
 void NMainMenuBar::setupShortcut(QAction *action, QString text) {
-    if (!global.shortcutKeys->containsAction(&text))
+    if (!global.shortcutKeys->containsAction(&text)) {
         return;
+    }
     QKeySequence key(global.shortcutKeys->getShortcut(&text));
     action->setShortcut(key);
 }

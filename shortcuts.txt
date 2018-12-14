@@ -28,13 +28,12 @@ File_Save_Content             Ctrl+S            // Force an immediate save of al
 File_Print                    Ctrl+P            // Print
 File_Selective_Sync                             // Selective sync setup
 File_Empty_Trash                                // Purge all deleted notes
-File_Exit                     Ctrl+Q            // I'm outahere
+File_Exit                     Ctrl+Q            // Quit (will terminate app)
+File_Exit2                    Alt+Q             // Quit - alternative shortcut
 File_Note_Export_Pdf                            // Export selected notes as a PDF
 File_Email                    Ctrl+Alt+E        // Email
 File_History_Previous         Alt+Left          // Go back in history
 File_History_Next             Alt+Right         // Go forward in history
-
-
 
 Edit_Search_Find              Ctrl+F            // Search only within the current note
 Edit_Search_Find_Next         Ctrl+G            // Find the next occurrence within the current note
