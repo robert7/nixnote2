@@ -14,9 +14,9 @@
         <translation>版本：</translation>
     </message>
     <message>
-        <location filename="../dialog/aboutdialog.cpp" line="53"/>
+        <location filename="../src/dialog/aboutdialog.cpp" line="51"/>
         <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
-        <translation>&lt;span align=&quot;center&quot;&gt;&lt;p&gt;简体中文翻译：Aten Zhang, 2016；&lt;br&gt;Boyuan Yang, 2017。
+        <translation>&lt;span align=&quot;center&quot;&gt;&lt;p&gt;简体中文翻译：Aten Zhang, 2016；&lt;br&gt;Boyuan Yang, 2017-2018。
 有任何翻译缺失、BUG和改进意见&lt;br&gt;
 请发邮件到&lt;i&gt;atenzd@gmail.com&lt;/i&gt;或向项目提交错误报告。&lt;/p&gt;&lt;/span&gt;</translation>
     </message>
@@ -171,7 +171,7 @@
         <location filename="../src/dialog/accountmaintenancedialog.cpp" line="168"/>
         <location filename="../src/dialog/accountmaintenancedialog.cpp" line="192"/>
         <source>Switch to </source>
-        <translation>切换到</translation>
+        <translation>切换到 </translation>
     </message>
 </context>
 <context>
@@ -290,7 +290,7 @@
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="56"/>
         <source>Set author on new notes.</source>
-        <translation>新建笔记时自动设置作者</translation>
+        <translation>新建笔记时自动设置作者。</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="58"/>
@@ -574,7 +574,7 @@
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="464"/>
         <source> has been created.
 </source>
-        <translation>已创建。</translation>
+        <translation> 已创建。</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="330"/>
@@ -984,29 +984,29 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="71"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="332"/>
         <source>Format Code Block</source>
-        <translation type="unfinished"></translation>
+        <translation>格式化代码块</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="72"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="335"/>
         <source>Sync</source>
-        <translation type="unfinished"></translation>
+        <translation>同步</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="73"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="340"/>
         <source>Email Note</source>
-        <translation type="unfinished">发送笔记</translation>
+        <translation>邮件发送笔记</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="160"/>
         <source>Change color of marked text to current color (click and hold to select color)</source>
-        <translation type="unfinished"></translation>
+        <translation>修改标记文本的颜色为当前颜色（点击并按住以选择颜色）</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="175"/>
         <source>Change background color of marked text to current color - highlight (click and hold  to select color)</source>
-        <translation type="unfinished"></translation>
+        <translation>修改标记文本的背景颜色为当前颜色 - 高亮（点击并按住以选择颜色）</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="252"/>
@@ -1031,7 +1031,7 @@
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="292"/>
         <source>Indent/Shift Right</source>
-        <translation type="unfinished"></translation>
+        <translation>缩进/向右偏移</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="311"/>
@@ -1047,13 +1047,13 @@
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
         <source>Intent/Shift Right</source>
-        <translation type="unfinished"></translation>
+        <translation>缩进/向右偏移</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="297"/>
         <source>Outdent/Shift Left</source>
-        <translation type="unfinished"></translation>
+        <translation>缩进/向左偏移</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="69"/>
@@ -1324,7 +1324,7 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/dialog/encryptdialog.cpp" line="61"/>
         <source>**64bit RC2 cipher ~ medium security**</source>
-        <translation type="unfinished"></translation>
+        <translation>**64比特 RC2 密文 ~ 中等程度安全性**</translation>
     </message>
     <message>
         <location filename="../src/dialog/encryptdialog.cpp" line="68"/>
@@ -1395,7 +1395,7 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/exits/exitmanager.cpp" line="55"/>
         <source>Script filename is blank. Disabling exit </source>
-        <translation type="unfinished"></translation>
+        <translation>脚本文件名为空。禁用退出 </translation>
     </message>
     <message>
         <location filename="../src/exits/exitmanager.cpp" line="62"/>
@@ -1405,7 +1405,7 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/exits/exitmanager.cpp" line="68"/>
         <source>Script file doesn&apos;t exist or cannot be read. Disabling exit </source>
-        <translation type="unfinished"></translation>
+        <translation>脚本文件不存在或无法读取。禁用退出 </translation>
     </message>
 </context>
 <context>
@@ -1421,7 +1421,7 @@ Please specify server settings in the Preferences menu.</source>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="62"/>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="74"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>启用</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="40"/>
@@ -1429,7 +1429,7 @@ Please specify server settings in the Preferences menu.</source>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="63"/>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="75"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>禁用</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="46"/>
@@ -1556,7 +1556,7 @@ Please specify server settings in the Preferences menu.</source>
         <location filename="../src/watcher/filewatcher.cpp" line="287"/>
         <location filename="../src/watcher/filewatcher.cpp" line="313"/>
         <source>Calling exit </source>
-        <translation type="unfinished"></translation>
+        <translation>调用退出 </translation>
     </message>
     <message>
         <location filename="../src/watcher/filewatcher.cpp" line="340"/>
@@ -1650,7 +1650,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <location filename="../src/xml/importdata.cpp" line="107"/>
         <location filename="../src/xml/importdata.cpp" line="119"/>
         <source> notes found.</source>
-        <translation>篇笔记已找到。</translation>
+        <translation> 篇笔记已找到。</translation>
     </message>
     <message>
         <location filename="../src/xml/importdata.cpp" line="130"/>
@@ -1689,7 +1689,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <location filename="../src/xml/importenex.cpp" line="84"/>
         <location filename="../src/xml/importenex.cpp" line="94"/>
         <source> notes found.</source>
-        <translation>篇笔记已找到。</translation>
+        <translation> 篇笔记已找到。</translation>
     </message>
     <message>
         <location filename="../src/xml/importenex.cpp" line="101"/>
@@ -1775,90 +1775,95 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="41"/>
         <source>Catalan</source>
-        <translation type="unfinished"></translation>
+        <translation>加泰隆语</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="42"/>
         <source>Czech</source>
-        <translation type="unfinished"></translation>
+        <translation>捷克语</translation>
     </message>
     <message>
-        <location filename="../src/dialog/preferences/localepreferences.cpp" line="43"/>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="45"/>
         <source>Danish</source>
-        <translation type="unfinished"></translation>
+        <translation>丹麦语</translation>
     </message>
     <message>
-        <location filename="../src/dialog/preferences/localepreferences.cpp" line="44"/>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="46"/>
         <source>German</source>
         <translation>德语</translation>
     </message>
     <message>
-        <location filename="../src/dialog/preferences/localepreferences.cpp" line="45"/>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="47"/>
         <source>English (US)</source>
         <translation>英语（美国）</translation>
     </message>
     <message>
-        <location filename="../src/dialog/preferences/localepreferences.cpp" line="46"/>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="48"/>
         <source>English (UK)</source>
         <translation>英语（英国）</translation>
     </message>
     <message>
-        <location filename="../src/dialog/preferences/localepreferences.cpp" line="47"/>
-        <source>Spanish</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="51"/>
+        <source>Italian</source>
+        <translation>意大利语</translation>
     </message>
     <message>
-        <location filename="../src/dialog/preferences/localepreferences.cpp" line="48"/>
-        <source>French</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="56"/>
+        <source>Spanish</source>
+        <translation>西班牙语</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="49"/>
-        <source>Japanese</source>
-        <translation type="unfinished"></translation>
+        <source>French</source>
+        <translation>法语</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="50"/>
-        <source>Polish</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dialog/preferences/localepreferences.cpp" line="51"/>
-        <source>Portuguese</source>
-        <translation type="unfinished"></translation>
+        <source>Japanese</source>
+        <translation>日语</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="52"/>
+        <source>Polish</source>
+        <translation>波兰语</translation>
+    </message>
+    <message>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="53"/>
+        <source>Portuguese</source>
+        <translation>葡萄牙语</translation>
+    </message>
+    <message>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="54"/>
         <source>Russian</source>
         <translation>俄语</translation>
     </message>
     <message>
-        <location filename="../src/dialog/preferences/localepreferences.cpp" line="53"/>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="55"/>
         <source>Slovak</source>
-        <translation type="unfinished"></translation>
+        <translation>斯洛伐克语</translation>
     </message>
     <message>
-        <location filename="../src/dialog/preferences/localepreferences.cpp" line="54"/>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="43"/>
         <source>Chinese</source>
         <translation>中文</translation>
     </message>
     <message>
-        <location filename="../src/dialog/preferences/localepreferences.cpp" line="55"/>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="44"/>
         <source>Chinese (Taiwan)</source>
         <translation>中文（台湾）</translation>
     </message>
     <message>
-        <location filename="../src/dialog/preferences/localepreferences.cpp" line="56"/>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="57"/>
         <source>*Note: Restart required</source>
         <translation>* 注意：需要重新启动</translation>
     </message>
     <message>
-        <location filename="../src/dialog/preferences/localepreferences.cpp" line="59"/>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="60"/>
         <source>Date Format</source>
         <translation>日期格式</translation>
     </message>
     <message>
-        <location filename="../src/dialog/preferences/localepreferences.cpp" line="69"/>
+        <location filename="../src/dialog/preferences/localepreferences.cpp" line="70"/>
         <source>Time Format</source>
         <translation>时间格式</translation>
     </message>
@@ -2160,7 +2165,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1217"/>
         <source>HTML cleanup failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>HTML 清理失败。</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1285"/>
@@ -2287,13 +2292,13 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="4020"/>
         <source>Failed to initialize spell checker for </source>
-        <translation type="unfinished"></translation>
+        <translation>无法初始化拼写检查器，用于 </translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="4227"/>
         <location filename="../src/gui/nbrowserwindow.cpp" line="4249"/>
         <source>Calling exit </source>
-        <translation type="unfinished"></translation>
+        <translation>正在调用退出 </translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="4291"/>
@@ -2336,7 +2341,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="129"/>
         <source>Switch to </source>
-        <translation>切换到</translation>
+        <translation>切换到 </translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="147"/>
@@ -2576,12 +2581,12 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="538"/>
         <source>Active shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>活动快捷键</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="539"/>
         <source>View current shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>查看当前快捷键</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="396"/>
@@ -2641,27 +2646,27 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="502"/>
         <source>&amp;Project wiki</source>
-        <translation type="unfinished"></translation>
+        <translation>项目维基 (&amp;P)</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="507"/>
         <source>&amp;Getting started</source>
-        <translation type="unfinished"></translation>
+        <translation>入门使用 (&amp;G)</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="508"/>
         <source>Open Getting started wiki page</source>
-        <translation type="unfinished"></translation>
+        <translation>打开“入门使用”维基页面</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="533"/>
         <source>Data and &amp;log location info</source>
-        <translation type="unfinished"></translation>
+        <translation>数据和日志位置信息 (&amp;L)</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="534"/>
         <source>View location of program data and log file</source>
-        <translation type="unfinished"></translation>
+        <translation>查看程序数据和日志文件的位置</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="545"/>
@@ -2671,92 +2676,92 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="547"/>
         <source>About Qt</source>
-        <translation type="unfinished"></translation>
+        <translation>关于 Qt</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="576"/>
         <source>Sort notes by</source>
-        <translation type="unfinished"></translation>
+        <translation>笔记排序依据</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="582"/>
         <source>Relevance, Date updated [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>相关性，更新日期 [降序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="583"/>
         <source>Relevance, Date updated [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>相关性，更新日期 [升序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="585"/>
         <source>Relevance, Date created [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>相关性，创建日期 [降序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="586"/>
         <source>Relevance, Date created [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>相关性，创建日期 [升序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="588"/>
         <source>Relevance, Title [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>相关性，标题 [降序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="589"/>
         <source>Relevance, Title [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>相关性，标题 [升序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="592"/>
         <source>Date updated [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>更新日期 [降序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="593"/>
         <source>Date updated [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>更新日期 [升序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="595"/>
         <source>Date created [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>创建日期 [降序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="596"/>
         <source>Date created [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>创建日期 [升序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="598"/>
         <source>Title [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>标题 [降序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="599"/>
         <source>Title [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>标题 [升序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="601"/>
         <source>Tags [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>标签 [升序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="603"/>
         <source>Size [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>大小 [降序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="604"/>
         <source>Has todo [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>有待办事项 [降序]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="605"/>
         <source>Unsynced first</source>
-        <translation type="unfinished"></translation>
+        <translation>未同步内容优先</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="642"/>
@@ -2841,7 +2846,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="449"/>
         <source>Pause &amp;indexing</source>
-        <translation type="unfinished"></translation>
+        <translation>暂停索引 (&amp;I)</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="457"/>
@@ -2861,27 +2866,27 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="482"/>
         <source>A&amp;ccount / usage</source>
-        <translation type="unfinished"></translation>
+        <translation>帐号/使用情况 (&amp;C)</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="483"/>
         <source>Account and usage information</source>
-        <translation type="unfinished"></translation>
+        <translation>帐号和使用信息</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="490"/>
         <source>&amp;Import folders</source>
-        <translation type="unfinished"></translation>
+        <translation>导入文件夹 (&amp;I)</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="503"/>
         <source>Open NixNote wiki page with help/documentation/contact</source>
-        <translation type="unfinished"></translation>
+        <translation>打开 NixNote 维基页面以显示帮助/文档/联系方式</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="514"/>
         <source>Theme &amp;Information</source>
-        <translation>主题信息(&amp;I) </translation>
+        <translation>主题信息(&amp;I)</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="554"/>
@@ -3009,7 +3014,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="208"/>
         <source>Open Note In New Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>在新标签页打开笔记</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="215"/>
@@ -3397,7 +3402,7 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/ntableviewheader.cpp" line="147"/>
         <source>Relevance</source>
-        <translation type="unfinished"></translation>
+        <translation>相关性</translation>
     </message>
 </context>
 <context>
@@ -3551,7 +3556,7 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="94"/>
         <source>Tidy HTML</source>
-        <translation type="unfinished"></translation>
+        <translation>清理 HTML</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="108"/>
@@ -3616,7 +3621,7 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="100"/>
         <source>Simplify formatting</source>
-        <translation type="unfinished"></translation>
+        <translation>格式简化</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="187"/>
@@ -3819,22 +3824,22 @@ Are you sure you want to continue?</source>
         <location filename="../src/nixnote.cpp" line="352"/>
         <location filename="../src/nixnote.cpp" line="353"/>
         <source>New Note</source>
-        <translation type="unfinished"></translation>
+        <translation>新建笔记</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="872"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>显示</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="875"/>
         <source>New note</source>
-        <translation type="unfinished">新建文本笔记</translation>
+        <translation>新建笔记</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="890"/>
         <source>Quit</source>
-        <translation type="unfinished">退出</translation>
+        <translation>退出</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1917"/>
@@ -3949,7 +3954,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="3047"/>
         <source>Switch to </source>
-        <translation>切换到</translation>
+        <translation>切换到 </translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3153"/>
@@ -3974,12 +3979,12 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="3203"/>
         <source>Delete </source>
-        <translation>删除</translation>
+        <translation>删除 </translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3206"/>
         <source>Permanently delete </source>
-        <translation>永久删除</translation>
+        <translation>永久删除 </translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3210"/>
@@ -3994,47 +3999,47 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="3297"/>
         <source>Application file(s) info</source>
-        <translation type="unfinished"></translation>
+        <translation>应用程序文件信息</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3298"/>
         <source>Config files are located at:</source>
-        <translation type="unfinished"></translation>
+        <translation>配置文件位于：</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3299"/>
         <source>Note database files are located at:</source>
-        <translation type="unfinished"></translation>
+        <translation>笔记数据库文件位于：</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3302"/>
         <source>See project wiki section FAQ (Menu Help/Project wiki) for more info how to:</source>
-        <translation type="unfinished"></translation>
+        <translation>请阅读项目维基的常见问题一节（菜单 帮助/项目维基）以查看下列操作的具体做法：</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3303"/>
         <source>* change log level</source>
-        <translation type="unfinished"></translation>
+        <translation>* 修改日志等级</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3304"/>
         <source>* look at log</source>
-        <translation type="unfinished"></translation>
+        <translation>* 查看日志</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3305"/>
         <source>* how to add content of log file to github issue</source>
-        <translation type="unfinished"></translation>
+        <translation>* 如何将日志文件内容添加到 github issue 中</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3306"/>
         <source>* how to change data location</source>
-        <translation type="unfinished"></translation>
+        <translation>* 如何变更数据位置</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3300"/>
         <source>Main app log file is located at:</source>
-        <translation type="unfinished"></translation>
+        <translation>主应用日志文件位于：</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3548"/>
@@ -4182,7 +4187,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/gui/plugins/popplerviewer.cpp" line="166"/>
         <source>Page </source>
-        <translation>第</translation>
+        <translation>第 </translation>
     </message>
     <message>
         <location filename="../src/gui/plugins/popplerviewer.cpp" line="166"/>
@@ -4240,7 +4245,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/preferences/preferencesdialog.cpp" line="129"/>
         <source>Exits</source>
-        <translation type="unfinished"></translation>
+        <translation>退出</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/preferencesdialog.cpp" line="135"/>
@@ -4363,7 +4368,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="195"/>
         <source>Relevance</source>
-        <translation type="unfinished"></translation>
+        <translation>相关性</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="196"/>
@@ -4492,7 +4497,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="76"/>
         <source>Experimental: Search/index preprocessing. On change reindexing of all notes is needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>试验性功能：搜索/索引预处理。产生变更时，需要对所有笔记进行重新索引。</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="77"/>
@@ -4502,12 +4507,12 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="78"/>
         <source>Force search/index to lower case</source>
-        <translation type="unfinished"></translation>
+        <translation>强制搜索/索引使用小写字母</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="83"/>
         <source>Remove diacritics before search/index</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索/索引之前去除变音符号</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="68"/>
@@ -4664,7 +4669,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="143"/>
         <source>Downloading changes..</source>
-        <translation>正在下载修改</translation>
+        <translation>正在下载修改..</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="194"/>
