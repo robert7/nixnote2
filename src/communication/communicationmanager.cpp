@@ -154,28 +154,30 @@ void CommunicationManager::enDisconnect() {
 bool CommunicationManager::getUserInfo(User &user) {
     QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo";
     userStore = new UserStore(evernoteHost, authToken);
+
+    bool res = true;
     try {
         User u = userStore->getUser();
         user = u;
     } catch (ThriftException &e) {
         reportError(CommunicationError::ThriftException, e.type(), e.what());
-        return false;
+        res =  false;
     } catch (EDAMUserException &e) {
         reportError(CommunicationError::EDAMUserException, e.errorCode, e.what());
-        return false;
+        res =  false;
     } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
-        return false;
+        res =  false;
     } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
-        return false;
+        res =  false;
     } catch (const std::exception &e) {
         reportError(CommunicationError::StdException, 16, e.what());
-        return false;
+        res =  false;
     }
 
-    QLOG_TRACE_OUT();
-    return true;
+    QLOG_DEBUG() << "Exiting CommunicationManager::getUserInfo, res=" << res;
+    return res;
 }
 
 
@@ -488,17 +490,20 @@ void CommunicationManager::reportError(
     int code,
     const QString &message,
     const QString &internalMessage) {
-#ifndef _WIN32
-    // non Windows only
-    void *array[30];
-    size_t size;
-    // get void*'s for all entries on the stack
-    size = backtrace(array, 30);
+    QLOG_DEBUG() << "reportError";
 
-    // print out all the frames to stderr
-    QLOG_ERROR() << "Exception stacktrace:";
-    backtrace_symbols_fd(array, size, 2);
-#endif // End windows check
+    #ifndef _WIN32
+        // non Windows only
+        void *array[30];
+        size_t size;
+        // get void*'s for all entries on the stack
+        size = backtrace(array, 30);
+
+        // print out all the frames to stderr
+        QLOG_ERROR() << "Exception stacktrace:";
+        backtrace_symbols_fd(array, size, 2);
+    #endif // End windows check
+
     error.resetTo(errorType, code, message, internalMessage);
 
     global.setMessage(tr("Error in sync: ") + error.getMessage(), 0);
@@ -1015,6 +1020,8 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
 
 // Error handler EDAM System Exception
 void CommunicationManager::handleEDAMSystemException(EDAMSystemException e, QString additionalInfo) {
+    QLOG_DEBUG() << "handleEDAMSystemException";
+
     QString msg;
     msg.append(e.what());
     if (e.message.isSet()) {
