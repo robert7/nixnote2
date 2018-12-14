@@ -43,7 +43,7 @@ class SyncRunner : public QObject
     Q_OBJECT
 private:
     bool idle;
-    bool init;
+    bool initialized;
     int defaultMsgTimeout;
     long evernoteUpdateCount;
     DatabaseConnection *db;
