@@ -10,6 +10,7 @@ NixNote (2.1.2-e) stable; urgency=low
   * Fixed: cursor jumps to search after sync - issue #59, improved sync error notifications
   * Restored "sample_exits" (NixNote note scripting examples) from upstream repository
   * Added button with wiki article link to "Preferences/Exits" with function description
+  * Synced qevercloud source with source repository (currently at tag v2.2.1)
  -- Robert Spiegel <nightingale7@gmail.com>  Fri, 14 Dec 2018 17:00:00 +0100
 
 NixNote (2.1.1) stable; urgency=low
