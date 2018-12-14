@@ -68,7 +68,6 @@ void ShortcutKeys::loadCustomKeys(QString fileName) {
 
                 if (keyvalue.size() >= 2) {
                     loadkey(keyStr, &keyvalue[1]);
-                    // QLOG_TRACE() << "Setting " + keyStr + " to " + keyvalue[1];
                 }
             }
         }
@@ -85,23 +84,27 @@ void ShortcutKeys::loadkey(QString action, QString *shortcut) {
     QString sc = shortcut->toLower().trimmed();
 
     // If we have an existing one, remove it.
-    if (actionMap->contains(action))
+    if (actionMap->contains(action)) {
         removeByAction(action);
-    if (shortcutMap->contains(sc.toLower().trimmed()))
-        removeByShortcut(sc.toLower().trimmed());
+    }
+    if (shortcutMap->contains(sc)) {
+        removeByShortcut(sc);
+    }
 
     if (sc == "") {
         removeByShortcut(sc);
         return;
     }
 
-    //Add the new value
-    actionMap->insert(action.toLower(), sc);
-    shortcutMap->insert(sc.toLower(), action);
+    // Add the new value
+    QLOG_TRACE() << "Setting " << action << " to " << sc;
+    actionMap->insert(action, sc);
+    shortcutMap->insert(sc, action);
 }
 
 // Remove a shortcut by the Shortcut key
 void ShortcutKeys::removeByShortcut(QString shortcut) {
+    QLOG_TRACE() << "Removing by shortcut " << shortcut;
     QString action = shortcutMap->key(shortcut.toLower(), "");
     shortcutMap->remove(shortcut.toLower());
     if (action != "")
@@ -110,6 +113,7 @@ void ShortcutKeys::removeByShortcut(QString shortcut) {
 
 // Remove a shortcut by the action itself
 void ShortcutKeys::removeByAction(QString action) {
+    QLOG_TRACE() << "Removing by action " << action;
     QString shortcut = actionMap->key(action.toLower(),"");
     actionMap->remove(action.toLower());
     if (shortcut != "")
