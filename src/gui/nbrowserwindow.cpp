@@ -2441,7 +2441,7 @@ void NBrowserWindow::editLatex(QString guid) {
                 attributes = r.attributes;
                 if (attributes.sourceURL.isSet()) {
                     QString formula = attributes.sourceURL;
-                    formula = formula.replace("http://latex.codecogs.com/gif.latex?", "");
+                    formula = formula.replace(LATEX_RENDER_URL, "");
                     oldFormula = formula;
                     dialog.setFormula(formula);
                 }
@@ -2518,7 +2518,7 @@ void NBrowserWindow::editLatex(QString guid) {
 
     ResourceAttributes a;
     a.attachment = false;
-    a.sourceURL = "http://latex.codecogs.com/gif.latex?" + text;
+    a.sourceURL = LATEX_RENDER_URL + text;
     r.attributes = a;
 
     rtable.add(newlid, r, true, lid);

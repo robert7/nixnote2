@@ -176,7 +176,7 @@ void Tests::enmlNixnoteLinkTest() {
 
         const QString r1 = formatToEnml(src);
         const QString r2 = addEnmlEnvelope(result, QStringLiteral("45878,45880"));
-        QCOMPAREX(r1, r2); //note use string, not expressions
+        QCOMPAREX(r1, r2); // note: use string, not expressions
     }
 
     // zip
@@ -202,10 +202,12 @@ void Tests::enmlNixnoteLinkTest() {
         QString src(
                 R"R(<a onmouseover="cursor:'hand'" title="xfrac{+y}{+z^}" href="latex:///45913"><img src="file:///home/robert7/.nixnote/db-2/dba/45913.gif" type="image/gif" hash="69cb83339ee2fb3f008492f82f98cbbc" oncontextmenu="window.browser.imageContextMenu('45913', '/home/robert7/.nixnote/db-2/dba/45913.gif');" en-tag="en-latex" lid="45913"></a><br><div><div>)R");
         QString result(
-                R"R(<a href="http://latex.codecogs.com/gif.latex?xfrac{+y}{+z^}"><en-media type="image/gif" hash="69cb83339ee2fb3f008492f82f98cbbc"></en-media></a><br />)R");
+                R"R(<a href=")R"
+                LATEX_RENDER_URL
+                R"R(xfrac{+y}{+z^}"><en-media type="image/gif" hash="69cb83339ee2fb3f008492f82f98cbbc"></en-media></a><br />)R");
         const QString r1 = formatToEnml(src);
         const QString r2 = addEnmlEnvelope(result, "45913");
-        QCOMPAREX(r1, r2); //note use string, not expressions
+        QCOMPAREX(r1, r2); // note: use string, not expressions
     }
 }
 

@@ -50,6 +50,9 @@ enum HtmlCleanupMode {
 #define HTML_COMMENT_END " -->"
 #define HTML_TEMP_TABLE_CLASS "en-crypt-temp"
 
+#define LATEX_RENDER_URL "http://latex.codecogs.com/gif.latex?"
+
+
 
 class EnmlFormatter : public QObject
 {

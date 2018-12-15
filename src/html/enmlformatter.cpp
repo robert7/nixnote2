@@ -44,7 +44,7 @@ EnmlFormatter::EnmlFormatter(
 ) : QObject(nullptr) {
     this->guiAvailable = guiAvailable;
 
-    // actually currently NOT used, as we donÄt support editable encrypted areas
+    // actually currently NOT used, as we don't support editable encrypted areas
     this->passwordSafe = passwordSafe;
     this->cryptoJarPath = cryptoJarPath;
 
@@ -617,10 +617,10 @@ void EnmlFormatter::fixANode(QWebElement &e) {
         e.setOuterXml(xml);
     } else if (href.toLower().startsWith("latex:///")) {
         QString formula = e.attribute("title");
-        const QString attr = QString("http://latex.codecogs.com/gif.latex?%1").arg(formula);
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed latex a tag to " << e.toOuterXml();
+        const QString attr = QString(LATEX_RENDER_URL "%1").arg(formula);
         e.removeAttribute("title");
         e.setAttribute("href", attr);
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed latex a tag to " << e.toOuterXml();
     } else if (href.isEmpty()) {
         QLOG_WARN() << ENML_MODULE_LOGPREFIX " a tag with empty href => removing";
         e.removeFromDocument();
