@@ -79,7 +79,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addAction(pasteWithoutFormatAction);
     connect(pasteWithoutFormatAction, SIGNAL(triggered()), parent, SLOT(pasteWithoutFormatButtonPressed()));
 
-    copyNoteUrlAction = new QAction(tr("Copy Note URL"), this);
+    copyNoteUrlAction = new QAction(tr("Copy Note Link"), this);
     global.setupShortcut(copyNoteUrlAction, "Edit_Copy_Note_Url");
     contextMenu->addAction(copyNoteUrlAction);
     connect(copyNoteUrlAction, SIGNAL(triggered()), parent, SLOT(copyNoteUrl()));

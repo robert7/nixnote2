@@ -4,7 +4,7 @@
 Nixnote is Evernote desktop client for Linux.
 
 * [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
-* [New features in v2.1](https://github.com/robert7/nixnote2/wiki/New-features-in-v2.1)
+* [Features](https://github.com/robert7/nixnote2/wiki/Features)
 * [CHANGELOG](https://github.com/robert7/nixnote2/blob/master/debian/changelog)
 * [Contributing](CONTRIBUTING.md)
 
@@ -19,6 +19,12 @@ sudo add-apt-repository ppa:nixnote/nixnote2-stable -y
 sudo apt update
 sudo apt install nixnote2 -y
 ```
+
+Additionally there is a "[development branch PPA](https://code.launchpad.net/~nixnote/+archive/ubuntu/nixnote2-develop)" available.
+The usage is same as for "stable PPA", just replace the name "nixnote2-stable" with "nixnote2-develop".
+Just please take care, that you don't enable both stable and development PPA.
+At most times, the "[development release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#development-releases)"
+should be OK for daily use.
 
 ### Arch Linux
 AUR package [nixnote2-git](https://aur.archlinux.org/packages/nixnote2-git/)

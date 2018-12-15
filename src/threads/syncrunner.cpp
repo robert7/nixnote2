@@ -38,10 +38,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 SyncRunner::SyncRunner() {
-    init = false;
+    initialized = false;
     finalSync = false;
     apiRateLimitExceeded = false;
     minutesToNextSync = 0;
+    error = false;
 }
 
 SyncRunner::~SyncRunner() {
@@ -50,9 +51,10 @@ SyncRunner::~SyncRunner() {
 
 void SyncRunner::synchronize() {
     QLOG_DEBUG() << "Starting SyncRunner.synchronize()";
-    if (!init) {
+
+    if (!initialized) {
         this->setObjectName("SyncRunnerThread");
-        init = true;
+        initialized = true;
         consumerKey = "";
         secret = "";
         apiRateLimitExceeded = false;
@@ -66,10 +68,10 @@ void SyncRunner::synchronize() {
         defaultMsgTimeout = 150000;
         db = new DatabaseConnection("syncrunner");
         comm = new CommunicationManager(db);
-        if (global.guiAvailable)
+        if (global.guiAvailable) {
             connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
+        }
     }
-
 
     // If we are already connected, we are already synchronizing so there is nothing more to do
     if (global.connected) {
@@ -1176,9 +1178,11 @@ qint32 SyncRunner::uploadPersonalNotes() {
         usn = comm->uploadNote(note);
         if (usn == 0) {
             this->communicationErrorHandler();
-            if (note.title.isSet())
+            if (note.title.isSet()) {
                 QLOG_ERROR() << tr("Error uploading note:") + note.title;
-            else QLOG_ERROR() << tr("Error uploading note with a missing title!");
+            } else {
+                QLOG_ERROR() << tr("Error uploading note with a missing title!");
+            }
             error = true;
             //return maxUsn;
         }

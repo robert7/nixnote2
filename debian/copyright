@@ -26,8 +26,9 @@ Copyright: Copyright Daniel Maurer
 License: GPL-2+
 
 Files: src/qevercloud/*
-Copyright: 2014 Sergey Skoblikov
-License: Expat
+Copyright: 2014 Sergey Skoblikov,
+           2015-2016 Dmitry Ivanov
+License: MIT
 
 Files: java/src/cx/fbn/encrypt/Base64.java
 Copyright: Robert Harder <rharder@usa.net>

@@ -154,28 +154,30 @@ void CommunicationManager::enDisconnect() {
 bool CommunicationManager::getUserInfo(User &user) {
     QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo";
     userStore = new UserStore(evernoteHost, authToken);
+
+    bool res = true;
     try {
         User u = userStore->getUser();
         user = u;
     } catch (ThriftException &e) {
         reportError(CommunicationError::ThriftException, e.type(), e.what());
-        return false;
+        res = false;
     } catch (EDAMUserException &e) {
         reportError(CommunicationError::EDAMUserException, e.errorCode, e.what());
-        return false;
+        res = false;
     } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
-        return false;
+        res = false;
     } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
-        return false;
+        res = false;
     } catch (const std::exception &e) {
         reportError(CommunicationError::StdException, 16, e.what());
-        return false;
+        res = false;
     }
 
-    QLOG_TRACE_OUT();
-    return true;
+    QLOG_DEBUG() << "Exiting CommunicationManager::getUserInfo, res=" << res;
+    return res;
 }
 
 
@@ -457,37 +459,40 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
         token = authToken;
     }
     noteStore = (token == authToken) ? myNoteStore : linkedNoteStore;
+
+    qint32 updateSequenceNum = 0;
     try {
         if (note.updateSequenceNum.isSet() && note.updateSequenceNum > 0) {
             note = noteStore->updateNote(note, token);
         } else {
             note = noteStore->createNote(note, token);
         }
-        return note.updateSequenceNum;
+        updateSequenceNum = note.updateSequenceNum;
     } catch (ThriftException &e) {
         reportError(CommunicationError::ThriftException, e.type(), e.what());
         dumpNote(note);
-        return 0;
     } catch (EDAMUserException &e) {
         reportError(CommunicationError::EDAMUserException, e.errorCode, e.what());
         dumpNote(note);
-        return 0;
     } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e, note.title);
         dumpNote(note);
-        return 0;
     } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e, note.title);
         dumpNote(note);
-        return 0;
     }
+
+    QLOG_DEBUG() << "uploadNote finished " << note.guid << ", updateSequenceNum=" << updateSequenceNum;
+    return updateSequenceNum;
 }
 
 void CommunicationManager::reportError(
-    const CommunicationError::CommunicationErrorType errorType,
-    int code,
-    const QString &message,
-    const QString &internalMessage) {
+        const CommunicationError::CommunicationErrorType errorType,
+        int code,
+        const QString &message,
+        const QString &internalMessage) {
+    QLOG_DEBUG() << "reportError";
+
 #ifndef _WIN32
     // non Windows only
     void *array[30];
@@ -499,6 +504,7 @@ void CommunicationManager::reportError(
     QLOG_ERROR() << "Exception stacktrace:";
     backtrace_symbols_fd(array, size, 2);
 #endif // End windows check
+
     error.resetTo(errorType, code, message, internalMessage);
 
     global.setMessage(tr("Error in sync: ") + error.getMessage(), 0);
@@ -1015,6 +1021,8 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
 
 // Error handler EDAM System Exception
 void CommunicationManager::handleEDAMSystemException(EDAMSystemException e, QString additionalInfo) {
+    QLOG_DEBUG() << "handleEDAMSystemException";
+
     QString msg;
     msg.append(e.what());
     if (e.message.isSet()) {
@@ -1041,9 +1049,9 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e, QStr
             startText = "Application will continue to sync in";
 
         QString userMessage(
-            tr("API rate limit exceeded.") + QString(" ")
-            + tr(startText.c_str()) + QString(" ") + QString::number(this->minutesToNextSync)
-            + " " + tr(endOfText.c_str()));
+                tr("API rate limit exceeded.") + QString(" ")
+                + tr(startText.c_str()) + QString(" ") + QString::number(this->minutesToNextSync)
+                + " " + tr(endOfText.c_str()));
         if (e.rateLimitDuration.isSet()) {
             msg.append(" # rateLimitDuration=").append(e.rateLimitDuration.ref());
         }

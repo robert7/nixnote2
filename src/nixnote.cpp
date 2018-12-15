@@ -595,8 +595,6 @@ void NixNote::setupGui() {
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(syncButtonReset()));
 
     QLOG_DEBUG() << "Setting up more connections for tab windows & threads";
-    // Setup so we refresh whenever the sync is done.
-    //    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria(bool)));
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(notifySyncComplete()));
 
     // connect so we refresh the note list and counts whenever a note has changed
@@ -1638,7 +1636,8 @@ void NixNote::openExternalNote(qint32 lid) {
 void NixNote::updateSelectionCriteria(bool afterSync) {
     QLOG_DEBUG() << "starting NixNote::updateSelectionCriteria() filtercnt="
                  << global.filterCriteria.size()
-                 << " pos=" << global.filterPosition;
+                 << ", pos=" << global.filterPosition
+                 << ", afterSync=" << afterSync;
 
     tabWindow->currentBrowser()->saveNoteContent();
 
@@ -1661,13 +1660,15 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
     filterEngine.filter();
 
     QLOG_DEBUG() << "Refreshing data";
-
     noteTableView->refreshData();
     noteTableView->scrollToTop();            // vertical scroll
     noteTableView->reset();                  // reset selection (to none)
+
     // yet missing:horizontal reset
     // focus search text after updating search criteria
-    searchText->setFocus(Qt::OtherFocusReason);
+    if (!afterSync) {
+        searchText->setFocus(Qt::OtherFocusReason);
+    }
 
     int maxFilterPosition = global.filterCriteria.size() - 1;
     if (global.filterPosition > maxFilterPosition) {
@@ -1978,25 +1979,35 @@ void NixNote::setMessage(QString text, int timeout) {
 // Notification slot that the sync has completed.
 void NixNote::notifySyncComplete() {
     updateSelectionCriteria(true);
-    bool show;
+
     global.settings->beginGroup(INI_GROUP_SYNC);
-    show = global.settings->value("enableNotification", false).toBool();
+    bool apiRateLimitAutoRestart = global.settings->value("apiRateLimitAutoRestart", false).toBool();
     global.settings->endGroup();
-    if (!show)
+    global.settings->beginGroup(INI_GROUP_SYNC);
+    bool syncNotifications = global.settings->value("enableNotification", false).toBool();
+    global.settings->endGroup();
+
+    bool popupOnSyncError = global.popupOnSyncError();
+    bool haveSyncError = syncRunner.error;
+
+    QLOG_DEBUG() << "notifySyncComplete: haveSyncError=" << haveSyncError
+                 << ", apiRateLimitAutoRestart=" << apiRateLimitAutoRestart
+                 << ", popupOnSyncError=" << popupOnSyncError
+                 << ", syncNotifications=" << syncNotifications;
+
+    if (haveSyncError && popupOnSyncError) {
+        QMessageBox::critical(this, tr("Sync Error"), tr("Sync error. See message log for details"));
         return;
-    if (syncRunner.error) {
+    }
+
+    if (!syncNotifications) {
+        return;
+    }
+    if (haveSyncError) {
         showMessage(tr("Sync Error"), tr("Sync completed with errors."));
-
-        global.settings->beginGroup(INI_GROUP_SYNC);
-        bool isAutoRestartEnabled = global.settings->value("apiRateLimitAutoRestart", false).toBool();
-        global.settings->endGroup();
-
-        //Do not show popup when automatic sync after error enabled
-        if (global.popupOnSyncError() && !isAutoRestartEnabled) {
-            QMessageBox::critical(0, tr("Sync Error"), tr("Sync error. See message log for details"));
-        }
-    } else if (global.showGoodSyncMessagesInTray)
+    } else if (global.showGoodSyncMessagesInTray) {
         showMessage(tr("Sync Complete"), tr("Sync completed successfully."));
+    }
 }
 
 
@@ -2009,10 +2020,9 @@ void NixNote::showMessage(QString title, QString msg, int timeout) {
         notifyProcess.waitForFinished();
         QLOG_DEBUG() << "notify-send completed: " << notifyProcess.waitForFinished()
                      << " Return Code: " << notifyProcess.state();
-        return;
+    } else {
+        trayIcon->showMessage(title, msg);
     }
-    trayIcon->showMessage(title, msg);
-
 }
 
 
