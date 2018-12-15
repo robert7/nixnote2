@@ -278,10 +278,12 @@ void Tests::enmlHtml5TagsTest() {
 void Tests::latexStringUtilTest() {
     // extract latex formula
     {
+        QString sampleLatexUrl(LATEX_RENDER_URL "xy");
+
+        QVERIFY(NixnoteStringUtils::isLatexFormulaResourceUrl(sampleLatexUrl));
         QVERIFY(NixnoteStringUtils::extractLatexFormulaFromResourceUrl("xy").isEmpty());
         QCOMPARE(
-                NixnoteStringUtils::extractLatexFormulaFromResourceUrl(LATEX_RENDER_URL
-                "xy"),
+                NixnoteStringUtils::extractLatexFormulaFromResourceUrl(sampleLatexUrl),
                 QString("xy"));
         QCOMPARE(
                 NixnoteStringUtils::extractLatexFormulaFromResourceUrl(LATEX_RENDER_URL
@@ -291,6 +293,12 @@ void Tests::latexStringUtilTest() {
         QString sourceFormula(R"R(x=\left(\frac{1}{\sqrt{x}}\right))R");
         QString sourceUrl(LATEX_RENDER_URL);
         sourceUrl.append(NixnoteStringUtils::urlencode(sourceFormula));
+
+        // this one is *intentionally* inlined
+        QCOMPARE(sourceUrl, QString(R"R(http://latex.codecogs.com/gif.latex?x%3D%5Cleft%28%5Cfrac%7B1%7D%7B%5Csqrt%7Bx%7D%7D%5Cright%29)R"));
+
+        QCOMPARE(sourceUrl, NixnoteStringUtils::createLatexResourceUrl(sourceFormula));
+        QCOMPARE(sourceUrl, NixnoteStringUtils::createLatexResourceUrl(NixnoteStringUtils::urlencode(sourceFormula), false));
 
         QLOG_WARN() << "sourceUrl=" << sourceUrl;
         QCOMPARE(NixnoteStringUtils::extractLatexFormulaFromResourceUrl(sourceUrl), sourceFormula);

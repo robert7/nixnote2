@@ -24,13 +24,34 @@ NixnoteStringUtils::NixnoteStringUtils() {
 
 }
 
+bool NixnoteStringUtils::isLatexFormulaResourceUrl(QString url) {
+    return url.startsWith(LATEX_RENDER_URL);
+}
 
-QString NixnoteStringUtils::extractLatexFormulaFromResourceUrl(QString url) {
-    QString prefix(LATEX_RENDER_URL);
-    if (!url.startsWith(prefix)) {
+
+QString NixnoteStringUtils::extractLatexFormulaFromResourceUrl(QString url, bool encoded) {
+    if (!NixnoteStringUtils::isLatexFormulaResourceUrl(url)) {
         return QString();
     }
-    return urldecode(url.right(url.size() - prefix.size()));
+
+    QString prefix(LATEX_RENDER_URL);
+    QString formula(url.right(url.size() - prefix.size()));
+    if (!encoded) {
+        formula = NixnoteStringUtils::urldecode(formula);
+    }
+    return formula;
+}
+
+QString NixnoteStringUtils::createLatexResourceUrl(QString formula, bool doUrlencode) {
+    QString url(LATEX_RENDER_URL);
+
+    // url encoding is optional (as we may already have url encoded source
+    if (doUrlencode) {
+        formula = NixnoteStringUtils::urlencode(formula);
+    }
+
+    url.append(formula);
+    return url;
 }
 
 QString NixnoteStringUtils::urlencode(QString plain) {

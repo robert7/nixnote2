@@ -312,10 +312,10 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     enCryptLen = anchors.count();
     for (qint32 i = 0; i < anchors.count(); i++) {
         QWebElement element = anchors.at(i);
-        if (!element.attribute("href").toLower().startsWith(LATEX_RENDER_URL)) {
+        if (!element.attribute("href").startsWith(LATEX_RENDER_URL)) {
             element.setAttribute("title", element.attribute("href"));
         } else {
-            QString formula = element.attribute("href").toLower().replace(LATEX_RENDER_URL, "");
+            QString formula = element.attribute("href").replace(LATEX_RENDER_URL, "");
             element.setAttribute("title", formula);
             QString resLid = element.firstChild().attribute("lid", "");
             element.setAttribute("href", "latex:///" + resLid);

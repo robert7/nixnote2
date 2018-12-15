@@ -617,7 +617,7 @@ void EnmlFormatter::fixANode(QWebElement &e) {
         e.setOuterXml(xml);
     } else if (href.toLower().startsWith("latex:///")) {
         QString formula = e.attribute("title");
-        const QString attr = QString(LATEX_RENDER_URL "%1").arg(formula);
+        const QString attr = NixnoteStringUtils::createLatexResourceUrl(formula, false);
         e.removeAttribute("title");
         e.setAttribute("href", attr);
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed latex a tag to " << e.toOuterXml();

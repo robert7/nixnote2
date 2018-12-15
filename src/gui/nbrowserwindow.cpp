@@ -2517,7 +2517,7 @@ void NBrowserWindow::editLatex(QString guid) {
 
     ResourceAttributes a;
     a.attachment = false;
-    a.sourceURL = LATEX_RENDER_URL + text;
+    a.sourceURL = NixnoteStringUtils::createLatexResourceUrl(text);
     r.attributes = a;
 
     rtable.add(newlid, r, true, lid);

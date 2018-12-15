@@ -26,17 +26,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define LATEX_RENDER_URL "http://latex.codecogs.com/gif.latex?"
 
 
-class NixnoteStringUtils
-{
+class NixnoteStringUtils {
 public:
     NixnoteStringUtils();
 
+
+    static bool isLatexFormulaResourceUrl(QString url);
+
     /**
      * Extract latex formula from url.
+     * @param urlencode whwnever we want it to receive in encoded form (needed in case we want to pass the formula
+     *     in other html/xml attribute.
      */
-    static QString extractLatexFormulaFromResourceUrl(QString url);
+    static QString extractLatexFormulaFromResourceUrl(QString url, bool encoded = false);
+
+    /**
+     * Create resouce url with given formula.
+     * @param formula formula to put in url
+     * @param urlencode whenever do url encoding.
+     */
+    static QString createLatexResourceUrl(QString formula, bool doUrlencode = true);
 
     static QString urlencode(QString plain);
+
     static QString urldecode(QString encoded);
 };
 
