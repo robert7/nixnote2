@@ -207,6 +207,7 @@ set (nixnote2_src
         src/utilities/noteindexer.cpp
         src/utilities/nuuid.cpp
         src/utilities/pixelconverter.cpp
+        src/utilities/NixnoteStringUtils.cpp
         src/watcher/filewatcher.cpp
         src/watcher/filewatchermanager.cpp
         src/xml/batchimport.cpp
@@ -410,6 +411,7 @@ set (nixnote2_hdr
         src/utilities/noteindexer.h
         src/utilities/nuuid.h
         src/utilities/pixelconverter.h
+        src/utilities/NixnoteStringUtils.h
         src/watcher/filewatcher.h
         src/watcher/filewatchermanager.h
         src/xml/batchimport.h

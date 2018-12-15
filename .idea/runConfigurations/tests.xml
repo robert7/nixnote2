@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="tests" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-platform offscreen" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nixnote2" TARGET_NAME="tests" CONFIG_NAME="Debug" RUN_PATH="$PROJECT_DIR$/qmake-build-debug-t/tests">
+    <method v="2" />
+  </configuration>
+</component>

@@ -24,10 +24,12 @@ private slots:
     void enmlNixnoteObjectTest();
     void enmlNixnoteEncryptTest();
     void enmlNixnoteTableTest();
-    void enmlNixnoteLinkTest();
+    void enmlHtml5TagsTest();
+    void latexStringUtilTest();
 
 private slots:
-    void enmlHtml5TagsTest();
+    void enmlNixnoteLinkTest();
+
 };
 
 #endif // NIXNOTE2_TESTS_H

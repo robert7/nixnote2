@@ -1,4 +1,4 @@
-NixNote (2.1.2-e) stable; urgency=low
+NixNote (2.1.2-f) stable; urgency=low
   * Make project cross-buildable issue #67; from https://bugs.debian.org/915590
   * Added italian translation, thanks to Rino Russo
   * Synchronized translation files with source code, fixed missing display of translation credits
@@ -11,7 +11,8 @@ NixNote (2.1.2-e) stable; urgency=low
   * Restored "sample_exits" (NixNote note scripting examples) from upstream repository
   * Added button with wiki article link to "Preferences/Exits" with function description
   * Synced qevercloud source with source repository (currently at tag v2.2.1)
- -- Robert Spiegel <nightingale7@gmail.com>  Fri, 14 Dec 2018 17:00:00 +0100
+  * Fixes in LaTeX handling
+ -- Robert Spiegel <nightingale7@gmail.com>  Sat, 15 Dec 2018 21:19:36 +0100
 
 NixNote (2.1.1) stable; urgency=low
   * Chinese translation update; thanks to https://github.com/hosiet

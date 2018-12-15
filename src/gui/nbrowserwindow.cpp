@@ -53,7 +53,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/exits/exitmanager.h"
 #include "browserWidgets/editorbuttonbar.h"
 #include "src/dialog/spellcheckdialog.h"
-
+#include "src/utilities/NixnoteStringUtils.h"
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
 #include <QAction>
@@ -2427,32 +2427,38 @@ void NBrowserWindow::setInsideLink(QString link) {
 
 
 // Edit a LaTeX formula
-void NBrowserWindow::editLatex(QString guid) {
-    QString text = editor->selectedText();
+void NBrowserWindow::editLatex(QString incomingLid) {
+
+    QString formula = editor->selectedText();
+    QLOG_DEBUG() << "edit latex incomingLid=" << incomingLid << ", formula=" << formula;
+
     QString oldFormula = "";
-    if (text.trimmed() == "\n" || text.trimmed() == "") {
+    if (formula.trimmed() == "\n" || formula.trimmed() == "") {
         InsertLatexDialog dialog;
-        if (guid.trimmed() != "") {
+        if (incomingLid.trimmed() != "") {
             Resource r;
             ResourceTable resTable(global.db);
-            resTable.get(r, guid.toInt(), false);
+            resTable.get(r, incomingLid.toInt(), false);
+
             if (r.attributes.isSet()) {
                 ResourceAttributes attributes;
                 attributes = r.attributes;
                 if (attributes.sourceURL.isSet()) {
-                    QString formula = attributes.sourceURL;
-                    formula = formula.replace("http://latex.codecogs.com/gif.latex?", "");
-                    oldFormula = formula;
-                    dialog.setFormula(formula);
+                    QString origFormula = NixnoteStringUtils::extractLatexFormulaFromResourceUrl(attributes.sourceURL);
+                    QLOG_DEBUG() << "edit latex origFormula=" << origFormula;
+                    oldFormula = origFormula;
+                    dialog.setFormula(origFormula);
                 }
             }
         }
         dialog.exec();
         if (!dialog.okPressed()) {
+            QLOG_DEBUG() << "latex dialog cancelled";
             return;
         }
-        text = dialog.getFormula().trimmed();
+        formula = dialog.getFormula().trimmed();
     }
+    QLOG_DEBUG() << "latex dialog finished, formula=" << formula;
 
     ConfigStore cs(global.db);
     qint32 newlid = cs.incrementLidCounter();
@@ -2466,14 +2472,12 @@ void NBrowserWindow::editLatex(QString guid) {
     QStringList args;
     args.append("-e");
     args.append(outfile);
-    args.append(text);
-    QLOG_DEBUG() << "Formula:" << "mimetex -e " + outfile + " '" + text + "'";
-    //latexProcess.start(formula, QIODevice::ReadWrite|QIODevice::Unbuffered);
+    args.append(formula);
+    QLOG_INFO() << "About to start: " << "mimetex" << args;
     latexProcess.start("mimetex", args, QIODevice::ReadWrite | QIODevice::Unbuffered);
-
     latexProcess.waitForStarted();
     latexProcess.waitForFinished();
-    QLOG_DEBUG() << " LaTeX Return Code: " << latexProcess.state();
+    QLOG_INFO() << " Result: " << latexProcess.state();
     QLOG_DEBUG() << "mimetex Errors:" << latexProcess.readAllStandardError();
     QLOG_DEBUG() << "mimetex Output:" << latexProcess.readAllStandardOutput();
 
@@ -2518,23 +2522,19 @@ void NBrowserWindow::editLatex(QString guid) {
 
     ResourceAttributes a;
     a.attachment = false;
-    a.sourceURL = "http://latex.codecogs.com/gif.latex?" + text;
+    a.sourceURL = NixnoteStringUtils::createLatexResourceUrl(formula);
     r.attributes = a;
 
     rtable.add(newlid, r, true, lid);
 
     // do the actual insert into the note
-
     QString buffer;
     buffer.append("<a onmouseover=\"cursor:&apos;hand&apos;\" title=\"");
-    buffer.append(text.remove(QRegExp("[^a-zA-Z +-*/^{}()]")));
+    buffer.append(NixnoteStringUtils::urlencode(formula));
     buffer.append("\" href=\"latex:///");
     buffer.append(QString::number(newlid));
     buffer.append("\">");
     buffer.append("<img src=\"file://");
-#ifdef _WIN32
-    buffer.append("/");
-#endif
     buffer.append(outfile);
     buffer.append("\" type=\"image/gif\" hash=\"");
     buffer.append(hash.toHex());
@@ -2547,29 +2547,45 @@ void NBrowserWindow::editLatex(QString guid) {
     buffer.append(QString::number(newlid));
     buffer.append("\"></a>");
 
+    QLOG_DEBUG() << "latex, final html=" << buffer;
+
     // If this is a new formula, we insert it, otherwise we replace the old one.
     if (oldFormula == "") {
+        QLOG_DEBUG() << "latex: insert";
         QString script_start = "document.execCommand('insertHTML', false, '";
         QString script_end = "');";
 
-        editor->page()->mainFrame()->evaluateJavaScript(
-                script_start + buffer + script_end);
+        editor->page()->mainFrame()->evaluateJavaScript(script_start + buffer + script_end);
     } else {
+        QLOG_DEBUG() << "latex: replace";
         QString oldHtml = editor->page()->mainFrame()->toHtml();
         int startPos = oldHtml.indexOf("<a");
+
+        bool found = false;
+        QString sliceId("latex:///" + incomingLid);
+        
         while (startPos != -1) {
             int endPos = oldHtml.indexOf("</a>", startPos);
             if (endPos != -1) {
                 QString slice = oldHtml.mid(startPos, endPos - startPos + 4);
-                if (slice.contains("lid=\"" + guid + "\"") && slice.contains("en-latex")) {
+                QLOG_DEBUG() << "latex: slice=" << slice;
+                if (slice.contains(sliceId)) {
+                    QLOG_DEBUG() << "latex: replace - insertion point found slice=" << slice;
                     oldHtml.replace(slice, buffer);
+                    found = true;
+                    break;
                 }
                 startPos = oldHtml.indexOf("<a", endPos);
-                editor->page()->mainFrame()->setHtml(oldHtml);
             }
         }
-        editor->reload();
-        contentChanged();
+
+        if (found) {
+            editor->page()->mainFrame()->setHtml(oldHtml);
+            editor->reload();
+            contentChanged();
+        } else {
+            QLOG_ERROR() << "latex: insertion point not found!";
+        }
     }
 }
 

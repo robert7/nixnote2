@@ -204,6 +204,7 @@ SOURCES += \
     src/sql/usertable.cpp \
     src/html/attachmenticonbuilder.cpp \
     src/html/enmlformatter.cpp \
+    src/html/NoteFormatterBase.cpp \
     src/html/noteformatter.cpp \
     src/html/tagscanner.cpp \
     src/html/thumbnailer.cpp \
@@ -218,6 +219,7 @@ SOURCES += \
     src/utilities/noteindexer.cpp \
     src/utilities/nuuid.cpp \
     src/utilities/pixelconverter.cpp \
+    src/utilities/NixnoteStringUtils.cpp \
     src/watcher/filewatcher.cpp \
     src/watcher/filewatchermanager.cpp \
     src/xml/batchimport.cpp \
@@ -406,6 +408,7 @@ HEADERS  += \
     src/sql/usertable.h \
     src/html/attachmenticonbuilder.h \
     src/html/enmlformatter.h \
+    src/html/NoteFormatterBase.h \
     src/html/noteformatter.h \
     src/html/tagscanner.h \
     src/html/thumbnailer.h \
@@ -419,6 +422,7 @@ HEADERS  += \
     src/utilities/mimereference.h \
     src/utilities/noteindexer.h \
     src/utilities/nuuid.h \
+    src/utilities/NixnoteStringUtils.h \
     src/utilities/pixelconverter.h \
     src/watcher/filewatcher.h \
     src/watcher/filewatchermanager.h \

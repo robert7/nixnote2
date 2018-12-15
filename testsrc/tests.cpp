@@ -8,6 +8,7 @@
 #include "../src/html/enmlformatter.h"
 #include "../src/logger/qslog.h"
 #include "../src/logger/qslogdest.h"
+#include "../src/utilities/NixnoteStringUtils.h"
 
 #define SET_LOGLEVEL_DEBUG QsLogging::Logger &logger = QsLogging::Logger::instance(); logger.setLoggingLevel(QsLogging::DebugLevel);
 
@@ -176,7 +177,7 @@ void Tests::enmlNixnoteLinkTest() {
 
         const QString r1 = formatToEnml(src);
         const QString r2 = addEnmlEnvelope(result, QStringLiteral("45878,45880"));
-        QCOMPAREX(r1, r2); //note use string, not expressions
+        QCOMPAREX(r1, r2); // note: use string, not expressions
     }
 
     // zip
@@ -199,13 +200,25 @@ void Tests::enmlNixnoteLinkTest() {
 
     // latex
     {
-        QString src(
-                R"R(<a onmouseover="cursor:'hand'" title="xfrac{+y}{+z^}" href="latex:///45913"><img src="file:///home/robert7/.nixnote/db-2/dba/45913.gif" type="image/gif" hash="69cb83339ee2fb3f008492f82f98cbbc" oncontextmenu="window.browser.imageContextMenu('45913', '/home/robert7/.nixnote/db-2/dba/45913.gif');" en-tag="en-latex" lid="45913"></a><br><div><div>)R");
-        QString result(
-                R"R(<a href="http://latex.codecogs.com/gif.latex?xfrac{+y}{+z^}"><en-media type="image/gif" hash="69cb83339ee2fb3f008492f82f98cbbc"></en-media></a><br />)R");
+        QString formula("xfrac{+y}{+z^}");
+
+        QString src(R"R(<a onmouseover="cursor:'hand'" title=")R");
+        src.append(NixnoteStringUtils::urlencode(formula));
+        src.append(
+                R"R(" href="latex:///45913"><img src="file:///home/robert7/.nixnote/db-2/dba/45913.gif" type="image/gif" hash="69cb83339ee2fb3f008492f82f98cbbc" oncontextmenu="window.browser.imageContextMenu('45913', '/home/robert7/.nixnote/db-2/dba/45913.gif');" en-tag="en-latex" lid="45913"></a><br><div><div>)R");
+
+        QString resourceUrl(NixnoteStringUtils::createLatexResourceUrl(formula));
+
+        QString result(R"R(<a title=")R");
+        result.append(resourceUrl);
+        // note that here intentionally space is missing, as this is currently the fucked up output of xml rendering
+        result.append(R"R("href=")R");
+        result.append(resourceUrl);
+        result.append(
+                R"R("><en-media type="image/gif" hash="69cb83339ee2fb3f008492f82f98cbbc"></en-media></a><br />)R");
         const QString r1 = formatToEnml(src);
         const QString r2 = addEnmlEnvelope(result, "45913");
-        QCOMPAREX(r1, r2); //note use string, not expressions
+        QCOMPAREX(r1, r2); // note: use string, not expressions
     }
 }
 
@@ -266,13 +279,42 @@ void Tests::enmlHtml5TagsTest() {
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
     {
-        QString src(
-                R"R(<xxx><span>aa</span></xxx>)R");
-        QString result(
-                R"R(<span>aa</span>)R");
+        QString src(R"R(<xxx><span>aa</span></xxx>)R");
+        QString result(R"R(<span>aa</span>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
 }
+
+void Tests::latexStringUtilTest() {
+    // extract latex formula
+    {
+        QString sampleLatexUrl(LATEX_RENDER_URL "xy");
+
+        QVERIFY(NixnoteStringUtils::isLatexFormulaResourceUrl(sampleLatexUrl));
+        QVERIFY(NixnoteStringUtils::extractLatexFormulaFromResourceUrl("xy").isEmpty());
+        QCOMPARE(
+                NixnoteStringUtils::extractLatexFormulaFromResourceUrl(sampleLatexUrl),
+                QString("xy"));
+        QCOMPARE(
+                NixnoteStringUtils::extractLatexFormulaFromResourceUrl(LATEX_RENDER_URL
+                "xfrac{+y}{+z^}"),
+                QString("xfrac{+y}{+z^}"));
+
+        QString sourceFormula(R"R(x=\left(\frac{1}{\sqrt{x}}\right))R");
+        QString sourceUrl(LATEX_RENDER_URL);
+        sourceUrl.append(NixnoteStringUtils::urlencode(sourceFormula));
+
+        // this one is *intentionally* inlined
+        QCOMPARE(sourceUrl, QString(R"R(http://latex.codecogs.com/gif.latex?x%3D%5Cleft%28%5Cfrac%7B1%7D%7B%5Csqrt%7Bx%7D%7D%5Cright%29)R"));
+
+        QCOMPARE(sourceUrl, NixnoteStringUtils::createLatexResourceUrl(sourceFormula));
+        QCOMPARE(sourceUrl, NixnoteStringUtils::createLatexResourceUrl(NixnoteStringUtils::urlencode(sourceFormula), false));
+
+        QLOG_WARN() << "sourceUrl=" << sourceUrl;
+        QCOMPARE(NixnoteStringUtils::extractLatexFormulaFromResourceUrl(sourceUrl), sourceFormula);
+    }
+}
+
 
 
 QT_BEGIN_NAMESPACE
