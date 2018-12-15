@@ -2428,9 +2428,9 @@ void NBrowserWindow::setInsideLink(QString link) {
 
 // Edit a LaTeX formula
 void NBrowserWindow::editLatex(QString guid) {
-    QString text = editor->selectedText();
+    QString formula = editor->selectedText();
     QString oldFormula = "";
-    if (text.trimmed() == "\n" || text.trimmed() == "") {
+    if (formula.trimmed() == "\n" || formula.trimmed() == "") {
         InsertLatexDialog dialog;
         if (guid.trimmed() != "") {
             Resource r;
@@ -2440,9 +2440,9 @@ void NBrowserWindow::editLatex(QString guid) {
                 ResourceAttributes attributes;
                 attributes = r.attributes;
                 if (attributes.sourceURL.isSet()) {
-                    QString formula = NixnoteStringUtils::extractLatexFormulaFromResourceUrl(attributes.sourceURL);
-                    oldFormula = formula;
-                    dialog.setFormula(formula);
+                    QString origFormula = NixnoteStringUtils::extractLatexFormulaFromResourceUrl(attributes.sourceURL);
+                    oldFormula = origFormula;
+                    dialog.setFormula(origFormula);
                 }
             }
         }
@@ -2450,7 +2450,7 @@ void NBrowserWindow::editLatex(QString guid) {
         if (!dialog.okPressed()) {
             return;
         }
-        text = dialog.getFormula().trimmed();
+        formula = dialog.getFormula().trimmed();
     }
 
     ConfigStore cs(global.db);
@@ -2465,8 +2465,8 @@ void NBrowserWindow::editLatex(QString guid) {
     QStringList args;
     args.append("-e");
     args.append(outfile);
-    args.append(text);
-    QLOG_DEBUG() << "Formula:" << "mimetex -e " + outfile + " '" + text + "'";
+    args.append(formula);
+    QLOG_DEBUG() << "Formula:" << "mimetex -e " + outfile + " '" + formula + "'";
     //latexProcess.start(formula, QIODevice::ReadWrite|QIODevice::Unbuffered);
     latexProcess.start("mimetex", args, QIODevice::ReadWrite | QIODevice::Unbuffered);
 
@@ -2517,7 +2517,7 @@ void NBrowserWindow::editLatex(QString guid) {
 
     ResourceAttributes a;
     a.attachment = false;
-    a.sourceURL = NixnoteStringUtils::createLatexResourceUrl(text);
+    a.sourceURL = NixnoteStringUtils::createLatexResourceUrl(formula);
     r.attributes = a;
 
     rtable.add(newlid, r, true, lid);
@@ -2526,14 +2526,11 @@ void NBrowserWindow::editLatex(QString guid) {
 
     QString buffer;
     buffer.append("<a onmouseover=\"cursor:&apos;hand&apos;\" title=\"");
-    buffer.append(text.remove(QRegExp("[^a-zA-Z +-*/^{}()]")));
+    buffer.append(formula.remove(QRegExp("[^a-zA-Z +-*/^{}()]")));
     buffer.append("\" href=\"latex:///");
     buffer.append(QString::number(newlid));
     buffer.append("\">");
     buffer.append("<img src=\"file://");
-#ifdef _WIN32
-    buffer.append("/");
-#endif
     buffer.append(outfile);
     buffer.append("\" type=\"image/gif\" hash=\"");
     buffer.append(hash.toHex());
@@ -2551,8 +2548,7 @@ void NBrowserWindow::editLatex(QString guid) {
         QString script_start = "document.execCommand('insertHTML', false, '";
         QString script_end = "');";
 
-        editor->page()->mainFrame()->evaluateJavaScript(
-                script_start + buffer + script_end);
+        editor->page()->mainFrame()->evaluateJavaScript(script_start + buffer + script_end);
     } else {
         QString oldHtml = editor->page()->mainFrame()->toHtml();
         int startPos = oldHtml.indexOf("<a");

@@ -317,13 +317,17 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     enCryptLen = anchors.count();
     for (qint32 i = 0; i < anchors.count(); i++) {
         QWebElement element = anchors.at(i);
-        const QString &href = element.attribute("href");
+        QString href = element.attribute("href");
+        QLOG_DEBUG() << "link #" << i << " href=" << href;
 
         if (!NixnoteStringUtils::isLatexFormulaResourceUrl(href)) {
             element.setAttribute("title", href);
         } else {
             QString encodedFormula = NixnoteStringUtils::extractLatexFormulaFromResourceUrl(href, true);
             element.setAttribute("title", encodedFormula);
+
+            QLOG_DEBUG() << "link #" << i << " encodedFormula=" << encodedFormula;
+
             QString resLid = element.firstChild().attribute("lid", "");
             element.setAttribute("href", "latex:///" + resLid);
         }
@@ -505,11 +509,15 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
             enMedia.setAttribute("src", imgfile);
             // Check if this is a LaTeX image
             ResourceAttributes attributes;
-            if (r.attributes.isSet())
+            if (r.attributes.isSet()) {
                 attributes = r.attributes;
+            }
+
             QString sourceUrl = "";
-            if (attributes.sourceURL.isSet())
+            if (attributes.sourceURL.isSet()) {
                 sourceUrl = attributes.sourceURL;
+            }
+
             if (NixnoteStringUtils::isLatexFormulaResourceUrl(sourceUrl)) {
                 enMedia.appendInside("<img/>");
                 QWebElement newText = enMedia.lastChild();
@@ -518,6 +526,7 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
 
                 QString encodedFormula = NixnoteStringUtils::extractLatexFormulaFromResourceUrl(sourceUrl, true);
                 newText.setAttribute("title", encodedFormula);
+                QLOG_DEBUG() << "setting title=" << encodedFormula;
 
                 newText.setAttribute("href", "latex:///" + QString::number(resLid));
             }
