@@ -312,11 +312,13 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     enCryptLen = anchors.count();
     for (qint32 i = 0; i < anchors.count(); i++) {
         QWebElement element = anchors.at(i);
-        if (!element.attribute("href").startsWith(LATEX_RENDER_URL)) {
-            element.setAttribute("title", element.attribute("href"));
+        const QString &href = element.attribute("href");
+
+        if (!NixnoteStringUtils::isLatexFormulaResourceUrl(href)) {
+            element.setAttribute("title", href);
         } else {
-            QString formula = element.attribute("href").replace(LATEX_RENDER_URL, "");
-            element.setAttribute("title", formula);
+            QString encodedFormula = NixnoteStringUtils::extractLatexFormulaFromResourceUrl(href, true);
+            element.setAttribute("title", encodedFormula);
             QString resLid = element.firstChild().attribute("lid", "");
             element.setAttribute("href", "latex:///" + resLid);
         }
@@ -503,13 +505,15 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
             QString sourceUrl = "";
             if (attributes.sourceURL.isSet())
                 sourceUrl = attributes.sourceURL;
-            if (sourceUrl.toLower().startsWith(LATEX_RENDER_URL)) {
+            if (NixnoteStringUtils::isLatexFormulaResourceUrl(sourceUrl)) {
                 enMedia.appendInside("<img/>");
                 QWebElement newText = enMedia.lastChild();
                 enMedia.setAttribute("en-tag", "en-latex");
                 newText.setAttribute("onMouseOver", "style.cursor='pointer'");
-                sourceUrl.replace(LATEX_RENDER_URL, "");
-                newText.setAttribute("title", sourceUrl);
+
+                QString encodedFormula = NixnoteStringUtils::extractLatexFormulaFromResourceUrl(sourceUrl, true);
+                newText.setAttribute("title", encodedFormula);
+
                 newText.setAttribute("href", "latex:///" + QString::number(resLid));
             }
             enMedia.setAttribute("onContextMenu", "window.browserWindow.imageContextMenu('"
