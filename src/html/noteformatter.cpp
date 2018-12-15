@@ -40,8 +40,7 @@ using namespace std;
 extern Global global;
 
 /* Constructor. */
-NoteFormatter::NoteFormatter(QObject *parent) :
-    QObject(parent) {
+NoteFormatter::NoteFormatter(QObject *parent) : NoteFormatterBase(parent) {
     thumbnail = false;
     this->setNoteHistory(false);
     this->noteHistory = false;
@@ -107,6 +106,34 @@ void NoteFormatter::setNoteHistory(bool value) {
 }
 
 
+QString NoteFormatter::enmlToNoteHTML(QString enml) {
+    QWebPage page;
+    QEventLoop loop;
+    QLOG_TRACE() << "Before preHTMLFormat";
+    QString html = "<body></body>";
+    if (note.content.isSet()) {
+        html = preHtmlFormat(enml);
+    }
+
+    html.replace("<en-note", "<body");
+    html.replace("</en-note>", "</body>");
+
+    QByteArray htmlPage;
+    htmlPage.append(html);
+    QLOG_TRACE() << "About to set content";
+    page.mainFrame()->setContent(htmlPage);
+    QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
+
+    QLOG_TRACE() << "Starting to modify tags";
+    modifyTags(page);
+    QLOG_TRACE() << "Done modifying tags";
+    html = page.mainFrame()->toHtml();
+
+    return html;
+}
+
+
+
 /* Take the ENML note and transform it into HTML that WebKit will
   not complain about */
 QByteArray NoteFormatter::rebuildNoteHTML() {
@@ -135,29 +162,7 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     QLOG_DEBUG_FILE(logfilePrefix + "original-enml.xml", origENML);
 
 
-    QWebPage page;
-    QEventLoop loop;
-    QLOG_TRACE() << "Before preHTMLFormat";
-    QString html = "<body></body>";
-    if (note.content.isSet()) {
-        html = preHtmlFormat(origENML);
-    }
-
-    html.replace("<en-note", "<body");
-    html.replace("</en-note>", "</body>");
-
-    QByteArray htmlPage;
-    htmlPage.append(html);
-
-
-    QLOG_TRACE() << "About to set content";
-    page.mainFrame()->setContent(htmlPage);
-    QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
-
-    QLOG_TRACE() << "Starting to modify tags";
-    modifyTags(page);
-    QLOG_TRACE() << "Done modifying tags";
-    html = page.mainFrame()->toHtml();
+    QString html = enmlToNoteHTML(origENML);
     note.content = html;
 
     QLOG_DEBUG_FILE(logfilePrefix + "modify.html", html);

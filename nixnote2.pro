@@ -204,6 +204,7 @@ SOURCES += \
     src/sql/usertable.cpp \
     src/html/attachmenticonbuilder.cpp \
     src/html/enmlformatter.cpp \
+    src/html/NoteFormatterBase.cpp \
     src/html/noteformatter.cpp \
     src/html/tagscanner.cpp \
     src/html/thumbnailer.cpp \
@@ -407,6 +408,7 @@ HEADERS  += \
     src/sql/usertable.h \
     src/html/attachmenticonbuilder.h \
     src/html/enmlformatter.h \
+    src/html/NoteFormatterBase.h \
     src/html/noteformatter.h \
     src/html/tagscanner.h \
     src/html/thumbnailer.h \

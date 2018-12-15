@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QVector>
 #include <QtXml>
 #include "src/qevercloud/include/QEverCloud.h"
+#include "NoteFormatterBase.h"
 #include "enmlformatter.h"
 
 using namespace qevercloud;
@@ -39,49 +40,65 @@ using namespace qevercloud;
 using namespace std;
 
 
-class NoteFormatter : public QObject
-{
-    Q_OBJECT
+class NoteFormatter : public NoteFormatterBase {
+
 private:
     Note note;
     QByteArray content;
     bool pdfPreview;
-    QList< QTemporaryFile* > tempFiles;
+    QList<QTemporaryFile *> tempFiles;
     QStringList highlightWords;
     bool noteHistory;
     bool formatError;
+
     QString addImageHighlight(qint32 resLid, QString imgfile);
+
     void modifyImageTags(QWebElement &enMedia, QString &hash);
+
     void modifyApplicationTags(QWebElement &enmedia, QString &hash, QString appl);
+
     void modifyPdfTags(qint32 resLid, QWebElement &enmedia);
+
     void modifyTodoTags(QWebElement &todo);
+
     void modifyTags(QWebPage &doc);
+
     QString findIcon(qint32 lid, Resource r, QString appl);
+
+    QString enmlToNoteHTML(QString enml);
     QString preHtmlFormat(QString content);
+
     QHash<QString, qint32> hashMap;
     QHash<qint32, Resource> resourceMap;
     bool resourceHighlight;
-    const char* findImageFormat(QString file);
+
+    const char *findImageFormat(QString file);
 
 public:
     bool resourceError;
     bool readOnly;
     bool inkNote;
     bool thumbnail;
-    //bool enableHighlight;
 
     explicit NoteFormatter(QObject *parent = 0);
+
     void setNote(Note n, bool pdfPreview);
+
     QEventLoop eventLoop;
+
     QString getPage();
-    //void setHighlight();
+
     void setNoteHistory(bool value);
+
     QByteArray rebuildNoteHTML();
-    bool  buildInkNote(QWebElement &docElem, QString &hash);
+
+    bool buildInkNote(QWebElement &docElem, QString &hash);
+
     void setHighlightText(QString text);
 
 
 signals:
+
     void fileIconProviderRequested(QString fileName);
 
 public slots:
