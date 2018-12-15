@@ -53,7 +53,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/exits/exitmanager.h"
 #include "browserWidgets/editorbuttonbar.h"
 #include "src/dialog/spellcheckdialog.h"
-
+#include "src/utilities/NixnoteStringUtils.h"
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
 #include <QAction>
@@ -2440,8 +2440,7 @@ void NBrowserWindow::editLatex(QString guid) {
                 ResourceAttributes attributes;
                 attributes = r.attributes;
                 if (attributes.sourceURL.isSet()) {
-                    QString formula = attributes.sourceURL;
-                    formula = formula.replace(LATEX_RENDER_URL, "");
+                    QString formula = NixnoteStringUtils::extractLatexFormulaFromResourceUrl(attributes.sourceURL);
                     oldFormula = formula;
                     dialog.setFormula(formula);
                 }

@@ -26,10 +26,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <tidy/tidy.h>
 #include <tidy/tidybuffio.h>
 #include <iostream>
-
 #include "enmlformatter.h"
 #include "src/utilities/encrypt.h"
 #include "src/logger/qslog.h"
+#include "src/utilities/NixnoteStringUtils.h"
 
 #define ENML_MODULE_LOGPREFIX "enml-cleanup: "
 

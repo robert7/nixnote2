@@ -17,7 +17,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-
+#include <QFileSystemModel>
+#include <QFileIconProvider>
+#include <poppler-qt5.h>
+#include <QIcon>
+#include <QList>
+#include <iostream>
 #include "noteformatter.h"
 #include "src/sql/resourcetable.h"
 #include "src/sql/notebooktable.h"
@@ -28,25 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/filters/filterengine.h"
 #include "src/utilities/mimereference.h"
 #include "enmlformatter.h"
-
-#include <QFileSystemModel>
-#include <QFileIconProvider>
-
-#if QT_VERSION < 0x050000
-
-#include <poppler-qt4.h>
-
-#else
-
-#include <poppler-qt5.h>
-
-#endif
-
-#include <QIcon>
-#include <QList>
-
-
-#include <iostream>
+#include "src/utilities/NixnoteStringUtils.h"
 
 using namespace std;
 

@@ -16,7 +16,7 @@ public:
     virtual ~Tests() {};
 
 // comment out to debug the only the last test
-private slots:
+//private slots:
     void enmlBasicTest();
     void enmlTidyTest();
     void enmlNixnoteTodoTest();
@@ -25,9 +25,11 @@ private slots:
     void enmlNixnoteEncryptTest();
     void enmlNixnoteTableTest();
     void enmlNixnoteLinkTest();
+    void enmlHtml5TagsTest();
 
 private slots:
-    void enmlHtml5TagsTest();
+
+    void latexStringUtilTest();
 };
 
 #endif // NIXNOTE2_TESTS_H

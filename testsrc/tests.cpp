@@ -8,6 +8,7 @@
 #include "../src/html/enmlformatter.h"
 #include "../src/logger/qslog.h"
 #include "../src/logger/qslogdest.h"
+#include "../src/utilities/NixnoteStringUtils.h"
 
 #define SET_LOGLEVEL_DEBUG QsLogging::Logger &logger = QsLogging::Logger::instance(); logger.setLoggingLevel(QsLogging::DebugLevel);
 
@@ -268,13 +269,34 @@ void Tests::enmlHtml5TagsTest() {
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
     {
-        QString src(
-                R"R(<xxx><span>aa</span></xxx>)R");
-        QString result(
-                R"R(<span>aa</span>)R");
+        QString src(R"R(<xxx><span>aa</span></xxx>)R");
+        QString result(R"R(<span>aa</span>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
 }
+
+void Tests::latexStringUtilTest() {
+    // extract latex formula
+    {
+        QVERIFY(NixnoteStringUtils::extractLatexFormulaFromResourceUrl("xy").isEmpty());
+        QCOMPARE(
+                NixnoteStringUtils::extractLatexFormulaFromResourceUrl(LATEX_RENDER_URL
+                "xy"),
+                QString("xy"));
+        QCOMPARE(
+                NixnoteStringUtils::extractLatexFormulaFromResourceUrl(LATEX_RENDER_URL
+                "xfrac{+y}{+z^}"),
+                QString("xfrac{+y}{+z^}"));
+
+        QString sourceFormula(R"R(x=\left(\frac{1}{\sqrt{x}}\right))R");
+        QString sourceUrl(LATEX_RENDER_URL);
+        sourceUrl.append(NixnoteStringUtils::urlencode(sourceFormula));
+
+        QLOG_WARN() << "sourceUrl=" << sourceUrl;
+        QCOMPARE(NixnoteStringUtils::extractLatexFormulaFromResourceUrl(sourceUrl), sourceFormula);
+    }
+}
+
 
 
 QT_BEGIN_NAMESPACE
