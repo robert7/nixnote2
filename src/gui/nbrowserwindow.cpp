@@ -2436,6 +2436,7 @@ void NBrowserWindow::editLatex(QString guid) {
             Resource r;
             ResourceTable resTable(global.db);
             resTable.get(r, guid.toInt(), false);
+
             if (r.attributes.isSet()) {
                 ResourceAttributes attributes;
                 attributes = r.attributes;
@@ -2466,13 +2467,11 @@ void NBrowserWindow::editLatex(QString guid) {
     args.append("-e");
     args.append(outfile);
     args.append(formula);
-    QLOG_DEBUG() << "Formula:" << "mimetex -e " + outfile + " '" + formula + "'";
-    //latexProcess.start(formula, QIODevice::ReadWrite|QIODevice::Unbuffered);
+    QLOG_INFO() << "About to start: " << "mimetex" << args;
     latexProcess.start("mimetex", args, QIODevice::ReadWrite | QIODevice::Unbuffered);
-
     latexProcess.waitForStarted();
     latexProcess.waitForFinished();
-    QLOG_DEBUG() << " LaTeX Return Code: " << latexProcess.state();
+    QLOG_INFO() << " Result: " << latexProcess.state();
     QLOG_DEBUG() << "mimetex Errors:" << latexProcess.readAllStandardError();
     QLOG_DEBUG() << "mimetex Output:" << latexProcess.readAllStandardOutput();
 
@@ -2526,7 +2525,11 @@ void NBrowserWindow::editLatex(QString guid) {
 
     QString buffer;
     buffer.append("<a onmouseover=\"cursor:&apos;hand&apos;\" title=\"");
-    buffer.append(formula.remove(QRegExp("[^a-zA-Z +-*/^{}()]")));
+
+    // orig code: buffer.append(formula.remove(QRegExp("[^a-zA-Z +-*/^{}()]")));
+    // wtf?
+
+    buffer.append(NixnoteStringUtils::urlencode(formula));
     buffer.append("\" href=\"latex:///");
     buffer.append(QString::number(newlid));
     buffer.append("\">");

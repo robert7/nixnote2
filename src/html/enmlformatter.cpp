@@ -615,12 +615,12 @@ void EnmlFormatter::fixANode(QWebElement &e) {
         xml.replace("</a>", "</en-media>" HTML_COMMENT_END);
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed link node to " << xml;
         e.setOuterXml(xml);
-    } else if (href.toLower().startsWith("latex:///")) {
+    } else if (href.startsWith("latex:///")) {
         QString formula = e.attribute("title");
         const QString attr = NixnoteStringUtils::createLatexResourceUrl(formula, false);
-        e.removeAttribute("title");
+        e.setAttribute("title", attr);
         e.setAttribute("href", attr);
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed latex a tag to " << e.toOuterXml();
+        QLOG_WARN() << ENML_MODULE_LOGPREFIX "fixed latex a tag to " << e.toOuterXml();
     } else if (href.isEmpty()) {
         QLOG_WARN() << ENML_MODULE_LOGPREFIX " a tag with empty href => removing";
         e.removeFromDocument();

@@ -1,5 +1,6 @@
 #!/bin/bash
 # compile and run tests - convenience shortcut only
+set -xe
 
 BUILD_TYPE=${1}
 CLEAN=${2}
