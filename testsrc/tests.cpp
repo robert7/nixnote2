@@ -211,6 +211,7 @@ void Tests::enmlNixnoteLinkTest() {
 
         QString result(R"R(<a title=")R");
         result.append(resourceUrl);
+        // note that here intentionally space is missing, as this is currently the fucked up output of xml rendering
         result.append(R"R("href=")R");
         result.append(resourceUrl);
         result.append(

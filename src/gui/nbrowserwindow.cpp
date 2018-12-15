@@ -2427,21 +2427,25 @@ void NBrowserWindow::setInsideLink(QString link) {
 
 
 // Edit a LaTeX formula
-void NBrowserWindow::editLatex(QString guid) {
+void NBrowserWindow::editLatex(QString incomingLid) {
+
     QString formula = editor->selectedText();
+    QLOG_DEBUG() << "edit latex incomingLid=" << incomingLid << ", formula=" << formula;
+
     QString oldFormula = "";
     if (formula.trimmed() == "\n" || formula.trimmed() == "") {
         InsertLatexDialog dialog;
-        if (guid.trimmed() != "") {
+        if (incomingLid.trimmed() != "") {
             Resource r;
             ResourceTable resTable(global.db);
-            resTable.get(r, guid.toInt(), false);
+            resTable.get(r, incomingLid.toInt(), false);
 
             if (r.attributes.isSet()) {
                 ResourceAttributes attributes;
                 attributes = r.attributes;
                 if (attributes.sourceURL.isSet()) {
                     QString origFormula = NixnoteStringUtils::extractLatexFormulaFromResourceUrl(attributes.sourceURL);
+                    QLOG_DEBUG() << "edit latex origFormula=" << origFormula;
                     oldFormula = origFormula;
                     dialog.setFormula(origFormula);
                 }
@@ -2449,10 +2453,12 @@ void NBrowserWindow::editLatex(QString guid) {
         }
         dialog.exec();
         if (!dialog.okPressed()) {
+            QLOG_DEBUG() << "latex dialog cancelled";
             return;
         }
         formula = dialog.getFormula().trimmed();
     }
+    QLOG_DEBUG() << "latex dialog finished, formula=" << formula;
 
     ConfigStore cs(global.db);
     qint32 newlid = cs.incrementLidCounter();
@@ -2522,13 +2528,8 @@ void NBrowserWindow::editLatex(QString guid) {
     rtable.add(newlid, r, true, lid);
 
     // do the actual insert into the note
-
     QString buffer;
     buffer.append("<a onmouseover=\"cursor:&apos;hand&apos;\" title=\"");
-
-    // orig code: buffer.append(formula.remove(QRegExp("[^a-zA-Z +-*/^{}()]")));
-    // wtf?
-
     buffer.append(NixnoteStringUtils::urlencode(formula));
     buffer.append("\" href=\"latex:///");
     buffer.append(QString::number(newlid));
@@ -2546,28 +2547,45 @@ void NBrowserWindow::editLatex(QString guid) {
     buffer.append(QString::number(newlid));
     buffer.append("\"></a>");
 
+    QLOG_DEBUG() << "latex, final html=" << buffer;
+
     // If this is a new formula, we insert it, otherwise we replace the old one.
     if (oldFormula == "") {
+        QLOG_DEBUG() << "latex: insert";
         QString script_start = "document.execCommand('insertHTML', false, '";
         QString script_end = "');";
 
         editor->page()->mainFrame()->evaluateJavaScript(script_start + buffer + script_end);
     } else {
+        QLOG_DEBUG() << "latex: replace";
         QString oldHtml = editor->page()->mainFrame()->toHtml();
         int startPos = oldHtml.indexOf("<a");
+
+        bool found = false;
+        QString sliceId("latex:///" + incomingLid);
+        
         while (startPos != -1) {
             int endPos = oldHtml.indexOf("</a>", startPos);
             if (endPos != -1) {
                 QString slice = oldHtml.mid(startPos, endPos - startPos + 4);
-                if (slice.contains("lid=\"" + guid + "\"") && slice.contains("en-latex")) {
+                QLOG_DEBUG() << "latex: slice=" << slice;
+                if (slice.contains(sliceId)) {
+                    QLOG_DEBUG() << "latex: replace - insertion point found slice=" << slice;
                     oldHtml.replace(slice, buffer);
+                    found = true;
+                    break;
                 }
                 startPos = oldHtml.indexOf("<a", endPos);
-                editor->page()->mainFrame()->setHtml(oldHtml);
             }
         }
-        editor->reload();
-        contentChanged();
+
+        if (found) {
+            editor->page()->mainFrame()->setHtml(oldHtml);
+            editor->reload();
+            contentChanged();
+        } else {
+            QLOG_ERROR() << "latex: insertion point not found!";
+        }
     }
 }
 
