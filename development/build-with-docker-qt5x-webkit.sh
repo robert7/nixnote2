@@ -8,7 +8,7 @@ PROJECTBRANCH=${1}
 PROJECTDIR=`pwd`
 set -xe
 
-DOCKERMODIFIER=_qt59
+DOCKERMODIFIER=_qt511
 DOCKERTAG=nixnote2/xenial${DOCKERMODIFIER}
 DOCKERFILE=./development/docker/Dockerfile.ubuntu_xenial${DOCKERMODIFIER}
 
@@ -75,10 +75,9 @@ time docker run \
 ## apt -y install mc
 
 #### ALTERNATIVE to webkit compile (as it takes ages): use prebuild webkit binaries
-## NNQTVER=$(cd /opt && echo qt5*) && cd /opt && wget https://github.com/robert7/nixnote2/releases/download/continuous-develop/qtwebkit-qt56-binaries.tgz && cd /opt/$NNQTVER && tar -xf /opt/qtwebkit-qt56-binaries.tgz
+## NNQTVER=$(cd /opt && echo qt5*) && cd /opt && wget https://github.com/robert7/nixnote2/releases/download/continuous-develop/qtwebkit-$NNQTVER-binaries.tgz && cd /opt/$NNQTVER && tar -xf /opt/qtwebkit-$NNQTVER-binaries.tgz
 
 #### compile nixnote and create AppImage - at the end resulting binary is copied to "appdir" which is mapped from host machine
-## PROJECTBRANCH=master && BUILD_TYPE=release && cd /opt/nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull && source /opt/qt5*/bin/qt*-env.sh &&./development/build-with-qmake.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy
-## cd /opt/nixnote2 && unset QTDIR && unset QT_PLUGIN_PATH && unset QT_BASE_DIR && unset LD_LIBRARY_PATH && PROG=nixnote2 && DESKTOP_FILE=appdir/usr/share/applications/${PROG}.desktop && linuxdeployqt $DESKTOP_FILE -appimage && mv *.AppImage appdir && chmod -R a+rwx appdir
+## PROJECTBRANCH=master && BUILD_TYPE=release && cd /opt/nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull && source /opt/qt5*/bin/qt*-env.sh && ./development/build-with-qmake.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy && cd /opt/nixnote2 && unset QTDIR && unset QT_PLUGIN_PATH && unset QT_BASE_DIR && unset LD_LIBRARY_PATH && PROG=nixnote2 && DESKTOP_FILE=appdir/usr/share/applications/${PROG}.desktop && linuxdeployqt $DESKTOP_FILE -appimage && mv *.AppImage appdir && chmod -R a+rwx appdir
 
 

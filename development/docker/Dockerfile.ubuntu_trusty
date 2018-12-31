@@ -1,5 +1,12 @@
 FROM ubuntu:trusty
 
+#
+# unfortunately this doesn't work
+# ..but, as "trusty" is reaching "end of life" I never bothered to fix the build
+# so I only leave it for reference
+# currently the AppImage build with "xenial"
+#
+
 ARG wdir="/opt"
 WORKDIR $wdir
 
