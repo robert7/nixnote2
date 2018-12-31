@@ -8,7 +8,7 @@ PROJECTBRANCH=${1}
 PROJECTDIR=`pwd`
 set -xe
 
-DOCKERMODIFIER=_qt562
+DOCKERMODIFIER=_qt59
 DOCKERTAG=nixnote2/xenial${DOCKERMODIFIER}
 DOCKERFILE=./development/docker/Dockerfile.ubuntu_xenial${DOCKERMODIFIER}
 
