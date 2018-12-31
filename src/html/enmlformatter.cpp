@@ -26,10 +26,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <tidy/tidy.h>
 #include <tidy/tidybuffio.h>
 #include <iostream>
-
 #include "enmlformatter.h"
 #include "src/utilities/encrypt.h"
 #include "src/logger/qslog.h"
+#include "src/utilities/NixnoteStringUtils.h"
 
 #define ENML_MODULE_LOGPREFIX "enml-cleanup: "
 
@@ -44,7 +44,7 @@ EnmlFormatter::EnmlFormatter(
 ) : QObject(nullptr) {
     this->guiAvailable = guiAvailable;
 
-    // actually currently NOT used, as we donÄt support editable encrypted areas
+    // actually currently NOT used, as we don't support editable encrypted areas
     this->passwordSafe = passwordSafe;
     this->cryptoJarPath = cryptoJarPath;
 
@@ -615,12 +615,12 @@ void EnmlFormatter::fixANode(QWebElement &e) {
         xml.replace("</a>", "</en-media>" HTML_COMMENT_END);
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed link node to " << xml;
         e.setOuterXml(xml);
-    } else if (href.toLower().startsWith("latex:///")) {
+    } else if (href.startsWith("latex:///")) {
         QString formula = e.attribute("title");
-        const QString attr = QString("http://latex.codecogs.com/gif.latex?%1").arg(formula);
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed latex a tag to " << e.toOuterXml();
-        e.removeAttribute("title");
+        const QString attr = NixnoteStringUtils::createLatexResourceUrl(formula, false);
+        e.setAttribute("title", attr);
         e.setAttribute("href", attr);
+        QLOG_WARN() << ENML_MODULE_LOGPREFIX "fixed latex a tag to " << e.toOuterXml();
     } else if (href.isEmpty()) {
         QLOG_WARN() << ENML_MODULE_LOGPREFIX " a tag with empty href => removing";
         e.removeFromDocument();

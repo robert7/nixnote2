@@ -17,6 +17,7 @@ SOURCES += tests.cpp \
            ../src/logger/qslog.cpp \
            ../src/logger/qslogdest.cpp \
            ../src/logger/qsdebugoutput.cpp \
+           ../src/utilities/NixnoteStringUtils.cpp \
            ../src/utilities/encrypt.cpp
 
 HEADERS += tests.h \
@@ -24,6 +25,7 @@ HEADERS += tests.h \
            ../src/logger/qslog.h \
            ../src/logger/qslogdest.h \
            ../src/logger/qsdebugoutput.h \
+           ../src/utilities/NixnoteStringUtils.h \
            ../src/utilities/encrypt.h
 
 CONFIG(debug, debug|release) {

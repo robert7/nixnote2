@@ -87,7 +87,7 @@ private:
     bool insideEncryption;
     bool insidePre;
     bool forceTextPaste;
-    void editLatex(QString guid);
+    void editLatex(QString incomingLid);
     QString selectedFileName;
     qint32 selectedFileLid;
     void rotateImage(qreal degrees);

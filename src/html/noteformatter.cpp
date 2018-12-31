@@ -17,7 +17,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-
+#include <QFileSystemModel>
+#include <QFileIconProvider>
+#include <poppler-qt5.h>
+#include <QIcon>
+#include <QList>
+#include <iostream>
 #include "noteformatter.h"
 #include "src/sql/resourcetable.h"
 #include "src/sql/notebooktable.h"
@@ -28,33 +33,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/filters/filterengine.h"
 #include "src/utilities/mimereference.h"
 #include "enmlformatter.h"
-
-#include <QFileSystemModel>
-#include <QFileIconProvider>
-
-#if QT_VERSION < 0x050000
-
-#include <poppler-qt4.h>
-
-#else
-
-#include <poppler-qt5.h>
-
-#endif
-
-#include <QIcon>
-#include <QList>
-
-
-#include <iostream>
+#include "src/utilities/NixnoteStringUtils.h"
 
 using namespace std;
 
 extern Global global;
 
 /* Constructor. */
-NoteFormatter::NoteFormatter(QObject *parent) :
-    QObject(parent) {
+NoteFormatter::NoteFormatter(QObject *parent) : NoteFormatterBase(parent) {
     thumbnail = false;
     this->setNoteHistory(false);
     this->noteHistory = false;
@@ -120,6 +106,34 @@ void NoteFormatter::setNoteHistory(bool value) {
 }
 
 
+QString NoteFormatter::enmlToNoteHTML(QString enml) {
+    QWebPage page;
+    QEventLoop loop;
+    QLOG_TRACE() << "Before preHTMLFormat";
+    QString html = "<body></body>";
+    if (note.content.isSet()) {
+        html = preHtmlFormat(enml);
+    }
+
+    html.replace("<en-note", "<body");
+    html.replace("</en-note>", "</body>");
+
+    QByteArray htmlPage;
+    htmlPage.append(html);
+    QLOG_TRACE() << "About to set content";
+    page.mainFrame()->setContent(htmlPage);
+    QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
+
+    QLOG_TRACE() << "Starting to modify tags";
+    modifyTags(page);
+    QLOG_TRACE() << "Done modifying tags";
+    html = page.mainFrame()->toHtml();
+
+    return html;
+}
+
+
+
 /* Take the ENML note and transform it into HTML that WebKit will
   not complain about */
 QByteArray NoteFormatter::rebuildNoteHTML() {
@@ -148,29 +162,7 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     QLOG_DEBUG_FILE(logfilePrefix + "original-enml.xml", origENML);
 
 
-    QWebPage page;
-    QEventLoop loop;
-    QLOG_TRACE() << "Before preHTMLFormat";
-    QString html = "<body></body>";
-    if (note.content.isSet()) {
-        html = preHtmlFormat(origENML);
-    }
-
-    html.replace("<en-note", "<body");
-    html.replace("</en-note>", "</body>");
-
-    QByteArray htmlPage;
-    htmlPage.append(html);
-
-
-    QLOG_TRACE() << "About to set content";
-    page.mainFrame()->setContent(htmlPage);
-    QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
-
-    QLOG_TRACE() << "Starting to modify tags";
-    modifyTags(page);
-    QLOG_TRACE() << "Done modifying tags";
-    html = page.mainFrame()->toHtml();
+    QString html = enmlToNoteHTML(origENML);
     note.content = html;
 
     QLOG_DEBUG_FILE(logfilePrefix + "modify.html", html);
@@ -325,11 +317,17 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     enCryptLen = anchors.count();
     for (qint32 i = 0; i < anchors.count(); i++) {
         QWebElement element = anchors.at(i);
-        if (!element.attribute("href").toLower().startsWith("http://latex.codecogs.com/gif.latex?")) {
-            element.setAttribute("title", element.attribute("href"));
+        QString href = element.attribute("href");
+        QLOG_DEBUG() << "link #" << i << " href=" << href;
+
+        if (!NixnoteStringUtils::isLatexFormulaResourceUrl(href)) {
+            element.setAttribute("title", href);
         } else {
-            QString formula = element.attribute("href").toLower().replace("http://latex.codecogs.com/gif.latex?", "");
-            element.setAttribute("title", formula);
+            QString encodedFormula = NixnoteStringUtils::extractLatexFormulaFromResourceUrl(href, true);
+            element.setAttribute("title", encodedFormula);
+
+            QLOG_DEBUG() << "link #" << i << " encodedFormula=" << encodedFormula;
+
             QString resLid = element.firstChild().attribute("lid", "");
             element.setAttribute("href", "latex:///" + resLid);
         }
@@ -511,18 +509,25 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
             enMedia.setAttribute("src", imgfile);
             // Check if this is a LaTeX image
             ResourceAttributes attributes;
-            if (r.attributes.isSet())
+            if (r.attributes.isSet()) {
                 attributes = r.attributes;
+            }
+
             QString sourceUrl = "";
-            if (attributes.sourceURL.isSet())
+            if (attributes.sourceURL.isSet()) {
                 sourceUrl = attributes.sourceURL;
-            if (sourceUrl.toLower().startsWith("http://latex.codecogs.com/gif.latex?")) {
+            }
+
+            if (NixnoteStringUtils::isLatexFormulaResourceUrl(sourceUrl)) {
                 enMedia.appendInside("<img/>");
                 QWebElement newText = enMedia.lastChild();
                 enMedia.setAttribute("en-tag", "en-latex");
                 newText.setAttribute("onMouseOver", "style.cursor='pointer'");
-                sourceUrl.replace("http://latex.codecogs.com/gif.latex?", "");
-                newText.setAttribute("title", sourceUrl);
+
+                QString encodedFormula = NixnoteStringUtils::extractLatexFormulaFromResourceUrl(sourceUrl, true);
+                newText.setAttribute("title", encodedFormula);
+                QLOG_DEBUG() << "setting title=" << encodedFormula;
+
                 newText.setAttribute("href", "latex:///" + QString::number(resLid));
             }
             enMedia.setAttribute("onContextMenu", "window.browserWindow.imageContextMenu('"
