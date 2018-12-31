@@ -8,12 +8,19 @@ PROJECTBRANCH=${1}
 PROJECTDIR=`pwd`
 set -xe
 
-# note: all with DOCKERMODIFIER != "" is highly experimental and needs "someway" to include webkit binaries
-# so without it will fail
 DOCKERMODIFIER=_qt562
-
 DOCKERTAG=nixnote2/xenial${DOCKERMODIFIER}
 DOCKERFILE=./development/docker/Dockerfile.ubuntu_xenial${DOCKERMODIFIER}
+
+function error_exit {
+    echo "$0: ***********error_exit***********"
+    echo "***********" 1>&2
+    echo "*********** Failed: $1" 1>&2
+    echo "***********" 1>&2
+    cd ${CDIR}
+    exit 1
+}
+
 
 if [ ! -f src/main.cpp ]; then
   echo "You seem to be in wrong directory. script MUST be run from the project directory."
@@ -34,8 +41,8 @@ fi
 
 # cleanup
 BUILD_TYPE=release
-rm -rf appdir
-rm -rf docker-build-${BUILD_TYPE}
+rm -rf appdir || error_exit "rm appdir"
+rm -rf docker-build-${BUILD_TYPE} || error_exit "rm docker-build-${BUILD_TYPE}"
 
 
 if [ ! -d docker-build-${BUILD_TYPE} ]; then

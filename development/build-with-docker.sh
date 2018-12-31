@@ -10,6 +10,15 @@ set -xe
 DOCKERTAG=nixnote2/xenial${DOCKERMODIFIER}
 DOCKERFILE=./development/docker/Dockerfile.ubuntu_xenial${DOCKERMODIFIER}
 
+function error_exit {
+    echo "$0: ***********error_exit***********"
+    echo "***********" 1>&2
+    echo "*********** Failed: $1" 1>&2
+    echo "***********" 1>&2
+    cd ${CDIR}
+    exit 1
+}
+
 if [ ! -f src/main.cpp ]; then
   echo "You seem to be in wrong directory. script MUST be run from the project directory."
   exit 1
@@ -31,11 +40,11 @@ if [ ! -z ${DOCKERMODIFIER} ] ; then
 fi
 
 if [ ! -d appdir ] ; then
-  mkdir appdir
+  mkdir appdir || error_exit "mkdir appdir"
 fi
 
 # delete appdir content
-rm -rf appdir/*
+rm -rf appdir/* || error_exit "rm appdir"
 
 BUILD_TYPE=release
 
