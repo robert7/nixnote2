@@ -3,9 +3,7 @@ FROM ubuntu:xenial
 ARG wdir="/opt"
 WORKDIR $wdir
 
-ARG cmake_ver="cmake-3.8.0-Linux-x86_64"
 ARG make_core=4
-ENV PATH="${wdir}/${cmake_ver}/bin:${PATH}"
 ENV PATH="${wdir}/linuxdeployqt:${PATH}"
 
 RUN apt-get update && apt-get install -y software-properties-common
