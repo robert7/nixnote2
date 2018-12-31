@@ -1,6 +1,7 @@
 #!/bin/bash
 # here we expected that the particular version of qmake, you want to use  is found on PATH
 # so if you want to use something different then default - make sure you adjust path before calling this script
+set -xe
 
 BUILD_TYPE=${1}
 CLEAN=${2}
