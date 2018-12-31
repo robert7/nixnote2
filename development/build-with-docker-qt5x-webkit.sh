@@ -61,10 +61,18 @@ time docker run \
    -it ${DOCKERTAG} \
       /bin/bash
 
-# run in container console:
+# manually run following commands in docker container console:
 #
-## cd /opt && git clone git://code.qt.io/qt/qtwebkit.git; source /opt/qt*/bin/qt*-env.sh && cd qtwebkit && mkdir -p WebKitBuild/Release && cd WebKitBuild/Release && cmake -DPORT=Qt -DCMAKE_BUILD_TYPE=Release ../.. && make -j$(nproc) && make install
-## PROJECTBRANCH=master && BUILD_TYPE=release && cd /opt/nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull && source /opt/qt*/bin/qt*-env.sh &&./development/build-with-qmake.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy
+##
+##
+#### install and compile webkit
+## cd /opt && git clone git://code.qt.io/qt/qtwebkit.git; source /opt/qt5*/bin/qt*-env.sh && cd qtwebkit && mkdir -p WebKitBuild/Release && cd WebKitBuild/Release && cmake -DPORT=Qt -DCMAKE_BUILD_TYPE=Release ../.. && make -j$(nproc) && make install
+####
+#### OPTIONAL: create tarball with webkit binaries
+## NNQTVER=$(cd /opt && echo qt5*) && cd /opt/qtwebkit/WebKitBuild/Release && make DESTDIR=/opt/qtwebkit-$NNQTVER-binaries install && cd /opt/qtwebkit-$NNQTVER-binaries/opt/$NNQTVER && tar -zcf /opt/nixnote2/appdir/qtwebkit-$NNQTVER-binaries.tgz * && cd /opt
+####
+#### compile nixnote
+## PROJECTBRANCH=master && BUILD_TYPE=release && cd /opt/nixnote2 && git fetch && git checkout $PROJECTBRANCH && git pull && source /opt/qt5*/bin/qt*-env.sh &&./development/build-with-qmake.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy
 ## cd /opt/nixnote2 && unset QTDIR && unset QT_PLUGIN_PATH && unset QT_BASE_DIR && unset LD_LIBRARY_PATH && PROG=nixnote2 && DESKTOP_FILE=appdir/usr/share/applications/${PROG}.desktop && linuxdeployqt $DESKTOP_FILE -appimage && mv *.AppImage appdir && chmod -R a+rwx appdir
 #
 
