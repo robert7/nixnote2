@@ -71,10 +71,7 @@ time docker run \
 ## NNQTVER=$(cd /opt && echo qt5*) && cd /opt/qtwebkit/WebKitBuild/Release && make DESTDIR=/opt/qtwebkit-$NNQTVER-binaries install && cd /opt/qtwebkit-$NNQTVER-binaries/opt/$NNQTVER && tar -zcf /opt/nixnote2/appdir/qtwebkit-$NNQTVER-binaries.tgz * && cd /opt
 ####
 
-#### OPTIONAL: helper tools
-## apt -y install mc
-
-#### ALTERNATIVE to webkit compile (as it takes ages): use prebuild webkit binaries
+#### ALTERNATIVE to webkit "compile from source" (as it takes ages): use prebuild webkit binaries
 ## NNQTVER=$(cd /opt && echo qt5*) && cd /opt && wget https://github.com/robert7/nixnote2/releases/download/continuous-develop/qtwebkit-$NNQTVER-binaries.tgz && cd /opt/$NNQTVER && tar -xf /opt/qtwebkit-$NNQTVER-binaries.tgz
 
 #### compile nixnote and create AppImage - at the end resulting binary is copied to "appdir" which is mapped from host machine

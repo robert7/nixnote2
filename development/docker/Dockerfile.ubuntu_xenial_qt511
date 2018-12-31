@@ -12,7 +12,7 @@ RUN add-apt-repository ppa:nixnote/nixnote2-stable -y && \
 # last line is for webkit build from source
 # qt pkg names: https://askubuntu.com/questions/508503/whats-the-development-package-for-qt5-in-14-04
 RUN apt-get update && apt-get install -y git-core build-essential \
-                              qt511base qt511tools qt511webchannel qt511script qt511translations qt511websockets qt511xmlpatterns qt511declarative qt511location \
+                              qt511base qt511tools qt511webchannel qt511script qt511translations qt511websockets qt511xmlpatterns qt511declarative qt511location qt511sensors \
                               wget curl make pkg-config \
                               libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev libcurl4-openssl-dev \
                               libpoppler-qt5-dev libhunspell-dev nixnote2-tidy \
