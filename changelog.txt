@@ -12,7 +12,7 @@ NixNote (2.1.2-f) stable; urgency=low
   * Added button with wiki article link to "Preferences/Exits" with function description
   * Synced qevercloud source with source repository (currently at tag v2.2.1)
   * Fixes in LaTeX handling
- -- Robert Spiegel <nightingale7@gmail.com>  Sat, 15 Dec 2018 21:19:36 +0100
+ -- Robert Spiegel <nightingale7@gmail.com>  Mon, 31 Dec 2018 16:39:35 +0100
 
 NixNote (2.1.1) stable; urgency=low
   * Chinese translation update; thanks to https://github.com/hosiet
