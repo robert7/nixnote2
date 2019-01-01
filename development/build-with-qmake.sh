@@ -52,8 +52,8 @@ echo "${BUILD_DIR}">_build_dir_.txt
 
 APPDIR=appdir
 if [ -d "${APPDIR}" ]; then
-  rm -rf ${APPDIR}
-  rm *.AppImage 2>/dev/null
+  rm -rf ${APPDIR}/* || echo "failed to remove"
+  rm *.AppImage 2>/dev/null || echo "failed to remove"
 fi
 
 
