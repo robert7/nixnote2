@@ -1,10 +1,23 @@
 #!/bin/bash
 PROJECTBRANCH=${1}
 PROJECTDIR=`pwd`
+set -xe
 
-DOCKERMODIFIER=_qt562
+# note: all with DOCKERMODIFIER != "" is highly experimental and needs "someway" to include webkit binaries
+# so without it will fail
+#DOCKERMODIFIER=_qt562
+
 DOCKERTAG=nixnote2/xenial${DOCKERMODIFIER}
 DOCKERFILE=./development/docker/Dockerfile.ubuntu_xenial${DOCKERMODIFIER}
+
+function error_exit {
+    echo "$0: ***********error_exit***********"
+    echo "***********" 1>&2
+    echo "*********** Failed: $1" 1>&2
+    echo "***********" 1>&2
+    cd ${CDIR}
+    exit 1
+}
 
 if [ ! -f src/main.cpp ]; then
   echo "You seem to be in wrong directory. script MUST be run from the project directory."
@@ -19,15 +32,19 @@ cd $PROJECTDIR
 # create "builder" image
 docker build -t ${DOCKERTAG} -f ${DOCKERFILE} ./development/docker
 
-# uncommend to stop after creating the image (e.g. you want to do the build manually)
-#exit 1
+# stop after creating the image (e.g. you want to do the build manually)
+if [ ! -z ${DOCKERMODIFIER} ] ; then
+  echo "Docker image ${DOCKERTAG} created.. "
+  echo "DOCKERMODIFIER set to $DOCKERMODIFIER .. you need to provide webkit manually.."
+  exit 1
+fi
 
 if [ ! -d appdir ] ; then
-  mkdir appdir
+  mkdir appdir || error_exit "mkdir appdir"
 fi
 
 # delete appdir content
-rm -rf appdir/*
+rm -rf appdir/* || error_exit "rm appdir"
 
 BUILD_TYPE=release
 

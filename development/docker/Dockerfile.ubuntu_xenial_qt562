@@ -3,9 +3,7 @@ FROM ubuntu:xenial
 ARG wdir="/opt"
 WORKDIR $wdir
 
-ARG cmake_ver="cmake-3.8.0-Linux-x86_64"
 ARG make_core=4
-ENV PATH="${wdir}/${cmake_ver}/bin:${PATH}"
 ENV PATH="${wdir}/linuxdeployqt:${PATH}"
 
 RUN apt-get update && apt-get install -y software-properties-common
@@ -19,7 +17,7 @@ RUN apt-get update && apt-get install -y git-core build-essential \
                               wget curl make pkg-config \
                               libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev libcurl4-openssl-dev \
                               libpoppler-qt5-dev libhunspell-dev nixnote2-tidy \
-                              cmake build-essential perl python ruby flex gperf bison cmake ninja-build libfontconfig1-dev libicu-dev libsqlite3-dev zlib1g-dev libpng-dev libjpeg-dev libxslt1-dev libxml2-dev libhyphen-dev libxcomposite-dev libxrender-dev
+                              cmake build-essential perl python ruby flex gperf bison cmake ninja-build libfontconfig1-dev libicu-dev libsqlite3-dev zlib1g-dev libpng-dev libjpeg-dev libxslt1-dev libxml2-dev libhyphen-dev libxcomposite-dev libxrender-dev libglib2.0-dev libgstreamer-plugins-base1.0-dev
 
 
 # install linuxdeployqt
