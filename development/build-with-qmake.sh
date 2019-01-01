@@ -52,7 +52,7 @@ echo "${BUILD_DIR}">_build_dir_.txt
 
 APPDIR=appdir
 if [ -d "${APPDIR}" ]; then
-  rm -rf ${APPDIR}
+  rm -rf ${APPDIR}/*
   rm *.AppImage 2>/dev/null
 fi
 
