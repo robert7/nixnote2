@@ -37,25 +37,26 @@ ColorMenu::ColorMenu(QObject *parent) :
 
 QStringList ColorMenu::colorNames() {
     QStringList colors;
-    colors << "black";
-    colors << "gray";
-    colors << "darkGrey";
+    const QString &delim = QStringLiteral("|");
+    colors << QString(tr("black")).append(delim).append(QString("black"));
+    colors << tr("gray").append(delim).append(QString("gray"));
+    colors << tr("darkGrey").append(delim).append(QString("darkGrey"));
 
-    colors << "red";
-    colors << "magenta";
-    colors << "darkMagenta";
-    colors << "darkRed";
+    colors << tr("red").append(delim).append(QString("red"));
+    colors << tr("magenta").append(delim).append(QString("magenta"));
+    colors << tr("darkMagenta").append(delim).append(QString("darkMagenta"));
+    colors << tr("darkRed").append(delim).append(QString("darkRed"));
 
-    colors << "green";
-    colors << "darkGreen";
+    colors << tr("green").append(delim).append(QString("green"));
+    colors << tr("darkGreen").append(delim).append(QString("darkGreen"));
 
-    colors << "blue";
-    colors << "darkBlue";
-    colors << "cyan";
-    colors << "darkCyan";
+    colors << tr("blue").append(delim).append(QString("blue"));
+    colors << tr("darkBlue").append(delim).append(QString("darkBlue"));
+    colors << tr("cyan").append(delim).append(QString("cyan"));
+    colors << tr("darkCyan").append(delim).append(QString("darkCyan"));
 
-    colors << "yellow";
-    colors << "white";
+    colors << tr("yellow").append(delim).append(QString("yellow"));
+    colors << tr("white").append(delim).append(QString("white"));
     return colors;
 }
 
@@ -75,9 +76,10 @@ void ColorMenu::populateList() {
         colorMap[colorCode] = colorname;
 
         QAction *newAction = new QAction(QIcon(pix), "", parent);
-        newAction->setToolTip(list[i]);
-        newAction->setText(list[i]);
+        newAction->setToolTip(colorname);
+        newAction->setText(colorname);
         menu.addAction(newAction);
+
         connect(newAction, SIGNAL(hovered()), this, SLOT(itemHovered()));
     }
     //QLOG_DEBUG() << "Done: populating colormenu";
