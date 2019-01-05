@@ -29,8 +29,9 @@ ColorMenu::ColorMenu(QObject *parent) :
 
     populateList();
     QString css = global.getThemeCss("colorMenuCss");
-    if (css != "")
+    if (css != "") {
         this->menu.setStyleSheet(css);
+    }
 
 }
 
@@ -122,7 +123,9 @@ QMenu *ColorMenu::getMenu() {
 
 void ColorMenu::setCurrentColorByEnglishName(QString color) {
     currentColorAsString = color;
-    currentColor.setNamedColor(color);
+    QColor tempColor(color);
+    currentColor = tempColor;
+    QLOG_DEBUG() << "Set color to name=" << color << ", code=" << currentColor.name();
 }
 
 void ColorMenu::setCurrentColorByLocalName(QString color) {
@@ -132,6 +135,6 @@ void ColorMenu::setCurrentColorByLocalName(QString color) {
 void ColorMenu::itemHovered() {
     if (menu.activeAction() != nullptr && menu.activeAction()->toolTip() != nullptr) {
         QString color = menu.activeAction()->toolTip();
-        setCurrentColorByEnglishName(color);
+        setCurrentColorByLocalName(color);
     }
 }
