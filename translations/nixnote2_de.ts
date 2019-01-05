@@ -1909,7 +1909,7 @@ Siehe Liste unter http://www.w3schools.com/charsets/.</translation>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="37"/>
         <source>Language *</source>
-        <translation type="unfinished"></translation>
+        <translation>Sprache *</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="50"/>
@@ -3991,14 +3991,12 @@ Wollen Sie wirklich fortfahren?</translation>
     <message>
         <location filename="../src/nixnote.cpp" line="3308"/>
         <source>Config files are located at:</source>
-        <translation>Konfigurationsdateien befinden sich unter: 
-</translation>
+        <translation>Konfigurationsdateien befinden sich unter:</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3309"/>
         <source>Note database files are located at:</source>
-        <translation>Notiz-Datenbank-Dateien befinden sich unter: 
-</translation>
+        <translation>Notiz-Datenbank-Dateien befinden sich unter:</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3312"/>
@@ -4143,8 +4141,7 @@ Wollen Sie wirklich fortfahren?</translation>
     <message>
         <location filename="../src/nixnote.cpp" line="3310"/>
         <source>Main app log file is located at:</source>
-        <translation>Die Log-Datei befindet sich unter: 
-</translation>
+        <translation>Die Log-Datei befindet sich unter:</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3558"/>
