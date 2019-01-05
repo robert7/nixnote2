@@ -32,16 +32,20 @@ private:
     QMenu menu;
     QObject *parent;
     void populateList();
+    QString currentColorAsString;
     QColor currentColor;
-    QMap<QString, QString> colorMap;
 
+
+    QMap<QString, QString> mapLocal2EnglishName;
     static QStringList colorNames();
+    void setCurrentColorByLocalName(QString color);
+    QString local2EnglishName(QString localName);
 
 public:
     explicit ColorMenu(QObject *parent = 0);
-    void setCurrentColor(QColor color);
-    void setCurrentColor(QString color);
+    void setCurrentColorByEnglishName(QString color);
     QColor* getCurrentColor();
+    QString getCurrentColorAsString();
     QString getCurrentColorName();
     QMenu* getMenu();
 
@@ -51,5 +55,6 @@ public slots:
     void itemHovered();
     
 };
+#define DEFAULT_COLORMENU_COLOR "black"
 
 #endif // COLORMENU_H

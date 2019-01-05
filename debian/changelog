@@ -1,3 +1,8 @@
+NixNote (2.1.3-a) stable; urgency=low
+  * Updated german translation, thanks to https://github.com/stemabu
+  * Fixed few issues involving translation (mainly color menu)
+ -- Robert Spiegel <nightingale7@gmail.com>  Sat, 05 Jan 2019 12:30:02 +0100
+
 NixNote (2.1.2) stable; urgency=low
   * Make project cross-buildable issue #67; from https://bugs.debian.org/915590
   * Added italian translation, thanks to Rino Russo
