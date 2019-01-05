@@ -163,7 +163,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     );
     fontColorAction = this->addWidget(fontColorButtonWidget);
     // TODO load from settings
-    fontColorMenuWidget->setCurrentColor(fontColor);
+    fontColorMenuWidget->setCurrentColorByEnglishName(fontColor);
 
     highlightColorMenuWidget = new ColorMenu();
     highlightColorButtonWidget = new QToolButton(this);
@@ -178,7 +178,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     );
     highlightColorAction = this->addWidget(highlightColorButtonWidget);
     // TODO load from settings
-    highlightColorMenuWidget->setCurrentColor(fontHighlightColor);
+    highlightColorMenuWidget->setCurrentColorByEnglishName(fontHighlightColor);
 
     QString tooltipInfo;
     undoButtonShortcut = new QShortcut(this);
