@@ -667,77 +667,77 @@
 <context>
     <name>ColorMenu</name>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="40"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="41"/>
         <source>black</source>
         <translation>Schwarz</translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="41"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="42"/>
         <source>gray</source>
         <translation>Grau</translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="42"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="43"/>
         <source>darkGrey</source>
         <translation>Dunkel Grau</translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="44"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="45"/>
         <source>red</source>
         <translation>Rot</translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="45"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="46"/>
         <source>magenta</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="46"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="47"/>
         <source>darkMagenta</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="47"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="48"/>
         <source>darkRed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="49"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="50"/>
         <source>green</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="50"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="51"/>
         <source>darkGreen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="52"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="53"/>
         <source>blue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="53"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="54"/>
         <source>darkBlue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="54"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="55"/>
         <source>cyan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="55"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="56"/>
         <source>darkCyan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="57"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="58"/>
         <source>yellow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="58"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="59"/>
         <source>white</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3984,53 +3984,53 @@ Wollen Sie wirklich fortfahren?</translation>
         <translation>Diese Notiz wurde nie mit Evernote synchronisiert</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3307"/>
+        <location filename="../src/nixnote.cpp" line="3289"/>
         <source>Application file(s) info</source>
         <translation>Datei-Informationen Nixnote</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3308"/>
+        <location filename="../src/nixnote.cpp" line="3290"/>
         <source>Config files are located at:</source>
         <translation>Konfigurationsdateien befinden sich unter:</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3309"/>
+        <location filename="../src/nixnote.cpp" line="3292"/>
         <source>Note database files are located at:</source>
         <translation>Notiz-Datenbank-Dateien befinden sich unter:</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3312"/>
+        <location filename="../src/nixnote.cpp" line="3297"/>
         <source>See project wiki section FAQ (Menu Help/Project wiki) for more info how to:</source>
         <translation>In der FAQ des Projekt-Wikis wird beschrieben wie</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3313"/>
+        <location filename="../src/nixnote.cpp" line="3298"/>
         <source>* change log level</source>
         <translation>* der Log-Level geändert werden kann</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3314"/>
+        <location filename="../src/nixnote.cpp" line="3299"/>
         <source>* look at log</source>
         <translation>* die Log-Datei eingesehen werden kann</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3315"/>
+        <location filename="../src/nixnote.cpp" line="3300"/>
         <source>* how to add content of log file to github issue</source>
         <translation>* Inhalt der Log-Datei in einem Issue auf Github verwendet werden kann</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3316"/>
+        <location filename="../src/nixnote.cpp" line="3301"/>
         <source>* how to change data location</source>
         <translation>* der Speicherort für die Daten geändert werden kann</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3647"/>
+        <location filename="../src/nixnote.cpp" line="3632"/>
         <source>PDF Export</source>
         <translation>PDF-Export</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3620"/>
-        <location filename="../src/nixnote.cpp" line="3621"/>
+        <location filename="../src/nixnote.cpp" line="3605"/>
+        <location filename="../src/nixnote.cpp" line="3606"/>
         <source>Exporting notes as PDF</source>
         <translation>Notizen als PDF exportieren</translation>
     </message>
@@ -4089,62 +4089,62 @@ Wollen Sie wirklich fortfahren?</translation>
         <translation>Die Notiz wurde wiederhergestellt</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2718"/>
+        <location filename="../src/nixnote.cpp" line="2708"/>
         <source>Note not found.</source>
         <translation>Die Notiz wurde nicht gefunden.</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3057"/>
+        <location filename="../src/nixnote.cpp" line="3039"/>
         <source>Switch to </source>
         <translation>Benutzer wechseln</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3163"/>
+        <location filename="../src/nixnote.cpp" line="3145"/>
         <source>Reindex Database</source>
         <translation>Datenbank neu indizieren</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3163"/>
+        <location filename="../src/nixnote.cpp" line="3145"/>
         <source>Reindex the entire database?</source>
         <translation>Die ganze Datenbank neu indizieren?</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3173"/>
+        <location filename="../src/nixnote.cpp" line="3155"/>
         <source>Notes will be reindexed.</source>
         <translation>Die Notizen werden neu indiziert.</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3201"/>
+        <location filename="../src/nixnote.cpp" line="3183"/>
         <source>Note Reindexed</source>
         <translation>Die Notiz wurde neu indiziert</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3213"/>
+        <location filename="../src/nixnote.cpp" line="3195"/>
         <source>Delete </source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3216"/>
+        <location filename="../src/nixnote.cpp" line="3198"/>
         <source>Permanently delete </source>
         <translation>Dauerhaft löschen</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3220"/>
+        <location filename="../src/nixnote.cpp" line="3202"/>
         <source>this note?</source>
         <translation>diese Notiz?</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3224"/>
+        <location filename="../src/nixnote.cpp" line="3206"/>
         <source>Verify Delete</source>
         <translation>Löschen bestätigen</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3310"/>
+        <location filename="../src/nixnote.cpp" line="3294"/>
         <source>Main app log file is located at:</source>
         <translation>Die Log-Datei befindet sich unter:</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3558"/>
+        <location filename="../src/nixnote.cpp" line="3543"/>
         <source>Press ESC to exit.</source>
         <translation>Zum Beenden ESC drücken.</translation>
     </message>

@@ -660,77 +660,77 @@
 <context>
     <name>ColorMenu</name>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="40"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="41"/>
         <source>black</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="41"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="42"/>
         <source>gray</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="42"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="43"/>
         <source>darkGrey</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="44"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="45"/>
         <source>red</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="45"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="46"/>
         <source>magenta</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="46"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="47"/>
         <source>darkMagenta</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="47"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="48"/>
         <source>darkRed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="49"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="50"/>
         <source>green</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="50"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="51"/>
         <source>darkGreen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="52"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="53"/>
         <source>blue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="53"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="54"/>
         <source>darkBlue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="54"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="55"/>
         <source>cyan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="55"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="56"/>
         <source>darkCyan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="57"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="58"/>
         <source>yellow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="58"/>
+        <location filename="../src/gui/browserWidgets/colormenu.cpp" line="59"/>
         <source>white</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3998,13 +3998,13 @@ Are you sure you want to continue?</source>
         <translation>该笔记从未和 Evernote 进行同步</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3647"/>
+        <location filename="../src/nixnote.cpp" line="3632"/>
         <source>PDF Export</source>
         <translation>PDF 导出</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3620"/>
-        <location filename="../src/nixnote.cpp" line="3621"/>
+        <location filename="../src/nixnote.cpp" line="3605"/>
+        <location filename="../src/nixnote.cpp" line="3606"/>
         <source>Exporting notes as PDF</source>
         <translation>导出笔记为 PDF</translation>
     </message>
@@ -4042,102 +4042,102 @@ Are you sure you want to continue?</source>
         <translation>笔记已恢复</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2718"/>
+        <location filename="../src/nixnote.cpp" line="2708"/>
         <source>Note not found.</source>
         <translation>未找到笔记。</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3057"/>
+        <location filename="../src/nixnote.cpp" line="3039"/>
         <source>Switch to </source>
         <translation>切换到 </translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3163"/>
+        <location filename="../src/nixnote.cpp" line="3145"/>
         <source>Reindex Database</source>
         <translation>重建数据库索引</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3163"/>
+        <location filename="../src/nixnote.cpp" line="3145"/>
         <source>Reindex the entire database?</source>
         <translation>重建整个数据库的索引？</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3173"/>
+        <location filename="../src/nixnote.cpp" line="3155"/>
         <source>Notes will be reindexed.</source>
         <translation>笔记将重新索引。</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3201"/>
+        <location filename="../src/nixnote.cpp" line="3183"/>
         <source>Note Reindexed</source>
         <translation>笔记已重新索引</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3213"/>
+        <location filename="../src/nixnote.cpp" line="3195"/>
         <source>Delete </source>
         <translation>删除 </translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3216"/>
+        <location filename="../src/nixnote.cpp" line="3198"/>
         <source>Permanently delete </source>
         <translation>永久删除 </translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3220"/>
+        <location filename="../src/nixnote.cpp" line="3202"/>
         <source>this note?</source>
         <translation>这个笔记？</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3224"/>
+        <location filename="../src/nixnote.cpp" line="3206"/>
         <source>Verify Delete</source>
         <translation>删除确认</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3307"/>
+        <location filename="../src/nixnote.cpp" line="3289"/>
         <source>Application file(s) info</source>
         <translation>应用程序文件信息</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3308"/>
+        <location filename="../src/nixnote.cpp" line="3290"/>
         <source>Config files are located at:</source>
         <translation>配置文件位于：</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3309"/>
+        <location filename="../src/nixnote.cpp" line="3292"/>
         <source>Note database files are located at:</source>
         <translation>笔记数据库文件位于：</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3312"/>
+        <location filename="../src/nixnote.cpp" line="3297"/>
         <source>See project wiki section FAQ (Menu Help/Project wiki) for more info how to:</source>
         <translation>请阅读项目维基的常见问题一节（菜单 帮助/项目维基）以查看下列操作的具体做法：</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3313"/>
+        <location filename="../src/nixnote.cpp" line="3298"/>
         <source>* change log level</source>
         <translation>* 修改日志等级</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3314"/>
+        <location filename="../src/nixnote.cpp" line="3299"/>
         <source>* look at log</source>
         <translation>* 查看日志</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3315"/>
+        <location filename="../src/nixnote.cpp" line="3300"/>
         <source>* how to add content of log file to github issue</source>
         <translation>* 如何将日志文件内容添加到 github issue 中</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3316"/>
+        <location filename="../src/nixnote.cpp" line="3301"/>
         <source>* how to change data location</source>
         <translation>* 如何变更数据位置</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3310"/>
+        <location filename="../src/nixnote.cpp" line="3294"/>
         <source>Main app log file is located at:</source>
         <translation>主应用日志文件位于：</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3558"/>
+        <location filename="../src/nixnote.cpp" line="3543"/>
         <source>Press ESC to exit.</source>
         <translation>按ESC退出。</translation>
     </message>
