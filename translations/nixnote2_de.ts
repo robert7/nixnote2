@@ -669,22 +669,22 @@
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="40"/>
         <source>black</source>
-        <translation type="unfinished"></translation>
+        <translation>Schwarz</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="41"/>
         <source>gray</source>
-        <translation type="unfinished"></translation>
+        <translation>Grau</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="42"/>
         <source>darkGrey</source>
-        <translation type="unfinished"></translation>
+        <translation>Dunkel Grau</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="44"/>
         <source>red</source>
-        <translation type="unfinished"></translation>
+        <translation>Rot</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="45"/>
