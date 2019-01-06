@@ -16,7 +16,7 @@
     <message>
         <location filename="../src/dialog/aboutdialog.cpp" line="51"/>
         <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
-        <translation>&lt;center&gt;Deutsche Übersetzung vom 2. Januar 2019&lt;/center&gt;</translation>
+        <translation>&lt;center&gt;Deutsche Übersetzung vom 6. Januar 2019&lt;/center&gt;</translation>
     </message>
 </context>
 <context>
@@ -315,7 +315,7 @@
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="63"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="68"/>
         <source>Show NixNote</source>
-        <translation type="unfinished"></translation>
+        <translation>Nixnote aufrufen</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="73"/>
@@ -330,7 +330,7 @@
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="89"/>
         <source>notify-send</source>
-        <translation type="unfinished"></translation>
+        <translation>Notify-send</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="96"/>
@@ -679,7 +679,7 @@
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="43"/>
         <source>darkGrey</source>
-        <translation>Dunkel Grau</translation>
+        <translation>Dunkelgrau</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="45"/>
@@ -689,57 +689,57 @@
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="46"/>
         <source>magenta</source>
-        <translation type="unfinished"></translation>
+        <translation>Magenta</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="47"/>
         <source>darkMagenta</source>
-        <translation type="unfinished"></translation>
+        <translation>Dunkles Magenta</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="48"/>
         <source>darkRed</source>
-        <translation type="unfinished"></translation>
+        <translation>Dunkelrot</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="50"/>
         <source>green</source>
-        <translation type="unfinished"></translation>
+        <translation>Grün</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="51"/>
         <source>darkGreen</source>
-        <translation type="unfinished"></translation>
+        <translation>Dunkelgrün</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="53"/>
         <source>blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Blau</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="54"/>
         <source>darkBlue</source>
-        <translation type="unfinished"></translation>
+        <translation>Dunkelblau</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="55"/>
         <source>cyan</source>
-        <translation type="unfinished"></translation>
+        <translation>Cyan</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="56"/>
         <source>darkCyan</source>
-        <translation type="unfinished"></translation>
+        <translation>Dunkles Cyan</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="58"/>
         <source>yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelb</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="59"/>
         <source>white</source>
-        <translation type="unfinished"></translation>
+        <translation>Weiß</translation>
     </message>
 </context>
 <context>
@@ -1062,13 +1062,13 @@
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="67"/>
         <source>To-do</source>
-        <translation>To-Do</translation>
+        <translation>Checkbox</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="71"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="332"/>
         <source>Format Code Block</source>
-        <translation type="unfinished"></translation>
+        <translation>Code-Block einfügen</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="72"/>
@@ -1408,7 +1408,7 @@ Bitte in den Einstellungen die entsprechenden Angaben machen.</translation>
     <message>
         <location filename="../src/dialog/encryptdialog.cpp" line="61"/>
         <source>**64bit RC2 cipher ~ medium security**</source>
-        <translation type="unfinished"></translation>
+        <translation>**64Bit RC2-Chiffre ~ Mittlere Sicherheit**</translation>
     </message>
     <message>
         <location filename="../src/dialog/encryptdialog.cpp" line="68"/>
@@ -1894,7 +1894,7 @@ Siehe Liste unter http://www.w3schools.com/charsets/.</translation>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="51"/>
         <source>Italian</source>
-        <translation type="unfinished"></translation>
+        <translation>Italienisch</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="56"/>
@@ -2264,7 +2264,7 @@ Siehe Liste unter http://www.w3schools.com/charsets/.</translation>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1286"/>
         <source>Insert your code here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Code hier eingeben.</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1976"/>
@@ -3109,7 +3109,7 @@ Entschlüsselung nicht möglich.</translation>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="208"/>
         <source>Open Note In New Tab</source>
-        <translation type="unfinished">Notiz in neuem Tab öffnen</translation>
+        <translation>Notiz in neuem Tab öffnen</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="215"/>
@@ -3497,7 +3497,7 @@ Möchtest Du fortfahren?</translation>
     <message>
         <location filename="../src/gui/ntableviewheader.cpp" line="147"/>
         <source>Relevance</source>
-        <translation type="unfinished">Relevanz</translation>
+        <translation>Relevanz</translation>
     </message>
 </context>
 <context>
@@ -3641,7 +3641,7 @@ Möchtest Du fortfahren?</translation>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="77"/>
         <source>Paste as Unformatted Text</source>
-        <translation>Als unfomtierten Text einfügen</translation>
+        <translation>Als unformatierten Text einfügen</translation>
     </message>
     <message>
         <source>Copy Note URL</source>
@@ -4771,18 +4771,18 @@ Wollen Sie wirklich fortfahren?</translation>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="145"/>
         <source>Downloading changes..</source>
-        <translation>Lade Änderungen herunter</translation>
+        <translation>Lade Änderungen herunter...</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="196"/>
         <source>Sync completed successfully</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronisierung erfolgreich abgeschlossen</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="242"/>
         <location filename="../src/threads/syncrunner.cpp" line="274"/>
         <source>Download </source>
-        <translation type="unfinished"></translation>
+        <translation>Download </translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="242"/>
@@ -4840,7 +4840,7 @@ Wollen Sie wirklich fortfahren?</translation>
         <location filename="../src/threads/syncrunner.cpp" line="730"/>
         <location filename="../src/threads/syncrunner.cpp" line="756"/>
         <source>.</source>
-        <translation type="unfinished">.</translation>
+        <translation>.</translation>
     </message>
 </context>
 <context>
@@ -5118,7 +5118,7 @@ Wollen Sie wirklich fortfahren?</translation>
     <message>
         <location filename="../src/gui/browserWidgets/tageditornewtag.cpp" line="60"/>
         <source>Click to add tag...</source>
-        <translation type="unfinished">Schlagwort...</translation>
+        <translation>Schlagwort...</translation>
     </message>
 </context>
 <context>
