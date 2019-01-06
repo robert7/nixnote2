@@ -34,7 +34,7 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     QDate date = QDate::currentDate();
     QTime time = QTime::currentTime();
 
-    translationLabel = new QLabel("Language *");
+    translationLabel = new QLabel(tr("Language *"));
     translationLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     translationCombo = new QComboBox(this);
     translationCombo->addItem(tr("<System Default>"), QLocale::system().name());
