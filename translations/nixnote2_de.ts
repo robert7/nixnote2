@@ -2477,7 +2477,7 @@ Entschlüsselung nicht möglich.</translation>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="106"/>
         <source>&amp;Import notes</source>
-        <translation>Nachrichten &amp;importieren</translation>
+        <translation>Notizen &amp;importieren</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="136"/>
