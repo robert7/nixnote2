@@ -687,17 +687,20 @@ void NTableView::deleteSelectedNotes() {
     QMessageBox msgBox;
     msgBox.setWindowTitle(tr("Verify Delete"));
     msgBox.setText(msg);
-    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    QPushButton *yesButton = new QPushButton(tr("Yes"), &msgBox);
+    msgBox.addButton(yesButton, QMessageBox::YesRole);
+    msgBox.addButton(new QPushButton(tr("No"), &msgBox), QMessageBox::NoRole);
+
     msgBox.setIcon(QMessageBox::Question);
-    msgBox.setDefaultButton(QMessageBox::Yes);
+    msgBox.setDefaultButton(yesButton);
     int rc = msgBox.exec();
-    if (rc != QMessageBox::Yes)
+    QLOG_DEBUG() << "Delete dialog reply: " << rc;
+    if (rc != 0) {
         return;
+    }
 
     NoteTable ntable(global.db);
     NSqlQuery sql(global.db);
-//    NSqlQuery transaction(*global.db);
-    //transaction.exec("begin");
     sql.prepare("Delete from filter where lid=:lid");
     for (int i = 0; i < lids.size(); i++) {
         ntable.deleteNote(lids[i], true);
