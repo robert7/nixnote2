@@ -3907,7 +3907,7 @@ an empty database.  Restoring into a database that
 
 Are you sure you want to continue?</source>
         <translation>Hiermit wird eine Datenbank aus Backups wiederhergestellt.
-Es wird DRINGEND geraden, dies nur zu verwenden, um eine
+Es wird DRINGEND geraten, dies nur zu verwenden, um eine
 leere Datenbank zu befüllen. Eine Wiederherstellung in eine
 Datenbank, die bereits Daten enthält, kann zu Problemen führen.
 
