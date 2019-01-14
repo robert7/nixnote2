@@ -1124,7 +1124,7 @@
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
-        <source>Intent/Shift Right</source>
+        <source>Indent/Shift Right</source>
         <translation>缩进/向右偏移</translation>
     </message>
     <message>

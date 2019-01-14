@@ -56,7 +56,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     rightJustifyVisible = contextMenu->addAction(tr("Align Right"));
     hlineVisible = contextMenu->addAction(tr("Horizontal Line"));
     insertDatetimeVisible = contextMenu->addAction(tr("Insert Date Time"));
-    shiftRightVisible = contextMenu->addAction(tr("Intent/Shift Right"));
+    shiftRightVisible = contextMenu->addAction(tr("Indent/Shift Right"));
     shiftLeftVisible = contextMenu->addAction(tr("Outdent/Shift Left"));
     bulletListVisible = contextMenu->addAction(tr("Bullet List"));
     numberListVisible = contextMenu->addAction(tr("Number List"));

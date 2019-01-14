@@ -1130,7 +1130,7 @@
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
-        <source>Intent/Shift Right</source>
+        <source>Indent/Shift Right</source>
         <translation>Einrücken / Nach rechts verschieben</translation>
     </message>
     <message>

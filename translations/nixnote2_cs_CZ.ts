@@ -1133,7 +1133,7 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
-        <source>Intent/Shift Right</source>
+        <source>Indent/Shift Right</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
