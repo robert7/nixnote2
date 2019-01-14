@@ -1116,6 +1116,7 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="292"/>
         <source>Indent/Shift Right</source>
         <translation type="unfinished"></translation>
@@ -1130,11 +1131,6 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="316"/>
         <source>Spell Check</source>
         <translation>Kontrola pravopisu</translation>
-    </message>
-    <message>
-        <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
-        <source>Indent/Shift Right</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
@@ -2239,39 +2235,39 @@ Seznam např. na http://www.w3schools.com/charsets/ .</translation>
     <name>NBrowserWindow</name>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="571"/>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3323"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3316"/>
         <source>Today</source>
         <translation>Dnes</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="573"/>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3325"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3318"/>
         <source>Tomorrow</source>
         <translation>Zítra</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="575"/>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3327"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3320"/>
         <source>Yesterday</source>
         <translation>Včera</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="1286"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="1279"/>
         <source>Insert your code here.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="1976"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="1969"/>
         <source>Insert Link</source>
         <translation>Vložit odkaz</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2239"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2232"/>
         <source>Unable Open</source>
         <translation>Otevření selhalo</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2240"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2233"/>
         <source>This is an ink note.
 Ink notes are not supported since Evernote has not
  published any specifications on them
@@ -2282,27 +2278,27 @@ INK poznámky nejsou podporovány, jelikož Evernote nezveřejnil
 aby to zjišťoval metodou pokus omyl.</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2423"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2416"/>
         <source>Edit Link</source>
         <translation>Upravit odkaz</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2489"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2482"/>
         <source>Unable to create LaTeX image</source>
         <translation>Nepodařilo se vytvořit LaTeX obrázek</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2490"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2483"/>
         <source>Unable to create LaTeX image.  Are you sure mimetex is installed?</source>
         <translation>Nepodařilo se vytvořit LaTeX obrázek. Jste si jistí, že &quot;mimetex&quot; je nainstalován?</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2839"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2832"/>
         <source>Setup Error</source>
         <translation>Chyba nastavení</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2840"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2833"/>
         <source>SMTP Server has not been setup.
 
 Please specify server settings
@@ -2311,84 +2307,84 @@ in the Preferences menu.</source>
 Prosím upřesněte nastavení v nabídce &quot;Předvolby&quot;.</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2850"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2843"/>
         <source>Sending Email. Please be patient.</source>
         <translation>Odesílám Email. Chvilku strpení, prosím.</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2910"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2903"/>
         <source>Connection Error</source>
         <translation>Chyba spojení</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2910"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2903"/>
         <source>Unable to connect to host.</source>
         <translation>Nepodařilo se připojit k serveru.</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2916"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2909"/>
         <source>Login Error</source>
         <translation>Chyba přihlášení</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2916"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2909"/>
         <source>Unable to login.</source>
         <translation>Přihlášení se nezdařilo.</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2921"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2914"/>
         <source>Send Error</source>
         <translation>Chyba odesílání</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2921"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2914"/>
         <source>Unable to send email.</source>
         <translation>Odeslání se nezdařilo.</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3371"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3364"/>
         <source>Decryption Error</source>
         <translation>Chyba dešifrování</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3372"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3365"/>
         <source>Unknown encryption method.
 Unable to decrypt.</source>
         <translation>Neznámá šifrovací medota.
 Dešifrování selhalo.</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3507"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3500"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3508"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3501"/>
         <source>Error Encrypting String.  Please verify you have Java installed.</source>
         <translation>Chyba při šifrování řetězce. Ověřte prosím, že &quot;Java&quot; je nainstalovaná.</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3649"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3642"/>
         <source>Plugin Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3650"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3643"/>
         <source>Hunspell not available or no dictionary for current locale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="4037"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="4030"/>
         <source>Failed to initialize spell checker for </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="4285"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="4278"/>
         <source>Notebook was not found:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3751"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3744"/>
         <source>Spell check completed</source>
         <translation>Kontrola pravopisu dokončena</translation>
     </message>
@@ -3653,72 +3649,67 @@ Přejete si pokračovat?</translation>
         <translation type="vanished">Kopírovat URL poznámky</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="94"/>
-        <source>Tidy HTML</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nwebview.cpp" line="108"/>
+        <location filename="../src/gui/nwebview.cpp" line="97"/>
         <source>Note Background Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="123"/>
+        <location filename="../src/gui/nwebview.cpp" line="112"/>
         <source>Set text color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="128"/>
+        <location filename="../src/gui/nwebview.cpp" line="117"/>
         <source>Set text background color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="136"/>
+        <location filename="../src/gui/nwebview.cpp" line="125"/>
         <source>To-do</source>
         <translation>TODO (úkol)</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="143"/>
+        <location filename="../src/gui/nwebview.cpp" line="132"/>
         <source>HTML Entities</source>
         <translation>HTML speciální znaky</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="150"/>
+        <location filename="../src/gui/nwebview.cpp" line="139"/>
         <source>Encrypt Selected Text</source>
         <translation>Zašifrovat vybraný text</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="155"/>
+        <location filename="../src/gui/nwebview.cpp" line="144"/>
         <source>Insert Date Time</source>
         <translation>Vložit Datum a Čas</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="160"/>
+        <location filename="../src/gui/nwebview.cpp" line="149"/>
         <source>Insert Hyperlink</source>
         <translation>Vložit odkaz</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="165"/>
+        <location filename="../src/gui/nwebview.cpp" line="154"/>
         <source>Quick Link</source>
         <translation>Odkaz na poznámku</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="170"/>
+        <location filename="../src/gui/nwebview.cpp" line="159"/>
         <source>Remove Hyperlink</source>
         <translation>Odstranit odkaz</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="175"/>
+        <location filename="../src/gui/nwebview.cpp" line="164"/>
         <source>Attach File</source>
         <translation>Přiložit soubor</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="181"/>
+        <location filename="../src/gui/nwebview.cpp" line="170"/>
         <source>Insert LaTeX Formula</source>
         <translation>Vložit LaTex vzorec</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="100"/>
+        <location filename="../src/gui/nwebview.cpp" line="89"/>
         <source>Simplify formatting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3728,68 +3719,68 @@ Přejete si pokračovat?</translation>
         <translation type="unfinished">Kopírovat odkaz na poznámku</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="187"/>
+        <location filename="../src/gui/nwebview.cpp" line="176"/>
         <source>Table</source>
         <translation>Tabulka</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="190"/>
+        <location filename="../src/gui/nwebview.cpp" line="179"/>
         <source>Insert Table</source>
         <translation>Vložit tabulku</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="196"/>
+        <location filename="../src/gui/nwebview.cpp" line="185"/>
         <source>Insert Row</source>
         <translation>Vložit řádek</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="201"/>
+        <location filename="../src/gui/nwebview.cpp" line="190"/>
         <source>Insert Column</source>
         <translation>Vložit sloupec</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="208"/>
+        <location filename="../src/gui/nwebview.cpp" line="197"/>
         <source>Delete Row</source>
         <translation>Smazat řádek</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="212"/>
+        <location filename="../src/gui/nwebview.cpp" line="201"/>
         <source>Delete Column</source>
         <translation>Smazat sloupec</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="219"/>
+        <location filename="../src/gui/nwebview.cpp" line="208"/>
         <source>Table Properties</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="226"/>
+        <location filename="../src/gui/nwebview.cpp" line="215"/>
         <source>Image</source>
         <translation>Obrázek</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="229"/>
+        <location filename="../src/gui/nwebview.cpp" line="218"/>
         <source>Save Image</source>
         <translation>Uložit obrázek</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="237"/>
+        <location filename="../src/gui/nwebview.cpp" line="226"/>
         <source>Rotate Left</source>
         <translation>Otočit vlevo</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="241"/>
+        <location filename="../src/gui/nwebview.cpp" line="230"/>
         <source>Rotate Right</source>
         <translation>Otočit vpravo</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="247"/>
+        <location filename="../src/gui/nwebview.cpp" line="236"/>
         <source>Save Attachment</source>
         <translation>Uložit přílohu</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="531"/>
-        <location filename="../src/gui/nwebview.cpp" line="561"/>
+        <location filename="../src/gui/nwebview.cpp" line="520"/>
+        <location filename="../src/gui/nwebview.cpp" line="550"/>
         <source>Save File</source>
         <translation>Uložit soubor</translation>
     </message>

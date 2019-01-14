@@ -1107,6 +1107,7 @@
         <translation>插入日期</translation>
     </message>
     <message>
+        <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="292"/>
         <source>Indent/Shift Right</source>
         <translation>缩进/向右偏移</translation>
@@ -1121,11 +1122,6 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="316"/>
         <source>Spell Check</source>
         <translation>拼写检查</translation>
-    </message>
-    <message>
-        <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
-        <source>Indent/Shift Right</source>
-        <translation>缩进/向右偏移</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
@@ -2228,19 +2224,19 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <name>NBrowserWindow</name>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="571"/>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3323"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3316"/>
         <source>Today</source>
         <translation>今天</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="573"/>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3325"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3318"/>
         <source>Tomorrow</source>
         <translation>明天</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="575"/>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3327"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3320"/>
         <source>Yesterday</source>
         <translation>昨天</translation>
     </message>
@@ -2256,22 +2252,22 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <translation>HTML 清理失败。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="1286"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="1279"/>
         <source>Insert your code here.</source>
         <translation>在此插入您的代码。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="1976"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="1969"/>
         <source>Insert Link</source>
         <translation>插入链接</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2239"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2232"/>
         <source>Unable Open</source>
         <translation>无法打开</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2240"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2233"/>
         <source>This is an ink note.
 Ink notes are not supported since Evernote has not
  published any specifications on them
@@ -2281,27 +2277,27 @@ and I&apos;m too lazy to figure them out by myself.</source>
 而作者本人又懒于自己去找，所以手写笔记不被支持。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2423"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2416"/>
         <source>Edit Link</source>
         <translation>编辑链接</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2489"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2482"/>
         <source>Unable to create LaTeX image</source>
         <translation>无法创建LaTeX图像</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2490"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2483"/>
         <source>Unable to create LaTeX image.  Are you sure mimetex is installed?</source>
         <translation>无法创建 LaTeX 图像。您是否安装了 mimetex？</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2839"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2832"/>
         <source>Setup Error</source>
         <translation>配置错误</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2840"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2833"/>
         <source>SMTP Server has not been setup.
 
 Please specify server settings
@@ -2311,74 +2307,74 @@ in the Preferences menu.</source>
 请在选项菜单中指定服务器配置。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2850"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2843"/>
         <source>Sending Email. Please be patient.</source>
         <translation>正在发送邮件。请耐心等待。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2910"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2903"/>
         <source>Connection Error</source>
         <translation>连接错误</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2910"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2903"/>
         <source>Unable to connect to host.</source>
         <translation>无法连接到主机。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2916"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2909"/>
         <source>Login Error</source>
         <translation>登录错误</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2916"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2909"/>
         <source>Unable to login.</source>
         <translation>无法登录。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2921"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2914"/>
         <source>Send Error</source>
         <translation>发送错误</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2921"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2914"/>
         <source>Unable to send email.</source>
         <translation>无法发送邮件。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3371"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3364"/>
         <source>Decryption Error</source>
         <translation>解密错误</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3372"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3365"/>
         <source>Unknown encryption method.
 Unable to decrypt.</source>
         <translation>未知加密方法。
 无法解密。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3507"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3500"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3508"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3501"/>
         <source>Error Encrypting String.  Please verify you have Java installed.</source>
         <translation>错误的加密字串。请确定Java已安装。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3649"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3642"/>
         <source>Plugin Error</source>
         <translation>插件错误</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3650"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3643"/>
         <source>Hunspell not available or no dictionary for current locale</source>
         <translation>Hunspell 不可用或当前地区语言没有对应词典</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="4037"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="4030"/>
         <source>Failed to initialize spell checker for </source>
         <translation>无法初始化拼写检查器，用于 </translation>
     </message>
@@ -2387,12 +2383,12 @@ Unable to decrypt.</source>
         <translation type="vanished">正在调用退出 </translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="4285"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="4278"/>
         <source>Notebook was not found:</source>
         <translation>笔记本未找到：</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3751"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3744"/>
         <source>Spell check completed</source>
         <translation>拼写检查完成</translation>
     </message>
@@ -3644,72 +3640,71 @@ Do you wish to continue?</source>
         <translation type="vanished">复制笔记URL</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="94"/>
         <source>Tidy HTML</source>
-        <translation>清理 HTML</translation>
+        <translation type="vanished">清理 HTML</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="108"/>
+        <location filename="../src/gui/nwebview.cpp" line="97"/>
         <source>Note Background Color</source>
         <translation>笔记背景颜色</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="123"/>
+        <location filename="../src/gui/nwebview.cpp" line="112"/>
         <source>Set text color</source>
         <translation>设置文本颜色</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="128"/>
+        <location filename="../src/gui/nwebview.cpp" line="117"/>
         <source>Set text background color</source>
         <translation>设置文本背景颜色</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="136"/>
+        <location filename="../src/gui/nwebview.cpp" line="125"/>
         <source>To-do</source>
         <translation>待办事项</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="143"/>
+        <location filename="../src/gui/nwebview.cpp" line="132"/>
         <source>HTML Entities</source>
         <translation>HTML实体</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="150"/>
+        <location filename="../src/gui/nwebview.cpp" line="139"/>
         <source>Encrypt Selected Text</source>
         <translation>加密已选文本</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="155"/>
+        <location filename="../src/gui/nwebview.cpp" line="144"/>
         <source>Insert Date Time</source>
         <translation>插入日期时间</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="160"/>
+        <location filename="../src/gui/nwebview.cpp" line="149"/>
         <source>Insert Hyperlink</source>
         <translation>插入超链接</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="165"/>
+        <location filename="../src/gui/nwebview.cpp" line="154"/>
         <source>Quick Link</source>
         <translation>快速链接</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="170"/>
+        <location filename="../src/gui/nwebview.cpp" line="159"/>
         <source>Remove Hyperlink</source>
         <translation>删除超链接</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="175"/>
+        <location filename="../src/gui/nwebview.cpp" line="164"/>
         <source>Attach File</source>
         <translation>添加附件</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="181"/>
+        <location filename="../src/gui/nwebview.cpp" line="170"/>
         <source>Insert LaTeX Formula</source>
         <translation>插入LaTeX公式</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="100"/>
+        <location filename="../src/gui/nwebview.cpp" line="89"/>
         <source>Simplify formatting</source>
         <translation>格式简化</translation>
     </message>
@@ -3719,68 +3714,68 @@ Do you wish to continue?</source>
         <translation type="unfinished">复制笔记链接</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="187"/>
+        <location filename="../src/gui/nwebview.cpp" line="176"/>
         <source>Table</source>
         <translation>表格</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="190"/>
+        <location filename="../src/gui/nwebview.cpp" line="179"/>
         <source>Insert Table</source>
         <translation>插入表格</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="196"/>
+        <location filename="../src/gui/nwebview.cpp" line="185"/>
         <source>Insert Row</source>
         <translation>插入行</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="201"/>
+        <location filename="../src/gui/nwebview.cpp" line="190"/>
         <source>Insert Column</source>
         <translation>插入列</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="208"/>
+        <location filename="../src/gui/nwebview.cpp" line="197"/>
         <source>Delete Row</source>
         <translation>删除行</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="212"/>
+        <location filename="../src/gui/nwebview.cpp" line="201"/>
         <source>Delete Column</source>
         <translation>删除列</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="219"/>
+        <location filename="../src/gui/nwebview.cpp" line="208"/>
         <source>Table Properties</source>
         <translation>表格属性</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="226"/>
+        <location filename="../src/gui/nwebview.cpp" line="215"/>
         <source>Image</source>
         <translation>图像</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="229"/>
+        <location filename="../src/gui/nwebview.cpp" line="218"/>
         <source>Save Image</source>
         <translation>保存图像</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="237"/>
+        <location filename="../src/gui/nwebview.cpp" line="226"/>
         <source>Rotate Left</source>
         <translation>向左旋转</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="241"/>
+        <location filename="../src/gui/nwebview.cpp" line="230"/>
         <source>Rotate Right</source>
         <translation>向右旋转</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="247"/>
+        <location filename="../src/gui/nwebview.cpp" line="236"/>
         <source>Save Attachment</source>
         <translation>保存附件</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="531"/>
-        <location filename="../src/gui/nwebview.cpp" line="561"/>
+        <location filename="../src/gui/nwebview.cpp" line="520"/>
+        <location filename="../src/gui/nwebview.cpp" line="550"/>
         <source>Save File</source>
         <translation>保存文件</translation>
     </message>

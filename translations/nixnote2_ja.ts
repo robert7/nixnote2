@@ -1108,6 +1108,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="292"/>
         <source>Indent/Shift Right</source>
         <translation type="unfinished"></translation>
@@ -1122,11 +1123,6 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="316"/>
         <source>Spell Check</source>
         <translation>スペルチェック</translation>
-    </message>
-    <message>
-        <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
-        <source>Indent/Shift Right</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
@@ -2227,39 +2223,39 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <name>NBrowserWindow</name>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="571"/>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3323"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3316"/>
         <source>Today</source>
         <translation>今日</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="573"/>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3325"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3318"/>
         <source>Tomorrow</source>
         <translation>明日</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="575"/>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3327"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3320"/>
         <source>Yesterday</source>
         <translation>昨日</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="1286"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="1279"/>
         <source>Insert your code here.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="1976"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="1969"/>
         <source>Insert Link</source>
         <translation>リンクの挿入</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2239"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2232"/>
         <source>Unable Open</source>
         <translation>開くのに失敗</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2240"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2233"/>
         <source>This is an ink note.
 Ink notes are not supported since Evernote has not
  published any specifications on them
@@ -2268,27 +2264,27 @@ and I&apos;m too lazy to figure them out by myself.</source>
 インクノートは、Evernoteが仕様を公開しないうちはサポートされません。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2423"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2416"/>
         <source>Edit Link</source>
         <translation>リンクの編集</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2489"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2482"/>
         <source>Unable to create LaTeX image</source>
         <translation>LaTeXイメージの作成に失敗</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2490"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2483"/>
         <source>Unable to create LaTeX image.  Are you sure mimetex is installed?</source>
         <translation>LaTeXイメージの生成に失敗しました。mimetexがインストールされているか確認してください。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2839"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2832"/>
         <source>Setup Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2840"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2833"/>
         <source>SMTP Server has not been setup.
 
 Please specify server settings
@@ -2296,83 +2292,83 @@ in the Preferences menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2850"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2843"/>
         <source>Sending Email. Please be patient.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2910"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2903"/>
         <source>Connection Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2910"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2903"/>
         <source>Unable to connect to host.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2916"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2909"/>
         <source>Login Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2916"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2909"/>
         <source>Unable to login.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2921"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2914"/>
         <source>Send Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="2921"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="2914"/>
         <source>Unable to send email.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3371"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3364"/>
         <source>Decryption Error</source>
         <translation>復号エラー</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3372"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3365"/>
         <source>Unknown encryption method.
 Unable to decrypt.</source>
         <translation>未知の暗号化方式。復号できません。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3507"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3500"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3508"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3501"/>
         <source>Error Encrypting String.  Please verify you have Java installed.</source>
         <translation>文字列暗号化に失敗。Javaがインストールされているか確認してください。</translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3649"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3642"/>
         <source>Plugin Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3650"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3643"/>
         <source>Hunspell not available or no dictionary for current locale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="4037"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="4030"/>
         <source>Failed to initialize spell checker for </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="4285"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="4278"/>
         <source>Notebook was not found:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nbrowserwindow.cpp" line="3751"/>
+        <location filename="../src/gui/nbrowserwindow.cpp" line="3744"/>
         <source>Spell check completed</source>
         <translation>スペルチェック完了</translation>
     </message>
@@ -3628,72 +3624,67 @@ Do you wish to continue?</source>
         <translation>書式なしテキストとして貼り付け</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="94"/>
-        <source>Tidy HTML</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nwebview.cpp" line="108"/>
+        <location filename="../src/gui/nwebview.cpp" line="97"/>
         <source>Note Background Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="123"/>
+        <location filename="../src/gui/nwebview.cpp" line="112"/>
         <source>Set text color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="128"/>
+        <location filename="../src/gui/nwebview.cpp" line="117"/>
         <source>Set text background color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="136"/>
+        <location filename="../src/gui/nwebview.cpp" line="125"/>
         <source>To-do</source>
         <translation>To-Do</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="143"/>
+        <location filename="../src/gui/nwebview.cpp" line="132"/>
         <source>HTML Entities</source>
         <translation>HTMLエンティティ</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="150"/>
+        <location filename="../src/gui/nwebview.cpp" line="139"/>
         <source>Encrypt Selected Text</source>
         <translation>選択されたテキストの暗号化</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="155"/>
+        <location filename="../src/gui/nwebview.cpp" line="144"/>
         <source>Insert Date Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="160"/>
+        <location filename="../src/gui/nwebview.cpp" line="149"/>
         <source>Insert Hyperlink</source>
         <translation>ハイパーリンクの挿入</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="165"/>
+        <location filename="../src/gui/nwebview.cpp" line="154"/>
         <source>Quick Link</source>
         <translation>クイックリンク</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="170"/>
+        <location filename="../src/gui/nwebview.cpp" line="159"/>
         <source>Remove Hyperlink</source>
         <translation>ハイパーリンクの削除</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="175"/>
+        <location filename="../src/gui/nwebview.cpp" line="164"/>
         <source>Attach File</source>
         <translation>ファイルの添付</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="181"/>
+        <location filename="../src/gui/nwebview.cpp" line="170"/>
         <source>Insert LaTeX Formula</source>
         <translation>LaTeX数式の挿入</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="100"/>
+        <location filename="../src/gui/nwebview.cpp" line="89"/>
         <source>Simplify formatting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3703,68 +3694,68 @@ Do you wish to continue?</source>
         <translation type="unfinished">ノートリンクのコピー</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="187"/>
+        <location filename="../src/gui/nwebview.cpp" line="176"/>
         <source>Table</source>
         <translation>表</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="190"/>
+        <location filename="../src/gui/nwebview.cpp" line="179"/>
         <source>Insert Table</source>
         <translation>表の挿入</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="196"/>
+        <location filename="../src/gui/nwebview.cpp" line="185"/>
         <source>Insert Row</source>
         <translation>列の挿入</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="201"/>
+        <location filename="../src/gui/nwebview.cpp" line="190"/>
         <source>Insert Column</source>
         <translation>行の挿入</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="208"/>
+        <location filename="../src/gui/nwebview.cpp" line="197"/>
         <source>Delete Row</source>
         <translation>列の削除</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="212"/>
+        <location filename="../src/gui/nwebview.cpp" line="201"/>
         <source>Delete Column</source>
         <translation>行の削除</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="219"/>
+        <location filename="../src/gui/nwebview.cpp" line="208"/>
         <source>Table Properties</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="226"/>
+        <location filename="../src/gui/nwebview.cpp" line="215"/>
         <source>Image</source>
         <translation>画像</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="229"/>
+        <location filename="../src/gui/nwebview.cpp" line="218"/>
         <source>Save Image</source>
         <translation>画像の保存</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="237"/>
+        <location filename="../src/gui/nwebview.cpp" line="226"/>
         <source>Rotate Left</source>
         <translation>左回転</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="241"/>
+        <location filename="../src/gui/nwebview.cpp" line="230"/>
         <source>Rotate Right</source>
         <translation>右回転</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="247"/>
+        <location filename="../src/gui/nwebview.cpp" line="236"/>
         <source>Save Attachment</source>
         <translation>添付の保存</translation>
     </message>
     <message>
-        <location filename="../src/gui/nwebview.cpp" line="531"/>
-        <location filename="../src/gui/nwebview.cpp" line="561"/>
+        <location filename="../src/gui/nwebview.cpp" line="520"/>
+        <location filename="../src/gui/nwebview.cpp" line="550"/>
         <source>Save File</source>
         <translation>ファイルの保存</translation>
     </message>

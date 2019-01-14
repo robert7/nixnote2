@@ -1234,14 +1234,7 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
 
 
 /**
- * Just tidy - same as before save.
- */
-void NBrowserWindow::htmlTidy() {
-    htmlCleanup(HtmlCleanupMode::Tidy);
-}
-
-/**
- * Simplify - same as before save.
+ * Simplify html.
  */
 void NBrowserWindow::htmlSimplify() {
     // this also may help a bit (but only if the text is selected I suppose)
