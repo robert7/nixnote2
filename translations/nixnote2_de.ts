@@ -4337,8 +4337,8 @@ Wollen Sie wirklich fortfahren?</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/preferencesdialog.cpp" line="129"/>
-        <source>Exits</source>
-        <translation type="unfinished"></translation>
+        <source>Scripting (Exits)</source>
+        <translation>Skripte (Exits)</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/preferencesdialog.cpp" line="135"/>

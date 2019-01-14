@@ -4344,7 +4344,7 @@ Jste si jisti, že chcete pokračovat?</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/preferencesdialog.cpp" line="129"/>
-        <source>Exits</source>
+        <source>Scripting (Exits)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

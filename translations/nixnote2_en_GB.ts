@@ -4309,8 +4309,8 @@ Are you sure you want to continue?</source>
     </message>
     <message>
         <location filename="../src/dialog/preferences/preferencesdialog.cpp" line="129"/>
-        <source>Exits</source>
-        <translation></translation>
+        <source>Scripting (Exits)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/preferencesdialog.cpp" line="135"/>
