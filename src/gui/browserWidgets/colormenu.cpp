@@ -41,8 +41,8 @@ QStringList ColorMenu::colorNames() {
     colors << QString(tr("black")).append(delim).append(QString(DEFAULT_COLORMENU_COLOR));
     // for some reason the "dark grey" produces "grey" & "grey" produces "dark grey"
     // anyway this hacky way works enough well for our purpose
-    colors << tr("gray").append(delim).append(QString("darkGrey"));
     colors << tr("darkGrey").append(delim).append(QString("gray"));
+    colors << tr("gray").append(delim).append(QString("darkGrey"));
 
     colors << tr("red").append(delim).append(QString("red"));
     colors << tr("magenta").append(delim).append(QString("magenta"));
