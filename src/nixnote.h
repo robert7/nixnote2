@@ -279,6 +279,7 @@ public slots:
     void counterThreadStarted();
     void openCloseNotebooks();
     void deleteCurrentNote();
+    bool isOkToDeleteNote(QString msg);
     void duplicateCurrentNote();
     void pinCurrentNote();
     void unpinCurrentNote();

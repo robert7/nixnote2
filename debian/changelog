@@ -1,6 +1,7 @@
-NixNote (2.1.3-a) stable; urgency=low
+NixNote (2.1.3-b) stable; urgency=low
   * Updated german translation, thanks to https://github.com/stemabu
-  * Fixed few issues involving translation (mainly color menu)
+  * Fixed few issues involving translation and minor interface adjustments
+  * Delete node dialog now respects "Confirm deletes" Preference options
  -- Robert Spiegel <nightingale7@gmail.com>  Sat, 05 Jan 2019 12:30:02 +0100
 
 NixNote (2.1.2) stable; urgency=low

@@ -942,7 +942,7 @@ void NixNote::setupNoteList() {
     topRightLayout = new QVBoxLayout();
     topRightLayout->addWidget(searchText);
     topRightWidget->setLayout(topRightLayout);
-    noteTableView = new NTableView();
+    noteTableView = new NTableView(this);
     topRightLayout->addWidget(noteTableView);
     topRightLayout->setContentsMargins(QMargins(0, 0, 0, 0));
 
@@ -3184,6 +3184,27 @@ void NixNote::reindexCurrentNote() {
 }
 
 
+bool NixNote::isOkToDeleteNote(QString msg) {
+    if (!global.confirmDeletes()) {
+        return true;
+    }
+
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(tr("Verify Delete"));
+    msgBox.setText(msg);
+    QPushButton *yesButton = new QPushButton(tr("Yes"), &msgBox);
+    msgBox.addButton(yesButton, QMessageBox::YesRole);
+    msgBox.addButton(new QPushButton(tr("No"), &msgBox), QMessageBox::NoRole);
+
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setDefaultButton(yesButton);
+    int rc = msgBox.exec();
+    QLOG_DEBUG() << "Delete dialog reply: " << rc;
+    return rc == 0;
+}
+
+
 // Delete the note we are currently viewing
 void NixNote::deleteCurrentNote() {
     qint32 lid = tabWindow->currentBrowser()->lid;
@@ -3200,17 +3221,8 @@ void NixNote::deleteCurrentNote() {
     }
 
     msg = typeDelete + tr("this note?");
-
-    if (global.confirmDeletes()) {
-        QMessageBox msgBox;
-        msgBox.setWindowTitle(tr("Verify Delete"));
-        msgBox.setText(msg);
-        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-        msgBox.setIcon(QMessageBox::Question);
-        msgBox.setDefaultButton(QMessageBox::Yes);
-        int rc = msgBox.exec();
-        if (rc != QMessageBox::Yes)
-            return;
+    if (!isOkToDeleteNote(msg)) {
+        return;
     }
 
     NoteTable ntable(global.db);
