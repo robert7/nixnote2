@@ -145,6 +145,9 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     // note editor toolbar items begin
     fontNames = new FontNameComboBox(this);
     fontSizes = new FontSizeComboBox(this);
+    QString toolbarHint(tr("To show/hide toolbar items, click on the blank space in toolbar"));
+    fontNames->setToolTip(toolbarHint);
+    fontSizes->setToolTip(toolbarHint);
 
     loadFontNames();
     fontButtonAction = addWidget(fontNames);
