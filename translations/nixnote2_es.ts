@@ -2396,32 +2396,22 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="81"/>
-        <source>Backup database to a file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="87"/>
-        <source>Restore from a backup</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="107"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="101"/>
         <source>Import notes from an export file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="129"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="132"/>
         <source>Switch to </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="147"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="150"/>
         <source>Open/Close Notebooks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="184"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="187"/>
         <source>&amp;Edit</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2451,408 +2441,418 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="80"/>
-        <source>&amp;Backup Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="86"/>
-        <source>&amp;Restore Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="106"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="100"/>
         <source>&amp;Import notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="136"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="139"/>
         <source>&amp;Add Another User...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="140"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="143"/>
         <source>&amp;User Account Maintenance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="146"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="149"/>
         <source>&amp;Open/Close Notebooks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="165"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="168"/>
         <source>Quit2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="188"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="191"/>
         <source>&amp;Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="192"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="195"/>
         <source>&amp;Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="198"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="201"/>
         <source>&amp;Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="202"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="205"/>
         <source>C&amp;opy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="206"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="209"/>
         <source>&amp;Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="210"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="213"/>
         <source>Pas&amp;te as Unformatted Text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="214"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="217"/>
         <source>Remo&amp;ve Formatting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="220"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="223"/>
         <source>Select &amp;All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="226"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="229"/>
         <source>F&amp;ind and Replace</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="229"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="232"/>
         <source>&amp;Search Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="234"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="237"/>
         <source>&amp;Reset Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="241"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="244"/>
         <source>&amp;Find in Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="247"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="250"/>
         <source>Find &amp;Next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="252"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="255"/>
         <source>Find &amp;Previous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="259"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="262"/>
         <source>Replace &amp;Within Note...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="268"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="271"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="277"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="280"/>
         <source>&amp;View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="281"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="284"/>
         <source>Wide Note List</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="286"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="289"/>
         <source>Narrow Note List</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="293"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="296"/>
         <source>&amp;Show Source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="297"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="300"/>
         <source>Note &amp;History</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="303"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="306"/>
         <source>&amp;Presentation Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="307"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="310"/>
         <source>Show &amp;Left Panel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="314"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="317"/>
         <source>Show &amp;Favorites</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="321"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="324"/>
         <source>Show &amp;Notebooks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="328"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="331"/>
         <source>Show Ta&amp;gs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="335"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="338"/>
         <source>Show Sa&amp;ved Searches</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="349"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="352"/>
         <source>Show T&amp;rash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="356"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="359"/>
         <source>Show N&amp;ote List</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="363"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="366"/>
         <source>Show Note &amp;Panel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="372"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="375"/>
         <source>View Note &amp;Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="376"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="379"/>
         <source>View &amp;Toolbar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="383"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="386"/>
         <source>View Status&amp;bar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="399"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="402"/>
         <source>New &amp;Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="546"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="549"/>
         <source>Active shortcuts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="547"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="550"/>
         <source>View current shortcuts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="404"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="407"/>
         <source>Dupl&amp;icate Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="409"/>
-        <source>&amp;Delete</source>
+        <location filename="../src/gui/nmainmenubar.cpp" line="80"/>
+        <source>&amp;Export all notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="414"/>
-        <source>Reindex Note</source>
+        <location filename="../src/gui/nmainmenubar.cpp" line="81"/>
+        <source>Export all notes to a NNEX file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="420"/>
-        <source>&amp;Spell Check</source>
+        <location filename="../src/gui/nmainmenubar.cpp" line="86"/>
+        <source>&amp;Import all notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="426"/>
-        <source>&amp;Pin Note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="431"/>
-        <source>&amp;UnPin Note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="444"/>
-        <source>&amp;Synchronize</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="445"/>
-        <source>Synchronize with Evernote</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="449"/>
-        <source>&amp;Disconnect</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="458"/>
-        <source>Temporarily pause indexing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="466"/>
-        <source>Temporarily disable note editing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="510"/>
-        <source>&amp;Project wiki</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="515"/>
-        <source>&amp;Getting started</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="516"/>
-        <source>Open Getting started wiki page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="541"/>
-        <source>Data and &amp;log location info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="542"/>
-        <source>View location of program data and log file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="553"/>
-        <source>About &amp;Qt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="555"/>
-        <source>About Qt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="585"/>
-        <source>Sort notes by</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="591"/>
-        <source>Relevance, Date updated [desc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="592"/>
-        <source>Relevance, Date updated [asc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="594"/>
-        <source>Relevance, Date created [desc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="595"/>
-        <source>Relevance, Date created [asc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="597"/>
-        <source>Relevance, Title [desc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="598"/>
-        <source>Relevance, Title [asc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="601"/>
-        <source>Date updated [desc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="602"/>
-        <source>Date updated [asc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="604"/>
-        <source>Date created [desc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="605"/>
-        <source>Date created [asc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="607"/>
-        <source>Title [desc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="608"/>
-        <source>Title [asc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="610"/>
-        <source>Tags [asc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="612"/>
-        <source>Size [desc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="613"/>
-        <source>Has todo [desc]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="614"/>
-        <source>Unsynced first</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="651"/>
-        <source>Theme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="395"/>
-        <source>&amp;Note</source>
+        <location filename="../src/gui/nmainmenubar.cpp" line="87"/>
+        <source>Import all notes from a file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="94"/>
-        <source>&amp;Export to NixNote Export</source>
+        <source>Export &amp;selected notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="412"/>
+        <source>&amp;Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="417"/>
+        <source>Reindex Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="423"/>
+        <source>&amp;Spell Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="429"/>
+        <source>&amp;Pin Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="434"/>
+        <source>&amp;UnPin Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="447"/>
+        <source>&amp;Synchronize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="448"/>
+        <source>Synchronize with Evernote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="452"/>
+        <source>&amp;Disconnect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="461"/>
+        <source>Temporarily pause indexing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="469"/>
+        <source>Temporarily disable note editing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="513"/>
+        <source>&amp;Project wiki</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="518"/>
+        <source>&amp;Getting started</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="519"/>
+        <source>Open Getting started wiki page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="544"/>
+        <source>Data and &amp;log location info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="545"/>
+        <source>View location of program data and log file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="556"/>
+        <source>About &amp;Qt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="558"/>
+        <source>About Qt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="588"/>
+        <source>Sort notes by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="594"/>
+        <source>Relevance, Date updated [desc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="595"/>
+        <source>Relevance, Date updated [asc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="597"/>
+        <source>Relevance, Date created [desc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="598"/>
+        <source>Relevance, Date created [asc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="600"/>
+        <source>Relevance, Title [desc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="601"/>
+        <source>Relevance, Title [asc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="604"/>
+        <source>Date updated [desc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="605"/>
+        <source>Date updated [asc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="607"/>
+        <source>Date created [desc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="608"/>
+        <source>Date created [asc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="610"/>
+        <source>Title [desc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="611"/>
+        <source>Title [asc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="613"/>
+        <source>Tags [asc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="615"/>
+        <source>Size [desc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="616"/>
+        <source>Has todo [desc]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="617"/>
+        <source>Unsynced first</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="654"/>
+        <source>Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/nmainmenubar.cpp" line="398"/>
+        <source>&amp;Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2861,112 +2861,112 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="100"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="108"/>
         <source>&amp;Export notes as PDF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="101"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="109"/>
         <source>Export selected notes to a PDF file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="154"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="157"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="155"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="158"/>
         <source>Quit the program</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="440"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="443"/>
         <source>&amp;Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="450"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="453"/>
         <source>Disconnect from Evernote</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="483"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="486"/>
         <source>Database Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="476"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="479"/>
         <source>Reindex all notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="499"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="502"/>
         <source>Import Folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="506"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="509"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="561"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="564"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="342"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="345"/>
         <source>Show &amp;Attribute Filter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="457"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="460"/>
         <source>Pause &amp;indexing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="465"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="468"/>
         <source>Disable &amp;editing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="475"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="478"/>
         <source>&amp;Reindex database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="482"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="485"/>
         <source>&amp;Database status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="490"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="493"/>
         <source>A&amp;ccount / usage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="491"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="494"/>
         <source>Account and usage information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="498"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="501"/>
         <source>&amp;Import folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="511"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="514"/>
         <source>Open NixNote wiki page with help/documentation/contact</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="522"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="525"/>
         <source>Theme &amp;Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/nmainmenubar.cpp" line="562"/>
+        <location filename="../src/gui/nmainmenubar.cpp" line="565"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3789,17 +3789,12 @@ Do you wish to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1871"/>
+        <location filename="../src/nixnote.cpp" line="1859"/>
         <source>Confirm Restore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1887"/>
-        <source>Restore Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/nixnote.cpp" line="1890"/>
+        <location filename="../src/nixnote.cpp" line="1878"/>
         <source>Import notes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3825,54 +3820,34 @@ Do you wish to continue?</source>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1496"/>
-        <location filename="../src/nixnote.cpp" line="2419"/>
+        <location filename="../src/nixnote.cpp" line="2400"/>
         <source>Log in to Evernote</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1789"/>
-        <location filename="../src/nixnote.cpp" line="1835"/>
-        <location filename="../src/nixnote.cpp" line="1929"/>
+        <location filename="../src/nixnote.cpp" line="1785"/>
+        <location filename="../src/nixnote.cpp" line="1829"/>
+        <location filename="../src/nixnote.cpp" line="1914"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1789"/>
+        <location filename="../src/nixnote.cpp" line="1785"/>
         <source>No notes selected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1796"/>
-        <source>Backup Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/nixnote.cpp" line="1798"/>
+        <location filename="../src/nixnote.cpp" line="1794"/>
         <source>Export Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1823"/>
-        <source>Performing backup</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/nixnote.cpp" line="1825"/>
+        <location filename="../src/nixnote.cpp" line="1819"/>
         <source>Performing export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1842"/>
-        <source>Database backup complete.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/nixnote.cpp" line="1844"/>
-        <source>Note extract complete.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/nixnote.cpp" line="1868"/>
+        <location filename="../src/nixnote.cpp" line="1852"/>
         <source>This is used to restore a database from backups.
 It is HIGHLY recommended that this only be used to populate
 an empty database.  Restoring into a database that
@@ -3882,120 +3857,105 @@ Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1918"/>
-        <source>Restoring database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/nixnote.cpp" line="1920"/>
-        <source>Importing Notes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/nixnote.cpp" line="1952"/>
-        <source>Database has been restored.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/nixnote.cpp" line="1954"/>
+        <location filename="../src/nixnote.cpp" line="1936"/>
         <source>Notes have been imported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1999"/>
-        <location filename="../src/nixnote.cpp" line="2007"/>
+        <location filename="../src/nixnote.cpp" line="1980"/>
+        <location filename="../src/nixnote.cpp" line="1988"/>
         <source>Sync Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2007"/>
+        <location filename="../src/nixnote.cpp" line="1988"/>
         <source>Sync completed with errors.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1999"/>
+        <location filename="../src/nixnote.cpp" line="1980"/>
         <source>Sync error. See message log for details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2009"/>
+        <location filename="../src/nixnote.cpp" line="1990"/>
         <source>Sync Complete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2009"/>
+        <location filename="../src/nixnote.cpp" line="1990"/>
         <source>Sync completed successfully.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2095"/>
+        <location filename="../src/nixnote.cpp" line="2076"/>
         <source>Untitled note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2410"/>
+        <location filename="../src/nixnote.cpp" line="2391"/>
         <source>Unsynchronized Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2411"/>
+        <location filename="../src/nixnote.cpp" line="2392"/>
         <source>This note has never been synchronized with Evernote</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3301"/>
+        <location filename="../src/nixnote.cpp" line="3282"/>
         <source>Application file(s) info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3302"/>
+        <location filename="../src/nixnote.cpp" line="3283"/>
         <source>Config files are located at:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3304"/>
+        <location filename="../src/nixnote.cpp" line="3285"/>
         <source>Note database files are located at:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3309"/>
+        <location filename="../src/nixnote.cpp" line="3290"/>
         <source>See project wiki section FAQ (Menu Help/Project wiki) for more info how to:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3310"/>
+        <location filename="../src/nixnote.cpp" line="3291"/>
         <source>* change log level</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3311"/>
+        <location filename="../src/nixnote.cpp" line="3292"/>
         <source>* look at log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3312"/>
+        <location filename="../src/nixnote.cpp" line="3293"/>
         <source>* how to add content of log file to github issue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3313"/>
+        <location filename="../src/nixnote.cpp" line="3294"/>
         <source>* how to change data location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3644"/>
+        <location filename="../src/nixnote.cpp" line="3625"/>
         <source>PDF Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3617"/>
-        <location filename="../src/nixnote.cpp" line="3618"/>
+        <location filename="../src/nixnote.cpp" line="3598"/>
+        <location filename="../src/nixnote.cpp" line="3599"/>
         <source>Exporting notes as PDF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2460"/>
-        <location filename="../src/nixnote.cpp" line="2467"/>
+        <location filename="../src/nixnote.cpp" line="2441"/>
+        <location filename="../src/nixnote.cpp" line="2448"/>
         <source>Error retrieving note.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4021,99 +3981,129 @@ Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2461"/>
-        <location filename="../src/nixnote.cpp" line="2468"/>
+        <location filename="../src/nixnote.cpp" line="1792"/>
+        <source>Export All Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/nixnote.cpp" line="1833"/>
+        <source>Note export complete.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/nixnote.cpp" line="1854"/>
+        <source>Ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/nixnote.cpp" line="1856"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/nixnote.cpp" line="1875"/>
+        <source>Import all notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/nixnote.cpp" line="1905"/>
+        <source>Importing notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/nixnote.cpp" line="2442"/>
+        <location filename="../src/nixnote.cpp" line="2449"/>
         <source>Error retrieving note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2491"/>
-        <location filename="../src/nixnote.cpp" line="2500"/>
+        <location filename="../src/nixnote.cpp" line="2472"/>
+        <location filename="../src/nixnote.cpp" line="2481"/>
         <source>Note Restored</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2491"/>
+        <location filename="../src/nixnote.cpp" line="2472"/>
         <source>A new copy has been restored.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2500"/>
+        <location filename="../src/nixnote.cpp" line="2481"/>
         <source>Note successfully restored.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2503"/>
+        <location filename="../src/nixnote.cpp" line="2484"/>
         <source>Note restored</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2708"/>
+        <location filename="../src/nixnote.cpp" line="2689"/>
         <source>Note not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3039"/>
+        <location filename="../src/nixnote.cpp" line="3020"/>
         <source>Switch to </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3145"/>
+        <location filename="../src/nixnote.cpp" line="3126"/>
         <source>Reindex Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3145"/>
+        <location filename="../src/nixnote.cpp" line="3126"/>
         <source>Reindex the entire database?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3155"/>
+        <location filename="../src/nixnote.cpp" line="3136"/>
         <source>Notes will be reindexed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3183"/>
+        <location filename="../src/nixnote.cpp" line="3164"/>
         <source>Note Reindexed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3196"/>
+        <location filename="../src/nixnote.cpp" line="3177"/>
         <source>Yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3198"/>
+        <location filename="../src/nixnote.cpp" line="3179"/>
         <source>No</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3216"/>
+        <location filename="../src/nixnote.cpp" line="3197"/>
         <source>Delete </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3219"/>
+        <location filename="../src/nixnote.cpp" line="3200"/>
         <source>Permanently delete </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3223"/>
+        <location filename="../src/nixnote.cpp" line="3204"/>
         <source>this note?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3194"/>
+        <location filename="../src/nixnote.cpp" line="3175"/>
         <source>Verify Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3306"/>
+        <location filename="../src/nixnote.cpp" line="3287"/>
         <source>Main app log file is located at:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3555"/>
+        <location filename="../src/nixnote.cpp" line="3536"/>
         <source>Press ESC to exit.</source>
         <translation type="unfinished"></translation>
     </message>

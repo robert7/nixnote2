@@ -1768,22 +1768,18 @@ void NixNote::leftButtonTriggered() {
 }
 
 
-//**************************************************
-// Import notes menu option chosen
-//**************************************************
-void NixNote::noteExport() {
-    databaseBackup(false);
+void NixNote::exportSelectedNotes() {
+    exportNotes(false);
 }
-
 
 //**************************************************
 //* Backup (or export) notes
 //**************************************************
-void NixNote::databaseBackup(bool backup) {
+void NixNote::exportNotes(bool exportAllNotes) {
     QLOG_TRACE() << "Entering databaseBackup()";
-    ExportData noteReader(backup);
+    ExportData noteReader(exportAllNotes);
 
-    if (!backup) {
+    if (!exportAllNotes) {
         noteTableView->getSelectedLids(noteReader.lids);
         if (noteReader.lids.size() == 0) {
             QMessageBox::critical(this, tr("Error"), tr("No notes selected."));
@@ -1792,10 +1788,11 @@ void NixNote::databaseBackup(bool backup) {
     }
 
     QString caption, directory;
-    if (backup)
-        caption = tr("Backup Database");
+    if (exportAllNotes)
+        caption = tr("Export All Notes");
     else
         caption = tr("Export Notes");
+    
     if (saveLastPath == "")
         directory = QDir::homePath();
     else
@@ -1807,7 +1804,7 @@ void NixNote::databaseBackup(bool backup) {
     fd.setAcceptMode(QFileDialog::AcceptSave);
 
     if (fd.exec() == 0 || fd.selectedFiles().size() == 0) {
-        QLOG_DEBUG() << "Database backup canceled in file dialog.";
+        QLOG_DEBUG() << "Export canceled in file dialog.";
         return;
     }
 
@@ -1819,10 +1816,7 @@ void NixNote::databaseBackup(bool backup) {
     if (pos != -1)
         saveLastPath.truncate(pos);
 
-    if (backup)
-        setMessage(tr("Performing backup"));
-    else
-        setMessage(tr("Performing export"));
+    setMessage(tr("Performing export"));
 
     if (!fileNames[0].endsWith(".nnex")) {
         fileNames[0].append(".nnex");
@@ -1831,43 +1825,37 @@ void NixNote::databaseBackup(bool backup) {
 
     if (noteReader.lastError != 0) {
         setMessage(noteReader.errorMessage);
-        QLOG_ERROR() << "Backup problem: " << noteReader.errorMessage;
+        QLOG_ERROR() << "Export problem: " << noteReader.errorMessage;
         QMessageBox::critical(this, tr("Error"), noteReader.errorMessage);
         waitCursor(false);
         return;
     }
-
-
-    if (backup)
-        setMessage(tr("Database backup complete."));
-    else
-        setMessage(tr("Note extract complete."));
-
+    setMessage(tr("Note export complete."));
     waitCursor(false);
-
 }
 
 
-//**************************************************
-// Import notes menu option chosen
-//**************************************************
+// partial import
 void NixNote::noteImport() {
-    databaseRestore(false);
+    importNotes(false);
 }
 
 
-//**************************************************
-//* Restore (or import) notes
-//**************************************************
-void NixNote::databaseRestore(bool fullRestore) {
-    QLOG_TRACE() << "Entering databaseRestore()";
+// full or partial import
+// basically same, just full import additionally displays warning
+void NixNote::importNotes(bool fullRestore) {
+    QLOG_TRACE() << "Entering importNotes()";
 
     if (fullRestore) {
         QMessageBox msgBox;
         msgBox.setText(
                 tr("This is used to restore a database from backups.\nIt is HIGHLY recommended that this only be used to populate\nan empty database.  Restoring into a database that\n already has data can cause problems.\n\nAre you sure you want to continue?"));
-        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-        msgBox.setDefaultButton(QMessageBox::Ok);
+
+        QPushButton *okButton = new QPushButton(tr("Ok"), &msgBox);
+        msgBox.addButton(okButton, QMessageBox::AcceptRole);
+        msgBox.addButton(new QPushButton(tr("Cancel"), &msgBox), QMessageBox::RejectRole);
+
+        msgBox.setDefaultButton(okButton);
         msgBox.setWindowTitle(tr("Confirm Restore"));
         int retval = msgBox.exec();
 
@@ -1884,7 +1872,7 @@ void NixNote::databaseRestore(bool fullRestore) {
     QString caption, directory, filter;
 
     if (fullRestore) {
-        caption = tr("Restore Database");
+        caption = tr("Import all notes");
         filter = tr(APP_NNEX_APP_NAME " Export (*.nnex);;All Files (*.*)");
     } else {
         caption = tr("Import notes");
@@ -1914,10 +1902,7 @@ void NixNote::databaseRestore(bool fullRestore) {
     if (pos != -1)
         saveLastPath.truncate(pos);
 
-    if (fullRestore)
-        setMessage(tr("Restoring database"));
-    else
-        setMessage(tr("Importing Notes"));
+    setMessage(tr("Importing notes"));
 
     if (fileNames[0].endsWith(".nnex") || fullRestore) {
         ImportData noteReader(fullRestore);
@@ -1925,7 +1910,7 @@ void NixNote::databaseRestore(bool fullRestore) {
 
         if (noteReader.lastError != 0) {
             setMessage(noteReader.getErrorMessage());
-            QLOG_ERROR() << "Restore problem: " << noteReader.errorMessage;
+            QLOG_ERROR() << "Import problem: " << noteReader.errorMessage;
             QMessageBox::critical(this, tr("Error"), noteReader.errorMessage);
             waitCursor(false);
             return;
@@ -1948,11 +1933,7 @@ void NixNote::databaseRestore(bool fullRestore) {
     notebookTreeView->rebuildNotebookTreeNeeded = true;
     notebookTreeView->loadData();
 
-    if (fullRestore)
-        setMessage(tr("Database has been restored."));
-    else
-        setMessage(tr("Notes have been imported."));
-
+    setMessage(tr("Notes have been imported."));
     waitCursor(false);
 }
 

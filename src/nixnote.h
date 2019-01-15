@@ -219,9 +219,12 @@ public slots:
     void rightButtonTriggered();
     void openNote(bool newWindow);
     void noteImport();
-    void noteExport();
-    void databaseRestore(bool fullRestore=true);
-    void databaseBackup(bool backup=true);
+
+    void exportSelectedNotes();
+    void exportNotes(bool exportAllNotes = true);
+
+    void importNotes(bool fullRestore=true);
+
     void resetView();
     void newNote();
     void restoreAndNewNote();
