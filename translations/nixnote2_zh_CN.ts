@@ -3848,7 +3848,7 @@ Do you wish to continue?</source>
         <translation type="vanished">恢复数据库</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1878"/>
+        <location filename="../src/nixnote.cpp" line="1874"/>
         <source>Import notes</source>
         <translation>导入笔记</translation>
     </message>
@@ -3874,14 +3874,14 @@ Do you wish to continue?</source>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1496"/>
-        <location filename="../src/nixnote.cpp" line="2400"/>
+        <location filename="../src/nixnote.cpp" line="2396"/>
         <source>Log in to Evernote</source>
         <translation>登录到Evernote</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1785"/>
         <location filename="../src/nixnote.cpp" line="1829"/>
-        <location filename="../src/nixnote.cpp" line="1914"/>
+        <location filename="../src/nixnote.cpp" line="1910"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
@@ -3963,59 +3963,59 @@ Are you sure you want to continue?</source>
         <translation type="vanished">数据库已恢复。</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1936"/>
+        <location filename="../src/nixnote.cpp" line="1932"/>
         <source>Notes have been imported.</source>
         <translation>笔记已导入。</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1980"/>
-        <location filename="../src/nixnote.cpp" line="1988"/>
+        <location filename="../src/nixnote.cpp" line="1976"/>
+        <location filename="../src/nixnote.cpp" line="1984"/>
         <source>Sync Error</source>
         <translation>同步错误</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1988"/>
+        <location filename="../src/nixnote.cpp" line="1984"/>
         <source>Sync completed with errors.</source>
         <translation>同步完成（有错误）。</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1980"/>
+        <location filename="../src/nixnote.cpp" line="1976"/>
         <source>Sync error. See message log for details</source>
         <translation>同步出错。请查看日志信息以了解详情</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1990"/>
+        <location filename="../src/nixnote.cpp" line="1986"/>
         <source>Sync Complete</source>
         <translation>同步完成</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1990"/>
+        <location filename="../src/nixnote.cpp" line="1986"/>
         <source>Sync completed successfully.</source>
         <translation>同步完成（成功）。</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2076"/>
+        <location filename="../src/nixnote.cpp" line="2072"/>
         <source>Untitled note</source>
         <translation>未命名笔记</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2391"/>
+        <location filename="../src/nixnote.cpp" line="2387"/>
         <source>Unsynchronized Note</source>
         <translation>未同步笔记</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2392"/>
+        <location filename="../src/nixnote.cpp" line="2388"/>
         <source>This note has never been synchronized with Evernote</source>
         <translation>该笔记从未和 Evernote 进行同步</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3625"/>
+        <location filename="../src/nixnote.cpp" line="3621"/>
         <source>PDF Export</source>
         <translation>PDF 导出</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3598"/>
-        <location filename="../src/nixnote.cpp" line="3599"/>
+        <location filename="../src/nixnote.cpp" line="3594"/>
+        <location filename="../src/nixnote.cpp" line="3595"/>
         <source>Exporting notes as PDF</source>
         <translation>导出笔记为 PDF</translation>
     </message>
@@ -4040,155 +4040,155 @@ Are you sure you want to continue?</source>
         <translation type="unfinished">取消</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1875"/>
+        <location filename="../src/nixnote.cpp" line="1871"/>
         <source>Import all notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1905"/>
+        <location filename="../src/nixnote.cpp" line="1901"/>
         <source>Importing notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2441"/>
-        <location filename="../src/nixnote.cpp" line="2448"/>
+        <location filename="../src/nixnote.cpp" line="2437"/>
+        <location filename="../src/nixnote.cpp" line="2444"/>
         <source>Error retrieving note.</source>
         <translation>检索笔记错误。</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2442"/>
-        <location filename="../src/nixnote.cpp" line="2449"/>
+        <location filename="../src/nixnote.cpp" line="2438"/>
+        <location filename="../src/nixnote.cpp" line="2445"/>
         <source>Error retrieving note</source>
         <translation>检索笔记错误</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2472"/>
-        <location filename="../src/nixnote.cpp" line="2481"/>
+        <location filename="../src/nixnote.cpp" line="2468"/>
+        <location filename="../src/nixnote.cpp" line="2477"/>
         <source>Note Restored</source>
         <translation>笔记已恢复</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2472"/>
+        <location filename="../src/nixnote.cpp" line="2468"/>
         <source>A new copy has been restored.</source>
         <translation>已恢复了一个新的副本。</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2481"/>
+        <location filename="../src/nixnote.cpp" line="2477"/>
         <source>Note successfully restored.</source>
         <translation>笔记成功恢复。</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2484"/>
+        <location filename="../src/nixnote.cpp" line="2480"/>
         <source>Note restored</source>
         <translation>笔记已恢复</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2689"/>
+        <location filename="../src/nixnote.cpp" line="2685"/>
         <source>Note not found.</source>
         <translation>未找到笔记。</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3020"/>
+        <location filename="../src/nixnote.cpp" line="3016"/>
         <source>Switch to </source>
         <translation>切换到 </translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3126"/>
+        <location filename="../src/nixnote.cpp" line="3122"/>
         <source>Reindex Database</source>
         <translation>重建数据库索引</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3126"/>
+        <location filename="../src/nixnote.cpp" line="3122"/>
         <source>Reindex the entire database?</source>
         <translation>重建整个数据库的索引？</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3136"/>
+        <location filename="../src/nixnote.cpp" line="3132"/>
         <source>Notes will be reindexed.</source>
         <translation>笔记将重新索引。</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3164"/>
+        <location filename="../src/nixnote.cpp" line="3160"/>
         <source>Note Reindexed</source>
         <translation>笔记已重新索引</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3177"/>
+        <location filename="../src/nixnote.cpp" line="3173"/>
         <source>Yes</source>
         <translation type="unfinished">是</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3179"/>
+        <location filename="../src/nixnote.cpp" line="3175"/>
         <source>No</source>
         <translation type="unfinished">否</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3197"/>
+        <location filename="../src/nixnote.cpp" line="3193"/>
         <source>Delete </source>
         <translation>删除 </translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3200"/>
+        <location filename="../src/nixnote.cpp" line="3196"/>
         <source>Permanently delete </source>
         <translation>永久删除 </translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3204"/>
+        <location filename="../src/nixnote.cpp" line="3200"/>
         <source>this note?</source>
         <translation>这个笔记？</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3175"/>
+        <location filename="../src/nixnote.cpp" line="3171"/>
         <source>Verify Delete</source>
         <translation>删除确认</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3282"/>
+        <location filename="../src/nixnote.cpp" line="3278"/>
         <source>Application file(s) info</source>
         <translation>应用程序文件信息</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3283"/>
+        <location filename="../src/nixnote.cpp" line="3279"/>
         <source>Config files are located at:</source>
         <translation>配置文件位于：</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3285"/>
+        <location filename="../src/nixnote.cpp" line="3281"/>
         <source>Note database files are located at:</source>
         <translation>笔记数据库文件位于：</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3290"/>
+        <location filename="../src/nixnote.cpp" line="3286"/>
         <source>See project wiki section FAQ (Menu Help/Project wiki) for more info how to:</source>
         <translation>请阅读项目维基的常见问题一节（菜单 帮助/项目维基）以查看下列操作的具体做法：</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3291"/>
+        <location filename="../src/nixnote.cpp" line="3287"/>
         <source>* change log level</source>
         <translation>* 修改日志等级</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3292"/>
+        <location filename="../src/nixnote.cpp" line="3288"/>
         <source>* look at log</source>
         <translation>* 查看日志</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3293"/>
+        <location filename="../src/nixnote.cpp" line="3289"/>
         <source>* how to add content of log file to github issue</source>
         <translation>* 如何将日志文件内容添加到 github issue 中</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3294"/>
+        <location filename="../src/nixnote.cpp" line="3290"/>
         <source>* how to change data location</source>
         <translation>* 如何变更数据位置</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3287"/>
+        <location filename="../src/nixnote.cpp" line="3283"/>
         <source>Main app log file is located at:</source>
         <translation>主应用日志文件位于：</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3536"/>
+        <location filename="../src/nixnote.cpp" line="3532"/>
         <source>Press ESC to exit.</source>
         <translation>按ESC退出。</translation>
     </message>

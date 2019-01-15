@@ -1858,14 +1858,10 @@ void NixNote::importNotes(bool fullRestore) {
         msgBox.setDefaultButton(okButton);
         msgBox.setWindowTitle(tr("Confirm Restore"));
         int retval = msgBox.exec();
-
-        switch (retval) {
-            case QMessageBox::Cancel:    // Cancel was clicked, let's exit
-                QLOG_DEBUG() << "Database restore has been canceled";
-                return;
-                break;
-            default:  // Anything else we don't care
-                break;
+        QLOG_DEBUG() << "Dialog answer: " << retval;
+        if (retval != 0) {
+            QLOG_INFO() << "Import of all notes has been canceled";
+            return;
         }
     }
 
@@ -1890,7 +1886,7 @@ void NixNote::importNotes(bool fullRestore) {
     fd.setAcceptMode(QFileDialog::AcceptOpen);
 
     if (fd.exec() == 0 || fd.selectedFiles().size() == 0) {
-        QLOG_DEBUG() << "Database restore canceled in file dialog.";
+        QLOG_INFO() << "Note import canceled in file dialog";
         return;
     }
 

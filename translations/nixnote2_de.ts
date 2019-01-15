@@ -3849,7 +3849,7 @@ Möchtest Du fortfahren?</translation>
         <translation type="vanished">Datenbank wiederherstellen</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1878"/>
+        <location filename="../src/nixnote.cpp" line="1874"/>
         <source>Import notes</source>
         <translation>Notizen importieren</translation>
     </message>
@@ -3875,14 +3875,14 @@ Möchtest Du fortfahren?</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1496"/>
-        <location filename="../src/nixnote.cpp" line="2400"/>
+        <location filename="../src/nixnote.cpp" line="2396"/>
         <source>Log in to Evernote</source>
         <translation>Bei Evernote einloggen</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1785"/>
         <location filename="../src/nixnote.cpp" line="1829"/>
-        <location filename="../src/nixnote.cpp" line="1914"/>
+        <location filename="../src/nixnote.cpp" line="1910"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
@@ -3945,105 +3945,105 @@ Wollen Sie wirklich fortfahren?</translation>
         <translation type="vanished">Die Datenbank wurde wiederhergestellt.</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1936"/>
+        <location filename="../src/nixnote.cpp" line="1932"/>
         <source>Notes have been imported.</source>
         <translation>Die Notizen wurden importiert.</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1980"/>
-        <location filename="../src/nixnote.cpp" line="1988"/>
+        <location filename="../src/nixnote.cpp" line="1976"/>
+        <location filename="../src/nixnote.cpp" line="1984"/>
         <source>Sync Error</source>
         <translation>Synchronisationsfehler</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1988"/>
+        <location filename="../src/nixnote.cpp" line="1984"/>
         <source>Sync completed with errors.</source>
         <translation>Die Synchronisation wurde mit Fehlern beendet.</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1980"/>
+        <location filename="../src/nixnote.cpp" line="1976"/>
         <source>Sync error. See message log for details</source>
         <translation>Synchronisationsfehler. Siehe Nachrichten-Log für Details</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1990"/>
+        <location filename="../src/nixnote.cpp" line="1986"/>
         <source>Sync Complete</source>
         <translation>Synchronisation fertiggestellt</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1990"/>
+        <location filename="../src/nixnote.cpp" line="1986"/>
         <source>Sync completed successfully.</source>
         <translation>Synchronisation erfolgreich fertiggestellt.</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2076"/>
+        <location filename="../src/nixnote.cpp" line="2072"/>
         <source>Untitled note</source>
         <translation>Unbenannte Notiz</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2391"/>
+        <location filename="../src/nixnote.cpp" line="2387"/>
         <source>Unsynchronized Note</source>
         <translation>Unsynchronisierte Notiz</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2392"/>
+        <location filename="../src/nixnote.cpp" line="2388"/>
         <source>This note has never been synchronized with Evernote</source>
         <translation>Diese Notiz wurde nie mit Evernote synchronisiert</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3282"/>
+        <location filename="../src/nixnote.cpp" line="3278"/>
         <source>Application file(s) info</source>
         <translation>Datei-Informationen Nixnote</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3283"/>
+        <location filename="../src/nixnote.cpp" line="3279"/>
         <source>Config files are located at:</source>
         <translation>Konfigurationsdateien befinden sich unter:</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3285"/>
+        <location filename="../src/nixnote.cpp" line="3281"/>
         <source>Note database files are located at:</source>
         <translation>Notiz-Datenbank-Dateien befinden sich unter:</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3290"/>
+        <location filename="../src/nixnote.cpp" line="3286"/>
         <source>See project wiki section FAQ (Menu Help/Project wiki) for more info how to:</source>
         <translation>In der FAQ des Projekt-Wikis wird beschrieben wie</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3291"/>
+        <location filename="../src/nixnote.cpp" line="3287"/>
         <source>* change log level</source>
         <translation>* der Log-Level geändert werden kann</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3292"/>
+        <location filename="../src/nixnote.cpp" line="3288"/>
         <source>* look at log</source>
         <translation>* die Log-Datei eingesehen werden kann</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3293"/>
+        <location filename="../src/nixnote.cpp" line="3289"/>
         <source>* how to add content of log file to github issue</source>
         <translation>* Inhalt der Log-Datei in einem Issue auf Github verwendet werden kann</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3294"/>
+        <location filename="../src/nixnote.cpp" line="3290"/>
         <source>* how to change data location</source>
         <translation>* der Speicherort für die Daten geändert werden kann</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3625"/>
+        <location filename="../src/nixnote.cpp" line="3621"/>
         <source>PDF Export</source>
         <translation>PDF-Export</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3598"/>
-        <location filename="../src/nixnote.cpp" line="3599"/>
+        <location filename="../src/nixnote.cpp" line="3594"/>
+        <location filename="../src/nixnote.cpp" line="3595"/>
         <source>Exporting notes as PDF</source>
         <translation>Notizen als PDF exportieren</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2441"/>
-        <location filename="../src/nixnote.cpp" line="2448"/>
+        <location filename="../src/nixnote.cpp" line="2437"/>
+        <location filename="../src/nixnote.cpp" line="2444"/>
         <source>Error retrieving note.</source>
         <translation>Fehler beim Empfang der Notiz.</translation>
     </message>
@@ -4089,109 +4089,109 @@ Wollen Sie wirklich fortfahren?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1875"/>
+        <location filename="../src/nixnote.cpp" line="1871"/>
         <source>Import all notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="1905"/>
+        <location filename="../src/nixnote.cpp" line="1901"/>
         <source>Importing notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2442"/>
-        <location filename="../src/nixnote.cpp" line="2449"/>
+        <location filename="../src/nixnote.cpp" line="2438"/>
+        <location filename="../src/nixnote.cpp" line="2445"/>
         <source>Error retrieving note</source>
         <translation>Fehler beim Empfang der Notiz</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2472"/>
-        <location filename="../src/nixnote.cpp" line="2481"/>
+        <location filename="../src/nixnote.cpp" line="2468"/>
+        <location filename="../src/nixnote.cpp" line="2477"/>
         <source>Note Restored</source>
         <translation>Notiz wiederhergestellt</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2472"/>
+        <location filename="../src/nixnote.cpp" line="2468"/>
         <source>A new copy has been restored.</source>
         <translation>Eine neue Kopie wurde wiederhergestellt.</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2481"/>
+        <location filename="../src/nixnote.cpp" line="2477"/>
         <source>Note successfully restored.</source>
         <translation>Die Notiz wurde erfolgreich wiederhergestellt.</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2484"/>
+        <location filename="../src/nixnote.cpp" line="2480"/>
         <source>Note restored</source>
         <translation>Die Notiz wurde wiederhergestellt</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="2689"/>
+        <location filename="../src/nixnote.cpp" line="2685"/>
         <source>Note not found.</source>
         <translation>Die Notiz wurde nicht gefunden.</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3020"/>
+        <location filename="../src/nixnote.cpp" line="3016"/>
         <source>Switch to </source>
         <translation>Benutzer wechseln</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3126"/>
+        <location filename="../src/nixnote.cpp" line="3122"/>
         <source>Reindex Database</source>
         <translation>Datenbank neu indizieren</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3126"/>
+        <location filename="../src/nixnote.cpp" line="3122"/>
         <source>Reindex the entire database?</source>
         <translation>Die ganze Datenbank neu indizieren?</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3136"/>
+        <location filename="../src/nixnote.cpp" line="3132"/>
         <source>Notes will be reindexed.</source>
         <translation>Die Notizen werden neu indiziert.</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3164"/>
+        <location filename="../src/nixnote.cpp" line="3160"/>
         <source>Note Reindexed</source>
         <translation>Die Notiz wurde neu indiziert</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3177"/>
+        <location filename="../src/nixnote.cpp" line="3173"/>
         <source>Yes</source>
         <translation type="unfinished">Ja</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3179"/>
+        <location filename="../src/nixnote.cpp" line="3175"/>
         <source>No</source>
         <translation type="unfinished">Nein</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3197"/>
+        <location filename="../src/nixnote.cpp" line="3193"/>
         <source>Delete </source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3200"/>
+        <location filename="../src/nixnote.cpp" line="3196"/>
         <source>Permanently delete </source>
         <translation>Dauerhaft löschen</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3204"/>
+        <location filename="../src/nixnote.cpp" line="3200"/>
         <source>this note?</source>
         <translation>diese Notiz?</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3175"/>
+        <location filename="../src/nixnote.cpp" line="3171"/>
         <source>Verify Delete</source>
         <translation>Löschen bestätigen</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3287"/>
+        <location filename="../src/nixnote.cpp" line="3283"/>
         <source>Main app log file is located at:</source>
         <translation>Die Log-Datei befindet sich unter:</translation>
     </message>
     <message>
-        <location filename="../src/nixnote.cpp" line="3536"/>
+        <location filename="../src/nixnote.cpp" line="3532"/>
         <source>Press ESC to exit.</source>
         <translation>Zum Beenden ESC drücken.</translation>
     </message>
