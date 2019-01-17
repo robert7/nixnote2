@@ -16,7 +16,7 @@
     <message>
         <location filename="../src/dialog/aboutdialog.cpp" line="51"/>
         <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
-        <translation>&lt;center&gt;Deutsche Übersetzung vom 6. Januar 2019&lt;/center&gt;</translation>
+        <translation>&lt;center&gt;Deutsche Übersetzung vom 17. Januar 2019&lt;/center&gt;</translation>
     </message>
 </context>
 <context>
@@ -805,7 +805,7 @@
     <message>
         <location filename="../src/communication/communicationmanager.cpp" line="519"/>
         <source>Error in sync: </source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler bei der Synchronisierung: </translation>
     </message>
     <message>
         <location filename="../src/communication/communicationmanager.cpp" line="605"/>
@@ -904,12 +904,12 @@
     <message>
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="55"/>
         <source>Intercept Unix SIGHUP (requires restart).</source>
-        <translation type="unfinished"></translation>
+        <translation>Unix SIGHUP abfangen (benötigt Neustart).</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="60"/>
         <source>Use multiple threads to save note contents (experimental).</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende mehrere Threads zum Speichern der Notizinhalte (experimentell).</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="64"/>
@@ -1085,7 +1085,7 @@
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="148"/>
         <source>To show/hide toolbar items, click on the blank space in toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtsklick auf den leeren Bereich der Symbolleiste, um diese anzupassen</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="163"/>
@@ -1480,17 +1480,17 @@ Bitte in den Einstellungen die entsprechenden Angaben machen.</translation>
     <message>
         <location filename="../src/exits/exitmanager.cpp" line="55"/>
         <source>Script filename is blank. Disabling exit </source>
-        <translation type="unfinished"></translation>
+        <translation>Der Skriptdateiname ist leer. Exit deaktiviert.</translation>
     </message>
     <message>
         <location filename="../src/exits/exitmanager.cpp" line="62"/>
         <source>Unknown script version. Disabling exit.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannte Skriptversion. Exit deaktiviert.</translation>
     </message>
     <message>
         <location filename="../src/exits/exitmanager.cpp" line="68"/>
         <source>Script file doesn&apos;t exist or cannot be read. Disabling exit </source>
-        <translation type="unfinished"></translation>
+        <translation>Skript existiert nicht oder kann nicht gelesen werden. Exit deaktiviert.</translation>
     </message>
 </context>
 <context>
@@ -1506,7 +1506,7 @@ Bitte in den Einstellungen die entsprechenden Angaben machen.</translation>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="62"/>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="74"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiviert</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="40"/>
@@ -1514,7 +1514,7 @@ Bitte in den Einstellungen die entsprechenden Angaben machen.</translation>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="63"/>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="75"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Deaktiviert</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="46"/>
@@ -1534,7 +1534,7 @@ Bitte in den Einstellungen die entsprechenden Angaben machen.</translation>
     <message>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="111"/>
         <source>More Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Weitere Informationen</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="128"/>
@@ -1652,13 +1652,13 @@ Bitte in den Einstellungen die entsprechenden Angaben machen.</translation>
         <location filename="../src/watcher/filewatcher.cpp" line="340"/>
         <location filename="../src/watcher/filewatcher.cpp" line="342"/>
         <source>Tag was not found:</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlagwort wurde nicht gefunden:</translation>
     </message>
     <message>
         <location filename="../src/watcher/filewatcher.cpp" line="356"/>
         <location filename="../src/watcher/filewatcher.cpp" line="358"/>
         <source>Notebook was not found:</source>
-        <translation type="unfinished">Notizbuch wurde nicht gefunden:</translation>
+        <translation>Notizbuch wurde nicht gefunden:</translation>
     </message>
 </context>
 <context>
@@ -2255,12 +2255,12 @@ Siehe Liste unter http://www.w3schools.com/charsets/.</translation>
         <location filename="../src/gui/nbrowserwindow.cpp" line="828"/>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1217"/>
         <source>Unable to reformat</source>
-        <translation type="unfinished"></translation>
+        <translation>Umformatierung nicht möglich</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1218"/>
         <source>HTML cleanup failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>HTML-Bereinigung ist fehlgeschlagen.</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1279"/>
@@ -2384,12 +2384,12 @@ Entschlüsselung nicht möglich.</translation>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3643"/>
         <source>Hunspell not available or no dictionary for current locale</source>
-        <translation type="unfinished"></translation>
+        <translation>Hunspell ist nicht vorhanden oder es gibt kein Wörterbuch für die eingestellte Lokalisierung</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="4030"/>
         <source>Failed to initialize spell checker for </source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtschreibprüfung konnte nicht initialisiert werden für </translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="4278"/>
@@ -2445,7 +2445,7 @@ Entschlüsselung nicht möglich.</translation>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="72"/>
         <source>&amp;Print Note</source>
-        <translation>Nachricht &amp;drucken</translation>
+        <translation>Notiz &amp;drucken</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="59"/>
@@ -2498,6 +2498,7 @@ Entschlüsselung nicht möglich.</translation>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="168"/>
         <source>Quit2</source>
+        <translatorcomment>Scheint mir nur intern Verwendung zu finden, um zwei Tastaturkürzel für Quit zu realisieren. Daher nicht übersetzt.</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2688,27 +2689,27 @@ Entschlüsselung nicht möglich.</translation>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="80"/>
         <source>&amp;Export all notes</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Exportieren aller Notizen</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="81"/>
         <source>Export all notes to a NNEX file</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportieren aller Notizen in eine NNEX-Datei</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="86"/>
         <source>&amp;Import all notes</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Importieren aller Notizen</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="87"/>
         <source>Import all notes from a file</source>
-        <translation type="unfinished"></translation>
+        <translation>Importieren aller Notizen einer Datei</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="94"/>
         <source>Export &amp;selected notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportieren au&amp;sgewählter Notizen</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="412"/>
@@ -3731,12 +3732,12 @@ Möchtest Du fortfahren?</translation>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="89"/>
         <source>Simplify formatting</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatierung vereinfachen</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="82"/>
         <source>Copy Note Link</source>
-        <translation type="unfinished">Kopiere Notizverknüpfung</translation>
+        <translation>Kopiere Notizverknüpfung</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="176"/>
@@ -4071,32 +4072,32 @@ Wollen Sie wirklich fortfahren?</translation>
     <message>
         <location filename="../src/nixnote.cpp" line="1792"/>
         <source>Export All Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportieren aller Notizen</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1833"/>
         <source>Note export complete.</source>
-        <translation type="unfinished"></translation>
+        <translation>Export der Notizen abgeschlossen.</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1854"/>
         <source>Ok</source>
-        <translation type="unfinished"></translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1856"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1871"/>
         <source>Import all notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Importieren aller Notizen</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1901"/>
         <source>Importing notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Importieren der Notizen</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="2438"/>
@@ -4158,12 +4159,12 @@ Wollen Sie wirklich fortfahren?</translation>
     <message>
         <location filename="../src/nixnote.cpp" line="3173"/>
         <source>Yes</source>
-        <translation type="unfinished">Ja</translation>
+        <translation>Ja</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3175"/>
         <source>No</source>
-        <translation type="unfinished">Nein</translation>
+        <translation>Nein</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3193"/>
@@ -4308,7 +4309,7 @@ Wollen Sie wirklich fortfahren?</translation>
     <message>
         <location filename="../src/oauth/oauthwindow.cpp" line="70"/>
         <source>Please Grant NixNote Access</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte Nixnote Zugang gewähren</translation>
     </message>
     <message>
         <location filename="../src/oauth/oauthwindow.cpp" line="81"/>
@@ -4656,12 +4657,12 @@ Wollen Sie wirklich fortfahren?</translation>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="78"/>
         <source>Force search/index to lower case</source>
-        <translation type="unfinished"></translation>
+        <translation>Erzwingen von Kleinschreibung für Suche und Indexierung</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="83"/>
         <source>Remove diacritics before search/index</source>
-        <translation type="unfinished"></translation>
+        <translation>Diakritika vor Suche / Indexierung entfernen</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="68"/>
