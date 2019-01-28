@@ -126,7 +126,7 @@ void PreferencesDialog::setupThumbnailPanel() {
 
 void PreferencesDialog::setupExitPanel() {
     exitPanel = new ExitPreferences(this);
-    tabs->addTab(exitPanel, tr("Exits"));
+    tabs->addTab(exitPanel, tr("Scripting (Exits)"));
 }
 
 

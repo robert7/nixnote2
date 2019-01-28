@@ -317,8 +317,8 @@ void NixNote::setupGui() {
 
     leftArrowButtonShortcut = new QShortcut(this);
     leftArrowButton = toolBar->addAction(
-        global.getIconResource(":leftArrowIcon"),
-        tr("Back") + global.setupShortcut(leftArrowButtonShortcut, "File_History_Previous")
+            global.getIconResource(":leftArrowIcon"),
+            tr("Back") + global.setupShortcut(leftArrowButtonShortcut, "File_History_Previous")
     );
     leftArrowButton->setEnabled(false);
     leftArrowButton->setPriority(QAction::LowPriority);
@@ -327,8 +327,8 @@ void NixNote::setupGui() {
 
     rightArrowButtonShortcut = new QShortcut(this);
     rightArrowButton = toolBar->addAction(
-        global.getIconResource(":rightArrowIcon"),
-        tr("Next") + global.setupShortcut(rightArrowButtonShortcut, "File_History_Next")
+            global.getIconResource(":rightArrowIcon"),
+            tr("Next") + global.setupShortcut(rightArrowButtonShortcut, "File_History_Next")
     );
     rightArrowButton->setEnabled(false);
     rightArrowButton->setPriority(QAction::LowPriority);
@@ -355,16 +355,16 @@ void NixNote::setupGui() {
     toolBar->addSeparator();
 
     deleteNoteButton = toolBar->addAction(
-        global.getIconResource(":deleteIcon"),
-        global.appendShortcutInfo(tr("Delete"), "File_Note_Delete")
+            global.getIconResource(":deleteIcon"),
+            global.appendShortcutInfo(tr("Delete"), "File_Note_Delete")
     );
     deleteNoteButton->setPriority(QAction::LowPriority);
 
     toolBar->addSeparator();
 
     printNoteButton = toolBar->addAction(
-        global.getIconResource(":printerIcon"),
-        global.appendShortcutInfo(tr("Print the current note"), "File_Print")
+            global.getIconResource(":printerIcon"),
+            global.appendShortcutInfo(tr("Print the current note"), "File_Print")
     );
     printNoteButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
 
@@ -942,7 +942,7 @@ void NixNote::setupNoteList() {
     topRightLayout = new QVBoxLayout();
     topRightLayout->addWidget(searchText);
     topRightWidget->setLayout(topRightLayout);
-    noteTableView = new NTableView();
+    noteTableView = new NTableView(this);
     topRightLayout->addWidget(noteTableView);
     topRightLayout->setContentsMargins(QMargins(0, 0, 0, 0));
 
@@ -1768,22 +1768,18 @@ void NixNote::leftButtonTriggered() {
 }
 
 
-//**************************************************
-// Import notes menu option chosen
-//**************************************************
-void NixNote::noteExport() {
-    databaseBackup(false);
+void NixNote::exportSelectedNotes() {
+    exportNotes(false);
 }
-
 
 //**************************************************
 //* Backup (or export) notes
 //**************************************************
-void NixNote::databaseBackup(bool backup) {
+void NixNote::exportNotes(bool exportAllNotes) {
     QLOG_TRACE() << "Entering databaseBackup()";
-    ExportData noteReader(backup);
+    ExportData noteReader(exportAllNotes);
 
-    if (!backup) {
+    if (!exportAllNotes) {
         noteTableView->getSelectedLids(noteReader.lids);
         if (noteReader.lids.size() == 0) {
             QMessageBox::critical(this, tr("Error"), tr("No notes selected."));
@@ -1792,10 +1788,11 @@ void NixNote::databaseBackup(bool backup) {
     }
 
     QString caption, directory;
-    if (backup)
-        caption = tr("Backup Database");
+    if (exportAllNotes)
+        caption = tr("Export All Notes");
     else
         caption = tr("Export Notes");
+    
     if (saveLastPath == "")
         directory = QDir::homePath();
     else
@@ -1807,7 +1804,7 @@ void NixNote::databaseBackup(bool backup) {
     fd.setAcceptMode(QFileDialog::AcceptSave);
 
     if (fd.exec() == 0 || fd.selectedFiles().size() == 0) {
-        QLOG_DEBUG() << "Database backup canceled in file dialog.";
+        QLOG_DEBUG() << "Export canceled in file dialog.";
         return;
     }
 
@@ -1819,10 +1816,7 @@ void NixNote::databaseBackup(bool backup) {
     if (pos != -1)
         saveLastPath.truncate(pos);
 
-    if (backup)
-        setMessage(tr("Performing backup"));
-    else
-        setMessage(tr("Performing export"));
+    setMessage(tr("Performing export"));
 
     if (!fileNames[0].endsWith(".nnex")) {
         fileNames[0].append(".nnex");
@@ -1831,60 +1825,50 @@ void NixNote::databaseBackup(bool backup) {
 
     if (noteReader.lastError != 0) {
         setMessage(noteReader.errorMessage);
-        QLOG_ERROR() << "Backup problem: " << noteReader.errorMessage;
+        QLOG_ERROR() << "Export problem: " << noteReader.errorMessage;
         QMessageBox::critical(this, tr("Error"), noteReader.errorMessage);
         waitCursor(false);
         return;
     }
-
-
-    if (backup)
-        setMessage(tr("Database backup complete."));
-    else
-        setMessage(tr("Note extract complete."));
-
+    setMessage(tr("Note export complete."));
     waitCursor(false);
-
 }
 
 
-//**************************************************
-// Import notes menu option chosen
-//**************************************************
+// partial import
 void NixNote::noteImport() {
-    databaseRestore(false);
+    importNotes(false);
 }
 
 
-//**************************************************
-//* Restore (or import) notes
-//**************************************************
-void NixNote::databaseRestore(bool fullRestore) {
-    QLOG_TRACE() << "Entering databaseRestore()";
+// full or partial import
+// basically same, just full import additionally displays warning
+void NixNote::importNotes(bool fullRestore) {
+    QLOG_TRACE() << "Entering importNotes()";
 
     if (fullRestore) {
         QMessageBox msgBox;
         msgBox.setText(
-            tr("This is used to restore a database from backups.\nIt is HIGHLY recommended that this only be used to populate\nan empty database.  Restoring into a database that\n already has data can cause problems.\n\nAre you sure you want to continue?"));
-        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-        msgBox.setDefaultButton(QMessageBox::Ok);
+                tr("This is used to restore a database from backups.\nIt is HIGHLY recommended that this only be used to populate\nan empty database.  Restoring into a database that\n already has data can cause problems.\n\nAre you sure you want to continue?"));
+
+        QPushButton *okButton = new QPushButton(tr("Ok"), &msgBox);
+        msgBox.addButton(okButton, QMessageBox::AcceptRole);
+        msgBox.addButton(new QPushButton(tr("Cancel"), &msgBox), QMessageBox::RejectRole);
+
+        msgBox.setDefaultButton(okButton);
         msgBox.setWindowTitle(tr("Confirm Restore"));
         int retval = msgBox.exec();
-
-        switch (retval) {
-            case QMessageBox::Cancel:    // Cancel was clicked, let's exit
-                QLOG_DEBUG() << "Database restore has been canceled";
-                return;
-                break;
-            default:  // Anything else we don't care
-                break;
+        QLOG_DEBUG() << "Dialog answer: " << retval;
+        if (retval != 0) {
+            QLOG_INFO() << "Import of all notes has been canceled";
+            return;
         }
     }
 
     QString caption, directory, filter;
 
     if (fullRestore) {
-        caption = tr("Restore Database");
+        caption = tr("Import all notes");
         filter = tr(APP_NNEX_APP_NAME " Export (*.nnex);;All Files (*.*)");
     } else {
         caption = tr("Import notes");
@@ -1902,7 +1886,7 @@ void NixNote::databaseRestore(bool fullRestore) {
     fd.setAcceptMode(QFileDialog::AcceptOpen);
 
     if (fd.exec() == 0 || fd.selectedFiles().size() == 0) {
-        QLOG_DEBUG() << "Database restore canceled in file dialog.";
+        QLOG_INFO() << "Note import canceled in file dialog";
         return;
     }
 
@@ -1914,10 +1898,7 @@ void NixNote::databaseRestore(bool fullRestore) {
     if (pos != -1)
         saveLastPath.truncate(pos);
 
-    if (fullRestore)
-        setMessage(tr("Restoring database"));
-    else
-        setMessage(tr("Importing Notes"));
+    setMessage(tr("Importing notes"));
 
     if (fileNames[0].endsWith(".nnex") || fullRestore) {
         ImportData noteReader(fullRestore);
@@ -1925,7 +1906,7 @@ void NixNote::databaseRestore(bool fullRestore) {
 
         if (noteReader.lastError != 0) {
             setMessage(noteReader.getErrorMessage());
-            QLOG_ERROR() << "Restore problem: " << noteReader.errorMessage;
+            QLOG_ERROR() << "Import problem: " << noteReader.errorMessage;
             QMessageBox::critical(this, tr("Error"), noteReader.errorMessage);
             waitCursor(false);
             return;
@@ -1948,11 +1929,7 @@ void NixNote::databaseRestore(bool fullRestore) {
     notebookTreeView->rebuildNotebookTreeNeeded = true;
     notebookTreeView->loadData();
 
-    if (fullRestore)
-        setMessage(tr("Database has been restored."));
-    else
-        setMessage(tr("Notes have been imported."));
-
+    setMessage(tr("Notes have been imported."));
     waitCursor(false);
 }
 
@@ -2087,7 +2064,7 @@ void NixNote::newNote() {
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
                           QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
                           QString(
-                              "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><br/></en-note>");
+                                  "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><br/></en-note>");
 
     Note n;
     NotebookTable notebookTable(global.db);
@@ -2183,7 +2160,7 @@ void NixNote::newExternalNote() {
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
                           QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
                           QString(
-                              "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><br/></en-note>");
+                                  "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><br/></en-note>");
 
     Note n;
     NotebookTable notebookTable(global.db);
@@ -2605,19 +2582,16 @@ void NixNote::heartbeatTimerTriggered() {
         QLOG_INFO() << "SYNCHRONIZE requested by shared memory segment.";
         this->synchronize();
         return;
-    }
-    else if (data.startsWith("IMMEDIATE_SHUTDOWN")) {
+    } else if (data.startsWith("IMMEDIATE_SHUTDOWN")) {
         QLOG_INFO() << "IMMEDIATE_SHUTDOWN requested by shared memory segment.";
         this->quitNixNote();
         return;
-    }
-    else if (data.startsWith("SHOW_WINDOW")) {
+    } else if (data.startsWith("SHOW_WINDOW")) {
         QLOG_INFO() << "SHOW_WINDOW requested by shared memory segment.";
         this->raise();
         this->showMaximized();
         return;
-    }
-    else if (data.startsWith("QUERY:")) {
+    } else if (data.startsWith("QUERY:")) {
         QLOG_INFO() << "QUERY requested by shared memory segment.";
         QList<qint32> results;
         QString query = data.mid(6);
@@ -2657,20 +2631,17 @@ void NixNote::heartbeatTimerTriggered() {
         dom.writeEndDocument();
 
         global.sharedMemory->write(xmlString);
-    }
-    else if (data.startsWith("OPEN_NOTE:")) {
+    } else if (data.startsWith("OPEN_NOTE:")) {
         QLOG_INFO() << "OPEN_NOTE requested by shared memory segment.";
         QString number = data.mid(10);
         qint32 note = number.toInt();
         NoteTable noteTable(global.db);
         if (noteTable.exists(note))
             this->openExternalNote(note);
-    }
-    else if (data.startsWith("NEW_NOTE")) {
+    } else if (data.startsWith("NEW_NOTE")) {
         QLOG_INFO() << "NEW_NOTE requested by shared memory segment.";
         this->newExternalNote();
-    }
-    else if (data.startsWith("CMDLINE_QUERY:")) {
+    } else if (data.startsWith("CMDLINE_QUERY:")) {
         QLOG_INFO() << "CMDLINE_QUERY requested by shared memory segment.";
         QString xml = data.mid(14);
         CmdLineQuery query;
@@ -2682,30 +2653,26 @@ void NixNote::heartbeatTimerTriggered() {
         QList<qint32> lids;
         engine.filter(filter, &lids);
         query.write(lids, tmpFile);
-    }
-    else if (data.startsWith("DELETE_NOTE:")) {
+    } else if (data.startsWith("DELETE_NOTE:")) {
         QLOG_INFO() << "DELETE_NOTE requested by shared memory segment.";
         qint32 lid = data.mid(12).toInt();
         NoteTable noteTable(global.db);
         noteTable.deleteNote(lid, true);
         updateSelectionCriteria();
-    }
-    else if (data.startsWith("EMAIL_NOTE:")) {
+    } else if (data.startsWith("EMAIL_NOTE:")) {
         QLOG_INFO() << "EMAIL_NOTE requested by shared memory segment.";
         QString xml = data.mid(11);
         EmailNote email;
         email.unwrap(xml);
         email.sendEmail();
-    }
-    else if (data.startsWith("ALTER_NOTE:")) {
+    } else if (data.startsWith("ALTER_NOTE:")) {
         QLOG_INFO() << "ALTER_NOTE requested by shared memory segment.";
         QString xml = data.mid(11);
         AlterNote alter;
         alter.unwrap(xml);
         alter.alterNote();
         updateSelectionCriteria();
-    }
-    else if (data.startsWith("READ_NOTE:")) {
+    } else if (data.startsWith("READ_NOTE:")) {
         QLOG_INFO() << "READ_NOTE requested by shared memory segment.";
         QString xml = data.mid(10);
         ExtractNoteText data;
@@ -2722,24 +2689,19 @@ void NixNote::heartbeatTimerTriggered() {
             return;
         responseMapper.write(reply);
         responseMapper.detach();
-    }
-    else if (data.startsWith("SIGNAL_GUI:")) {
+    } else if (data.startsWith("SIGNAL_GUI:")) {
         QLOG_INFO() << "SIGNAL_GUI requested by shared memory segment.";
         QString cmd = data.mid(12);
         QLOG_DEBUG() << "COMMAND REQUESTED: " << cmd;
         if (cmd.startsWith("SYNCHRONIZE")) {
             this->synchronize();
-        }
-        else if (cmd.startsWith("SHUTDOWN")) {
+        } else if (cmd.startsWith("SHUTDOWN")) {
             this->quitNixNote();
-        }
-        else if (cmd.startsWith("SHOW")) {
+        } else if (cmd.startsWith("SHOW")) {
             this->restoreAndShowMainWindow();
-        }
-        else if (cmd.startsWith("NEW_NOTE")) {
+        } else if (cmd.startsWith("NEW_NOTE")) {
             this->restoreAndNewNote();
-        }
-        else if (cmd.startsWith("NEW_EXTERNAL_NOTE")) {
+        } else if (cmd.startsWith("NEW_EXTERNAL_NOTE")) {
             this->newExternalNote();
             this->raise();
             this->activateWindow();
@@ -2748,8 +2710,7 @@ void NixNote::heartbeatTimerTriggered() {
                 tabWindow->lastExternal->showNormal();
                 tabWindow->lastExternal->browser->editor->setFocus();
             }
-        }
-        else if (cmd.startsWith("OPEN_EXTERNAL_NOTE")) {
+        } else if (cmd.startsWith("OPEN_EXTERNAL_NOTE")) {
             cmd = cmd.mid(18);
             qint32 lid = cmd.toInt();
             this->openExternalNote(lid);
@@ -2759,8 +2720,7 @@ void NixNote::heartbeatTimerTriggered() {
                 tabWindow->lastExternal->browser->editor->setFocus();
             }
             return;
-        }
-        else if (cmd.startsWith("OPEN_NOTE")) {
+        } else if (cmd.startsWith("OPEN_NOTE")) {
             bool newTab = false;
 
             this->restoreAndShowMainWindow();
@@ -2900,8 +2860,7 @@ void NixNote::onTrayActivated(QSystemTrayIcon::ActivationReason reason) {
         int value = global.settings->value("trayDoubleClickAction", -1).toInt();
         global.settings->endGroup();
         trayActivatedAction(value);
-    }
-    else if (reason == QSystemTrayIcon::MiddleClick) {
+    } else if (reason == QSystemTrayIcon::MiddleClick) {
         QLOG_DEBUG() << "onTrayActivated reason=MiddleClick (" << reason << ")";
         global.settings->beginGroup(INI_GROUP_APPEARANCE);
         int value = global.settings->value("trayMiddleClickAction", -1).toInt();
@@ -3202,6 +3161,27 @@ void NixNote::reindexCurrentNote() {
 }
 
 
+bool NixNote::isOkToDeleteNote(QString msg) {
+    if (!global.confirmDeletes()) {
+        return true;
+    }
+
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(tr("Verify Delete"));
+    msgBox.setText(msg);
+    QPushButton *yesButton = new QPushButton(tr("Yes"), &msgBox);
+    msgBox.addButton(yesButton, QMessageBox::YesRole);
+    msgBox.addButton(new QPushButton(tr("No"), &msgBox), QMessageBox::NoRole);
+
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setDefaultButton(yesButton);
+    int rc = msgBox.exec();
+    QLOG_DEBUG() << "Delete dialog reply: " << rc;
+    return rc == 0;
+}
+
+
 // Delete the note we are currently viewing
 void NixNote::deleteCurrentNote() {
     qint32 lid = tabWindow->currentBrowser()->lid;
@@ -3218,17 +3198,8 @@ void NixNote::deleteCurrentNote() {
     }
 
     msg = typeDelete + tr("this note?");
-
-    if (global.confirmDeletes()) {
-        QMessageBox msgBox;
-        msgBox.setWindowTitle(tr("Verify Delete"));
-        msgBox.setText(msg);
-        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-        msgBox.setIcon(QMessageBox::Question);
-        msgBox.setDefaultButton(QMessageBox::Yes);
-        int rc = msgBox.exec();
-        if (rc != QMessageBox::Yes)
-            return;
+    if (!isOkToDeleteNote(msg)) {
+        return;
     }
 
     NoteTable ntable(global.db);
@@ -3305,9 +3276,12 @@ void NixNote::pauseIndexing(bool value) {
 void NixNote::openMessageLogInfo() {
     QMessageBox mb;
     mb.information(this, tr("Application file(s) info"),
-                   tr("Config files are located at:") + global.fileManager.getConfigDir() + "\n"
-                   + tr("Note database files are located at:") + global.fileManager.getUserDataDir() + "\n\n"
-                   + tr("Main app log file is located at:") + global.fileManager.getMainLogFileName() + "\n"
+                   tr("Config files are located at:") + "\n"
+                   + global.fileManager.getConfigDir() + "\n"
+                   + tr("Note database files are located at:") + "\n"
+                   + global.fileManager.getUserDataDir() + "\n\n"
+                   + tr("Main app log file is located at:") + "\n"
+                   + global.fileManager.getMainLogFileName() + "\n"
                    + "\n"
                    + tr("See project wiki section FAQ (Menu Help/Project wiki) for more info how to:") + "\n"
                    + tr("* change log level") + "\n"

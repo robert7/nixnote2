@@ -345,7 +345,6 @@ public slots:
     void findReplaceWindowHidden();
     void findReplaceInNotePressed();
 
-    void htmlTidy();
     void htmlSimplify();
 
 

@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/sql/notebooktable.h"
 #include "src/utilities/nuuid.h"
 #include "src/dialog/noteproperties.h"
+#include "src/nixnote.h"
 
 //*****************************************************************
 //* This class overrides QTableView and is used to provide a
@@ -343,7 +344,6 @@ NTableView::NTableView(QWidget *parent) :
 
 
     QLOG_TRACE() << "Exiting NTableView constructor";
-
 }
 
 
@@ -684,20 +684,13 @@ void NTableView::deleteSelectedNotes() {
     else
         msg = typeDelete + QString::number(lids.size()) + " notes?";
 
-    QMessageBox msgBox;
-    msgBox.setWindowTitle(tr("Verify Delete"));
-    msgBox.setText(msg);
-    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    msgBox.setIcon(QMessageBox::Question);
-    msgBox.setDefaultButton(QMessageBox::Yes);
-    int rc = msgBox.exec();
-    if (rc != QMessageBox::Yes)
+    NixNote *nixnote = (NixNote*) (parent());
+    if (!nixnote->isOkToDeleteNote(msg)) {
         return;
+    }
 
     NoteTable ntable(global.db);
     NSqlQuery sql(global.db);
-//    NSqlQuery transaction(*global.db);
-    //transaction.exec("begin");
     sql.prepare("Delete from filter where lid=:lid");
     for (int i = 0; i < lids.size(); i++) {
         ntable.deleteNote(lids[i], true);

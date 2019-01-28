@@ -77,25 +77,33 @@ void NMainMenuBar::setupFileMenu() {
     fileMenu->addSeparator();
 
 
-    backupDatabaseAction = new QAction(tr("&Backup Database"), this);
-    backupDatabaseAction->setToolTip(tr("Backup database to a file"));
-    connect(backupDatabaseAction, SIGNAL(triggered()), parent, SLOT(databaseBackup()));
+    backupDatabaseAction = new QAction(tr("&Export all notes"), this);
+    backupDatabaseAction->setToolTip(tr("Export all notes to a NNEX file"));
+    connect(backupDatabaseAction, SIGNAL(triggered()), parent, SLOT(exportNotes()));
     setupShortcut(backupDatabaseAction, QString("File_Backup_Database"));
     fileMenu->addAction(backupDatabaseAction);
 
-    restoreDatabaseAction = new QAction(tr("&Restore Database"), this);
-    restoreDatabaseAction->setToolTip(tr("Restore from a backup"));
-    connect(restoreDatabaseAction, SIGNAL(triggered()), parent, SLOT(databaseRestore()));
+    restoreDatabaseAction = new QAction(tr("&Import all notes"), this);
+    restoreDatabaseAction->setToolTip(tr("Import all notes from a file"));
+    connect(restoreDatabaseAction, SIGNAL(triggered()), parent, SLOT(importNotes()));
     setupShortcut(restoreDatabaseAction, QString("File_Restore_Database"));
     fileMenu->addAction(restoreDatabaseAction);
 
     fileMenu->addSeparator();
 
-    exportNoteAction = new QAction(tr("&Export to NixNote Export"), this);
+    exportNoteAction = new QAction(tr("Export &selected notes"), this);
     exportNoteAction->setToolTip(tr("Export selected notes to a NNEX file"));
-    connect(exportNoteAction, SIGNAL(triggered()), parent, SLOT(noteExport()));
+    connect(exportNoteAction, SIGNAL(triggered()), parent, SLOT(exportSelectedNotes()));
     setupShortcut(exportNoteAction, QString("File_Note_Export"));
     fileMenu->addAction(exportNoteAction);
+
+    importNoteAction = new QAction(tr("&Import notes"), this);
+    importNoteAction->setToolTip(tr("Import notes from an export file"));
+    connect(importNoteAction, SIGNAL(triggered()), parent, SLOT(noteImport()));
+    setupShortcut(importNoteAction, QString("File_Note_Import"));
+    fileMenu->addAction(importNoteAction);
+
+    fileMenu->addSeparator();
 
     exportAsPdfAction = new QAction(tr("&Export notes as PDF"), this);
     exportAsPdfAction->setToolTip(tr("Export selected notes to a PDF file"));
@@ -103,11 +111,6 @@ void NMainMenuBar::setupFileMenu() {
     setupShortcut(exportAsPdfAction, QString("File_Note_Export_Pdf"));
     fileMenu->addAction(exportAsPdfAction);
 
-    importNoteAction = new QAction(tr("&Import notes"), this);
-    importNoteAction->setToolTip(tr("Import notes from an export file"));
-    connect(importNoteAction, SIGNAL(triggered()), parent, SLOT(noteImport()));
-    setupShortcut(importNoteAction, QString("File_Note_Import"));
-    fileMenu->addAction(importNoteAction);
 
     fileMenu->addSeparator();
     QList<QString> names = global.accountsManager->nameList();

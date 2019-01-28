@@ -56,7 +56,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     rightJustifyVisible = contextMenu->addAction(tr("Align Right"));
     hlineVisible = contextMenu->addAction(tr("Horizontal Line"));
     insertDatetimeVisible = contextMenu->addAction(tr("Insert Date Time"));
-    shiftRightVisible = contextMenu->addAction(tr("Intent/Shift Right"));
+    shiftRightVisible = contextMenu->addAction(tr("Indent/Shift Right"));
     shiftLeftVisible = contextMenu->addAction(tr("Outdent/Shift Left"));
     bulletListVisible = contextMenu->addAction(tr("Bullet List"));
     numberListVisible = contextMenu->addAction(tr("Number List"));
@@ -145,6 +145,9 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     // note editor toolbar items begin
     fontNames = new FontNameComboBox(this);
     fontSizes = new FontSizeComboBox(this);
+    QString toolbarHint(tr("To show/hide toolbar items, click on the blank space in toolbar"));
+    fontNames->setToolTip(toolbarHint);
+    fontSizes->setToolTip(toolbarHint);
 
     loadFontNames();
     fontButtonAction = addWidget(fontNames);
@@ -163,7 +166,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     );
     fontColorAction = this->addWidget(fontColorButtonWidget);
     // TODO load from settings
-    fontColorMenuWidget->setCurrentColor(fontColor);
+    fontColorMenuWidget->setCurrentColorByEnglishName(fontColor);
 
     highlightColorMenuWidget = new ColorMenu();
     highlightColorButtonWidget = new QToolButton(this);
@@ -178,7 +181,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     );
     highlightColorAction = this->addWidget(highlightColorButtonWidget);
     // TODO load from settings
-    highlightColorMenuWidget->setCurrentColor(fontHighlightColor);
+    highlightColorMenuWidget->setCurrentColorByEnglishName(fontHighlightColor);
 
     QString tooltipInfo;
     undoButtonShortcut = new QShortcut(this);

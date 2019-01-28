@@ -819,7 +819,8 @@ void NBrowserWindow::saveNoteContent() {
 
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
 
-        EnmlFormatter formatter(contents, global.guiAvailable, global.passwordSafe, global.fileManager.getCryptoJarPath());
+        EnmlFormatter formatter(contents, global.guiAvailable, global.passwordSafe,
+                                global.fileManager.getCryptoJarPath());
         formatter.rebuildNoteEnml();
         if (formatter.isFormattingError()) {
             QMessageBox::information(
@@ -1233,14 +1234,7 @@ void NBrowserWindow::htmlCleanup(HtmlCleanupMode mode) {
 
 
 /**
- * Just tidy - same as before save.
- */
-void NBrowserWindow::htmlTidy() {
-    htmlCleanup(HtmlCleanupMode::Tidy);
-}
-
-/**
- * Simplify - same as before save.
+ * Simplify html.
  */
 void NBrowserWindow::htmlSimplify() {
     // this also may help a bit (but only if the text is selected I suppose)
@@ -2246,7 +2240,7 @@ void NBrowserWindow::linkClicked(const QUrl url) {
 #endif // End windows check
         QString fullName = url.toString().mid(6).replace(filepath, "");
         filepath = filepath.replace("\\", "/");
-        QLOG_DEBUG() << "linkClicked: dba path="<< global.fileManager.getDbaDirPath();
+        QLOG_DEBUG() << "linkClicked: dba path=" << global.fileManager.getDbaDirPath();
         int index = fullName.lastIndexOf(".");
         QString guid = "";
         if (index != -1) {
@@ -2563,7 +2557,7 @@ void NBrowserWindow::editLatex(QString incomingLid) {
 
         bool found = false;
         QString sliceId("latex:///" + incomingLid);
-        
+
         while (startPos != -1) {
             int endPos = oldHtml.indexOf("</a>", startPos);
             if (endPos != -1) {
@@ -3194,9 +3188,9 @@ void NBrowserWindow::attachFileSelected(QString filename) {
                 hash = d.bodyHash;
         }
         buffer.append("<img src=\"file://");
-        #ifdef _WIN32
-                buffer.append("/");
-        #endif
+#ifdef _WIN32
+        buffer.append("/");
+#endif
         buffer.append(path);
         buffer.append("\" type=\"");
         buffer.append(mime);
@@ -3260,9 +3254,9 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
         buffer.append("<img en-tag=\"temporary\" title=\"" + QFileInfo(filename).fileName() + "\" ");
         buffer.append("src=\"file://");
-        #ifdef _WIN32
+#ifdef _WIN32
         buffer.append("/");
-        #endif
+#endif
         buffer.append(tmpFile);
         buffer.append("\" />");
         buffer.append("</a>");
@@ -3385,7 +3379,7 @@ void NBrowserWindow::decryptText(QString id, QString text, QString hint, QString
         QString password = global.passwordRemember.at(i).first;
         int rc = crypt.decrypt(plainText, text, password, cipher, len);
         if (rc == 0) {
-            QLOG_DEBUG() << "Successful decrypt with session password #" << (i+1);
+            QLOG_DEBUG() << "Successful decrypt with session password #" << (i + 1);
 
             QPair<QString, QString> newEntry;
             newEntry.first = id;
@@ -3411,10 +3405,10 @@ void NBrowserWindow::decryptText(QString id, QString text, QString hint, QString
             return;
         }
         pwd = dialog.password->text().trimmed();
-        
+
         int rc = crypt.decrypt(plainText, text, pwd);
         if (rc == EnCrypt::Invalid_Key) {
-           //QMessageBox.warning(this, tr("Incorrect Password"), tr("The password entered is not correct"));
+            //QMessageBox.warning(this, tr("Incorrect Password"), tr("The password entered is not correct"));
         }
     }
 
@@ -3430,7 +3424,7 @@ void NBrowserWindow::decryptText(QString id, QString text, QString hint, QString
     removeEncryption(id, plainText, permanentlyDecrypt, slot);
 
     bool rememberPassword = dialog.rememberPassword->isChecked();
-    
+
     if (rememberPassword) {
         QPair<QString, QString> pair;
         pair.first = pwd;
@@ -3450,7 +3444,7 @@ void NBrowserWindow::removeEncryption(QString id, QString plainText, bool perman
                     + "border=1 width=100%><tbody><tr><td>"
                     + plainText + "</td></tr></tbody></table>";
 
-        QMimeData* mimeData = new QMimeData;
+        QMimeData *mimeData = new QMimeData;
         mimeData->setData("text/html", plainText.toUtf8());
 
         QApplication::clipboard()->setMimeData(mimeData, QClipboard::Clipboard);
@@ -4070,9 +4064,8 @@ void NBrowserWindow::spellCheckAddWordToUserDictionary(QString currentWord) {
         // invalid state
         return;
     }
-    spellChecker->addWord( currentWord);
+    spellChecker->addWord(currentWord);
 }
-
 
 
 // Find shortcut activated
