@@ -112,7 +112,7 @@ void StartupConfig::printHelp() {
                            + QString("                %g                     Show tags.\n")
                            + QString("                %c                     Show the date the note was created.\n")
                            + QString("                %u                     Show the last date updated.\n")
-                           + QString("                %e                     Show if is synchronized with Evernote.\n")
+                           + QString("                %e                     Show if the note is synchronized with Evernote.\n")
                            + QString("                %s                     Show the source URL.\n")
                            + QString("                %a                     Show the author.\n")
                            + QString("                %x                     Show if the note has a todo item.\n")
@@ -157,7 +157,7 @@ void StartupConfig::printHelp() {
                            + QString(
         "          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
                            + QString("                                       is read from stdin.\n")
-                           + QString("  alterNote <options>                  Change a notes't notebook or tags.\n")
+                           + QString("  alterNote <options>                  Change a note's notebook or tags.\n")
                            + QString("     alterNote options:\n")
                            + QString(
         "          --id=\"<note_ids>\"            Space separated list of note IDs to extract.\n")
@@ -180,10 +180,10 @@ void StartupConfig::printHelp() {
                            + QString("          --id=\"<note_id>\"             ID of the note to delete.\n")
                            + QString("          --noVerify                   Do not prompt for verification.\n")
                            + QString(
-        "  emailNote <options>                  Move a note to the trash via the command line.\n")
+        "  emailNote <options>                  Email a note via the command line.\n")
                            + QString("     emailNote options:\n")
                            + QString("          --id=\"<note_id>\"             ID of the note to email.\n")
-                           + QString("          --subject=\"<subject>\"        Additional comments.\n")
+                           + QString("          --subject=\"<subject>\"        Subject for the email.\n")
                            + QString("          --to=\"<address list>\"        List of recipients for the email.\n")
                            + QString("          --cc=\"<address list>\"        List of recipients to carbon copy.\n")
                            + QString(
@@ -198,18 +198,18 @@ void StartupConfig::printHelp() {
                            + QString(
         "          --id=\"<note_ids>\"            Space separated list of note IDs to extract.\n")
                            + QString("          --search=\"search string\"     Export notes matching search string.\n")
-                           + QString("          --output=\"filename\"        Output file name.\n")
+                           + QString("          --output=\"filename\"          Output file name.\n")
                            +
                            QString("          --deleteAfterExtract         Delete notes after the extract completes.\n")
                            + QString("          --noVerifyDelete             Don't verify deletions.\n")
                            + QString(
         "  import <options>                     Import notes from a NixNote extract (.nnex).\n")
                            + QString("     import options:\n")
-                           + QString("          --input=\"filename\"         Input file name.\n")
+                           + QString("          --input=\"filename\"           Input file name.\n")
                            + QString("  closeNotebook <options>              Close a notebook.\n")
                            + QString("     closeNotebook options:\n")
                            + QString("          --notebook=\"notebook\"        Notebook name.\n")
-                           + QString("  openNotebook <options>               Open a closed a notebook.\n")
+                           + QString("  openNotebook <options>               Open a closed notebook.\n")
                            + QString("     openNotebook options:\n")
                            + QString("          --notebook=\"notebook\"        Notebook name.\n")
                            + QString("  signalGui <options>                  Send command to a running NixNote.\n")
