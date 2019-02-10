@@ -1,9 +1,10 @@
-NixNote (2.1.3-c) stable; urgency=low
+NixNote (2.1.3-d) stable; urgency=low
   * Updated german translation (2x), thanks to https://github.com/stemabu
   * Fixed various issues involving translation and minor interface adjustments
   * Delete node dialog now respects "Confirm deletes" Preference options
   * Cleanup in wording of database backup/restore/import notes (as "backup" means basically export of *all* notes)
   * Updated german translation, thanks to https://github.com/stemabu
+  * Typo fixes thanks to https://github.com/Discostu36
  -- Robert Spiegel <nightingale7@gmail.com>  Tue, 22 Jan 2019 16:16:36 +0100
 
 NixNote (2.1.2) stable; urgency=low
