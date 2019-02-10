@@ -1593,15 +1593,19 @@ void NixNote::updateSyncButton() {
 }
 
 
-//************************************************************
-//* Open a new note.  If newWindow is true it is an external
-//* note request.
-//************************************************************
+/**
+ * Open note by current selection criteria.
+ * If newWindow is true it is an external note request.
+ *
+ * @param newWindow Whenever open in new window.
+ */
 void NixNote::openNote(bool newWindow) {
     saveContents();
     FilterCriteria *criteria = global.getCurrentCriteria();
     qint32 lid;
-    if (criteria->isLidSet()) {
+    bool isLidSet = criteria->isLidSet();
+    QLOG_DEBUG() << "Opening note lid=" << (isLidSet ? criteria->getLid() : -1);
+    if (isLidSet) {
         lid = criteria->getLid();
         if (newWindow)
             tabWindow->openNote(lid, NTabWidget::NewTab);
@@ -1612,11 +1616,14 @@ void NixNote::openNote(bool newWindow) {
     }
     rightArrowButton->setEnabled(false);
     leftArrowButton->setEnabled(false);
+
     int maxFilterPosition = global.filterCriteria.size() - 1;
-    if (global.filterPosition < maxFilterPosition)
+    if (global.filterPosition < maxFilterPosition) {
         rightArrowButton->setEnabled(true);
-    if (global.filterPosition > 0)
+    }
+    if (global.filterPosition > 0) {
         leftArrowButton->setEnabled(true);
+    }
     checkReadOnlyNotebook();
 }
 
@@ -1634,7 +1641,7 @@ void NixNote::openExternalNote(qint32 lid) {
 //* (i.e. they select a notebook, tag, saved search...
 //*****************************************************
 void NixNote::updateSelectionCriteria(bool afterSync) {
-    QLOG_DEBUG() << "starting NixNote::updateSelectionCriteria() filtercnt="
+    QLOG_DEBUG() << "Updating selection criteria filtercnt="
                  << global.filterCriteria.size()
                  << ", pos=" << global.filterPosition
                  << ", afterSync=" << afterSync;
@@ -1701,10 +1708,12 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
         //tabWindow->currentBrowser()->setContent(selectedNotes.at(0));  // <<<<<< This causes problems with multiple tabs after sync
         NBrowserWindow *window = nullptr;
         tabWindow->findBrowser(window, selectedNotes.at(0));
-        if (window != nullptr)
+        if (window != nullptr) {
             window->setContent(selectedNotes.at(0));
-        if (!afterSync)
+        }
+        if (!afterSync) {
             openNote(false);
+        }
     }
 
     if (global.getCurrentCriteria()->isDeletedOnlySet() &&
@@ -2133,23 +2142,30 @@ void NixNote::newNote() {
         n.attributes = na;
     }
     NoteTable table(global.db);
+    QLOG_DEBUG() << "Adding new note";
     qint32 lid = table.add(0, n, true);
 
+    QLOG_DEBUG() << "New note added; lid=" << lid;
     FilterCriteria *criteria = new FilterCriteria();
     global.getCurrentCriteria()->duplicate(*criteria);
     criteria->unsetTags();
     criteria->unsetSearchString();
     criteria->setLid(lid);
-    global.filterCriteria.append(criteria);
-    global.filterPosition++;
-    updateSelectionCriteria();
-    openNote(false);
 
-    if (global.newNoteFocusToTitle()) {
-        tabWindow->currentBrowser()->noteTitle.setFocus();
-        tabWindow->currentBrowser()->noteTitle.selectAll();
+    global.filterCriteria.append(criteria);
+    // set last criteria as active
+    global.filterPosition = global.filterCriteria.size() - 1;
+    updateSelectionCriteria();
+    openNote(false); // newWindow=false
+
+    bool newNoteFocusToTitle = global.newNoteFocusToTitle();
+    NBrowserWindow *browser = tabWindow->currentBrowser();
+    QLOG_DEBUG() << "About to set focus to browser; newNoteFocusToTitle=" << newNoteFocusToTitle;
+    if (newNoteFocusToTitle) {
+        browser->noteTitle.setFocus();
+        browser->noteTitle.selectAll();
     } else
-        tabWindow->currentBrowser()->editor->setFocus();
+        browser->editor->setFocus();
 }
 
 
