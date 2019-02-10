@@ -334,7 +334,7 @@ public slots:
     void fontFocusShortcut();
     void fontSizeFocusShortcut();
     void urlFocusShortcut();
-    void copyNoteUrl();
+    void copyInAppNoteLink();
     void findShortcut();
     void findReplaceShortcut();
     void findNextShortcut();

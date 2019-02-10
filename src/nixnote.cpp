@@ -794,7 +794,7 @@ void NixNote::setupGui() {
     copyNoteUrlShortcut = new QShortcut(this);
     copyNoteUrlShortcut->setContext(Qt::WidgetShortcut);
     global.setupShortcut(copyNoteUrlShortcut, "Edit_Copy_Note_Url");
-    connect(copyNoteUrlShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(copyNoteUrl()));
+    connect(copyNoteUrlShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(copyInAppNoteLink()));
 
     focusTagShortcut = new QShortcut(this);
     focusTagShortcut->setContext(Qt::WidgetWithChildrenShortcut);
