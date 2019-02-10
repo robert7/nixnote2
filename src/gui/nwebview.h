@@ -82,7 +82,7 @@ public:
     QAction *openAction;
     QAction *insertQuickLinkAction;
     QAction *insertHtmlEntitiesAction;
-    QAction *copyNoteUrlAction;
+    QAction *copyInAppNoteLinkAction;
 
     QAction *fontColorAction;
     QAction *fontBackgroundColorAction;

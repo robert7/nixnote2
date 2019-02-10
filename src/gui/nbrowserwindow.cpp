@@ -204,7 +204,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     copyNoteUrlShortcut = new QShortcut(this);
     global.setupShortcut(copyNoteUrlShortcut, "Edit_Copy_Note_Url");
-    connect(copyNoteUrlShortcut, SIGNAL(activated()), this, SLOT(copyNoteUrl()));
+    connect(copyNoteUrlShortcut, SIGNAL(activated()), this, SLOT(copyInAppNoteLink()));
 
     // Setup the signals
     connect(&expandButton, SIGNAL(stateChanged(int)), this, SLOT(changeExpandState(int)));
@@ -3908,7 +3908,7 @@ void NBrowserWindow::urlFocusShortcut() {
 }
 
 
-void NBrowserWindow::copyNoteUrl() {
+void NBrowserWindow::copyInAppNoteLink() {
     Note n;
     NoteTable ntable(global.db);
     ntable.get(n, this->lid, false, false);
@@ -3916,10 +3916,7 @@ void NBrowserWindow::copyNoteUrl() {
     User user;
     utable.getUser(user);
 
-    QString href = "evernote:///view/" + QString::number(user.id) + QString("/") +
-                   user.shardId + QString("/") +
-                   n.guid + QString("/") +
-                   n.guid + QString("/");
+    QString href = NixnoteStringUtils::createNoteLink(true, global.server, QString::number(user.id), user.shardId, n.guid);
     QApplication::clipboard()->setText(href, QClipboard::Clipboard);
 }
 

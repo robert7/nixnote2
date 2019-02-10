@@ -64,3 +64,16 @@ QString NixnoteStringUtils::urldecode(QString encoded) {
     return decoded;
 }
 
+
+QString NixnoteStringUtils::createNoteLink(bool createInAppLink, QString server, QString userId, QString shardId,
+                                           QString noteGuid) {
+    if (createInAppLink) {
+        return "evernote:///view/" + userId + QString("/") +
+               shardId + QString("/") +
+               noteGuid + QString("/") +
+               noteGuid + QString("/");
+    } else {
+        return "https://" + server + "/shard/" + shardId + "/nl/" + userId + "/" + noteGuid + "/";
+    }
+}
+
