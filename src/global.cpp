@@ -1447,7 +1447,7 @@ void Global::setMessage(QString msg, int timeout) {
  */
 FilterCriteria *Global::getCurrentCriteria() const {
     qint32 pos = global.filterPosition;
-    //QLOG_DEBUG() << "Requesting filter [" << pos << "], count=" << global.filterCriteria.size();
+    QLOG_TRACE() << "Requesting filter [" << pos << "], filter count=" << global.filterCriteria.size();
     return global.filterCriteria[pos];
 }
 
