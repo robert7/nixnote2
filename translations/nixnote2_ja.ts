@@ -3718,22 +3718,22 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="185"/>
         <source>Insert Row</source>
-        <translation>列の挿入</translation>
+        <translation>行の挿入</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="190"/>
         <source>Insert Column</source>
-        <translation>行の挿入</translation>
+        <translation>列の挿入</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="197"/>
         <source>Delete Row</source>
-        <translation>列の削除</translation>
+        <translation>行の削除</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="201"/>
         <source>Delete Column</source>
-        <translation>行の削除</translation>
+        <translation>列の削除</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="208"/>
@@ -4872,12 +4872,12 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/tabledialog.cpp" line="55"/>
         <source>Rows</source>
-        <translation>列</translation>
+        <translation>行</translation>
     </message>
     <message>
         <location filename="../src/dialog/tabledialog.cpp" line="57"/>
         <source>Columns</source>
-        <translation>行</translation>
+        <translation>列</translation>
     </message>
     <message>
         <location filename="../src/dialog/tabledialog.cpp" line="59"/>
