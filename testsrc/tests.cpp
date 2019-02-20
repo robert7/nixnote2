@@ -228,7 +228,7 @@ void Tests::enmlNixnoteLinkTest2() {
         QString src(
                 R"R(<a href="https://www.example.com/xy" name="5329482" style="box-sizing: border-box" id="5329482" title="https://www.example.com/xy">been there, done that</a>)R");
         QString result(
-                R"R(<a href="https://www.example.com/xy" name="5329482" style="box-sizing: border-box" title="https://www.example.com/xy">been there, done that</a>)R");
+                R"R(<a href="https://www.example.com/xy" style="box-sizing: border-box"title="https://www.example.com/xy">been there, done that</a>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
 }
@@ -335,8 +335,8 @@ QT_END_NAMESPACE
 
 int main(int argc, char *argv[]) {
     QsLogging::Logger &logger = QsLogging::Logger::instance();
-    logger.setLoggingLevel(QsLogging::DebugLevel);
-    //logger.setLoggingLevel(QsLogging::WarnLevel);
+    //logger.setLoggingLevel(QsLogging::DebugLevel);
+    logger.setLoggingLevel(QsLogging::WarnLevel);
 
     // this will write attachments into temp directory relative to working directory
     logger.setFileLoggingPath("./tmp");

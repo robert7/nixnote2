@@ -403,6 +403,9 @@ void EnmlFormatter::rebuildNoteEnml() {
                     } else if (tagname == "table") {
                         fixTableNode(element);
                     }
+
+                    QString xml = element.toOuterXml();
+                    QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " fixed element: " << xml;
                 }
         }
         QString outerXml = elementRoot.toOuterXml();
@@ -629,9 +632,11 @@ void EnmlFormatter::fixANode(QWebElement &e) {
         QLOG_WARN() << ENML_MODULE_LOGPREFIX " a tag with empty href => removing";
         e.removeFromDocument();
     } else {
+        // we also need to remove "name", as tidy will set "id" to value of "name"
+        e.removeAttribute("name");
         QString xml = e.toOuterXml();
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " standard a tag: " << xml;
-        e.setOuterXml(xml);
+        //e.setOuterXml(xml);
     }
 }
 
