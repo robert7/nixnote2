@@ -6,6 +6,7 @@ BUILD_TYPE=${1}
 CLEAN=${2}
 TIDY_LIB_DIR=${3}
 CDIR=`pwd`
+TEMP_DIR=`pwd`/tmp
 
 function error_exit {
     echo "$0: ***********error_exit***********"
@@ -46,6 +47,12 @@ echo "$0: libtidy is expected in: ${TIDY_LIB_DIR}"
 if [ ! -d "${BUILD_DIR}" ]; then
   mkdir ${BUILD_DIR}
 fi
+
+if [ -d ${TEMP_DIR} ] ; then
+  rm -rf ${TEMP_DIR}
+fi
+mkdir ${TEMP_DIR}
+
 
 QMAKE_BINARY=qmake
 

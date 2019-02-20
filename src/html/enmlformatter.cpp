@@ -366,6 +366,7 @@ void EnmlFormatter::rebuildNoteEnml() {
     //content = fixEncryptionTags(content);
 
     QLOG_DEBUG_FILE("fmt-pre-dt-check.html", getContent());
+    QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " rebuildNoteEnml guiAvailable=" << guiAvailable;
     if (guiAvailable) {
         QWebPage page;
         QEventLoop loop;
@@ -599,11 +600,13 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 
 
 void EnmlFormatter::fixANode(QWebElement &e) {
+    QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " fixANode";
     QString enTag = e.attribute("en-tag", "").toLower();
     QString lid = e.attribute("lid");
     QString href = e.attribute("href", "");
     removeInvalidAttributes(e);
     if (enTag == "en-media") {
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " a/en-media tag";
         resources.append(lid.toInt());
         e.removeAttribute("style");
         e.removeAttribute("href");
@@ -616,6 +619,7 @@ void EnmlFormatter::fixANode(QWebElement &e) {
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed link node to " << xml;
         e.setOuterXml(xml);
     } else if (href.startsWith("latex:///")) {
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " a/latex tag";
         QString formula = e.attribute("title");
         const QString attr = NixnoteStringUtils::createLatexResourceUrl(formula, false);
         e.setAttribute("title", attr);
@@ -625,7 +629,9 @@ void EnmlFormatter::fixANode(QWebElement &e) {
         QLOG_WARN() << ENML_MODULE_LOGPREFIX " a tag with empty href => removing";
         e.removeFromDocument();
     } else {
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " standard a tag: " << e.toOuterXml();
+        QString xml = e.toOuterXml();
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " standard a tag: " << xml;
+        e.setOuterXml(xml);
     }
 }
 

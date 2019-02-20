@@ -222,6 +222,18 @@ void Tests::enmlNixnoteLinkTest() {
     }
 }
 
+void Tests::enmlNixnoteLinkTest2() {
+    // link with id & href attribute
+    {
+        QString src(
+                R"R(<a href="https://www.example.com/xy" name="5329482" style="box-sizing: border-box" id="5329482" title="https://www.example.com/xy">been there, done that</a>)R");
+        QString result(
+                R"R(<a href="https://www.example.com/xy" name="5329482" style="box-sizing: border-box" title="https://www.example.com/xy">been there, done that</a>)R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+}
+
+
 void Tests::enmlNixnoteObjectTest() {
     {
         QString src(
@@ -319,12 +331,16 @@ void Tests::latexStringUtilTest() {
 
 QT_BEGIN_NAMESPACE
 QTEST_ADD_GPU_BLACKLIST_SUPPORT_DEFS
-
 QT_END_NAMESPACE
 
 int main(int argc, char *argv[]) {
     QsLogging::Logger &logger = QsLogging::Logger::instance();
-    logger.setLoggingLevel(QsLogging::WarnLevel);
+    logger.setLoggingLevel(QsLogging::DebugLevel);
+    //logger.setLoggingLevel(QsLogging::WarnLevel);
+
+    // this will write attachments into temp directory relative to working directory
+    logger.setFileLoggingPath("./tmp");
+
     QsLogging::DestinationPtr debugDestination(QsLogging::DestinationFactory::MakeDebugOutputDestination());
     logger.addDestination(debugDestination.get());
 
