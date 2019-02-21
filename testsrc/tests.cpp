@@ -10,6 +10,9 @@
 #include "../src/logger/qslogdest.h"
 #include "../src/utilities/NixnoteStringUtils.h"
 
+
+// ENML: https://dev.evernote.com/doc/articles/enml.php
+
 #define SET_LOGLEVEL_DEBUG QsLogging::Logger &logger = QsLogging::Logger::instance(); logger.setLoggingLevel(QsLogging::DebugLevel);
 
 Tests::Tests(QObject *parent) :
@@ -119,6 +122,24 @@ void Tests::enmlTidyTest() {
         QString result(R"R(<div style="something: 1">aa6</div>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
+    {
+        // undefined tags are replaced by div; content stays
+        QString src(
+                R"R(<fieldset class="l-form-block " data-enable-block-validation="false" style="box-sizing: border-box">x1 x</fieldset>)R");
+        QString result(R"R(<div>x1 x</div>)R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+
+    {
+        // nested undefined tags are replaced by div
+        QString src(
+                R"R(<div><fieldset class="l-form-block " data-enable-block-validation="false" style="box-sizing: border-box">x1 x<fieldset class="l-form-block " data-enable-block-validation="false" style="box-sizing: border-box">x1 x</fieldset></fieldset></div>)R");
+        QString result(R"R(<div><div>x1 x<div>x1 x</div></div></div>)R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+
+
+
 }
 
 void Tests::enmlNixnoteTodoTest() {
@@ -281,7 +302,6 @@ void Tests::enmlNixnoteTableTest() {
     }
 }
 
-
 void Tests::enmlHtml5TagsTest() {
     {
         QString src(
@@ -325,6 +345,24 @@ void Tests::latexStringUtilTest() {
         QLOG_WARN() << "sourceUrl=" << sourceUrl;
         QCOMPARE(NixnoteStringUtils::extractLatexFormulaFromResourceUrl(sourceUrl), sourceFormula);
     }
+}
+
+/**
+ * Read contents of the file in string
+ */
+QString readFile(QString file) {
+    QFile f(file);
+    if (!f.open(QFile::ReadOnly)) {
+        QLOG_DEBUG() << "Error opening file " << file;
+        return QString();
+    }
+    QTextStream is(&f);
+    return is.readAll();
+}
+
+
+void Tests::enmlHtmlFileTest() {
+
 }
 
 

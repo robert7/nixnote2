@@ -27,9 +27,10 @@ private slots:
     void enmlHtml5TagsTest();
     void latexStringUtilTest();
     void enmlNixnoteLinkTest();
+    void enmlNixnoteLinkTest2();
 
 private slots:
-    void enmlNixnoteLinkTest2();
+    void enmlHtmlFileTest();
 };
 
 #endif // NIXNOTE2_TESTS_H

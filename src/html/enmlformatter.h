@@ -108,6 +108,7 @@ private:
     bool guiAvailable;
     QHash< QString, QPair <QString, QString> > passwordSafe;
     QString cryptoJarPath;
+    void recursiveTreeCleanup(QWebElement &elementRoot);
 
 public:
     explicit EnmlFormatter(QString html, bool guiAvailable, QHash< QString, QPair <QString, QString> > passwordSafe, QString cryptoJarPath);

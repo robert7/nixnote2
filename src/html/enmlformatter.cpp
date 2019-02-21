@@ -26,6 +26,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <tidy/tidy.h>
 #include <tidy/tidybuffio.h>
 #include <iostream>
+#include <QtCore/QStringList>
+#include <QtCore/QString>
+#include <QtGui/QtGui>
+#include <QtSql/QtSql>
+#include <QtWidgets/QDialog>
 #include "enmlformatter.h"
 #include "src/utilities/encrypt.h"
 #include "src/logger/qslog.h"
@@ -375,41 +380,9 @@ void EnmlFormatter::rebuildNoteEnml() {
         loop.exit();
 
         QWebElement elementRoot = page.mainFrame()->documentElement();
-        QStringList tags = findAllTags(elementRoot);
-
-        for (int i = 0; i < tags.size(); i++) {
-            QString tag = tags[i];
-            QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "== processing tag " << tag;
-
-            QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
-                foreach(QWebElement
-                            element, anchors) {
-                    QString tagname = element.tagName().toLower();
-
-                    if (!checkAndFixElement(element)) {
-                        // was logged already
-                        element.removeFromDocument();
-                        continue;
-                    }
-
-                    if (tagname == "input") {
-                        fixInputNode(element);
-                    } else if (tagname == "a") {
-                        fixANode(element);
-                    } else if (tagname == "object") {
-                        fixObjectNode(element);
-                    } else if (tagname == "img") {
-                        fixImgNode(element);
-                    } else if (tagname == "table") {
-                        fixTableNode(element);
-                    }
-
-                    QString xml = element.toOuterXml();
-                    QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " fixed element: " << xml;
-                }
-        }
-        QString outerXml = elementRoot.toOuterXml();
-        setContent(outerXml);
+        recursiveTreeCleanup(elementRoot);
+        QString xml = elementRoot.toOuterXml();
+        setContent(xml);
     }
     QLOG_DEBUG_FILE("fmt-post-dt-check.html", getContent());
 
@@ -445,6 +418,44 @@ void EnmlFormatter::rebuildNoteEnml() {
 
     QLOG_DEBUG_FILE("fmt-enml-final.xml", getContent());
     QLOG_INFO() << ENML_MODULE_LOGPREFIX "===== finished rebuilding note ENML";
+}
+
+void EnmlFormatter::recursiveTreeCleanup(QWebElement &elementRoot) {
+    QStringList tags = findAllTags(elementRoot);
+
+    for (int i = 0; i < tags.size(); i++) {
+        QString tag = tags[i];
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "== processing tag " << tag;
+
+        QWebElementCollection anchors = elementRoot.findAll(tag);
+                foreach(QWebElement
+                                element, anchors) {
+                QString tagname = element.tagName().toLower();
+
+                if (!checkAndFixElement(element)) {
+                    // was logged already
+                    element.removeFromDocument();
+                    continue;
+                }
+
+                if (tagname == "input") {
+                    fixInputNode(element);
+                } else if (tagname == "a") {
+                    fixANode(element);
+                } else if (tagname == "object") {
+                    fixObjectNode(element);
+                } else if (tagname == "img") {
+                    fixImgNode(element);
+                } else if (tagname == "table") {
+                    fixTableNode(element);
+                }
+
+                recursiveTreeCleanup(element);
+
+                QString xml = element.toOuterXml();
+                QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " fixed element: " << xml;
+            }
+    }
 }
 
 
@@ -486,7 +497,7 @@ void EnmlFormatter::fixInputNode(QWebElement &e) {
     }
 
     removeInvalidAttributes(e);
-    // those 2 are additionaly needed (as they pass the basic checks)
+    // those 2 are additionally needed (as they pass the basic checks)
     e.removeAttribute("style");
     e.removeAttribute("type");
 
