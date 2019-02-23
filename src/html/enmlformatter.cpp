@@ -380,9 +380,10 @@ void EnmlFormatter::rebuildNoteEnml() {
         QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
         loop.exit();
 
-        QWebElement elementRoot = page.mainFrame()->documentElement();
-        recursiveTreeCleanup(elementRoot);
-        QString xml = elementRoot.toOuterXml();
+        QWebElement bodyElement = page.mainFrame()->documentElement().findFirst("body");
+        removeInvalidAttributes(bodyElement);
+        recursiveTreeCleanup(bodyElement, 0);
+        QString xml = bodyElement.toOuterXml();
         setContent(xml);
     }
     QLOG_DEBUG_FILE("fmt-post-dt-check.html", getContent());
@@ -422,73 +423,39 @@ void EnmlFormatter::rebuildNoteEnml() {
     QLOG_INFO() << ENML_MODULE_LOGPREFIX "===== finished rebuilding note ENML in " << (timeEnd - timeStart) << " ms";
 }
 
-void EnmlFormatter::recursiveTreeCleanup(QWebElement &elementRoot) {
-    QStringList tags = findAllTags(elementRoot);
+void EnmlFormatter::recursiveTreeCleanup(QWebElement &elementRoot, int level) {
+    QWebElement element = elementRoot.firstChild();
+    while (true) {
+        if (element.isNull()) {
+            return;
+        }
 
-    for (int i = 0; i < tags.size(); i++) {
-        QString tag = tags[i];
-        QLOG_TRACE() << ENML_MODULE_LOGPREFIX "== processing tag " << tag;
+        bool remove = false;
+        QString tagname = element.tagName().toLower();
+        QWebElement next = element.nextSibling();
+        recursiveTreeCleanup(element, level + 1);
 
-        QWebElementCollection anchors = elementRoot.findAll(tag);
-                foreach(QWebElement
-                                element, anchors) {
-                QString tagname = element.tagName().toLower();
+        //QLOG_DEBUG() << "****recursiveTreeCleanup(" << tagname << "," << level << "): " << element.toOuterXml()
+        //            << "- next sibling " << next.tagName().toLower();
 
-                if (!checkAndFixElement(element)) {
-                    // was logged already
-                    element.removeFromDocument();
-                    continue;
-                }
-
-                if (tagname == "input") {
-                    fixInputNode(element);
-                } else if (tagname == "a") {
-                    fixANode(element);
-                } else if (tagname == "object") {
-                    fixObjectNode(element);
-                } else if (tagname == "img") {
-                    fixImgNode(element);
-                } else if (tagname == "table") {
-                    fixTableNode(element);
-                }
-
-                if (!element.firstChild().isNull()) {
-                    QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " recursive cleanup needed";
-                    recursiveTreeCleanup(element);
-                }
-
-                //QString xml = element.toOuterXml();
-                //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " fixed element: " << xml;
+        if (!checkAndFixElement(element)) {
+            element.removeFromDocument();
+        } else {
+            if (tagname == "input") {
+                fixInputNode(element);
+            } else if (tagname == "a") {
+                fixANode(element);
+            } else if (tagname == "object") {
+                fixObjectNode(element);
+            } else if (tagname == "img") {
+                fixImgNode(element);
+            } else if (tagname == "table") {
+                fixTableNode(element);
             }
+        }
+        element = next;
     }
 }
-
-
-QStringList EnmlFormatter::findAllTags(QWebElement &element) {
-    //qint64 timeStart = QDateTime::currentMSecsSinceEpoch();
-    QStringList tags;
-    QString body = element.toOuterXml();
-    body = body.replace("</", "<").replace("/>", " ").replace(">", " ");
-    int i = body.indexOf("<body") + 1;
-    // Look through and get a list of all possible tags
-    i = body.indexOf("<", i);
-
-    while (i != -1) {
-        int eot = body.indexOf(" ", i);
-        QString tag = body.mid(i + 1, eot - i - 1);
-        if (!tags.contains(tag) && tag != "body") {
-            tags.append(tag);
-        }
-        i = body.indexOf("<", eot);
-        if (tag == "body") {
-            i = -1;
-        }
-    }
-    //qint64 timeEnd = QDateTime::currentMSecsSinceEpoch();
-    //QLOG_WARN() << ENML_MODULE_LOGPREFIX "find all tags: " << tags << " in " << (timeEnd - timeStart) << " ms";
-    return tags;
-}
-
 
 void EnmlFormatter::fixInputNode(QWebElement &e) {
     QString type = e.attribute("type", "");
@@ -824,10 +791,10 @@ bool EnmlFormatter::checkAndFixElement(QWebElement &e) {
 
     } else {
         QString inner = e.toInnerXml();
-        e.replace("<div>" + inner + "</div>");
+        QString newXml = "<div>" + inner + "</div>";
+        e.setOuterXml(newXml);
 
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX << tagName << " is invalid .. will be changed to a 'div'";
-        return true;
+        //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX << tagName << " is invalid .. will be changed to a 'div' - " << e.toOuterXml() << " / " << newXml;
     }
     // possibly fixed, but now is valid
     return true;

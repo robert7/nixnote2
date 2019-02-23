@@ -16,6 +16,9 @@
 #define SET_LOGLEVEL_DEBUG QsLogging::Logger &logger = QsLogging::Logger::instance(); logger.setLoggingLevel(QsLogging::DebugLevel);
 #define TESTDATADIR "testsrc/testdata/"
 
+// note use string as params, not expressions
+#define QCOMPAREX(r1, r2) if (QString::compare(r1,r2) != 0) { QLOG_WARN() << "DIFF r1: " << r1 << ", r2: " << r2; } QCOMPARE(r1, r2);
+
 Tests::Tests(QObject *parent) :
         QObject(parent) {
 
@@ -73,7 +76,7 @@ void Tests::enmlBasicTest() {
     QCOMPARE(formatToEnml(src2), addEnmlEnvelope(src2));
 
     QString src3(
-            R"R(<html style="xx:1"><head style="xx:1"><title style="xx:1">xx</title></head><body style="word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;"><div>aa</div></body></html>)R");
+            R"R(<html style="xx:1"><head style="xx:1"><title style="xx:1">xx</title></head><body style="word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;" class="xy"><div>aa</div></body></html>)R");
     QString src3r("<div>aa</div>");
 
 
@@ -82,6 +85,13 @@ void Tests::enmlBasicTest() {
     );
     QCOMPARE(formatToEnml(src3), addEnmlEnvelope(src3r, QString(), bodyAttr));
 }
+
+void Tests::enmlBasicRecursiveTest() {
+    QString src2("<div>aa</div><div>bb<div>cc</div><div>dd<div>ee</div></div></div>");
+    QCOMPARE(formatToEnml(src2), addEnmlEnvelope(src2));
+}
+
+
 
 void Tests::enmlTidyTest() {
     {
@@ -134,13 +144,13 @@ void Tests::enmlTidyTest() {
     {
         // nested undefined tags are replaced by div
         QString src(
-                R"R(<div><fieldset class="l-form-block " data-enable-block-validation="false" style="box-sizing: border-box">x1 x<fieldset class="l-form-block " data-enable-block-validation="false" style="box-sizing: border-box">x1 x</fieldset></fieldset></div>)R");
+                R"R(<div><fieldset class="x-form-block " data-enable-block-validation="false" style="box-sizing: border-box">x1 x<fieldset class="y-form-block " data-enable-block-validation="false" style="box-sizing: border-box">x1 x</fieldset></fieldset></div>)R");
         QString result(R"R(<div><div>x1 x<div>x1 x</div></div></div>)R");
-        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+
+        const QString r1 = formatToEnml(src);
+        const QString r2 = addEnmlEnvelope(result);
+        QCOMPAREX(r1, r2); // note: use string, not expressions
     }
-
-
-
 }
 
 void Tests::enmlNixnoteTodoTest() {
@@ -177,9 +187,6 @@ void Tests::enmlNixnoteImageTest() {
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45875")));
     }
 }
-
-// note use string as params, not expressions
-#define QCOMPAREX(r1, r2) if (QString::compare(r1,r2) != 0) { QLOG_WARN() << "DIFF r1: " << r1 << ", r2: " << r2; } QCOMPARE(r1, r2);
 
 void Tests::enmlNixnoteLinkTest() {
     {

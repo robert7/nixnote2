@@ -62,7 +62,6 @@ private:
     void fixImgNode(QWebElement &element);
     void fixTableNode(QWebElement &e);
     void fixInputNode(QWebElement &e);
-    QStringList findAllTags(QWebElement &element);
     void removeInvalidAttributes(QWebElement &e);
     void fixANode(QWebElement &e);
     void fixObjectNode(QWebElement &e);
@@ -108,7 +107,7 @@ private:
     bool guiAvailable;
     QHash< QString, QPair <QString, QString> > passwordSafe;
     QString cryptoJarPath;
-    void recursiveTreeCleanup(QWebElement &elementRoot);
+    void recursiveTreeCleanup(QWebElement &elementRoot, int level);
 
 public:
     explicit EnmlFormatter(QString html, bool guiAvailable, QHash< QString, QPair <QString, QString> > passwordSafe, QString cryptoJarPath);
