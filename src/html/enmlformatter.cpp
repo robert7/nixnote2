@@ -346,6 +346,7 @@ void EnmlFormatter::removeHtmlHeader() {
  * Take the WebKit HTML and transform it into ENML
  * */
 void EnmlFormatter::rebuildNoteEnml() {
+    qint64 timeStart = QDateTime::currentMSecsSinceEpoch();
     QLOG_INFO() << ENML_MODULE_LOGPREFIX "===== rebuilding note ENML";
     QLOG_DEBUG_FILE("fmt-html-input.html", getContent());
 
@@ -417,7 +418,8 @@ void EnmlFormatter::rebuildNoteEnml() {
 
 
     QLOG_DEBUG_FILE("fmt-enml-final.xml", getContent());
-    QLOG_INFO() << ENML_MODULE_LOGPREFIX "===== finished rebuilding note ENML";
+    qint64 timeEnd = QDateTime::currentMSecsSinceEpoch();
+    QLOG_INFO() << ENML_MODULE_LOGPREFIX "===== finished rebuilding note ENML in " << (timeEnd - timeStart) << " ms";
 }
 
 void EnmlFormatter::recursiveTreeCleanup(QWebElement &elementRoot) {
@@ -425,7 +427,7 @@ void EnmlFormatter::recursiveTreeCleanup(QWebElement &elementRoot) {
 
     for (int i = 0; i < tags.size(); i++) {
         QString tag = tags[i];
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "== processing tag " << tag;
+        QLOG_TRACE() << ENML_MODULE_LOGPREFIX "== processing tag " << tag;
 
         QWebElementCollection anchors = elementRoot.findAll(tag);
                 foreach(QWebElement
@@ -450,16 +452,20 @@ void EnmlFormatter::recursiveTreeCleanup(QWebElement &elementRoot) {
                     fixTableNode(element);
                 }
 
-                recursiveTreeCleanup(element);
+                if (!element.firstChild().isNull()) {
+                    QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " recursive cleanup needed";
+                    recursiveTreeCleanup(element);
+                }
 
-                QString xml = element.toOuterXml();
-                QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " fixed element: " << xml;
+                //QString xml = element.toOuterXml();
+                //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " fixed element: " << xml;
             }
     }
 }
 
 
 QStringList EnmlFormatter::findAllTags(QWebElement &element) {
+    //qint64 timeStart = QDateTime::currentMSecsSinceEpoch();
     QStringList tags;
     QString body = element.toOuterXml();
     body = body.replace("</", "<").replace("/>", " ").replace(">", " ");
@@ -478,7 +484,8 @@ QStringList EnmlFormatter::findAllTags(QWebElement &element) {
             i = -1;
         }
     }
-    QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "find all tags: " << tags;
+    //qint64 timeEnd = QDateTime::currentMSecsSinceEpoch();
+    //QLOG_WARN() << ENML_MODULE_LOGPREFIX "find all tags: " << tags << " in " << (timeEnd - timeStart) << " ms";
     return tags;
 }
 
@@ -614,13 +621,13 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 
 
 void EnmlFormatter::fixANode(QWebElement &e) {
-    QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " fixANode";
+    QLOG_TRACE() << ENML_MODULE_LOGPREFIX " fixANode";
     QString enTag = e.attribute("en-tag", "").toLower();
     QString lid = e.attribute("lid");
     QString href = e.attribute("href", "");
     removeInvalidAttributes(e);
     if (enTag == "en-media") {
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " a/en-media tag";
+        QLOG_TRACE() << ENML_MODULE_LOGPREFIX " a/en-media tag";
         resources.append(lid.toInt());
         e.removeAttribute("style");
         e.removeAttribute("href");
@@ -630,23 +637,23 @@ void EnmlFormatter::fixANode(QWebElement &e) {
         QString xml = e.toOuterXml();
         xml.replace("<a", HTML_COMMENT_START "<en-media");
         xml.replace("</a>", "</en-media>" HTML_COMMENT_END);
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed link node to " << xml;
+        QLOG_TRACE() << ENML_MODULE_LOGPREFIX "fixed link node to " << xml;
         e.setOuterXml(xml);
     } else if (href.startsWith("latex:///")) {
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " a/latex tag";
+        QLOG_TRACE() << ENML_MODULE_LOGPREFIX " a/latex tag";
         QString formula = e.attribute("title");
         const QString attr = NixnoteStringUtils::createLatexResourceUrl(formula, false);
         e.setAttribute("title", attr);
         e.setAttribute("href", attr);
-        QLOG_WARN() << ENML_MODULE_LOGPREFIX "fixed latex a tag to " << e.toOuterXml();
+        QLOG_TRACE() << ENML_MODULE_LOGPREFIX "fixed latex a tag to " << e.toOuterXml();
     } else if (href.isEmpty()) {
-        QLOG_WARN() << ENML_MODULE_LOGPREFIX " a tag with empty href => removing";
+        QLOG_TRACE() << ENML_MODULE_LOGPREFIX " a tag with empty href => removing";
         e.removeFromDocument();
     } else {
         // we also need to remove "name", as tidy will set "id" to value of "name"
         e.removeAttribute("name");
         QString xml = e.toOuterXml();
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " standard a tag: " << xml;
+        QLOG_TRACE() << ENML_MODULE_LOGPREFIX " standard a tag: " << xml;
         //e.setOuterXml(xml);
     }
 }
@@ -819,7 +826,7 @@ bool EnmlFormatter::checkAndFixElement(QWebElement &e) {
         QString inner = e.toInnerXml();
         e.replace("<div>" + inner + "</div>");
 
-        QLOG_WARN() << ENML_MODULE_LOGPREFIX << tagName << " is invalid .. will be change to a 'div'";
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX << tagName << " is invalid .. will be changed to a 'div'";
         return true;
     }
     // possibly fixed, but now is valid
@@ -833,7 +840,7 @@ void EnmlFormatter::removeInvalidAttributes(QWebElement &e) {
     for (int i = 0; i < attributes.size(); i++) {
         QString a = attributes[i];
         if (!isAttributeValid(a)) {
-            QLOG_WARN() << ENML_MODULE_LOGPREFIX "removeInvalidAttributes - tag " << e.tagName().toLower()
+            QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "removeInvalidAttributes - tag " << e.tagName().toLower()
                         << " removing  invalid attribute " << a;
             e.removeAttribute(a);
         }
@@ -898,7 +905,7 @@ void EnmlFormatter::checkAttributes(QWebElement &element, QStringList valid) {
     QStringList attrs = element.attributeNames();
     for (int i = 0; i < attrs.size(); i++) {
         if (!valid.contains(attrs[i])) {
-            QLOG_WARN() << ENML_MODULE_LOGPREFIX "checkAttributes - tag " << element.tagName().toLower() << " removing invalid attribute " << attrs[i];
+            QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "checkAttributes - tag " << element.tagName().toLower() << " removing invalid attribute " << attrs[i];
             element.removeAttribute(attrs[i]);
         }
     }

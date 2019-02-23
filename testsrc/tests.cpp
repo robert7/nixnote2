@@ -14,6 +14,7 @@
 // ENML: https://dev.evernote.com/doc/articles/enml.php
 
 #define SET_LOGLEVEL_DEBUG QsLogging::Logger &logger = QsLogging::Logger::instance(); logger.setLoggingLevel(QsLogging::DebugLevel);
+#define TESTDATADIR "testsrc/testdata/"
 
 Tests::Tests(QObject *parent) :
         QObject(parent) {
@@ -362,7 +363,15 @@ QString readFile(QString file) {
 
 
 void Tests::enmlHtmlFileTest() {
+    // https://doc.qt.io/archives/qt-5.5/qwebelement.html
+    QString s = readFile(TESTDATADIR "qwebelement.html");
+    QString enml = formatToEnml(s);
+    QLOG_DEBUG_FILE("enml.html", enml);
 
+    // http://www.tescoma.sk/slideshow/catalog/varenie/riad/vision/726010-suprava-vision-10-dielov?category=varenie%2Friad%2Fvision%2F
+    s = readFile(TESTDATADIR "tescoma.html");
+    enml = formatToEnml(s);
+    QLOG_DEBUG_FILE("enml.html", enml);
 }
 
 
@@ -373,8 +382,8 @@ QT_END_NAMESPACE
 
 int main(int argc, char *argv[]) {
     QsLogging::Logger &logger = QsLogging::Logger::instance();
+    logger.setLoggingLevel(QsLogging::InfoLevel);
     //logger.setLoggingLevel(QsLogging::DebugLevel);
-    logger.setLoggingLevel(QsLogging::WarnLevel);
 
     // this will write attachments into temp directory relative to working directory
     logger.setFileLoggingPath("./tmp");
