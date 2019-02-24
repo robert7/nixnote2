@@ -426,13 +426,15 @@ void EnmlFormatter::rebuildNoteEnml() {
 void EnmlFormatter::recursiveTreeCleanup(QWebElement &elementRoot, int level) {
     QWebElement element = elementRoot.firstChild();
     while (true) {
+        // if there a no childs we are done
         if (element.isNull()) {
             return;
         }
 
-        bool remove = false;
         QString tagname = element.tagName().toLower();
+        // we need to query sibling *before* we are modifying "element"
         QWebElement next = element.nextSibling();
+        // recursive cleanup (this may update element)
         recursiveTreeCleanup(element, level + 1);
 
         //QLOG_DEBUG() << "****recursiveTreeCleanup(" << tagname << "," << level << "): " << element.toOuterXml()
@@ -453,6 +455,7 @@ void EnmlFormatter::recursiveTreeCleanup(QWebElement &elementRoot, int level) {
                 fixTableNode(element);
             }
         }
+        // now the sibling becomes current element
         element = next;
     }
 }
