@@ -156,7 +156,8 @@ namespace QsLogging {
     void Logger::writeToFile(const QString &logid, const QString &message) {
 
         if (fileLoggingPath.isEmpty()) {
-            QLOGINFO() << "fileLoggingPath not set writeToFile not disabled";
+            QLOGINFO() << "file attachment logging: fileLoggingPath not set, writeToFile() is disabled";
+            return;
         }
 
         if (!fileLoggingPath.endsWith(QDir::separator())) {
@@ -174,13 +175,16 @@ namespace QsLogging {
             filename.append(".log");
         }
 
-        QFile file(fileLoggingPath + filename);
+        const QString &fullFilename = fileLoggingPath + filename;
+        QFile file(fullFilename);
 
         if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+            //QLOGINFO() << "Writing attachment data to " << fullFilename;
             QTextStream stream(&file);
             stream << message;
+        } else {
+            QLOGINFO() << "FAILED to open log attachment file " << fullFilename;
         }
-        //QLOGINFO() << "Writing attachment data to " << filename;
     }
 
     /**
