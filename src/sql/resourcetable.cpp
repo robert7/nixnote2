@@ -409,7 +409,16 @@ bool ResourceTable::exists(string noteGuid, string guid) {
 
 // Add a resource to the database
 qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
-    QLOG_DEBUG() << "Adding resource to database noteLid=" << noteLid;
+    QString resourceHash("");
+    if (t.data.isSet()) {
+        Data d = t.data;
+        if (d.bodyHash.isSet()) {
+            QByteArray b;
+            b.append(d.bodyHash);
+            resourceHash =  b.toHex();
+        }
+    }
+    QLOG_DEBUG() << "Adding resource to database noteLid=" << noteLid << ", hash=" << resourceHash;
 
 
     ConfigStore cs(db);
