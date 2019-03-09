@@ -674,7 +674,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
 
 
 // Build an icon for any attachments
-QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
+QString NoteFormatter::findIcon(qint32 lid, Resource r, QString fileExt) {
     QLOG_TRACE_IN();
 
     FilterCriteria *criteria = global.getCurrentCriteria();
@@ -685,7 +685,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
         resourceHighlight = engine.resourceContains(lid, criteria->getSearchString(), nullptr);
     }
 
-    QString fileName = global.fileManager.getDbaDirPath(QString::number(lid) + appl);
+    QString fileName = global.fileManager.getDbaDirPath() + QString::number(lid) + fileExt;
     QIcon icon;
     QFileInfo info(fileName);
     QFileIconProvider provider;
@@ -699,7 +699,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     if (attributes.fileName.isSet())
         displayName = attributes.fileName;
     else
-        displayName = appl.toUpper() + " " + QString(tr("File"));
+        displayName = fileExt.toUpper() + " " + QString(tr("File"));
 
     // Setup the painter
     QPainter p;

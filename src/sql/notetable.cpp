@@ -313,12 +313,20 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     QList<Resource> resources;
     if (t.resources.isSet())
         resources = t.resources;
-    for (int i=0; i<resources.size(); i++) {
+
+    QLOG_DEBUG() << "Adding resources count=" << resources.size();
+
+    for (int i = 0; i < resources.size(); i++) {
         qint32 resLid;
         resLid = 0;
         Resource r;
         r = resources[i];
-        resLid = resTable.getLid(t.guid,resources[i].guid);
+        QString noteGuid(t.guid);
+        QString resourceGuid(resources[i].guid);
+        resLid = resTable.getLid(noteGuid, resourceGuid);
+        QLOG_DEBUG() << "Adding resource i=" << i << " noteGuid=" << noteGuid << ", resourceGuid=" << resourceGuid;
+
+
         if (resLid == 0)
             resLid = cs.incrementLidCounter();
         resTable.add(resLid, r, isDirty, lid);

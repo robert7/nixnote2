@@ -2241,6 +2241,7 @@ void NBrowserWindow::linkClicked(const QUrl url) {
         QString fullName = url.toString().mid(6).replace(filepath, "");
         filepath = filepath.replace("\\", "/");
         QLOG_DEBUG() << "linkClicked: dba path=" << global.fileManager.getDbaDirPath();
+
         int index = fullName.lastIndexOf(".");
         QString guid = "";
         if (index != -1) {

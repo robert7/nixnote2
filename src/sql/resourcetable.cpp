@@ -34,11 +34,9 @@ using namespace std;
 extern Global global;
 
 // Default constructor
-ResourceTable::ResourceTable(DatabaseConnection *db)
-{
+ResourceTable::ResourceTable(DatabaseConnection *db) {
     this->db = db;
 }
-
 
 
 // Given a resource's lid, we give it a new guid.  This can happen
@@ -60,8 +58,6 @@ void ResourceTable::updateGuid(qint32 lid, Guid &guid) {
 }
 
 
-
-
 // Synchronize a new resource with what is in the database.  We basically
 // just delete the old one & give it a new entry
 void ResourceTable::sync(Resource &resource) {
@@ -69,7 +65,6 @@ void ResourceTable::sync(Resource &resource) {
     sync(0, resource);
     QLOG_TRACE() << "Leaving ResourceTable::sync()";
 }
-
 
 
 // Synchronize a new resource with what is in the database.  We basically
@@ -99,8 +94,6 @@ void ResourceTable::sync(qint32 lid, Resource &resource) {
 }
 
 
-
-
 // Given a resource's GUID, we return the LID
 qint32 ResourceTable::getLid(QString noteGuid, QString guid) {
 
@@ -108,7 +101,8 @@ qint32 ResourceTable::getLid(QString noteGuid, QString guid) {
     NoteTable n(db);
     db->lockForRead();
     qint32 noteLid = n.getLid(noteGuid);
-    query.prepare("Select a.lid from DataStore a where a.data=:data and a.key=:key and a.lid = (select distinct b.lid from DataStore b where b.key=:key2 and b.data=:noteLid)");
+    query.prepare(
+            "Select a.lid from DataStore a where a.data=:data and a.key=:key and a.lid = (select distinct b.lid from DataStore b where b.key=:key2 and b.data=:noteLid)");
     query.bindValue(":data", guid);
     query.bindValue(":key", RESOURCE_GUID);
     query.bindValue(":key2", RESOURCE_NOTE_LID);
@@ -172,6 +166,7 @@ QString ResourceTable::getGuid(int lid) {
 
 // Return a resource structure given the LID
 bool ResourceTable::get(Resource &resource, qint32 lid, bool withBinary) {
+    QLOG_DEBUG() << "Resource get lid=" << lid;
 
     NSqlQuery query(db);
     db->lockForRead();
@@ -199,7 +194,7 @@ bool ResourceTable::get(Resource &resource, qint32 lid, bool withBinary) {
         if (attributes.fileName.isSet())
             filename = attributes.fileName;
         QString fileExt = ref.getExtensionFromMime(mimetype, filename);
-        QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +fileExt );
+        QFile tfile(global.fileManager.getDbaDirPath() + QString::number(lid) + fileExt);
         tfile.open(QIODevice::ReadOnly);
         QByteArray b = tfile.readAll();
         Data d;
@@ -212,7 +207,6 @@ bool ResourceTable::get(Resource &resource, qint32 lid, bool withBinary) {
 
     return true;
 }
-
 
 
 // Save a resource's map data.
@@ -230,112 +224,110 @@ void ResourceTable::mapResource(NSqlQuery &query, Resource &resource) {
         attributes = resource.attributes;
     qint32 key = query.value(0).toInt();
     switch (key) {
-    case (RESOURCE_GUID):
-        resource.guid = query.value(1).toString();
-        break;
-    case (RESOURCE_NOTE_LID):
-        resource.noteGuid = ntable.getGuid(query.value(1).toInt());
-        break;
-    case (RESOURCE_DATA_BODY):
-          break;
-    case (RESOURCE_DATA_HASH):
-        d.bodyHash = QByteArray::fromHex(query.value(1).toByteArray());
-        resource.data = d;
-        break;
-    case (RESOURCE_DATA_SIZE):
-        d.size = query.value(1).toInt();
-        resource.data = d;
-        break;
-    case (RESOURCE_MIME):
-        resource.mime = query.value(1).toString();
-        break;
-    case (RESOURCE_ACTIVE):
-        resource.active = query.value(1).toBool();
-        break;
-    case (RESOURCE_HEIGHT):
-        resource.height = query.value(1).toString().toInt();
-        break;
-    case (RESOURCE_WIDTH):
-        resource.width = query.value(1).toString().toInt();
-        break;
-    case (RESOURCE_DURATION):
-        resource.duration = query.value(1).toString().toInt();
-        break;
-    case (RESOURCE_RECOGNITION_BODY):
-        rd.body = query.value(1).toByteArray();
-        resource.recognition = rd;
-        break;
-    case (RESOURCE_RECOGNITION_HASH):
-        rd.bodyHash = query.value(1).toByteArray();
-        resource.recognition = rd;
-        break;
-    case (RESOURCE_RECOGNITION_SIZE):
-        rd.size = query.value(1).toInt();
-        resource.recognition = rd;
-        break;
-    case (RESOURCE_UPDATE_SEQUENCE_NUMBER):
-        resource.duration = query.value(1).toString().toInt();
-        break;
-    case (RESOURCE_ALTERNATE_BODY):
-        ad.body = query.value(1).toByteArray();
-        resource.alternateData = ad;
-        break;
-    case (RESOURCE_ALTERNATE_HASH):
-        ad.bodyHash = query.value(1).toByteArray();
-        resource.alternateData = ad;
-        break;
-    case (RESOURCE_ALTERNATE_SIZE):
-        ad.size = query.value(1).toInt();
-        resource.alternateData = ad;
-        break;
-    case (RESOURCE_SOURCE_URL):
-        attributes.sourceURL = query.value(1).toString();
-        resource.attributes = attributes;
-        break;
-    case (RESOURCE_CAMERA_MAKE):
-        attributes.cameraMake = query.value(1).toString();
-        resource.attributes = attributes;
-        break;
-    case (RESOURCE_CAMERA_MODEL):
-        attributes.cameraModel = query.value(1).toString();
-        resource.attributes = attributes;
-        break;
-    case (RESOURCE_ALTITUDE):
-        attributes.altitude = query.value(1).toString().toDouble();
-        resource.attributes = attributes;
-        break;
-    case (RESOURCE_LONGITUDE):
-        attributes.longitude = query.value(1).toString().toDouble();
-        resource.attributes = attributes;
-        break;
-    case (RESOURCE_LATITUDE):
-        attributes.latitude = query.value(1).toString().toDouble();
-        resource.attributes = attributes;
-        break;
-    case (RESOURCE_RECO_TYPE):
-        attributes.recoType = query.value(1).toString();
-        resource.attributes = attributes;
-        break;
-    case (RESOURCE_ATTACHMENT):
-        attributes.attachment = query.value(1).toBool();
-        resource.attributes = attributes;
-        break;
-    case (RESOURCE_FILENAME):
-        attributes.fileName = query.value(1).toString();
-        resource.attributes = attributes;
-        break;
-    case (RESOURCE_CLIENT_WILL_INDEX):
-        attributes.clientWillIndex = query.value(1).toBool();
-        resource.attributes = attributes;
-        break;
-    case (RESOURCE_TIMESTAMP):
-        attributes.timestamp = query.value(1).toDouble();
-        resource.attributes = attributes;
-        break;
+        case (RESOURCE_GUID):
+            resource.guid = query.value(1).toString();
+            break;
+        case (RESOURCE_NOTE_LID):
+            resource.noteGuid = ntable.getGuid(query.value(1).toInt());
+            break;
+        case (RESOURCE_DATA_BODY):
+            break;
+        case (RESOURCE_DATA_HASH):
+            d.bodyHash = QByteArray::fromHex(query.value(1).toByteArray());
+            resource.data = d;
+            break;
+        case (RESOURCE_DATA_SIZE):
+            d.size = query.value(1).toInt();
+            resource.data = d;
+            break;
+        case (RESOURCE_MIME):
+            resource.mime = query.value(1).toString();
+            break;
+        case (RESOURCE_ACTIVE):
+            resource.active = query.value(1).toBool();
+            break;
+        case (RESOURCE_HEIGHT):
+            resource.height = query.value(1).toString().toInt();
+            break;
+        case (RESOURCE_WIDTH):
+            resource.width = query.value(1).toString().toInt();
+            break;
+        case (RESOURCE_DURATION):
+            resource.duration = query.value(1).toString().toInt();
+            break;
+        case (RESOURCE_RECOGNITION_BODY):
+            rd.body = query.value(1).toByteArray();
+            resource.recognition = rd;
+            break;
+        case (RESOURCE_RECOGNITION_HASH):
+            rd.bodyHash = query.value(1).toByteArray();
+            resource.recognition = rd;
+            break;
+        case (RESOURCE_RECOGNITION_SIZE):
+            rd.size = query.value(1).toInt();
+            resource.recognition = rd;
+            break;
+        case (RESOURCE_UPDATE_SEQUENCE_NUMBER):
+            resource.duration = query.value(1).toString().toInt();
+            break;
+        case (RESOURCE_ALTERNATE_BODY):
+            ad.body = query.value(1).toByteArray();
+            resource.alternateData = ad;
+            break;
+        case (RESOURCE_ALTERNATE_HASH):
+            ad.bodyHash = query.value(1).toByteArray();
+            resource.alternateData = ad;
+            break;
+        case (RESOURCE_ALTERNATE_SIZE):
+            ad.size = query.value(1).toInt();
+            resource.alternateData = ad;
+            break;
+        case (RESOURCE_SOURCE_URL):
+            attributes.sourceURL = query.value(1).toString();
+            resource.attributes = attributes;
+            break;
+        case (RESOURCE_CAMERA_MAKE):
+            attributes.cameraMake = query.value(1).toString();
+            resource.attributes = attributes;
+            break;
+        case (RESOURCE_CAMERA_MODEL):
+            attributes.cameraModel = query.value(1).toString();
+            resource.attributes = attributes;
+            break;
+        case (RESOURCE_ALTITUDE):
+            attributes.altitude = query.value(1).toString().toDouble();
+            resource.attributes = attributes;
+            break;
+        case (RESOURCE_LONGITUDE):
+            attributes.longitude = query.value(1).toString().toDouble();
+            resource.attributes = attributes;
+            break;
+        case (RESOURCE_LATITUDE):
+            attributes.latitude = query.value(1).toString().toDouble();
+            resource.attributes = attributes;
+            break;
+        case (RESOURCE_RECO_TYPE):
+            attributes.recoType = query.value(1).toString();
+            resource.attributes = attributes;
+            break;
+        case (RESOURCE_ATTACHMENT):
+            attributes.attachment = query.value(1).toBool();
+            resource.attributes = attributes;
+            break;
+        case (RESOURCE_FILENAME):
+            attributes.fileName = query.value(1).toString();
+            resource.attributes = attributes;
+            break;
+        case (RESOURCE_CLIENT_WILL_INDEX):
+            attributes.clientWillIndex = query.value(1).toBool();
+            resource.attributes = attributes;
+            break;
+        case (RESOURCE_TIMESTAMP):
+            attributes.timestamp = query.value(1).toDouble();
+            resource.attributes = attributes;
+            break;
     }
 }
-
-
 
 
 // Return a resource given the GUID
@@ -345,13 +337,11 @@ bool ResourceTable::get(Resource &resource, QString noteGuid, QString guid, bool
 }
 
 
-
 // Return a resource given the GUID as a std::string
 bool ResourceTable::get(Resource &resource, string noteGuid, string guid, bool withBinary) {
     qint32 lid = getLid(noteGuid, guid);
     return get(resource, lid, withBinary);
 }
-
 
 
 // Return if a resource is dirty given its lid
@@ -419,6 +409,9 @@ bool ResourceTable::exists(string noteGuid, string guid) {
 
 // Add a resource to the database
 qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
+    QLOG_DEBUG() << "Adding resource to database noteLid=" << noteLid;
+
+
     ConfigStore cs(db);
     qint32 lid = l;
     if (lid <= 0)
@@ -432,6 +425,7 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
 
     if (t.guid.isSet()) {
         QString guid = t.guid;
+        QLOG_DEBUG() << "Resource guid=" << guid;
         query.bindValue(":lid", lid);
         query.bindValue(":key", RESOURCE_GUID);
         query.bindValue(":data", guid);
@@ -443,10 +437,10 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
     query.bindValue(":data", true);
     query.exec();
 
-    if (noteLid <=0) {
+    if (noteLid <= 0) {
         NoteTable noteTable(db);
         noteLid = noteTable.getLid(t.noteGuid);
-        if (noteLid <=0) {
+        if (noteLid <= 0) {
             noteLid = noteTable.addStub(t.noteGuid);
         }
     }
@@ -481,6 +475,7 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
 
         if (d.body.isSet()) {
             QString mimetype = t.mime;
+
             QString filename;
             MimeReference ref;
             ResourceAttributes attributes;
@@ -489,7 +484,11 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
             if (attributes.fileName.isSet())
                 filename = attributes.fileName;
             QString fileExt = ref.getExtensionFromMime(mimetype, filename);
-            QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +fileExt );
+            QLOG_DEBUG() << "Resource mime=" << mimetype << ", fileExt=" << fileExt;
+
+            QString tfileName(global.fileManager.getDbaDirPath() + QString::number(lid) + fileExt);
+            QFile tfile(tfileName);
+            QLOG_DEBUG() << "Adding resource to database tfileName=" << tfileName;
             tfile.open(QIODevice::WriteOnly);
             if (d.size > 0)
                 tfile.write(d.body);
@@ -566,7 +565,7 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
     }
 
     if (t.updateSequenceNum.isSet()) {
-        qint32 usn =t.updateSequenceNum;
+        qint32 usn = t.updateSequenceNum;
         query.bindValue(":key", RESOURCE_UPDATE_SEQUENCE_NUMBER);
         query.bindValue(":data", usn);
         query.exec();
@@ -774,12 +773,14 @@ qint32 ResourceTable::getLidByHashHex(QString noteGuid, QString hash) {
 
 // Get an ink note's data
 bool ResourceTable::getInkNote(QByteArray &value, qint32 lid) {
-    QString fileName = global.fileManager.getDbaDirPath()+QString::number(lid)+QString(".png");
+    QString fileName = global.fileManager.getDbaDirPath() + QString::number(lid) + QString(".png");
+    QLOG_DEBUG() << "getInkNote fileName=" << fileName;
+
     QFile f(fileName);
     f.open(QIODevice::ReadOnly);
     value = f.readAll();
     if (value.size() > 0)
-            return true;
+        return true;
     return false;
 }
 
@@ -826,7 +827,6 @@ qint32 ResourceTable::getIndexNeeded(QList<qint32> &lids) {
 }
 
 
-
 // Get a list of all resource LIDs for a given note
 bool ResourceTable::getResourceList(QList<qint32> &resourceList, qint32 noteLid) {
 
@@ -869,20 +869,19 @@ void ResourceTable::expunge(qint32 lid) {
     QDir myDir(global.fileManager.getDbaDirPath());
     QString num = QString::number(lid);
     QStringList filter;
-    filter.append(num+QString(".*"));
-    QStringList list = myDir.entryList(filter, QDir::Files, QDir::NoSort);	// filter resource files
-    for (int i=0; i<list.size(); i++) {
+    filter.append(num + QString(".*"));
+    QStringList list = myDir.entryList(filter, QDir::Files, QDir::NoSort);    // filter resource files
+    for (int i = 0; i < list.size(); i++) {
         myDir.remove(list[i]);
     }
 
     // Delete the physical files (thumbnail)
     QDir myTDir(global.fileManager.getThumbnailDirPath());
-    list = myTDir.entryList(filter, QDir::Files, QDir::NoSort);	// filter resource files
-    for (int i=0; i<list.size(); i++) {
+    list = myTDir.entryList(filter, QDir::Files, QDir::NoSort);    // filter resource files
+    for (int i = 0; i < list.size(); i++) {
         myTDir.remove(list[i]);
     }
 }
-
 
 
 // Permanently delete a resource
@@ -903,14 +902,14 @@ void ResourceTable::expungeByNote(qint32 notebookLid) {
         query.bindValue(":data", notebookLid);
         query.exec();
         db->unlock();
-        while(query.next()) {
+        while (query.next()) {
             qint32 lid = query.value(0).toInt();
             lids.append(lid);
         }
         query.finish();
     }
 
-    for (int i=0; i<lids.size(); i++) {
+    for (int i = 0; i < lids.size(); i++) {
         expunge(lids[i]);
     }
 }
@@ -928,10 +927,6 @@ void ResourceTable::updateResourceHash(qint32 lid, QByteArray newhash) {
     query.finish();
     db->unlock();
 }
-
-
-
-
 
 
 // Get a count of all resources in the database
@@ -957,9 +952,9 @@ qint32 ResourceTable::getUnindexedCount() {
     query.prepare("Select count(lid) from DataStore where key=:key and data=1");
     query.bindValue(":key", RESOURCE_INDEX_NEEDED);
     query.exec();
-    qint32 retval =0;
+    qint32 retval = 0;
     if (query.next())
-        retval= query.value(0).toInt();
+        retval = query.value(0).toInt();
     query.finish();
     db->unlock();
     return retval;
@@ -1002,21 +997,20 @@ qint32 ResourceTable::getNoteLid(qint32 resLid) {
 }
 
 
-
 // Get a resource's HASH data
 QByteArray ResourceTable::getDataHash(qint32 lid) {
-        NSqlQuery query(db);
-        db->lockForRead();
-        query.prepare("Select data from datastore where lid=:lid and key=:key");
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", RESOURCE_DATA_HASH);
-        query.exec();
-        if (query.next()) {
-            db->unlock();
-            return QByteArray::fromHex(query.value(0).toByteArray());
-        }
+    NSqlQuery query(db);
+    db->lockForRead();
+    query.prepare("Select data from datastore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", RESOURCE_DATA_HASH);
+    query.exec();
+    if (query.next()) {
         db->unlock();
-        return QByteArray();
+        return QByteArray::fromHex(query.value(0).toByteArray());
+    }
+    db->unlock();
+    return QByteArray();
 }
 
 
@@ -1037,7 +1031,6 @@ void ResourceTable::reindexAllResources() {
 }
 
 
-
 // Update a resource's owning note.  This is done when merging notes
 void ResourceTable::updateNoteLid(qint32 resourceLid, qint32 newNoteLid) {
     NSqlQuery query(db);
@@ -1053,12 +1046,11 @@ void ResourceTable::updateNoteLid(qint32 resourceLid, qint32 newNoteLid) {
 
 
 // Get a resource's map data
-void ResourceTable::getResourceMap(QHash<QString, qint32> &map, QHash< qint32, Resource > &resourceMap, QString guid) {
+void ResourceTable::getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, QString guid) {
     NoteTable ntable(db);
     qint32 lid = ntable.getLid(guid);
     this->getResourceMap(map, resourceMap, lid);
 }
-
 
 
 // Get a resource's map data
@@ -1069,15 +1061,16 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Re
 }
 
 
-
 // Get a resource's map data
-void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32, Resource> &resourceMap, qint32 noteLid) {
+void
+ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32, Resource> &resourceMap, qint32 noteLid) {
     NoteTable ntable(db);
     QString noteGuid = ntable.getGuid(noteLid);
     NSqlQuery query(db);
     qint32 prevLid = -1;
     db->lockForRead();
-    query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:noteLid) order by lid");
+    query.prepare(
+            "Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:noteLid) order by lid");
     query.bindValue(":key2", RESOURCE_NOTE_LID);
     query.bindValue(":noteLid", noteLid);
     query.exec();
@@ -1132,17 +1125,22 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32
 
 // Get all resources for a note
 void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool fullLoad, bool withBinary) {
+    QLOG_DEBUG() << "getAllResources noteLid=" << noteLid;
+
+
     //NoteTable ntable(db);
     //QString noteGuid = ntable.getGuid(noteLid);
     NSqlQuery query(db);
     db->lockForRead();
-    QHash<qint32, Resource*> lidMap;
-    if (fullLoad){
-        query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:noteLid) order by lid");
+    QHash<qint32, Resource *> lidMap;
+    if (fullLoad) {
+        query.prepare(
+                "Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:noteLid) order by lid");
         query.bindValue(":key2", RESOURCE_NOTE_LID);
         query.bindValue(":noteLid", noteLid);
     } else {
-        query.prepare("Select key, data, lid from datastore where key=:key and lid in (select lid from datastore where key=:key2 and data=:noteLid) order by lid");
+        query.prepare(
+                "Select key, data, lid from datastore where key=:key and lid in (select lid from datastore where key=:key2 and data=:noteLid) order by lid");
         query.bindValue(":key", RESOURCE_GUID);
         query.bindValue(":key2", RESOURCE_NOTE_LID);
         query.bindValue(":noteLid", noteLid);
@@ -1163,9 +1161,9 @@ void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool 
     db->unlock();
 
     // if we need binary data, read it in.  Then add to the list
-    QHash<qint32, Resource*>::iterator i;
+    QHash<qint32, Resource *>::iterator i;
     list.clear();
-    for (i=lidMap.begin(); i!=lidMap.end(); ++i) {
+    for (i = lidMap.begin(); i != lidMap.end(); ++i) {
         if (withBinary && fullLoad) {
             Resource *r = i.value();
             qint32 lid = i.key();
@@ -1178,14 +1176,20 @@ void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool 
             if (attributes.fileName.isSet())
                 filename = attributes.fileName;
             QString fileExt = ref.getExtensionFromMime(mimetype, filename);
-            QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +fileExt );
+
+            QString tfileName(global.fileManager.getDbaDirPath() + QString::number(lid) + fileExt);
+            QFile tfile(tfileName);
+            QLOG_DEBUG() << "getAllResources lid=" << lid << ", fileExt=" << fileExt << ", tfileName=" << tfileName;
+
             if (!tfile.open(QIODevice::ReadOnly)) {
                 QDir dir(global.fileManager.getDbaDirPath());
                 QStringList filterList;
-                filterList.append(QString::number(lid)+".*");
-                QStringList list= dir.entryList(filterList, QDir::Files);
+                filterList.append(QString::number(lid) + ".*");
+                QStringList list = dir.entryList(filterList, QDir::Files);
                 if (list.size() > 0) {
-                    tfile.setFileName(global.fileManager.getDbaDirPath()+list[0]);
+                    QString fileName(global.fileManager.getDbaDirPath() + list[0]);
+                    tfile.setFileName(fileName);
+                    QLOG_DEBUG() << "getAllResources fileName=" << fileName;
                     tfile.open(QIODevice::ReadOnly);
                 }
             }

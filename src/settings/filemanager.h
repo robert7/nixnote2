@@ -102,8 +102,6 @@ public:
     QString getSpellDirPathUser();
     QString getDbDirPath(QString relativePath);
     QString getDbaDirPath();
-    QString getDbaDirPath(QString relativePath);
-    QString getDbaDirPathSpecialChar(QString relativePath);
     QString getDbiDirPath();
     QString getDbiDirPath(QString relativePath);
     QString getDbiDirPathSpecialChar(QString relativePath);
