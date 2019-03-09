@@ -49,6 +49,7 @@ private:
     ReminderOrderDelegate *reminderOrderDelegate;
     QModelIndex dragStartIndex;
     NoteModel *noteModel;
+    void copyNoteLinkInternal(bool createInAppLink);
 
 
 public:
@@ -70,7 +71,7 @@ public:
     QAction *restoreNoteAction;
     QAction *openNoteExternalWindowAction;
     QAction *openNoteNewTabAction;
-    QAction *copyNoteLinkAction;
+    QAction *copyInAppNoteLinkAction;
     QAction *copyNoteAction;
     QAction *pinNoteAction;
     QAction *unpinNoteAction;
@@ -119,7 +120,10 @@ public slots:
     void openNoteNewTabTriggered();
     void openNoteExternalWindowTriggered();
 
+    void copyInAppNoteLink();
     void copyNoteLink();
+
+
     void toggleColumnVisible(int position, bool visible);
     void copyNote();
     void pinNote();

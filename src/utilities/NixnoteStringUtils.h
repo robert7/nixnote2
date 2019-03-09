@@ -50,6 +50,18 @@ public:
     static QString urlencode(QString plain);
 
     static QString urldecode(QString encoded);
+
+    /**
+     * Create "In App Note Link" or "Note Link".
+     * https://dev.evernote.com/doc/articles/note_links.php
+     *
+     * @param createInAppLink if true "in app" link (‘Classic Note Link’) is created.
+     * false: Note Link is created - Note Links are used to reference a note in a web browser that when the
+     * recipient of the link already has access via notebook or individual note sharing.
+     *
+     * @return note link
+     */
+    static QString createNoteLink(bool createInAppLink, QString server, QString userId, QString shardId, QString noteGuid);
 };
 
 #endif // NIXNOTE_STRING_UTILS_H

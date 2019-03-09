@@ -38,6 +38,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/utilities/nuuid.h"
 #include "src/dialog/noteproperties.h"
 #include "src/nixnote.h"
+#include "src/utilities/NixnoteStringUtils.h"
+
 
 //*****************************************************************
 //* This class overrides QTableView and is used to provide a
@@ -235,8 +237,14 @@ NTableView::NTableView(QWidget *parent) :
     restoreNoteAction->setFont(guiFont);
     restoreNoteAction->setVisible(false);
 
-    copyNoteLinkAction = new QAction(tr("Copy Note Link"), this);
-    global.setupShortcut(copyNoteLinkAction, "Edit_Copy_Note_Url");
+    copyInAppNoteLinkAction = new QAction(tr("Copy In-App Note Link"), this);
+    global.setupShortcut(copyInAppNoteLinkAction, "Edit_Copy_Note_Url");
+    contextMenu->addAction(copyInAppNoteLinkAction);
+    copyInAppNoteLinkAction->setFont(guiFont);
+    connect(copyInAppNoteLinkAction, SIGNAL(triggered()), this, SLOT(copyInAppNoteLink()));
+
+    QAction *copyNoteLinkAction = new QAction(tr("Copy Note Link"), this);
+    //global.setupShortcut(copyNoteLinkAction, "Edit_Copy_Note_Url");
     contextMenu->addAction(copyNoteLinkAction);
     copyNoteLinkAction->setFont(guiFont);
     connect(copyNoteLinkAction, SIGNAL(triggered()), this, SLOT(copyNoteLink()));
@@ -867,11 +875,19 @@ void NTableView::copyNote() {
 
 // Copy a note link into the clipboard
 void NTableView::copyNoteLink() {
+    this->copyNoteLinkInternal(false);
+}
+
+void NTableView::copyInAppNoteLink() {
+    this->copyNoteLinkInternal(true);
+}
+
+void NTableView::copyNoteLinkInternal(bool createInAppLink) {
     QList<qint32> lids;
     getSelectedLids(lids);
-    if (lids.size() == 0)
+    if (lids.size() == 0) {
         return;
-
+    }
 
     UserTable userTable(global.db);
     User user;
@@ -896,33 +912,37 @@ void NTableView::copyNoteLink() {
 
     Note note;
     NoteTable ntable(global.db);
-    QString lidUrl = "";
-    for (int i = 0; i < lids.size(); i++) {
-        ntable.get(note, lids[i], false, false);
 
-        QString guid = "";
-        if (note.guid.isSet())
-            guid = note.guid;
-        QString localid;
-        if (!note.updateSequenceNum.isSet() || note.updateSequenceNum == 0) {
-            syncneeded = true;
-            localid = QString::number(lids[i]);
-        } else
-            localid = guid;
 
-        lidUrl = lidUrl + "evernote:///view/" + userid + "/" + shard + "/" + guid + "/" + localid + "/" + " ";
+    qint32 lid = lids[0];
+    ntable.get(note, lid, false, false);
+
+    QString guid = "";
+    if (note.guid.isSet()) {
+        guid = note.guid;
     }
+    QString localid;
+    if (!note.updateSequenceNum.isSet() || note.updateSequenceNum == 0) {
+        syncneeded = true;
+        // note: this is original code, but it will not work anyway
+        localid = QString::number(lid);
+    } else {
+        localid = guid;
+    }
+
     if (syncneeded) {
         QMessageBox msgBox;
         msgBox.setWindowTitle(tr("Unsynchronized Note"));
         msgBox.setText(
-            tr("This note has never been synchronized.\nUsing this in a note link can cause problems unless you synchronize it first."));
+                tr("This note has never been synchronized.\nUsing this in a note link can cause problems unless you synchronize it first."));
         msgBox.setStandardButtons(QMessageBox::Ok);
         msgBox.setIcon(QMessageBox::Warning);
         msgBox.setDefaultButton(QMessageBox::Ok);
         msgBox.exec();
     }
-    QApplication::clipboard()->setText(lidUrl);
+
+    QString href = NixnoteStringUtils::createNoteLink(createInAppLink, global.server, userid, shard, guid);
+    QApplication::clipboard()->setText(href);
 }
 
 

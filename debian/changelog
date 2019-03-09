@@ -1,10 +1,18 @@
-NixNote (2.1.3-c) stable; urgency=low
+NixNote (2.1.3-g) stable; urgency=low
   * Updated german translation (2x), thanks to https://github.com/stemabu
   * Fixed various issues involving translation and minor interface adjustments
   * Delete node dialog now respects "Confirm deletes" Preference options
   * Cleanup in wording of database backup/restore/import notes (as "backup" means basically export of *all* notes)
   * Updated german translation, thanks to https://github.com/stemabu
- -- Robert Spiegel <nightingale7@gmail.com>  Tue, 22 Jan 2019 16:16:36 +0100
+  * Typo fixes thanks to https://github.com/Discostu36
+  * Fixed "Focus on New Note does not work if Note is created directly after starting Nixnote" Issue #77
+  * Added possibility to create real "Note Links" (Link directly to individual notes from anywhere)
+    until now nixnote only used "In-App Note Links" - experimental feature. Issue #84
+    https://dev.evernote.com/doc/articles/note_links.php
+  * Updated japanese translation, thanks to https://github.com/junf
+  * Fixed enml cleanup for "a" tag involving "name" attribute. Before it could cause sync problem when specific html was pasted in.
+  * Fixed cleanup of nested html tags - this could cause various sync problems with specific more complex html markup.
+ -- Robert Spiegel <nightingale7@gmail.com>  Sun, 24 Feb 2019 09:54:57 +0100
 
 NixNote (2.1.2) stable; urgency=low
   * Make project cross-buildable issue #67; from https://bugs.debian.org/915590

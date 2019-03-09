@@ -154,10 +154,11 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     qint32 notebookLid = account;
 
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
-    if (lid <= 0)
+    if (lid <= 0) {
         lid = cs.incrementLidCounter();
+    }
 
-    QLOG_DEBUG() << "Adding note("<<lid<<") " << (t.title.isSet() ? t.title : "title is empty");
+    QLOG_DEBUG() << "Adding note lid=" << lid << ", title=" << (t.title.isSet() ? t.title : "title is empty");
     if (t.guid.isSet()) {
         QString guid = t.guid;
         query.bindValue(":lid", lid);

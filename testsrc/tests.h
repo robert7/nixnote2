@@ -18,7 +18,6 @@ public:
 // comment out to debug the only the last test
 private slots:
     void enmlBasicTest();
-    void enmlTidyTest();
     void enmlNixnoteTodoTest();
     void enmlNixnoteImageTest();
     void enmlNixnoteObjectTest();
@@ -26,10 +25,13 @@ private slots:
     void enmlNixnoteTableTest();
     void enmlHtml5TagsTest();
     void latexStringUtilTest();
-
-private slots:
+    void enmlNixnoteLinkTest2();
+    void enmlHtmlFileTest();
+    void enmlBasicRecursiveTest();
     void enmlNixnoteLinkTest();
 
+private slots:
+    void enmlTidyTest();
 };
 
 #endif // NIXNOTE2_TESTS_H

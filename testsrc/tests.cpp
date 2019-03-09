@@ -10,7 +10,14 @@
 #include "../src/logger/qslogdest.h"
 #include "../src/utilities/NixnoteStringUtils.h"
 
+
+// ENML: https://dev.evernote.com/doc/articles/enml.php
+
 #define SET_LOGLEVEL_DEBUG QsLogging::Logger &logger = QsLogging::Logger::instance(); logger.setLoggingLevel(QsLogging::DebugLevel);
+#define TESTDATADIR "testsrc/testdata/"
+
+// note use string as params, not expressions
+#define QCOMPAREX(r1, r2) if (QString::compare(r1,r2) != 0) { QLOG_WARN() << "DIFF r1: " << r1 << ", r2: " << r2; } QCOMPARE(r1, r2);
 
 Tests::Tests(QObject *parent) :
         QObject(parent) {
@@ -69,7 +76,7 @@ void Tests::enmlBasicTest() {
     QCOMPARE(formatToEnml(src2), addEnmlEnvelope(src2));
 
     QString src3(
-            R"R(<html style="xx:1"><head style="xx:1"><title style="xx:1">xx</title></head><body style="word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;"><div>aa</div></body></html>)R");
+            R"R(<html style="xx:1"><head style="xx:1"><title style="xx:1">xx</title></head><body style="word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;" class="xy"><div>aa</div></body></html>)R");
     QString src3r("<div>aa</div>");
 
 
@@ -78,6 +85,13 @@ void Tests::enmlBasicTest() {
     );
     QCOMPARE(formatToEnml(src3), addEnmlEnvelope(src3r, QString(), bodyAttr));
 }
+
+void Tests::enmlBasicRecursiveTest() {
+    QString src2("<div>aa</div><div>bb<div>cc</div><div>dd<div>ee</div></div></div>");
+    QCOMPARE(formatToEnml(src2), addEnmlEnvelope(src2));
+}
+
+
 
 void Tests::enmlTidyTest() {
     {
@@ -119,6 +133,24 @@ void Tests::enmlTidyTest() {
         QString result(R"R(<div style="something: 1">aa6</div>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
     }
+    {
+        // undefined tags are replaced by div; content stays
+        QString src(
+                R"R(<fieldset class="l-form-block " data-enable-block-validation="false" style="box-sizing: border-box">x1 x</fieldset>)R");
+        QString result(R"R(<div>x1 x</div>)R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+
+    {
+        // nested undefined tags are replaced by div
+        QString src(
+                R"R(<div><fieldset class="x-form-block " data-enable-block-validation="false" style="box-sizing: border-box">x1 x<fieldset class="y-form-block " data-enable-block-validation="false" style="box-sizing: border-box">x1 x</fieldset></fieldset></div>)R");
+        QString result(R"R(<div><div>x1 x<div>x1 x</div></div></div>)R");
+
+        const QString r1 = formatToEnml(src);
+        const QString r2 = addEnmlEnvelope(result);
+        QCOMPAREX(r1, r2); // note: use string, not expressions
+    }
 }
 
 void Tests::enmlNixnoteTodoTest() {
@@ -155,9 +187,6 @@ void Tests::enmlNixnoteImageTest() {
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45875")));
     }
 }
-
-// note use string as params, not expressions
-#define QCOMPAREX(r1, r2) if (QString::compare(r1,r2) != 0) { QLOG_WARN() << "DIFF r1: " << r1 << ", r2: " << r2; } QCOMPARE(r1, r2);
 
 void Tests::enmlNixnoteLinkTest() {
     {
@@ -222,6 +251,18 @@ void Tests::enmlNixnoteLinkTest() {
     }
 }
 
+void Tests::enmlNixnoteLinkTest2() {
+    // link with id & href attribute
+    {
+        QString src(
+                R"R(<a href="https://www.example.com/xy" name="5329482" style="box-sizing: border-box" id="5329482" title="https://www.example.com/xy">been there, done that</a>)R");
+        QString result(
+                R"R(<a href="https://www.example.com/xy" style="box-sizing: border-box"title="https://www.example.com/xy">been there, done that</a>)R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+}
+
+
 void Tests::enmlNixnoteObjectTest() {
     {
         QString src(
@@ -269,7 +310,6 @@ void Tests::enmlNixnoteTableTest() {
     }
 }
 
-
 void Tests::enmlHtml5TagsTest() {
     {
         QString src(
@@ -315,16 +355,46 @@ void Tests::latexStringUtilTest() {
     }
 }
 
+/**
+ * Read contents of the file in string
+ */
+QString readFile(QString file) {
+    QFile f(file);
+    if (!f.open(QFile::ReadOnly)) {
+        QLOG_DEBUG() << "Error opening file " << file;
+        return QString();
+    }
+    QTextStream is(&f);
+    return is.readAll();
+}
+
+
+void Tests::enmlHtmlFileTest() {
+    // https://doc.qt.io/archives/qt-5.5/qwebelement.html
+    QString s = readFile(TESTDATADIR "qwebelement.html");
+    QString enml = formatToEnml(s);
+    QLOG_DEBUG_FILE("enml.html", enml);
+
+    // http://www.tescoma.sk/slideshow/catalog/varenie/riad/vision/726010-suprava-vision-10-dielov?category=varenie%2Friad%2Fvision%2F
+    s = readFile(TESTDATADIR "tescoma.html");
+    enml = formatToEnml(s);
+    QLOG_DEBUG_FILE("enml.html", enml);
+}
+
 
 
 QT_BEGIN_NAMESPACE
 QTEST_ADD_GPU_BLACKLIST_SUPPORT_DEFS
-
 QT_END_NAMESPACE
 
 int main(int argc, char *argv[]) {
     QsLogging::Logger &logger = QsLogging::Logger::instance();
-    logger.setLoggingLevel(QsLogging::WarnLevel);
+    logger.setLoggingLevel(QsLogging::InfoLevel);
+    //logger.setLoggingLevel(QsLogging::DebugLevel);
+
+    // this will write attachments into temp directory relative to working directory
+    logger.setFileLoggingPath("./tmp");
+
     QsLogging::DestinationPtr debugDestination(QsLogging::DestinationFactory::MakeDebugOutputDestination());
     logger.addDestination(debugDestination.get());
 
