@@ -476,36 +476,48 @@ const char *NoteFormatter::findImageFormat(QString file) {
   modify the ENML */
 void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     QLOG_TRACE_IN();
-    //QLOG_DEBUG() << "Image tag - getting resource hash=" << hash;
     QString mimetype = enMedia.attribute("type");
     qint32 resLid = 0;
     resLid = hashMap[hash];
     QString highlightString = "";
 
     if (resLid > 0) {
-        QLOG_DEBUG() << "htmlfmt: image tag - getting resource hash=" << hash << ", lid=" << resLid;
         Resource r = resourceMap[resLid];
         QLOG_TRACE() << "resource retrieved";
 
         MimeReference ref;
         QString filename;
         ResourceAttributes attributes;
-        if (r.attributes.isSet())
+        if (r.attributes.isSet()) {
             attributes = r.attributes;
-        if (attributes.fileName.isSet())
+        }
+        if (attributes.fileName.isSet()) {
             filename = attributes.fileName;
+        }
+        if (r.mime.isSet() && (mimetype != r.mime)) {
+            QLOG_WARN() << "htmlfmt: image tag - overriding mime type from ENML style attribute=" << mimetype
+              << " by mimetype from resource=" << r.mime;
+
+            // override the mime type from "type" attribute in enml by mime info from resource
+            mimetype = r.mime;
+        }
+
+
+
         QString type = ref.getExtensionFromMime(mimetype, filename);
+        QLOG_DEBUG() << "htmlfmt: image tag - getting resource hash=" << hash << ", lid=" << resLid << ", type="
+                     << type << ", mimetype=" << mimetype;
 
         Data data;
         if (r.data.isSet())
             data = r.data;
 
         if (data.size.isSet() && data.size > 0) {
-            QString imgfile =
-                    "file:///" +
-                    global.fileManager.getDbDirPath(QString(NN_DB_DIR_PREFIX "a/") + QString::number(resLid) + type);
+            QString imgfile("file:///" + global.fileManager.getDbaDirPath() + QString::number(resLid) + type);
+            QLOG_DEBUG() << "htmlfmt: image tag - imgfile=" << imgfile;
 
             enMedia.setAttribute("src", imgfile);
+
             // Check if this is a LaTeX image
             ResourceAttributes attributes;
             if (r.attributes.isSet()) {
@@ -584,8 +596,9 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
     } else {
         // If we are running the formatter and we are not generating a thumbnail
         QString mimetype = "";
-        if (r.mime.isSet())
+        if (r.mime.isSet()) {
             mimetype = r.mime;
+        }
 
         // Check that we don't have a locked PDF.  If we do, then disable PDF previews.
         if (mimetype == "application/pdf") {
@@ -623,11 +636,14 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
             enmedia.setOuterXml(enmedia.toOuterXml().replace("</en-media>", "</img>"));
             return;
         }
+
         QString fileDetails = "";
         MimeReference ref;
         ResourceAttributes attributes;
-        if (r.attributes.isSet())
+        if (r.attributes.isSet()) {
             attributes = r.attributes;
+        }
+
         if (attributes.fileName.isSet()) {
             fileDetails = ref.getExtensionFromMime(r.mime, fileDetails);
         }
@@ -653,17 +669,22 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
             fileExt = attributes.fileName;
         else
             fileExt = appl;
+
         QString fn;
         QString mime;
-        if (attributes.fileName.isSet())
+        if (attributes.fileName.isSet()) {
             fn = attributes.fileName;
-        if (r.mime.isSet())
+        }
+        if (r.mime.isSet()) {
             mime = r.mime;
+        }
         fileExt = ref.getExtensionFromMime(mime, fn);
+
         QString icon = findIcon(resLid, r, fileExt);
         newText.setAttribute("src", "file:///" + icon);
-        if (attributes.fileName.isSet())
+        if (attributes.fileName.isSet()) {
             newText.setAttribute("title", attributes.fileName);
+        }
         newText.setAttribute("en-tag", "temporary");
         //Rename the tag to a <a> link
         enmedia.setOuterXml(enmedia.toOuterXml().replace("<en-media", "<a"));
