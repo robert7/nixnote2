@@ -438,7 +438,7 @@ QT_END_NAMESPACE
 int main(int argc, char *argv[]) {
     QsLogging::Logger &logger = QsLogging::Logger::instance();
     logger.setLoggingLevel(QsLogging::InfoLevel);
-    logger.setLoggingLevel(QsLogging::DebugLevel);
+    //logger.setLoggingLevel(QsLogging::DebugLevel);
 
     // this will write attachments into temp directory relative to working directory
     logger.setFileLoggingPath("./tmp");

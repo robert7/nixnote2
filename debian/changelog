@@ -15,7 +15,8 @@ NixNote (2.1.3-h) stable; urgency=low
   * Override the mime type from "type" attribute in enml by mime info from resource; this fixes display problem
     in business cards
   * Added "Ctrl+Shift+C" as shortcut for "ToDo" checkbox
- -- Robert Spiegel <nightingale7@gmail.com>  Sun, 10 Mar 2019 09:25:56 +0100
+  * Added html comment cleanup to enml cleanup; this fixes among other problem with editing busines cards in nixnote
+ -- Robert Spiegel <nightingale7@gmail.com>  Sun, 10 Mar 2019 10:30:59 +0100
 
 NixNote (2.1.2) stable; urgency=low
   * Make project cross-buildable issue #67; from https://bugs.debian.org/915590
