@@ -30,11 +30,15 @@ script:
       find appdir/ &&
     qmake testsrc/tests.pro CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR &&
       make &&
-      ./qmake-build-release-t/tests -platform offscreen &&
-    wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" &&
-    chmod a+x linuxdeployqt-continuous-x86_64.AppImage &&
-    unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH &&
-    ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage
+      ./qmake-build-release-t/tests -platform offscreen
+  - wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+  - chmod a+x linuxdeployqt*.AppImage
+  - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
+  - ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop -bundle-non-qt-libs
+  - ./linuxdeployqt*.AppImage --appimage-extract
+  - export PATH=$(readlink -f ./squashfs-root/usr/bin/):$PATH
+  - ./squashfs-root/usr/bin/appimagetool appdir/
+
 
 after_success:
   - find appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
