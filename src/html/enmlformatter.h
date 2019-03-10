@@ -121,6 +121,7 @@ public:
     void tidyHtml(HtmlCleanupMode mode);
     bool isFormattingError() const;
     void setContent(QString &content);
+    void removeHtmlCommentsInclContent();
 };
 
 
