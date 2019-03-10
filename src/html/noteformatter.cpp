@@ -133,7 +133,6 @@ QString NoteFormatter::enmlToNoteHTML(QString enml) {
 }
 
 
-
 /* Take the ENML note and transform it into HTML that WebKit will
   not complain about */
 QByteArray NoteFormatter::rebuildNoteHTML() {
@@ -243,8 +242,8 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     QLOG_TRACE() << "Searching for all en-media tags;";
     QWebElementCollection anchors = doc.mainFrame()->findAllElements("en-media");
     QLOG_TRACE() << "Search complete: " << anchors.toList().size();
-        foreach(QWebElement
-                    enmedia, anchors) {
+            foreach(QWebElement
+                            enmedia, anchors) {
             if (enmedia.hasAttribute("type")) {
                 QString attr = enmedia.attribute("type");
                 QString hash = enmedia.attribute("hash");
@@ -503,8 +502,8 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
 
         if (data.size.isSet() && data.size > 0) {
             QString imgfile =
-                "file:///" +
-                global.fileManager.getDbDirPath(QString(NN_DB_DIR_PREFIX "a/") + QString::number(resLid) + type);
+                    "file:///" +
+                    global.fileManager.getDbDirPath(QString(NN_DB_DIR_PREFIX "a/") + QString::number(resLid) + type);
 
             enMedia.setAttribute("src", imgfile);
             // Check if this is a LaTeX image
@@ -580,9 +579,9 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
     qint32 resLid = resTable.getLidByHashHex(note.guid, hash);
     Resource r;
     resTable.get(r, resLid, false);
-    if (!r.data.isSet())
+    if (!r.data.isSet()) {
         resourceError = true;
-    else {
+    } else {
         // If we are running the formatter and we are not generating a thumbnail
         QString mimetype = "";
         if (r.mime.isSet())
@@ -606,7 +605,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
         // If we are running the formatter so we can generate a thumbnail and it is a PDF
         if (mimetype == "application/pdf" && pdfPreview && thumbnail) {
             QString printImageFile =
-                global.fileManager.getTmpDirPath() + QString::number(resLid) + QString("-print.jpg");
+                    global.fileManager.getTmpDirPath() + QString::number(resLid) + QString("-print.jpg");
             QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) + ".pdf";
             Poppler::Document *doc;
             doc = Poppler::Document::load(file);
@@ -629,14 +628,15 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
         ResourceAttributes attributes;
         if (r.attributes.isSet())
             attributes = r.attributes;
-        if (attributes.fileName.isSet())
+        if (attributes.fileName.isSet()) {
             fileDetails = ref.getExtensionFromMime(r.mime, fileDetails);
+        }
 
         enmedia.setAttribute("href", QString("nnres:") + global.fileManager.getDbaDirPath() + QString::number(resLid)
                                      + fileDetails);
         contextFileName =
-            global.fileManager.getTmpDirPath("") + QString::number(resLid) + global.attachmentNameDelimeter +
-            fileDetails;
+                global.fileManager.getTmpDirPath("") + QString::number(resLid) + global.attachmentNameDelimeter +
+                fileDetails;
 
         // Setup the context menu.  This is useful if we want to do a "save as" or such
         contextFileName = contextFileName.replace("\\", "/");
@@ -789,7 +789,7 @@ bool NoteFormatter::buildInkNote(QWebElement &docElem, QString &hash) {
     docElem.setAttribute("lid", QString::number(resLid));
     docElem.setAttribute("type", "application/vnd.evernote.ink");
     QString filename =
-        QString("file:///") + global.fileManager.getDbaDirPath() + QString::number(resLid) + QString(".png");
+            QString("file:///") + global.fileManager.getDbaDirPath() + QString::number(resLid) + QString(".png");
     docElem.setAttribute("src", filename);
     QString k = docElem.toOuterXml();
     k.replace("<en-media", "<img");
