@@ -26,33 +26,36 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
-LocationEditor::LocationEditor(QWidget *parent) :
-    QToolButton(parent)
-{
+LocationEditor::LocationEditor(QWidget *parent) : QToolButton(parent) {
     QPalette pal;
     pal.setColor(backgroundRole(), QPalette::Base);
     setPalette(pal);
 
     this->setFont(global.getGuiFont(font()));
 
-
     inactiveColor = global.getThemeCss("noteLocationCss");
-    if (inactiveColor=="")
+    if (inactiveColor == "") {
         inactiveColor = "QToolButton {background-color: transparent; border-radius: 0px; border:none; margin 0px; padding: 4px} ";
+    }
     this->setCursor(Qt::PointingHandCursor);
     this->setStyleSheet(inactiveColor);
 
     defaultText = QString(tr("Click to set location..."));
     this->setText(defaultText);
+    setToolTip(tr("Click and hold to display menu"));
+
     actionMenu = new QMenu();
     editAction = actionMenu->addAction(tr("Edit..."));
     clearAction = actionMenu->addAction(tr("Clear"));
     viewAction = actionMenu->addAction(tr("View on map"));
+
     connect(editAction, SIGNAL(triggered()), this, SLOT(buttonClicked()));
     connect(viewAction, SIGNAL(triggered()), this, SLOT(viewClicked()));
     connect(clearAction, SIGNAL(triggered()), this, SLOT(clearClicked()));
+
     setAutoRaise(false);
     setMenu(actionMenu);
+
     this->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     this->reloadIcons();
     connect(this, SIGNAL(clicked()), this, SLOT(buttonClicked()));
@@ -64,12 +67,9 @@ void LocationEditor::reloadIcons() {
     this->setIcon(global.getIconResource(":navigationIcon"));
 }
 
-
-
 void LocationEditor::setActiveColor() {
     setStyleSheet(activeColor);
 }
-
 
 void LocationEditor::buttonClicked() {
     const QWeakPointer<LocationDialog> dialogPtr(new LocationDialog(this));
@@ -84,6 +84,7 @@ void LocationEditor::buttonClicked() {
         const double lon = dialog->getLongitude();
         const double lat = dialog->getLatitude();
         const double alt = dialog->getAltitude();
+
         startAltitude = alt;
         startLongitude = lon;
         startLatitude = lat;
@@ -94,7 +95,7 @@ void LocationEditor::buttonClicked() {
                 ntable.resetGeography(currentLid, true);
             } else {
                 setText(dialog->locationText());
-                ntable.setGeography(currentLid, lon,lat,alt, true);
+                ntable.setGeography(currentLid, lon, lat, alt, true);
             }
         }
         delete dialog;
@@ -112,12 +113,16 @@ void LocationEditor::setGeography(qint32 lid, double longitude, double latitude,
     NoteTable ntable(global.db);
     ntable.get(n, lid, false, false);
     NoteAttributes attributes;
-    if (n.attributes.isSet())
+    if (n.attributes.isSet()) {
         attributes = n.attributes;
-    if (!attributes.latitude.isSet() || !attributes.longitude.isSet())
+    }
+    if (!attributes.latitude.isSet() || !attributes.longitude.isSet()) {
+        setText(defaultText);
         return;
+    }
 
     if (placeName == "") {
+        // we are using the dialog to convert the coordinates to text form
         LocationDialog dialog;
         dialog.setLongitude(this->startLongitude);
         dialog.setLatitude(this->startLatitude);
@@ -128,7 +133,6 @@ void LocationEditor::setGeography(qint32 lid, double longitude, double latitude,
 }
 
 
-
 void LocationEditor::getGeography(double &longitude, double &latitude, double &altitude, QString &placeName) {
     longitude = this->startLongitude;
     latitude = this->startLatitude;
@@ -137,16 +141,15 @@ void LocationEditor::getGeography(double &longitude, double &latitude, double &a
 }
 
 
-
-
 void LocationEditor::clearClicked() {
     NoteTable ntable(global.db);
     ntable.resetGeography(currentLid, true);
+    setText(defaultText);
 }
 
 void LocationEditor::viewClicked() {
     if (this->text().toLower() == defaultText.toLower())
         return;
-    QDesktopServices::openUrl(QUrl("http://maps.google.com/maps?z=6&q=" +QString::number(startLatitude) +","
-                                       +QString::number(startLongitude)));
+    QDesktopServices::openUrl(QUrl("http://maps.google.com/maps?z=6&q=" + QString::number(startLatitude) + ","
+                                   + QString::number(startLongitude)));
 }

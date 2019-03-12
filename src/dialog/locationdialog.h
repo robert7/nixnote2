@@ -40,6 +40,7 @@ private:
 public:
     explicit LocationDialog(QWidget *parent = 0);
     bool okPressed();
+    QString locationTextOLD();
     QString locationText();
     QString calculateDegrees(double value);
     double getLongitude();
