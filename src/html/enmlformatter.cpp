@@ -342,6 +342,15 @@ void EnmlFormatter::removeHtmlHeader() {
 }
 
 
+void EnmlFormatter::removeHtmlCommentsInclContent() {
+    // quite a hack
+    QRegularExpression re("(?=<!--)([\\s\\S]*?)-->");
+    QString contentStr(getContent());
+    contentStr = contentStr.replace(re, "");
+    setContent(contentStr);
+}
+
+
 /**
  * Take the WebKit HTML and transform it into ENML
  * */
@@ -352,6 +361,8 @@ void EnmlFormatter::rebuildNoteEnml() {
 
     // list of referenced LIDs
     resources.clear();
+
+    removeHtmlCommentsInclContent();
 
 
     tidyHtml(HtmlCleanupMode::Tidy);

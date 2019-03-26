@@ -92,7 +92,6 @@ void Tests::enmlBasicRecursiveTest() {
 }
 
 
-
 void Tests::enmlTidyTest() {
     {
         QString src("<div>aa1</xdiv>");
@@ -274,40 +273,36 @@ void Tests::enmlNixnoteObjectTest() {
 }
 
 void Tests::enmlNixnoteEncryptTest() {
-    {
-        // table contains plain text -> will be removed
-        // img with encrypted part will be converted
-        QString src(
-                R"R(<table border="1" width="100%" class=")R"
-                HTML_TEMP_TABLE_CLASS
-                R"R("> <tbody> <tr> <td><br> aaaaa</td> </tr></tbody>)R"
-                R"R(</table><div><img en-tag="en-crypt" cipher="RC2" hint="qq" length="64" alt="bGHOocsWJD4Id76YevNUb29Lxi7/aCAI" src="file:///usr/share/nixnote2/images/encrypt.png" id="crypt1" onmouseover="style.cursor='hand'" onclick="window.browserWindow.decryptText('crypt1', 'bGHOocsWJD4Id76YevNUb29Lxi7/aCAI', 'qq', 'RC2', 64);" style="display:block"></div>)R"
-                );
-        QString result(
-                R"R(<div><en-crypt cipher="RC2" length="64" hint="qq">bGHOocsWJD4Id76YevNUb29Lxi7/aCAI</en-crypt></div>)R");
+    // table contains plain text -> will be removed
+    // img with encrypted part will be converted
+    QString src(
+            R"R(<table border="1" width="100%" class=")R"
+            HTML_TEMP_TABLE_CLASS
+            R"R("> <tbody> <tr> <td><br> aaaaa</td> </tr></tbody>)R"
+            R"R(</table><div><img en-tag="en-crypt" cipher="RC2" hint="qq" length="64" alt="bGHOocsWJD4Id76YevNUb29Lxi7/aCAI" src="file:///usr/share/nixnote2/images/encrypt.png" id="crypt1" onmouseover="style.cursor='hand'" onclick="window.browserWindow.decryptText('crypt1', 'bGHOocsWJD4Id76YevNUb29Lxi7/aCAI', 'qq', 'RC2', 64);" style="display:block"></div>)R"
+    );
+    QString result(
+            R"R(<div><en-crypt cipher="RC2" length="64" hint="qq">bGHOocsWJD4Id76YevNUb29Lxi7/aCAI</en-crypt></div>)R");
 
-        const QString r1 = formatToEnml(src);
-        const QString r2 = addEnmlEnvelope(result);
-        QCOMPARE(r1, r2);
-    }
+    const QString r1 = formatToEnml(src);
+    const QString r2 = addEnmlEnvelope(result);
+    QCOMPARE(r1, r2);
 }
 
 
 void Tests::enmlNixnoteTableTest() {
-    {
-        // first table is temporyry => should be deleted
-        // then next table should stay; whitespace normalised and "style" attr removed
-        QString src(
-                R"R(<div><table border="1" width="100%" class=")R"
-                HTML_TEMP_TABLE_CLASS
-                R"R("> <tbody> <tr> <td><br> aaaaa</td> </tr></tbody>)R"
-                R"R(</table></div>)R"
-                R"R(<div><table border="1" width="100%" class="abcd"> <tbody> <tr> <td><br> aa  aaa</td> </tr></tbody></table></div>)R"
-        );
-        QString result(
-                R"R(<div><table border="1" width="100%"><tbody><tr><td><br />aa aaa</td></tr></tbody></table></div>)R");
-        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
-    }
+    // first table is temporyry => should be deleted
+    // then next table should stay; whitespace normalised and "style" attr removed
+    QString src(
+            R"R(<div><table border="1" width="100%" class=")R"
+            HTML_TEMP_TABLE_CLASS
+            R"R("> <tbody> <tr> <td><br> aaaaa</td> </tr></tbody>)R"
+            R"R(</table></div>)R"
+            R"R(<div><table border="1" width="100%" class="abcd"> <tbody> <tr> <td><br> aa  aaa</td> </tr></tbody></table></div>)R"
+    );
+    QString result(
+            R"R(<div><table border="1" width="100%"><tbody><tr><td><br />aa aaa</td></tr></tbody></table></div>)R");
+    QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
 }
 
 void Tests::enmlHtml5TagsTest() {
@@ -327,38 +322,38 @@ void Tests::enmlHtml5TagsTest() {
 
 void Tests::latexStringUtilTest() {
     // extract latex formula
-    {
-        QString sampleLatexUrl(LATEX_RENDER_URL "xy");
+    QString sampleLatexUrl(LATEX_RENDER_URL "xy");
 
-        QVERIFY(NixnoteStringUtils::isLatexFormulaResourceUrl(sampleLatexUrl));
-        QVERIFY(NixnoteStringUtils::extractLatexFormulaFromResourceUrl("xy").isEmpty());
-        QCOMPARE(
-                NixnoteStringUtils::extractLatexFormulaFromResourceUrl(sampleLatexUrl),
-                QString("xy"));
-        QCOMPARE(
-                NixnoteStringUtils::extractLatexFormulaFromResourceUrl(LATEX_RENDER_URL
-                "xfrac{+y}{+z^}"),
-                QString("xfrac{+y}{+z^}"));
+    QVERIFY(NixnoteStringUtils::isLatexFormulaResourceUrl(sampleLatexUrl));
+    QVERIFY(NixnoteStringUtils::extractLatexFormulaFromResourceUrl("xy").isEmpty());
+    QCOMPARE(
+            NixnoteStringUtils::extractLatexFormulaFromResourceUrl(sampleLatexUrl),
+            QString("xy"));
+    QCOMPARE(
+            NixnoteStringUtils::extractLatexFormulaFromResourceUrl(LATEX_RENDER_URL
+            "xfrac{+y}{+z^}"),
+            QString("xfrac{+y}{+z^}"));
 
-        QString sourceFormula(R"R(x=\left(\frac{1}{\sqrt{x}}\right))R");
-        QString sourceUrl(LATEX_RENDER_URL);
-        sourceUrl.append(NixnoteStringUtils::urlencode(sourceFormula));
+    QString sourceFormula(R"R(x=\left(\frac{1}{\sqrt{x}}\right))R");
+    QString sourceUrl(LATEX_RENDER_URL);
+    sourceUrl.append(NixnoteStringUtils::urlencode(sourceFormula));
 
-        // this one is *intentionally* inlined
-        QCOMPARE(sourceUrl, QString(R"R(http://latex.codecogs.com/gif.latex?x%3D%5Cleft%28%5Cfrac%7B1%7D%7B%5Csqrt%7Bx%7D%7D%5Cright%29)R"));
+    QString resultUrl(
+            R"RR(http://latex.codecogs.com/gif.latex?x%3D%5Cleft%28%5Cfrac%7B1%7D%7B%5Csqrt%7Bx%7D%7D%5Cright%29)RR");
+    QCOMPARE(sourceUrl, resultUrl);
 
-        QCOMPARE(sourceUrl, NixnoteStringUtils::createLatexResourceUrl(sourceFormula));
-        QCOMPARE(sourceUrl, NixnoteStringUtils::createLatexResourceUrl(NixnoteStringUtils::urlencode(sourceFormula), false));
+    QCOMPARE(sourceUrl, NixnoteStringUtils::createLatexResourceUrl(sourceFormula));
+    QCOMPARE(sourceUrl,
+             NixnoteStringUtils::createLatexResourceUrl(NixnoteStringUtils::urlencode(sourceFormula), false));
 
-        QLOG_WARN() << "sourceUrl=" << sourceUrl;
-        QCOMPARE(NixnoteStringUtils::extractLatexFormulaFromResourceUrl(sourceUrl), sourceFormula);
-    }
+    QLOG_WARN() << "sourceUrl=" << sourceUrl;
+    QCOMPARE(NixnoteStringUtils::extractLatexFormulaFromResourceUrl(sourceUrl), sourceFormula);
 }
 
 /**
  * Read contents of the file in string
  */
-QString readFile(QString file) {
+QString Tests::readFile(QString file) {
     QFile f(file);
     if (!f.open(QFile::ReadOnly)) {
         QLOG_DEBUG() << "Error opening file " << file;
@@ -375,16 +370,69 @@ void Tests::enmlHtmlFileTest() {
     QString enml = formatToEnml(s);
     QLOG_DEBUG_FILE("enml.html", enml);
 
+    // TODO maybe add some validation
+
     // http://www.tescoma.sk/slideshow/catalog/varenie/riad/vision/726010-suprava-vision-10-dielov?category=varenie%2Friad%2Fvision%2F
     s = readFile(TESTDATADIR "tescoma.html");
     enml = formatToEnml(s);
     QLOG_DEBUG_FILE("enml.html", enml);
 }
 
+QString Tests::getHtmlWithStrippedHtmlComments(QString source) {
+    bool guiAvailable = true;
+    QHash<QString, QPair<QString, QString> > passwordSafe;
+    QString cryptoJarPath;
+    EnmlFormatter formatter(source, guiAvailable, passwordSafe, cryptoJarPath);
+    formatter.removeHtmlCommentsInclContent();
+
+    QString res = formatter.getContent();
+
+    QRegularExpression re("\\s\\s*");
+    res = res.replace(re, " ");
+    return res;
+}
+
+void Tests::enmlHtmlCommentTest() {
+    // strip test #1
+    {
+        QString source(R"R(<html><!-- tralala -->xy<!--xy--></html>)R");
+        QString expected(R"R(<html>xy</html>)R");
+        const QString &result = getHtmlWithStrippedHtmlComments(source);
+        QCOMPAREX(expected, result);
+    }
+    // strip test #2
+    {
+        QString source(R"R(<!-- begin span 1 --><div style="x-evernote:contact">
+    <!-- begin div 1 -->
+    <div style="height: 100%;">
+
+      <div style="x-evernote:contact-info-section">
+        <!-- begin div 2 -->
+        <div>
+
+          <!-- begin div 4 -->
+          <div style="margin: 20px 35px 20px 10px;
+            width: 330px;
+            float: left;">
+
+            <!-- begin div 8 - PHOTO --><b>)R");
+        QString expected(
+                R"R(<div style="x-evernote:contact"> <div style="height: 100%;"> <div style="x-evernote:contact-info-section"> <div> <div style="margin: 20px 35px 20px 10px; width: 330px; float: left;"> <b>)R");
+        const QString &result = getHtmlWithStrippedHtmlComments(source);
+        QLOG_DEBUG_FILE("expectedcleaned.html", expected);
+        QCOMPAREX(expected, result);
+    }
+
+    // html gets stripped
+    QString src4("<div>aa<!-- hallo --></div>");
+    QString result4("<div>aa</div>");
+    QCOMPARE(formatToEnml(src4), addEnmlEnvelope(result4));
+}
 
 
 QT_BEGIN_NAMESPACE
 QTEST_ADD_GPU_BLACKLIST_SUPPORT_DEFS
+
 QT_END_NAMESPACE
 
 int main(int argc, char *argv[]) {

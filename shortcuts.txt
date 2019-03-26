@@ -56,7 +56,7 @@ Edit_Delete_Table_Column                        // Delete a table row
 Edit_HTML_Simplify            Ctrl+Space        // Simplify formatting
 
 Edit_Insert_Hyperlink         Ctrl+K            // Insert a hyperlink (Popup menu)
-Edit_Insert_Todo                                // Insert a todo checkbox (Popup menu)
+Edit_Insert_Todo              Ctrl+Shift+C      // Insert a todo checkbox (Popup menu)
 Edit_Insert_QuickLink                           // Insert a quick link to another note (Popup menu)
 Edit_Remove_Hyperlink                           // Remove hyperlink from text
 Edit_Insert_Html_Entities                       // Insert HTML Entities

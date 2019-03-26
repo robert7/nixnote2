@@ -158,9 +158,10 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         lid = cs.incrementLidCounter();
     }
 
-    QLOG_DEBUG() << "Adding note lid=" << lid << ", title=" << (t.title.isSet() ? t.title : "title is empty");
+    QLOG_DEBUG() << "Adding note; lid=" << lid << ", title=" << (t.title.isSet() ? t.title : "title is empty");
     if (t.guid.isSet()) {
         QString guid = t.guid;
+        QLOG_DEBUG() << "Adding note; guid=" << guid;
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_GUID);
         query.bindValue(":data", guid);
@@ -195,6 +196,11 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
 #else
         b.append(content);
 #endif
+
+
+        QLOG_DEBUG_FILE("incoming.enml", content);
+
+
         query.bindValue(":data", b);
         query.exec();
     }
@@ -313,12 +319,20 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     QList<Resource> resources;
     if (t.resources.isSet())
         resources = t.resources;
-    for (int i=0; i<resources.size(); i++) {
+
+    QLOG_DEBUG() << "Adding resources count=" << resources.size();
+
+    for (int i = 0; i < resources.size(); i++) {
         qint32 resLid;
         resLid = 0;
         Resource r;
         r = resources[i];
-        resLid = resTable.getLid(t.guid,resources[i].guid);
+        QString noteGuid(t.guid);
+        QString resourceGuid(resources[i].guid);
+        resLid = resTable.getLid(noteGuid, resourceGuid);
+        QLOG_DEBUG() << "Adding resource i=" << i << " noteGuid=" << noteGuid << ", resourceGuid=" << resourceGuid;
+
+
         if (resLid == 0)
             resLid = cs.incrementLidCounter();
         resTable.add(resLid, r, isDirty, lid);

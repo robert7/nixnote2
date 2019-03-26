@@ -10,6 +10,8 @@ class Tests: public QObject
 private:
     QString formatToEnml(QString source);
     QString addEnmlEnvelope(QString source, QString resources = QString(), QString bodyAttrs = QString());
+    QString readFile(QString file);
+    QString getHtmlWithStrippedHtmlComments(QString source);
 
 public:
     Q_INVOKABLE explicit Tests(QObject *parent=Q_NULLPTR);
@@ -29,9 +31,10 @@ private slots:
     void enmlHtmlFileTest();
     void enmlBasicRecursiveTest();
     void enmlNixnoteLinkTest();
+    void enmlTidyTest();
+    void enmlHtmlCommentTest();
 
 private slots:
-    void enmlTidyTest();
 };
 
 #endif // NIXNOTE2_TESTS_H

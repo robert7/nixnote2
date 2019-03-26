@@ -63,7 +63,7 @@ private:
 
     void modifyTags(QWebPage &doc);
 
-    QString findIcon(qint32 lid, Resource r, QString appl);
+    QString findIcon(qint32 lid, Resource r, QString fileExt);
 
     QString enmlToNoteHTML(QString enml);
     QString preHtmlFormat(QString content);

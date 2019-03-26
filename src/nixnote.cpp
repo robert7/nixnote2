@@ -3109,8 +3109,10 @@ void NixNote::resourceExternallyUpdated(QString resourceFile) {
     QString dba = global.fileManager.getDbaDirPath();
     shortName.replace(dba, "");
     int pos = shortName.indexOf(".");
-    if (pos != -1)
+    if (pos != -1) {
         shortName = shortName.mid(0, pos);
+    }
+
     qint32 lid = shortName.toInt();
     QFile file(resourceFile);
     file.open(QIODevice::ReadOnly);
@@ -3120,12 +3122,15 @@ void NixNote::resourceExternallyUpdated(QString resourceFile) {
     ResourceTable resTable(global.db);
     QByteArray oldHash = resTable.getDataHash(lid);
     if (oldHash != newHash) {
+        QLOG_DEBUG() << "Detected change of " << resourceFile << " old hash " << oldHash << " new hash " << newHash;
+
         qint32 noteLid = resTable.getNoteLid(lid);
         resTable.updateResourceHash(lid, newHash);
         NoteTable noteTable(global.db);
         noteTable.updateEnmediaHash(noteLid, oldHash, newHash, true);
         tabWindow->updateResourceHash(noteLid, oldHash, newHash);
     }
+
     AttachmentIconBuilder icon;
     icon.buildIcon(lid, resourceFile);
     global.resourceWatcher->addPath(resourceFile);

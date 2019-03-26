@@ -1,4 +1,4 @@
-NixNote (2.1.3-g) stable; urgency=low
+NixNote (2.1.3-i) stable; urgency=low
   * Updated german translation (2x), thanks to https://github.com/stemabu
   * Fixed various issues involving translation and minor interface adjustments
   * Delete node dialog now respects "Confirm deletes" Preference options
@@ -12,7 +12,12 @@ NixNote (2.1.3-g) stable; urgency=low
   * Updated japanese translation, thanks to https://github.com/junf
   * Fixed enml cleanup for "a" tag involving "name" attribute. Before it could cause sync problem when specific html was pasted in.
   * Fixed cleanup of nested html tags - this could cause various sync problems with specific more complex html markup.
- -- Robert Spiegel <nightingale7@gmail.com>  Sat, 09 Mar 2019 20:20:43 +0100
+  * Override the mime type from "type" attribute in enml by mime info from resource; this fixes display problem
+    in business cards
+  * Added "Ctrl+Shift+C" as shortcut for "ToDo" checkbox
+  * Added html comment cleanup to enml cleanup; this fixes among other problem with editing busines cards in nixnote
+  * Fixed in location dialog; location now displays in decimals not in degrees
+ -- Robert Spiegel <nightingale7@gmail.com>  Tue, 12 Mar 2019 22:09:57 +0100
 
 NixNote (2.1.2) stable; urgency=low
   * Make project cross-buildable issue #67; from https://bugs.debian.org/915590

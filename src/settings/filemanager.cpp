@@ -366,15 +366,7 @@ QString FileManager::getTmpDirPathSpecialChar(QString relativePath) {
 }
 
 QString FileManager::getDbaDirPath() {
-    return dbaDirPath.replace("\\", "/");
-}
-
-QString FileManager::getDbaDirPath(QString relativePath) {
-    return dbaDirPath + toPlatformPathSeparator(relativePath);
-}
-
-QString FileManager::getDbaDirPathSpecialChar(QString relativePath) {
-    return dbaDirPath + toPlatformPathSeparator(relativePath).replace("#", "%23");
+    return dbaDirPath;
 }
 
 QString FileManager::getDbiDirPath() {
