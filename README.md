@@ -26,10 +26,6 @@ Just please take care, that you don't enable both stable and development PPA.
 At most times, the "[development release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#development-releases)"
 should be OK for daily use.
 
-### Arch Linux
-AUR package [nixnote2-git](https://aur.archlinux.org/packages/nixnote2-git/)
-builds the latest [stable release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#stable-releases).
-
 ### AppImage
 This is suitable to any ~recent linux distribution.
 Installation is trivial - download AppImage file, mark as executable & run.
@@ -38,6 +34,20 @@ More information can be found on [NixNote AppImage wiki page](https://github.com
 Two builds are available:
 * [Stable build](https://github.com/robert7/nixnote2/releases/tag/continuous) - it reflects the latest [stable release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#stable-releases) - tip of the `master` branch - same as the PPA or AUR version.
 * [Development build](https://github.com/robert7/nixnote2/releases/tag/continuous-develop) - it reflects the latest [development release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#development-releases) - tip of the `develop` branch..
+
+### Other
+I can't provide support for packaging for other distributions that Ubuntu PPA and the AppImage
+but here are links to further community builds:
+
+#### Arch Linux
+AUR package [nixnote2-git](https://aur.archlinux.org/packages/nixnote2-git/)
+builds the latest [stable release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#stable-releases).
+
+#### Fedora
+https://copr.fedorainfracloud.org/coprs/nunodias/nixnote2/
+
+#### OpenSUSE
+https://software.opensuse.org/package/nixnote2
 
 ## Building from source
 
