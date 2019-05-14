@@ -755,7 +755,7 @@ bool EnmlFormatter::checkAndFixElement(QWebElement &e) {
         // note that "tidy" will restore "id"; so checkAttributes() would not really work; let remove <map> altogether
         // as it is useless for notes anyway
         //checkAttributes(e, i18n + map);
-        
+
         return false;
     } else if (tagName == "object") {
         checkAttributes(e, attrs + object);
@@ -807,6 +807,8 @@ bool EnmlFormatter::checkAndFixElement(QWebElement &e) {
         checkAttributes(e, attrs);
     } else if (tagName == "xmp") {
 
+    } else if (tagName == "svg") {
+        return false;
     } else {
         QString inner = e.toInnerXml();
         QString newXml = "<div>" + inner + "</div>";

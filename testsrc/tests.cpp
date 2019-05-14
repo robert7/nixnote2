@@ -441,6 +441,18 @@ style="box-sizing:border-box;" /></map>)R");
     }
 }
 
+void Tests::enmlHtmlSvgTest() {
+    {
+        QString src(
+                R"R(<svg class="icon icon-caret-down" xmlns="http://www.w3.org/2000/svg" width="16" height="28" viewBox="0 0 16 28"><path d="M16 11a.99.99 0 0 1-.297.703l-7 7C8.516 18.89 8.265 19 8 19s-.516-.109-.703-.297l-7-7A.996.996 0 0 1 0 11c0-.547.453-1 1-1h14c.547 0 1 .453 1 1z"/></svg>)R");
+        QString result(
+                R"R()R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+}
+
+
+
 QT_BEGIN_NAMESPACE
 QTEST_ADD_GPU_BLACKLIST_SUPPORT_DEFS
 

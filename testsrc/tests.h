@@ -33,9 +33,10 @@ private slots:
     void enmlNixnoteLinkTest();
     void enmlTidyTest();
     void enmlHtmlCommentTest();
+    void enmlHtmlMapTest();
 
 private slots:
-    void enmlHtmlMapTest();
+    void enmlHtmlSvgTest();
 };
 
 #endif // NIXNOTE2_TESTS_H
