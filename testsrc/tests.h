@@ -35,6 +35,7 @@ private slots:
     void enmlHtmlCommentTest();
 
 private slots:
+    void enmlHtmlMapTest();
 };
 
 #endif // NIXNOTE2_TESTS_H

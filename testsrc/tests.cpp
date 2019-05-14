@@ -429,6 +429,17 @@ void Tests::enmlHtmlCommentTest() {
     QCOMPARE(formatToEnml(src4), addEnmlEnvelope(result4));
 }
 
+void Tests::enmlHtmlMapTest() {
+    {
+        QString src(
+                R"R(<map name="xx" id="zz">
+<area shape="rect" coords="0,0,600,50" alt="aa" href="https://www.amazon.com/gp/student/signup/info"
+style="box-sizing:border-box;" /></map>)R");
+        QString result(
+                R"R()R");
+        QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
+    }
+}
 
 QT_BEGIN_NAMESPACE
 QTEST_ADD_GPU_BLACKLIST_SUPPORT_DEFS
