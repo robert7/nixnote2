@@ -478,7 +478,7 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
             QLOG_DEBUG() << "qevercloud noteStore->updateNote";
             note = noteStore->updateNote(note, token);
         } else {
-            QLOG_DEBUG() << "qevercloud f^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^noteStore->createNote";
+            QLOG_DEBUG() << "qevercloud noteStore->createNote";
             note = noteStore->createNote(note, token);
         }
         updateSequenceNum = note.updateSequenceNum;
