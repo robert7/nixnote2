@@ -471,24 +471,29 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
 
     qint32 updateSequenceNum = 0;
     try {
+        // dump always; but only in DEBUG log level
+        dumpNote(note);
+
         if (note.updateSequenceNum.isSet() && note.updateSequenceNum > 0) {
+            QLOG_DEBUG() << "qevercloud noteStore->updateNote";
             note = noteStore->updateNote(note, token);
         } else {
+            QLOG_DEBUG() << "qevercloud f^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^noteStore->createNote";
             note = noteStore->createNote(note, token);
         }
         updateSequenceNum = note.updateSequenceNum;
     } catch (ThriftException &e) {
         reportError(CommunicationError::ThriftException, e.type(), e.what());
-        dumpNote(note);
+        //dumpNote(note);
     } catch (EDAMUserException &e) {
         reportError(CommunicationError::EDAMUserException, e.errorCode, e.what());
-        dumpNote(note);
+        //dumpNote(note);
     } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e, note.title);
-        dumpNote(note);
+        //dumpNote(note);
     } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e, note.title);
-        dumpNote(note);
+        //dumpNote(note);
     }
 
     QLOG_DEBUG() << "uploadNote finished " << note.guid << ", updateSequenceNum=" << updateSequenceNum;
