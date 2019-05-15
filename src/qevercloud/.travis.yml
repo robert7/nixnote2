@@ -1,0 +1,91 @@
+language: cpp
+
+sudo: required
+dist: trusty
+
+branches:
+    only:
+        - master
+        - development
+
+matrix:
+    include:
+        - os: linux
+          env: QT_BASE=48 COMPILER=g++-4.6 CMAKE_BUILD_TYPE=Debug
+
+        - os: linux
+          env: QT_BASE=48 COMPILER=clang++
+
+        - os: linux
+          env: QT_BASE=57 COMPILER=g++-4.9 CMAKE_BUILD_TYPE=Debug
+
+        - os: linux
+          env: QT_BASE=57 COMPILER=clang++ CMAKE_BUILD_TYPE=Debug
+
+        - os: osx
+          env: CMAKE_BUILD_TYPE=Debug
+          compiler: clang
+
+install:
+    - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+        wget http://www.cmake.org/files/v3.2/cmake-3.2.0-Linux-x86_64.tar.gz	 &&
+        tar -xzf cmake-3.2.0-Linux-x86_64.tar.gz &&
+        sudo cp -fR cmake-3.2.0-Linux-x86_64/* /usr &&
+        sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test &&
+        if [ "${QT_BASE}" = "57" ]; then
+          sudo apt-add-repository -y ppa:beineri/opt-qt57-trusty &&
+          sudo apt-get -qq update &&
+          if [ "${COMPILER}" = "g++-4.9" ]; then
+            sudo apt-get -qq install g++-4.9 gcc-4.9 qt57tools qt57base qt57webchannel qt57webengine qt57websockets &&
+            export CXX="g++-4.9" &&
+            export CC="gcc-4.9"
+            ;
+          else
+            sudo apt-get -qq install qt57tools qt57base qt57webchannel qt57webengine qt57websockets &&
+            export CXX="clang++" &&
+            export CC="clang"
+            ;
+          fi
+          ;
+        else
+          sudo apt-get -qq update &&
+          if [ "${COMPILER}" = "g++-4.6" ]; then
+            sudo apt-get -qq install g++-4.6 gcc-4.6 &&
+            export CXX="g++-4.6" &&
+            export CC="gcc-4.6"
+            ;
+          else
+            export CXX="clang++" &&
+            export CC="clang"
+            ;
+          fi
+          ;
+        fi
+        ;
+      else
+        brew update &&
+        brew unlink cmake &&
+        brew install cmake &&
+        brew link cmake &&
+        brew install qt5 &&
+        chmod -R 755 /usr/local/opt/qt5/*
+        ;
+      fi
+
+before_script:
+    - mkdir build
+    - cd build
+    - cmake --version
+    - if [ "${QT_BASE}" = "57" ]; then
+        source /opt/qt57/bin/qt57-env.sh &&
+        cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DUSE_QT5=1 ..
+        ;
+      elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+        cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_PREFIX_PATH=/usr/local/opt/qt5/lib/cmake -DUSE_QT5=1 ..
+        ;
+      else
+        cmake -DCMAKE_VERBOSE_MAKEFILE=ON ..
+        ;
+      fi
+
+script: make && make check
