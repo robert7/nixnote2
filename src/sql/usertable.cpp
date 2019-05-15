@@ -441,7 +441,7 @@ void UserTable::updateLastSyncNumber(qint32 value) {
 }
 
 
-// Fetch the user record fro the DB
+// Fetch the user record from the DB
 void UserTable::getUser(User &user) {
     NSqlQuery query(db);
     db->lockForRead();
@@ -491,8 +491,10 @@ void UserTable::getUser(User &user) {
             user.username = QVariant(query.value(1)).toString();
         }
         if (query.value(0) == USER_ACCOUNTING_UPLOAD_LIMIT) {
-            accounting.uploadLimit =query.value(1).toLongLong();
-            user.accounting = accounting;
+            if (user.accountLimits.isSet()) {
+                user.accountLimits.ref().uploadLimit = query.value(1).toLongLong();
+                user.accounting = accounting;
+            }
         }
         if (query.value(0) == USER_ACCOUNTING_UPLOAD_LIMIT_END) {
             accounting.uploadLimitEnd = query.value(1).toLongLong();

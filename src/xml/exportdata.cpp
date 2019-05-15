@@ -465,8 +465,9 @@ void ExportData::writeSharedNotebooks() {
 
             table.get(s,lids[i], users[j]);
             writer->writeStartElement("SharedNotebook");
-            if (s.allowPreview.isSet())
-                createNode("AllowPreview", s.allowPreview);
+            // removed in qevercloud v4
+            // if (s.allowPreview.isSet())
+            //     createNode("AllowPreview", s.allowPreview);
             if (s.email.isSet())
                 createNode("Email", s.email);
             if (s.id.isSet())
@@ -489,8 +490,9 @@ void ExportData::writeSharedNotebooks() {
                 createNode("Username", s.username);
             if (s.userId.isSet())
                 createNode("UserId", s.userId);
-            if (s.requireLogin.isSet())
-                createNode("RequireLogin", s.requireLogin);
+            // removed in qevercloud v4
+            // if (s.requireLogin.isSet())
+            //     createNode("RequireLogin", s.requireLogin);
             if (s.serviceCreated.isSet())
                 createTimestampNode("ServiceCreated", s.serviceCreated);
             if (s.serviceUpdated.isSet())
