@@ -298,26 +298,30 @@ void ExportData::writeUser(User user) {
             createNode("BusinessAddress", user.attributes.value().businessAddress);
         if (user.attributes.value().hideSponsorBilling.isSet())
             createNode("HideSponsorBilling", user.attributes.value().hideSponsorBilling);
-        if (user.attributes.value().taxExempt.isSet())
-            createNode("TaxExempt", user.attributes.value().taxExempt);
+        // removed in qevercloud v4
+        //if (user.attributes.value().taxExempt.isSet())
+        //    createNode("TaxExempt", user.attributes.value().taxExempt);
         if (user.attributes.value().useEmailAutoFiling.isSet())
             createNode("UseEmailAutoFiling", user.attributes.value().useEmailAutoFiling);
         if (user.attributes.value().reminderEmailConfig.isSet())
             createNode("ReminderEmailConfig", user.attributes.value().reminderEmailConfig);
         writer->writeEndElement();
     }
-    if (user.premiumInfo.isSet()) {
-        writer->writeStartElement("PremiumInfo");
-        if (user.premiumInfo.value().premiumExpirationDate.isSet())
-            createTimestampNode("PremiumExpirationDate",user.premiumInfo.value().premiumExpirationDate);
-        if (user.premiumInfo.value().premiumUpgradable.isSet())
-            createNode("PremiumUpgradable", user.premiumInfo.value().premiumUpgradable);
-        if (user.premiumInfo.value().sponsoredGroupName.isSet())
-            createNode("SponsorGroupName", user.premiumInfo.value().sponsoredGroupName);
-        if (user.premiumInfo.value().sponsoredGroupRole.isSet())
-            createNode("SponsorGroupRole", user.premiumInfo.value().sponsoredGroupRole);
-        writer->writeEndElement();
-    }
+
+    // removed in qevercloud v4
+    // if (user.premiumInfo.isSet()) {
+    //     writer->writeStartElement("PremiumInfo");
+    //     if (user.premiumInfo.value().premiumExpirationDate.isSet())
+    //         createTimestampNode("PremiumExpirationDate",user.premiumInfo.value().premiumExpirationDate);
+    //     if (user.premiumInfo.value().premiumUpgradable.isSet())
+    //         createNode("PremiumUpgradable", user.premiumInfo.value().premiumUpgradable);
+    //     if (user.premiumInfo.value().sponsoredGroupName.isSet())
+    //         createNode("SponsorGroupName", user.premiumInfo.value().sponsoredGroupName);
+    //     if (user.premiumInfo.value().sponsoredGroupRole.isSet())
+    //         createNode("SponsorGroupRole", user.premiumInfo.value().sponsoredGroupRole);
+    //     writer->writeEndElement();
+    // }
+
     if (user.businessUserInfo.isSet()) {
         writer->writeStartElement("BusinessUserInfo");
         if (user.businessUserInfo.value().businessId.isSet())
@@ -420,8 +424,8 @@ void ExportData::writeLinkedNotebooks() {
             createNode("BusinessId", s.businessId);
         if (s.shardId.isSet())
             createNode("ShardId", s.shardId);
-        if (s.shareKey.isSet())
-            createNode("ShareKey", s.shareKey);
+        if (s.sharedNotebookGlobalId.isSet())
+            createNode("ShareKey", s.sharedNotebookGlobalId);
         if (s.updateSequenceNum.isSet())
             createNode("UpdateSequenceNumber", s.updateSequenceNum);
         if (s.shareName.isSet())

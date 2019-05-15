@@ -197,10 +197,10 @@ void UserTable::updateUser(User &user) {
 
     if (user.accounting.isSet()) {
         Accounting accounting = user.accounting;
-        if (accounting.uploadLimit.isSet()) {
+        if (user.accountLimits.ref().uploadLimit.isSet()) {
             query.prepare("Insert into UserTable (key, data) values (:key, :data);");
             query.bindValue(":key", USER_ACCOUNTING_UPLOAD_LIMIT);
-            qint32 limit = accounting.uploadLimit;
+            qint32 limit = user.accountLimits.ref().uploadLimit;
             query.bindValue(":data", limit);
             query.exec();
         }
