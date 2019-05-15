@@ -388,6 +388,7 @@ bool TagTable::get(Tag &tag, qint32 lid) {
                         break;
                     }
                 }
+                break;
             case TAG_NAME:
                 tag.name = query.value(1).toString();
                 break;
