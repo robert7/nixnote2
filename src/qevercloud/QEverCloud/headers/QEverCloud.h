@@ -18,6 +18,8 @@
 #include "Optional.h"
 #include "qt4helpers.h"
 #include "thumbnail.h"
+#include "InkNoteImageDownloader.h"
+#include "VersionInfo.h"
 #include "generated/EDAMErrorCode.h"
 #include "generated/constants.h"
 #include "generated/services.h"

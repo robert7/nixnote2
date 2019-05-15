@@ -1,0 +1,2 @@
+QEverCloudFindPackageWrapper(Qt5WebKit ${QEVERCLOUD_FIND_PACKAGE_ARG})
+QEverCloudFindPackageWrapper(Qt5WebKitWidgets ${QEVERCLOUD_FIND_PACKAGE_ARG})

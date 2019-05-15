@@ -33,30 +33,31 @@ namespace qevercloud {
  * Service:  NoteStore
  * <p>
  * The NoteStore service is used by EDAM clients to exchange information
- * about the collection of notes in an account.  This is primarily used for
+ * about the collection of notes in an account. This is primarily used for
  * synchronization, but could also be used by a "thin" client without a full
  * local cache.
  * </p><p>
- * All functions take an "authenticationToken" parameter, which is the
+ * Most functions take an "authenticationToken" parameter, which is the
  * value returned by the UserStore which permits access to the account.
- * This parameter is mandatory for all functions.
  * </p>
  *
  * Calls which require an authenticationToken may throw an EDAMUserException
  * for the following reasons:
  *  <ul>
- *   <li> AUTH_EXPIRED "authenticationToken" - token has expired
- *   </li>
- *   <li> BAD_DATA_FORMAT "authenticationToken" - token is malformed
- *   </li>
- *   <li> DATA_REQUIRED "authenticationToken" - token is empty
- *   </li>
- *   <li> INVALID_AUTH "authenticationToken" - token signature is invalid
- *   </li>
+ *   <li>DATA_REQUIRED "authenticationToken" - token is empty</li>
+ *   <li>BAD_DATA_FORMAT "authenticationToken" - token is malformed</li>
+ *   <li>INVALID_AUTH "authenticationToken" - token signature is invalid</li>
+ *   <li>AUTH_EXPIRED "authenticationToken" - token has expired or been revoked</li>
+ *   <li>PERMISSION_DENIED "authenticationToken" - token does not grant permission
+ *       to perform the requested action</li>
+ *   <li>BUSINESS_SECURITY_LOGIN_REQUIRED "sso" - the user is a member of a business
+ *       that requires single sign-on, and must complete SSO before accessing business
+ *       content.
  * </ul>
  */
 class QEVERCLOUD_EXPORT NoteStore: public QObject
 {
+    Q_OBJECT
     Q_DISABLE_COPY(NoteStore)
 public:
     explicit NoteStore(QString noteStoreUrl = QString(), QString authenticationToken = QString(), QObject * parent = 0);
@@ -76,29 +77,6 @@ public:
 
     /** Asynchronous version of @link getSyncState @endlink */
     AsyncResult * getSyncStateAsync(QString authenticationToken = QString());
-
-    /**
-       * Asks the NoteStore to provide information about the status of the user
-       * account corresponding to the provided authentication token.
-       * This version of 'getSyncState' allows the client to upload coarse-
-       * grained usage metrics to the service.
-       *
-       * @param clientMetrics  see the documentation of the ClientUsageMetrics
-       *   structure for an explanation of the fields that clients can pass to
-       *   the service.
-       */
-    SyncState getSyncStateWithMetrics(const ClientUsageMetrics& clientMetrics, QString authenticationToken = QString());
-
-    /** Asynchronous version of @link getSyncStateWithMetrics @endlink */
-    AsyncResult * getSyncStateWithMetricsAsync(const ClientUsageMetrics& clientMetrics, QString authenticationToken = QString());
-
-    /**
-       * DEPRECATED - use getFilteredSyncChunk.
-       */
-    SyncChunk getSyncChunk(qint32 afterUSN, qint32 maxEntries, bool fullSyncOnly, QString authenticationToken = QString());
-
-    /** Asynchronous version of @link getSyncChunk @endlink */
-    AsyncResult * getSyncChunkAsync(qint32 afterUSN, qint32 maxEntries, bool fullSyncOnly, QString authenticationToken = QString());
 
     /**
        * Asks the NoteStore to provide the state of the account in order of
@@ -158,6 +136,26 @@ public:
        * @param linkedNotebook
        *   This structure should contain identifying information and permissions
        *   to access the notebook in question.
+       *
+       * @throws EDAMUserException <ul>
+       *   <li>DATA_REQUIRED "LinkedNotebook.username" - The username field must be
+       *       populated with the current username of the owner of the notebook for which
+       *       you are obtaining sync state.
+       *   </li>
+       * </ul>
+       *
+       * @throws EDAMNotFoundException <ul>
+       *   <li>"LinkedNotebook.username" - If the LinkedNotebook.username field does not
+       *       correspond to a current user on the service.
+       *   </li>
+       * </ul>
+       *
+       * @throws SystemException <ul>
+       *   <li>SHARD_UNAVAILABLE - If the provided LinkedNotebook.username corresponds to a
+       *       user whose account is on a shard other than that on which this method was
+       *       invoked.
+       *   </li>
+       * </ul>
        */
     SyncState getLinkedNotebookSyncState(const LinkedNotebook& linkedNotebook, QString authenticationToken = QString());
 
@@ -242,6 +240,24 @@ public:
     AsyncResult * listNotebooksAsync(QString authenticationToken = QString());
 
     /**
+       * Returns a list of all the notebooks in a business that the user has permission to access,
+       * regardless of whether the user has joined them. This includes notebooks that have been shared
+       * with the entire business as well as notebooks that have been shared directly with the user.
+       *
+       * @param authenticationToken A business authentication token obtained by calling
+       *   UserStore.authenticateToBusiness.
+       *
+       * @throws EDAMUserException <ul>
+       *   <li> INVALID_AUTH "authenticationToken" - if the authentication token is not a
+       *     business auth token.</li>
+       * </ul>
+       */
+    QList< Notebook > listAccessibleBusinessNotebooks(QString authenticationToken = QString());
+
+    /** Asynchronous version of @link listAccessibleBusinessNotebooks @endlink */
+    AsyncResult * listAccessibleBusinessNotebooksAsync(QString authenticationToken = QString());
+
+    /**
        * Returns the current state of the notebook with the provided GUID.
        * The notebook may be active or deleted (but not expunged).
        *
@@ -289,22 +305,18 @@ public:
        *   saved in this object's 'guid' field.
        *
        * @throws EDAMUserException <ul>
-       *   <li> BAD_DATA_FORMAT "Notebook.name" - invalid length or pattern
-       *   </li>
-       *   <li> BAD_DATA_FORMAT "Notebook.stack" - invalid length or pattern
-       *   </li>
-       *   <li> BAD_DATA_FORMAT "Publishing.uri" - if publishing set but bad uri
-       *   </li>
-       *   <li> BAD_DATA_FORMAT "Publishing.publicDescription" - if too long
-       *   </li>
-       *   <li> DATA_CONFLICT "Notebook.name" - name already in use
-       *   </li>
-       *   <li> DATA_CONFLICT "Publishing.uri" - if URI already in use
-       *   </li>
-       *   <li> DATA_REQUIRED "Publishing.uri" - if publishing set but uri missing
-       *   </li>
-       *   <li> LIMIT_REACHED "Notebook" - at max number of notebooks
-       *   </li>
+       *   <li> BAD_DATA_FORMAT "Notebook.name" - invalid length or pattern</li>
+       *   <li> BAD_DATA_FORMAT "Notebook.stack" - invalid length or pattern</li>
+       *   <li> BAD_DATA_FORMAT "Publishing.uri" - if publishing set but bad uri</li>
+       *   <li> BAD_DATA_FORMAT "Publishing.publicDescription" - if too long</li>
+       *   <li> DATA_CONFLICT "Notebook.name" - name already in use</li>
+       *   <li> DATA_CONFLICT "Publishing.uri" - if URI already in use</li>
+       *   <li> DATA_REQUIRED "Publishing.uri" - if publishing set but uri missing</li>
+       *   <li> DATA_REQUIRED "Notebook" - notebook parameter was null</li>
+       *   <li> PERMISSION_DENIED "Notebook.defaultNotebook" - if the 'defaultNotebook' field
+       *        is set to 'true' for a Notebook that is not owned by the user identified by
+       *        the passed authenticationToken.</li>
+       *   <li> LIMIT_REACHED "Notebook" - at max number of notebooks</li>
        * </ul>
        */
     Notebook createNotebook(const Notebook& notebook, QString authenticationToken = QString());
@@ -323,20 +335,17 @@ public:
        *   The Update Sequence Number for this change within the account.
        *
        * @throws EDAMUserException <ul>
-       *   <li> BAD_DATA_FORMAT "Notebook.name" - invalid length or pattern
-       *   </li>
-       *   <li> BAD_DATA_FORMAT "Notebook.stack" - invalid length or pattern
-       *   </li>
-       *   <li> BAD_DATA_FORMAT "Publishing.uri" - if publishing set but bad uri
-       *   </li>
-       *   <li> BAD_DATA_FORMAT "Publishing.publicDescription" - if too long
-       *   </li>
-       *   <li> DATA_CONFLICT "Notebook.name" - name already in use
-       *   </li>
-       *   <li> DATA_CONFLICT "Publishing.uri" - if URI already in use
-       *   </li>
-       *   <li> DATA_REQUIRED "Publishing.uri" - if publishing set but uri missing
-       *   </li>
+       *   <li> BAD_DATA_FORMAT "Notebook.name" - invalid length or pattern</li>
+       *   <li> BAD_DATA_FORMAT "Notebook.stack" - invalid length or pattern</li>
+       *   <li> BAD_DATA_FORMAT "Publishing.uri" - if publishing set but bad uri</li>
+       *   <li> BAD_DATA_FORMAT "Publishing.publicDescription" - if too long</li>
+       *   <li> DATA_CONFLICT "Notebook.name" - name already in use</li>
+       *   <li> DATA_CONFLICT "Publishing.uri" - if URI already in use</li>
+       *   <li> DATA_REQUIRED "Publishing.uri" - if publishing set but uri missing</li>
+       *   <li> DATA_REQUIRED "Notebook" - notebook parameter was null</li>
+       *   <li> PERMISSION_DENIED "Notebook.defaultNotebook" - if the 'defaultNotebook' field
+       *        is set to 'true' for a Notebook that is not owned by the user identified by
+       *        the passed authenticationToken.</li>
        * </ul>
        *
        * @throws EDAMNotFoundException <ul>
@@ -532,7 +541,7 @@ public:
     /**
        * Permanently deletes the tag with the provided GUID, if present.
        * <p/>
-       * NOTE: This function is generally not available to third party applications.
+       * NOTE: This function is not generally available to third party applications.
        * Calls will result in an EDAMUserException with the error code
        * PERMISSION_DENIED.
        *
@@ -682,14 +691,6 @@ public:
     AsyncResult * expungeSearchAsync(Guid guid, QString authenticationToken = QString());
 
     /**
-       * DEPRECATED. Use findNotesMetadata.
-       */
-    NoteList findNotes(const NoteFilter& filter, qint32 offset, qint32 maxNotes, QString authenticationToken = QString());
-
-    /** Asynchronous version of @link findNotes @endlink */
-    AsyncResult * findNotesAsync(const NoteFilter& filter, qint32 offset, qint32 maxNotes, QString authenticationToken = QString());
-
-    /**
        * Finds the position of a note within a sorted subset of all of the user's
        * notes. This may be useful for thin clients that are displaying a paginated
        * listing of a large account, which need to know where a particular note
@@ -757,10 +758,12 @@ public:
        *   pagination.
        *
        * @param maxNotes
-       *   The mximum notes to return in this query.  The service will return a set
+       *   The maximum notes to return in this query.  The service will return a set
        *   of notes that is no larger than this number, but may return fewer notes
        *   if needed.  The NoteList.totalNotes field in the return value will
        *   indicate whether there are more values available after the returned set.
+       *   Currently, the service will not return more than 250 notes in a single request,
+       *   but this number may change in the future.
        *
        * @param resultSpec
        *   This specifies which information should be returned for each matching
@@ -770,6 +773,7 @@ public:
        *
        * @return
        *   The list of notes that match the criteria.
+       *   The Notes.sharedNotes field will not be set.
        *
        * @throws EDAMUserException <ul>
        *   <li> BAD_DATA_FORMAT "offset" - not between 0 and EDAM_USER_NOTES_MAX
@@ -817,16 +821,12 @@ public:
        *   and supplied in the reply. Otherwise, the trash value will be omitted.
        *
        * @throws EDAMUserException <ul>
-       *   <li> BAD_DATA_FORMAT "NoteFilter.notebookGuid" - if malformed
-       *   </li>
-       *   <li> BAD_DATA_FORMAT "NoteFilter.notebookGuids" - if any are malformed
-       *   </li>
-       *   <li> BAD_DATA_FORMAT "NoteFilter.words" - if search string too long
-       *   </li>
+       *   <li>BAD_DATA_FORMAT "NoteFilter.notebookGuid" - if malformed</li>
+       *   <li>BAD_DATA_FORMAT "NoteFilter.notebookGuids" - if any are malformed</li>
+       *   <li>BAD_DATA_FORMAT "NoteFilter.words" - if search string too long</li>
        *
        * @throws EDAMNotFoundException <ul>
-       *   <li> "Notebook.guid" - not found, by GUID
-       *   </li>
+       *   <li> "Notebook.guid" - not found, by GUID</li>
        * </ul>
        */
     NoteCollectionCounts findNoteCounts(const NoteFilter& filter, bool withTrash, QString authenticationToken = QString());
@@ -844,25 +844,14 @@ public:
        * will be ignored (so it could be an empty string).  The applicationData
        * fields are returned as keysOnly.
        *
+       * @param authenticationToken
+       *   An authentication token that grants the caller access to the requested note.
+       *
        * @param guid
        *   The GUID of the note to be retrieved.
        *
-       * @param withContent
-       *   If true, the note will include the ENML contents of its
-       *   'content' field.
-       *
-       * @param withResourcesData
-       *   If true, any Resource elements in this Note will include the binary
-       *   contents of their 'data' field's body.
-       *
-       * @param withResourcesRecognition
-       *   If true, any Resource elements will include the binary contents of the
-       *   'recognition' field's body if recognition data is present.
-       *
-       * @param withResourcesAlternateData
-       *   If true, any Resource elements in this Note will include the binary
-       *   contents of their 'alternateData' fields' body, if an alternate form
-       *   is present.
+       * @param resultSpec
+       *   A structure specifying the fields of the note that the caller would like to get.
        *
        * @throws EDAMUserException <ul>
        *   <li> BAD_DATA_FORMAT "Note.guid" - if the parameter is missing
@@ -875,6 +864,18 @@ public:
        *   <li> "Note.guid" - not found, by GUID
        *   </li>
        * </ul>
+       */
+    Note getNoteWithResultSpec(Guid guid, const NoteResultSpec& resultSpec, QString authenticationToken = QString());
+
+    /** Asynchronous version of @link getNoteWithResultSpec @endlink */
+    AsyncResult * getNoteWithResultSpecAsync(Guid guid, const NoteResultSpec& resultSpec, QString authenticationToken = QString());
+
+    /**
+       * DEPRECATED. See getNoteWithResultSpec.
+       *
+       * This function is equivalent to getNoteWithResultSpec, with each of the boolean parameters
+       * mapping to the equivalent field of a NoteResultSpec. The Note.sharedNotes field is never
+       * populated on the returned note. To get a note with its shares, use getNoteWithResultSpec.
        */
     Note getNote(Guid guid, bool withContent, bool withResourcesData, bool withResourcesRecognition, bool withResourcesAlternateData, QString authenticationToken = QString());
 
@@ -1120,7 +1121,8 @@ public:
        *   resources is not being modified, note.resources should be left unset.
        *
        * @return
-       *   The metadata (no contents) for the Note on the server after the update
+       *   The metadata (no contents) for the Note on the server after the update.
+       *   The Note.sharedNotes field will not be set.
        *
        * @throws EDAMUserException <ul>
        *   <li> BAD_DATA_FORMAT "Note.title" - invalid length or pattern
@@ -1151,9 +1153,12 @@ public:
        *   </li>
        *   <li> LIMIT_REACHED "ResourceAttribute.*" - attribute string too long
        *   </li>
-       *   <li> PERMISSION_DENIED "Note" - user doesn't own
-       *   </li>
        *   <li> PERMISSION_DENIED "Note.notebookGuid" - user doesn't own destination
+       *   <li> PERMISSION_DENIED "Note.tags" - user doesn't have permission to
+       *     modify the note's tags. note.tags must be unset.
+       *   </li>
+       *   <li> PERMISSION_DENIED "Note.attributes" - user doesn't have permission
+       *     to modify the note's attributes. note.attributes must be unset.
        *   </li>
        *   <li> QUOTA_REACHED "Accounting.uploadLimit" - note exceeds upload quota
        *   </li>
@@ -1238,62 +1243,6 @@ public:
     AsyncResult * expungeNoteAsync(Guid guid, QString authenticationToken = QString());
 
     /**
-       * Permanently removes a list of Notes, and all of their Resources, from
-       * the service.  This should be invoked with a small number of Note GUIDs
-       * (e.g. 100 or less) on each call.  To expunge a larger number of notes,
-       * call this method multiple times.  This should also be used to reduce the
-       * number of Notes in a notebook before calling expungeNotebook() or
-       * in the trash before calling expungeInactiveNotes(), since these calls may
-       * be prohibitively slow if there are more than a few hundred notes.
-       * If an exception is thrown for any of the GUIDs, then none of the notes
-       * will be deleted.  I.e. this call can be treated as an atomic transaction.
-       * <p/>
-       * NOTE: This function is not available to third party applications.
-       * Calls will result in an EDAMUserException with the error code
-       * PERMISSION_DENIED.
-       *
-       * @param noteGuids
-       *   The list of GUIDs for the Notes to remove.
-       *
-       * @return
-       *   The account's updateCount at the end of this operation
-       *
-       * @throws EDAMUserException <ul>
-       *   <li> PERMISSION_DENIED "Note" - user doesn't own
-       *   </li>
-       * </ul>
-       *
-       * @throws EDAMNotFoundException <ul>
-       *   <li> "Note.guid" - not found, by GUID
-       *   </li>
-       * </ul>
-       */
-    qint32 expungeNotes(QList< Guid > noteGuids, QString authenticationToken = QString());
-
-    /** Asynchronous version of @link expungeNotes @endlink */
-    AsyncResult * expungeNotesAsync(QList< Guid > noteGuids, QString authenticationToken = QString());
-
-    /**
-       * Permanently removes all of the Notes that are currently marked as
-       * inactive.  This is equivalent to "emptying the trash", and these Notes
-       * will be gone permanently.
-       * <p/>
-       * This operation may be relatively slow if the account contains a large
-       * number of inactive Notes.
-       * <p/>
-       * NOTE: This function is not available to third party applications.
-       * Calls will result in an EDAMUserException with the error code
-       * PERMISSION_DENIED.
-       *
-       * @return
-       *    The number of notes that were expunged.
-       */
-    qint32 expungeInactiveNotes(QString authenticationToken = QString());
-
-    /** Asynchronous version of @link expungeInactiveNotes @endlink */
-    AsyncResult * expungeInactiveNotesAsync(QString authenticationToken = QString());
-
-    /**
        * Performs a deep copy of the Note with the provided GUID 'noteGuid' into
        * the Notebook with the provided GUID 'toNotebookGuid'.
        * The caller must be the owner of both the Note and the Notebook.
@@ -1304,6 +1253,9 @@ public:
        * The copied note is considered as an "upload" for the purpose of upload
        * transfer limit calculation, so its size is added to the upload count for
        * the owner.
+       *
+       * If the original note has been shared and has SharedNote records, the shares
+       * are NOT copied.
        *
        * @param noteGuid
        *   The GUID of the Note to copy.
@@ -1344,16 +1296,18 @@ public:
        * that are returned by this call can be used with getNoteVersion to retrieve
        * the previous note.
        * The identifiers will be listed from the most recent versions to the oldest.
+       * This call is only available for notes in Premium accounts. (I.e. access
+       * to past versions of Notes is a Premium-only feature.)
        *
        * @throws EDAMUserException <ul>
-       *   <li> BAD_DATA_FORMAT "Note.guid" - if the parameter is missing
+       *   <li> DATA_REQUIRED "Note.guid" - if GUID is null or empty string.
        *   </li>
-       *   <li> PERMISSION_DENIED "Note" - private note, user doesn't own
+       *   <li> BAD_DATA_FORMAT "Note.guid" - if GUID is not of correct length.
        *   </li>
        * </ul>
        *
        * @throws EDAMNotFoundException <ul>
-       *   <li> "Note.guid" - not found, by GUID
+       *   <li> "Note.guid" - not found, by GUID.
        *   </li>
        * </ul>
        */
@@ -1368,7 +1322,7 @@ public:
        * guid) and the version (via the updateSequenceNumber of that version).
        * to find a listing of the stored version USNs for a note, call
        * listNoteVersions.
-       * This call is only available for notes in Premium accounts.  (I.e. access
+       * This call is only available for notes in Premium accounts. (I.e. access
        * to past versions of Notes is a Premium-only feature.)
        *
        * @param noteGuid
@@ -1391,18 +1345,14 @@ public:
        *   is present.
        *
        * @throws EDAMUserException <ul>
-       *   <li> BAD_DATA_FORMAT "Note.guid" - if the parameter is missing
+       *   <li> DATA_REQUIRED "Note.guid" - if GUID is null or empty string.
        *   </li>
-       *   <li> PERMISSION_DENIED "Note" - private note, user doesn't own
-       *   </li>
-       *   <li> PERMISSION_DENIED "updateSequenceNum" -
-       *     The account isn't permitted to access previous versions of notes.
-       *     (i.e. this is a Free account.)
+       *   <li> BAD_DATA_FORMAT "Note.guid" - if GUID is not of correct length.
        *   </li>
        * </ul>
        *
        * @throws EDAMNotFoundException <ul>
-       *   <li> "Note.guid" - not found, by GUID
+       *   <li> "Note.guid" - not found, by GUID.
        *   </li>
        *   <li> "Note.updateSequenceNumber" - the Note doesn't have a version with
        *      the corresponding USN.
@@ -1751,44 +1701,41 @@ public:
     AsyncResult * getPublicNotebookAsync(UserID userId, QString publicUri);
 
     /**
-       * Used to construct a shared notebook object. The constructed notebook will
-       * contain a "share key" which serve as a unique identifer and access token
-       * for a user to access the notebook of the shared notebook owner.
+       * @Deprecated for first-party clients. See createOrUpdateNotebookShares.
        *
-       * @param sharedNotebook
-       *   A shared notebook object populated with the email address of the share
-       *   recipient, the notebook guid and the access permissions. All other
-       *   attributes of the shared object are ignored. The SharedNotebook.allowPreview
-       *   field must be explicitly set with either a true or false value.
+       * Share a notebook with an email address, and optionally to a specific
+       * recipient. If an existing SharedNotebook associated with
+       * sharedNotebook.notebookGuid is found by recipientUsername or email, then
+       * the values of sharedNotebook will be used to update the existing record,
+       * else a new record will be created.
        *
-       * @return
-       *   The fully populated SharedNotebook object including the server assigned
-       *   share id and shareKey which can both be used to uniquely identify the
-       *   SharedNotebook.
+       * If recipientUsername is set and there is already a SharedNotebook
+       * for that Notebook with that recipientUsername and the privileges on the
+       * existing notebook are lower, than on this one, this will update the
+       * privileges and sharerUserId. If there isn't an existing SharedNotebook for
+       * recipientUsername, this will create and return a shared notebook for that
+       * email and recipientUsername. If recipientUsername is not set and there
+       * already is a SharedNotebook for a Notebook for that email address and the
+       * privileges on the existing SharedNotebook are lower than on this one, this
+       * will update the privileges and sharerUserId, and return the updated
+       * SharedNotebook. Otherwise, this will create and return a SharedNotebook for
+       * the email address.
        *
-       * @throws EDAMUserException <ul>
-       *   <li>BAD_DATA_FORMAT "SharedNotebook.email" - if the email was not valid</li>
-       *   <li>BAD_DATA_FORMAT "requireLogin" - if the SharedNotebook.allowPreview field was
-       *       not set, and the SharedNotebook.requireLogin was also not set or was set to
-       *       false.</li>
-       *   <li>PERMISSION_DENIED "SharedNotebook.recipientSettings" - if
-       *       recipientSettings is set in the sharedNotebook.  Only the recipient
-       *       can set these values via the setSharedNotebookRecipientSettings
-       *       method.
-       *   </li>
-       *   </ul>
-       * @throws EDAMNotFoundException <ul>
-       *   <li>Notebook.guid - if the notebookGuid is not a valid GUID for the user.
-       *   </li>
-       *   </ul>
-       */
-    SharedNotebook createSharedNotebook(const SharedNotebook& sharedNotebook, QString authenticationToken = QString());
-
-    /** Asynchronous version of @link createSharedNotebook @endlink */
-    AsyncResult * createSharedNotebookAsync(const SharedNotebook& sharedNotebook, QString authenticationToken = QString());
-
-    /**
-       * Update a SharedNotebook object.
+       * If the authenticationToken is a Business auth token, recipientUsername is
+       * set and the recipient is in the same business as the business auth token,
+       * this method will also auto-join the business user to the SharedNotebook -
+       * that is it will set serviceJoined on the SharedNotebook and create a
+       * LinkedNotebook on the recipient's account pointing to the SharedNotebook.
+       * The LinkedNotebook creation happens out-of-band, so there will be a delay
+       * on the order of half a minute between the SharedNotebook and LinkedNotebook
+       * creation.
+       *
+       * Also handles sending an email to the email addresses: if a SharedNotebook
+       * is being created, this will send the shared notebook invite email, and
+       * if a SharedNotebook already exists, it will send the shared notebook
+       * reminder email. Both these emails contain a link to join the notebook.
+       * If the notebook is being auto-joined, it sends an email with that
+       * information to the recipient.
        *
        * @param authenticationToken
        *   Must be an authentication token from the owner or a shared notebook
@@ -1796,25 +1743,106 @@ public:
        *   permissions to change invitations for a notebook.
        *
        * @param sharedNotebook
-       *  The SharedNotebook object containing the requested changes.
-       *  The "id" of the shared notebook must be set to allow the service
-       *  to identify the SharedNotebook to be updated. In addition, you MUST set
-       *  the email, permission, and allowPreview fields to the desired values.
-       *  All other fields will be ignored if set.
+       *   A shared notebook object populated with the email address of the share
+       *   recipient, the notebook guid and the access permissions. All other
+       *   attributes of the shared object are ignored. The SharedNotebook.allowPreview
+       *   field must be explicitly set with either a true or false value.
+       *
+       * @param message
+       *   The sharer-defined message to put in the email sent out.
        *
        * @return
-       *  The Update Serial Number for this change within the account.
+       *   The fully populated SharedNotebook object including the server assigned
+       *   globalId which can both be used to uniquely identify the SharedNotebook.
        *
        * @throws EDAMUserException <ul>
-       *   <li>UNSUPPORTED_OPERATION "updateSharedNotebook" - if this service instance does not support shared notebooks.</li>
-       *   <li>BAD_DATA_FORMAT "SharedNotebook.email" - if the email was not valid.</li>
-       *   <li>DATA_REQUIRED "SharedNotebook.id" - if the id field was not set.</li>
-       *   <li>DATA_REQUIRED "SharedNotebook.privilege" - if the privilege field was not set.</li>
-       *   <li>DATA_REQUIRED "SharedNotebook.allowPreview" - if the allowPreview field was not set.</li>
+       *   <li>BAD_DATA_FORMAT "SharedNotebook.email" - if the email was not valid</li>
+       *   <li>DATA_REQUIRED "SharedNotebook.privilege" - if the
+       *       SharedNotebook.privilegeLevel was not set.</li>
+       *   <li>BAD_DATA_FORMAT "SharedNotebook.requireLogin" - if requireLogin was
+       *       set. requireLogin is deprecated.</li>
+       *   <li>BAD_DATA_FORMAT "SharedNotebook.privilegeLevel" - if the
+       *       SharedNotebook.privilegeLevel field was unset or set to GROUP.</li>
+       *   <li>PERMISSION_DENIED "emailConfirmation" - if the email address on the
+       *       authenticationToken's owner's account is not confirmed.</li>
+       *   <li>PERMISSION_DENIED "SharedNotebook.recipientSettings" - if
+       *       recipientSettings is set in the sharedNotebook.  Only the recipient
+       *       can set these values via the setSharedNotebookRecipientSettings
+       *       method.</li>
+       *   <li>EDAMErrorCode.LIMIT_REACHED "SharedNotebook" - The notebook already has
+       *       EDAM_NOTEBOOK_SHARED_NOTEBOOK_MAX shares.</li>
        *   </ul>
        * @throws EDAMNotFoundException <ul>
-       *   <li>SharedNotebook.id - if no shared notebook with the specified ID was found.
+       *   <li>Notebook.guid - if the notebookGuid is not a valid GUID for the user.
+       *   </li>
        *   </ul>
+       */
+    SharedNotebook shareNotebook(const SharedNotebook& sharedNotebook, QString message, QString authenticationToken = QString());
+
+    /** Asynchronous version of @link shareNotebook @endlink */
+    AsyncResult * shareNotebookAsync(const SharedNotebook& sharedNotebook, QString message, QString authenticationToken = QString());
+
+    /**
+       * Share a notebook by a messaging thread ID or a list of contacts. This function is
+       * intended to be used in conjunction with Evernote messaging, and as such does not
+       * notify the recipient that a notebook has been shared with them.
+       *
+       * Sharing with a subset of participants on a thread is accomplished by specifying both
+       * a thread ID and a list of contacts. This ensures that even if those contacts are
+       * on the thread under a deactivated identity, the correct user (the one who has the
+       * given contact on the thread) receives the share.
+       *
+       * @param authenticationToken
+       *   An authentication token that grants the caller permission to share the notebook.
+       *   This should be an owner token if the notebook is owned by the caller.
+       *   If the notebook is a business notebook to which the caller has full access,
+       *   this should be their business authentication token. If the notebook is a shared
+       *   (non-business) notebook to which the caller has full access, this should be the
+       *   shared notebook authentication token returned by NoteStore.authenticateToNotebook.
+       *
+       * @param shareTemplate
+       *   Specifies the GUID of the notebook to be shared, the privilege at which the notebook
+       *   should be shared, and the recipient information.
+       *
+       * @return
+       *   A structure containing the USN of the Notebook after the change and a list of created
+       *   or updated SharedNotebooks.
+       *
+       * @throws EDAMUserException <ul>
+       *   <li>DATA_REQUIRED "Notebook.guid" - if no notebook GUID was specified</li>
+       *   <li>BAD_DATA_FORMAT "Notebook.guid" - if shareTemplate.notebookGuid is not a
+       *     valid GUID</li>
+       *   <li>DATA_REQUIRED "shareTemplate" - if the shareTemplate parameter was missing</li>
+       *   <li>DATA_REQUIRED "NotebookShareTemplate.privilege" - if no privilege was
+       *     specified</li>
+       *   <li>DATA_CONFLICT "NotebookShareTemplate.privilege" - if the specified privilege
+       *     is not allowed.</li>
+       *   <li>DATA_REQUIRED "NotebookShareTemplate.recipients" - if no recipients were
+       *     specified, either by thread ID or as a list of contacts</li>
+       *   <li>LIMIT_REACHED "SharedNotebook" - if the notebook has reached its maximum
+       *     number of shares</li>
+       * </ul>
+       *
+       * @throws EDAMInvalidContactsException <ul>
+       *   <li>"NotebookShareTemplate.recipients" - if one or more of the recipients specified
+       *     in shareTemplate.recipients was not syntactically valid, or if attempting to
+       *     share a notebook with an Evernote identity that the sharer does not have a
+       *     connection to. The exception will specify which recipients were invalid.</li>
+       * </ul>
+       *
+       * @throws EDAMNotFoundException <ul>
+       *   <li>"Notebook.guid" - if no notebook with the specified GUID was found</li>
+       *   <li>"NotebookShareTemplate.recipientThreadId" - if the recipient thread ID was
+       *     specified, but no thread with that ID exists</li>
+       * </ul>
+       */
+    CreateOrUpdateNotebookSharesResult createOrUpdateNotebookShares(const NotebookShareTemplate& shareTemplate, QString authenticationToken = QString());
+
+    /** Asynchronous version of @link createOrUpdateNotebookShares @endlink */
+    AsyncResult * createOrUpdateNotebookSharesAsync(const NotebookShareTemplate& shareTemplate, QString authenticationToken = QString());
+
+    /**
+       * @Deprecated See createOrUpdateNotebookShares and manageNotebookShares.
        */
     qint32 updateSharedNotebook(const SharedNotebook& sharedNotebook, QString authenticationToken = QString());
 
@@ -1822,74 +1850,43 @@ public:
     AsyncResult * updateSharedNotebookAsync(const SharedNotebook& sharedNotebook, QString authenticationToken = QString());
 
     /**
-       * Set values for the recipient settings associated with a shared notebook.  Having
-       * update rights to the shared notebook record itself has no effect on this call;
-       * only the recipient of the shared notebook can can the recipient settings.
+       * Set values for the recipient settings associated with a notebook share. Only the
+       * recipient of the share can update their recipient settings.
        *
-       * If you do <i>not</i> wish to, or cannot, change one of the reminderNotifyEmail or
-       * reminderNotifyInApp fields, you must leave that field unset in recipientSettings.
-       * This method will skip that field for updates and leave the existing state as
+       * If you do <i>not</i> wish to, or cannot, change one of the recipient settings fields,
+       * you must leave that field unset in recipientSettings.
+       * This method will skip that field for updates and attempt to leave the existing value as
        * it is.
        *
-       * @return The update sequence number of the account to which the shared notebook
-       *   belongs, which is the account from which we are sharing a notebook.
+       * If recipientSettings.inMyList is false, both reminderNotifyInApp and reminderNotifyEmail
+       * will be either left as null or converted to false (if currently true).
        *
-       * @throws EDAMNotFoundException "sharedNotebookId" - Thrown if the service does not
-       *   have a shared notebook record for the sharedNotebookId on the given shard.  If you
-       *   receive this exception, it is probable that the shared notebook record has
-       *   been revoked or expired, or that you accessed the wrong shard.
+       * @param authenticationToken The owner authentication token for the recipient of the share.
        *
-       * @throws EDAMUserException <ul>
-       *   <li>PEMISSION_DENIED "authenticationToken" - If you do not have permission to set
-       *       the recipient settings for the shared notebook.  Only the recipient has
-       *       permission to do this.
-       *   <li>DATA_CONFLICT "recipientSettings.reminderNotifyEmail" - Setting whether
-       *       or not you want to receive reminder e-mail notifications is possible on
-       *       a business notebook in the business to which the user belongs.  All
-       *       others can safely unset the reminderNotifyEmail field from the
-       *       recipientSettings parameter.
-       * </ul>
-       */
-    qint32 setSharedNotebookRecipientSettings(qint64 sharedNotebookId, const SharedNotebookRecipientSettings& recipientSettings, QString authenticationToken = QString());
-
-    /** Asynchronous version of @link setSharedNotebookRecipientSettings @endlink */
-    AsyncResult * setSharedNotebookRecipientSettingsAsync(qint64 sharedNotebookId, const SharedNotebookRecipientSettings& recipientSettings, QString authenticationToken = QString());
-
-    /**
-       * Send a reminder message to some or all of the email addresses that a notebook has been
-       * shared with. The message includes the current link to view the notebook.
-       * @param authenticationToken
-       *   The auth token of the user with permissions to share the notebook
-       * @param notebookGuid
-       *   The guid of the shared notebook
-       * @param messageText
-       *  User provided text to include in the email
-       * @param recipients
-       *  The email addresses of the recipients. If this list is empty then all of the
-       *  users that the notebook has been shared with are emailed.
-       *  If an email address doesn't correspond to share invite members then that address
-       *  is ignored.
-       * @return
-       *  The number of messages sent
-       * @throws EDAMUserException <ul>
-       *   <li> LIMIT_REACHED "(recipients)" -
-       *     The email can't be sent because this would exceed the user's daily
-       *     email limit.
-       *   </li>
-       *   <li> PERMISSION_DENIED "Notebook.guid" - The user doesn't have permission to
-       *     send a message for the specified notebook.
-       *   </li>
-       * </ul>
+       * @return The updated Notebook with the new recipient settings. Note that some of the
+       * recipient settings may differ from what was requested. Clients should update their state
+       * based on this return value.
        *
        * @throws EDAMNotFoundException <ul>
-       *   <li> "Notebook.guid" - not found, by GUID
-       *   </li>
+       *   <li>Notebook.guid - Thrown if the service does not have a notebook record with the
+       *       notebookGuid on the given shard.</li>
+       *   <li>Publishing.publishState - Thrown if the business notebook is not shared with the
+       *       user and is also not published to their business.</li>
        * </ul>
-        */
-    qint32 sendMessageToSharedNotebookMembers(Guid notebookGuid, QString messageText, QStringList recipients, QString authenticationToken = QString());
+       *
+       * @throws EDAMUserException <ul>
+       *   <li>PEMISSION_DENIED "authenticationToken" - If the owner of the given token is not
+       *       allowed to set recipient settings on the specified notebook.</li>
+       *   <li>DATA_CONFLICT "recipientSettings.reminderNotifyEmail" - Setting reminderNotifyEmail
+       *       is allowed only for notebooks which belong to the same business as the user.</li>
+       *   <li>DATA_CONFLICT "recipientSettings.inMyList" - If the request is setting inMyList
+       *       to false and any of reminder* settings to true.</li>
+       * </ul>
+       */
+    Notebook setNotebookRecipientSettings(QString notebookGuid, const NotebookRecipientSettings& recipientSettings, QString authenticationToken = QString());
 
-    /** Asynchronous version of @link sendMessageToSharedNotebookMembers @endlink */
-    AsyncResult * sendMessageToSharedNotebookMembersAsync(Guid notebookGuid, QString messageText, QStringList recipients, QString authenticationToken = QString());
+    /** Asynchronous version of @link setNotebookRecipientSettings @endlink */
+    AsyncResult * setNotebookRecipientSettingsAsync(QString notebookGuid, const NotebookRecipientSettings& recipientSettings, QString authenticationToken = QString());
 
     /**
        * Lists the collection of shared notebooks for all notebooks in the
@@ -1902,26 +1899,6 @@ public:
 
     /** Asynchronous version of @link listSharedNotebooks @endlink */
     AsyncResult * listSharedNotebooksAsync(QString authenticationToken = QString());
-
-    /**
-       * Expunges the SharedNotebooks in the user's account using the
-       * SharedNotebook.id as the identifier.
-       * <p/>
-       * NOTE: This function is generally not available to third party applications.
-       * Calls will result in an EDAMUserException with the error code
-       * PERMISSION_DENIED.
-       *
-       * @param
-       *   sharedNotebookIds - a list of ShardNotebook.id longs identifying the
-       *       objects to delete permanently.
-       *
-       * @return
-       *   The account's update sequence number.
-       */
-    qint32 expungeSharedNotebooks(QList< qint64 > sharedNotebookIds, QString authenticationToken = QString());
-
-    /** Asynchronous version of @link expungeSharedNotebooks @endlink */
-    AsyncResult * expungeSharedNotebooksAsync(QList< qint64 > sharedNotebookIds, QString authenticationToken = QString());
 
     /**
        * Asks the service to make a linked notebook with the provided name, username
@@ -1939,18 +1916,24 @@ public:
        *   saved in this object's 'id' field.
        *
        * @throws EDAMUserException <ul>
-       *   <li> BAD_DATA_FORMAT "LinkedNotebook.name" - invalid length or pattern
+       *   <li> DATA_REQUIRED "LinkedNotebook.shareName" - missing shareName
+       *   <li> BAD_DATA_FORMAT "LinkedNotebook.name" - invalid shareName length or pattern
        *   </li>
        *   <li> BAD_DATA_FORMAT "LinkedNotebook.username" - bad username format
        *   </li>
        *   <li> BAD_DATA_FORMAT "LinkedNotebook.uri" -
        *     if public notebook set but bad uri
        *   </li>
-       *   <li> BAD_DATA_FORMAT "LinkedNotebook.shareKey" -
-       *     if private notebook set but bad shareKey
-       *   </li>
        *   <li> DATA_REQUIRED "LinkedNotebook.shardId" -
        *     if private notebook but shard id not provided
+       *   </li>
+       *   <li> BAD_DATA_FORMAT "LinkedNotebook.stack" - invalid stack name length or pattern
+       *   </li>
+       * </ul>
+       *
+       * @throws EDAMSystemException <ul>
+       *   <li> BAD_DATA_FORMAT "LinkedNotebook.sharedNotebookGlobalId" -
+       *     if a bad global identifer was set on a private notebook
        *   </li>
        * </ul>
        */
@@ -1967,7 +1950,11 @@ public:
        *   The Update Sequence Number for this change within the account.
        *
        * @throws EDAMUserException <ul>
-       *   <li> BAD_DATA_FORMAT "LinkedNotebook.name" - invalid length or pattern
+       *   <li> DATA_REQUIRED "LinkedNotebook.shareName" - missing shareName
+       *   </li>
+       *   <li> BAD_DATA_FORMAT "LinkedNotebook.shareName" - invalid shareName length or pattern
+       *   </li>
+       *   <li> BAD_DATA_FORMAT "LinkedNotebook.stack" - invalid stack name length or pattern
        *   </li>
        * </ul>
        */
@@ -2007,29 +1994,38 @@ public:
        * calls to find and retrieve notes, and if the permissions in the shared
        * notebook are sufficient, to make changes to the contents of the notebook.
        *
-       * @param shareKey
-       *   The 'shareKey' identifier from the SharedNotebook that was granted to
-       *   some recipient.  This string internally encodes the notebook identifier
-       *   and a security signature.
+       * @param shareKeyOrGlobalId
+       *   May be one of the following:
+       *   <ul>
+       *     <li>A share key for a shared notebook that was granted to some recipient
+       *         Must be used if you are joining a notebook unless it was shared via
+       *         createOrUpdateNotebookShares. Share keys are delivered out-of-band
+       *         and are generally not available to clients. For security reasons,
+       *         share keys may be invalidated at the discretion of the service.
+       *     </li>
+       *     <li>The shared notebook global identifier. May be used to access a
+       *         notebook that is already joined.
+       *     </li>
+       *     <li>The Notebook GUID. May be used to access a notebook that was already
+       *         joined, or to access a notebook that was shared with the recipient
+       *         via createOrUpdateNotebookShares.
+       *     </li>
+       *   </ul>
        *
        * @param authenticationToken
        *   If a non-empty string is provided, this is the full user-based
        *   authentication token that identifies the user who is currently logged in
-       *   and trying to access the shared notebook.  This may be required if the
-       *   notebook was created with 'requireLogin'.
+       *   and trying to access the shared notebook.
        *   If this string is empty, the service will attempt to authenticate to the
        *   shared notebook without any logged in user.
        *
        * @throws EDAMSystemException <ul>
-       *   <li> BAD_DATA_FORMAT "shareKey" - invalid shareKey string
-       *   </li>
-       *   <li> INVALID_AUTH "shareKey" - bad signature on shareKey string
-       *   </li>
+       *   <li> BAD_DATA_FORMAT "shareKey" - invalid shareKey string</li>
+       *   <li> INVALID_AUTH "shareKey" - bad signature on shareKey string</li>
        * </ul>
        *
        * @throws EDAMNotFoundException <ul>
-       *   <li> "SharedNotebook.id" - the shared notebook no longer exists
-       *   </li>
+       *   <li> "SharedNotebook.id" - the shared notebook no longer exists</li>
        * </ul>
        *
        * @throws EDAMUserException <ul>
@@ -2041,10 +2037,10 @@ public:
        *   </li>
        * </ul>
        */
-    AuthenticationResult authenticateToSharedNotebook(QString shareKey, QString authenticationToken = QString());
+    AuthenticationResult authenticateToSharedNotebook(QString shareKeyOrGlobalId, QString authenticationToken = QString());
 
     /** Asynchronous version of @link authenticateToSharedNotebook @endlink */
-    AsyncResult * authenticateToSharedNotebookAsync(QString shareKey, QString authenticationToken = QString());
+    AsyncResult * authenticateToSharedNotebookAsync(QString shareKeyOrGlobalId, QString authenticationToken = QString());
 
     /**
        * This function is used to retrieve extended information about a shared
@@ -2131,7 +2127,7 @@ public:
     AsyncResult * emailNoteAsync(const NoteEmailParameters& parameters, QString authenticationToken = QString());
 
     /**
-       * If this note is not already shared (via its own direct URL), then this
+       * If this note is not already shared publicly (via its own direct URL), then this
        * will start sharing that note.
        * This will return the secret "Note Key" for this note that
        * can currently be used in conjunction with the Note's GUID to gain direct
@@ -2145,15 +2141,12 @@ public:
        *   The GUID of the note to be shared.
        *
        * @throws EDAMUserException <ul>
-       *   <li> BAD_DATA_FORMAT "Note.guid" - if the parameter is missing
-       *   </li>
-       *   <li> PERMISSION_DENIED "Note" - private note, user doesn't own
-       *   </li>
+       *   <li> BAD_DATA_FORMAT "Note.guid" - if the parameter is missing</li>
+       *   <li> PERMISSION_DENIED "Note" - private note, user doesn't own</li>
        * </ul>
        *
        * @throws EDAMNotFoundException <ul>
-       *   <li> "Note.guid" - not found, by GUID
-       *   </li>
+       *   <li> "Note.guid" - not found, by GUID</li>
        * </ul>
        */
     QString shareNote(Guid guid, QString authenticationToken = QString());
@@ -2162,24 +2155,25 @@ public:
     AsyncResult * shareNoteAsync(Guid guid, QString authenticationToken = QString());
 
     /**
-       * If this note is not already shared then this will stop sharing that note
+       * If this note is shared publicly then this will stop sharing that note
        * and invalidate its "Note Key", so any existing URLs to access that Note
        * will stop working.
+       *
        * If the Note is not shared, then this function will do nothing.
+       *
+       * This function does not remove invididual shares for the note. To remove
+       * individual shares, see stopSharingNoteWithRecipients.
        *
        * @param guid
        *   The GUID of the note to be un-shared.
        *
        * @throws EDAMUserException <ul>
-       *   <li> BAD_DATA_FORMAT "Note.guid" - if the parameter is missing
-       *   </li>
-       *   <li> PERMISSION_DENIED "Note" - private note, user doesn't own
-       *   </li>
+       *   <li> BAD_DATA_FORMAT "Note.guid" - if the parameter is missing</li>
+       *   <li> PERMISSION_DENIED "Note" - private note, user doesn't own</li>
        * </ul>
        *
        * @throws EDAMNotFoundException <ul>
-       *   <li> "Note.guid" - not found, by GUID
-       *   </li>
+       *   <li>"Note.guid" - not found, by GUID</li>
        * </ul>
        */
     void stopSharingNote(Guid guid, QString authenticationToken = QString());
@@ -2236,11 +2230,11 @@ public:
 
     /**
        * Identify related entities on the service, such as notes,
-       * notebooks, and tags related to notes or content.
+       * notebooks, tags and users in a business related to notes or content.
        *
        * @param query
        *   The information about which we are finding related entities.
-    
+       *
        * @param resultSpec
        *   Allows the client to indicate the type and quantity of
        *   information to be returned, allowing a saving of time and
@@ -2268,6 +2262,10 @@ public:
        *   <li>PERMISSION_DENIED "Note" - If the caller does not have access to
        *     the note identified by RelatedQuery.noteGuid.
        *   </li>
+       *   <li>PERMISSION_DENIED "authenticationToken" - If the caller has requested to
+       *     findExperts in the context of a non business user (i.e. The authenticationToken
+       *     is not a business auth token).
+       *   </li>
        *   <li>DATA_REQUIRED "RelatedResultSpec" - If you did not not set any values
        *     in the result spec.
        *   </li>
@@ -2283,6 +2281,72 @@ public:
 
     /** Asynchronous version of @link findRelated @endlink */
     AsyncResult * findRelatedAsync(const RelatedQuery& query, const RelatedResultSpec& resultSpec, QString authenticationToken = QString());
+
+    /**
+       * Perform the same operation as updateNote() would provided that the update
+       * sequence number on the parameter Note object matches the current update sequence
+       * number that the service has for the note.  If they do <i>not</i> match, then
+       * <i>no</i> update is performed and the return value will have the current server
+       * state in the note field and updated will be false.  If the update sequence
+       * numbers between the client and server do match, then the note will be updated
+       * and the note field of the return value will be returned as it would be for the
+       * updateNote method.  This method allows you to check for an update to the note
+       * on the service, by another client instance, from when you obtained the
+       * note state as a baseline for your edits and the time when you wish to save your
+       * edits.  If your client can merge the conflict, you can avoid overwriting changes
+       * that were saved to the service by the other client.
+       *
+       * See the updateNote method for information on the exceptions and parameters for
+       * this method.  The only difference is that you must have an update sequence number
+       * defined on the note parameter (equal to the USN of the note as synched to the
+       * client), and the following additional exceptions might be thrown.
+       *
+       * @throws EDAMUserException <ul>
+       *   <li>DATA_REQUIRED "Note.updateSequenceNum" - If the update sequence number was
+       *       not provided.  This includes a value that is set as 0.</li>
+       *   <li>BAD_DATA_FORMAT "Note.updateSequenceNum" - If the note has an update
+       *       sequence number that is larger than the current server value, which should
+       *       not happen if your client is working correctly.</li>
+       * </ul>
+       */
+    UpdateNoteIfUsnMatchesResult updateNoteIfUsnMatches(const Note& note, QString authenticationToken = QString());
+
+    /** Asynchronous version of @link updateNoteIfUsnMatches @endlink */
+    AsyncResult * updateNoteIfUsnMatchesAsync(const Note& note, QString authenticationToken = QString());
+
+    /**
+       * Manage invitations and memberships associated with a given notebook.
+       *
+       * <i>Note:</i> Beta method! This method is currently intended for
+       * limited use by Evernote clients that have discussed using this
+       * routine with the platform team.
+       *
+       * @param parameters A structure containing all parameters for the updates.
+       *    See the structure documentation for details.
+       *
+       * @throws EDAMUserException <ul>
+       *   <li>EDAMErrorCode.LIMIT_REACHED "SharedNotebook" - Trying to share a
+       *    notebook while the notebook already has EDAM_NOTEBOOK_SHARED_NOTEBOOK_MAX
+       *    shares.</li>
+       * </ul>
+       */
+    ManageNotebookSharesResult manageNotebookShares(const ManageNotebookSharesParameters& parameters, QString authenticationToken = QString());
+
+    /** Asynchronous version of @link manageNotebookShares @endlink */
+    AsyncResult * manageNotebookSharesAsync(const ManageNotebookSharesParameters& parameters, QString authenticationToken = QString());
+
+    /**
+       * Return the share relationships for the given notebook, including
+       * both the invitations and the memberships.
+       *
+       * <i>Note:</i> Beta method! This method is currently intended for
+       * limited use by Evernote clients that have discussed using this
+       * routine with the platform team.
+       */
+    ShareRelationships getNotebookShares(QString notebookGuid, QString authenticationToken = QString());
+
+    /** Asynchronous version of @link getNotebookShares @endlink */
+    AsyncResult * getNotebookSharesAsync(QString notebookGuid, QString authenticationToken = QString());
 
 private:
     QString m_url;
@@ -2304,10 +2368,13 @@ private:
  *   <li> BAD_DATA_FORMAT "authenticationToken" - token is malformed
  *   <li> DATA_REQUIRED "authenticationToken" - token is empty
  *   <li> INVALID_AUTH "authenticationToken" - token signature is invalid
+ *   <li> PERMISSION_DENIED "authenticationToken" - token does not convey sufficient
+ *     privileges
  * </ul>
  */
 class QEVERCLOUD_EXPORT UserStore: public QObject
 {
+    Q_OBJECT
     Q_DISABLE_COPY(UserStore)
 public:
     explicit UserStore(QString host, QString authenticationToken = QString(), QObject * parent = 0);
@@ -2365,67 +2432,6 @@ public:
 
     /**
        * This is used to check a username and password in order to create a
-       * short-lived authentication session that can be used for further actions.
-       *
-       * This function is only available to Evernote's internal applications.
-       * Third party applications must authenticate using OAuth as
-       * described at
-       * <a href="http://dev.evernote.com/documentation/cloud/">dev.evernote.com</a>.
-       *
-       * @param username
-       *   The username (not numeric user ID) for the account to
-       *   authenticate against.  This function will also accept the user's
-       *   registered email address in this parameter.
-       *
-       * @param password
-       *   The plaintext password to check against the account.  Since
-       *   this is not protected by the EDAM protocol, this information must be
-       *   provided over a protected transport (e.g. SSL).
-       *
-       * @param consumerKey
-       *   The "consumer key" portion of the API key issued to the client application
-       *   by Evernote.
-       *
-       * @param consumerSecret
-       *   The "consumer secret" portion of the API key issued to the client application
-       *   by Evernote.
-       *
-       * @param supportsTwoFactor
-       *   Whether the calling application supports two-factor authentication. If this
-       *   parameter is false, this method will fail with the error code INVALID_AUTH and the
-       *   parameter "password" when called for a user who has enabled two-factor
-       *   authentication.
-       *
-       * @return
-       *   <p>The result of the authentication.  If the authentication was successful,
-       *   the AuthenticationResult.user field will be set with the full information
-       *   about the User.</p>
-       *   <p>If the user has two-factor authentication enabled,
-       *   AuthenticationResult.secondFactorRequired will be set and
-       *   AuthenticationResult.authenticationToken will contain a short-lived token
-       *   that may only be used to complete the two-factor authentication process by calling
-       *   UserStore.completeTwoFactorAuthentication.</p>
-       *
-       * @throws EDAMUserException <ul>
-       *   <li> DATA_REQUIRED "username" - username is empty
-       *   <li> DATA_REQUIRED "password" - password is empty
-       *   <li> DATA_REQUIRED "consumerKey" - consumerKey is empty
-       *   <li> INVALID_AUTH "username" - username not found
-       *   <li> INVALID_AUTH "password" - password did not match
-       *   <li> INVALID_AUTH "consumerKey" - consumerKey is not authorized
-       *   <li> INVALID_AUTH "consumerSecret" - consumerSecret is incorrect
-       *   <li> PERMISSION_DENIED "User.active" - user account is closed
-       *   <li> PERMISSION_DENIED "User.tooManyFailuresTryAgainLater" - user has
-       *     failed authentication too often
-       * </ul>
-       */
-    AuthenticationResult authenticate(QString username, QString password, QString consumerKey, QString consumerSecret, bool supportsTwoFactor);
-
-    /** Asynchronous version of @link authenticate @endlink */
-    AsyncResult * authenticateAsync(QString username, QString password, QString consumerKey, QString consumerSecret, bool supportsTwoFactor);
-
-    /**
-       * This is used to check a username and password in order to create a
        * long-lived authentication token that can be used for further actions.
        *
        * This function is not available to most third party applications,
@@ -2455,12 +2461,12 @@ public:
        *   by Evernote.
        *
        * @param deviceIdentifier
-       *   An optional string, no more than 32 characters in length, that uniquely identifies
-       *   the device from which the authentication is being performed. This string allows
-       *   the service to return the same authentication token when a given application
-       *   requests authentication repeatedly from the same device. This may happen when the
-       *   user logs out of an application and then logs back in, or when the application is
-       *   uninstalled and later reinstalled. If no reliable device identifier can be created,
+       *   An optional string that uniquely identifies the device from which the
+       *   authentication is being performed. This string allows the service to return the
+       *   same authentication token when a given application requests authentication
+       *   repeatedly from the same device. This may happen when the user logs out of an
+       *   application and then logs back in, or when the application is uninstalled
+       *   and later reinstalled. If no reliable device identifier can be created,
        *   this value should be omitted. If set, the device identifier must be between
        *   1 and EDAM_DEVICE_ID_LEN_MAX characters long and must match the regular expression
        *   EDAM_DEVICE_ID_REGEX.
@@ -2506,6 +2512,7 @@ public:
        *   <li> PERMISSION_DENIED "User.active" - user account is closed
        *   <li> PERMISSION_DENIED "User.tooManyFailuresTryAgainLater" - user has
        *     failed authentication too often
+       *   <li> AUTH_EXPIRED "password" - user password is expired
        * </ul>
        */
     AuthenticationResult authenticateLongSession(QString username, QString password, QString consumerKey, QString consumerSecret, QString deviceIdentifier, QString deviceDescription, bool supportsTwoFactor);
@@ -2539,6 +2546,7 @@ public:
        * @throws EDAMUserException <ul>
        *   <li> DATA_REQUIRED "authenticationToken" - authenticationToken is empty
        *   <li> DATA_REQUIRED "oneTimeCode" - oneTimeCode is empty
+       *   <li> BAD_DATA_FORMAT "deviceIdentifier" - deviceIdentifier is not valid
        *   <li> BAD_DATA_FORMAT "authenticationToken" - authenticationToken is not well formed
        *   <li> INVALID_AUTH "oneTimeCode" - oneTimeCode did not match
        *   <li> AUTH_EXPIRED "authenticationToken" - authenticationToken has expired
@@ -2607,32 +2615,14 @@ public:
        *        authentication token is not currently a member of a business. </li>
        *   <li> PERMISSION_DENIED "Business.status" - the business that the user is a
        *        member of is not currently in an active status. </li>
+       *   <li> BUSINESS_SECURITY_LOGIN_REQUIRED "sso" - the user must complete single
+       *        sign-on before authenticating to the business.
        * </ul>
        */
     AuthenticationResult authenticateToBusiness(QString authenticationToken = QString());
 
     /** Asynchronous version of @link authenticateToBusiness @endlink */
     AsyncResult * authenticateToBusinessAsync(QString authenticationToken = QString());
-
-    /**
-       * This is used to take an existing authentication token (returned from
-       * 'authenticate') and exchange it for a newer token which will not expire
-       * as soon.  This must be invoked before the previous token expires.
-       *
-       * This function is only availabe to Evernote's internal applications.
-       *
-       * @param authenticationToken
-       *   The previous authentication token from the authenticate() result.
-       *
-       * @return
-       *   The result of the authentication, with the new token in
-       *   the result's 'authenticationToken' field.  The 'User' field will
-       *   not be set in the result.
-       */
-    AuthenticationResult refreshAuthentication(QString authenticationToken = QString());
-
-    /** Asynchronous version of @link refreshAuthentication @endlink */
-    AsyncResult * refreshAuthenticationAsync(QString authenticationToken = QString());
 
     /**
        * Returns the User corresponding to the provided authentication token,
@@ -2660,28 +2650,199 @@ public:
     AsyncResult * getPublicUserInfoAsync(QString username);
 
     /**
-       * Returns information regarding a user's Premium account corresponding to the
-       * provided authentication token, or throws an exception if this token is not
-       * valid.
+       * <p>Returns the URLs that should be used when sending requests to the service on
+       * behalf of the account represented by the provided authenticationToken.</p>
+       *
+       * <p>This method isn't needed by most clients, who can retreive the correct set of
+       * UserUrls from the AuthenticationResult returned from
+       * UserStore#authenticateLongSession(). This method is typically only needed to look up
+       * the correct URLs for an existing long-lived authentication token.</p>
        */
-    PremiumInfo getPremiumInfo(QString authenticationToken = QString());
+    UserUrls getUserUrls(QString authenticationToken = QString());
 
-    /** Asynchronous version of @link getPremiumInfo @endlink */
-    AsyncResult * getPremiumInfoAsync(QString authenticationToken = QString());
+    /** Asynchronous version of @link getUserUrls @endlink */
+    AsyncResult * getUserUrlsAsync(QString authenticationToken = QString());
 
     /**
-       * Returns the URL that should be used to talk to the NoteStore for the
-       * account represented by the provided authenticationToken.
-       * This method isn't needed by most clients, who can retrieve the correct
-       * NoteStore URL from the AuthenticationResult returned from the authenticate
-       * or refreshAuthentication calls. This method is typically only needed
-       * to look up the correct URL for a long-lived session token (e.g. for an
-       * OAuth web service).
+       * Invite a user to join an Evernote Business account.
+       *
+       * Behavior will depend on the auth token. <ol>
+       *   <li>
+       *     auth token with privileges to manage Evernote Business membership.
+       *       "External Provisioning" - The user will receive an email inviting
+       *       them to join the business. They do not need to have an existing Evernote
+       *       account. If the user has already been invited, a new invitation email
+       *       will be sent.
+       *   </li>
+       *   <li>
+       *     business auth token issued to an admin user. Only for first-party clients:
+       *       "Approve Invitation" - If there has been a request to invite the email,
+       *       approve it. Invited user will receive email with a link to join business.
+       *       "Invite User" - If no invitation for the email exists, create an approved
+       *       invitation for the email. An email will be sent to the emailAddress with
+       *       a link to join the caller's business.
+       *   </li>
+       *   </li>
+       *     business auth token:
+       *       "Request Invitation" - If no invitation exists, create a request to
+       *       invite the user to the business. These requests do not count towards a
+       *       business' max active user limit.
+       *   </li>
+       * </ol>
+       *
+       * @param authenticationToken
+       *   the authentication token with sufficient privileges to manage Evernote Business
+       *   membership or a business auth token.
+       *
+       * @param emailAddress
+       *   the email address of the user to invite to join the Evernote Business account.
+       *
+       * @throws EDAMUserException <ul>
+       *   <li> DATA_REQUIRED "email" - if no email address was provided </li>
+       *   <li> BAD_DATA_FORMAT "email" - if the email address is not well formed </li>
+       *   <li> DATA_CONFLICT "BusinessUser.email" - if there is already a user in the business
+       *     whose business email address matches the specified email address. </li>
+       *   <li> LIMIT_REACHED "Business.maxActiveUsers" - if the business has reached its
+       *     user limit. </li>
+       * </ul>
        */
-    QString getNoteStoreUrl(QString authenticationToken = QString());
+    void inviteToBusiness(QString emailAddress, QString authenticationToken = QString());
 
-    /** Asynchronous version of @link getNoteStoreUrl @endlink */
-    AsyncResult * getNoteStoreUrlAsync(QString authenticationToken = QString());
+    /** Asynchronous version of @link inviteToBusiness @endlink */
+    AsyncResult * inviteToBusinessAsync(QString emailAddress, QString authenticationToken = QString());
+
+    /**
+       * Remove a user from an Evernote Business account. Once removed, the user will no
+       * longer be able to access content within the Evernote Business account.
+       *
+       * <p>The email address of the user to remove from the business must match the email
+       * address used to invite a user to join the business via UserStore.inviteToBusiness.
+       * This function will only remove users who were invited by external provisioning</p>
+       *
+       * @param authenticationToken
+       *   An authentication token with sufficient privileges to manage Evernote Business
+       *   membership.
+       *
+       * @param emailAddress
+       *   The email address of the user to remove from the Evernote Business account.
+       *
+       * @throws EDAMUserException <ul>
+       *   <li> DATA_REQUIRED "email" - if no email address was provided </li>
+       *   <li> BAD_DATA_FORMAT "email" - The email address is not well formed </li>
+       * </ul>
+       * @throws EDAMNotFoundException <ul>
+       *   <li> "email" - If there is no user with the specified email address in the
+       *     business or that user was not invited via external provisioning. </li>
+       * </ul>
+       */
+    void removeFromBusiness(QString emailAddress, QString authenticationToken = QString());
+
+    /** Asynchronous version of @link removeFromBusiness @endlink */
+    AsyncResult * removeFromBusinessAsync(QString emailAddress, QString authenticationToken = QString());
+
+    /**
+       * Update the email address used to uniquely identify an Evernote Business user.
+       *
+       * This will update the identifier for a user who was previously invited using
+       * inviteToBusiness, ensuring that caller and the Evernote service maintain an
+       * agreed-upon identifier for a specific user.
+       *
+       * For example, the following sequence of calls would invite a user to join
+       * a business, update their email address, and then remove the user
+       * from the business using the updated email address.
+       *
+       * inviteToBusiness("foo@bar.com")
+       * updateBusinessUserIdentifier("foo@bar.com", "baz@bar.com")
+       * removeFromBusiness("baz@bar.com")
+       *
+       * @param authenticationToken
+       *   An authentication token with sufficient privileges to manage Evernote Business
+       *   membership.
+       *
+       * @param oldEmailAddress
+       *   The existing email address used to uniquely identify the user.
+       *
+       * @param newEmailAddress
+       *   The new email address used to uniquely identify the user.
+       *
+       * @throws EDAMUserException <ul>
+       *   <li>DATA_REQUIRED "oldEmailAddress" - No old email address was provided</li>
+       *   <li>DATA_REQUIRED "newEmailAddress" - No new email address was provided</li>
+       *   <li>BAD_DATA_FORMAT "oldEmailAddress" - The old email address is not well formed</li>
+       *   <li>BAD_DATA_FORMAT "newEmailAddress" - The new email address is not well formed</li>
+       *   <li>DATA_CONFLICT "oldEmailAddress" - The old and new email addresses were the same</li>
+       *   <li>DATA_CONFLICT "newEmailAddress" - There is already an invitation or registered user with
+       *     the provided new email address.</li>
+       *   <li>DATA_CONFLICT "invitation.externallyProvisioned" - The user identified by
+       *     oldEmailAddress was not added via UserStore.inviteToBusiness and therefore cannot be
+       *     updated.</li>
+       * </ul>
+       * @throws EDAMNotFoundException <ul>
+       *   <li>"oldEmailAddress" - If there is no user or invitation with the specified oldEmailAddress
+       *     in the business.</li>
+       * </ul>
+       */
+    void updateBusinessUserIdentifier(QString oldEmailAddress, QString newEmailAddress, QString authenticationToken = QString());
+
+    /** Asynchronous version of @link updateBusinessUserIdentifier @endlink */
+    AsyncResult * updateBusinessUserIdentifierAsync(QString oldEmailAddress, QString newEmailAddress, QString authenticationToken = QString());
+
+    /**
+       * Returns a list of active business users in a given business.
+       *
+       * Clients are required to cache this information and re-fetch no more than once per day
+       * or when they encountered a user ID or username that was not known to them.
+       *
+       * To avoid excessive look ups, clients should also track user IDs and usernames that belong
+       * to users who are not in the business, since they will not be included in the result.
+       *
+       * I.e., when a client encounters a previously unknown user ID as a note's creator, it may query
+       * listBusinessUsers to find information about this user. If the user is not in the resulting
+       * list, the client should track that fact and not re-query the service the next time that it sees
+       * this user on a note.
+       *
+       * @param authenticationToken
+       *   A business authentication token returned by authenticateToBusiness or with sufficient
+       *   privileges to manage Evernote Business membership.
+       */
+    QList< UserProfile > listBusinessUsers(QString authenticationToken = QString());
+
+    /** Asynchronous version of @link listBusinessUsers @endlink */
+    AsyncResult * listBusinessUsersAsync(QString authenticationToken = QString());
+
+    /**
+       * Returns a list of outstanding invitations to join an Evernote Business account.
+       *
+       * Only outstanding invitations are returned by this function. Users who have accepted an
+       * invitation and joined a business are listed using listBusinessUsers.
+       *
+       * @param authenticationToken
+       *   An authentication token with sufficient privileges to manage Evernote Business membership.
+       *
+       * @param includeRequestedInvitations
+       *   If true, invitations with a status of BusinessInvitationStatus.REQUESTED will be included
+       *   in the returned list. If false, only invitations with a status of
+       *   BusinessInvitationStatus.APPROVED will be included.
+       */
+    QList< BusinessInvitation > listBusinessInvitations(bool includeRequestedInvitations, QString authenticationToken = QString());
+
+    /** Asynchronous version of @link listBusinessInvitations @endlink */
+    AsyncResult * listBusinessInvitationsAsync(bool includeRequestedInvitations, QString authenticationToken = QString());
+
+    /**
+       * Retrieve the standard account limits for a given service level. This should only be
+       * called when necessary, e.g. to determine if a higher level is available should the
+       * user upgrade, and should be cached for long periods (e.g. 30 days) as the values are
+       * not expected to fluctuate frequently.
+       *
+       * @throws EDAMUserException <ul>
+       *   <li>DATA_REQUIRED "serviceLevel" - serviceLevel is null</li>
+       * </ul>
+       */
+    AccountLimits getAccountLimits(ServiceLevel::type serviceLevel);
+
+    /** Asynchronous version of @link getAccountLimits @endlink */
+    AsyncResult * getAccountLimitsAsync(ServiceLevel::type serviceLevel);
 
 private:
     QString m_url;
@@ -2695,5 +2856,7 @@ Q_DECLARE_METATYPE(QList< qevercloud::SavedSearch >)
 Q_DECLARE_METATYPE(QList< qevercloud::NoteVersionId >)
 Q_DECLARE_METATYPE(QList< qevercloud::SharedNotebook >)
 Q_DECLARE_METATYPE(QList< qevercloud::LinkedNotebook >)
+Q_DECLARE_METATYPE(QList< qevercloud::BusinessInvitation >)
+Q_DECLARE_METATYPE(QList< qevercloud::UserProfile >)
 
 #endif // QEVERCLOUD_GENERATED_SERVICES_H

@@ -38,7 +38,8 @@ QByteArray pngImage = thumb.download(noteGuid);
  *
  * By defualt 300x300 PNG images are requested.
  */
-class QEVERCLOUD_EXPORT Thumbnail {
+class QEVERCLOUD_EXPORT Thumbnail
+{
 public:
     /**
      * Specifies image type of the returned thumbnail.

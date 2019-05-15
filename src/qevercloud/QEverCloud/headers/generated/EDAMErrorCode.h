@@ -64,6 +64,12 @@ namespace qevercloud {
  *   <dt>RATE_LIMIT_REACHED</dt>
  *     <dd>Operation denied because the calling application has reached
  *         its hourly API call limit for this user.</dd>
+ *   <dt>BUSINESS_SECURITY_LOGIN_REQUIRED</dt>
+ *     <dd>Access to a business account has been denied because the user must complete
+ *        additional steps in order to comply with business security requirements.</dd>
+ *   <dt>DEVICE_LIMIT_REACHED</dt>
+ *     <dd>Operation denied because the user has exceeded their maximum allowed
+ *        number of devices.</dd>
  * </dl>
  */
 struct QEVERCLOUD_EXPORT EDAMErrorCode
@@ -88,7 +94,9 @@ struct QEVERCLOUD_EXPORT EDAMErrorCode
         TOO_MANY = 16,
         UNSUPPORTED_OPERATION = 17,
         TAKEN_DOWN = 18,
-        RATE_LIMIT_REACHED = 19
+        RATE_LIMIT_REACHED = 19,
+        BUSINESS_SECURITY_LOGIN_REQUIRED = 20,
+        DEVICE_LIMIT_REACHED = 21
     };
 };
 

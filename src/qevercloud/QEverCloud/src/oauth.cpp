@@ -7,6 +7,7 @@
  */
 
 #include <oauth.h>
+#include <qt4helpers.h>
 #include "http.h"
 #include <QVBoxLayout>
 #include <QNetworkReply>
@@ -104,7 +105,7 @@ EvernoteOAuthWebViewPrivate::EvernoteOAuthWebViewPrivate(QWidget * parent)
 void EvernoteOAuthWebViewPrivate::setError(QString errorText)
 {
     m_isSucceeded = false;
-    this->setHtml("");
+    this->setHtml(QStringLiteral(""));
     this->history()->clear();
     m_errorText = errorText;
     emit authenticationFinished(false);
@@ -132,7 +133,7 @@ void EvernoteOAuthWebView::authenticate(QString host, QString consumerKey, QStri
     Q_D(EvernoteOAuthWebView);
     d->m_host = host;
     d->m_isSucceeded = false;
-    d->setHtml("");
+    d->setHtml(QStringLiteral(""));
     d->history()->clear();
 
     qint64 timestamp = QDateTime::currentMSecsSinceEpoch()/1000;
@@ -192,7 +193,7 @@ void EvernoteOAuthWebViewPrivate::temporaryFinished(QObject * rf)
     }
     else
     {
-        QString reply = QString(replyFetcher->receivedData());
+        QString reply = QString::fromUtf8(replyFetcher->receivedData().constData());
         int index = reply.indexOf(QStringLiteral("&oauth_token_secret"));
         QString token = reply.left(index);
 
@@ -256,7 +257,7 @@ void EvernoteOAuthWebViewPrivate::permanentFinished(QObject * rf)
 
         for(int i = 0, size = vals.length(); i < size; i++)  {
             QString decoded = QUrl::fromPercentEncoding(vals[i]);
-            int pos = decoded.indexOf('=');
+            int pos = decoded.indexOf(QStringLiteral("="));
             params[decoded.left(pos).trimmed()] = decoded.mid(pos + 1);
         }
 
@@ -276,7 +277,7 @@ void EvernoteOAuthWebViewPrivate::permanentFinished(QObject * rf)
 
 void EvernoteOAuthWebViewPrivate::clearHtml()
 {
-    setHtml("");
+    setHtml(QStringLiteral(""));
 }
 
 class EvernoteOAuthDialogPrivate

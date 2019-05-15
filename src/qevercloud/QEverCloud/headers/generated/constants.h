@@ -149,6 +149,9 @@ QEVERCLOUD_EXPORT extern const QString EDAM_MIME_TYPE_JPEG;
 /** Canonical MIME type string for PNG image resources */
 QEVERCLOUD_EXPORT extern const QString EDAM_MIME_TYPE_PNG;
 
+/** Canonical MIME type string for TIFF image resources */
+QEVERCLOUD_EXPORT extern const QString EDAM_MIME_TYPE_TIFF;
+
 /** Canonical MIME type string for WAV audio resources */
 QEVERCLOUD_EXPORT extern const QString EDAM_MIME_TYPE_WAV;
 
@@ -184,10 +187,17 @@ QEVERCLOUD_EXPORT extern const QSet< QString > EDAM_MIME_TYPES;
 
 /**
  * The set of MIME types that Evernote will parse and index for
- * searching. With exception of images, and PDFs, which are
- * handled in a different way.
+ * searching. With exception of images, PDFs and plain text files,
+ * which are handled in a different way.
  */
 QEVERCLOUD_EXPORT extern const QSet< QString > EDAM_INDEXABLE_RESOURCE_MIME_TYPES;
+
+/**
+ * The set of plain text MIME types that Evernote will parse and index
+ * for searching. The MIME types which start with "text/" will be handled
+ * separately by each client (i.e. hard-coded in each client).
+ */
+QEVERCLOUD_EXPORT extern const QSet< QString > EDAM_INDEXABLE_PLAINTEXT_MIME_TYPES;
 
 /**
  * The minimum length of a user search query string in Unicode chars
@@ -532,11 +542,31 @@ QEVERCLOUD_EXPORT extern const qint64 EDAM_USER_UPLOAD_LIMIT_FREE;
 QEVERCLOUD_EXPORT extern const qint64 EDAM_USER_UPLOAD_LIMIT_PREMIUM;
 
 /**
+ * The number of bytes of new data that may be uploaded each month to an account at
+ * a Plus service level.
+ */
+QEVERCLOUD_EXPORT extern const qint64 EDAM_USER_UPLOAD_LIMIT_PLUS;
+
+/**
+ * The number of bytes of new data uploaded in a monthly quota cycle at which point
+ * users should be prompted with a survey to gather information on how they are using
+ * Evernote.
+ */
+QEVERCLOUD_EXPORT extern const qint64 EDAM_USER_UPLOAD_SURVEY_THRESHOLD;
+
+/**
  * The number of bytes of new data that may be uploaded to a Business user's
  * personal account each month. Note that content uploaded into the Business
  * notebooks by the user does not count against this limit.
  */
 QEVERCLOUD_EXPORT extern const qint64 EDAM_USER_UPLOAD_LIMIT_BUSINESS;
+
+/**
+ * The number of bytes of new data that may be uploaded to a Business for each
+ * member of the business per month. The total bytes available can be determined
+ * by multiplying this with the number of business users.
+ */
+QEVERCLOUD_EXPORT extern const qint64 EDAM_USER_UPLOAD_LIMIT_BUSINESS_PER_USER;
 
 /**
  * Maximum total size of a Note that can be added to a Free account.
@@ -578,9 +608,24 @@ QEVERCLOUD_EXPORT extern const qint32 EDAM_USER_LINKED_NOTEBOOK_MAX;
 QEVERCLOUD_EXPORT extern const qint32 EDAM_USER_LINKED_NOTEBOOK_MAX_PREMIUM;
 
 /**
- * Maximum number of shared notebooks per notebook
+ * Maximum number of shared notebooks per business notebook
  */
-QEVERCLOUD_EXPORT extern const qint32 EDAM_NOTEBOOK_SHARED_NOTEBOOK_MAX;
+QEVERCLOUD_EXPORT extern const qint32 EDAM_NOTEBOOK_BUSINESS_SHARED_NOTEBOOK_MAX;
+
+/**
+ * Maximum number of shared notebooks per personal notebook
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_NOTEBOOK_PERSONAL_SHARED_NOTEBOOK_MAX;
+
+/**
+ * Maximum number of SharedNote records per business note
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_NOTE_BUSINESS_SHARED_NOTE_MAX;
+
+/**
+ * Maximum number of SharedNote records per personal note
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_NOTE_PERSONAL_SHARED_NOTE_MAX;
 
 /**
  * The minimum length of the content class attribute of a note.
@@ -673,6 +718,62 @@ QEVERCLOUD_EXPORT extern const QString EDAM_CONTENT_CLASS_PENULTIMATE_PREFIX;
 QEVERCLOUD_EXPORT extern const QString EDAM_CONTENT_CLASS_PENULTIMATE_NOTEBOOK;
 
 /**
+ * The NoteAttributes.sourceApplication value used for notes captured by the Post-it
+ * camera.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_SOURCE_APPLICATION_POSTIT;
+
+/**
+ * The NoteAttributes.sourceApplication value used for notes captured by the Moleskine
+ * page camera.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_SOURCE_APPLICATION_MOLESKINE;
+
+/**
+ * The NoteAttributes.sourceApplication value used for notes captured by
+ * PFU ScanSnap Evernote Edition.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_SOURCE_APPLICATION_EN_SCANSNAP;
+
+/**
+ * The NoteAttributes.sourceApplication value used for notes captured with the Embedded
+ * Web Clipper.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_SOURCE_APPLICATION_EWC;
+
+/**
+ * The NoteAttributes.source value used for notes captured by the Microsoft Outlook clipper.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_SOURCE_OUTLOOK_CLIPPER;
+
+/**
+ * A NoteAttributes.noteTitleQuality value indicating that a note has no meaningful title,
+ * only a placeholder value such as "Untitled Note".
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_NOTE_TITLE_QUALITY_UNTITLED;
+
+/**
+ * A NoteAttributes.noteTitleQuality value indicating that the quality of an automatically
+ * generated note title is low. Examples of low quality titles include those based on a
+ * note's type and location, such as "Snapshot from 123 Sesame Street in New York".
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_NOTE_TITLE_QUALITY_LOW;
+
+/**
+ * A NoteAttributes.noteTitleQuality value indicating that the quality of an automatically
+ * generated note title is medium. Examples of medium quality titles include those based on a
+ * calendar entry, such as "Note from Weekly Staff Meeting".
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_NOTE_TITLE_QUALITY_MEDIUM;
+
+/**
+ * A NoteAttributes.noteTitleQuality value indicating that the quality of an automatically
+ * generated note title is high. Examples of high quality titles include those based on a
+ * scanned business card, such as "John Doe - Scanned Business Card".
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_NOTE_TITLE_QUALITY_HIGH;
+
+/**
  * The minimum length of the plain text in a findRelated query, assuming that
  * plaintext is being provided.
  */
@@ -700,6 +801,17 @@ QEVERCLOUD_EXPORT extern const qint32 EDAM_RELATED_MAX_NOTEBOOKS;
  * The maximum number of tags that will be returned from a findRelated() query.
  */
 QEVERCLOUD_EXPORT extern const qint32 EDAM_RELATED_MAX_TAGS;
+
+/**
+ * The maximum number of experts that will be returned from a findRelated() query
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_RELATED_MAX_EXPERTS;
+
+/**
+ * The maximum number of related content snippets that will be returned from a
+ * findRelated() query.
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_RELATED_MAX_RELATED_CONTENT;
 
 /**
  * The minimum length, in Unicode characters, of a description for a business
@@ -751,9 +863,19 @@ QEVERCLOUD_EXPORT extern const qint32 EDAM_PREFERENCE_VALUE_LEN_MAX;
 QEVERCLOUD_EXPORT extern const qint32 EDAM_MAX_PREFERENCES;
 
 /**
- * Maximum number of values per preference name
+ * Maximum number of values per preference name when using
+ * values of size no greater than EDAM_PREFERENCE_VALUE_LEN_MAX.
  */
 QEVERCLOUD_EXPORT extern const qint32 EDAM_MAX_VALUES_PER_PREFERENCE;
+
+/**
+ * The maximum length of a preference value if you only use one value
+ * per preference rather than up to EDAM_MAX_VALUES_PER_PREFERENCE.
+ * This option is useful if you want a single string that is larger
+ * than EDAM_PREFERENCE_VALUE_LEN_MAX and would otherwise need to
+ * split the string into multiple pieces to store it.
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_PREFERENCE_ONLY_ONE_VALUE_LEN_MAX;
 
 /**
  * A preference name must match this regex.
@@ -761,14 +883,49 @@ QEVERCLOUD_EXPORT extern const qint32 EDAM_MAX_VALUES_PER_PREFERENCE;
 QEVERCLOUD_EXPORT extern const QString EDAM_PREFERENCE_NAME_REGEX;
 
 /**
- * A preference value must match this regex.
+ * A preference value must match this regex if you are using more
+ * than a single value for a preference.
  */
 QEVERCLOUD_EXPORT extern const QString EDAM_PREFERENCE_VALUE_REGEX;
+
+/**
+ * A preference value must match this regex if you are using a single
+ * value for a preference.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_PREFERENCE_ONLY_ONE_VALUE_REGEX;
 
 /**
  * The name of the preferences entry that contains shortcuts.
  */
 QEVERCLOUD_EXPORT extern const QString EDAM_PREFERENCE_SHORTCUTS;
+
+/**
+ * The name of the preferences entry that contains the notebook GUID (not the linked notebook) of
+ * the default business notebook. It must be in the format EDAM_GUID_REGEX.
+ * If a default business notebook is not set and the user is a business user
+ * the user should be prompted to set the default business notebook.
+ * The default business notebook must be a read/write notebook.
+ * Whenever the default business notebook guid is used, it must be revalidiated as a writable
+ * notebook. If it is not valid, the user should be re-prompted to set the value.
+ * This value is used by clients only.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_PREFERENCE_BUSINESS_DEFAULT_NOTEBOOK;
+
+/**
+ * The name of the preferences entry that contains a boolean indicating that default
+ * quicknotes should go into a business notebook. The EDAM_PREFERENCE_BUSINESS_DEFAULT_NOTEBOOK
+ * must be set correctly for this preference to be honored.
+ * The quicknote preferences should only be set to "true", if quicknote should use a business
+ * notebook.
+ * Any value other than "true" (or the omission of a value) should be treated as "false".
+ * In this case, quicknotes should be created in in the user's personal default notebook.
+ * The interface should not allow users to set quicknote to a business notebook
+ * without a valid default business notebook selected, however, clients should handle the edge
+ * case of an invalid business notebook guid.  If a user stops being a business user or
+ * does not have write access to any business notebooks the quicknote preference should be
+ * ignored.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_PREFERENCE_BUSINESS_QUICKNOTE;
 
 /**
  * The maximum number of shortcuts that a user may have.
@@ -810,6 +967,93 @@ QEVERCLOUD_EXPORT extern const qint32 EDAM_SEARCH_SUGGESTIONS_PREFIX_LEN_MAX;
  */
 QEVERCLOUD_EXPORT extern const qint32 EDAM_SEARCH_SUGGESTIONS_PREFIX_LEN_MIN;
 
+/**
+ * Default maximum number of results the service will return for findContact
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_FIND_CONTACT_DEFAULT_MAX_RESULTS;
+
+/**
+ * Absolute maximum number of results the service will return for findContact
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_FIND_CONTACT_MAX_RESULTS;
+
+/**
+ * The maximum number of separate notes that may be queried in a single call to
+ * NoteStore.getViewersForNotes.
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_NOTE_LOCK_VIEWERS_NOTES_MAX;
+
+/**
+ * The maximum length of a message body in unicode characters.
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_MESSAGE_BODY_LEN_MAX;
+
+/**
+ * The regex to validate message.body against
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_MESSAGE_BODY_REGEX;
+
+/**
+ * The maximum number of recipients on a MessageThread.
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_MESSAGE_RECIPIENTS_MAX;
+
+/**
+ * The maximum number of attachments a Message can have.
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_MESSAGE_ATTACHMENTS_MAX;
+
+/**
+ * The maximum length of a message attachment title in unicode characters.
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_MESSAGE_ATTACHMENT_TITLE_LEN_MAX;
+
+/**
+ * The regex to validate message attachment titles against
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_MESSAGE_ATTACHMENT_TITLE_REGEX;
+
+/**
+ * The maximum length of a message attachment snippet in unicode characters.
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_MESSAGE_ATTACHMENT_SNIPPET_LEN_MAX;
+
+/**
+ * The regex to validate message attachment snippets against
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_MESSAGE_ATTACHMENT_SNIPPET_REGEX;
+
+/**
+ * Maximum user profile photo size, in bytes, that clients may send to the service.
+ * Photos may be resized before being stored on the service.
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_USER_PROFILE_PHOTO_MAX_BYTES;
+
+/**
+ * The maximum length of a promotion ID in unicode characters.
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_PROMOTION_ID_LEN_MAX;
+
+/**
+ * The regex to validate promotion IDs against.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_PROMOTION_ID_REGEX;
+
+/** App Feedback Rating range */
+QEVERCLOUD_EXPORT extern const qint16 EDAM_APP_RATING_MIN;
+
+QEVERCLOUD_EXPORT extern const qint16 EDAM_APP_RATING_MAX;
+
+/**
+ * The maximium number of note snippets you can retrieve in a single request
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_SNIPPETS_NOTES_MAX;
+
+/**
+ * The maximum number of connected identities a client can request.
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_CONNECTED_IDENTITY_REQUEST_MAX;
+
 
 // Types.thrift
 /**
@@ -835,6 +1079,12 @@ QEVERCLOUD_EXPORT extern const QString CLASSIFICATION_RECIPE_SERVICE_RECIPE;
  * were clipped from the web in some manner.
  */
 QEVERCLOUD_EXPORT extern const QString EDAM_NOTE_SOURCE_WEB_CLIP;
+
+/**
+ * Standardized value for the 'source' NoteAttribute for notes that
+ * were clipped using the "simplified article" function of the clipper.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_NOTE_SOURCE_WEB_CLIP_SIMPLIFIED;
 
 /**
  * Standardized value for the 'source' NoteAttribute for notes that

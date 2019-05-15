@@ -333,7 +333,7 @@ public:
 
     quint32 readMessageEnd() { return 0; }
 
-    inline quint32 readStructBegin(QString & name) { name = ""; return 0; }
+    inline quint32 readStructBegin(QString & name) { name.clear(); return 0; }
     inline quint32 readStructEnd() { return 0; }
     inline quint32 readFieldBegin(QString & name, ThriftFieldType::type & fieldType, qint16 & fieldId)
     {

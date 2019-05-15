@@ -62,7 +62,7 @@ public:
      * @brief Wait for asyncronous operation to complete.
      * @param timeout
      * Maximum time to wait in milliseconds. Forever if < 0.
-     * @return true if finished succesfully, flase in case of the timeout
+     * @return true if finished successfully, false in case of the timeout
      */
     bool waitForFinished(int timeout = -1);
 

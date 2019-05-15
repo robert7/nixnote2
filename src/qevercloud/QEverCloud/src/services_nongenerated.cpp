@@ -7,6 +7,7 @@
  */
 
 #include <generated/services.h>
+#include <qt4helpers.h>
 #include <QUrl>
 
 namespace qevercloud {
@@ -24,7 +25,7 @@ UserStore::UserStore(QString host, QString authenticationToken, QObject * parent
     QUrl url;
     url.setScheme(QStringLiteral("https"));
     url.setHost(host);
-    url.setPath("/edam/user");
+    url.setPath(QStringLiteral("/edam/user"));
     m_url = url.toString(QUrl::StripTrailingSlash);
     setAuthenticationToken(authenticationToken);
 }

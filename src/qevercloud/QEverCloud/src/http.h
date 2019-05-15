@@ -32,7 +32,7 @@ class ReplyFetcher: public QObject
 {
     Q_OBJECT
 public:
-    ReplyFetcher();
+    ReplyFetcher(QObject * parent = Q_NULLPTR);
 
     void start(QNetworkAccessManager * nam, QUrl url);
     // if !postData.isNull() then POST will be issued instead of GET
@@ -71,6 +71,23 @@ QByteArray askEvernote(QString url, QByteArray postData);
 
 QByteArray simpleDownload(QNetworkAccessManager * nam, QNetworkRequest request,
                           QByteArray postData = QByteArray(), int * httpStatusCode = Q_NULLPTR);
+
+class ReplyFetcherLauncher: public QObject
+{
+    Q_OBJECT
+public:
+    explicit ReplyFetcherLauncher(ReplyFetcher * fetcher, QNetworkAccessManager * nam,
+                                  const QNetworkRequest & request, const QByteArray & postData);
+
+public Q_SLOTS:
+    void start();
+
+private:
+    ReplyFetcher *          m_fetcher;
+    QNetworkAccessManager * m_nam;
+    QNetworkRequest         m_request;
+    QByteArray              m_postData;
+};
 
 } // namespace qevercloud
 

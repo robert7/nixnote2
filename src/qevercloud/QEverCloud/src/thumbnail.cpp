@@ -137,7 +137,7 @@ QPair<QNetworkRequest, QByteArray> Thumbnail::createPostRequest(Guid guid, bool 
     request.setUrl(QUrl(url));
     request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/x-www-form-urlencoded"));
 
-    if(!isPublic) {
+    if (!isPublic) {
         postData = QByteArray("auth=")+ QUrl::toPercentEncoding(d->m_authenticationToken);
     }
 

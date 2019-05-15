@@ -135,7 +135,8 @@ void AsyncResult::onReplyFetched(QObject * rp)
         error = e.exceptionData();
     }
     catch(const std::exception & e) {
-        error = QSharedPointer<EverCloudExceptionData>(new EverCloudExceptionData(QStringLiteral("Exception of type \"%1\" with the message: %2").arg(typeid(e).name(), e.what())));
+        error = QSharedPointer<EverCloudExceptionData>(new EverCloudExceptionData(QStringLiteral("Exception of type \"%1\" with the message: %2")
+                                                                                  .arg(QString::fromUtf8(typeid(e).name()), QString::fromUtf8(e.what()))));
     }
     catch(...) {
         error = QSharedPointer<EverCloudExceptionData>(new EverCloudExceptionData(QStringLiteral("Unknown exception")));
