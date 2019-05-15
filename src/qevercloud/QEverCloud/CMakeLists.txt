@@ -98,7 +98,7 @@ set_target_properties(${LIBNAME} PROPERTIES
   VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
   SOVERSION "${PROJECT_VERSION_MAJOR}"
   MACOSX_RPATH 1
-  INSTALL_NAME_DIR "${CMAKE_INSTALL_LIBDIR}")
+  INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 
 target_link_libraries(${LIBNAME} ${QT_LIBRARIES})
 
@@ -124,8 +124,7 @@ if((USE_QT5 AND Qt5Test_FOUND) OR (NOT USE_QT5 AND Qt4_FOUND))
   add_executable(test_${PROJECT_NAME} ${TEST_SOURCES})
   add_test(test_${PROJECT_NAME} test_${PROJECT_NAME})
   if(USE_QT5)
-    target_link_libraries(test_${PROJECT_NAME} ${LIBNAME} ${QT_LIBRARIES})
-    qt5_use_modules(test_${PROJECT_NAME} Test)
+    target_link_libraries(test_${PROJECT_NAME} ${LIBNAME} ${QT_LIBRARIES} Qt5::Test)
   else()
     target_link_libraries(test_${PROJECT_NAME} ${LIBNAME} Qt4::QtCore Qt4::QtGui Qt4::QtNetwork Qt4::QtWebKit Qt4::QtTest)
   endif()

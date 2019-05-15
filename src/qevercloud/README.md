@@ -22,6 +22,25 @@ your copy of Qt Creator to have context-sensitive help. See below for more detai
 
 Please see the [contribution guide](CONTRIBUTING.md) for detailed info. 
 
+## Downloads
+
+Prebuilt versions of the library can be downloaded from the following locations:
+
+ * Stable version:
+   * Windows binaries:
+     * [MSVC 2015 32 bit Qt 5.10](https://github.com/d1vanov/QEverCloud/releases/download/continuous-master/qevercloud-windows-qt510-VS2015_x86.zip)
+     * [MSVC 2017 64 bit Qt 5.10](https://github.com/d1vanov/QEverCloud/releases/download/continuous-master/qevercloud-windows-qt510-VS2017_x64.zip)
+     * [MinGW 32 bit Qt 5.5](https://github.com/d1vanov/QEverCloud/releases/download/continuous-master/qevercloud-windows-qt55-MinGW_x86.zip)
+   * [Mac binary](https://github.com/d1vanov/QEverCloud/releases/download/continuous-master/qevercloud_mac_x86_64.zip) (built with latest Qt from Homebrew)
+   * [Linux binary](https://github.com/d1vanov/QEverCloud/releases/download/continuous-master/qevercloud_linux_qt_592_x86_64.zip) built on Ubuntu 14.04 with Qt 5.9.2
+ * Unstable version:
+   * Windows binaries:
+     * [MSVC 2015 32 bit Qt 5.10](https://github.com/d1vanov/QEverCloud/releases/download/continuous-development/qevercloud-windows-qt510-VS2015_x86.zip)
+     * [MSVC 2017 64 bit Qt 5.10](https://github.com/d1vanov/QEverCloud/releases/download/continuous-development/qevercloud-windows-qt510-VS2017_x64.zip)
+     * [MinGW 32 bit Qt 5.5](https://github.com/d1vanov/QEverCloud/releases/download/continuous-development/qevercloud-windows-qt55-MinGW_x86.zip)
+   * [Mac binary](https://github.com/d1vanov/QEverCloud/releases/download/continuous-development/qevercloud_mac_x86_64.zip) (built with latest Qt from Homebrew)
+   * [Linux binary](https://github.com/d1vanov/QEverCloud/releases/download/continuous-development/qevercloud_linux_qt_592_x86_64.zip) built on Ubuntu 14.04 with Qt 5.9.2
+
 ## How to build
 
 The project can be built and shipped as either static library or shared library. Dll export/import symbols necessary for Windows platform are supported.
@@ -75,17 +94,6 @@ If *MAJOR_VERSION_DEV_HEADERS_FOLDER_NAME_SUFFIX* is on, `make install` would in
 
 The two latter options are intended to allow for easier installation of multiple major versions of QEverCloud.
 
-## Availability
-
-QEverCloud packages are available in the official Debian repositories since Debian 9. They will also be available in Ubuntu since 17.04 and in later derivatives. The package names are
-```
-libqt4qevercloud3
-libqt5qevercloud3
-qevercloud-doc
-qt4qevercloud-dev
-qt5qevercloud-dev
-```
-
 ## Compatibility
 
 The library can be built with both Qt4 and Qt5 versions of the framework. By default Qt4 is used, if found. If you'd like to force finding the Qt5 version no matter whether Qt4 is found, pass `-DUSE_QT5=1` option to CMake.
@@ -105,6 +113,10 @@ while since 3.0 the intended way to use the installed shared library is the foll
 #endif
 ```
 
+### API breaks from 3.x to 4.0
+
+Tha API breaks in 4.0 inlcude a few changes caused by migration from Evernote API 1.25 to Evernote API 1.28. The breaks are listed in a [separate document](API_breaks_3_to_4.md).
+
 ### QtWebKit vs QWebEngine
 
 The library uses Qt's web facilities for OAuth authentication. These can be based on either QtWebKit (for Qt4 and older versions of Qt5) or QWebEngine (for more recent versions of Qt5). With CMake build system the choice happens automatically during the pre-build configuration based on the used version of Qt. One can also choose to use QtWebKit even with newer versions of Qt via CMake option `USE_QT5_WEBKIT`.
@@ -122,3 +134,5 @@ Two "cumulative" headers - *QEverCloud.h* or *QEverCloudOAuth.h* - include every
 * [NotePoster](https://github.com/d1vanov/QEverCloud-example-NotePoster) is an example app using QEverCloud library to post notes to Evernote.
 * [QEverCloud packaging](https://github.com/d1vanov/QEverCloud-packaging) repository contains various files and scripts required for building QEverCloud packages for various platforms and distributions.
 * [QEverCloudGenerator](https://github.com/d1vanov/QEverCloudGenerator) repository contains the parser of [Evernote Thrift IDL files](https://github.com/evernote/evernote-thrift) generating headers and sources for QEverCloud library.
+* [libquentier](https://github.com/d1vanov/libquentier) is a library for creating of feature rich full sync Evernote clients built on top of QEverCloud
+* [Quentier](https://github.com/d1vanov/quentier) is an open source desktop note taking app capable of working as Evernote client built on top of libquentier and QEverCloud

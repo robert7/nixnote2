@@ -113,7 +113,7 @@ void TestEverCloudTest::testOptional()
     QVERIFY(t.ref() == Timestamp(0));
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
 #ifdef QT_GUI_LIB
 #undef QT_GUI_LIB
 QTEST_MAIN(TestEverCloudTest)

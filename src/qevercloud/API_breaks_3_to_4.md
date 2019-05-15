@@ -78,4 +78,4 @@ Evernote themselves haven't provided any changelog for their API update so far.
     for Evernote client apps so it shouldn't be a big loss.
 
 ## class UserStore
-  * Methods refreshAuthentication and refreshAuthenticatonAsync were removed as their counterparts were removed from Evernote API. It is not a big loss since these methods were available only to Evernote internal applications anyway.
+  * Methods `refreshAuthentication` and `refreshAuthenticatonAsync` were removed as their counterparts were removed from Evernote API. It is not a big loss since these methods were available only to Evernote internal applications anyway.

@@ -12,7 +12,7 @@ if(EXISTS "${QEVERCLOUD_CMAKE_DIR}/CMakeCache.txt")
   # in build tree
   include("${QEVERCLOUD_CMAKE_DIR}/QEverCloud-@QEVERCLOUD_QT_VERSION@BuildTreeSettings.cmake")
 else()
-  set(QEVERCLOUD_INCLUDE_DIRS "@CMAKE_INSTALL_INCLUDEDIR@")
+  set(QEVERCLOUD_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@")
 endif()
 
 # Find the QEverCloud's Qt dependencies
