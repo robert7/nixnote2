@@ -1,7 +1,7 @@
 NixNote (2.1.4-b) stable; urgency=low
   * Fixed few sync problems (e.g. involving "map" or "svg" tag)
   * Fixed html handling in relation in urls on text paste
-
+ -- Robert Spiegel <nightingale7@gmail.com>  Wed, 15 May 2019 08:18:54 +0200
 
 NixNote (2.1.3) stable; urgency=low
   * Updated german translation (2x), thanks to https://github.com/stemabu
