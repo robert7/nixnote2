@@ -623,11 +623,11 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook &boo
         // Now, authenticate to the book.  Books
         // without a sharekey are public, so authentication
         // isn't needed
-        if (!book.shareKey.isSet())
+        if (!book.sharedNotebookGlobalId.isSet())
             return true;
 
         // We have a share key, so authenticate
-        linkedAuth = noteStore->authenticateToSharedNotebook(book.shareKey, authToken);
+        linkedAuth = noteStore->authenticateToSharedNotebook(book.sharedNotebookGlobalId, authToken);
         linkedAuthToken = linkedAuth.authenticationToken;
     } catch (ThriftException &e) {
         reportError(CommunicationError::ThriftException, e.type(), e.what());
