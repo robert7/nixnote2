@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "src/gui/nwebview.h"
 
-#include "src/qevercloud/include/QEverCloud.h"
+#include "src/qevercloud/QEverCloud/headers/QEverCloud.h"
 #include "src/gui/browserWidgets/ntitleeditor.h"
 #include "src/gui/browserWidgets/notebookmenubutton.h"
 #include "src/gui/plugins/pluginfactory.h"
