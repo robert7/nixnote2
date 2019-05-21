@@ -70,8 +70,8 @@ qint32 LinkedNotebookTable::sync(qint32 lid, LinkedNotebook &notebook) {
     NotebookTable ntable(db);
     SharedNotebookTable stable(db);
 
-    if (lid == 0 && notebook.shareKey.isSet()) {
-        lid = stable.findByShareKey(notebook.shareKey);
+    if (lid == 0 && notebook.sharedNotebookGlobalId.isSet()) {
+        lid = stable.findByShareKey(notebook.sharedNotebookGlobalId);
     }
     if (lid == 0 && notebook.uri.isSet()) {
         lid = ntable.findByUri(notebook.uri);
@@ -192,11 +192,11 @@ qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
         query.exec();
     }
 
-    if (t.shareKey.isSet()) {
+    if (t.sharedNotebookGlobalId.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", LINKEDNOTEBOOK_SHARE_KEY);
-        QString sharekey = t.shareKey;
-        query.bindValue(":data", sharekey);
+        QString sharedNotebookGlobalId = t.sharedNotebookGlobalId;
+        query.bindValue(":data", sharedNotebookGlobalId);
         query.exec();
     }
 
@@ -304,7 +304,7 @@ bool LinkedNotebookTable::get(LinkedNotebook &notebook, qint32 lid) {
             notebook.shareName = query.value(1).toString();
             break;
         case (LINKEDNOTEBOOK_SHARE_KEY):
-            notebook.shareKey = query.value(1).toString();
+            notebook.sharedNotebookGlobalId = query.value(1).toString();
             break;
         case (LINKEDNOTEBOOK_USERNAME):
             notebook.username = query.value(1).toString();

@@ -56,6 +56,7 @@ AccountDialog::AccountDialog(QWidget *parent) :
     QString username = "*unknown*";
     if (user.username.isSet())
         username = user.username;
+
     qlonglong uploadAmt = 0;
     qlonglong uploadLimit = 0;
     qlonglong uploadLimitEnd = 0;
@@ -63,10 +64,14 @@ AccountDialog::AccountDialog(QWidget *parent) :
     Accounting accounting;
     if (user.accounting.isSet())
         accounting = user.accounting;
-    if (accounting.uploadLimit.isSet())
-        uploadLimit = accounting.uploadLimit;
+
+    if (user.accountLimits.isSet())
+        uploadLimit = user.accountLimits.ref().uploadLimit;
+
     if (accounting.uploadLimitEnd.isSet())
         uploadLimitEnd = accounting.uploadLimitEnd;
+
+
     uploadAmt = userTable.getUploadAmt();
     if (uploadLimit > 0)
         pct = uploadAmt*100/uploadLimit;

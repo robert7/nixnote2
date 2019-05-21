@@ -1,0 +1,7 @@
+if(CMAKE_COMPILER_IS_GNUCXX)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-local-typedefs")
+elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wconversion -Wmismatched-tags -Wformat=2 -Wcast-align ")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wimplicit-atomic-properties -Wmissing-declarations -Woverlength-strings ")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wstrict-selector-match -Wundeclared-selector -Wunreachable-code")
+endif()

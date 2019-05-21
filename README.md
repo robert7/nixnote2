@@ -46,6 +46,9 @@ also macOS config is already present (see more detailed info bellow). As lot of 
 has been made and I can't currently try anything else then linux, it is quite probable
 that minor adjustments are needed for the all non linux builds.
 
+Application is developed using [Clion](https://www.jetbrains.com/clion/) IDE
+using open source licence from [JetBrains](https://www.jetbrains.com/?from=nixnote2).
+
 ### Linux - docker build
 This should work out of the box, no fiddling with any dependencies
 is needed. The created binary image should work on all ~recent distributions (at least

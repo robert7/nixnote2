@@ -1,0 +1,67 @@
+version: '3.0.2-{build}'
+
+branches:
+  only:
+    - development
+    - master
+
+environment:
+  matrix:
+    - name: win32
+      platform: amd64_x86
+      qt: msvc2015
+    - name: win64
+      platform: amd64
+      qt: msvc2015_64
+    - name: win32
+      platform: mingw
+      qt: mingw492_32
+
+clone_folder: c:\dev\qevercloud
+
+init:
+  - if %platform%==mingw set PATH=C:\Qt\5.5\%qt%\bin;%PATH%
+  - if not %platform%==mingw set PATH=C:\Qt\5.7\%qt%\bin;%PATH%
+  - set ORIGPATH=%PATH%
+  - if %platform%==mingw (set DEPLOYMENT_TARGET=qevercloud-qt55-%qt%-%APPVEYOR_BUILD_VERSION%_%APPVEYOR_REPO_COMMIT:~0,7%.zip) else (set DEPLOYMENT_TARGET=qevercloud-qt57-%qt%-%APPVEYOR_BUILD_VERSION%_%APPVEYOR_REPO_COMMIT:~0,7%.zip)
+  - if not %platform%==mingw call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %platform%
+  - if not %platform%==mingw (set makefiles="NMake Makefiles") else (set makefiles="MinGW Makefiles")
+  - if %platform%==mingw (set use_webkit=1) else (set use_webkit=0)
+
+before_build:
+  - cd c:\dev\qevercloud
+  - md build
+
+build_script:
+  - if %platform%==mingw set PATH=C:\Qt\5.5\%qt%\bin;C:\Qt\Tools\mingw492_32\bin;C:\Program Files (x86)\CMake\bin
+  - cd build
+  - if %platform%==mingw cmake .. -G %makefiles% -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="c:/dev/install" -DUSE_QT5_WEBKIT=%use_webkit% -DCMAKE_PREFIX_PATH="C:/Qt/55"
+  - if not %platform%==mingw cmake .. -G %makefiles% -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="c:/dev/install" -DUSE_QT5_WEBKIT=%use_webkit% -DCMAKE_PREFIX_PATH="C:/Qt/57"
+  - if not %platform%==mingw (nmake) else (mingw32-make)
+  - if not %platform%==mingw (nmake install) else (mingw32-make install)
+  - if %platform%==mingw set PATH=%ORIGPATH%
+
+after_build:
+  - cd c:\dev
+  - 7z a %DEPLOYMENT_TARGET% c:\dev\install\*
+  - cp %DEPLOYMENT_TARGET% %APPVEYOR_BUILD_FOLDER%
+
+artifacts:
+  - path: '*.zip'
+    name: archive
+
+deploy:
+  - provider: GitHub
+    artifact: archive
+    draft: false
+    prerelease: false
+    on:
+      branch: master                # release from master branch only
+      appveyor_repo_tag: true       # deploy on tag push only
+
+test_script:
+  - cd c:\dev\install\bin
+  - ..\..\qevercloud\build\QEverCloud\test_QEverCloud.exe
+
+matrix:
+  fast_finish: true
