@@ -455,6 +455,9 @@ qint32 CommunicationManager::expungeNotebook(Guid guid) {
 qint32 CommunicationManager::uploadNote(Note &note, QString token) {
 
     if (QLOG_IS_DEBUG) {
+        // dump always; but only in DEBUG log level
+        dumpNote(note);
+
         qint32 resourceCount = note.resources.isSet() ? note.resources.ref().size() : 0;
 
         QLOG_DEBUG() << "uploadNote " << note.guid << ", " << note.title << ", resourceCount=" << resourceCount;
@@ -471,9 +474,6 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
 
     qint32 updateSequenceNum = 0;
     try {
-        // dump always; but only in DEBUG log level
-        dumpNote(note);
-
         if (note.updateSequenceNum.isSet() && note.updateSequenceNum > 0) {
             QLOG_DEBUG() << "qevercloud noteStore->updateNote";
             note = noteStore->updateNote(note, token);
