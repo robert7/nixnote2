@@ -2066,14 +2066,16 @@ void NixNote::restoreAndNewNote() {
     newNote();
 }
 
+
+#define NEW_NOTE_ENML "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" \
+                      "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">" \
+                      "<en-note ><br/><br/><br/></en-note>"
+
 /**
  * Create a new note
  */
 void NixNote::newNote() {
-    QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
-                          QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
-                          QString(
-                                  "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><br/></en-note>");
+    QString newNoteBody = QString(NEW_NOTE_ENML);
 
     Note n;
     NotebookTable notebookTable(global.db);
@@ -2173,15 +2175,12 @@ void NixNote::newNote() {
 //* Create a new note in an external window.
 //**********************************************
 void NixNote::newExternalNote() {
-    QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
-                          QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
-                          QString(
-                                  "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><br/></en-note>");
+    QString newNoteBody = QString(NEW_NOTE_ENML);
 
     Note n;
     NotebookTable notebookTable(global.db);
     n.content = newNoteBody;
-    n.title = "Untitled note";
+    n.title = tr("Untitled note");
     QString uuid = QUuid::createUuid().toString();
     uuid = uuid.mid(1);
     uuid.chop(1);
