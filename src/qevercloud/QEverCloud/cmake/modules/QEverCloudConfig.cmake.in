@@ -1,0 +1,30 @@
+# - Try to find QEverCloud
+# Once done this will define
+#  QEVERCLOUD_FOUND - QEverCloud library was found
+#  QEVERCLOUD_INCLUDE_DIRS - The QEverCloud include directories
+#  QEVERCLOUD_LIBRARIES - The libraries needed to use QEverCloud
+#  QEVERCLOUD_HAS_OAUTH - Boolean set to true if QEverCloud was built with OAuth support
+#  QEVERCLOUD_USE_QT_WEB_ENGINE - Boolean set to true if QEverCloud was built with OAuth support using QtWebEngine backend
+
+# Compute paths
+get_filename_component(QEVERCLOUD_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+if(EXISTS "${QEVERCLOUD_CMAKE_DIR}/CMakeCache.txt")
+  # in build tree
+  include("${QEVERCLOUD_CMAKE_DIR}/QEverCloud-@QEVERCLOUD_QT_VERSION@BuildTreeSettings.cmake")
+else()
+  set(QEVERCLOUD_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@")
+endif()
+
+# Find the QEverCloud's Qt dependencies
+include("${QEVERCLOUD_CMAKE_DIR}/QEverCloudFindPackageWrapperMacro.cmake")
+include("${QEVERCLOUD_CMAKE_DIR}/QEverCloud-@QEVERCLOUD_QT_VERSION@FindQtDependencies.cmake")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+include("${QEVERCLOUD_CMAKE_DIR}/QEverCloud-@QEVERCLOUD_QT_VERSION@LibraryDepends.cmake")
+
+# These are IMPORTED targets created by FooBarLibraryDepends.cmake
+set(QEVERCLOUD_LIBRARIES "@QEVERCLOUD_LIBNAME_PREFIX@@QEVERCLOUD_QT_VERSION@qevercloud@QEVERCLOUD_LIBNAME_SUFFIX@")
+
+@QEVERCLOUD_HAS_OAUTH@
+@QEVERCLOUD_USES_QT_WEB_ENGINE@
+set(QEVERCLOUD_FOUND TRUE)

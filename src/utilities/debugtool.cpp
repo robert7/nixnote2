@@ -68,8 +68,7 @@ void DebugTool::dumpNote(const Note &note) {
         return;
     }
 
-    QLOG_DEBUG() << "*** Dumping Note ***";
-    dumpField(note.guid, "guid");
+    QLOG_DEBUG() << ">>>>>>>>> note guid=" << note.guid;
     dumpField(note.active, "active");
     dumpField(note.title, "title");
     dumpField(note.content, "content");
@@ -106,7 +105,7 @@ void DebugTool::dumpNote(const Note &note) {
     }
     dumpNoteResources(note);
 
-    QLOG_DEBUG() << "*** Note Dump complete ***";
+    QLOG_DEBUG() << "<<<<<<<<< note guid=" << note.guid;
 }
 
 void DebugTool::dumpNoteResources(const Note &note) {
@@ -266,8 +265,10 @@ void DebugTool::dumpField(Optional<QByteArray> field, QString name, bool hexValu
 
 void DebugTool::dumpField(Optional<QStringList> field, QString name) {
     if (!field.isSet()) {
+        QLOG_DEBUG() << name << " is empty (QStringList)";
         return;
     }
+
     QStringList fields = field;
     QLOG_DEBUG() << name << " has " << fields.size() << " entries.";
     for (int i = 0; i < fields.size(); i++) {
@@ -278,8 +279,10 @@ void DebugTool::dumpField(Optional<QStringList> field, QString name) {
 
 void DebugTool::dumpField(Optional<QList<QString> > field, QString name) {
     if (!field.isSet()) {
+        QLOG_DEBUG() << name << " is empty (QList<QString>)";
         return;
     }
+
     QList<QString> fields = field;
     QLOG_DEBUG() << name << " has " << fields.size() << " entries.";
     for (int i = 0; i < fields.size(); i++) {

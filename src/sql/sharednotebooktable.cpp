@@ -137,22 +137,26 @@ qint32 SharedNotebookTable::add(qint32 l, const SharedNotebook &t, bool isDirty)
         query.bindValue(":data", priv);
         query.exec();
     }
-    if (t.requireLogin.isSet()) {
-        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", SHAREDNOTEBOOK_REQUIRE_LOGIN);
-        bool login = t.requireLogin;
-        query.bindValue(":data", login);
-        query.exec();
-    }
-    if (t.allowPreview.isSet()) {
-        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", SHAREDNOTEBOOK_ALLOW_PREVIEW);
-        bool preview = t.allowPreview;
-        query.bindValue(":data", preview);
-        query.exec();
-    }
+
+    // removed in qevercloud v4
+    // if (t.requireLogin.isSet()) {
+    //     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+    //     query.bindValue(":lid", lid);
+    //     query.bindValue(":key", SHAREDNOTEBOOK_REQUIRE_LOGIN);
+    //     bool login = t.requireLogin;
+    //     query.bindValue(":data", login);
+    //     query.exec();
+    // }
+    // removed in qevercloud v4
+    // if (t.allowPreview.isSet()) {
+    //     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+    //     query.bindValue(":lid", lid);
+    //     query.bindValue(":key", SHAREDNOTEBOOK_ALLOW_PREVIEW);
+    //     bool preview = t.allowPreview;
+    //     query.bindValue(":data", preview);
+    //     query.exec();
+    // }
+
     if (t.serviceCreated.isSet()) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
@@ -161,11 +165,11 @@ qint32 SharedNotebookTable::add(qint32 l, const SharedNotebook &t, bool isDirty)
         query.bindValue(":data", date);
         query.exec();
     }
-    if (t.shareKey.isSet()) {
+    if (t.globalId.isSet()) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", SHAREDNOTEBOOK_SHARE_KEY);
-        QString key = t.shareKey;
+        QString key = t.globalId;
         query.bindValue(":data", key);
         query.exec();
     }
@@ -218,10 +222,11 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid, QString user
         case (SHAREDNOTEBOOK_SERVICE_UPDATED):
             returnVal = true;
             break;
-        case (SHAREDNOTEBOOK_ALLOW_PREVIEW):
-            notebook.allowPreview = query.value(1).toBool();
-            returnVal = true;
-            break;
+        // removed in qevercloud v4
+        // case (SHAREDNOTEBOOK_ALLOW_PREVIEW):
+        //     notebook.allowPreview = query.value(1).toBool();
+        //     returnVal = true;
+        //     break;
         case (SHAREDNOTEBOOK_ID):
             notebook.id = query.value(1).toLongLong();
             returnVal = true;
@@ -234,10 +239,11 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid, QString user
             notebook.notebookModifiable = query.value(1).toBool();
             returnVal = true;
             break;
-        case (SHAREDNOTEBOOK_REQUIRE_LOGIN):
-            notebook.requireLogin = query.value(1).toBool();
-            returnVal = true;
-            break;
+        // removed in qevercloud v4
+        // case (SHAREDNOTEBOOK_REQUIRE_LOGIN):
+        //     notebook.requireLogin = query.value(1).toBool();
+        //     returnVal = true;
+        //     break;
         case (SHAREDNOTEBOOK_PRIVILEGE): {
             int priv = query.value(1).toInt();
             notebook.privilege = SharedNotebookPrivilegeLevel::READ_NOTEBOOK;
@@ -259,7 +265,7 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid, QString user
             returnVal = true;
             break;
         case (SHAREDNOTEBOOK_SHARE_KEY):
-            notebook.shareKey = query.value(1).toString();
+            notebook.globalId = query.value(1).toString();
             returnVal = true;
             break;
         case (SHAREDNOTEBOOK_USERNAME):

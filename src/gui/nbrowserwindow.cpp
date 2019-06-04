@@ -952,6 +952,7 @@ void NBrowserWindow::pasteButtonPressed() {
         pasteWithoutFormatButtonPressed();
         return;
     }
+    QLOG_DEBUG() << "pasteButtonPressed";
 
     const QMimeData *mime = QApplication::clipboard()->mimeData();
 
@@ -962,63 +963,78 @@ void NBrowserWindow::pasteButtonPressed() {
         return;
     }
 
-    QLOG_DEBUG() << "Have URL?: " << mime->hasUrls();
+    // Returns true if the object can return a list of urls; otherwise returns false.
+    const bool hasUrls = mime->hasUrls();
+    QLOG_DEBUG() << "pasteButtonPressed: hasUrls=" << hasUrls;
 
-    if (mime->hasUrls()) {
+    if (hasUrls) {
         QList<QUrl> urls = mime->urls();
         for (int i = 0; i < urls.size(); i++) {
-            QLOG_DEBUG() << urls[i].toString();
-            if (urls[i].toString().startsWith("file://")) {
-                QString fileName = urls[i].toString().mid(7);
+            QString url = urls[i].toString();
+            QString urlL = url.toLower();
+            QLOG_DEBUG() << "pasteButtonPressed: processing url=" << url;
+
+            if (url.startsWith("file://")) {
+                // inserting local file
+                QString fileName = url.mid(7);
                 attachFileSelected(fileName);
                 this->editor->triggerPageAction(QWebPage::InsertParagraphSeparator);
             }
-
-            // If inserting a URL
-            if (urls[i].toString().toLower().startsWith("https://") ||
-                urls[i].toString().toLower().startsWith("http://") ||
-                urls[i].toString().toLower().startsWith("ftp://") ||
-                urls[i].toString().toLower().startsWith("mailto:")) {
-                QString url = this->buildPasteUrl(urls[i].toString());
-                QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
+            else if (urlL.startsWith("https://") ||
+                     urlL.startsWith("http://") ||
+                     urlL.startsWith("ftp://") ||
+                     urlL.startsWith("mailto:")) {
+                // inserting a URL
+                QString urlP = this->buildPasteUrl(urls[i].toString());
+                QLOG_DEBUG() << "pasteButtonPressed: urlP=" << urlP;
+                QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(urlP);
                 editor->page()->mainFrame()->evaluateJavaScript(script);
             }
         }
 
         this->editor->setFocus();
         microFocusChanged();
+        QLOG_DEBUG() << "pasteButtonPressed: done";
         return;
     }
 
     QString pastedHtml = mime->html();
     if (mime->hasHtml()) {
         if (pastedHtml.length() > 50) {
-            QLOG_DEBUG_FILE("pasted.html", pastedHtml);
+            QLOG_DEBUG_FILE("pasted-html.html", pastedHtml);
         } else {
             QLOG_DEBUG() << "Pasted html: " << pastedHtml;
         }
     }
     QLOG_DEBUG() << "Has Color:" << mime->hasColor();
-    QLOG_DEBUG() << "Has Url:" << mime->hasUrls();
 
     if (mime->hasText()) {
-        // note: pasted text - ist text only version withou html tags
+        QLOG_DEBUG() << "pasteButtonPressed: plain text processing";
+
+
+        // note: pasted text - is text only version without html tags
         QString pastedText = mime->text();
         if (pastedText.length() > 50) {
-            QLOG_DEBUG_FILE("pasted.txt", pastedText);
+            QLOG_DEBUG_FILE("pasted-text.txt", pastedText);
         } else {
-            QLOG_DEBUG() << "Pasted txt: " << pastedText;
+            QLOG_DEBUG() << "pastedText=" << pastedText;
         }
 
-        if (pastedText.toLower().startsWith("https://") ||
-            pastedText.toLower().startsWith("http://") ||
-            pastedText.toLower().startsWith("ftp://") || \
-            pastedText.toLower().startsWith("mailto:")) {
-            QString url = this->buildPasteUrl(pastedText);
-            QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
-            editor->page()->mainFrame()->evaluateJavaScript(script);
-            return;
-        }
+        // this is original code, but seems to be a nonsense
+        // the "text" may start with url, but contain more than one url,
+        // this would be destroyed here
+
+        // if (pastedText.toLower().startsWith("https://") ||
+        //     pastedText.toLower().startsWith("http://") ||
+        //     pastedText.toLower().startsWith("ftp://") || 
+        //     pastedText.toLower().startsWith("mailto:")) {
+        //     QString urlP2 = this->buildPasteUrl(pastedText);
+        //     QLOG_DEBUG() << "pasteButtonPressed: plain text urlP2=" << urlP2;
+        //
+        //     QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(urlP);
+        //     editor->page()->mainFrame()->evaluateJavaScript(script);
+        //     return;
+        // }
 
 
         if (pastedText.toLower().mid(0, 17) == "evernote:///view/") {
@@ -1068,7 +1084,7 @@ void NBrowserWindow::pasteButtonPressed() {
         }
     }
 
-
+    QLOG_DEBUG() << "pasteButtonPressed: 1:1 paste";
     this->editor->triggerPageAction(QWebPage::Paste);
     this->editor->setFocus();
     microFocusChanged();
@@ -1085,6 +1101,8 @@ void NBrowserWindow::selectAllButtonPressed() {
 
 // The paste without mime format was pressed
 void NBrowserWindow::pasteWithoutFormatButtonPressed() {
+    QLOG_DEBUG() << "pasteWithoutFormatButtonPressed";
+
     const QMimeData *mime = QApplication::clipboard()->mimeData();
     if (!mime->hasText())
         return;
@@ -2623,6 +2641,7 @@ void NBrowserWindow::insertDateTimeUsingFormat(const QString &format) const {
 
 // Insert an image into the editor
 void NBrowserWindow::insertImage(const QMimeData *mime) {
+    QLOG_DEBUG() << "insertImage";
 
     // Get the image from the clipboard and save it into a QByteArray
     // that can be saved

@@ -455,6 +455,9 @@ qint32 CommunicationManager::expungeNotebook(Guid guid) {
 qint32 CommunicationManager::uploadNote(Note &note, QString token) {
 
     if (QLOG_IS_DEBUG) {
+        // dump always; but only in DEBUG log level
+        dumpNote(note);
+
         qint32 resourceCount = note.resources.isSet() ? note.resources.ref().size() : 0;
 
         QLOG_DEBUG() << "uploadNote " << note.guid << ", " << note.title << ", resourceCount=" << resourceCount;
@@ -472,23 +475,25 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
     qint32 updateSequenceNum = 0;
     try {
         if (note.updateSequenceNum.isSet() && note.updateSequenceNum > 0) {
+            QLOG_DEBUG() << "qevercloud noteStore->updateNote";
             note = noteStore->updateNote(note, token);
         } else {
+            QLOG_DEBUG() << "qevercloud noteStore->createNote";
             note = noteStore->createNote(note, token);
         }
         updateSequenceNum = note.updateSequenceNum;
     } catch (ThriftException &e) {
         reportError(CommunicationError::ThriftException, e.type(), e.what());
-        dumpNote(note);
+        //dumpNote(note);
     } catch (EDAMUserException &e) {
         reportError(CommunicationError::EDAMUserException, e.errorCode, e.what());
-        dumpNote(note);
+        //dumpNote(note);
     } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e, note.title);
-        dumpNote(note);
+        //dumpNote(note);
     } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e, note.title);
-        dumpNote(note);
+        //dumpNote(note);
     }
 
     QLOG_DEBUG() << "uploadNote finished " << note.guid << ", updateSequenceNum=" << updateSequenceNum;
@@ -618,11 +623,11 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook &boo
         // Now, authenticate to the book.  Books
         // without a sharekey are public, so authentication
         // isn't needed
-        if (!book.shareKey.isSet())
+        if (!book.sharedNotebookGlobalId.isSet())
             return true;
 
         // We have a share key, so authenticate
-        linkedAuth = noteStore->authenticateToSharedNotebook(book.shareKey, authToken);
+        linkedAuth = noteStore->authenticateToSharedNotebook(book.sharedNotebookGlobalId, authToken);
         linkedAuthToken = linkedAuth.authenticationToken;
     } catch (ThriftException &e) {
         reportError(CommunicationError::ThriftException, e.type(), e.what());

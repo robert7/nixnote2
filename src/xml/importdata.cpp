@@ -714,7 +714,7 @@ void ImportData::processLinkedNotebookNode() {
                 linkedNotebook.updateSequenceNum = intValue();
             }
             if (name == "sharekey") {
-                linkedNotebook.shareKey = textValue();
+                linkedNotebook.sharedNotebookGlobalId = textValue();
             }
             if (name == "sharename") {
                 linkedNotebook.shareName = textValue();
@@ -730,7 +730,6 @@ void ImportData::processLinkedNotebookNode() {
         QString endName = reader->name().toString().toLower();
         if (endName == "linkednotebook" && reader->isEndElement())
             atEnd = true;		}
-    return;
 }
 
 
@@ -764,7 +763,7 @@ void ImportData::processSharedNotebookNode() {
                 sharedNotebook.notebookGuid = textValue();
             }
             if (name == "sharekey") {
-                sharedNotebook.shareKey = textValue();
+                sharedNotebook.globalId = textValue();
             }
             if (name == "username") {
                 sharedNotebook.username = textValue();
@@ -777,7 +776,6 @@ void ImportData::processSharedNotebookNode() {
         QString endName = reader->name().toString().toLower();
         if (endName == "sharednotebook" && reader->isEndElement())
             atEnd = true;		}
-    return;
 }
 
 

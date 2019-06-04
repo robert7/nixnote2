@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "communicationerror.h"
 #include "src/logger/qslog.h"
-#include "src/qevercloud/generated/EDAMErrorCode.h"
+#include "src/qevercloud/QEverCloud/headers/generated/EDAMErrorCode.h"
 
 // Default constructor
 CommunicationError::CommunicationError(QObject *parent) :

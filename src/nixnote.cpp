@@ -89,7 +89,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/xml/exportdata.h"
 #include "src/dialog/aboutdialog.h"
 
-#include "src/qevercloud/include/QEverCloudOAuth.h"
+#include "src/qevercloud/QEverCloud/headers/QEverCloudOAuth.h"
 
 using namespace qevercloud;
 
