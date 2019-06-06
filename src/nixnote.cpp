@@ -2066,14 +2066,16 @@ void NixNote::restoreAndNewNote() {
     newNote();
 }
 
+
+#define NEW_NOTE_ENML "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" \
+                      "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">" \
+                      "<en-note ><br/><br/><br/></en-note>"
+
 /**
  * Create a new note
  */
 void NixNote::newNote() {
-    QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
-                          QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
-                          QString(
-                                  "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><br/></en-note>");
+    QString newNoteBody = QString(NEW_NOTE_ENML);
 
     Note n;
     NotebookTable notebookTable(global.db);
@@ -2173,15 +2175,12 @@ void NixNote::newNote() {
 //* Create a new note in an external window.
 //**********************************************
 void NixNote::newExternalNote() {
-    QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
-                          QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
-                          QString(
-                                  "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><br/></en-note>");
+    QString newNoteBody = QString(NEW_NOTE_ENML);
 
     Note n;
     NotebookTable notebookTable(global.db);
     n.content = newNoteBody;
-    n.title = "Untitled note";
+    n.title = tr("Untitled note");
     QString uuid = QUuid::createUuid().toString();
     uuid = uuid.mid(1);
     uuid.chop(1);
@@ -3581,7 +3580,6 @@ void NixNote::onExportAsPdf() {
         connect(pdfExportWindow, SIGNAL(loadFinished(bool)), this, SLOT(onExportAsPdfReady(bool)));
     }
 
-
     if (lids.size() <= 0) {
         QList<qint32> lids;
         noteTableView->getSelectedLids(lids);
@@ -3593,10 +3591,7 @@ void NixNote::onExportAsPdf() {
 
 
         QPrinter printer;
-        printer.setOutputFormat(QPrinter::PdfFormat);
-        printer.setResolution(QPrinter::HighResolution);
-        printer.setPaperSize(QPrinter::A4);
-        printer.setOutputFileName(file);
+        configurePdfPrinter(printer, file);
 
         // TODO use this as base for filename
         const QString noteTitle = tabWindow->currentBrowser()->noteTitle.text();
@@ -3638,6 +3633,16 @@ void NixNote::onExportAsPdf() {
     pdfExportWindow->setHtml(content);
 }
 
+void NixNote::configurePdfPrinter(QPrinter &printer, QString &file) const {
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setResolution(QPrinter::HighResolution);
+    printer.setPaperSize(QPrinter::A4);
+    printer.setOutputFileName(file);
+    #define TOP_MARGIN 10
+    #define SIDE_MARGIN 15
+    printer.setPageMargins(SIDE_MARGIN, TOP_MARGIN, SIDE_MARGIN, TOP_MARGIN, QPrinter::Millimeter);
+}
+
 QString NixNote::selectExportPDFFileName() {
     QString file = QFileDialog::getSaveFileName(this, tr("PDF Export"), "", "*.pdf");
 
@@ -3660,10 +3665,7 @@ void NixNote::onExportAsPdfReady(bool) {
     }
 
     QPrinter printer;
-    printer.setOutputFormat(QPrinter::PdfFormat);
-    printer.setResolution(QPrinter::HighResolution);
-    printer.setPaperSize(QPrinter::A4);
-    printer.setOutputFileName(file);
+    configurePdfPrinter(printer, file);
     pdfExportWindow->print(&printer);
 }
 

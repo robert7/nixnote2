@@ -979,11 +979,10 @@ void NBrowserWindow::pasteButtonPressed() {
                 QString fileName = url.mid(7);
                 attachFileSelected(fileName);
                 this->editor->triggerPageAction(QWebPage::InsertParagraphSeparator);
-            }
-            else if (urlL.startsWith("https://") ||
-                     urlL.startsWith("http://") ||
-                     urlL.startsWith("ftp://") ||
-                     urlL.startsWith("mailto:")) {
+            } else if (urlL.startsWith("https://") ||
+                       urlL.startsWith("http://") ||
+                       urlL.startsWith("ftp://") ||
+                       urlL.startsWith("mailto:")) {
                 // inserting a URL
                 QString urlP = this->buildPasteUrl(urls[i].toString());
                 QLOG_DEBUG() << "pasteButtonPressed: urlP=" << urlP;
@@ -3154,7 +3153,7 @@ void NBrowserWindow::updateResourceHash(qint32 noteLid, QByteArray oldHash, QByt
 
 
 void NBrowserWindow::attachFileSelected(QString filename) {
-    QLOG_INFO() << "Attaching file: " << filename;
+    QLOG_INFO() << "attachFileSelected: attaching file: " << filename;
 
     // Read in the file
     QFile file(filename);
@@ -3188,11 +3187,15 @@ void NBrowserWindow::attachFileSelected(QString filename) {
         if (d.bodyHash.isSet())
             hash = d.bodyHash;
     }
-    if (rlid <= 0)
+    QLOG_INFO() << "attachFileSelected: attaching file rlid=" << rlid;
+    if (rlid <= 0) {
+        QLOG_INFO() << "attachFileSelected: FAIL";
         return;
+    }
 
     // If we have an image, then insert it.
     if (mime.startsWith("image", Qt::CaseInsensitive)) {
+        QLOG_INFO() << "attachFileSelected: image insert";
 
         // The resource is done, now we need to add it to the
         // note body
@@ -3232,6 +3235,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
     bool isPdfWithInlineDisplay = mime == "application/pdf" && global.pdfPreview;
     if (isPdfWithInlineDisplay) {
+        QLOG_INFO() << "attachFileSelected: isPdfWithInlineDisplay";
         // The resource is done, now we need to add it to the note body
         QString g = QString::number(rlid) + extension;
 
@@ -3252,6 +3256,8 @@ void NBrowserWindow::attachFileSelected(QString filename) {
         // Insert the actual image
         editor->page()->mainFrame()->evaluateJavaScript(script_start + buffer + script_end);
     } else {
+        QLOG_INFO() << "attachFileSelected: other object";
+        
         // if we already inserted the "object", then skip "img" tag, as this would duplicate the PDF
 
         // If we have something other than an image or PDF
@@ -3281,7 +3287,11 @@ void NBrowserWindow::attachFileSelected(QString filename) {
         buffer.append("\" />");
         buffer.append("</a>");
         buffer.replace("\'", "&quot;");
-        editor->page()->mainFrame()->evaluateJavaScript(script_start + buffer + script_end);
+
+        const QString &html = script_start + buffer + script_end;
+        QLOG_INFO() << "attachFileSelected: inserting HTML " << html;
+
+        editor->page()->mainFrame()->evaluateJavaScript(html);
     }
 }
 
@@ -3780,20 +3790,30 @@ void NBrowserWindow::hideHtmlEntities() {
 void NBrowserWindow::handleUrls(const QMimeData *mime) {
     QList<QUrl> urlList = mime->urls();
     bool ctrlModifier = QApplication::keyboardModifiers() & Qt::ControlModifier;
+    QLOG_DEBUG() << "handleUrls: urlList=" << urlList << ", ctrlModifier=" << ctrlModifier;
+
     for (int i = 0; i < urlList.size(); i++) {
         QString file = urlList[i].toString();
-        if (file.toLower().startsWith("file://") && !ctrlModifier) {
+        QLOG_DEBUG() << "handleUrls: file=" << file;
+
+        bool isFileProtocol = file.toLower().startsWith("file://");
+        bool isLastItem = i >= urlList.size() - 1;
+        
+        if (isFileProtocol && !ctrlModifier) {
             attachFileSelected(file.mid(7));
 
-            if (i < urlList.size() - 1)
+            if (!isLastItem) {
                 insertHtml("<div><br/></div>");
-        } else if (file.toLower().startsWith("file://") && ctrlModifier) {
-            QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(file).arg(file).arg(file);
-            QLOG_DEBUG() << url;
-            insertHtml(url);
-            if (i < urlList.size() - 1)
+            }
+        } else if (isFileProtocol && ctrlModifier) {
+            QString urlMarkup = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(file).arg(file).arg(file);
+            QLOG_DEBUG() << "handleUrls: converted urlMarkup=" << file;
+            insertHtml(urlMarkup);
+            if (!isLastItem) {
                 insertHtml("<div><br/></div>");
+            }
         } else {
+            QLOG_DEBUG() << "handleUrls: plain clipboard insert";
             editor->setFocus();
             QApplication::clipboard()->clear();
             QApplication::clipboard()->setText(file, QClipboard::Clipboard);
@@ -3936,7 +3956,8 @@ void NBrowserWindow::copyInAppNoteLink() {
     User user;
     utable.getUser(user);
 
-    QString href = NixnoteStringUtils::createNoteLink(true, global.server, QString::number(user.id), user.shardId, n.guid);
+    QString href = NixnoteStringUtils::createNoteLink(true, global.server, QString::number(user.id), user.shardId,
+                                                      n.guid);
     QApplication::clipboard()->setText(href, QClipboard::Clipboard);
 }
 
