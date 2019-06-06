@@ -184,6 +184,7 @@ private:
     void trayActivatedAction(int value);
     TrayMenu *createTrayContexMenu();
     void restoreAndShowMainWindow();
+    void configurePdfPrinter(QPrinter &printer, QString &file) const;
 
 public:
     NixNote(QWidget *parent = 0);  // Constructor
@@ -305,6 +306,7 @@ public slots:
 signals:
     void syncRequested();
     void updateCounts();
+
 
 };
 
