@@ -2071,7 +2071,7 @@ void NBrowserWindow::tabPressed() {
     if (insideEncryption)
         return;
     if (!insideList && !insideTable) {
-        QString script_start = "document.execCommand('insertHtml', false, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');";
+        QString script_start = "document.execCommand('insertHtml', false, ' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;');";
         editor->page()->mainFrame()->evaluateJavaScript(script_start);
         return;
     }

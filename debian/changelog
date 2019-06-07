@@ -1,11 +1,12 @@
-NixNote (2.1.4-e) stable; urgency=low
+NixNote (2.1.4-f) stable; urgency=low
   * Fixed few sync problems (e.g. involving "map" or "svg" tag)
   * Fixed html handling in relation in urls on text paste
   * Updated qevercloud (Evernote API) to latest version (v.4.0.0) - Evernote API 1.28
   * Fixed problem with not removing tags when all of them should be removed from a note, Issue #96
   * Added sort by "encrypted notes first"
   * Added page margins for note output to PDF
- -- Robert Spiegel <nightingale7@gmail.com>  Thu, 06 Jun 2019 15:41:10 +0200
+  * Corrected insert of non breaking spaces on Tab
+ -- Robert Spiegel <nightingale7@gmail.com>  Fri, 07 Jun 2019 10:27:41 +0200
 
 NixNote (2.1.3) stable; urgency=low
   * Updated german translation (2x), thanks to https://github.com/stemabu
