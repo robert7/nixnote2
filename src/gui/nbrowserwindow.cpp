@@ -969,28 +969,31 @@ void NBrowserWindow::pasteButtonPressed() {
         return;
     }
 
-
-
-
     // note: pasted text - is text only version without html tags
     bool hasHtml = mime->hasHtml();
-    QString textToPaste = hasHtml ? mime->html() : mime->text();
+    const QString mimeContentAsText = mime->text().trimmed();
+    bool isEvernoteInAppLink = mimeContentAsText.startsWith("evernote:///view/");
+    bool processAsHtml = hasHtml && (!isEvernoteInAppLink);
+    QString textToPaste = processAsHtml ? mime->html() : mimeContentAsText;
 
-    QLOG_DEBUG() << "original textToPaste=" << textToPaste;
+    QLOG_DEBUG() << "pasteButtonPressed: hasHtml=" << hasHtml
+                 << ", isEvernoteInAppLink=" << isEvernoteInAppLink
+                 << ", original textToPaste=" << textToPaste;
     bool hasWhitespace = textToPaste.contains(QRegExp("\\s"));
     if (hasWhitespace) {
         // hacky workaround to skip any postprocessing
         QLOG_DEBUG() << "1:1 insert (no preprocessing)";
         this->editor->triggerPageAction(QWebPage::Paste);
     } else {
-        if (!hasHtml) {
+        if ((!hasHtml) && (!isEvernoteInAppLink)) {
             // this to add markup if it is a single url
             textToPaste = this->buildPasteUrl(textToPaste);
         }
 
-        if (textToPaste.toLower().mid(0, 17) == "evernote:///view/") {
+        // TODO refactor this hacky code
+        if (isEvernoteInAppLink) {
             // very hacky way to process evernote urls
-            QLOG_DEBUG() << "its evernote link";
+            QLOG_DEBUG() << "pasteButtonPressed: its evernote link";
             QStringList urlList = textToPaste.split(" ");
             QString url = "";
             for (int i = 0; i < urlList.size(); i++) {
@@ -1033,7 +1036,7 @@ void NBrowserWindow::pasteButtonPressed() {
 
         // https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
         // 2nd param: A Boolean, specifies if the UI should be shown or not
-        QLOG_DEBUG() << "final textToPaste=" << textToPaste;
+        QLOG_DEBUG() << "pasteButtonPressed: final textToPaste=" << textToPaste;
         QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(textToPaste);
         editor->page()->mainFrame()->evaluateJavaScript(script);
     }
@@ -1462,10 +1465,14 @@ void NBrowserWindow::fontHighlightClicked() {
 }
 
 void NBrowserWindow::insertLinkButtonPressed() {
+    QLOG_DEBUG() << "insertLinkButtonPressed";
     QString text = editor->selectedText().trimmed();
-    if (text == "" && currentHyperlink == "")
+    if (text == "" && currentHyperlink == "") {
+        QLOG_DEBUG()
+            << "insertLinkButtonPressed. you need to select some text or position cursor inside existing link, "
+               "before calling the function (abort)";
         return;
-
+    }
     InsertLinkDialog dialog(insertHyperlink);
 
     // If we have a link already highlighted, set it to the dialog.
