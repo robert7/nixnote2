@@ -2181,6 +2181,10 @@ void NBrowserWindow::setBackgroundColor(QString value) {
 
 // The user clicked a link in the note
 void NBrowserWindow::linkClicked(const QUrl url) {
+
+    QLOG_DEBUG() << "linkClicked: " << url;
+
+
     if (url.toString().startsWith("latex:///", Qt::CaseInsensitive)) {
         editLatex(url.toString().mid(9));
         return;
@@ -2260,12 +2264,12 @@ void NBrowserWindow::linkClicked(const QUrl url) {
         fileUrl = fileUrl.replace("\\", "/");
 #endif // End windows check
         global.resourceWatcher->addPath(fileUrl);
-        QLOG_DEBUG() << "Opening attachment file url=" << fileUrl;
+        QLOG_DEBUG() << "Opening attachment file (QDesktopServices::openUrl) url=" << fileUrl;
         QDesktopServices::openUrl(fileUrl);
         return;
     }
 
-    QLOG_DEBUG() << "Opening attachment url=" << url;
+    QLOG_DEBUG() << "Opening attachment (QDesktopServices::openUrl) url=" << url;
     QDesktopServices::openUrl(url);
 }
 
