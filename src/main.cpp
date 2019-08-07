@@ -340,21 +340,22 @@ int main(int argc, char *argv[]) {
         proxy.setType(QNetworkProxy::HttpProxy);
     }
 
-    QLOG_DEBUG() << "Setting up exit signal";
-
+    QLOG_DEBUG() << "main: setting up exit signal (to saveOnExit())";
     QObject::connect(a, SIGNAL(aboutToQuit()), w, SLOT(saveOnExit()));
 
-    QLOG_DEBUG() << "Launching";
+    QLOG_DEBUG() << "main: Launching";
     int rc = a->exec();
-    if (sharedMemory->isAttached())
+    if (sharedMemory->isAttached()) {
         sharedMemory->detach();
-    QLOG_DEBUG() << "Deleting NixNote instance";
+    }
+
+    QLOG_DEBUG() << "main: deleting NixNote instance";
     delete w;
-    QLOG_DEBUG() << "Quitting application instance";
+    QLOG_DEBUG() << "main: quitting application instance";
     a->exit(rc);
-    QLOG_DEBUG() << "Deleting application instance";
+    QLOG_DEBUG() << "main: deleting application instance";
     delete a;
-    QLOG_INFO() << "Exit: retcode=" << rc;
+    QLOG_INFO() << "main: Exit: retcode=" << rc;
     exit(rc);
     return rc;
 }

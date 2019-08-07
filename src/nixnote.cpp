@@ -1141,6 +1141,8 @@ void NixNote::setupTabWindow() {
  * Quit NixNote.   This will force a app close even if "close to tray" is set.
  */
 void NixNote::quitNixNote() {
+    QLOG_DEBUG() << "quitNixNote";
+
     closeToTray = false;
     close();
 }
@@ -1150,6 +1152,8 @@ void NixNote::quitNixNote() {
  * Close nixnote via the shortcut. If we have it set to close to the tray,
  */
 void NixNote::closeShortcut() {
+    QLOG_DEBUG() << "closeShortcut()";
+
     if (closeToTray && isVisible())
         showMainWindow(); // wtf?
     else
@@ -1161,12 +1165,12 @@ void NixNote::closeShortcut() {
 //* Save program contents on exit
 //******************************************************************************
 void NixNote::saveOnExit() {
-    QLOG_DEBUG() << "saveOnExit called";
+    QLOG_DEBUG() << "saveOnExit()";
 
-    QLOG_DEBUG() << "Saving contents";
+    QLOG_DEBUG() << "saveOnExit: Saving contents";
     saveContents();
 
-    QLOG_DEBUG() << "Shutting down threads";
+    QLOG_DEBUG() << "saveOnExit: Shutting down threads";
     indexRunner.keepRunning = false;
     counterRunner.keepRunning = false;
     QCoreApplication::processEvents();
@@ -1281,7 +1285,7 @@ void NixNote::saveOnExit() {
     saveNoteColumnPositions();
     noteTableView->saveColumnsVisible();
 
-    QLOG_DEBUG() << "Closing threads";
+    QLOG_DEBUG() << "saveOnExit: Closing threads";
     indexThread.quit();
     counterThread.quit();
 
@@ -1292,11 +1296,13 @@ void NixNote::saveOnExit() {
 //* Close the program
 //*****************************************************************************
 void NixNote::closeEvent(QCloseEvent *event) {
-//    if (closeToTray && !closeFlag) {
-//        event->ignore();
-//        hide();
-//        return;
-//    }
+    QLOG_DEBUG() << "closeEvent";
+
+    //    if (closeToTray && !closeFlag) {
+    //        event->ignore();
+    //        hide();
+    //        return;
+    //    }
 
     saveOnExit();
 
@@ -1310,6 +1316,8 @@ void NixNote::closeEvent(QCloseEvent *event) {
         connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(close()));
         synchronize();
         event->ignore();
+        QLOG_DEBUG() << "closeEvent: ignore";
+
         return;
     }
 
@@ -1325,7 +1333,7 @@ void NixNote::closeEvent(QCloseEvent *event) {
     }
 
     QMainWindow::closeEvent(event);
-    QLOG_DEBUG() << "Quitting";
+    QLOG_DEBUG() << "closeEvent: quitting";
 }
 
 
@@ -1994,6 +2002,8 @@ void NixNote::notifySyncComplete() {
     } else if (global.showGoodSyncMessagesInTray) {
         showMessage(tr("Sync Complete"), tr("Sync completed successfully."));
     }
+
+    QLOG_DEBUG() << "notifySyncComplete: done";
 }
 
 
@@ -2066,14 +2076,16 @@ void NixNote::restoreAndNewNote() {
     newNote();
 }
 
+
+#define NEW_NOTE_ENML "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" \
+                      "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">" \
+                      "<en-note ><br/><br/><br/></en-note>"
+
 /**
  * Create a new note
  */
 void NixNote::newNote() {
-    QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
-                          QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
-                          QString(
-                                  "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><br/></en-note>");
+    QString newNoteBody = QString(NEW_NOTE_ENML);
 
     Note n;
     NotebookTable notebookTable(global.db);
@@ -2173,15 +2185,12 @@ void NixNote::newNote() {
 //* Create a new note in an external window.
 //**********************************************
 void NixNote::newExternalNote() {
-    QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
-                          QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">") +
-                          QString(
-                                  "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><br/></en-note>");
+    QString newNoteBody = QString(NEW_NOTE_ENML);
 
     Note n;
     NotebookTable notebookTable(global.db);
     n.content = newNoteBody;
-    n.title = "Untitled note";
+    n.title = tr("Untitled note");
     QString uuid = QUuid::createUuid().toString();
     uuid = uuid.mid(1);
     uuid.chop(1);
@@ -2443,6 +2452,7 @@ void NixNote::viewNoteHistory() {
         if (!normalUser)
             comm.listNoteVersions(versions, guid);
     }
+
     dialog.loadData(versions);
     dialog.exec();
     if (!dialog.importPressed)
@@ -2599,7 +2609,7 @@ void NixNote::heartbeatTimerTriggered() {
         this->synchronize();
         return;
     } else if (data.startsWith("IMMEDIATE_SHUTDOWN")) {
-        QLOG_INFO() << "IMMEDIATE_SHUTDOWN requested by shared memory segment.";
+        QLOG_INFO() << "IMMEDIATE_SHUTDOWN requested by shared memory segment (quitNixNote).";
         this->quitNixNote();
         return;
     } else if (data.startsWith("SHOW_WINDOW")) {
@@ -2712,6 +2722,7 @@ void NixNote::heartbeatTimerTriggered() {
         if (cmd.startsWith("SYNCHRONIZE")) {
             this->synchronize();
         } else if (cmd.startsWith("SHUTDOWN")) {
+            QLOG_INFO() << "calling quitNixNote";
             this->quitNixNote();
         } else if (cmd.startsWith("SHOW")) {
             this->restoreAndShowMainWindow();
@@ -3581,7 +3592,6 @@ void NixNote::onExportAsPdf() {
         connect(pdfExportWindow, SIGNAL(loadFinished(bool)), this, SLOT(onExportAsPdfReady(bool)));
     }
 
-
     if (lids.size() <= 0) {
         QList<qint32> lids;
         noteTableView->getSelectedLids(lids);
@@ -3593,10 +3603,7 @@ void NixNote::onExportAsPdf() {
 
 
         QPrinter printer;
-        printer.setOutputFormat(QPrinter::PdfFormat);
-        printer.setResolution(QPrinter::HighResolution);
-        printer.setPaperSize(QPrinter::A4);
-        printer.setOutputFileName(file);
+        configurePdfPrinter(printer, file);
 
         // TODO use this as base for filename
         const QString noteTitle = tabWindow->currentBrowser()->noteTitle.text();
@@ -3638,6 +3645,16 @@ void NixNote::onExportAsPdf() {
     pdfExportWindow->setHtml(content);
 }
 
+void NixNote::configurePdfPrinter(QPrinter &printer, QString &file) const {
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setResolution(QPrinter::HighResolution);
+    printer.setPaperSize(QPrinter::A4);
+    printer.setOutputFileName(file);
+    #define TOP_MARGIN 10
+    #define SIDE_MARGIN 15
+    printer.setPageMargins(SIDE_MARGIN, TOP_MARGIN, SIDE_MARGIN, TOP_MARGIN, QPrinter::Millimeter);
+}
+
 QString NixNote::selectExportPDFFileName() {
     QString file = QFileDialog::getSaveFileName(this, tr("PDF Export"), "", "*.pdf");
 
@@ -3660,10 +3677,7 @@ void NixNote::onExportAsPdfReady(bool) {
     }
 
     QPrinter printer;
-    printer.setOutputFormat(QPrinter::PdfFormat);
-    printer.setResolution(QPrinter::HighResolution);
-    printer.setPaperSize(QPrinter::A4);
-    printer.setOutputFileName(file);
+    configurePdfPrinter(printer, file);
     pdfExportWindow->print(&printer);
 }
 

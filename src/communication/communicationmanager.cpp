@@ -106,8 +106,11 @@ bool CommunicationManager::enConnect() {
     QString data = global.accountsManager->getOAuthToken();
     tokenizer.tokenize(data);
     authToken = tokenizer.oauth_token;
-//    authToken = global.accountsManager->getOAuthToken();
-    return init();
+    //    authToken = global.accountsManager->getOAuthToken();
+    bool b = init();
+
+    QLOG_DEBUG() << "enConnect: " << b;
+    return b;
 }
 
 
@@ -115,8 +118,10 @@ bool CommunicationManager::enConnect() {
 bool CommunicationManager::init() {
     if (initComplete)
         return true;
-    if (!initNoteStore())
+    if (!initNoteStore()) {
+        QLOG_DEBUG() << "init: fail";
         return false;
+    }
     initComplete = true;
     return true;
 }
@@ -125,11 +130,13 @@ bool CommunicationManager::init() {
 // Initialize the note store
 bool CommunicationManager::initNoteStore() {
     using namespace qevercloud;
-    QLOG_DEBUG() << "Inside CommunicationManager::initNoteStore()";
+    QLOG_DEBUG() << "initNoteStore()";
 
     User user;
-    if (!getUserInfo(user))
+    if (!getUserInfo(user)) {
+        QLOG_DEBUG() << "initNoteStore: fail";
         return false;
+    }
     noteStorePath = "/edam/note/" + user.shardId;
 
     QString noteStoreUrl = QString("https://") + evernoteHost + noteStorePath;

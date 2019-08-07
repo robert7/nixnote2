@@ -77,7 +77,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qplaintextedit.h>
 
 #if QT_VERSION < 0x050000
+
 #include <QtScript/QScriptEngine>
+
 #else
 
 #include <QJSEngine>
@@ -85,7 +87,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #endif
 
 
-extern Global global;
+extern Global
+        global;
 
 NBrowserWindow::NBrowserWindow(QWidget *parent) :
         QWidget(parent) {
@@ -932,17 +935,16 @@ void NBrowserWindow::copyButtonPressed() {
 
 // Build URL from pasted text
 QString NBrowserWindow::buildPasteUrl(QString url) {
-    if (url.toLower().startsWith("http://") ||
-        url.toLower().startsWith("https://") ||
-        url.toLower().startsWith("mailto://") ||
-        url.toLower().startsWith("mailto:") ||
-        url.toLower().startsWith("ftp://")) {
-        QString newUrl = QString("<a href=\"") + QApplication::clipboard()->text()
-                         + QString("\" title=\"") + url
-                         + QString("\" >") + url + QString("</a>");
-        return newUrl;
+    QUrl qurl(url);
+    // hacky test
+    bool valid = qurl.isValid() && !url.contains(QRegExp("\\s"));
+    if (!valid) {
+        QLOG_DEBUG() << "buildPasteUrl: not a valid url detected";
+        return url;
     }
-    return url;
+    QString newUrl = QString("<a href=\"") + url + QString("\">") + url + QString("</a>");
+    QLOG_DEBUG() << "buildPasteUrl: valid url; adjusted to HTML: newUrl=" << newUrl;
+    return newUrl;
 }
 
 
@@ -955,7 +957,6 @@ void NBrowserWindow::pasteButtonPressed() {
     QLOG_DEBUG() << "pasteButtonPressed";
 
     const QMimeData *mime = QApplication::clipboard()->mimeData();
-
     if (mime->hasImage()) {
         editor->setFocus();
         insertImage(mime);
@@ -963,98 +964,53 @@ void NBrowserWindow::pasteButtonPressed() {
         return;
     }
 
-    // Returns true if the object can return a list of urls; otherwise returns false.
-    const bool hasUrls = mime->hasUrls();
-    QLOG_DEBUG() << "pasteButtonPressed: hasUrls=" << hasUrls;
-
-    if (hasUrls) {
-        QList<QUrl> urls = mime->urls();
-        for (int i = 0; i < urls.size(); i++) {
-            QString url = urls[i].toString();
-            QString urlL = url.toLower();
-            QLOG_DEBUG() << "pasteButtonPressed: processing url=" << url;
-
-            if (url.startsWith("file://")) {
-                // inserting local file
-                QString fileName = url.mid(7);
-                attachFileSelected(fileName);
-                this->editor->triggerPageAction(QWebPage::InsertParagraphSeparator);
-            }
-            else if (urlL.startsWith("https://") ||
-                     urlL.startsWith("http://") ||
-                     urlL.startsWith("ftp://") ||
-                     urlL.startsWith("mailto:")) {
-                // inserting a URL
-                QString urlP = this->buildPasteUrl(urls[i].toString());
-                QLOG_DEBUG() << "pasteButtonPressed: urlP=" << urlP;
-                QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(urlP);
-                editor->page()->mainFrame()->evaluateJavaScript(script);
-            }
-        }
-
-        this->editor->setFocus();
-        microFocusChanged();
-        QLOG_DEBUG() << "pasteButtonPressed: done";
+    if (!mime->hasText()) {
+        QLOG_DEBUG() << "pasteButtonPressed: no text; nothing to do";
         return;
     }
 
-    QString pastedHtml = mime->html();
-    if (mime->hasHtml()) {
-        if (pastedHtml.length() > 50) {
-            QLOG_DEBUG_FILE("pasted-html.html", pastedHtml);
-        } else {
-            QLOG_DEBUG() << "Pasted html: " << pastedHtml;
+    // note: pasted text - is text only version without html tags
+    bool hasHtml = mime->hasHtml();
+    const QString mimeContentAsText = mime->text().trimmed();
+    bool isEvernoteInAppLink = mimeContentAsText.startsWith("evernote:///view/");
+    bool processAsHtml = hasHtml && (!isEvernoteInAppLink);
+    QString textToPaste = processAsHtml ? mime->html() : mimeContentAsText;
+
+    QLOG_DEBUG() << "pasteButtonPressed: hasHtml=" << hasHtml
+                 << ", isEvernoteInAppLink=" << isEvernoteInAppLink
+                 << ", original textToPaste=" << textToPaste;
+    bool hasWhitespace = textToPaste.contains(QRegExp("\\s"));
+    if (hasWhitespace) {
+        // hacky workaround to skip any postprocessing
+        QLOG_DEBUG() << "1:1 insert (no preprocessing)";
+        this->editor->triggerPageAction(QWebPage::Paste);
+    } else {
+        if ((!hasHtml) && (!isEvernoteInAppLink)) {
+            // this to add markup if it is a single url
+            textToPaste = this->buildPasteUrl(textToPaste);
         }
-    }
-    QLOG_DEBUG() << "Has Color:" << mime->hasColor();
 
-    if (mime->hasText()) {
-        QLOG_DEBUG() << "pasteButtonPressed: plain text processing";
-
-
-        // note: pasted text - is text only version without html tags
-        QString pastedText = mime->text();
-        if (pastedText.length() > 50) {
-            QLOG_DEBUG_FILE("pasted-text.txt", pastedText);
-        } else {
-            QLOG_DEBUG() << "pastedText=" << pastedText;
-        }
-
-        // this is original code, but seems to be a nonsense
-        // the "text" may start with url, but contain more than one url,
-        // this would be destroyed here
-
-        // if (pastedText.toLower().startsWith("https://") ||
-        //     pastedText.toLower().startsWith("http://") ||
-        //     pastedText.toLower().startsWith("ftp://") || 
-        //     pastedText.toLower().startsWith("mailto:")) {
-        //     QString urlP2 = this->buildPasteUrl(pastedText);
-        //     QLOG_DEBUG() << "pasteButtonPressed: plain text urlP2=" << urlP2;
-        //
-        //     QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(urlP);
-        //     editor->page()->mainFrame()->evaluateJavaScript(script);
-        //     return;
-        // }
-
-
-        if (pastedText.toLower().mid(0, 17) == "evernote:///view/") {
-            QStringList urlList = pastedText.split(" ");
+        // TODO refactor this hacky code
+        if (isEvernoteInAppLink) {
+            // very hacky way to process evernote urls
+            QLOG_DEBUG() << "pasteButtonPressed: its evernote link";
+            QStringList urlList = textToPaste.split(" ");
             QString url = "";
             for (int i = 0; i < urlList.size(); i++) {
-                QLOG_DEBUG() << urlList[i];
-                pastedText = urlList[i];
-                pastedText = pastedText.mid(17);
-                int pos = pastedText.indexOf("/");
-                pastedText = pastedText.mid(pos + 1);
-                pos = pastedText.indexOf("/");
-                pastedText = pastedText.mid(pos + 1);
-                pos = pastedText.indexOf("/");
-                pastedText = pastedText.mid(pos + 1);
-                pos = pastedText.indexOf("/");
-                QString guid = pastedText.mid(0, pos);
-                pastedText = pastedText.mid(pos);
-                pos = pastedText.indexOf("/");
-                QString locguid = pastedText.mid(pos);
+                //QLOG_DEBUG() << urlList[i];
+                textToPaste = urlList[i];
+                textToPaste = textToPaste.mid(17);
+                int pos = textToPaste.indexOf("/");
+                textToPaste = textToPaste.mid(pos + 1);
+                pos = textToPaste.indexOf("/");
+                textToPaste = textToPaste.mid(pos + 1);
+                pos = textToPaste.indexOf("/");
+                textToPaste = textToPaste.mid(pos + 1);
+                pos = textToPaste.indexOf("/");
+                QString guid = textToPaste.mid(0, pos);
+                textToPaste = textToPaste.mid(pos);
+                pos = textToPaste.indexOf("/");
+                QString locguid = textToPaste.mid(pos);
 
                 Note n;
                 bool goodrc = false;
@@ -1068,24 +1024,23 @@ void NBrowserWindow::pasteButtonPressed() {
                 if (goodrc) {
                     url = url + QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(urlList[i], n.title, n.title);
                     QLOG_DEBUG() << "HTML to insert:" << url;
-                    if (i + 1 < urlList.size())
+                    if (i + 1 < urlList.size()) {
                         url = url + " <br> ";
-                } else {
-                    if (pastedText != "") {
-                        QLOG_ERROR() << "Error retrieving note after paste: " << urlList[i];
                     }
+                    textToPaste = url;
+                    // TODO maybe add code to handle more than one url
+                    break;
                 }
             }
-
-            QLOG_DEBUG() << url;
-            QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
-            editor->page()->mainFrame()->evaluateJavaScript(script);
-            return;
         }
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
+        // 2nd param: A Boolean, specifies if the UI should be shown or not
+        QLOG_DEBUG() << "pasteButtonPressed: final textToPaste=" << textToPaste;
+        QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(textToPaste);
+        editor->page()->mainFrame()->evaluateJavaScript(script);
     }
 
-    QLOG_DEBUG() << "pasteButtonPressed: 1:1 paste";
-    this->editor->triggerPageAction(QWebPage::Paste);
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -1510,10 +1465,14 @@ void NBrowserWindow::fontHighlightClicked() {
 }
 
 void NBrowserWindow::insertLinkButtonPressed() {
+    QLOG_DEBUG() << "insertLinkButtonPressed";
     QString text = editor->selectedText().trimmed();
-    if (text == "" && currentHyperlink == "")
+    if (text == "" && currentHyperlink == "") {
+        QLOG_DEBUG()
+            << "insertLinkButtonPressed. you need to select some text or position cursor inside existing link, "
+               "before calling the function (abort)";
         return;
-
+    }
     InsertLinkDialog dialog(insertHyperlink);
 
     // If we have a link already highlighted, set it to the dialog.
@@ -1892,29 +1851,47 @@ void NBrowserWindow::rotateImageRightButtonPressed() {
 }
 
 
-void NBrowserWindow::rotateImage(qreal degrees) {
+void NBrowserWindow::rotateImage(qreal
+                                 degrees) {
 
-    // rotate the image
+// rotate the image
     QWebSettings::setMaximumPagesInCache(0);
     QWebSettings::setObjectCacheCapacities(0, 0, 0);
     QImage image(global.fileManager.getDbaDirPath() + selectedFileName);
     QMatrix matrix;
-    matrix.rotate(degrees);
+    matrix.
+            rotate(degrees);
     image = image.transformed(matrix);
-    image.save(global.fileManager.getDbaDirPath() + selectedFileName);
-    editor->setHtml(editor->page()->mainFrame()->toHtml());
+    image.
+            save(global
+                         .fileManager.
 
-    // Now, we need to update the note's MD5
+            getDbaDirPath()
+
+                 + selectedFileName);
+    editor->
+            setHtml(editor
+                            ->page()->mainFrame()->
+
+            toHtml()
+
+    );
+
+// Now, we need to update the note's MD5
     QFile f(global.fileManager.getDbaDirPath() + selectedFileName);
-    f.open(QIODevice::ReadOnly);
+    f.
+            open(QIODevice::ReadOnly);
     QByteArray filedata = f.readAll();
     QCryptographicHash hash(QCryptographicHash::Md5);
     QByteArray b = hash.hash(filedata, QCryptographicHash::Md5);
     updateImageHash(b);
 
-    // Reload the web page
-    editor->triggerPageAction(QWebPage::ReloadAndBypassCache);
+// Reload the web page
+    editor->
+            triggerPageAction(QWebPage::ReloadAndBypassCache);
+
     contentChanged();
+
 }
 
 
@@ -2072,7 +2049,7 @@ void NBrowserWindow::tabPressed() {
     if (insideEncryption)
         return;
     if (!insideList && !insideTable) {
-        QString script_start = "document.execCommand('insertHtml', false, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');";
+        QString script_start = "document.execCommand('insertHtml', false, ' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;');";
         editor->page()->mainFrame()->evaluateJavaScript(script_start);
         return;
     }
@@ -2204,6 +2181,10 @@ void NBrowserWindow::setBackgroundColor(QString value) {
 
 // The user clicked a link in the note
 void NBrowserWindow::linkClicked(const QUrl url) {
+
+    QLOG_DEBUG() << "linkClicked: " << url;
+
+
     if (url.toString().startsWith("latex:///", Qt::CaseInsensitive)) {
         editLatex(url.toString().mid(9));
         return;
@@ -2283,12 +2264,12 @@ void NBrowserWindow::linkClicked(const QUrl url) {
         fileUrl = fileUrl.replace("\\", "/");
 #endif // End windows check
         global.resourceWatcher->addPath(fileUrl);
-        QLOG_DEBUG() << "Opening attachment file url=" << fileUrl;
+        QLOG_DEBUG() << "Opening attachment file (QDesktopServices::openUrl) url=" << fileUrl;
         QDesktopServices::openUrl(fileUrl);
         return;
     }
 
-    QLOG_DEBUG() << "Opening attachment url=" << url;
+    QLOG_DEBUG() << "Opening attachment (QDesktopServices::openUrl) url=" << url;
     QDesktopServices::openUrl(url);
 }
 
@@ -3154,7 +3135,7 @@ void NBrowserWindow::updateResourceHash(qint32 noteLid, QByteArray oldHash, QByt
 
 
 void NBrowserWindow::attachFileSelected(QString filename) {
-    QLOG_INFO() << "Attaching file: " << filename;
+    QLOG_INFO() << "attachFileSelected: attaching file: " << filename;
 
     // Read in the file
     QFile file(filename);
@@ -3188,11 +3169,15 @@ void NBrowserWindow::attachFileSelected(QString filename) {
         if (d.bodyHash.isSet())
             hash = d.bodyHash;
     }
-    if (rlid <= 0)
+    QLOG_INFO() << "attachFileSelected: attaching file rlid=" << rlid;
+    if (rlid <= 0) {
+        QLOG_INFO() << "attachFileSelected: FAIL";
         return;
+    }
 
     // If we have an image, then insert it.
     if (mime.startsWith("image", Qt::CaseInsensitive)) {
+        QLOG_INFO() << "attachFileSelected: image insert";
 
         // The resource is done, now we need to add it to the
         // note body
@@ -3232,6 +3217,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
     bool isPdfWithInlineDisplay = mime == "application/pdf" && global.pdfPreview;
     if (isPdfWithInlineDisplay) {
+        QLOG_INFO() << "attachFileSelected: isPdfWithInlineDisplay";
         // The resource is done, now we need to add it to the note body
         QString g = QString::number(rlid) + extension;
 
@@ -3252,6 +3238,8 @@ void NBrowserWindow::attachFileSelected(QString filename) {
         // Insert the actual image
         editor->page()->mainFrame()->evaluateJavaScript(script_start + buffer + script_end);
     } else {
+        QLOG_INFO() << "attachFileSelected: other object";
+
         // if we already inserted the "object", then skip "img" tag, as this would duplicate the PDF
 
         // If we have something other than an image or PDF
@@ -3281,7 +3269,11 @@ void NBrowserWindow::attachFileSelected(QString filename) {
         buffer.append("\" />");
         buffer.append("</a>");
         buffer.replace("\'", "&quot;");
-        editor->page()->mainFrame()->evaluateJavaScript(script_start + buffer + script_end);
+
+        const QString &html = script_start + buffer + script_end;
+        QLOG_INFO() << "attachFileSelected: inserting HTML " << html;
+
+        editor->page()->mainFrame()->evaluateJavaScript(html);
     }
 }
 
@@ -3608,15 +3600,21 @@ void NBrowserWindow::sendNotebookUpdateSignal() {
 
 
 // Send a signal that the note has been updated
-void NBrowserWindow::sendDateUpdateSignal(qint64 dt) {
+void NBrowserWindow::sendDateUpdateSignal(qint64
+                                          dt) {
     setDirty(this->lid, true);
 
     if (dt == 0) {
         dt = QDateTime::currentMSecsSinceEpoch();
-        this->dateEditor.setUpdateDate(dt);
+        this->dateEditor.
+                setUpdateDate(dt);
     }
-    emit(this->noteUpdated(lid));
-    emit(this->updateNoteList(lid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
+    emit(this->
+            noteUpdated(lid)
+    );
+    emit(this->
+            updateNoteList(lid,
+                           NOTE_TABLE_DATE_UPDATED_POSITION, dt));
 }
 
 
@@ -3780,20 +3778,30 @@ void NBrowserWindow::hideHtmlEntities() {
 void NBrowserWindow::handleUrls(const QMimeData *mime) {
     QList<QUrl> urlList = mime->urls();
     bool ctrlModifier = QApplication::keyboardModifiers() & Qt::ControlModifier;
+    QLOG_DEBUG() << "handleUrls: urlList=" << urlList << ", ctrlModifier=" << ctrlModifier;
+
     for (int i = 0; i < urlList.size(); i++) {
         QString file = urlList[i].toString();
-        if (file.toLower().startsWith("file://") && !ctrlModifier) {
+        QLOG_DEBUG() << "handleUrls: file=" << file;
+
+        bool isFileProtocol = file.toLower().startsWith("file://");
+        bool isLastItem = i >= urlList.size() - 1;
+
+        if (isFileProtocol && !ctrlModifier) {
             attachFileSelected(file.mid(7));
 
-            if (i < urlList.size() - 1)
+            if (!isLastItem) {
                 insertHtml("<div><br/></div>");
-        } else if (file.toLower().startsWith("file://") && ctrlModifier) {
-            QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(file).arg(file).arg(file);
-            QLOG_DEBUG() << url;
-            insertHtml(url);
-            if (i < urlList.size() - 1)
+            }
+        } else if (isFileProtocol && ctrlModifier) {
+            QString urlMarkup = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(file).arg(file).arg(file);
+            QLOG_DEBUG() << "handleUrls: converted urlMarkup=" << file;
+            insertHtml(urlMarkup);
+            if (!isLastItem) {
                 insertHtml("<div><br/></div>");
+            }
         } else {
+            QLOG_DEBUG() << "handleUrls: plain clipboard insert";
             editor->setFocus();
             QApplication::clipboard()->clear();
             QApplication::clipboard()->setText(file, QClipboard::Clipboard);
@@ -3936,7 +3944,8 @@ void NBrowserWindow::copyInAppNoteLink() {
     User user;
     utable.getUser(user);
 
-    QString href = NixnoteStringUtils::createNoteLink(true, global.server, QString::number(user.id), user.shardId, n.guid);
+    QString href = NixnoteStringUtils::createNoteLink(true, global.server, QString::number(user.id), user.shardId,
+                                                      n.guid);
     QApplication::clipboard()->setText(href, QClipboard::Clipboard);
 }
 
@@ -3985,7 +3994,8 @@ void NBrowserWindow::setEditorStyle() {
 
 
 void NBrowserWindow::createSpellChecker() {
-    QLOG_DEBUG() << SPELLCHECKER_MODULE ": about to create spell checker";
+    QLOG_DEBUG() << SPELLCHECKER_MODULE
+                    ": about to create spell checker";
     // if interface doesn't exist, create it
     if (!spellChecker) {
         spellChecker = new SpellChecker();
@@ -4003,19 +4013,23 @@ QString NBrowserWindow::initializeSpellCheckerInitial() {
         bool ok = initializeSpellCheckerWithLocale(locale);
 
         if (!ok) {
-            QLOG_WARN() << SPELLCHECKER_MODULE ": failed init with locale=" << locale;
+            QLOG_WARN() << SPELLCHECKER_MODULE
+                           ": failed init with locale=" << locale;
 
             // get list of all available locales
             QStringList availableLocales = spellChecker->availableSpellLocales();
             if (!availableLocales.isEmpty()) {
                 // first locale from list
                 QString availableLocales1 = availableLocales.first();
-                QLOG_INFO() << SPELLCHECKER_MODULE ": first availablelocale: " << availableLocales1;
+                QLOG_INFO() << SPELLCHECKER_MODULE
+                               ": first availablelocale: " << availableLocales1;
                 if (QString::compare(locale, availableLocales1, Qt::CaseInsensitive) != 0) {
-                    QLOG_INFO() << SPELLCHECKER_MODULE ": will retry init with: " << availableLocales1;
+                    QLOG_INFO() << SPELLCHECKER_MODULE
+                                   ": will retry init with: " << availableLocales1;
                     ok = initializeSpellCheckerWithLocale(availableLocales1);
                     if (ok) {
-                        QLOG_INFO() << SPELLCHECKER_MODULE ": OK init with fallback locale=" << locale;
+                        QLOG_INFO() << SPELLCHECKER_MODULE
+                                       ": OK init with fallback locale=" << locale;
                         locale = availableLocales1;
                     }
                 }
@@ -4023,29 +4037,34 @@ QString NBrowserWindow::initializeSpellCheckerInitial() {
         }
         if (ok) {
             // on success set current locale
-            QLOG_DEBUG() << SPELLCHECKER_MODULE ": OK setting current locale=" << locale;
+            QLOG_DEBUG() << SPELLCHECKER_MODULE
+                            ": OK setting current locale=" << locale;
             saveSpellCheckerLocaleToSettings(locale);
             return locale;
         }
     }
-    QLOG_ERROR() << SPELLCHECKER_MODULE ": failed init";
+    QLOG_ERROR() << SPELLCHECKER_MODULE
+                    ": failed init";
     return QString();
 }
 
 bool NBrowserWindow::initializeSpellCheckerWithLocale(QString locale) {
     QString userDictionaryPath(global.fileManager.getSpellDirPathUser());
 
-    QLOG_INFO() << SPELLCHECKER_MODULE ": trying initialization for locale: " << locale
+    QLOG_INFO() << SPELLCHECKER_MODULE
+                   ": trying initialization for locale: " << locale
                 << ", userDictionaryPath=" << userDictionaryPath;
 
 
     bool result = spellChecker->setup(userDictionaryPath, locale);
     if (result) {
-        QLOG_INFO() << SPELLCHECKER_MODULE ": initialization OK";
+        QLOG_INFO() << SPELLCHECKER_MODULE
+                       ": initialization OK";
         saveSpellCheckerLocaleToSettings(locale);
     } else {
         global.setMessage(tr("Failed to initialize spell checker for ") + locale);
-        QLOG_ERROR() << SPELLCHECKER_MODULE ": initialization FAILED for locale: " << locale;
+        QLOG_ERROR() << SPELLCHECKER_MODULE
+                        ": initialization FAILED for locale: " << locale;
     }
     return result;
 }
@@ -4064,12 +4083,14 @@ QString NBrowserWindow::getSpellCheckerLocaleFromSettings() {
         locale = QLocale::system().name();
     }
 
-    QLOG_DEBUG() << SPELLCHECKER_MODULE ": got settings spell check locale=" << locale;
+    QLOG_DEBUG() << SPELLCHECKER_MODULE
+                    ": got settings spell check locale=" << locale;
     return locale;
 }
 
 void NBrowserWindow::saveSpellCheckerLocaleToSettings(QString locale) {
-    QLOG_DEBUG() << SPELLCHECKER_MODULE ": save settings spell check locale=" << locale;
+    QLOG_DEBUG() << SPELLCHECKER_MODULE
+                    ": save settings spell check locale=" << locale;
     global.settings->beginGroup(INI_GROUP_LOCALE);
     global.settings->setValue(INI_VALUE_SPELLCHECK_LOCALE, locale);
     global.settings->endGroup();
