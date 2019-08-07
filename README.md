@@ -158,3 +158,6 @@ can be loaded from inside that bundle (wherever it ends up).
 Should work on Windows, but minor tweaks will be needed to make it run.
 I currently have no time for it. Pull request is welcome. No sure its worth the effort, as there is
 quite decent official Evernote client for Windows.
+
+## Donations
+If you would like to support the project, you can send me some little amount via paypal: https://paypal.me/nixnote2
