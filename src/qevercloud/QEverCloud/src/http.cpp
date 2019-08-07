@@ -15,6 +15,9 @@
 #include <QSharedPointer>
 #include <QUrl>
 
+/////TEMP!!
+#include "src/logger/qslog.h"
+
 /** @cond HIDDEN_SYMBOLS  */
 
 namespace qevercloud {
@@ -89,6 +92,8 @@ void ReplyFetcher::onFinished()
 
 void ReplyFetcher::onError(QNetworkReply::NetworkError error)
 {
+    QLOG_WARN() << "QEverCloud.http.ReplyFetcher.onError: " << m_reply->errorString();
+
     Q_UNUSED(error)
     setError(m_reply->errorString());
 }
@@ -123,16 +128,21 @@ QByteArray simpleDownload(QNetworkAccessManager* nam, QNetworkRequest request,
 
     ReplyFetcherLauncher * fetcherLauncher = new ReplyFetcherLauncher(fetcher, nam, request, postData);
     QTimer::singleShot(0, fetcherLauncher, SLOT(start()));
+
+    QLOG_DEBUG() << "QEverCloud.http.simpleDownload starting loop";
     loop.exec(QEventLoop::ExcludeUserInputEvents);
 
+    QLOG_DEBUG() << "QEverCloud.http.simpleDownload starting loop done";
     fetcherLauncher->deleteLater();
 
     if (httpStatusCode) {
         *httpStatusCode = fetcher->httpStatusCode();
+        QLOG_DEBUG() << "QEverCloud.http.simpleDownload http code " << *httpStatusCode;
     }
 
     if (fetcher->isError()) {
         QString errorText = fetcher->errorText();
+        QLOG_WARN() << "QEverCloud.http.simpleDownload error " << errorText;
         fetcher->deleteLater();
         throw EverCloudException(errorText);
     }

@@ -160,8 +160,7 @@ bool CommunicationManager::getUserInfo(User &user) {
     QNetworkAccessManager::NetworkAccessibility accessibility = p->networkAccessible();
     // unfortunately it doesn't really seem to check the network availability
     QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo; networkAccessible=" << accessibility
-                 << ", timestamp=" << QDateTime::currentMSecsSinceEpoch()
-                 << " (note: in case of connection error, expected timeout is ~30 sec.)";
+                 << ", timestamp=" << QDateTime::currentMSecsSinceEpoch();
 
     userStore = new UserStore(evernoteHost, authToken);
 
