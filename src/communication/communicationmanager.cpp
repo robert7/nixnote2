@@ -157,9 +157,11 @@ void CommunicationManager::enDisconnect() {
 bool CommunicationManager::getUserInfo(User &user) {
 
     QNetworkAccessManager *p = evernoteNetworkAccessManager();
-    // QNetworkAccessManager::NetworkAccessibility accessibility = p->networkAccessible();
-    // QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo; networkAccessible=" << accessibility;
-
+    QNetworkAccessManager::NetworkAccessibility accessibility = p->networkAccessible();
+    // unfortunately it doesn't really seem to check the network availability
+    QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo; networkAccessible=" << accessibility
+                 << ", timestamp=" << QDateTime::currentMSecsSinceEpoch()
+                 << " (note: in case of connection error, expected timeout is ~30 sec.)";
 
     userStore = new UserStore(evernoteHost, authToken);
 
@@ -185,7 +187,8 @@ bool CommunicationManager::getUserInfo(User &user) {
     }
     qint32 userId = user.id.isSet() ? user.id.ref() : -1;
 
-    QLOG_DEBUG() << "Exiting CommunicationManager::getUserInfo, res=" << res << ", user=" << userId;
+    QLOG_DEBUG() << "Exiting CommunicationManager::getUserInfo, res=" << res << ", user=" << userId
+                 << ", timestamp=" << QDateTime::currentMSecsSinceEpoch();
     return res;
 }
 
@@ -517,7 +520,8 @@ void CommunicationManager::reportError(
         int code,
         const QString &message,
         const QString &internalMessage) {
-    QLOG_DEBUG() << "reportError";
+    QLOG_DEBUG() << "reportError()"
+                 << " timestamp=" << QDateTime::currentMSecsSinceEpoch();
 
 #ifndef _WIN32
     // non Windows only
