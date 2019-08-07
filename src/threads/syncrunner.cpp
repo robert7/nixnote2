@@ -50,7 +50,7 @@ SyncRunner::~SyncRunner() {
 
 
 void SyncRunner::synchronize() {
-    QLOG_DEBUG() << "Starting SyncRunner.synchronize()";
+    QLOG_DEBUG() << "synchronize";
 
     if (!initialized) {
         this->setObjectName("SyncRunnerThread");
@@ -75,6 +75,7 @@ void SyncRunner::synchronize() {
 
     // If we are already connected, we are already synchronizing so there is nothing more to do
     if (global.connected) {
+        QLOG_DEBUG() << "synchronize: sync seems to be already running (or stuck someway)";
         return;
     }
 
@@ -82,11 +83,14 @@ void SyncRunner::synchronize() {
     comm->resetError();
 
     if (!comm->enConnect()) {
+        QLOG_DEBUG() << "synchronize: connect failed";
+
         this->communicationErrorHandler();
         error = true;
         emit syncComplete();
         return;
     }
+    QLOG_DEBUG() << "synchronize: connect OK";
 
     global.connected = true;
     keepRunning = true;
@@ -100,6 +104,7 @@ void SyncRunner::synchronize() {
 void SyncRunner::evernoteSync() {
     QLOG_TRACE() << "Sync thread:" << QThread::currentThreadId();
     if (!global.connected) {
+        QLOG_DEBUG() << "synchronize: not connected";
         return;
     }
 
