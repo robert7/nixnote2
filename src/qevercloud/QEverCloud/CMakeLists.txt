@@ -94,16 +94,18 @@ else()
   add_library(${LIBNAME} STATIC ${ALL_HEADERS_AND_SOURCES})
 endif()
 
+add_sanitizers(${LIBNAME})
+
 set_target_properties(${LIBNAME} PROPERTIES
   VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
-  SOVERSION "${PROJECT_VERSION_MAJOR}"
+  SOVERSION ${PROJECT_VERSION_MAJOR}
   MACOSX_RPATH 1
   INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 
 target_link_libraries(${LIBNAME} ${QT_LIBRARIES})
 
-if(NOT USE_QT5)
-  # NOTE: workarounding what seems to be a CMake bug...
+if(BUILD_WITH_QT4)
+  # NOTE: working around what seems to be a CMake bug
   target_link_libraries(${LIBNAME} Qt4::QtWebKit)
 endif()
 
@@ -112,21 +114,22 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/headers)
 add_definitions("-DQT_NO_CAST_FROM_ASCII -DQT_NO_CAST_TO_ASCII -DQT_NO_CAST_FROM_BYTEARRAY -DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT")
 
 # Tests
-if(USE_QT5)
-  find_package(Qt5Test QUIET)
-else()
+if(BUILD_WITH_QT4)
   find_package(QT4 COMPONENTS QTCORE QTTEST QUIET)
+else()
+  find_package(Qt5Test QUIET)
 endif()
 
-if((USE_QT5 AND Qt5Test_FOUND) OR (NOT USE_QT5 AND Qt4_FOUND))
+if((NOT BUILD_WITH_QT4 AND Qt5Test_FOUND) OR (BUILD_WITH_QT4 AND Qt4_FOUND))
   set(TEST_SOURCES
       src/tests/TestQEverCloud.cpp)
   add_executable(test_${PROJECT_NAME} ${TEST_SOURCES})
+  add_sanitizers(test_${PROJECT_NAME})
   add_test(test_${PROJECT_NAME} test_${PROJECT_NAME})
-  if(USE_QT5)
-    target_link_libraries(test_${PROJECT_NAME} ${LIBNAME} ${QT_LIBRARIES} Qt5::Test)
-  else()
+  if(BUILD_WITH_QT4)
     target_link_libraries(test_${PROJECT_NAME} ${LIBNAME} Qt4::QtCore Qt4::QtGui Qt4::QtNetwork Qt4::QtWebKit Qt4::QtTest)
+  else()
+    target_link_libraries(test_${PROJECT_NAME} ${LIBNAME} ${QT_LIBRARIES} Qt5::Test)
   endif()
 else()
   message(STATUS "Haven't found Qt components required for building and running the unit tests")

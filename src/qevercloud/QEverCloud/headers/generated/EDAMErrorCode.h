@@ -70,7 +70,29 @@ namespace qevercloud {
  *   <dt>DEVICE_LIMIT_REACHED</dt>
  *     <dd>Operation denied because the user has exceeded their maximum allowed
  *        number of devices.</dd>
- * </dl>
+ *   <dt>OPENID_ALREADY_TAKEN</dt>
+ *     <dd>Operation failed because the Open ID is already associated with another user.</dd>
+ *   <dt>INVALID_OPENID_TOKEN</dt>
+ *     <dd>Operation denied because the Open ID token is invalid. Please re-issue a valid
+ *        token.</dd>
+ *	 <dt>USER_NOT_REGISTERED</dt>
+ *     <dd>There is no Evernote user associated with this OpenID account,
+ *     	   and no Evernote user with a matching email</dd>
+ *	 <dt>USER_NOT_ASSOCIATED</dt>
+ *     <dd>There is no Evernote user associated with this OpenID account,
+ *		   but Evernote user with matching email exists</dd>
+ *	 <dt>USER_ALREADY_ASSOCIATED</dt>
+ * 	   <dd>Evernote user is already associated with this provider
+ *		   using a different email address.</dd>
+ *	 <dt>ACCOUNT_CLEAR</dt>
+ *     <dd>The user's account has been disabled. Clients should deal with this errorCode
+ *       by logging the user out and purging all locally saved content, including local
+ *       edits not yet pushed to the server.</dd>
+ *	 <dt>SSO_AUTHENTICATION_REQUIRED</dt>
+  *     <dd>SSO authentication is the only type of authentication allowed for the user's
+  *     account. This error is thrown when the user attempts to authenticate by another
+   *     method (password, OpenId, etc).</dd>
+  * </dl>
  */
 struct QEVERCLOUD_EXPORT EDAMErrorCode
 {
@@ -96,7 +118,14 @@ struct QEVERCLOUD_EXPORT EDAMErrorCode
         TAKEN_DOWN = 18,
         RATE_LIMIT_REACHED = 19,
         BUSINESS_SECURITY_LOGIN_REQUIRED = 20,
-        DEVICE_LIMIT_REACHED = 21
+        DEVICE_LIMIT_REACHED = 21,
+        OPENID_ALREADY_TAKEN = 22,
+        INVALID_OPENID_TOKEN = 23,
+        USER_NOT_ASSOCIATED = 24,
+        USER_NOT_REGISTERED = 25,
+        USER_ALREADY_ASSOCIATED = 26,
+        ACCOUNT_CLEAR = 27,
+        SSO_AUTHENTICATION_REQUIRED = 28
     };
 };
 

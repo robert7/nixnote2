@@ -1,6 +1,6 @@
 /**
  * Original work: Copyright (c) 2014 Sergey Skoblikov
- * Modified work: Copyright (c) 2015-2016 Dmitry Ivanov
+ * Modified work: Copyright (c) 2015-2019 Dmitry Ivanov
  *
  * This file is a part of QEverCloud project and is distributed under the terms of MIT license:
  * https://opensource.org/licenses/MIT
@@ -15,8 +15,9 @@
 #include <QSharedPointer>
 #include <QUrl>
 
-/////TEMP!!
+// TEMP!! nixnote addition to allow logger calls
 #include "src/logger/qslog.h"
+////////////////////////////////////////////////
 
 /** @cond HIDDEN_SYMBOLS  */
 
@@ -69,8 +70,12 @@ void ReplyFetcher::onDownloadProgress(qint64, qint64)
 
 void ReplyFetcher::checkForTimeout()
 {
-    const int connectionTimeout = 30*1000;
-    if ((m_lastNetworkTime - QDateTime::currentMSecsSinceEpoch()) > connectionTimeout) {
+    const int timeout = connectionTimeout();
+    if (timeout < 0) {
+        return;
+    }
+
+    if ((QDateTime::currentMSecsSinceEpoch() - m_lastNetworkTime) > timeout) {
         setError(QStringLiteral("Connection timeout."));
     }
 }
@@ -132,7 +137,6 @@ QByteArray simpleDownload(QNetworkAccessManager* nam, QNetworkRequest request,
     QLOG_DEBUG() << "QEverCloud.http.simpleDownload starting loop";
     loop.exec(QEventLoop::ExcludeUserInputEvents);
 
-    QLOG_DEBUG() << "QEverCloud.http.simpleDownload starting loop done";
     fetcherLauncher->deleteLater();
 
     if (httpStatusCode) {

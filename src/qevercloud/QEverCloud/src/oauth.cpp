@@ -105,7 +105,7 @@ EvernoteOAuthWebViewPrivate::EvernoteOAuthWebViewPrivate(QWidget * parent)
 void EvernoteOAuthWebViewPrivate::setError(QString errorText)
 {
     m_isSucceeded = false;
-    this->setHtml(QStringLiteral(""));
+    this->setHtml(QLatin1String(""));
     this->history()->clear();
     m_errorText = errorText;
     emit authenticationFinished(false);
@@ -133,7 +133,7 @@ void EvernoteOAuthWebView::authenticate(QString host, QString consumerKey, QStri
     Q_D(EvernoteOAuthWebView);
     d->m_host = host;
     d->m_isSucceeded = false;
-    d->setHtml(QStringLiteral(""));
+    d->setHtml(QLatin1String(""));
     d->history()->clear();
 
     qint64 timestamp = QDateTime::currentMSecsSinceEpoch()/1000;
@@ -277,7 +277,7 @@ void EvernoteOAuthWebViewPrivate::permanentFinished(QObject * rf)
 
 void EvernoteOAuthWebViewPrivate::clearHtml()
 {
-    setHtml(QStringLiteral(""));
+    setHtml(QLatin1String(""));
 }
 
 class EvernoteOAuthDialogPrivate

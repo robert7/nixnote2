@@ -1,6 +1,6 @@
 /**
  * Original work: Copyright (c) 2014 Sergey Skoblikov
- * Modified work: Copyright (c) 2015-2016 Dmitry Ivanov
+ * Modified work: Copyright (c) 2015-2019 Dmitry Ivanov
  *
  * This file is a part of QEverCloud project and is distributed under the terms of MIT license:
  * https://opensource.org/licenses/MIT
@@ -24,6 +24,16 @@ namespace qevercloud {
  * Use this function to handle proxy authentication requests etc.
  */
 QEVERCLOUD_EXPORT QNetworkAccessManager * evernoteNetworkAccessManager();
+
+/**
+ * Network request timeout in milliseconds
+ */
+QEVERCLOUD_EXPORT int connectionTimeout();
+
+/**
+ * Set network request timeout; negative values mean no timeout
+ */
+QEVERCLOUD_EXPORT void setConnectionTimeout(int timeout);
 
 /**
  * qevercloud library version.

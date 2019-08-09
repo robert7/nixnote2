@@ -96,7 +96,7 @@ The two latter options are intended to allow for easier installation of multiple
 
 ## Compatibility
 
-The library can be built with both Qt4 and Qt5 versions of the framework. By default Qt4 is used, if found. If you'd like to force finding the Qt5 version no matter whether Qt4 is found, pass `-DUSE_QT5=1` option to CMake.
+The library can be built with both Qt4 and Qt5 versions of the framework. Since QEverCloud 4.1.0 the default one is Qt5. In order to force building with Qt4 version pass `-DBUILD_WITH_QT4=ON` option to CMake. Prior to QEverCloud 4.1.0 version of Qt used by default was Qt4. For those old versions in order to force building with Qt5 one needs to pass `-DUSE_QT5=1` option to CMake.
 
 ### API breaks from 2.x to 3.0
 

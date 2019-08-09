@@ -144,6 +144,8 @@ void writeNotebookRecipientSettings(ThriftBinaryBufferWriter & w, const Notebook
 void readNotebookRecipientSettings(ThriftBinaryBufferReader & r, NotebookRecipientSettings & s);
 void writeSharedNotebook(ThriftBinaryBufferWriter & w, const SharedNotebook & s);
 void readSharedNotebook(ThriftBinaryBufferReader & r, SharedNotebook & s);
+void writeCanMoveToContainerRestrictions(ThriftBinaryBufferWriter & w, const CanMoveToContainerRestrictions & s);
+void readCanMoveToContainerRestrictions(ThriftBinaryBufferReader & r, CanMoveToContainerRestrictions & s);
 void writeNotebookRestrictions(ThriftBinaryBufferWriter & w, const NotebookRestrictions & s);
 void readNotebookRestrictions(ThriftBinaryBufferReader & r, NotebookRestrictions & s);
 void writeNotebook(ThriftBinaryBufferWriter & w, const Notebook & s);
@@ -195,10 +197,14 @@ void readEnumSharedNotebookPrivilegeLevel(ThriftBinaryBufferReader & r, SharedNo
 void readEnumSharedNotePrivilegeLevel(ThriftBinaryBufferReader & r, SharedNotePrivilegeLevel::type & e);
 void readEnumSponsoredGroupRole(ThriftBinaryBufferReader & r, SponsoredGroupRole::type & e);
 void readEnumBusinessUserRole(ThriftBinaryBufferReader & r, BusinessUserRole::type & e);
+void readEnumBusinessUserStatus(ThriftBinaryBufferReader & r, BusinessUserStatus::type & e);
 void readEnumSharedNotebookInstanceRestrictions(ThriftBinaryBufferReader & r, SharedNotebookInstanceRestrictions::type & e);
 void readEnumReminderEmailConfig(ThriftBinaryBufferReader & r, ReminderEmailConfig::type & e);
 void readEnumBusinessInvitationStatus(ThriftBinaryBufferReader & r, BusinessInvitationStatus::type & e);
 void readEnumContactType(ThriftBinaryBufferReader & r, ContactType::type & e);
+void readEnumEntityType(ThriftBinaryBufferReader & r, EntityType::type & e);
+void readEnumRecipientStatus(ThriftBinaryBufferReader & r, RecipientStatus::type & e);
+void readEnumCanMoveToContainerStatus(ThriftBinaryBufferReader & r, CanMoveToContainerStatus::type & e);
 void readEnumRelatedContentType(ThriftBinaryBufferReader & r, RelatedContentType::type & e);
 void readEnumRelatedContentAccess(ThriftBinaryBufferReader & r, RelatedContentAccess::type & e);
 void readEnumUserIdentityType(ThriftBinaryBufferReader & r, UserIdentityType::type & e);
