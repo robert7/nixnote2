@@ -1,4 +1,4 @@
-NixNote (2.1.4-i) stable; urgency=low
+NixNote (2.1.4) stable; urgency=low
   * Fixed few sync problems (e.g. involving "map" or "svg" tag)
   * Fixed html handling in relation in urls on text paste
   * Updated qevercloud (Evernote API) to latest version (v.4.0.0) - Evernote API 1.28
@@ -8,7 +8,7 @@ NixNote (2.1.4-i) stable; urgency=low
   * Corrected insert of non breaking spaces on Tab
   * Fixed url insertion code (2x)
   * Minor logging improvements
- -- Robert Spiegel <nightingale7@gmail.com>  Wed, 07 Aug 2019 14:15:23 +0200
+ -- Robert Spiegel <nightingale7@gmail.com>  Fri, 09 Aug 2019 16:00:50 +0200
 
 NixNote (2.1.3) stable; urgency=low
   * Updated german translation (2x), thanks to https://github.com/stemabu
