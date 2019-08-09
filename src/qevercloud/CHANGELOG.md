@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.1.0
+  * Migrate to Evernote API 1.29 to 1.28. The changes are incremental and API is not broken. ABI is changed though,
+    hence minor version number increase. The changes in API include:
+     * Extension of `EDAMErrorCode` enumeration with new error codes
+     * Extension of `NoteFilter`, `NoteList`, `NotesMetadataList`, `RelatedResult`, `RelatedResultSpec`, `UserAttributes`,
+       `NotebookRecipientSettings`, `NotebookRestrictions`, `UserProfile`, `BusinessInvitation` structs
+     * Extension of SystemLevel enumeration with the item for business users
+     * `NoteStore.createNotebook` method can now throw `EDAMNotFoundException` exception
+     * Addition of some new constants, enumerations and structs
+
 ## 4.0.0
   * Migrate to Evernote API 1.28 from 1.25. Unfortunately, the changes in Evernote API are quite sufficient and hence
     the migration to it has introduced a lot of API breaks in QEverCloud. Please refer to [API breaks from 3 to 4](API_breaks_3_to_4.md)

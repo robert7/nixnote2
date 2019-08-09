@@ -152,6 +152,9 @@ QEVERCLOUD_EXPORT extern const QString EDAM_MIME_TYPE_PNG;
 /** Canonical MIME type string for TIFF image resources */
 QEVERCLOUD_EXPORT extern const QString EDAM_MIME_TYPE_TIFF;
 
+/** Canonical MIME type string for BMP image resources */
+QEVERCLOUD_EXPORT extern const QString EDAM_MIME_TYPE_BMP;
+
 /** Canonical MIME type string for WAV audio resources */
 QEVERCLOUD_EXPORT extern const QString EDAM_MIME_TYPE_WAV;
 
@@ -390,6 +393,28 @@ QEVERCLOUD_EXPORT extern const qint32 EDAM_NOTEBOOK_STACK_LEN_MAX;
 QEVERCLOUD_EXPORT extern const QString EDAM_NOTEBOOK_STACK_REGEX;
 
 /**
+ * The minimum length of a Workspace.name, in Unicode characters
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_WORKSPACE_NAME_LEN_MIN;
+
+/**
+ * The maximum length of a Workspace.name, in Unicode characters
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_WORKSPACE_NAME_LEN_MAX;
+
+/**
+ * The maximum length of a Workspace.description, in Unicode characters
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_WORKSPACE_DESCRIPTION_LEN_MAX;
+
+/**
+ * All Workspace.name fields must match this pattern.
+ * This excludes control chars or line/paragraph separators.
+ * The string may not begin or end with whitespace.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_WORKSPACE_NAME_REGEX;
+
+/**
  * The minimum length of a public notebook URI component
  */
 QEVERCLOUD_EXPORT extern const qint32 EDAM_PUBLISHING_URI_LEN_MIN;
@@ -465,6 +490,11 @@ QEVERCLOUD_EXPORT extern const QString EDAM_USER_PASSWORD_REGEX;
 QEVERCLOUD_EXPORT extern const qint32 EDAM_BUSINESS_URI_LEN_MAX;
 
 /**
+ * Valid Evernote Business marketing code / affiliate code format.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_BUSINESS_MARKETING_CODE_REGEX_PATTERN;
+
+/**
  * The maximum number of Tags per Note
  */
 QEVERCLOUD_EXPORT extern const qint32 EDAM_NOTE_TAGS_MAX;
@@ -505,9 +535,19 @@ QEVERCLOUD_EXPORT extern const qint32 EDAM_BUSINESS_NOTES_MAX;
 QEVERCLOUD_EXPORT extern const qint32 EDAM_USER_NOTEBOOKS_MAX;
 
 /**
+ * Maximum number of Workspaces per user
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_USER_WORKSPACES_MAX;
+
+/**
  * Maximum number of Notebooks in a business account
  */
 QEVERCLOUD_EXPORT extern const qint32 EDAM_BUSINESS_NOTEBOOKS_MAX;
+
+/**
+ * Maximum number of Workspaces in a business account
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_BUSINESS_WORKSPACES_MAX;
 
 /**
  * Maximum number of recent email addresses that are maintained
@@ -540,6 +580,18 @@ QEVERCLOUD_EXPORT extern const qint64 EDAM_USER_UPLOAD_LIMIT_FREE;
  * account each month.
  */
 QEVERCLOUD_EXPORT extern const qint64 EDAM_USER_UPLOAD_LIMIT_PREMIUM;
+
+/**
+ * The number of bytes of new data that may be uploaded to new business
+ * account during the first month. 50GB.
+ */
+QEVERCLOUD_EXPORT extern const qint64 EDAM_USER_UPLOAD_LIMIT_BUSINESS_FIRST_MONTH;
+
+/**
+ * The number of bytes of new data that may be uploaded to a business
+ * account for the next month. 20GB.
+ */
+QEVERCLOUD_EXPORT extern const qint64 EDAM_USER_UPLOAD_LIMIT_BUSINESS_NEXT_MONTH;
 
 /**
  * The number of bytes of new data that may be uploaded each month to an account at
@@ -740,6 +792,24 @@ QEVERCLOUD_EXPORT extern const QString EDAM_SOURCE_APPLICATION_EN_SCANSNAP;
  * Web Clipper.
  */
 QEVERCLOUD_EXPORT extern const QString EDAM_SOURCE_APPLICATION_EWC;
+
+/**
+ * The NoteAttributes.sourceApplication value used for notes captured with the Android
+ * share extension.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_SOURCE_APPLICATION_ANDROID_SHARE_EXTENSION;
+
+/**
+ * The NoteAttributes.sourceApplication value used for notes captured with the iOS share
+ * extension.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_SOURCE_APPLICATION_IOS_SHARE_EXTENSION;
+
+/**
+ * The NoteAttributes.sourceApplication value used for notes captured with the Evernote
+ * Web Clipper.
+ */
+QEVERCLOUD_EXPORT extern const QString EDAM_SOURCE_APPLICATION_WEB_CLIPPER;
 
 /**
  * The NoteAttributes.source value used for notes captured by the Microsoft Outlook clipper.
@@ -984,6 +1054,11 @@ QEVERCLOUD_EXPORT extern const qint32 EDAM_FIND_CONTACT_MAX_RESULTS;
 QEVERCLOUD_EXPORT extern const qint32 EDAM_NOTE_LOCK_VIEWERS_NOTES_MAX;
 
 /**
+ * Absolute maximum number of results the servce will return for PersistentInternalMarket.getOrders()
+ */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_GET_ORDERS_MAX_RESULTS;
+
+/**
  * The maximum length of a message body in unicode characters.
  */
 QEVERCLOUD_EXPORT extern const qint32 EDAM_MESSAGE_BODY_LEN_MAX;
@@ -1053,6 +1128,12 @@ QEVERCLOUD_EXPORT extern const qint32 EDAM_SNIPPETS_NOTES_MAX;
  * The maximum number of connected identities a client can request.
  */
 QEVERCLOUD_EXPORT extern const qint32 EDAM_CONNECTED_IDENTITY_REQUEST_MAX;
+
+/**
+   *  Maximum length for OpenID token. There is no official enforced limit. The length of the Token ID depends
+   *  on the provider. 1000 seems to be the safest value at this time.
+   */
+QEVERCLOUD_EXPORT extern const qint32 EDAM_OPEN_ID_ACCESS_TOKEN_MAX;
 
 
 // Types.thrift

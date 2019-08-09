@@ -318,6 +318,11 @@ public:
        *        the passed authenticationToken.</li>
        *   <li> LIMIT_REACHED "Notebook" - at max number of notebooks</li>
        * </ul>
+       *
+       * @throws EDAMNotFoundException <ul>
+       *   <li> "Workspace.guid" - if workspaceGuid set and no Workspace exists for the GUID
+       *   </li>
+       * </ul>
        */
     Notebook createNotebook(const Notebook& notebook, QString authenticationToken = QString());
 
@@ -325,8 +330,16 @@ public:
     AsyncResult * createNotebookAsync(const Notebook& notebook, QString authenticationToken = QString());
 
     /**
-       * Submits notebook changes to the service.  The provided data must include
-       * the notebook's guid field for identification.
+       * Submits notebook changes to the service. The provided data must include the
+       * notebook's guid field for identification.
+       * <p />
+       * The Notebook will be moved to the specified Workspace, if a non empty
+       * Notebook.workspaceGuid is provided. If an empty Notebook.workspaceGuid is set and the
+       * Notebook is in a Workspace, then it will be removed from the Workspace and a full
+       * access SharedNotebook record will be ensured for the caller. If the caller does not
+       * already have a full access share, either the privilege of an existing share will be
+       * upgraded or a new share will be created. It is illegal to set a
+       * Notebook.workspaceGuid on a Workspace backing Notebook.
        *
        * @param notebook
        *   The notebook object containing the requested changes.
@@ -349,7 +362,9 @@ public:
        * </ul>
        *
        * @throws EDAMNotFoundException <ul>
-       *   <li> "Notebook.guid" - not found, by GUID
+       *   <li> "Notebook.guid" - not found, by GUID</li>
+       *   <li> "Workspace.guid" - if a non empty workspaceGuid set and no Workspace exists
+       *        for the GUID
        *   </li>
        * </ul>
        */
@@ -838,8 +853,8 @@ public:
        * Returns the current state of the note in the service with the provided
        * GUID.  The ENML contents of the note will only be provided if the
        * 'withContent' parameter is true.  The service will include the meta-data
-       * for each resource in the note, but the binary contents of the resources
-       * and their recognition data will be omitted.
+       * for each resource in the note, but the binary content depends
+       * on whether it is explicitly requested in resultSpec parameter.
        * If the Note is found in a public notebook, the authenticationToken
        * will be ignored (so it could be an empty string).  The applicationData
        * fields are returned as keysOnly.
@@ -1054,6 +1069,10 @@ public:
        * @return
        *   The newly created Note from the service.  The server-side
        *   GUIDs for the Note and any Resources will be saved in this object.
+       *   The service will include the meta-data
+       *   for each resource in the note, but the binary contents of the resources
+       *   and their recognition data will be omitted (except Recognition Resource body,
+       *   for which the behavior is unspecified).
        *
        * @throws EDAMUserException <ul>
        *   <li> BAD_DATA_FORMAT "Note.title" - invalid length or pattern
@@ -1121,8 +1140,10 @@ public:
        *   resources is not being modified, note.resources should be left unset.
        *
        * @return
-       *   The metadata (no contents) for the Note on the server after the update.
        *   The Note.sharedNotes field will not be set.
+       *   The service will include the meta-data
+       *   for each resource in the note, but the binary contents of the resources
+       *   and their recognition data will be omitted.
        *
        * @throws EDAMUserException <ul>
        *   <li> BAD_DATA_FORMAT "Note.title" - invalid length or pattern
@@ -1763,8 +1784,8 @@ public:
        *       set. requireLogin is deprecated.</li>
        *   <li>BAD_DATA_FORMAT "SharedNotebook.privilegeLevel" - if the
        *       SharedNotebook.privilegeLevel field was unset or set to GROUP.</li>
-       *   <li>PERMISSION_DENIED "emailConfirmation" - if the email address on the
-       *       authenticationToken's owner's account is not confirmed.</li>
+       *   <li>PERMISSION_DENIED "user" - if the email address on the authenticationToken's
+               owner's account is not confirmed.</li>
        *   <li>PERMISSION_DENIED "SharedNotebook.recipientSettings" - if
        *       recipientSettings is set in the sharedNotebook.  Only the recipient
        *       can set these values via the setSharedNotebookRecipientSettings
@@ -1860,6 +1881,8 @@ public:
        *
        * If recipientSettings.inMyList is false, both reminderNotifyInApp and reminderNotifyEmail
        * will be either left as null or converted to false (if currently true).
+       *
+       * To unset a notebook's stack, pass in the empty string for the stack field.
        *
        * @param authenticationToken The owner authentication token for the recipient of the share.
        *
@@ -2509,6 +2532,7 @@ public:
        *   <li> INVALID_AUTH "password" - password did not match
        *   <li> INVALID_AUTH "consumerKey" - consumerKey is not authorized
        *   <li> INVALID_AUTH "consumerSecret" - consumerSecret is incorrect
+       *   <li> INVALID_AUTH "businessOnly" - the user is a business-only account
        *   <li> PERMISSION_DENIED "User.active" - user account is closed
        *   <li> PERMISSION_DENIED "User.tooManyFailuresTryAgainLater" - user has
        *     failed authentication too often

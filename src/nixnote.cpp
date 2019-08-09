@@ -89,6 +89,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/xml/exportdata.h"
 #include "src/dialog/aboutdialog.h"
 
+#include "src/qevercloud/QEverCloud/headers/QEverCloud.h"
 #include "src/qevercloud/QEverCloud/headers/QEverCloudOAuth.h"
 
 using namespace qevercloud;
@@ -155,6 +156,10 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     // Setup the sync thread
     QLOG_DEBUG() << "Setting up counter thread";
     connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
+
+
+    // Evernote timeout to 30 seconds
+    setConnectionTimeout(30000);
 
     // Setup the counter thread
     QLOG_DEBUG() << "Setting up sync thread";
@@ -1809,7 +1814,7 @@ void NixNote::exportNotes(bool exportAllNotes) {
         caption = tr("Export All Notes");
     else
         caption = tr("Export Notes");
-    
+
     if (saveLastPath == "")
         directory = QDir::homePath();
     else
@@ -3650,8 +3655,8 @@ void NixNote::configurePdfPrinter(QPrinter &printer, QString &file) const {
     printer.setResolution(QPrinter::HighResolution);
     printer.setPaperSize(QPrinter::A4);
     printer.setOutputFileName(file);
-    #define TOP_MARGIN 10
-    #define SIDE_MARGIN 15
+#define TOP_MARGIN 10
+#define SIDE_MARGIN 15
     printer.setPageMargins(SIDE_MARGIN, TOP_MARGIN, SIDE_MARGIN, TOP_MARGIN, QPrinter::Millimeter);
 }
 

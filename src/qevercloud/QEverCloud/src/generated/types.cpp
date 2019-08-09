@@ -43,6 +43,13 @@ void readEnumEDAMErrorCode(ThriftBinaryBufferReader & r, EDAMErrorCode::type & e
     case static_cast<int>(EDAMErrorCode::RATE_LIMIT_REACHED): e = EDAMErrorCode::RATE_LIMIT_REACHED; break;
     case static_cast<int>(EDAMErrorCode::BUSINESS_SECURITY_LOGIN_REQUIRED): e = EDAMErrorCode::BUSINESS_SECURITY_LOGIN_REQUIRED; break;
     case static_cast<int>(EDAMErrorCode::DEVICE_LIMIT_REACHED): e = EDAMErrorCode::DEVICE_LIMIT_REACHED; break;
+    case static_cast<int>(EDAMErrorCode::OPENID_ALREADY_TAKEN): e = EDAMErrorCode::OPENID_ALREADY_TAKEN; break;
+    case static_cast<int>(EDAMErrorCode::INVALID_OPENID_TOKEN): e = EDAMErrorCode::INVALID_OPENID_TOKEN; break;
+    case static_cast<int>(EDAMErrorCode::USER_NOT_ASSOCIATED): e = EDAMErrorCode::USER_NOT_ASSOCIATED; break;
+    case static_cast<int>(EDAMErrorCode::USER_NOT_REGISTERED): e = EDAMErrorCode::USER_NOT_REGISTERED; break;
+    case static_cast<int>(EDAMErrorCode::USER_ALREADY_ASSOCIATED): e = EDAMErrorCode::USER_ALREADY_ASSOCIATED; break;
+    case static_cast<int>(EDAMErrorCode::ACCOUNT_CLEAR): e = EDAMErrorCode::ACCOUNT_CLEAR; break;
+    case static_cast<int>(EDAMErrorCode::SSO_AUTHENTICATION_REQUIRED): e = EDAMErrorCode::SSO_AUTHENTICATION_REQUIRED; break;
     default: throw ThriftException(ThriftException::Type::INVALID_DATA, QStringLiteral("Incorrect value for enum EDAMErrorCode"));
     }
 }
@@ -91,6 +98,7 @@ void readEnumServiceLevel(ThriftBinaryBufferReader & r, ServiceLevel::type & e) 
     case static_cast<int>(ServiceLevel::BASIC): e = ServiceLevel::BASIC; break;
     case static_cast<int>(ServiceLevel::PLUS): e = ServiceLevel::PLUS; break;
     case static_cast<int>(ServiceLevel::PREMIUM): e = ServiceLevel::PREMIUM; break;
+    case static_cast<int>(ServiceLevel::BUSINESS): e = ServiceLevel::BUSINESS; break;
     default: throw ThriftException(ThriftException::Type::INVALID_DATA, QStringLiteral("Incorrect value for enum ServiceLevel"));
     }
 }
@@ -178,6 +186,16 @@ void readEnumBusinessUserRole(ThriftBinaryBufferReader & r, BusinessUserRole::ty
     }
 }
 
+void readEnumBusinessUserStatus(ThriftBinaryBufferReader & r, BusinessUserStatus::type & e) {
+    qint32 i;
+    r.readI32(i);
+    switch(i) {
+    case static_cast<int>(BusinessUserStatus::ACTIVE): e = BusinessUserStatus::ACTIVE; break;
+    case static_cast<int>(BusinessUserStatus::DEACTIVATED): e = BusinessUserStatus::DEACTIVATED; break;
+    default: throw ThriftException(ThriftException::Type::INVALID_DATA, QStringLiteral("Incorrect value for enum BusinessUserStatus"));
+    }
+}
+
 void readEnumSharedNotebookInstanceRestrictions(ThriftBinaryBufferReader & r, SharedNotebookInstanceRestrictions::type & e) {
     qint32 i;
     r.readI32(i);
@@ -220,6 +238,39 @@ void readEnumContactType(ThriftBinaryBufferReader & r, ContactType::type & e) {
     case static_cast<int>(ContactType::TWITTER): e = ContactType::TWITTER; break;
     case static_cast<int>(ContactType::LINKEDIN): e = ContactType::LINKEDIN; break;
     default: throw ThriftException(ThriftException::Type::INVALID_DATA, QStringLiteral("Incorrect value for enum ContactType"));
+    }
+}
+
+void readEnumEntityType(ThriftBinaryBufferReader & r, EntityType::type & e) {
+    qint32 i;
+    r.readI32(i);
+    switch(i) {
+    case static_cast<int>(EntityType::NOTE): e = EntityType::NOTE; break;
+    case static_cast<int>(EntityType::NOTEBOOK): e = EntityType::NOTEBOOK; break;
+    case static_cast<int>(EntityType::WORKSPACE): e = EntityType::WORKSPACE; break;
+    default: throw ThriftException(ThriftException::Type::INVALID_DATA, QStringLiteral("Incorrect value for enum EntityType"));
+    }
+}
+
+void readEnumRecipientStatus(ThriftBinaryBufferReader & r, RecipientStatus::type & e) {
+    qint32 i;
+    r.readI32(i);
+    switch(i) {
+    case static_cast<int>(RecipientStatus::NOT_IN_MY_LIST): e = RecipientStatus::NOT_IN_MY_LIST; break;
+    case static_cast<int>(RecipientStatus::IN_MY_LIST): e = RecipientStatus::IN_MY_LIST; break;
+    case static_cast<int>(RecipientStatus::IN_MY_LIST_AND_DEFAULT_NOTEBOOK): e = RecipientStatus::IN_MY_LIST_AND_DEFAULT_NOTEBOOK; break;
+    default: throw ThriftException(ThriftException::Type::INVALID_DATA, QStringLiteral("Incorrect value for enum RecipientStatus"));
+    }
+}
+
+void readEnumCanMoveToContainerStatus(ThriftBinaryBufferReader & r, CanMoveToContainerStatus::type & e) {
+    qint32 i;
+    r.readI32(i);
+    switch(i) {
+    case static_cast<int>(CanMoveToContainerStatus::CAN_BE_MOVED): e = CanMoveToContainerStatus::CAN_BE_MOVED; break;
+    case static_cast<int>(CanMoveToContainerStatus::INSUFFICIENT_ENTITY_PRIVILEGE): e = CanMoveToContainerStatus::INSUFFICIENT_ENTITY_PRIVILEGE; break;
+    case static_cast<int>(CanMoveToContainerStatus::INSUFFICIENT_CONTAINER_PRIVILEGE): e = CanMoveToContainerStatus::INSUFFICIENT_CONTAINER_PRIVILEGE; break;
+    default: throw ThriftException(ThriftException::Type::INVALID_DATA, QStringLiteral("Incorrect value for enum CanMoveToContainerStatus"));
     }
 }
 
@@ -1055,9 +1106,24 @@ void writeNoteFilter(ThriftBinaryBufferWriter & w, const NoteFilter & s) {
         w.writeBool(s.includeAllReadableNotebooks.ref());
         w.writeFieldEnd();
     }
+    if(s.includeAllReadableWorkspaces.isSet()) {
+        w.writeFieldBegin(QStringLiteral("includeAllReadableWorkspaces"), ThriftFieldType::T_BOOL, 15);
+        w.writeBool(s.includeAllReadableWorkspaces.ref());
+        w.writeFieldEnd();
+    }
     if(s.context.isSet()) {
         w.writeFieldBegin(QStringLiteral("context"), ThriftFieldType::T_STRING, 10);
         w.writeString(s.context.ref());
+        w.writeFieldEnd();
+    }
+    if(s.rawWords.isSet()) {
+        w.writeFieldBegin(QStringLiteral("rawWords"), ThriftFieldType::T_STRING, 11);
+        w.writeString(s.rawWords.ref());
+        w.writeFieldEnd();
+    }
+    if(s.searchContextBytes.isSet()) {
+        w.writeFieldBegin(QStringLiteral("searchContextBytes"), ThriftFieldType::T_STRING, 12);
+        w.writeBinary(s.searchContextBytes.ref());
         w.writeFieldEnd();
     }
     w.writeFieldStop();
@@ -1164,11 +1230,38 @@ void readNoteFilter(ThriftBinaryBufferReader & r, NoteFilter & s) {
                 r.skip(fieldType);
             }
         } else
+        if (fieldId == 15) {
+            if (fieldType == ThriftFieldType::T_BOOL) {
+                bool v;
+                r.readBool(v);
+                s.includeAllReadableWorkspaces = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
         if (fieldId == 10) {
             if (fieldType == ThriftFieldType::T_STRING) {
                 QString v;
                 r.readString(v);
                 s.context = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 11) {
+            if (fieldType == ThriftFieldType::T_STRING) {
+                QString v;
+                r.readString(v);
+                s.rawWords = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 12) {
+            if (fieldType == ThriftFieldType::T_STRING) {
+                QByteArray v;
+                r.readBinary(v);
+                s.searchContextBytes = v;
             } else {
                 r.skip(fieldType);
             }
@@ -1217,6 +1310,16 @@ void writeNoteList(ThriftBinaryBufferWriter & w, const NoteList & s) {
     if(s.updateCount.isSet()) {
         w.writeFieldBegin(QStringLiteral("updateCount"), ThriftFieldType::T_I32, 6);
         w.writeI32(s.updateCount.ref());
+        w.writeFieldEnd();
+    }
+    if(s.searchContextBytes.isSet()) {
+        w.writeFieldBegin(QStringLiteral("searchContextBytes"), ThriftFieldType::T_STRING, 7);
+        w.writeBinary(s.searchContextBytes.ref());
+        w.writeFieldEnd();
+    }
+    if(s.debugInfo.isSet()) {
+        w.writeFieldBegin(QStringLiteral("debugInfo"), ThriftFieldType::T_STRING, 8);
+        w.writeString(s.debugInfo.ref());
         w.writeFieldEnd();
     }
     w.writeFieldStop();
@@ -1318,6 +1421,24 @@ void readNoteList(ThriftBinaryBufferReader & r, NoteList & s) {
                 qint32 v;
                 r.readI32(v);
                 s.updateCount = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 7) {
+            if (fieldType == ThriftFieldType::T_STRING) {
+                QByteArray v;
+                r.readBinary(v);
+                s.searchContextBytes = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 8) {
+            if (fieldType == ThriftFieldType::T_STRING) {
+                QString v;
+                r.readString(v);
+                s.debugInfo = v;
             } else {
                 r.skip(fieldType);
             }
@@ -1577,6 +1698,16 @@ void writeNotesMetadataList(ThriftBinaryBufferWriter & w, const NotesMetadataLis
         w.writeI32(s.updateCount.ref());
         w.writeFieldEnd();
     }
+    if(s.searchContextBytes.isSet()) {
+        w.writeFieldBegin(QStringLiteral("searchContextBytes"), ThriftFieldType::T_STRING, 7);
+        w.writeBinary(s.searchContextBytes.ref());
+        w.writeFieldEnd();
+    }
+    if(s.debugInfo.isSet()) {
+        w.writeFieldBegin(QStringLiteral("debugInfo"), ThriftFieldType::T_STRING, 9);
+        w.writeString(s.debugInfo.ref());
+        w.writeFieldEnd();
+    }
     w.writeFieldStop();
     w.writeStructEnd();
 }
@@ -1676,6 +1807,24 @@ void readNotesMetadataList(ThriftBinaryBufferReader & r, NotesMetadataList & s) 
                 qint32 v;
                 r.readI32(v);
                 s.updateCount = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 7) {
+            if (fieldType == ThriftFieldType::T_STRING) {
+                QByteArray v;
+                r.readBinary(v);
+                s.searchContextBytes = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 9) {
+            if (fieldType == ThriftFieldType::T_STRING) {
+                QString v;
+                r.readString(v);
+                s.debugInfo = v;
             } else {
                 r.skip(fieldType);
             }
@@ -2481,6 +2630,11 @@ void writeRelatedResult(ThriftBinaryBufferWriter & w, const RelatedResult & s) {
         w.writeListEnd();
         w.writeFieldEnd();
     }
+    if(s.debugInfo.isSet()) {
+        w.writeFieldBegin(QStringLiteral("debugInfo"), ThriftFieldType::T_STRING, 5);
+        w.writeString(s.debugInfo.ref());
+        w.writeFieldEnd();
+    }
     if(s.experts.isSet()) {
         w.writeFieldBegin(QStringLiteral("experts"), ThriftFieldType::T_LIST, 6);
         w.writeListBegin(ThriftFieldType::T_STRUCT, s.experts.ref().length());
@@ -2598,6 +2752,15 @@ void readRelatedResult(ThriftBinaryBufferReader & r, RelatedResult & s) {
                 r.skip(fieldType);
             }
         } else
+        if (fieldId == 5) {
+            if (fieldType == ThriftFieldType::T_STRING) {
+                QString v;
+                r.readString(v);
+                s.debugInfo = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
         if (fieldId == 6) {
             if (fieldType == ThriftFieldType::T_LIST) {
                 QList< UserProfile > v;
@@ -2689,6 +2852,11 @@ void writeRelatedResultSpec(ThriftBinaryBufferWriter & w, const RelatedResultSpe
         w.writeBool(s.includeContainingNotebooks.ref());
         w.writeFieldEnd();
     }
+    if(s.includeDebugInfo.isSet()) {
+        w.writeFieldBegin(QStringLiteral("includeDebugInfo"), ThriftFieldType::T_BOOL, 6);
+        w.writeBool(s.includeDebugInfo.ref());
+        w.writeFieldEnd();
+    }
     if(s.maxExperts.isSet()) {
         w.writeFieldBegin(QStringLiteral("maxExperts"), ThriftFieldType::T_I32, 7);
         w.writeI32(s.maxExperts.ref());
@@ -2762,6 +2930,15 @@ void readRelatedResultSpec(ThriftBinaryBufferReader & r, RelatedResultSpec & s) 
                 bool v;
                 r.readBool(v);
                 s.includeContainingNotebooks = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 6) {
+            if (fieldType == ThriftFieldType::T_BOOL) {
+                bool v;
+                r.readBool(v);
+                s.includeDebugInfo = v;
             } else {
                 r.skip(fieldType);
             }
@@ -4576,6 +4753,11 @@ void writeUserAttributes(ThriftBinaryBufferWriter & w, const UserAttributes & s)
         w.writeBool(s.shouldLogClientEvent.ref());
         w.writeFieldEnd();
     }
+    if(s.optOutMachineLearning.isSet()) {
+        w.writeFieldBegin(QStringLiteral("optOutMachineLearning"), ThriftFieldType::T_BOOL, 39);
+        w.writeBool(s.optOutMachineLearning.ref());
+        w.writeFieldEnd();
+    }
     w.writeFieldStop();
     w.writeStructEnd();
 }
@@ -4911,6 +5093,15 @@ void readUserAttributes(ThriftBinaryBufferReader & r, UserAttributes & s) {
                 bool v;
                 r.readBool(v);
                 s.shouldLogClientEvent = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 39) {
+            if (fieldType == ThriftFieldType::T_BOOL) {
+                bool v;
+                r.readBool(v);
+                s.optOutMachineLearning = v;
             } else {
                 r.skip(fieldType);
             }
@@ -8097,6 +8288,11 @@ void writeNotebookRecipientSettings(ThriftBinaryBufferWriter & w, const Notebook
         w.writeString(s.stack.ref());
         w.writeFieldEnd();
     }
+    if(s.recipientStatus.isSet()) {
+        w.writeFieldBegin(QStringLiteral("recipientStatus"), ThriftFieldType::T_I32, 5);
+        w.writeI32(static_cast<qint32>(s.recipientStatus.ref()));
+        w.writeFieldEnd();
+    }
     w.writeFieldStop();
     w.writeStructEnd();
 }
@@ -8142,6 +8338,15 @@ void readNotebookRecipientSettings(ThriftBinaryBufferReader & r, NotebookRecipie
                 QString v;
                 r.readString(v);
                 s.stack = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 5) {
+            if (fieldType == ThriftFieldType::T_I32) {
+                RecipientStatus::type v;
+                readEnumRecipientStatus(r, v);
+                s.recipientStatus = v;
             } else {
                 r.skip(fieldType);
             }
@@ -8401,6 +8606,43 @@ void readSharedNotebook(ThriftBinaryBufferReader & r, SharedNotebook & s) {
     r.readStructEnd();
 }
 
+void writeCanMoveToContainerRestrictions(ThriftBinaryBufferWriter & w, const CanMoveToContainerRestrictions & s) {
+    w.writeStructBegin(QStringLiteral("CanMoveToContainerRestrictions"));
+    if(s.canMoveToContainer.isSet()) {
+        w.writeFieldBegin(QStringLiteral("canMoveToContainer"), ThriftFieldType::T_I32, 1);
+        w.writeI32(static_cast<qint32>(s.canMoveToContainer.ref()));
+        w.writeFieldEnd();
+    }
+    w.writeFieldStop();
+    w.writeStructEnd();
+}
+
+void readCanMoveToContainerRestrictions(ThriftBinaryBufferReader & r, CanMoveToContainerRestrictions & s) {
+    QString fname;
+    ThriftFieldType::type fieldType;
+    qint16 fieldId;
+    r.readStructBegin(fname);
+    while(true)
+    {
+        r.readFieldBegin(fname, fieldType, fieldId);
+        if (fieldType == ThriftFieldType::T_STOP) break;
+        if (fieldId == 1) {
+            if (fieldType == ThriftFieldType::T_I32) {
+                CanMoveToContainerStatus::type v;
+                readEnumCanMoveToContainerStatus(r, v);
+                s.canMoveToContainer = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        {
+            r.skip(fieldType);
+        }
+        r.readFieldEnd();
+    }
+    r.readStructEnd();
+}
+
 void writeNotebookRestrictions(ThriftBinaryBufferWriter & w, const NotebookRestrictions & s) {
     w.writeStructBegin(QStringLiteral("NotebookRestrictions"));
     if(s.noReadNotes.isSet()) {
@@ -8511,6 +8753,41 @@ void writeNotebookRestrictions(ThriftBinaryBufferWriter & w, const NotebookRestr
     if(s.noRenameNotebook.isSet()) {
         w.writeFieldBegin(QStringLiteral("noRenameNotebook"), ThriftFieldType::T_BOOL, 22);
         w.writeBool(s.noRenameNotebook.ref());
+        w.writeFieldEnd();
+    }
+    if(s.noSetInMyList.isSet()) {
+        w.writeFieldBegin(QStringLiteral("noSetInMyList"), ThriftFieldType::T_BOOL, 23);
+        w.writeBool(s.noSetInMyList.ref());
+        w.writeFieldEnd();
+    }
+    if(s.noChangeContact.isSet()) {
+        w.writeFieldBegin(QStringLiteral("noChangeContact"), ThriftFieldType::T_BOOL, 24);
+        w.writeBool(s.noChangeContact.ref());
+        w.writeFieldEnd();
+    }
+    if(s.canMoveToContainerRestrictions.isSet()) {
+        w.writeFieldBegin(QStringLiteral("canMoveToContainerRestrictions"), ThriftFieldType::T_STRUCT, 26);
+        writeCanMoveToContainerRestrictions(w, s.canMoveToContainerRestrictions.ref());
+        w.writeFieldEnd();
+    }
+    if(s.noSetReminderNotifyEmail.isSet()) {
+        w.writeFieldBegin(QStringLiteral("noSetReminderNotifyEmail"), ThriftFieldType::T_BOOL, 27);
+        w.writeBool(s.noSetReminderNotifyEmail.ref());
+        w.writeFieldEnd();
+    }
+    if(s.noSetReminderNotifyInApp.isSet()) {
+        w.writeFieldBegin(QStringLiteral("noSetReminderNotifyInApp"), ThriftFieldType::T_BOOL, 28);
+        w.writeBool(s.noSetReminderNotifyInApp.ref());
+        w.writeFieldEnd();
+    }
+    if(s.noSetRecipientSettingsStack.isSet()) {
+        w.writeFieldBegin(QStringLiteral("noSetRecipientSettingsStack"), ThriftFieldType::T_BOOL, 29);
+        w.writeBool(s.noSetRecipientSettingsStack.ref());
+        w.writeFieldEnd();
+    }
+    if(s.noCanMoveNote.isSet()) {
+        w.writeFieldBegin(QStringLiteral("noCanMoveNote"), ThriftFieldType::T_BOOL, 30);
+        w.writeBool(s.noCanMoveNote.ref());
         w.writeFieldEnd();
     }
     w.writeFieldStop();
@@ -8720,6 +8997,69 @@ void readNotebookRestrictions(ThriftBinaryBufferReader & r, NotebookRestrictions
                 bool v;
                 r.readBool(v);
                 s.noRenameNotebook = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 23) {
+            if (fieldType == ThriftFieldType::T_BOOL) {
+                bool v;
+                r.readBool(v);
+                s.noSetInMyList = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 24) {
+            if (fieldType == ThriftFieldType::T_BOOL) {
+                bool v;
+                r.readBool(v);
+                s.noChangeContact = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 26) {
+            if (fieldType == ThriftFieldType::T_STRUCT) {
+                CanMoveToContainerRestrictions v;
+                readCanMoveToContainerRestrictions(r, v);
+                s.canMoveToContainerRestrictions = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 27) {
+            if (fieldType == ThriftFieldType::T_BOOL) {
+                bool v;
+                r.readBool(v);
+                s.noSetReminderNotifyEmail = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 28) {
+            if (fieldType == ThriftFieldType::T_BOOL) {
+                bool v;
+                r.readBool(v);
+                s.noSetReminderNotifyInApp = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 29) {
+            if (fieldType == ThriftFieldType::T_BOOL) {
+                bool v;
+                r.readBool(v);
+                s.noSetRecipientSettingsStack = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 30) {
+            if (fieldType == ThriftFieldType::T_BOOL) {
+                bool v;
+                r.readBool(v);
+                s.noCanMoveNote = v;
             } else {
                 r.skip(fieldType);
             }
@@ -9310,6 +9650,11 @@ void writeUserProfile(ThriftBinaryBufferWriter & w, const UserProfile & s) {
         w.writeI32(static_cast<qint32>(s.role.ref()));
         w.writeFieldEnd();
     }
+    if(s.status.isSet()) {
+        w.writeFieldBegin(QStringLiteral("status"), ThriftFieldType::T_I32, 10);
+        w.writeI32(static_cast<qint32>(s.status.ref()));
+        w.writeFieldEnd();
+    }
     w.writeFieldStop();
     w.writeStructEnd();
 }
@@ -9400,6 +9745,15 @@ void readUserProfile(ThriftBinaryBufferReader & r, UserProfile & s) {
                 BusinessUserRole::type v;
                 readEnumBusinessUserRole(r, v);
                 s.role = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 10) {
+            if (fieldType == ThriftFieldType::T_I32) {
+                BusinessUserStatus::type v;
+                readEnumBusinessUserStatus(r, v);
+                s.status = v;
             } else {
                 r.skip(fieldType);
             }
@@ -9817,6 +10171,11 @@ void writeBusinessInvitation(ThriftBinaryBufferWriter & w, const BusinessInvitat
         w.writeI64(s.created.ref());
         w.writeFieldEnd();
     }
+    if(s.mostRecentReminder.isSet()) {
+        w.writeFieldBegin(QStringLiteral("mostRecentReminder"), ThriftFieldType::T_I64, 8);
+        w.writeI64(s.mostRecentReminder.ref());
+        w.writeFieldEnd();
+    }
     w.writeFieldStop();
     w.writeStructEnd();
 }
@@ -9889,6 +10248,15 @@ void readBusinessInvitation(ThriftBinaryBufferReader & r, BusinessInvitation & s
                 qint64 v;
                 r.readI64(v);
                 s.created = v;
+            } else {
+                r.skip(fieldType);
+            }
+        } else
+        if (fieldId == 8) {
+            if (fieldType == ThriftFieldType::T_I64) {
+                qint64 v;
+                r.readI64(v);
+                s.mostRecentReminder = v;
             } else {
                 r.skip(fieldType);
             }

@@ -1,6 +1,6 @@
 /**
  * Original work: Copyright (c) 2014 Sergey Skoblikov
- * Modified work: Copyright (c) 2015-2016 Dmitry Ivanov
+ * Modified work: Copyright (c) 2015-2019 Dmitry Ivanov
  *
  * This file is a part of QEverCloud project and is distributed under the terms of MIT license:
  * https://opensource.org/licenses/MIT
@@ -14,6 +14,10 @@
 #include <QtNetwork>
 #include <QSharedPointer>
 #include <QUrl>
+
+// TEMP!! nixnote addition to allow logger calls
+#include "src/logger/qslog.h"
+////////////////////////////////////////////////
 
 /** @cond HIDDEN_SYMBOLS  */
 
@@ -66,8 +70,12 @@ void ReplyFetcher::onDownloadProgress(qint64, qint64)
 
 void ReplyFetcher::checkForTimeout()
 {
-    const int connectionTimeout = 30*1000;
-    if ((m_lastNetworkTime - QDateTime::currentMSecsSinceEpoch()) > connectionTimeout) {
+    const int timeout = connectionTimeout();
+    if (timeout < 0) {
+        return;
+    }
+
+    if ((QDateTime::currentMSecsSinceEpoch() - m_lastNetworkTime) > timeout) {
         setError(QStringLiteral("Connection timeout."));
     }
 }
@@ -89,6 +97,8 @@ void ReplyFetcher::onFinished()
 
 void ReplyFetcher::onError(QNetworkReply::NetworkError error)
 {
+    QLOG_WARN() << "QEverCloud.http.ReplyFetcher.onError: " << m_reply->errorString();
+
     Q_UNUSED(error)
     setError(m_reply->errorString());
 }
@@ -119,20 +129,28 @@ QByteArray simpleDownload(QNetworkAccessManager* nam, QNetworkRequest request,
 {
     ReplyFetcher * fetcher = new ReplyFetcher;
     QEventLoop loop;
-    QObject::connect(fetcher, SIGNAL(replyFetched(QObject*)), &loop, SLOT(quit()));
+    QObject::connect(fetcher, SIGNAL(replyFetched(QObject * )), &loop, SLOT(quit()));
 
-    ReplyFetcherLauncher * fetcherLauncher = new ReplyFetcherLauncher(fetcher, nam, request, postData);
+    ReplyFetcherLauncher *fetcherLauncher = new ReplyFetcherLauncher(fetcher, nam, request, postData);
     QTimer::singleShot(0, fetcherLauncher, SLOT(start()));
+
+    qint64 time1 = QDateTime::currentMSecsSinceEpoch();
+    QString url = request.url().toString();
+    QLOG_DEBUG() << "QEverCloud.http.simpleDownload starting loop, url=" << url;
     loop.exec(QEventLoop::ExcludeUserInputEvents);
 
     fetcherLauncher->deleteLater();
 
+    qint64 time2 = QDateTime::currentMSecsSinceEpoch();
     if (httpStatusCode) {
         *httpStatusCode = fetcher->httpStatusCode();
+        QLOG_DEBUG() << "QEverCloud.http.simpleDownload, url=" << url << ", http code " << *httpStatusCode
+                     << ", " << (time2 - time1) << " ms";
     }
 
     if (fetcher->isError()) {
         QString errorText = fetcher->errorText();
+        QLOG_WARN() << "QEverCloud.http.simpleDownload error " << errorText;
         fetcher->deleteLater();
         throw EverCloudException(errorText);
     }

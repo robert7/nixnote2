@@ -24,9 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // Windows Check
 #ifndef _WIN32
-
 #include <execinfo.h>
-
 #endif  // end windows check
 
 #include <QNetworkAccessManager>
@@ -37,7 +35,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/sql/usertable.h"
 #include "src/sql/notetable.h"
 #include <QPainter>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -45,7 +42,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // Windows Check
 #ifndef _WIN32
-
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -53,10 +49,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <curl/curl.h>
 #include <curl/easy.h>
-
 #endif // End windows check
 
 #include "src/utilities/debugtool.h"
+
 
 extern Global global;
 
@@ -159,7 +155,14 @@ void CommunicationManager::enDisconnect() {
 
 // Get a user's information
 bool CommunicationManager::getUserInfo(User &user) {
-    QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo";
+
+    QNetworkAccessManager *p = evernoteNetworkAccessManager();
+    QNetworkAccessManager::NetworkAccessibility accessibility = p->networkAccessible();
+    // unfortunately it doesn't really seem to check the network availability
+    qint64 time1 = QDateTime::currentMSecsSinceEpoch();
+    QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo; networkAccessible=" << accessibility << ", timestamp=" << time1;
+
+
     userStore = new UserStore(evernoteHost, authToken);
 
     bool res = true;
@@ -182,8 +185,11 @@ bool CommunicationManager::getUserInfo(User &user) {
         reportError(CommunicationError::StdException, 16, e.what());
         res = false;
     }
+    qint32 userId = user.id.isSet() ? user.id.ref() : -1;
 
-    QLOG_DEBUG() << "Exiting CommunicationManager::getUserInfo, res=" << res;
+    qint64 time2 = QDateTime::currentMSecsSinceEpoch();
+    QLOG_DEBUG() << "Exiting CommunicationManager::getUserInfo, res=" << res << ", user=" << userId
+                 << ", timestamp=" << QDateTime::currentMSecsSinceEpoch() << ", " << (time2 - time1) << " ms";
     return res;
 }
 
@@ -219,6 +225,9 @@ bool CommunicationManager::getSyncState(QString token, SyncState &syncState) {
         return false;
     } catch (EDAMSystemException &e) {
         handleEDAMSystemException(e);
+        return false;
+    } catch (const std::exception &e) {
+        reportError(CommunicationError::StdException, 16, e.what());
         return false;
     }
     return true;
@@ -512,7 +521,8 @@ void CommunicationManager::reportError(
         int code,
         const QString &message,
         const QString &internalMessage) {
-    QLOG_DEBUG() << "reportError";
+    QLOG_DEBUG() << "reportError()"
+                 << " timestamp=" << QDateTime::currentMSecsSinceEpoch();
 
 #ifndef _WIN32
     // non Windows only
