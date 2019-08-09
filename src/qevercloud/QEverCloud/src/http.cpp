@@ -129,19 +129,23 @@ QByteArray simpleDownload(QNetworkAccessManager* nam, QNetworkRequest request,
 {
     ReplyFetcher * fetcher = new ReplyFetcher;
     QEventLoop loop;
-    QObject::connect(fetcher, SIGNAL(replyFetched(QObject*)), &loop, SLOT(quit()));
+    QObject::connect(fetcher, SIGNAL(replyFetched(QObject * )), &loop, SLOT(quit()));
 
-    ReplyFetcherLauncher * fetcherLauncher = new ReplyFetcherLauncher(fetcher, nam, request, postData);
+    ReplyFetcherLauncher *fetcherLauncher = new ReplyFetcherLauncher(fetcher, nam, request, postData);
     QTimer::singleShot(0, fetcherLauncher, SLOT(start()));
 
-    QLOG_DEBUG() << "QEverCloud.http.simpleDownload starting loop";
+    qint64 time1 = QDateTime::currentMSecsSinceEpoch();
+    QString url = request.url().toString();
+    QLOG_DEBUG() << "QEverCloud.http.simpleDownload starting loop, url=" << url;
     loop.exec(QEventLoop::ExcludeUserInputEvents);
 
     fetcherLauncher->deleteLater();
 
+    qint64 time2 = QDateTime::currentMSecsSinceEpoch();
     if (httpStatusCode) {
         *httpStatusCode = fetcher->httpStatusCode();
-        QLOG_DEBUG() << "QEverCloud.http.simpleDownload http code " << *httpStatusCode;
+        QLOG_DEBUG() << "QEverCloud.http.simpleDownload, url=" << url << ", http code " << *httpStatusCode
+                     << ", " << (time2 - time1) << " ms";
     }
 
     if (fetcher->isError()) {

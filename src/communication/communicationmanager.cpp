@@ -159,8 +159,9 @@ bool CommunicationManager::getUserInfo(User &user) {
     QNetworkAccessManager *p = evernoteNetworkAccessManager();
     QNetworkAccessManager::NetworkAccessibility accessibility = p->networkAccessible();
     // unfortunately it doesn't really seem to check the network availability
-    QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo; networkAccessible=" << accessibility
-                 << ", timestamp=" << QDateTime::currentMSecsSinceEpoch();
+    qint64 time1 = QDateTime::currentMSecsSinceEpoch();
+    QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo; networkAccessible=" << accessibility << ", timestamp=" << time1;
+
 
     userStore = new UserStore(evernoteHost, authToken);
 
@@ -186,8 +187,9 @@ bool CommunicationManager::getUserInfo(User &user) {
     }
     qint32 userId = user.id.isSet() ? user.id.ref() : -1;
 
+    qint64 time2 = QDateTime::currentMSecsSinceEpoch();
     QLOG_DEBUG() << "Exiting CommunicationManager::getUserInfo, res=" << res << ", user=" << userId
-                 << ", timestamp=" << QDateTime::currentMSecsSinceEpoch();
+                 << ", timestamp=" << QDateTime::currentMSecsSinceEpoch() << ", " << (time2 - time1) << " ms";
     return res;
 }
 
