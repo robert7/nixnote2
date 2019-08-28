@@ -1,7 +1,9 @@
-NixNote (2.1.5-a) stable; urgency=low
+NixNote (2.1.5-b) stable; urgency=low
   * Updated qevercloud (Evernote API) to latest development version (v.4.1.0) - Evernote API 1.29
   * Set Evernote request timeout to 30 seconds, added Evernote network request logging (in DEBUG mode)
- -- Robert Spiegel <nightingale7@gmail.com>  Fri, 09 Aug 2019 16:36:44 +0200
+  * Evernote request timeout increased to 4 minutes (as 30 seconds seems to be too small for some users/use cases)
+  * Fixed url insertion code (one more time)
+ -- Robert Spiegel <nightingale7@gmail.com>  Wed, 28 Aug 2019 15:27:10 +0200
 
 NixNote (2.1.4) stable; urgency=low
   * Fixed few sync problems (e.g. involving "map" or "svg" tag)

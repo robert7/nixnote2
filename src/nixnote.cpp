@@ -158,8 +158,8 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
 
 
-    // Evernote timeout to 30 seconds
-    setConnectionTimeout(30000);
+    // Evernote request timeout to 4 minutes
+    setConnectionTimeout(4 * 60 * 1000);
 
     // Setup the counter thread
     QLOG_DEBUG() << "Setting up sync thread";
