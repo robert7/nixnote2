@@ -936,7 +936,8 @@ void NBrowserWindow::copyButtonPressed() {
 // Build URL from pasted text
 QString NBrowserWindow::buildPasteUrl(QString url) {
     // Setup regular expression to test http urls
-    // regex may be a bit overkill but whatever :)
+    // regex from https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
+    // TODO add tests...
     QRegExp urlREGEX(R"R(^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$)R");
     urlREGEX.setCaseSensitivity(Qt::CaseInsensitive);
     urlREGEX.setPatternSyntax(QRegExp::RegExp);
