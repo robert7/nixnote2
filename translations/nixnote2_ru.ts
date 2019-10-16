@@ -11,12 +11,13 @@
     <message>
         <location filename="../src/dialog/aboutdialog.cpp" line="46"/>
         <source>Version: </source>
-        <translation type="unfinished"></translation>
+        <translation>Версия</translation>
     </message>
     <message>
         <location filename="../src/dialog/aboutdialog.cpp" line="51"/>
         <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
         <translation type="unfinished"></translation>
+    </message>
     </message>
 </context>
 <context>
@@ -79,12 +80,12 @@
     <message>
         <location filename="../src/dialog/accountdialog.cpp" line="93"/>
         <source>User Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя пользователя:</translation>
     </message>
     <message>
         <location filename="../src/dialog/accountdialog.cpp" line="95"/>
         <source>Account Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип аккаунта:</translation>
     </message>
     <message>
         <location filename="../src/dialog/accountdialog.cpp" line="97"/>
@@ -94,17 +95,17 @@
     <message>
         <location filename="../src/dialog/accountdialog.cpp" line="99"/>
         <source>Uploaded In This Period:</source>
-        <translation type="unfinished"></translation>
+        <translation>Загружено в этом расчетном периоде:</translation>
     </message>
     <message>
         <location filename="../src/dialog/accountdialog.cpp" line="103"/>
         <source>Less than 1MB</source>
-        <translation type="unfinished"></translation>
+        <translation>Менее 1 Мб</translation>
     </message>
     <message>
         <location filename="../src/dialog/accountdialog.cpp" line="104"/>
         <source>Current Cycle Ends:</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущий расчетный период заканчивается:</translation>
     </message>
     <message>
         <location filename="../src/dialog/accountdialog.cpp" line="112"/>
@@ -142,17 +143,17 @@
     <message>
         <location filename="../src/dialog/accountmaintenancedialog.cpp" line="38"/>
         <source>Remove Authorization</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить авторизацию</translation>
     </message>
     <message>
         <location filename="../src/dialog/accountmaintenancedialog.cpp" line="63"/>
         <source>User Account Maintenance</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактирование учетных записей</translation>
     </message>
     <message>
         <location filename="../src/dialog/accountmaintenancedialog.cpp" line="102"/>
         <source>Are you sure you want to delete this account?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы уверены, что хотите удалить этот аккаунт?</translation>
     </message>
     <message>
         <location filename="../src/dialog/accountmaintenancedialog.cpp" line="103"/>
@@ -162,13 +163,13 @@
     <message>
         <location filename="../src/dialog/accountmaintenancedialog.cpp" line="115"/>
         <source>You cannot delete the active account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нельзя удалить активный аккаунт</translation>
     </message>
     <message>
         <location filename="../src/dialog/accountmaintenancedialog.cpp" line="168"/>
         <location filename="../src/dialog/accountmaintenancedialog.cpp" line="192"/>
         <source>Switch to </source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить на </translation>
     </message>
 </context>
 <context>
@@ -222,190 +223,190 @@
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="42"/>
         <source>Show tray icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать иконку в трее</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="43"/>
         <source>Display PDFs inline**</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображение PDF-файлов inline**</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="44"/>
         <source>Show splash screen on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать заставку при запуске</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="45"/>
         <source>Start automatically at login</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматический запуск при входе в систему</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="46"/>
         <source>Confirm Deletes</source>
-        <translation type="unfinished"></translation>
+        <translation>Подтверждать удаление</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="47"/>
         <source>Show missed reminders on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать пропущенные напоминания при запуске</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="48"/>
         <source>Always Start minimized</source>
-        <translation type="unfinished"></translation>
+        <translation>Всегда стартовать в свернутом виде</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="49"/>
         <source>Show notebook and tag totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать итоговые данные по тегам и ноутбукам</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="50"/>
         <source>Disable note editing on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Отключить редактирование заметок при запуске</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="51"/>
         <source>Focus on Note Title on New Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Фокус на заголовок новой заметки</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="52"/>
         <source>Limit Editor to Web Fonts*</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограничить редактор веб-шрифтами*</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="54"/>
         <source>Show note list grid*</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать сетку списка заметок*</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="55"/>
         <source>Alternate note list colors*</source>
-        <translation type="unfinished"></translation>
+        <translation>Альтернативные цвета списка заметок*</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="56"/>
         <source>Set author on new notes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Установить автора на новую заметку.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="58"/>
         <source>Preview fonts in editor dialog*</source>
-        <translation type="unfinished"></translation>
+        <translation>Предварительный просмотр шрифтов в диалоговом окне редактора*</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="62"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="67"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Ничего не делать</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="64"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="69"/>
         <source>New note</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая заметка</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="63"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="68"/>
         <source>Show NixNote</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать NixNote</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="73"/>
         <source>Open New Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть новое окно</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="88"/>
         <source>Qt Default</source>
-        <translation type="unfinished"></translation>
+        <translation>По-умолчанию из Qt</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="89"/>
         <source>notify-send</source>
-        <translation type="unfinished"></translation>
+        <translation>уведомление</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="96"/>
         <source>Startup Behavior</source>
-        <translation type="unfinished"></translation>
+        <translation>Поведение при запуске</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="98"/>
         <source>Restore Selection Criteria</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстановить критерии выбора</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="99"/>
         <source>Select Default Notebook</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать блокнот по-умолчанию</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="100"/>
         <source>View All Notebooks</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать все блокноты</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="110"/>
         <source>Minimize to tray</source>
-        <translation type="unfinished"></translation>
+        <translation>Свернуть в трей</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="111"/>
         <source>Close to tray</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыть в трей</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="132"/>
         <source>Notification Service</source>
-        <translation type="unfinished"></translation>
+        <translation>Служба уведомлений</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="135"/>
         <source>Middle Click Open Behavior</source>
-        <translation type="unfinished"></translation>
+        <translation>Поведение по клику средней кнопки мыши</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="138"/>
         <source>Tray Icon Middle Click Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Клик средней кнопки мыши на иконке в трее</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="141"/>
         <source>Tray Icon Double Click Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Двойной клик на иконке в трее</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="144"/>
         <source>Default GUI Font*</source>
-        <translation type="unfinished"></translation>
+        <translation>Шрифт GUI по-умолчанию*</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="147"/>
         <source>Default GUI Font Size*</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер шрифта GUI по-умолчанию*</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="150"/>
         <source>Default Editor Font*</source>
-        <translation type="unfinished"></translation>
+        <translation>Шрифт редактора по-умолчанию*</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="153"/>
         <source>Default Editor Font Size*</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер шрифта GUI по-умолчанию*</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="157"/>
         <source>* May require restart on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation>* Может потребоваться перезагрузка программы</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="158"/>
         <source>** Can crash on Gnome systems.</source>
-        <translation type="unfinished"></translation>
+        <translation>** Может не работать в системах , основанных на Gnome.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="92"/>
@@ -413,7 +414,7 @@
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="427"/>
         <location filename="../src/dialog/preferences/appearancepreferences.cpp" line="446"/>
         <source>System Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки системы по-умолчанию</translation>
     </message>
 </context>
 <context>
@@ -434,7 +435,7 @@
     <message>
         <location filename="../src/gui/browserWidgets/authoreditor.cpp" line="37"/>
         <source>Click to set author</source>
-        <translation type="unfinished"></translation>
+        <translation>Нажмите, чтобы задать автора</translation>
     </message>
 </context>
 <context>
@@ -523,7 +524,7 @@
     <message>
         <location filename="../src/cmdtools/cmdlinequery.cpp" line="87"/>
         <source>Source URL</source>
-        <translation type="unfinished"></translation>
+        <translation>URL источника</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinequery.cpp" line="90"/>
@@ -533,17 +534,17 @@
     <message>
         <location filename="../src/cmdtools/cmdlinequery.cpp" line="93"/>
         <source>Todo</source>
-        <translation type="unfinished"></translation>
+        <translation>Задача</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinequery.cpp" line="96"/>
         <source>Reminder Due</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Напоминание установлено</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinequery.cpp" line="99"/>
         <source>Reminder Done</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Напоминание отработало</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinequery.cpp" line="181"/>
@@ -564,20 +565,20 @@
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="51"/>
         <source>Unable to attach to shared memory segment.  Is the other NixNote running?
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Не удается подключиться к сегменту общей памяти. Запущен ли другой сеанс NixNote?</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="327"/>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="464"/>
         <source> has been created.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>былл создан.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="330"/>
         <source>No response from NixNote.  Please verify that the note was created.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Нет ответа от NixNote.  Пожалуйста, убедитесь, что заметка была создана.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="344"/>
@@ -587,42 +588,42 @@
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="547"/>
         <source> was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation> не было найдено.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="550"/>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="621"/>
         <source> has been appended.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>было добавлено.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="553"/>
         <source>No response from NixNote.  Please verify that the note was appended.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Нет ответа от NixNote.  Пожалуйста, убедитесь, что заметка была добавлена.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="564"/>
         <source> was not found.
 </source>
-        <translation type="unfinished"></translation>
+        <translation> не найдено.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="233"/>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="666"/>
         <source>No response received from NixNote.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет ответа от NixNote.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="168"/>
         <source>Type DELETE to verify: </source>
-        <translation type="unfinished"></translation>
+        <translation>Введите DELETE для подтверждения:</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="675"/>
         <source>Note not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Заметка не найдена.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="686"/>
@@ -630,28 +631,28 @@
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="734"/>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="754"/>
         <source>This cannot be done with NixNote running.</source>
-        <translation type="unfinished"></translation>
+        <translation>Это невозможно выполнить с запущенным NixNote.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="744"/>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="764"/>
         <source>Notebook not found: </source>
-        <translation type="unfinished"></translation>
+        <translation>Блокнот не найден:</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="777"/>
         <source>OAuth token not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>OAuth токен не найден.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="795"/>
         <source>Error synchronizing with Evernote.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка синхронизации с сервером Evernote.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/cmdlinetool.cpp" line="798"/>
         <source>Sync completed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронизация успешно завершена.</translation>
     </message>
 </context>
 <context>
@@ -659,22 +660,22 @@
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="41"/>
         <source>black</source>
-        <translation type="unfinished"></translation>
+        <translation>черный</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="45"/>
         <source>gray</source>
-        <translation type="unfinished"></translation>
+        <translation>серый</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="44"/>
         <source>darkGrey</source>
-        <translation type="unfinished"></translation>
+        <translation>темно-серый</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="47"/>
         <source>red</source>
-        <translation type="unfinished"></translation>
+        <translation>красный</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="48"/>
@@ -689,27 +690,27 @@
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="50"/>
         <source>darkRed</source>
-        <translation type="unfinished"></translation>
+        <translation>темно-красный</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="52"/>
         <source>green</source>
-        <translation type="unfinished"></translation>
+        <translation>зеленый</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="53"/>
         <source>darkGreen</source>
-        <translation type="unfinished"></translation>
+        <translation>темно-зеленый</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="55"/>
         <source>blue</source>
-        <translation type="unfinished"></translation>
+        <translation>синий</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="56"/>
         <source>darkBlue</source>
-        <translation type="unfinished"></translation>
+        <translation>темно-синий</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="57"/>
@@ -724,12 +725,12 @@
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="60"/>
         <source>yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>желтый</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/colormenu.cpp" line="61"/>
         <source>white</source>
-        <translation type="unfinished"></translation>
+        <translation>белый</translation>
     </message>
 </context>
 <context>
@@ -787,7 +788,7 @@
     <message>
         <location filename="../src/settings/colorsettings.cpp" line="47"/>
         <source>Powder Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Бледно-синий</translation>
     </message>
 </context>
 <context>
@@ -795,12 +796,12 @@
     <message>
         <location filename="../src/communication/communicationmanager.cpp" line="519"/>
         <source>Error in sync: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка синхронизации:</translation>
     </message>
     <message>
         <location filename="../src/communication/communicationmanager.cpp" line="605"/>
         <source>Linked notebook notestore URL missing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсутствует URL , на который сделана ссылка.</translation>
     </message>
     <message>
         <location filename="../src/communication/communicationmanager.cpp" line="1061"/>
@@ -823,22 +824,22 @@
     <message>
         <location filename="../src/dialog/databasestatus.cpp" line="49"/>
         <source>Total resources:</source>
-        <translation type="unfinished"></translation>
+        <translation>Общий объем ресурсов:</translation>
     </message>
     <message>
         <location filename="../src/dialog/databasestatus.cpp" line="51"/>
         <source>Unindexed notes:</source>
-        <translation type="unfinished">Непроиндексированных заметок:</translation>
+        <translation>Неиндексированные заметки:</translation>
     </message>
     <message>
         <location filename="../src/dialog/databasestatus.cpp" line="53"/>
         <source>Unindexed resources:</source>
-        <translation type="unfinished"></translation>
+        <translation>Неиндексированные ресурсы::</translation>
     </message>
     <message>
         <location filename="../src/dialog/databasestatus.cpp" line="55"/>
         <source>Thumbnails needed:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Требующие эскизов:</translation>
     </message>
     <message>
         <location filename="../src/dialog/databasestatus.cpp" line="60"/>
@@ -869,42 +870,42 @@
     <message>
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="35"/>
         <source>Disable image search highlighting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Отключить подсветку поиска.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="34"/>
         <source>Disable uploads to server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Отключить загрузку на сервер.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="36"/>
         <source>Show LID column (requires restart).</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать LID столбец (требуется перезапуск).</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="37"/>
         <source>Disable Tag Sorting (useful for non-ASCII sort bug).</source>
-        <translation type="unfinished"></translation>
+        <translation>Отключить сортировку по меткам.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="38"/>
         <source>Force UTF8 Encoding.</source>
-        <translation type="unfinished"></translation>
+        <translation>Принудительное кодирование UTF8.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="55"/>
         <source>Intercept Unix SIGHUP (requires restart).</source>
-        <translation type="unfinished"></translation>
+        <translation>Перехват Unix SIGHUP (требуется перезапуск).</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="60"/>
         <source>Use multiple threads to save note contents (experimental).</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать многопоточное сохранение (экспериментально).</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/debugpreferences.cpp" line="64"/>
         <source>Auto-Save Interval (in seconds).</source>
-        <translation type="unfinished"></translation>
+        <translation>Интервал автосохранения (в секундах).</translation>
     </message>
 </context>
 <context>
@@ -963,13 +964,13 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="49"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="245"/>
         <source>Superscript</source>
-        <translation type="unfinished"></translation>
+        <translation>Надстрочный</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="50"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="250"/>
         <source>Subscript</source>
-        <translation type="unfinished"></translation>
+        <translation>Подстрочный</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="51"/>
@@ -987,35 +988,35 @@
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="53"/>
         <source>Align Left</source>
-        <translation type="unfinished"></translation>
+        <translation>По левому краю</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="54"/>
         <source>Align Center</source>
-        <translation type="unfinished"></translation>
+        <translation>По центру</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="55"/>
         <source>Align Full</source>
-        <translation type="unfinished"></translation>
+        <translation>Заполнить по центру</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="56"/>
         <source>Align Right</source>
-        <translation type="unfinished"></translation>
+        <translation>По правому краю</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="57"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="275"/>
         <source>Horizontal Line</source>
-        <translation type="unfinished">Вставить горизонтальную линию</translation>
+        <translation>Вставить горизонтальную линию</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="58"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="277"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="288"/>
         <source>Insert Date Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить дату и время</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="61"/>
@@ -1047,7 +1048,7 @@
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="66"/>
         <source>Highlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Подсветка фоном</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="67"/>
@@ -1058,65 +1059,65 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="71"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="335"/>
         <source>Format Code Block</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить блок с кодом</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="72"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="338"/>
         <source>Sync</source>
-        <translation type="unfinished">Синхронизировать</translation>
+        <translation>Синхронизировать</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="73"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="343"/>
         <source>Email Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Отправить заметку по email</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="148"/>
         <source>To show/hide toolbar items, click on the blank space in toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Для скрытия\показа элементов панели кликните ПКМ на свободном месте.</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="163"/>
         <source>Change color of marked text to current color (click and hold to select color)</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить цвет выделенного текста (нажмите и удерживайте для выбора цвета)</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="178"/>
         <source>Change background color of marked text to current color - highlight (click and hold  to select color)</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить фон выделенного текста - подсветка (нажмите и удерживайте для выбора цвета)</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="255"/>
         <source>Center Justify</source>
-        <translation type="unfinished"></translation>
+        <translation>Выровнять по центру</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="260"/>
         <source>Fully Justify</source>
-        <translation type="unfinished"></translation>
+        <translation>Заполнить по центру</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="280"/>
         <source>Insert Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить дату</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="283"/>
         <source>Insert Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить время</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="295"/>
         <source>Indent/Shift Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Отступ/Сдвиг справа</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="314"/>
         <source>Todo</source>
-        <translation type="unfinished"></translation>
+        <translation>Задача</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="68"/>
@@ -1128,7 +1129,7 @@
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="300"/>
         <source>Outdent/Shift Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Отступ/Сдвиг слева</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="69"/>
@@ -1139,22 +1140,22 @@
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="70"/>
         <source>HTML Entities</source>
-        <translation type="unfinished"></translation>
+        <translation>HTML-объекты</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="270"/>
         <source>Left Justify</source>
-        <translation type="unfinished"></translation>
+        <translation>Выровнять влево</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="265"/>
         <source>Right Justify</source>
-        <translation type="unfinished"></translation>
+        <translation>Выровнять вправо</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="329"/>
         <source>Insert HTML Entities</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставка HTML-объектов</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/editorbuttonbar.cpp" line="810"/>
@@ -1216,27 +1217,27 @@
         <location filename="../src/cmdtools/emailnote.cpp" line="261"/>
         <source>SMTP Server has not been setup.
 Please specify server settings in the Preferences menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не заданы параметры SMTP сервера. Установите их в меню Настройки.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/emailnote.cpp" line="327"/>
         <source>Connection Error: Unable to connect to host.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка соединения: невозможно соединиться с хостом.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/emailnote.cpp" line="333"/>
         <source>Login Error : Unable to login.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка авторизации : невозможно авторизироваться.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/emailnote.cpp" line="338"/>
         <source>Send Error : Unable to send email.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка отправки : невозможно отправить email.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/emailnote.cpp" line="344"/>
         <source>Message Sent</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщение отправлено</translation>
     </message>
 </context>
 <context>
@@ -1244,17 +1245,17 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="17"/>
         <source>SMTP Server</source>
-        <translation type="unfinished"></translation>
+        <translation>SMTP сервер</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="18"/>
         <source>Server Port</source>
-        <translation type="unfinished"></translation>
+        <translation>Порт сервера</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="19"/>
         <source>Userid</source>
-        <translation>Userid</translation>
+        <translation>Пользователь</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="20"/>
@@ -1264,17 +1265,17 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="21"/>
         <source>Sender Display Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображаемое имя отправителя</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="22"/>
         <source>Sender Email</source>
-        <translation type="unfinished"></translation>
+        <translation>Email отправителя</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="23"/>
         <source>Connection Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип соединения</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="31"/>
@@ -1284,88 +1285,88 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="32"/>
         <source>SSL Connection</source>
-        <translation type="unfinished"></translation>
+        <translation>SSL соединение</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="33"/>
         <source>TLS Connection</source>
-        <translation type="unfinished"></translation>
+        <translation>TLS соединение</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="35"/>
         <source>Send Test Email</source>
-        <translation type="unfinished"></translation>
+        <translation>Послать тестовое сообщение</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="108"/>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="113"/>
         <source>Setup Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Оишбка настроек</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="109"/>
         <source>You must specify a SMTP server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Необходимо указать сервер SMTP.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="114"/>
         <source>You must specify a sender email.</source>
-        <translation type="unfinished"></translation>
+        <translation>Необходимо указать имя отправителя.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="146"/>
         <source>Test Email From NixNote</source>
-        <translation type="unfinished"></translation>
+        <translation>Тестовое сообщение из NixNote</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="152"/>
         <source>&lt;h1&gt;This is a test email from NixNote.&lt;/h1&gt; </source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h1&gt;Это тестовое сообщение из NixNote&lt;/h1&gt; </translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="153"/>
-        <source>If you are reading it then your email preferences are are setup properly.</source>
-        <translation type="unfinished"></translation>
+        <source>If you are reading it then your email preferences are setup properly.</source>
+        <translation>Если вы читаете это - радуйтесь. Значит настройки корректны и вы офигительный чувак.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="168"/>
         <source>Connection Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка соединения</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="168"/>
         <source>Unable to connect to host.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно соединиться с хостом</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="174"/>
         <source>Login Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка авторизации</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="174"/>
         <source>Unable to login.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно авторизоваться.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="179"/>
         <source>Send Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка отправки</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="179"/>
         <source>Unable to send email.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно отправить email.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="186"/>
         <source>Message Sent</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщение отправлено</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/emailpreferences.cpp" line="186"/>
         <source>Message sent.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщение отправлено.</translation>
     </message>
 </context>
 <context>
@@ -1398,7 +1399,7 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/dialog/encryptdialog.cpp" line="61"/>
         <source>**64bit RC2 cipher ~ medium security**</source>
-        <translation type="unfinished"></translation>
+        <translation>**64-битный RC2-шифр ~ средняя степень защиты**</translation>
     </message>
     <message>
         <location filename="../src/dialog/encryptdialog.cpp" line="68"/>
@@ -1431,7 +1432,7 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/dialog/endecryptdialog.cpp" line="39"/>
         <source>Decrypt</source>
-        <translation type="unfinished"></translation>
+        <translation>Расшифровать</translation>
     </message>
     <message>
         <location filename="../src/dialog/endecryptdialog.cpp" line="55"/>
@@ -1469,17 +1470,17 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/exits/exitmanager.cpp" line="55"/>
         <source>Script filename is blank. Disabling exit </source>
-        <translation type="unfinished"></translation>
+        <translation>Имя скрипта не задано. Отмена выхода.</translation>
     </message>
     <message>
         <location filename="../src/exits/exitmanager.cpp" line="62"/>
         <source>Unknown script version. Disabling exit.</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестная версия скрипта. Отмена выхода.</translation>
     </message>
     <message>
         <location filename="../src/exits/exitmanager.cpp" line="68"/>
         <source>Script file doesn&apos;t exist or cannot be read. Disabling exit </source>
-        <translation type="unfinished"></translation>
+        <translation>Файл сценария не существует или поврежден. Отмена выхода.</translation>
     </message>
 </context>
 <context>
@@ -1495,7 +1496,7 @@ Please specify server settings in the Preferences menu.</source>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="62"/>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="74"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Разрешено</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="40"/>
@@ -1523,7 +1524,7 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="111"/>
         <source>More Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Дополнительная информация</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/exitpreferences.cpp" line="128"/>
@@ -1539,17 +1540,17 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/xml/exportdata.cpp" line="54"/>
         <source>Cannot open file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно открыть файл.</translation>
     </message>
     <message>
         <location filename="../src/xml/exportdata.cpp" line="62"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт</translation>
     </message>
     <message>
         <location filename="../src/xml/exportdata.cpp" line="81"/>
         <source>Backup</source>
-        <translation type="unfinished"></translation>
+        <translation>Резервное копирование</translation>
     </message>
     <message>
         <location filename="../src/xml/exportdata.cpp" line="114"/>
@@ -1559,27 +1560,27 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/xml/exportdata.cpp" line="151"/>
         <source>Notebooks</source>
-        <translation type="unfinished"></translation>
+        <translation>Блокноты</translation>
     </message>
     <message>
         <location filename="../src/xml/exportdata.cpp" line="360"/>
         <source>Searches</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск</translation>
     </message>
     <message>
         <location filename="../src/xml/exportdata.cpp" line="405"/>
         <source>Linked Notebooks</source>
-        <translation type="unfinished"></translation>
+        <translation>Связанные блокноты</translation>
     </message>
     <message>
         <location filename="../src/xml/exportdata.cpp" line="448"/>
         <source>Shared Notebooks</source>
-        <translation type="unfinished"></translation>
+        <translation>Общие блокноты</translation>
     </message>
     <message>
         <location filename="../src/xml/exportdata.cpp" line="508"/>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Заметки</translation>
     </message>
     <message>
         <location filename="../src/xml/exportdata.cpp" line="725"/>
@@ -1593,17 +1594,17 @@ Please specify server settings in the Preferences menu.</source>
         <location filename="../src/cmdtools/extractnotes.cpp" line="41"/>
         <location filename="../src/cmdtools/extractnotes.cpp" line="82"/>
         <source>Output file not specified.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выходной файл не указан.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/extractnotes.cpp" line="64"/>
         <source>Deleting notes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Удаление заметок:</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/extractnotes.cpp" line="65"/>
         <source>Type DELETE to verify: </source>
-        <translation type="unfinished"></translation>
+        <translation>Введите DELETE для подтверждения:</translation>
     </message>
 </context>
 <context>
@@ -1611,17 +1612,17 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/gui/favoritesview.cpp" line="72"/>
         <source>Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Закладки</translation>
     </message>
     <message>
         <location filename="../src/gui/favoritesview.cpp" line="94"/>
         <source>Remove from shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить из закладок</translation>
     </message>
     <message>
         <location filename="../src/gui/favoritesview.cpp" line="573"/>
         <source>Are you sure you want to remove this shortcut?</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить закладку?</translation>
     </message>
     <message>
         <location filename="../src/gui/favoritesview.cpp" line="574"/>
@@ -1641,13 +1642,13 @@ Please specify server settings in the Preferences menu.</source>
         <location filename="../src/watcher/filewatcher.cpp" line="340"/>
         <location filename="../src/watcher/filewatcher.cpp" line="342"/>
         <source>Tag was not found:</source>
-        <translation type="unfinished"></translation>
+        <translation>Метка не найдена:</translation>
     </message>
     <message>
         <location filename="../src/watcher/filewatcher.cpp" line="356"/>
         <location filename="../src/watcher/filewatcher.cpp" line="358"/>
         <source>Notebook was not found:</source>
-        <translation type="unfinished"></translation>
+        <translation>Блокнот не найден:</translation>
     </message>
 </context>
 <context>
@@ -1693,17 +1694,17 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../src/dialog/htmlentitiesdialog.cpp" line="35"/>
         <source>Edit entries list</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать список</translation>
     </message>
     <message>
         <location filename="../src/dialog/htmlentitiesdialog.cpp" line="36"/>
         <source>Save entities list</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить список</translation>
     </message>
     <message>
         <location filename="../src/dialog/htmlentitiesdialog.cpp" line="71"/>
         <source>HTML Entities Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбор объектов HTML</translation>
     </message>
     <message>
         <location filename="../src/dialog/htmlentitiesdialog.cpp" line="206"/>
@@ -1717,28 +1718,28 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/xml/importdata.cpp" line="59"/>
         <source>Imported Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортированые заметки</translation>
     </message>
     <message>
         <location filename="../src/xml/importdata.cpp" line="106"/>
         <source>Scanning File</source>
-        <translation type="unfinished"></translation>
+        <translation>Сканирование файла</translation>
     </message>
     <message>
         <location filename="../src/xml/importdata.cpp" line="107"/>
         <location filename="../src/xml/importdata.cpp" line="119"/>
         <source> notes found.</source>
-        <translation type="unfinished"></translation>
+        <translation>заметок найдено.</translation>
     </message>
     <message>
         <location filename="../src/xml/importdata.cpp" line="130"/>
         <source>Importing</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт</translation>
     </message>
     <message>
         <location filename="../src/xml/importdata.cpp" line="131"/>
         <source>Importing Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт заметок</translation>
     </message>
     <message>
         <location filename="../src/xml/importdata.cpp" line="133"/>
@@ -1748,7 +1749,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/xml/importdata.cpp" line="134"/>
         <source>Restoring Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстановить заметки</translation>
     </message>
 </context>
 <context>
@@ -1756,24 +1757,24 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/xml/importenex.cpp" line="40"/>
         <source>Imported Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортированные заметки</translation>
     </message>
     <message>
         <location filename="../src/xml/importenex.cpp" line="83"/>
         <source>Scanning File</source>
-        <translation type="unfinished"></translation>
+        <translation>Сканирование файла</translation>
     </message>
     <message>
         <location filename="../src/xml/importenex.cpp" line="84"/>
         <location filename="../src/xml/importenex.cpp" line="94"/>
         <source> notes found.</source>
-        <translation type="unfinished"></translation>
+        <translation>заметок найдено.</translation>
     </message>
     <message>
         <location filename="../src/xml/importenex.cpp" line="101"/>
         <location filename="../src/xml/importenex.cpp" line="102"/>
         <source>Importing Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортированные заметки</translation>
     </message>
 </context>
 <context>
@@ -1781,12 +1782,12 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/cmdtools/importnotes.cpp" line="19"/>
         <source>Input file not specified.</source>
-        <translation type="unfinished"></translation>
+        <translation>Входной файл не указан.</translation>
     </message>
     <message>
         <location filename="../src/cmdtools/importnotes.cpp" line="24"/>
         <source>Input file not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Входной файл не найден.</translation>
     </message>
 </context>
 <context>
@@ -1848,7 +1849,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="40"/>
         <source>&lt;System Default&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Системный</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="41"/>
@@ -1918,7 +1919,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="54"/>
         <source>Russian</source>
-        <translation type="unfinished"></translation>
+        <translation>Русский</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="55"/>
@@ -1938,7 +1939,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="57"/>
         <source>*Note: Restart required</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">*: Требуется перезагрузка программы</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/localepreferences.cpp" line="60"/>
@@ -1989,7 +1990,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/gui/browserWidgets/locationeditor.cpp" line="45"/>
         <source>Click to set location...</source>
-        <translation type="unfinished"></translation>
+        <translation>Нажмите для задания местоположения...</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/locationeditor.cpp" line="48"/>
@@ -2012,7 +2013,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/dialog/logindialog.cpp" line="44"/>
         <source>Userid</source>
-        <translation>Userid</translation>
+        <translation>Пользователь</translation>
     </message>
     <message>
         <location filename="../src/dialog/logindialog.cpp" line="45"/>
@@ -2035,7 +2036,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="48"/>
         <source>Attributes</source>
-        <translation type="unfinished">Свойства поиска</translation>
+        <translation>Аттрибуты</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="129"/>
@@ -2046,7 +2047,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <location filename="../src/gui/nattributetree.cpp" line="132"/>
         <location filename="../src/gui/nattributetree.cpp" line="213"/>
         <source>Since</source>
-        <translation type="unfinished">Начиная с</translation>
+        <translation>Начиная с</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="136"/>
@@ -2070,7 +2071,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <location filename="../src/gui/nattributetree.cpp" line="225"/>
         <location filename="../src/gui/nattributetree.cpp" line="262"/>
         <source>This week</source>
-        <translation type="unfinished"></translation>
+        <translation>Этой недели</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="148"/>
@@ -2078,7 +2079,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <location filename="../src/gui/nattributetree.cpp" line="229"/>
         <location filename="../src/gui/nattributetree.cpp" line="266"/>
         <source>Last week</source>
-        <translation type="unfinished"></translation>
+        <translation>Предыдущей недели</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="152"/>
@@ -2086,7 +2087,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <location filename="../src/gui/nattributetree.cpp" line="233"/>
         <location filename="../src/gui/nattributetree.cpp" line="270"/>
         <source>This Month</source>
-        <translation type="unfinished">Этого месяца</translation>
+        <translation>Этого месяца</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="156"/>
@@ -2094,7 +2095,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <location filename="../src/gui/nattributetree.cpp" line="237"/>
         <location filename="../src/gui/nattributetree.cpp" line="274"/>
         <source>Last Month</source>
-        <translation type="unfinished">Предыдущего месяца</translation>
+        <translation>Предыдущего месяца</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="160"/>
@@ -2102,7 +2103,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <location filename="../src/gui/nattributetree.cpp" line="241"/>
         <location filename="../src/gui/nattributetree.cpp" line="278"/>
         <source>This Year</source>
-        <translation type="unfinished">Этого года</translation>
+        <translation>Этого года</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="164"/>
@@ -2110,7 +2111,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <location filename="../src/gui/nattributetree.cpp" line="245"/>
         <location filename="../src/gui/nattributetree.cpp" line="282"/>
         <source>Last Year</source>
-        <translation type="unfinished">Предыдущего года</translation>
+        <translation>Предыдущего года</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="169"/>
@@ -2121,12 +2122,12 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="210"/>
         <source>Last Modified</source>
-        <translation type="unfinished">Изменена</translation>
+        <translation>Изменена</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="289"/>
         <source>Contains</source>
-        <translation type="unfinished">Содержит</translation>
+        <translation>Содержит</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="292"/>
@@ -2141,32 +2142,32 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="300"/>
         <source>Ink</source>
-        <translation type="unfinished">Рукописные заметки</translation>
+        <translation>Рукописные заметки</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="304"/>
         <source>Encrypted Text</source>
-        <translation type="unfinished">Зашифрованные записи</translation>
+        <translation>Зашифрованные записи</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="308"/>
         <source>To-do items</source>
-        <translation type="unfinished"></translation>
+        <translation>Задачи</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="312"/>
         <source>Unfinished to-do items</source>
-        <translation type="unfinished">Незавершённые задачи</translation>
+        <translation>Незавершённые задачи</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="316"/>
         <source>Finished to-do items</source>
-        <translation type="unfinished">Завершённые задачи</translation>
+        <translation>Завершённые задачи</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="320"/>
         <source>PDF document</source>
-        <translation type="unfinished"></translation>
+        <translation>Документ PDF</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="324"/>
@@ -2176,17 +2177,17 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="328"/>
         <source>Reminder</source>
-        <translation type="unfinished"></translation>
+        <translation>Напоминания</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="332"/>
         <source>Uncompleted Reminder</source>
-        <translation type="unfinished"></translation>
+        <translation>Актуальные напоминания</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="336"/>
         <source>Future Reminder</source>
-        <translation type="unfinished"></translation>
+        <translation>Будущие напоминания</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="341"/>
@@ -2196,7 +2197,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="344"/>
         <source>Emailed to Evernote</source>
-        <translation type="unfinished"></translation>
+        <translation>Отосланные по Email на Evernote</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="348"/>
@@ -2206,17 +2207,17 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="352"/>
         <source>Web page</source>
-        <translation type="unfinished"></translation>
+        <translation>Web страница</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="356"/>
         <source>Mobile</source>
-        <translation type="unfinished"></translation>
+        <translation>С мобильного приложения</translation>
     </message>
     <message>
         <location filename="../src/gui/nattributetree.cpp" line="360"/>
         <source>Another application</source>
-        <translation type="unfinished"></translation>
+        <translation>С других приложений</translation>
     </message>
 </context>
 <context>
@@ -2231,7 +2232,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <location filename="../src/gui/nbrowserwindow.cpp" line="573"/>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3318"/>
         <source>Tomorrow</source>
-        <translation type="unfinished"></translation>
+        <translation>Завтра</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="575"/>
@@ -2242,7 +2243,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1279"/>
         <source>Insert your code here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставьте здесь свой код.</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1969"/>
@@ -2260,30 +2261,28 @@ See http://www.w3schools.com/charsets/ for list.</source>
 Ink notes are not supported since Evernote has not
  published any specifications on them
 and I&apos;m too lazy to figure them out by myself.</source>
-        <translation type="unfinished">Это рукописная заметка.
-Рукописные заметки не поддерживаются, поскольку Evernote
-не опубликовал никаких спецификаций
-и я слишком ленив, чтобы понять их самостоятельно.</translation>
+        <translation>Это рукописная заметка.Рукописные заметки не поддерживаются, поскольку Evernote
+не опубликовал никаких спецификаций, а я слишком ленив, чтобы понять их самостоятельно.</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="2416"/>
         <source>Edit Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать ссылку</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="2482"/>
         <source>Unable to create LaTeX image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Невозможно создать образ LaTeX</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="2483"/>
         <source>Unable to create LaTeX image.  Are you sure mimetex is installed?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Невозможно создать образ LaTeX.  Вы уверены, что mimetex установлен?</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="2832"/>
         <source>Setup Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка настройки</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="2833"/>
@@ -2291,53 +2290,53 @@ and I&apos;m too lazy to figure them out by myself.</source>
 
 Please specify server settings
 in the Preferences menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>SMTP сервер не настроен. Настройте его через меню Настройки.</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="2843"/>
         <source>Sending Email. Please be patient.</source>
-        <translation type="unfinished"></translation>
+        <translation>Идет отправка Email. Подождите... </translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="2903"/>
         <source>Connection Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка соединения</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="2903"/>
         <source>Unable to connect to host.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно соединиться с хостом.</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="2909"/>
         <source>Login Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка авторизации</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="2909"/>
         <source>Unable to login.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно авторизироваться.</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="2914"/>
         <source>Send Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка отправки</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="2914"/>
-        <source>Unable to send email.</source>
-        <translation type="unfinished"></translation>
+        <source>Unable to send Email.</source>
+        <translation>Невозможно отправить Email.</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3364"/>
         <source>Decryption Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка при расшифровке</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3365"/>
         <source>Unknown encryption method.
 Unable to decrypt.</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестный метод шифрования. Расшифровка невозможна.</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3500"/>
@@ -2347,27 +2346,27 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3501"/>
         <source>Error Encrypting String.  Please verify you have Java installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка шифрования. Убедитесь что Java установлена.</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3642"/>
         <source>Plugin Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка плагина</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3643"/>
         <source>Hunspell not available or no dictionary for current locale</source>
-        <translation type="unfinished"></translation>
+        <translation>Hunspell недоступен или нет словаря для текущей локали</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="4030"/>
         <source>Failed to initialize spell checker for </source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось инициализировать проверку орфографии для</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="4278"/>
         <source>Notebook was not found:</source>
-        <translation type="unfinished"></translation>
+        <translation>Блокнот не найден:</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="3744"/>
@@ -2378,12 +2377,12 @@ Unable to decrypt.</source>
         <location filename="../src/gui/nbrowserwindow.cpp" line="828"/>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1217"/>
         <source>Unable to reformat</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось переформатировать</translation>
     </message>
     <message>
         <location filename="../src/gui/nbrowserwindow.cpp" line="1218"/>
         <source>HTML cleanup failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось выполнить очистку HTML.</translation>
     </message>
 </context>
 <context>
@@ -2391,22 +2390,22 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="55"/>
         <source>&amp;File</source>
-        <translation>&amp;Файл</translation>
+        <translation>Файл</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="73"/>
         <source>Print this note</source>
-        <translation type="unfinished"></translation>
+        <translation>Печать заметки</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="101"/>
         <source>Import notes from an export file</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт заметок из файла экспорта</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="132"/>
         <source>Switch to </source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить на</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="150"/>
@@ -2416,132 +2415,132 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="187"/>
         <source>&amp;Edit</source>
-        <translation>&amp;Редактировать</translation>
+        <translation>Редактировать</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="72"/>
         <source>&amp;Print Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Печать заметки</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="59"/>
         <source>Email Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Отправить заметку по Email</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="60"/>
         <source>Email a copy of this note</source>
-        <translation type="unfinished"></translation>
+        <translation>Отправить копию заметки по Email</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="65"/>
         <source>Print Preview Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Предпросмотр печати заметки</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="66"/>
         <source>Print preview of this note</source>
-        <translation type="unfinished"></translation>
+        <translation>Предпросмотр печати заметки</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="100"/>
         <source>&amp;Import notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт заметок</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="139"/>
         <source>&amp;Add Another User...</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить другого пользователя...</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="143"/>
         <source>&amp;User Account Maintenance</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактирование учетной записи</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="149"/>
         <source>&amp;Open/Close Notebooks</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть/Закрыть блокноты</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="168"/>
         <source>Quit2</source>
-        <translation type="unfinished"></translation>
+        <translation>Выход</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="191"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="195"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Вернуть</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="201"/>
         <source>&amp;Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Вырезать</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="205"/>
         <source>C&amp;opy</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="209"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="213"/>
         <source>Pas&amp;te as Unformatted Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить как неформатированный текст</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="217"/>
         <source>Remo&amp;ve Formatting</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить форматирование</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="223"/>
         <source>Select &amp;All</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать всё</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="229"/>
         <source>F&amp;ind and Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Найти и заменить</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="232"/>
         <source>&amp;Search Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Найти заметки</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="237"/>
         <source>&amp;Reset Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить поиск</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="244"/>
         <source>&amp;Find in Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Найти в заметке</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="250"/>
         <source>Find &amp;Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Найти следущий</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="255"/>
         <source>Find &amp;Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Найти предыдущий</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="262"/>
         <source>Replace &amp;Within Note...</source>
-        <translation type="unfinished"></translation>
+        <translation>Заменить внутри заметки...</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="271"/>
@@ -2551,207 +2550,207 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="280"/>
         <source>&amp;View</source>
-        <translation>&amp;Вид</translation>
+        <translation>Вид</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="284"/>
         <source>Wide Note List</source>
-        <translation type="unfinished"></translation>
+        <translation>Широкий список заметок</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="289"/>
         <source>Narrow Note List</source>
-        <translation type="unfinished"></translation>
+        <translation>Узкий список заметок</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="296"/>
         <source>&amp;Show Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать код</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="300"/>
         <source>Note &amp;History</source>
-        <translation type="unfinished"></translation>
+        <translation>История заметки</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="306"/>
         <source>&amp;Presentation Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим презентации</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="310"/>
         <source>Show &amp;Left Panel</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать левую панель</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="317"/>
         <source>Show &amp;Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать закладки</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="324"/>
         <source>Show &amp;Notebooks</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать блокноты</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="331"/>
         <source>Show Ta&amp;gs</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать метки</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="338"/>
         <source>Show Sa&amp;ved Searches</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Показать сохраненные поисковые запросы</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="352"/>
         <source>Show T&amp;rash</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать корзину</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="359"/>
         <source>Show N&amp;ote List</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать список заметок</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="366"/>
         <source>Show Note &amp;Panel</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать панель заметки</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="375"/>
         <source>View Note &amp;Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать информацию о заметке</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="379"/>
         <source>View &amp;Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать панель инструментов</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="386"/>
         <source>View Status&amp;bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать статусбар</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="402"/>
         <source>New &amp;Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая заметка</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="549"/>
         <source>Active shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Активные горячие клавиши</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="550"/>
         <source>View current shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Посмотреть текущие закладки</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="407"/>
         <source>Dupl&amp;icate Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Дублировать заметку</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="80"/>
         <source>&amp;Export all notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт всех заметок</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="81"/>
         <source>Export all notes to a NNEX file</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт всех заметок NNEX файл</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="86"/>
         <source>&amp;Import all notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт всех заметок</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="87"/>
         <source>Import all notes from a file</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт всех заметок из NNEX файла</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="94"/>
         <source>Export &amp;selected notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт выделенных заметок</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="412"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="417"/>
         <source>Reindex Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Переиндексировать заметку</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="423"/>
         <source>&amp;Spell Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверка правописания</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="429"/>
         <source>&amp;Pin Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Присоединить заметку</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="434"/>
         <source>&amp;UnPin Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсоединить заметку</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="447"/>
         <source>&amp;Synchronize</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронизировать</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="448"/>
         <source>Synchronize with Evernote</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронизировать с Evernote</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="452"/>
         <source>&amp;Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсоединиться</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="461"/>
         <source>Temporarily pause indexing</source>
-        <translation type="unfinished"></translation>
+        <translation>Приостановка индексирования</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="469"/>
         <source>Temporarily disable note editing</source>
-        <translation type="unfinished"></translation>
+        <translation>Временно отключить редактирование заметок</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="513"/>
         <source>&amp;Project wiki</source>
-        <translation type="unfinished"></translation>
+        <translation>Проект wiki</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="518"/>
         <source>&amp;Getting started</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстрый старт</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="519"/>
         <source>Open Getting started wiki page</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть Быстрый старт на wiki</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="544"/>
         <source>Data and &amp;log location info</source>
-        <translation type="unfinished"></translation>
+        <translation>Файлы базы</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="545"/>
         <source>View location of program data and log file</source>
-        <translation type="unfinished"></translation>
+        <translation>Расположение основных файлов программы</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="556"/>
@@ -2766,92 +2765,92 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="588"/>
         <source>Sort notes by</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать заметки по</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="594"/>
         <source>Relevance, Date updated [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Релевантность, дата модификации [desc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="595"/>
         <source>Relevance, Date updated [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Релевантность, дата модификации [asc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="597"/>
         <source>Relevance, Date created [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Релевантность, дата создания [desc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="598"/>
         <source>Relevance, Date created [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Релевантность, дата создания [asc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="600"/>
         <source>Relevance, Title [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Релевантность, Заголовок [desc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="601"/>
         <source>Relevance, Title [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Релевантность, Заголовок [asc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="604"/>
         <source>Date updated [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата модификации [desc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="605"/>
         <source>Date updated [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата модификации [asc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="607"/>
         <source>Date created [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата создания [desc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="608"/>
         <source>Date created [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата создания [asc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="610"/>
         <source>Title [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Заголовок [desc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="611"/>
         <source>Title [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Заголовок [asc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="613"/>
         <source>Tags [asc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Метки [asc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="615"/>
         <source>Size [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер [desc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="616"/>
         <source>Has todo [desc]</source>
-        <translation type="unfinished"></translation>
+        <translation>Содержит задачи [desc]</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="617"/>
         <source>Unsynced first</source>
-        <translation type="unfinished"></translation>
+        <translation>Еще не синхронизированные</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="654"/>
         <source>Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="398"/>
@@ -2861,27 +2860,27 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="95"/>
         <source>Export selected notes to a NNEX file</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт выделенных заметок в NNEX файл</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="108"/>
         <source>&amp;Export notes as PDF</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт заметок в PDF</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="109"/>
         <source>Export selected notes to a PDF file</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт выделенных заметок в PDF</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="157"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Выход</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="158"/>
         <source>Quit the program</source>
-        <translation type="unfinished"></translation>
+        <translation>Выйти из программы</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="443"/>
@@ -2891,7 +2890,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="453"/>
         <source>Disconnect from Evernote</source>
-        <translation type="unfinished">Отключиться от Evernote</translation>
+        <translation>Отключиться от Evernote</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="486"/>
@@ -2901,12 +2900,12 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="479"/>
         <source>Reindex all notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Переиндексировать все заметки</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="502"/>
         <source>Import Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт папок</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="509"/>
@@ -2916,52 +2915,52 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="564"/>
         <source>&amp;About</source>
-        <translation type="unfinished"></translation>
+        <translation>О программе</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="345"/>
         <source>Show &amp;Attribute Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтр по аттрибутам</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="460"/>
         <source>Pause &amp;indexing</source>
-        <translation type="unfinished"></translation>
+        <translation>Приостановить индексацию</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="468"/>
         <source>Disable &amp;editing</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить редактирование</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="478"/>
         <source>&amp;Reindex database</source>
-        <translation type="unfinished"></translation>
+        <translation>Переиндексировать базу</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="485"/>
         <source>&amp;Database status</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус базы</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="493"/>
         <source>A&amp;ccount / usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Аккаунт</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="494"/>
         <source>Account and usage information</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация об аккаунте</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="501"/>
         <source>&amp;Import folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт папок</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="514"/>
         <source>Open NixNote wiki page with help/documentation/contact</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть страницу nixnote wiki</translation>
     </message>
     <message>
         <location filename="../src/gui/nmainmenubar.cpp" line="525"/>
@@ -2979,12 +2978,12 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="69"/>
         <source>Notebooks</source>
-        <translation type="unfinished"></translation>
+        <translation>Блокноты</translation>
     </message>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="86"/>
         <source>Create New Notebook</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новый блокнот</translation>
     </message>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="95"/>
@@ -2994,17 +2993,17 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="103"/>
         <source>Add to stack</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в стек</translation>
     </message>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="116"/>
         <source>Create New stack</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать стек</translation>
     </message>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="119"/>
         <source>Remove from stack</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить из стека</translation>
     </message>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="123"/>
@@ -3014,12 +3013,12 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="131"/>
         <source>Properties</source>
-        <translation>Настройки</translation>
+        <translation>Свойства</translation>
     </message>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="642"/>
         <source>Are you sure you want to delete this notebook?</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить блокнот?</translation>
     </message>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="643"/>
@@ -3029,7 +3028,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="815"/>
         <source>New Stack (</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый стек (</translation>
     </message>
     <message>
         <location filename="../src/gui/nnotebookview.cpp" line="815"/>
@@ -3042,12 +3041,12 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nsearchview.cpp" line="65"/>
         <source>Saved Searches</source>
-        <translation type="unfinished"></translation>
+        <translation>Поисковые запросы</translation>
     </message>
     <message>
         <location filename="../src/gui/nsearchview.cpp" line="74"/>
         <source>Create Saved Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать поисковый запрос</translation>
     </message>
     <message>
         <location filename="../src/gui/nsearchview.cpp" line="83"/>
@@ -3062,12 +3061,12 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/nsearchview.cpp" line="94"/>
         <source>Properties</source>
-        <translation>Настройки</translation>
+        <translation>Свойства</translation>
     </message>
     <message>
         <location filename="../src/gui/nsearchview.cpp" line="410"/>
         <source>Are you sure you want to delete this saved search?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы уверены, что хотите удалить сохраненный поисковый запрос?</translation>
     </message>
     <message>
         <location filename="../src/gui/nsearchview.cpp" line="411"/>
@@ -3089,42 +3088,42 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="204"/>
         <source>Open Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть заметку</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="209"/>
         <source>Open Note In New Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть заметку в новой вкладке</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="216"/>
         <source>Add Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить заметку</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="221"/>
         <source>Delete Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить заметку</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="232"/>
         <source>Restore Note</source>
-        <translation type="unfinished">Восстановить заметку</translation>
+        <translation>Восстановить заметку</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="238"/>
         <source>Copy Note Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать ссылку на заметку</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="244"/>
         <source>Duplicate Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Дублировать заметку</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="249"/>
         <source>Reminders</source>
-        <translation type="unfinished"></translation>
+        <translation>Напоминания</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="253"/>
@@ -3134,22 +3133,22 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="258"/>
         <source>Mark Completed</source>
-        <translation type="unfinished"></translation>
+        <translation>Пометить как завершенное</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="264"/>
         <source>Pin Note</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Присоединить заметку</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="269"/>
         <source>Unpin Note</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Отсоединить заметку</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="274"/>
         <source>Merge Notes</source>
-        <translation type="unfinished">Объединить заметки</translation>
+        <translation>Объединить заметки</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="280"/>
@@ -3159,12 +3158,12 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="286"/>
         <source>Title Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Цвет заголовка</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="291"/>
         <source>Properties</source>
-        <translation>Настройки</translation>
+        <translation>Свойства</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="296"/>
@@ -3199,7 +3198,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="314"/>
         <source>Gray</source>
-        <translation type="unfinished"></translation>
+        <translation>Серый</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="317"/>
@@ -3219,27 +3218,28 @@ Unable to decrypt.</source>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="677"/>
         <source>Permanently delete </source>
-        <translation type="unfinished"></translation>
+        <translation>Окончательно удалить</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="683"/>
         <source>selected note?</source>
-        <translation type="unfinished"></translation>
+        <translation>выделенную заметку?</translation>
     </message>
     <message>
         <source>Verify Delete</source>
-        <translation type="vanished">Подтвердить удаление</translation>
+        <translation>Подтвердить удаление</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="917"/>
         <source>Unsynchronized Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Несинхронизированная заметка</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="919"/>
         <source>This note has never been synchronized.
 Using this in a note link can cause problems unless you synchronize it first.</source>
-        <translation type="unfinished"></translation>
+        <translation>Эта заметка никогда не была синхронизирована.
+Использование её в качестве ссылки может вызвать проблемы, если вы сначала не проведете синхронизацию.</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="1329"/>
@@ -3251,7 +3251,9 @@ Using this in a note link can cause problems unless you synchronize it first.</s
         <source>One or more notes are unsynchronized.
 This can cause issues if they are later synchronized.
 Do you wish to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Одна или несколько заметок не синхронизированы.
+Это может вызвать проблемы, если они позже синхронизируются.
+Вы хотите продолжить?</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="1682"/>
@@ -3295,12 +3297,12 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="1700"/>
         <source>Has Encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Содержит шифрование</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="1706"/>
         <source>Has To-Do</source>
-        <translation type="unfinished"></translation>
+        <translation>Содержит задачи</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="1712"/>
@@ -3310,12 +3312,12 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="1716"/>
         <source>Date Updated</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата модификации</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="1720"/>
         <source>Date Deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата удаления</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="1729"/>
@@ -3378,7 +3380,7 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/ntableviewheader.cpp" line="46"/>
         <source>Date Updated</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата модификации</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableviewheader.cpp" line="51"/>
@@ -3433,12 +3435,12 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/ntableviewheader.cpp" line="101"/>
         <source>Has Encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Содержит шифрование</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableviewheader.cpp" line="106"/>
         <source>Has To-do</source>
-        <translation type="unfinished"></translation>
+        <translation>Содержит задачи</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableviewheader.cpp" line="111"/>
@@ -3487,12 +3489,12 @@ Do you wish to continue?</source>
         <location filename="../src/gui/ntagview.cpp" line="67"/>
         <location filename="../src/gui/ntagview.cpp" line="163"/>
         <source>Tags from Personal</source>
-        <translation type="unfinished"></translation>
+        <translation>Мои метки</translation>
     </message>
     <message>
         <location filename="../src/gui/ntagview.cpp" line="91"/>
         <source>Create New Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать метку</translation>
     </message>
     <message>
         <location filename="../src/gui/ntagview.cpp" line="100"/>
@@ -3507,17 +3509,17 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/ntagview.cpp" line="110"/>
         <source>Merge</source>
-        <translation type="unfinished"></translation>
+        <translation>Объединить</translation>
     </message>
     <message>
         <location filename="../src/gui/ntagview.cpp" line="113"/>
         <source>Hide Unassigned</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрыть пустые</translation>
     </message>
     <message>
         <location filename="../src/gui/ntagview.cpp" line="119"/>
         <source>Properties</source>
-        <translation>Настройки</translation>
+        <translation>Свойства</translation>
     </message>
     <message>
         <location filename="../src/gui/ntagview.cpp" line="161"/>
@@ -3532,22 +3534,22 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/ntagview.cpp" line="712"/>
         <source>Are you sure you want to merge these tags?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы уверены, что хотите объединить эти метки?</translation>
     </message>
     <message>
         <location filename="../src/gui/ntagview.cpp" line="713"/>
         <source>Verify Merge</source>
-        <translation type="unfinished"></translation>
+        <translation>Подтвердить объединение</translation>
     </message>
     <message>
         <location filename="../src/gui/ntagview.cpp" line="759"/>
         <source>Are you sure you want to delete this tag?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы уверены, что хотите удалить эту метку?</translation>
     </message>
     <message>
         <location filename="../src/gui/ntagview.cpp" line="761"/>
         <source>Are you sure you want to delete all selected tags?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вы уверены, что хотите удалить выделенные метки?</translation>
     </message>
     <message>
         <location filename="../src/gui/ntagview.cpp" line="762"/>
@@ -3594,7 +3596,7 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/ntrashtree.cpp" line="244"/>
         <source>Are you sure you want to permanently delete these notes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы уверены, что хотите навсегда удалить эти заметки?</translation>
     </message>
 </context>
 <context>
@@ -3622,22 +3624,22 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="77"/>
         <source>Paste as Unformatted Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить как неформатированный текст</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="97"/>
         <source>Note Background Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Цвет фона заметки</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="112"/>
         <source>Set text color</source>
-        <translation type="unfinished"></translation>
+        <translation>Установить цвет шрифта</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="117"/>
         <source>Set text background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Установить цвет фона шрифта</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="125"/>
@@ -3647,37 +3649,37 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="132"/>
         <source>HTML Entities</source>
-        <translation type="unfinished"></translation>
+        <translation>HTML объекты</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="139"/>
         <source>Encrypt Selected Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Шифрование выделенного текста</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="144"/>
         <source>Insert Date Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить дату\время</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="149"/>
         <source>Insert Hyperlink</source>
-        <translation>Вставить ссылку</translation>
+        <translation>Вставить гиперссылку</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="154"/>
         <source>Quick Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстрая ссылка</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="159"/>
         <source>Remove Hyperlink</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить гиперссылку</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="164"/>
         <source>Attach File</source>
-        <translation type="unfinished"></translation>
+        <translation>Прикрепить файл</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="170"/>
@@ -3687,12 +3689,12 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="89"/>
         <source>Simplify formatting</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Простое форматирование</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="82"/>
         <source>Copy Note Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать ссылку на заметку</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="176"/>
@@ -3727,7 +3729,7 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="208"/>
         <source>Table Properties</source>
-        <translation>Настройки таблицы</translation>
+        <translation>Свойства таблицы</translation>
     </message>
     <message>
         <location filename="../src/gui/nwebview.cpp" line="215"/>
@@ -3766,7 +3768,7 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="302"/>
         <source>ToolBar</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель инструментов</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="321"/>
@@ -3782,7 +3784,7 @@ Do you wish to continue?</source>
         <location filename="../src/nixnote.cpp" line="349"/>
         <location filename="../src/nixnote.cpp" line="350"/>
         <source>All Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Все заметки</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="343"/>
@@ -3798,11 +3800,11 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="1859"/>
         <source>Confirm Restore</source>
-        <translation type="unfinished"></translation>
+        <translation>Подтверить восстановление</translation>
     </message>
     <message>
         <source>Restore Database</source>
-        <translation type="vanished">Восстановление базы данных</translation>
+        <translation>Восстановление базы данных</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1874"/>
@@ -3812,12 +3814,12 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="367"/>
         <source>Print the current note</source>
-        <translation type="unfinished"></translation>
+        <translation>Печать текущей заметки</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="372"/>
         <source>Email the current note</source>
-        <translation type="unfinished"></translation>
+        <translation>Отправить по Email текущую заметку</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="876"/>
@@ -3827,13 +3829,13 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="883"/>
         <source>Recently updated</source>
-        <translation type="unfinished"></translation>
+        <translation>Недавно обновленные</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1496"/>
         <location filename="../src/nixnote.cpp" line="2396"/>
         <source>Log in to Evernote</source>
-        <translation type="unfinished"></translation>
+        <translation>Войти в Evernote</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1785"/>
@@ -3845,17 +3847,17 @@ Do you wish to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="1785"/>
         <source>No notes selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ни одна заметка не выбрана.</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1794"/>
         <source>Export Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт заметок</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1819"/>
         <source>Performing export</source>
-        <translation type="unfinished"></translation>
+        <translation>Выполнение экспорта</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1852"/>
@@ -3865,7 +3867,12 @@ an empty database.  Restoring into a database that
  already has data can cause problems.
 
 Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Это используется для восстановления базы данных из резервных копий.
+Настоятельно рекомендуется использовать это только для заполнения
+пустой базы данных.  Восстановление в базу данных, в которой
+ уже есть данные, может вызвать проблемы.
+
+Вы уверены, что хотите продолжить?</translation>
     </message>
     <message>
         <source>Restoring database</source>
@@ -3878,33 +3885,33 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="1932"/>
         <source>Notes have been imported.</source>
-        <translation type="unfinished">Заметки были импортированы.</translation>
+        <translation>Заметки были импортированы.</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1976"/>
         <location filename="../src/nixnote.cpp" line="1984"/>
         <source>Sync Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка синхронизации</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1984"/>
         <source>Sync completed with errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронизация завершилась с ошибками</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1976"/>
         <source>Sync error. See message log for details</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка синхронизации. Смотри подробности в сообщениях лога.</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1986"/>
         <source>Sync Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронизация завершена</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1986"/>
         <source>Sync completed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронизация успешно завершена</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="2072"/>
@@ -3914,27 +3921,27 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="2387"/>
         <source>Unsynchronized Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Несинхронизированная заметка</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="2388"/>
         <source>This note has never been synchronized with Evernote</source>
-        <translation type="unfinished"></translation>
+        <translation>Эта заметка никогда не синхронизировалась с Evernote</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3278"/>
         <source>Application file(s) info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация о файлах приложения</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3279"/>
         <source>Config files are located at:</source>
-        <translation type="unfinished"></translation>
+        <translation>Конфигурационные файлы расположены в:</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3281"/>
         <source>Note database files are located at:</source>
-        <translation type="unfinished"></translation>
+        <translation>Файлы базы данных расположены в:</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3286"/>
@@ -3964,107 +3971,107 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="3621"/>
         <source>PDF Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт в PDF</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3594"/>
         <location filename="../src/nixnote.cpp" line="3595"/>
         <source>Exporting notes as PDF</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт заметок в формат PDF</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="2437"/>
         <location filename="../src/nixnote.cpp" line="2444"/>
         <source>Error retrieving note.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка получения заметки.</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="352"/>
         <location filename="../src/nixnote.cpp" line="353"/>
         <source>New Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая заметка</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="870"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="873"/>
         <source>New note</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая заметка</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="888"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Выход</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1792"/>
         <source>Export All Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт всех заметок</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1833"/>
         <source>Note export complete.</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт заметки завершен</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1854"/>
         <source>Ok</source>
-        <translation type="unfinished">Ok</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1856"/>
         <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1871"/>
         <source>Import all notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт всех заметок</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="1901"/>
         <source>Importing notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортх заметок</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="2438"/>
         <location filename="../src/nixnote.cpp" line="2445"/>
         <source>Error retrieving note</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка получения заметки.</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="2468"/>
         <location filename="../src/nixnote.cpp" line="2477"/>
         <source>Note Restored</source>
-        <translation type="unfinished"></translation>
+        <translation>Заметка восстановлена</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="2468"/>
         <source>A new copy has been restored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая копия была восстановлена</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="2477"/>
         <source>Note successfully restored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Заметка успешно восстановлена</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="2480"/>
         <source>Note restored</source>
-        <translation type="unfinished"></translation>
+        <translation>Заметка восстановлена</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="2685"/>
         <source>Note not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Заметка не найдена</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3016"/>
         <source>Switch to </source>
-        <translation type="unfinished"></translation>
+        <translation>Перключиться на </translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3122"/>
@@ -4074,7 +4081,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="3122"/>
         <source>Reindex the entire database?</source>
-        <translation type="unfinished"></translation>
+        <translation>Переиндексировать всю базу данных?</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3132"/>
@@ -4084,17 +4091,17 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="3160"/>
         <source>Note Reindexed</source>
-        <translation type="unfinished"></translation>
+        <translation>Заметка переиндексирована</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3173"/>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation>Да</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3175"/>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation>Нет</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3193"/>
@@ -4104,12 +4111,12 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="3196"/>
         <source>Permanently delete </source>
-        <translation type="unfinished"></translation>
+        <translation>Окончательное удаление </translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3200"/>
         <source>this note?</source>
-        <translation type="unfinished"></translation>
+        <translation>этой заметки?</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3171"/>
@@ -4119,12 +4126,12 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/nixnote.cpp" line="3283"/>
         <source>Main app log file is located at:</source>
-        <translation type="unfinished"></translation>
+        <translation>Главный лог приложения расположен в:</translation>
     </message>
     <message>
         <location filename="../src/nixnote.cpp" line="3532"/>
         <source>Press ESC to exit.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нажмите ESC для выхода</translation>
     </message>
 </context>
 <context>
@@ -4165,7 +4172,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/notehistoryselect.cpp" line="39"/>
         <source>Replace current note?</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить эту заметку?</translation>
     </message>
     <message>
         <location filename="../src/dialog/notehistoryselect.cpp" line="80"/>
@@ -4188,7 +4195,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/noteproperties.cpp" line="37"/>
         <source>Note Properties</source>
-        <translation>Настройки заметки</translation>
+        <translation>Свойства заметки</translation>
     </message>
     <message>
         <location filename="../src/dialog/noteproperties.cpp" line="38"/>
@@ -4239,27 +4246,27 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/oauth/oauthwindow.cpp" line="70"/>
         <source>Please Grant NixNote Access</source>
-        <translation type="unfinished"></translation>
+        <translation>Предоставьте доступ NixNote</translation>
     </message>
     <message>
         <location filename="../src/oauth/oauthwindow.cpp" line="81"/>
         <source>SSL Support not found.  Aborting connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет поддержки SSL.Соединение прервано</translation>
     </message>
     <message>
         <location filename="../src/oauth/oauthwindow.cpp" line="132"/>
         <source>Error receiving temporary credentials</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка при получении временных учетных данных</translation>
     </message>
     <message>
         <location filename="../src/oauth/oauthwindow.cpp" line="176"/>
         <source>Error receiving permanent credentials</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка при получении постоянных учетных данных</translation>
     </message>
     <message>
         <location filename="../src/oauth/oauthwindow.cpp" line="219"/>
         <source>Error receiving authorization</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка при получении авторизации</translation>
     </message>
 </context>
 <context>
@@ -4280,7 +4287,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/preferences/preferencesdialog.cpp" line="30"/>
         <source>User Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользовательские настройки</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/preferencesdialog.cpp" line="50"/>
@@ -4363,7 +4370,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="177"/>
         <source>Date Updated</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата модификации</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="178"/>
@@ -4373,12 +4380,12 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="179"/>
         <source>Deletion Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата удаления</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="180"/>
         <source>Reminder</source>
-        <translation type="unfinished"></translation>
+        <translation>Напоминание</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="181"/>
@@ -4398,12 +4405,12 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="185"/>
         <source>Source URL</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">URL источника</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="187"/>
         <source>Source Application</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Приложение-источник</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="188"/>
@@ -4423,17 +4430,17 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="191"/>
         <source>Has Encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Содержит шифрование</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="192"/>
         <source>Has To-do</source>
-        <translation type="unfinished"></translation>
+        <translation>Содержит задачи</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="193"/>
         <source>Sync</source>
-        <translation>Синхронизировать</translation>
+        <translation>Синхронизация</translation>
     </message>
     <message>
         <location filename="../src/gui/ntableview.cpp" line="194"/>
@@ -4509,7 +4516,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/savedsearchproperties.cpp" line="35"/>
         <source>Saved Search</source>
-        <translation>Сохраненные поиски</translation>
+        <translation>Сохраненный поиск</translation>
     </message>
     <message>
         <location filename="../src/dialog/savedsearchproperties.cpp" line="42"/>
@@ -4547,52 +4554,52 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="44"/>
         <source>Clear Notebook Selection on Search Text Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить выбор блокнота при новом поиске</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="48"/>
         <source>Clear Tag Selection on Search Text Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить выбор метки при новом поиске</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="52"/>
         <source>Clear Search Text on Notebook Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить строку поиска при смене блокнота</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="56"/>
         <source>Show Any Matching Tags When Selecting Multiple Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать все совпадающие метки при выборе нескольких меток</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="60"/>
         <source>Index PDFs locally</source>
-        <translation type="unfinished"></translation>
+        <translation>Индексировать PDF локально</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="64"/>
         <source>Background Indexing (requires restart &amp; may cause issues on some systems)</source>
-        <translation type="unfinished"></translation>
+        <translation>Фоновая индексация (требует перезапуска &amp; может вызвать проблемы на некоторых системах)</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="76"/>
         <source>Experimental: Search/index preprocessing. On change reindexing of all notes is needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспериментально: Поисковая/индексная предварительная обработка. При изменении потребуется переиндексация всех заметок.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="77"/>
         <source>=&gt; currently can be only enabled manually</source>
-        <translation type="unfinished"></translation>
+        <translation> в настоящее время может быть активирован только вручную.</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="78"/>
         <source>Force search/index to lower case</source>
-        <translation type="unfinished"></translation>
+        <translation>Принудительное приведение поиска/индексирования к нижнему регистру</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="83"/>
         <source>Remove diacritics before search/index</source>
-        <translation type="unfinished"></translation>
+        <translation>Удаление диакритических знаков перед поиском/индексированием</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/searchpreferences.cpp" line="68"/>
@@ -4651,47 +4658,47 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="34"/>
         <source>Sync automatically</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронизировать автоматически</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="38"/>
         <source>Every 15 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>Каждые 15 минут</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="39"/>
         <source>Every 30 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>Каждые 30 минут</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="40"/>
         <source>Every hour</source>
-        <translation type="unfinished"></translation>
+        <translation>Каждый час</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="41"/>
         <source>Every day</source>
-        <translation type="unfinished"></translation>
+        <translation>Каждый день</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="43"/>
         <source>Sync on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронизация при старте</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="45"/>
         <source>Sync on shutdown</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронизация при выходе</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="47"/>
         <source>Enable sync notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить уведомления о синхронизации</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="48"/>
         <source>Show successful syncs</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать успешные синхронизации</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="49"/>
@@ -4701,12 +4708,12 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="51"/>
         <source>Enable Proxy*</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Использовать Proxy*</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="52"/>
         <source>Enable Socks5</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Использовать Socks5</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="53"/>
@@ -4731,12 +4738,12 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="57"/>
         <source>*Note: Restart required</source>
-        <translation type="unfinished"></translation>
+        <translation>*Примечание: требует перезагрузки программы</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/syncpreferences.cpp" line="73"/>
         <source>Popup message on sync errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>Всплывающее сообщение об ошибках синхронизации.</translation>
     </message>
 </context>
 <context>
@@ -4744,23 +4751,23 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="137"/>
         <source>Beginning sync</source>
-        <translation type="unfinished"></translation>
+        <translation>Начать синхронизацию</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="145"/>
         <source>Downloading changes..</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка изменений..</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="196"/>
         <source>Sync completed successfully</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронизация успешно завершена</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="242"/>
         <location filename="../src/threads/syncrunner.cpp" line="274"/>
         <source>Download </source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка </translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="242"/>
@@ -4770,17 +4777,17 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="252"/>
         <source>Download complete for notebooks, tags, &amp; searches.  Downloading notes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка завершена для блокнотов, меток , поисков. Загружаются заметки.</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="274"/>
         <source>% complete.</source>
-        <translation>%.</translation>
+        <translation>% завершено.</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="287"/>
         <source>Download complete.</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка завершена.</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="711"/>
@@ -4791,27 +4798,27 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="711"/>
         <source>% complete for tags in shared notebook </source>
-        <translation type="unfinished"></translation>
+        <translation>% завершено для меток общих блокнотов</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="730"/>
         <source>Downloading notes for shared notebook </source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка заметок общих блокнотов</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="755"/>
         <source>% complete for shared notebook </source>
-        <translation type="unfinished"></translation>
+        <translation>% завершено для общих блокнотов</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="1182"/>
         <source>Error uploading note:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка при загрузке заметки:</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="1184"/>
         <source>Error uploading note with a missing title!</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестная ошибка при загрузке заметки!</translation>
     </message>
     <message>
         <location filename="../src/threads/syncrunner.cpp" line="712"/>
@@ -4875,7 +4882,7 @@ Are you sure you want to continue?</source>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="72"/>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="105"/>
         <source>Table Properties</source>
-        <translation>Настройки таблицы</translation>
+        <translation>Свойства таблицы</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="86"/>
@@ -4890,52 +4897,52 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="106"/>
         <source>Cell Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Свойства ячейки</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="214"/>
         <source>Row 1 Cell 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка 1 ячейка 1</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="216"/>
         <source>Row 1 Cell 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка 1 ячейка 2</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="218"/>
         <source>Row 1 Cell 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка 1 ячейка 3</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="220"/>
         <source>Row 2 Cell 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка 2 ячейка 1</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="222"/>
         <source>Row 2 Cell 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка 2 ячейка 1</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="224"/>
         <source>Row 2 Cell 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка 2 ячейка 3</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="226"/>
         <source>Row 3 Cell 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка 3 ячейка 1</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="228"/>
         <source>Row 3 Cell 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка 3 ячейка 2</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="230"/>
         <source>Row 3 Cell 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка 3 ячейка 3</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="456"/>
@@ -4963,27 +4970,27 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="476"/>
         <source>Top Margin</source>
-        <translation type="unfinished"></translation>
+        <translation>Верхний отступ</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="490"/>
         <source>Bottom Margin</source>
-        <translation type="unfinished"></translation>
+        <translation>Нижний отступ</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="507"/>
         <source>Left Margin</source>
-        <translation type="unfinished"></translation>
+        <translation>Отступ слева</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="522"/>
         <source>Right Margin</source>
-        <translation type="unfinished"></translation>
+        <translation>Отступ справа</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="560"/>
         <source>Border Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Цвет границы</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="561"/>
@@ -4998,37 +5005,37 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="576"/>
         <source>Border Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Толщина границы</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="587"/>
         <source>Padding</source>
-        <translation type="unfinished"></translation>
+        <translation>Отступ внутри ячейки</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="597"/>
         <source>Top Border</source>
-        <translation type="unfinished"></translation>
+        <translation>Верхняя граница</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="606"/>
         <source>Bottom Border</source>
-        <translation type="unfinished"></translation>
+        <translation>Нижняя граница</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="615"/>
         <source>Left Border</source>
-        <translation type="unfinished"></translation>
+        <translation>Левая граница</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="624"/>
         <source>Right Border</source>
-        <translation type="unfinished"></translation>
+        <translation>Првая граница</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="636"/>
         <source>Horizontal Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Горизонтальное выравнивание</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="641"/>
@@ -5038,12 +5045,12 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="642"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Влево</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="643"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Вправо</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="644"/>
@@ -5058,22 +5065,22 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="677"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсутствует</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="678"/>
         <source>Dotted</source>
-        <translation type="unfinished"></translation>
+        <translation>Точками</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="679"/>
         <source>Dashed</source>
-        <translation type="unfinished"></translation>
+        <translation>Тире</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="680"/>
         <source>Double</source>
-        <translation type="unfinished"></translation>
+        <translation>Двойная</translation>
     </message>
     <message>
         <location filename="../src/gui/browserWidgets/table/tablepropertiesdialog.cpp" line="681"/>
@@ -5096,7 +5103,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/gui/browserWidgets/tageditornewtag.cpp" line="60"/>
         <source>Click to add tag...</source>
-        <translation type="unfinished"></translation>
+        <translation>Нажмите для добавления метки...</translation>
     </message>
 </context>
 <context>
@@ -5132,22 +5139,22 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/preferences/thumbnailpreferences.cpp" line="14"/>
         <source>Disable thumbnail generation</source>
-        <translation type="unfinished"></translation>
+        <translation>Отключить генерацию миниатюр</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/thumbnailpreferences.cpp" line="15"/>
         <source>Images to generate per interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Количество генерируемых изображений за интервал</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/thumbnailpreferences.cpp" line="16"/>
         <source>Minimum scan interval (in seconds)</source>
-        <translation type="unfinished"></translation>
+        <translation>Минимальный интервал сканирования (в секундах)</translation>
     </message>
     <message>
         <location filename="../src/dialog/preferences/thumbnailpreferences.cpp" line="17"/>
         <source>Maximum scan interval (in seconds)</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальный интервал сканирования (в секундах)</translation>
     </message>
 </context>
 <context>
@@ -5155,7 +5162,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/gui/browserWidgets/urleditor.cpp" line="43"/>
         <source>Click to set source URL...</source>
-        <translation type="unfinished"></translation>
+        <translation>Нажмите, чтобы задать исходный URL-адрес...</translation>
     </message>
 </context>
 <context>
@@ -5193,12 +5200,12 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/watchfolderadd.cpp" line="92"/>
         <source>After import</source>
-        <translation type="unfinished"></translation>
+        <translation>После импорта</translation>
     </message>
     <message>
         <location filename="../src/dialog/watchfolderadd.cpp" line="94"/>
         <source>Include subdirectories</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить подкаталоги</translation>
     </message>
     <message>
         <location filename="../src/dialog/watchfolderadd.cpp" line="101"/>
@@ -5221,7 +5228,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/watchfolderdialog.cpp" line="50"/>
         <source>Auto Import Folders</source>
-        <translation type="unfinished">Импорт папок</translation>
+        <translation>Автоматический импорт папок</translation>
     </message>
     <message>
         <location filename="../src/dialog/watchfolderdialog.cpp" line="62"/>
@@ -5258,7 +5265,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../src/dialog/watchfolderdialog.cpp" line="115"/>
         <source>Include Subdirectories</source>
-        <translation>Включая поддиректории</translation>
+        <translation>Включить подкаталоги</translation>
     </message>
     <message>
         <location filename="../src/dialog/watchfolderdialog.cpp" line="169"/>
