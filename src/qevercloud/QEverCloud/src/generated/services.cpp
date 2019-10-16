@@ -1076,6 +1076,16 @@ Notebook NoteStore_createNotebook_readReply(QByteArray reply)
                 r.skip(fieldType);
             }
         }
+       else if (fieldId == 3) {
+            if (fieldType == ThriftFieldType::T_STRUCT) {
+                EDAMNotFoundException e;
+                readEDAMNotFoundException(r, e);
+                throw e;
+            }
+            else {
+                r.skip(fieldType);
+            }
+        }
         else {
             r.skip(fieldType);
         }

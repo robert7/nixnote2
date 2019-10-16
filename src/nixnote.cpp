@@ -89,6 +89,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/xml/exportdata.h"
 #include "src/dialog/aboutdialog.h"
 
+#include "src/qevercloud/QEverCloud/headers/QEverCloud.h"
 #include "src/qevercloud/QEverCloud/headers/QEverCloudOAuth.h"
 
 using namespace qevercloud;
@@ -155,6 +156,16 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     // Setup the sync thread
     QLOG_DEBUG() << "Setting up counter thread";
     connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
+
+
+    // set Evernote http timeout to 4 minutes
+    // actually it is nor exactly connection timeout nor request timeout - it seems to be time between http reads
+    // where if nothing happens, timeout is reached
+    // but actually the excat definition should not matter much in real use cases
+    // timeout is is set to big enought value to work well even for full sync and slower connections
+    // but will eventually timeout, if the network is unstable
+    // see https://github.com/d1vanov/QEverCloud/issues/22#issuecomment-525745982
+    setConnectionTimeout(4 * 60 * 1000);
 
     // Setup the counter thread
     QLOG_DEBUG() << "Setting up sync thread";
@@ -1809,7 +1820,7 @@ void NixNote::exportNotes(bool exportAllNotes) {
         caption = tr("Export All Notes");
     else
         caption = tr("Export Notes");
-    
+
     if (saveLastPath == "")
         directory = QDir::homePath();
     else
@@ -3650,8 +3661,8 @@ void NixNote::configurePdfPrinter(QPrinter &printer, QString &file) const {
     printer.setResolution(QPrinter::HighResolution);
     printer.setPaperSize(QPrinter::A4);
     printer.setOutputFileName(file);
-    #define TOP_MARGIN 10
-    #define SIDE_MARGIN 15
+#define TOP_MARGIN 10
+#define SIDE_MARGIN 15
     printer.setPageMargins(SIDE_MARGIN, TOP_MARGIN, SIDE_MARGIN, TOP_MARGIN, QPrinter::Millimeter);
 }
 

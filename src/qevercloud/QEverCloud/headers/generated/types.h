@@ -116,13 +116,16 @@ struct QEVERCLOUD_EXPORT PrivilegeLevel {
 };
 
 /**
- * This enumeration defines the possible tiers of service that a user may have.
+ * This enumeration defines the possible tiers of service that a user may have. A
+ * ServiceLevel of BUSINESS signifies a business-only account, which can never be any
+ * other ServiceLevel.
  */
 struct QEVERCLOUD_EXPORT ServiceLevel {
     enum type {
         BASIC = 1,
         PLUS = 2,
-        PREMIUM = 3
+        PREMIUM = 3,
+        BUSINESS = 4
     };
 };
 
@@ -162,9 +165,8 @@ struct QEVERCLOUD_EXPORT NoteSortOrder {
  * ACTIVE:  the user has been charged and their premium account is in good
  *  standing
  *
- * FAILED:  the system attempted to charge the was denied. Their premium
- *   privileges have been revoked. We will periodically attempt to re-validate
- *   their order.
+ * FAILED:  the system attempted to charge the was denied. We will periodically attempt to
+ *  re-validate their order.
  *
  * CANCELLATION_PENDING: the user has requested that no further charges be made
  *   but the current account is still active.
@@ -283,6 +285,26 @@ struct QEVERCLOUD_EXPORT BusinessUserRole {
 };
 
 /**
+ * The BusinessUserStatus indicates the status of the user in the business.
+ *
+ * A BusinessUser will typically start as ACTIVE.
+ * Only ACTIVE users can authenticate to the Business.
+ *
+ * <dl>
+ * <dt>ACTIVE<dt>
+ * <dd>The business user can authenticate to and access the business.</dd>
+ * <dt>DEACTIVATED<dt>
+ * <dd>The business user has been deactivated and cannot access the business</dd>
+ * </dl>
+ */
+struct QEVERCLOUD_EXPORT BusinessUserStatus {
+    enum type {
+        ACTIVE = 1,
+        DEACTIVATED = 2
+    };
+};
+
+/**
  * An enumeration describing restrictions on the domain of shared notebook
  * instances that are valid for a given operation, as used, for example, in
  * NotebookRestrictions.
@@ -348,6 +370,65 @@ struct QEVERCLOUD_EXPORT ContactType {
         EMAIL = 4,
         TWITTER = 5,
         LINKEDIN = 6
+    };
+};
+
+/**
+ * Entity types
+ */
+struct QEVERCLOUD_EXPORT EntityType {
+    enum type {
+        NOTE = 1,
+        NOTEBOOK = 2,
+        WORKSPACE = 3
+    };
+};
+
+/**
+ * This enumeration defines the possible states that a notebook can be in for a recipient.
+ * It encompasses the "inMyList" boolean and default notebook status.
+ *
+ * <dl>
+ * <dt>NOT_IN_MY_LIST</dt>
+ * <dd>The notebook is not in the recipient's list (not "joined").</dd>
+ * <dt>IN_MY_LIST</dt>
+ * <dd>The notebook is in the recipient's notebook list (formerly, we would say
+ *     that the recipient has "joined" the notebook)</dd>
+ * <dt>IN_MY_LIST_AND_DEFAULT_NOTEBOOK</dt>
+ * <dd>The same as IN_MY_LIST and this notebook is the user's default notebook.</dd>
+ * </dl>
+ */
+struct QEVERCLOUD_EXPORT RecipientStatus {
+    enum type {
+        NOT_IN_MY_LIST = 1,
+        IN_MY_LIST = 2,
+        IN_MY_LIST_AND_DEFAULT_NOTEBOOK = 3
+    };
+};
+
+/**
+ * This enumeration defines the possible types of canMoveToContainer outcomes.
+ * <p />
+ * An outdated client is expected to signal a "Cannot Move, Please Upgrade To Learn Why"
+ * like response to the user if an unknown enumeration value is received.
+ * <dl>
+ * <dt>CAN_BE_MOVED</dt>
+ * <dd>Can move Notebook to Workspace.</dd>
+ * <dt>INSUFFICIENT_ENTITY_PRIVILEGE</dt>
+ * <dd>Can not move Notebook to Workspace, because either:
+ *  a) Notebook not in Workspace and insufficient privilege on Notebook
+ *  or b) Notebook in Workspace and membership on Workspace with insufficient privilege
+ *  for move</dd>
+ * <dt>INSUFFICIENT_CONTAINER_PRIVILEGE</dt>
+ * <dd>Notebook in Workspace and no membership on Workspace.
+ * </dd>
+ * </dl>
+ */
+struct QEVERCLOUD_EXPORT CanMoveToContainerStatus {
+    enum type {
+        CAN_BE_MOVED = 1,
+        INSUFFICIENT_ENTITY_PRIVILEGE = 2,
+        INSUFFICIENT_CONTAINER_PRIVILEGE = 3
     };
 };
 
@@ -749,11 +830,29 @@ struct QEVERCLOUD_EXPORT NoteFilter {
     */
     Optional< bool > includeAllReadableNotebooks;
     /**
+    If true, then the search will include all workspaces that are readable
+       by the user. A business authentication token must be supplied for
+       this option to take effect when calling search APIs.
+    */
+    Optional< bool > includeAllReadableWorkspaces;
+    /**
     Specifies the context to consider when determining result ranking.
-         Clients must leave this value unset unless they wish to explicitly specify a known
-         non-default context.
+       Clients must leave this value unset unless they wish to explicitly specify a known
+       non-default context.
     */
     Optional< QString > context;
+    /**
+    If present, the raw user query input.
+       Accepts the full search grammar documented in the Evernote API Overview.
+    */
+    Optional< QString > rawWords;
+    /**
+    Specifies the correlating information about the current search session, in byte array.
+       If this request is not for the first page of search results, the client should populate
+       this field with the value of searchContextBytes from the NotesMetadataList of the
+       original search response.
+    */
+    Optional< QByteArray > searchContextBytes;
 
     bool operator==(const NoteFilter & other) const
     {
@@ -766,7 +865,10 @@ struct QEVERCLOUD_EXPORT NoteFilter {
             && inactive.isEqual(other.inactive)
             && emphasized.isEqual(other.emphasized)
             && includeAllReadableNotebooks.isEqual(other.includeAllReadableNotebooks)
+            && includeAllReadableWorkspaces.isEqual(other.includeAllReadableWorkspaces)
             && context.isEqual(other.context)
+            && rawWords.isEqual(other.rawWords)
+            && searchContextBytes.isEqual(other.searchContextBytes)
         ;
     }
 
@@ -1109,6 +1211,12 @@ struct QEVERCLOUD_EXPORT RelatedResultSpec {
     */
     Optional< bool > includeContainingNotebooks;
     /**
+    If set to <code>true</code>, indicate that debug information should
+         be returned in the 'debugInfo' field of RelatedResult. Note that the call may
+         be slower if this flag is set.
+    */
+    Optional< bool > includeDebugInfo;
+    /**
     This can only be used when making a findRelated call against a business.
       Find users within your business who have knowledge about the specified query.
       No more than this many users will be returned. Any value greater than
@@ -1133,6 +1241,7 @@ struct QEVERCLOUD_EXPORT RelatedResultSpec {
             && maxTags.isEqual(other.maxTags)
             && writableNotebooksOnly.isEqual(other.writableNotebooksOnly)
             && includeContainingNotebooks.isEqual(other.includeContainingNotebooks)
+            && includeDebugInfo.isEqual(other.includeDebugInfo)
             && maxExperts.isEqual(other.maxExperts)
             && maxRelatedContent.isEqual(other.maxRelatedContent)
             && relatedContentTypes.isEqual(other.relatedContentTypes)
@@ -1710,8 +1819,16 @@ struct QEVERCLOUD_EXPORT UserAttributes {
     Optional< Timestamp > passwordUpdated;
     /** NOT DOCUMENTED */
     Optional< bool > salesforcePushEnabled;
-    /** NOT DOCUMENTED */
+    /**
+    If set to True, the server will record LogRequest send from clients of this
+            user as ClientEventLog.
+    */
     Optional< bool > shouldLogClientEvent;
+    /**
+    If set to True, no Machine Learning nor human review will be done to this
+            user's note contents.
+    */
+    Optional< bool > optOutMachineLearning;
 
     bool operator==(const UserAttributes & other) const
     {
@@ -1749,6 +1866,7 @@ struct QEVERCLOUD_EXPORT UserAttributes {
             && passwordUpdated.isEqual(other.passwordUpdated)
             && salesforcePushEnabled.isEqual(other.salesforcePushEnabled)
             && shouldLogClientEvent.isEqual(other.shouldLogClientEvent)
+            && optOutMachineLearning.isEqual(other.optOutMachineLearning)
         ;
     }
 
@@ -2653,7 +2771,7 @@ struct QEVERCLOUD_EXPORT Resource {
     */
     Optional< qint16 > duration;
     /**
-    DEPRECATED: ignored.
+    If the resource is active or not.
     */
     Optional< bool > active;
     /**
@@ -3576,7 +3694,8 @@ struct QEVERCLOUD_EXPORT NotebookRecipientSettings {
     */
     Optional< bool > reminderNotifyInApp;
     /**
-    The notebook is on the recipient's notebook list (formerly, we would say
+    DEPRECATED: Use recipientStatus instead.
+         The notebook is on the recipient's notebook list (formerly, we would say
          that the recipient has "joined" the notebook)
     */
     Optional< bool > inMyList;
@@ -3586,6 +3705,12 @@ struct QEVERCLOUD_EXPORT NotebookRecipientSettings {
      notebook.
     */
     Optional< QString > stack;
+    /**
+    The notebook is on/off the recipient's notebook list (formerly, we would say
+         that the recipient has "joined" the notebook) and perhaps also their
+         default notebook
+    */
+    Optional< RecipientStatus::type > recipientStatus;
 
     bool operator==(const NotebookRecipientSettings & other) const
     {
@@ -3593,6 +3718,7 @@ struct QEVERCLOUD_EXPORT NotebookRecipientSettings {
             && reminderNotifyInApp.isEqual(other.reminderNotifyInApp)
             && inMyList.isEqual(other.inMyList)
             && stack.isEqual(other.stack)
+            && recipientStatus.isEqual(other.recipientStatus)
         ;
     }
 
@@ -3738,6 +3864,26 @@ struct QEVERCLOUD_EXPORT SharedNotebook {
 };
 
 /**
+ * Specifies if the client can move a Notebook to a Workspace.
+ */
+struct QEVERCLOUD_EXPORT CanMoveToContainerRestrictions {
+    /** NOT DOCUMENTED */
+    Optional< CanMoveToContainerStatus::type > canMoveToContainer;
+
+    bool operator==(const CanMoveToContainerRestrictions & other) const
+    {
+        return canMoveToContainer.isEqual(other.canMoveToContainer)
+        ;
+    }
+
+    bool operator!=(const CanMoveToContainerRestrictions & other) const
+    {
+        return !(*this == other);
+    }
+
+};
+
+/**
  * This structure captures information about the types of operations
  * that cannot be performed on a given notebook with a type of
  * authenticated access and credentials.  The values filled into this
@@ -3787,8 +3933,9 @@ struct QEVERCLOUD_EXPORT NotebookRestrictions {
     */
     Optional< bool > noShareNotes;
     /**
-    The client may not e-mail notes via the Evernote service by
-       using the emailNote method.
+    The client may not e-mail notes by guid via the Evernote
+       service by using the emailNote method.  Email notes by value
+       by populating the note parameter instead.
     */
     Optional< bool > noEmailNotes;
     /**
@@ -3867,9 +4014,31 @@ struct QEVERCLOUD_EXPORT NotebookRestrictions {
     */
     Optional< bool > noShareNotesWithBusiness;
     /**
-    The client may not rename this notebook
+    The client may not rename this notebook.
     */
     Optional< bool > noRenameNotebook;
+    /**
+    clients may not change the NotebookRecipientSettings.inMyList settings for
+       this notebook.
+    */
+    Optional< bool > noSetInMyList;
+    /** NOT DOCUMENTED */
+    Optional< bool > noChangeContact;
+    /**
+    Specifies if the client can move this notebook to a container and if not,
+       the reason why.
+    */
+    Optional< CanMoveToContainerRestrictions > canMoveToContainerRestrictions;
+    /** NOT DOCUMENTED */
+    Optional< bool > noSetReminderNotifyEmail;
+    /** NOT DOCUMENTED */
+    Optional< bool > noSetReminderNotifyInApp;
+    /** NOT DOCUMENTED */
+    Optional< bool > noSetRecipientSettingsStack;
+    /**
+    If set, the client cannot move a Note into or out of the Notebook.
+    */
+    Optional< bool > noCanMoveNote;
 
     bool operator==(const NotebookRestrictions & other) const
     {
@@ -3895,6 +4064,13 @@ struct QEVERCLOUD_EXPORT NotebookRestrictions {
             && expungeWhichSharedNotebookRestrictions.isEqual(other.expungeWhichSharedNotebookRestrictions)
             && noShareNotesWithBusiness.isEqual(other.noShareNotesWithBusiness)
             && noRenameNotebook.isEqual(other.noRenameNotebook)
+            && noSetInMyList.isEqual(other.noSetInMyList)
+            && noChangeContact.isEqual(other.noChangeContact)
+            && canMoveToContainerRestrictions.isEqual(other.canMoveToContainerRestrictions)
+            && noSetReminderNotifyEmail.isEqual(other.noSetReminderNotifyEmail)
+            && noSetReminderNotifyInApp.isEqual(other.noSetReminderNotifyInApp)
+            && noSetRecipientSettingsStack.isEqual(other.noSetRecipientSettingsStack)
+            && noCanMoveNote.isEqual(other.noCanMoveNote)
         ;
     }
 
@@ -4220,7 +4396,7 @@ struct QEVERCLOUD_EXPORT UserProfile {
     Optional< QString > name;
     /**
     The user's business email address. If the user has not registered their business
-       email address, this field will contain the user's personal email address.
+       email address, this field will be empty.
     */
     Optional< QString > email;
     /**
@@ -4247,6 +4423,10 @@ struct QEVERCLOUD_EXPORT UserProfile {
     The BusinessUserRole for the user
     */
     Optional< BusinessUserRole::type > role;
+    /**
+    The BusinessUserStatus for the user
+    */
+    Optional< BusinessUserStatus::type > status;
 
     bool operator==(const UserProfile & other) const
     {
@@ -4259,6 +4439,7 @@ struct QEVERCLOUD_EXPORT UserProfile {
             && photoLastUpdated.isEqual(other.photoLastUpdated)
             && photoUrl.isEqual(other.photoUrl)
             && role.isEqual(other.role)
+            && status.isEqual(other.status)
         ;
     }
 
@@ -4456,6 +4637,10 @@ struct QEVERCLOUD_EXPORT BusinessInvitation {
     The timestamp at which this invitation was created.
     */
     Optional< Timestamp > created;
+    /**
+    The timestamp at which the most recent reminder was sent.
+    */
+    Optional< Timestamp > mostRecentReminder;
 
     bool operator==(const BusinessInvitation & other) const
     {
@@ -4466,6 +4651,7 @@ struct QEVERCLOUD_EXPORT BusinessInvitation {
             && requesterId.isEqual(other.requesterId)
             && fromWorkChat.isEqual(other.fromWorkChat)
             && created.isEqual(other.created)
+            && mostRecentReminder.isEqual(other.mostRecentReminder)
         ;
     }
 
@@ -4889,7 +5075,8 @@ struct QEVERCLOUD_EXPORT BootstrapInfo {
  *   must be one of the values of EDAMErrorCode.
  *
  * parameter:  If the error applied to a particular input parameter, this will
- *   indicate which parameter.
+ *   indicate which parameter. For some errors (USER_NOT_ASSOCIATED, USER_NOT_REGISTERED,
+ *   SSO_AUTHENTICATION_REQUIRED), this is the user's email.
  */
 class QEVERCLOUD_EXPORT EDAMUserException: public EvernoteException
 {
@@ -5215,6 +5402,15 @@ struct QEVERCLOUD_EXPORT NoteList {
        within the account.
     */
     Optional< qint32 > updateCount;
+    /**
+    Specifies the correlating information about the current search session, in byte array.
+    */
+    Optional< QByteArray > searchContextBytes;
+    /**
+    Depends on the value of <code>context</code> in NoteFilter, this field
+       may contain debug information if the service decides to do so.
+    */
+    Optional< QString > debugInfo;
 
     bool operator==(const NoteList & other) const
     {
@@ -5224,6 +5420,8 @@ struct QEVERCLOUD_EXPORT NoteList {
             && stoppedWords.isEqual(other.stoppedWords)
             && searchedWords.isEqual(other.searchedWords)
             && updateCount.isEqual(other.updateCount)
+            && searchContextBytes.isEqual(other.searchContextBytes)
+            && debugInfo.isEqual(other.debugInfo)
         ;
     }
 
@@ -5350,6 +5548,15 @@ struct QEVERCLOUD_EXPORT NotesMetadataList {
        within the account.
     */
     Optional< qint32 > updateCount;
+    /**
+    Specifies the correlating information about the current search session, in byte array.
+    */
+    Optional< QByteArray > searchContextBytes;
+    /**
+    Depends on the value of <code>context</code> in NoteFilter, this field
+       may contain debug information if the service decides to do so.
+    */
+    Optional< QString > debugInfo;
 
     bool operator==(const NotesMetadataList & other) const
     {
@@ -5359,6 +5566,8 @@ struct QEVERCLOUD_EXPORT NotesMetadataList {
             && stoppedWords.isEqual(other.stoppedWords)
             && searchedWords.isEqual(other.searchedWords)
             && updateCount.isEqual(other.updateCount)
+            && searchContextBytes.isEqual(other.searchContextBytes)
+            && debugInfo.isEqual(other.debugInfo)
         ;
     }
 
@@ -5462,6 +5671,8 @@ struct QEVERCLOUD_EXPORT RelatedResult {
          NotebookDescriptor objects.
     */
     Optional< QList< NotebookDescriptor > > containingNotebooks;
+    /** NOT DOCUMENTED */
+    Optional< QString > debugInfo;
     /**
     If experts have been requested to be included, this will return
       a list of users within your business who have knowledge about the specified query.
@@ -5522,6 +5733,7 @@ struct QEVERCLOUD_EXPORT RelatedResult {
             && notebooks.isEqual(other.notebooks)
             && tags.isEqual(other.tags)
             && containingNotebooks.isEqual(other.containingNotebooks)
+            && debugInfo.isEqual(other.debugInfo)
             && experts.isEqual(other.experts)
             && relatedContent.isEqual(other.relatedContent)
             && cacheKey.isEqual(other.cacheKey)
@@ -5583,9 +5795,11 @@ struct QEVERCLOUD_EXPORT InvitationShareRelationship {
     Optional< QString > displayName;
     /**
     Identifies the recipient of the invitation. The user identity
-     type can be either EMAIL or IDENTITYID, depending on whether the
-     invitation was created using the classic notebook sharing APIs or
-     the new identity-based notebook sharing APIs.
+     type can be either EMAIL, EVERNOTE or IDENTITYID. If the
+     invitation was created using the classic notebook sharing APIs it will be EMAIL. If it
+     was created using the new identity-based notebook sharing APIs it will either be
+     EVERNOTE or IDENTITYID, depending on whether we can map the identity to an Evernote
+     user at the time of creation.
     */
     Optional< UserIdentity > recipientUserIdentity;
     /**
@@ -5707,11 +5921,11 @@ struct QEVERCLOUD_EXPORT ManageNotebookSharesParameters {
     Optional< QList< InvitationShareRelationship > > invitationsToCreateOrUpdate;
     /**
     The list of share relationships to expunge from the service.
-     If the user identity is for an Evernote UserID, then memberships will
-     be removed. If it's an e-mail, then e-mail based shared notebook
-     invitations will be removed. If it's for an Identity ID, then
-     any invitations that match the identity (by identity ID or user ID or
-     e-mail for legacy invitations) will be removed.
+     If the user identity is for an Evernote UserID, then matching invitations or
+     memberships will be removed. If it's an e-mail, then e-mail based shared notebook
+     invitations will be removed. If it's for an Identity ID, then any invitations that
+     match the identity (by identity ID or user ID or e-mail for legacy invitations) will be
+     removed.
     */
     Optional< QList< UserIdentity > > unshares;
 
@@ -6045,6 +6259,7 @@ Q_DECLARE_METATYPE(qevercloud::SavedSearch)
 Q_DECLARE_METATYPE(qevercloud::SharedNotebookRecipientSettings)
 Q_DECLARE_METATYPE(qevercloud::NotebookRecipientSettings)
 Q_DECLARE_METATYPE(qevercloud::SharedNotebook)
+Q_DECLARE_METATYPE(qevercloud::CanMoveToContainerRestrictions)
 Q_DECLARE_METATYPE(qevercloud::NotebookRestrictions)
 Q_DECLARE_METATYPE(qevercloud::Notebook)
 Q_DECLARE_METATYPE(qevercloud::LinkedNotebook)

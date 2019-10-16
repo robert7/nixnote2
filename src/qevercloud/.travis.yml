@@ -55,7 +55,7 @@ install:
         wget http://www.cmake.org/files/v3.2/cmake-3.2.0-Linux-x86_64.tar.gz &&
         tar -xzf cmake-3.2.0-Linux-x86_64.tar.gz &&
         sudo cp -fR cmake-3.2.0-Linux-x86_64/* /usr &&
-        sudo apt-get -qq install p7zip-full &&
+        sudo apt-get -qq install p7zip-full coreutils curl &&
         sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test &&
         if [ "${QT_BASE}" = "5123" ]; then
           sudo apt-add-repository -y ppa:beineri/opt-qt-5.12.3-xenial &&
@@ -92,17 +92,22 @@ before_script:
     - |
       if [ "${QT_BASE}" = "5123" ]; then
         source /opt/qt512/bin/qt512-env.sh &&
-        cmake -DUSE_QT5=1 -DCMAKE_INSTALL_PREFIX=$(pwd)/installdir ..
-      elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-        cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/qt5/lib/cmake -DUSE_QT5=1 -DCMAKE_INSTALL_PREFIX=$(pwd)/installdir ..
-      else
         cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/installdir ..
+      elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+        cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/qt5/lib/cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/installdir ..
+      else
+        cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/installdir -DBUILD_WITH_QT4=1 ..
       fi
 
 script:
     - make
     - make check
     - make install
+    - |
+      if [ "${TRAVIS_OS_NAME}" = "linux" ] && [ "${QT_BASE}" = "592" ] && [ "${COMPILER}" = "g++-4.8" ] && [ "${TRAVIS_BRANCH}" = "development" ]; then
+        echo "Triggering build at OpenSUSE build service for development branch" &&
+        curl -X POST -H "Authorization: Token $OSC_TOKEN" https://api.opensuse.org/trigger/runservice?project=home%3Ad1vanov%3Aquentier-development&package=qevercloud-development
+      fi
 
 after_success:
     - |

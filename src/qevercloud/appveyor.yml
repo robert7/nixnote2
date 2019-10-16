@@ -1,4 +1,4 @@
-version: '4.0.0-{build}'
+version: '4.1.0-{build}'
 
 branches:
   only:
@@ -87,6 +87,7 @@ artifacts:
     name: archive
 
 matrix:
-  fast_finish: true
   allow_failures:
     - prepare_mode: YES
+  # Disable until https://github.com/appveyor/ci/issues/1231 is fixed
+  # fast_finish: true
