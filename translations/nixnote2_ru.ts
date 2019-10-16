@@ -11,13 +11,12 @@
     <message>
         <location filename="../src/dialog/aboutdialog.cpp" line="46"/>
         <source>Version: </source>
-        <translation>Версия</translation>
+        <translation>Версия: </translation>
     </message>
     <message>
         <location filename="../src/dialog/aboutdialog.cpp" line="51"/>
-        <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
-        <translation type="unfinished"></translation>
-    </message>
+    <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
+        <translation>Russian translation by Александр, ra3ggi@gmail.com</translation>
     </message>
 </context>
 <context>
