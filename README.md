@@ -11,14 +11,26 @@ Nixnote is Evernote desktop client for Linux.
 Travis CI [![Build Status](https://travis-ci.com/robert7/nixnote2.svg?branch=master)](https://travis-ci.com/robert7/nixnote2)
 
 ## Packages
+### Debian, Ubuntu and derivatives official repositories
+In case you distribution is based on **Debian 10 (Buster) or Ubuntu 19.04 (Disco) or later distribution 
+versions**, you can install Nixnote 2.1 from official repositories using:
+
+``` bash
+sudo apt update
+sudo apt install nixnote2 -y
+```
+But there maybe newer version in the PPA (see bellow).
+Note: on older distributions the "nixnote2" may also be available, but you may get the older [2.0 version](https://github.com/baumgarr/nixnote2).
+
 ### Ubuntu
 NixNote PPA - reflects the latest [stable release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#stable-releases). More information can be found on [NixNote PPA wiki page](https://github.com/robert7/nixnote2/wiki/NixNote-PPA). Installation commands:
 
-```
+``` bash
 sudo add-apt-repository ppa:nixnote/nixnote2-stable -y
 sudo apt update
 sudo apt install nixnote2 -y
 ```
+PPA packages are available for Ubuntu 16.04 (Xenial) and newer.
 
 Additionally there is a "[development branch PPA](https://code.launchpad.net/~nixnote/+archive/ubuntu/nixnote2-develop)" available.
 The usage is same as for "stable PPA", just replace the name "nixnote2-stable" with "nixnote2-develop".
@@ -27,7 +39,7 @@ At most times, the "[development release](https://github.com/robert7/nixnote2/wi
 should be OK for daily use.
 
 ### AppImage
-This is suitable to any ~recent linux distribution.
+This is suitable to **any ~recent linux distribution**.
 Installation is trivial - download AppImage file, mark as executable & run.
 More information can be found on [NixNote AppImage wiki page](https://github.com/robert7/nixnote2/wiki/HowTo---Run-AppImage).
 
