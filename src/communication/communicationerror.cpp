@@ -58,6 +58,7 @@ void CommunicationError::resetTo(
 
     // render exception name
     QString msg(communicationErrorTypeToString(type));
+
     // followed by code
     if (code != 0) {
         msg.append("[");
@@ -65,6 +66,7 @@ void CommunicationError::resetTo(
         if (type == CommunicationError::EDAMUserException) {
             msg.append(edamErrorCodeToString(code));
         } else {
+            msg.append("code=");
             msg.append(QString::number(code));
         }
         msg.append("]");
