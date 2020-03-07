@@ -10,6 +10,7 @@ public:
     SignalGui();
     bool takeScreenshot;
     bool openNote;
+    bool openNoteUrl;
     bool openExternalNote;
     bool openNoteNewTab;
     bool newExternalNote;
@@ -18,6 +19,8 @@ public:
     bool synchronize;
     bool show;
     qint32 lid;
+    QString url;
+
 };
 
 #endif // SIGNALGUI_H

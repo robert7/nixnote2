@@ -591,6 +591,11 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
                 parm = parm.mid(5);
                 signalGui->lid = parm.toInt();
             }
+            if (parm.startsWith("--url=", Qt::CaseSensitive)) {
+                parm = parm.mid(6);
+                signalGui->url = parm;
+                signalGui->openNoteUrl = true;
+            }
             if (parm.startsWith("--show", Qt::CaseSensitive))
                 signalGui->show = true;
             if (parm.startsWith("--synchronize", Qt::CaseSensitive))

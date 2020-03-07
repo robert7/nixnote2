@@ -4,6 +4,7 @@ SignalGui::SignalGui()
 {
     takeScreenshot = false;
     openNote= false;
+    openNoteUrl= false;
     newExternalNote = false;
     newNote = false;
     shutdown = false;
@@ -12,5 +13,6 @@ SignalGui::SignalGui()
     openNoteNewTab = false;
     show = false;
     lid = 0;
+    url = "";
 
 }

@@ -70,6 +70,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/dialog/accountmaintenancedialog.h"
 #include "src/communication/communicationmanager.h"
 #include "src/utilities/encrypt.h"
+#include "src/utilities/NixnoteStringUtils.h"
 
 // Windows Check
 #ifndef _WIN32
@@ -2759,6 +2760,13 @@ void NixNote::heartbeatTimerTriggered() {
             }
             return;
         } else if (cmd.startsWith("OPEN_NOTE")) {
+            if (cmd.startsWith("OPEN_NOTE_URL")) {
+                // Get noteGuid from the evernote URL
+                QString noteUrl = cmd.mid(13);
+                QString noteGuid = NixnoteStringUtils::extractNoteGuid(noteUrl);
+                QLOG_DEBUG() << QString("Found note GUID: %1").arg(noteGuid);
+                
+            }
             bool newTab = false;
 
             this->restoreAndShowMainWindow();
