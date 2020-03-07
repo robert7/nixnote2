@@ -70,7 +70,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/dialog/accountmaintenancedialog.h"
 #include "src/communication/communicationmanager.h"
 #include "src/utilities/encrypt.h"
-#include "src/utilities/NixnoteStringUtils.h"
 
 // Windows Check
 #ifndef _WIN32
@@ -2766,12 +2765,8 @@ void NixNote::heartbeatTimerTriggered() {
             qint32 lid;
             if (cmd.startsWith("OPEN_NOTE_URL")) {
                 QString noteUrl = cmd.mid(13);
-                QString noteGuid = NixnoteStringUtils::extractNoteGuid(noteUrl);
-                QLOG_DEBUG() << QString("Found note GUID: %1").arg(noteGuid);
                 NoteTable ntable(global.db);
-                lid = ntable.getLid(noteGuid);
-                QLOG_DEBUG() << QString("Found note lid: %1").arg(lid);
-                
+                lid = ntable.getLidFromUrl(noteUrl);
             } else {
                 if (cmd.startsWith("OPEN_NOTE_NEW_TAB")) {
                     newTab = true;

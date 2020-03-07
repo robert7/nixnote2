@@ -101,6 +101,7 @@ public:
     NoteTable(DatabaseConnection *db);                             // Constructor
     qint32 getLid(QString guid);                             // given a guid, return the lid
     qint32 getLid(string guid);                              // Given a guid, return the lid
+    qint32 getLidFromUrl(QString noteUrl);                   // Given a URL, return the lid
     QString getGuid(int lid);                                // given a lid, get the guid
     bool get(Note &note, qint32 lid, bool loadResources, bool loadBinary);           // Get a note given a lid
     bool get(Note &note, QString guid, bool loadResources, bool loadBinary);         // get a note given a guid
