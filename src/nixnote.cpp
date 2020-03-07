@@ -2610,7 +2610,7 @@ void NixNote::findReplaceAllInNotePressed() {
 
 
 //**************************************************************
-//* This queries she shared memory segment at occasional
+//* This queries the shared memory segment at occasional
 //* intervals.  This is useful for cross-program communication.
 //**************************************************************
 void NixNote::heartbeatTimerTriggered() {
