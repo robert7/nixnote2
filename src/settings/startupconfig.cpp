@@ -594,7 +594,6 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             if (parm.startsWith("--url=", Qt::CaseSensitive)) {
                 parm = parm.mid(6);
                 signalGui->url = parm;
-                signalGui->openNoteUrl = true;
             }
             if (parm.startsWith("--show", Qt::CaseSensitive))
                 signalGui->show = true;
@@ -604,10 +603,16 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
                 signalGui->takeScreenshot = true;
             if (parm.startsWith("--openNote", Qt::CaseSensitive))
                 signalGui->openNote = true;
+            if (parm.startsWith("--openNoteURL", Qt::CaseSensitive))
+                signalGui->openNoteUrl = true;
             if (parm.startsWith("--openExternalNote", Qt::CaseSensitive))
                 signalGui->openExternalNote = true;
+            if (parm.startsWith("--openExternalNoteUrl", Qt::CaseSensitive))
+                signalGui->openExternalNoteUrl = true;
             if (parm.startsWith("--openNoteNewTab", Qt::CaseSensitive))
                 signalGui->openNoteNewTab = true;
+            if (parm.startsWith("--openNoteNewTabUrl", Qt::CaseSensitive))
+                signalGui->openNoteNewTabUrl = true;
             if (parm.startsWith("--newNote", Qt::CaseSensitive))
                 signalGui->newNote = true;
             if (parm.startsWith("--newExternalNote", Qt::CaseSensitive))

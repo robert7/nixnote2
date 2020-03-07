@@ -10,7 +10,9 @@ SignalGui::SignalGui()
     shutdown = false;
     synchronize = false;
     openExternalNote = false;
+    openExternalNoteUrl = false;
     openNoteNewTab = false;
+    openNoteNewTabUrl = false;
     show = false;
     lid = 0;
     url = "";

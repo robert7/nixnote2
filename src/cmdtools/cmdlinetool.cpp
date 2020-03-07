@@ -809,7 +809,6 @@ int CmdLineTool::signalGui(StartupConfig config) {
         QLOG_DEBUG() << "Failed to attach to other instance";
         return 16;
     }
-    QLOG_DEBUG() << "I'M HEEEEERE ------------------------------------------";
     if (config.signalGui->show)
         global.sharedMemory->write(QString("SIGNAL_GUI: SHOW"));
     if (config.signalGui->takeScreenshot)
@@ -826,8 +825,12 @@ int CmdLineTool::signalGui(StartupConfig config) {
         global.sharedMemory->write("SIGNAL_GUI: OPEN_NOTE_URL " + QVariant(config.signalGui->url).toString());
     if (config.signalGui->openExternalNote)
         global.sharedMemory->write("SIGNAL_GUI: OPEN_EXTERNAL_NOTE " + QVariant(config.signalGui->lid).toString());
+    if (config.signalGui->openExternalNoteUrl)
+        global.sharedMemory->write("SIGNAL_GUI: OPEN_EXTERNAL_NOTE_URL " + QVariant(config.signalGui->url).toString());
     if (config.signalGui->openNoteNewTab)
         global.sharedMemory->write("SIGNAL_GUI: OPEN_NOTE_NEW_TAB " + QVariant(config.signalGui->lid).toString());
+    if (config.signalGui->openNoteNewTabUrl)
+        global.sharedMemory->write("SIGNAL_GUI: OPEN_NOTE_NEW_TAB_URL " + QVariant(config.signalGui->url).toString());
     if (config.signalGui->synchronize)
         global.sharedMemory->write(QString("SIGNAL_GUI: SYNCHRONIZE"));
 

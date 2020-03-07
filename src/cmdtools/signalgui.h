@@ -12,7 +12,9 @@ public:
     bool openNote;
     bool openNoteUrl;
     bool openExternalNote;
+    bool openExternalNoteUrl;
     bool openNoteNewTab;
+    bool openNoteNewTabUrl;
     bool newExternalNote;
     bool newNote;
     bool shutdown;
