@@ -2760,24 +2760,27 @@ void NixNote::heartbeatTimerTriggered() {
             }
             return;
         } else if (cmd.startsWith("OPEN_NOTE")) {
-            if (cmd.startsWith("OPEN_NOTE_URL")) {
-                // Get noteGuid from the evernote URL
-                QString noteUrl = cmd.mid(13);
-                QString noteGuid = NixnoteStringUtils::extractNoteGuid(noteUrl);
-                QLOG_DEBUG() << QString("Found note GUID: %1").arg(noteGuid);
-                
-            }
             bool newTab = false;
 
             this->restoreAndShowMainWindow();
-
-            if (cmd.startsWith("OPEN_NOTE_NEW_TAB")) {
-                newTab = true;
-                cmd = cmd.mid(18);
+            qint32 lid;
+            if (cmd.startsWith("OPEN_NOTE_URL")) {
+                QString noteUrl = cmd.mid(13);
+                QString noteGuid = NixnoteStringUtils::extractNoteGuid(noteUrl);
+                QLOG_DEBUG() << QString("Found note GUID: %1").arg(noteGuid);
+                NoteTable ntable(global.db);
+                lid = ntable.getLid(noteGuid);
+                QLOG_DEBUG() << QString("Found note lid: %1").arg(lid);
+                
             } else {
-                cmd = cmd.mid(10);
+                if (cmd.startsWith("OPEN_NOTE_NEW_TAB")) {
+                    newTab = true;
+                    cmd = cmd.mid(18);
+                } else {
+                    cmd = cmd.mid(10);
+                }
+                lid = cmd.toInt();
             }
-            qint32 lid = cmd.toInt();
             QList<qint32> lids;
             lids.append(lid);
 
