@@ -103,10 +103,13 @@ More info in: [DOCKER README](docs/DOCKER-README.md)
 ```bash
 ./development/build-with-qmake.sh
 ```
-
 `build-with-qmake.sh` is just kind of convenience script. You can also build without it like:
 `qmake CONFIG+=debug PREFIX=appdir/usr`, then `make && make install`.
+
 This suppose, you installed libtidy in system default location (recommended version is 5.6.0).
+
+In case you installed tidy from nixnote (e.g. using package `nixnote2-tidy` from Nixnote PPA), then
+the could command could be `./development/build-with-qmake.sh debug noclean /usr/lib/nixnote2/tidy`.
 
 If all got OK, you should have "qmake-build-debug/nixnote2" binary available now
 (and also a deployment copy in appdir). 
