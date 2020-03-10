@@ -563,7 +563,7 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
                 signalGui->takeScreenshot = true;
             if (parm.startsWith("--openNote", Qt::CaseSensitive))
                 signalGui->openNote = true;
-            if (parm.startsWith("--openNoteURL", Qt::CaseSensitive))
+            if (parm.startsWith("--openNoteUrl", Qt::CaseSensitive))
                 signalGui->openNoteUrl = true;
             if (parm.startsWith("--openExternalNote", Qt::CaseSensitive))
                 signalGui->openExternalNote = true;
