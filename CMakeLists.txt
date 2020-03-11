@@ -159,15 +159,15 @@ set (nixnote2_src
         src/oauth/oauthtokenizer.cpp
         src/oauth/oauthwindow.cpp
         src/hunspell/spellchecker.cpp
-        src/qevercloud/AsyncResult.cpp
-        src/qevercloud/EventLoopFinisher.cpp
-        src/qevercloud/exceptions.cpp
-        src/qevercloud/generated/constants.cpp
-        src/qevercloud/generated/services.cpp
-        src/qevercloud/generated/types.cpp
-        src/qevercloud/http.cpp
-        src/qevercloud/oauth.cpp
-        src/qevercloud/services_nongenerated.cpp
+        src/qevercloud/QEverCloud/src/AsyncResult.cpp
+        src/qevercloud/QEverCloud/src/EventLoopFinisher.cpp
+        src/qevercloud/QEverCloud/src/exceptions.cpp
+        src/qevercloud/QEverCloud/src/generated/constants.cpp
+        src/qevercloud/QEverCloud/src/generated/services.cpp
+        src/qevercloud/QEverCloud/src/generated/types.cpp
+        src/qevercloud/QEverCloud/src/http.cpp
+        src/qevercloud/QEverCloud/src/oauth.cpp
+        src/qevercloud/QEverCloud/src/services_nongenerated.cpp
         src/reminders/reminderevent.cpp
         src/reminders/remindermanager.cpp
         src/settings/accountsmanager.cpp
@@ -352,26 +352,25 @@ set (nixnote2_hdr
         src/oauth/oauthtokenizer.h
         src/oauth/oauthwindow.h
         src/hunspell/spellchecker.h
-        src/qevercloud/AsyncResult.h
-        src/qevercloud/EventLoopFinisher.h
-        src/qevercloud/EverCloudException.h
-        src/qevercloud/exceptions.h
-        src/qevercloud/generated/constants.h
-        src/qevercloud/generated/EDAMErrorCode.h
-        src/qevercloud/generated/services.h
-        src/qevercloud/generated/types.h
-        src/qevercloud/generated/types_impl.h
-        src/qevercloud/globals.h
-        src/qevercloud/http.h
-        src/qevercloud/impl.h
-        src/qevercloud/include/QEverCloud.h
-        src/qevercloud/include/QEverCloudOAuth.h
-        src/qevercloud/oauth.h
-        src/qevercloud/Optional.h
-        src/qevercloud/public.h
-        src/qevercloud/qt4helpers.h
-        src/qevercloud/thrift.h
-        src/qevercloud/thumbnail.h
+        src/qevercloud/QEverCloud/src/AsyncResult.h
+        src/qevercloud/QEverCloud/src/EventLoopFinisher.h
+        src/qevercloud/QEverCloud/src/EverCloudException.h
+        src/qevercloud/QEverCloud/src/exceptions.h
+        src/qevercloud/QEverCloud/src/generated/constants.h
+        src/qevercloud/QEverCloud/src/generated/EDAMErrorCode.h
+        src/qevercloud/QEverCloud/src/generated/services.h
+        src/qevercloud/QEverCloud/src/generated/types.h
+        src/qevercloud/QEverCloud/src/generated/types_impl.h
+        src/qevercloud/QEverCloud/src/http.h
+        src/qevercloud/QEverCloud/src/impl.h
+        src/qevercloud/QEverCloud/src/include/QEverCloud.h
+        src/qevercloud/QEverCloud/src/include/QEverCloudOAuth.h
+        src/qevercloud/QEverCloud/src/oauth.h
+        src/qevercloud/QEverCloud/src/Optional.h
+        src/qevercloud/QEverCloud/src/public.h
+        src/qevercloud/QEverCloud/src/qt4helpers.h
+        src/qevercloud/QEverCloud/src/thrift.h
+        src/qevercloud/tQEverCloud/src/humbnail.h
         src/reminders/reminderevent.h
         src/reminders/remindermanager.h
         src/settings/accountsmanager.h
