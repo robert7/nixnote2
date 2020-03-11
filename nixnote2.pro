@@ -567,7 +567,7 @@ PRE_TARGETDEPS += $$TRANSLATIONS_OUT
 mac {
     # TODO 6.2018 this will need minor adjustments
 
-    ICON = images/NixNote2.icns
+    #ICON = images/NixNote2.icns
 
     # we go for an appbundle that contains all resources (except
     # the shared library dependencies - use macdeployqt for those).

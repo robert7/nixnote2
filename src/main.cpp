@@ -46,8 +46,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "src/application.h"
 
+#ifdef Q_OS_MACOS
+#include <tidy.h>
+#include <tidybuffio.h>
+#else
 #include <tidy/tidy.h>
 #include <tidy/tidybuffio.h>
+#endif
 
 
 NixNote *w;
