@@ -293,8 +293,10 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
 // Windows Check
 #ifndef _WIN32
     QString display = QProcessEnvironment::systemEnvironment().value("DISPLAY", "");
-    if (display.trimmed() == "")
+    if (display.trimmed() == "") {
+        QLOG_DEBUG() << "It seems no display was found => guiAvailable=false";
         guiAvailable = false;
+    }
 #endif // End windows check
 
     // although this will contain the path used to start the binary (even in case of AppImage)

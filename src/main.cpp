@@ -301,7 +301,7 @@ int main(int argc, char *argv[]) {
         signal(SIGHUP, sighup_handler);   // install our handler
 #endif
 
-    QLOG_DEBUG() << "Setting up";
+    QLOG_DEBUG() << "Setting up, guiAvailable=" << guiAvailable;
     w = new NixNote();
     w->setAttribute(Qt::WA_QuitOnClose);
 
