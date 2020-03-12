@@ -304,7 +304,7 @@ int CmdLineTool::addNote(StartupConfig config) {
 
         // Setup cross memory for response
         CrossMemoryMapper crossMemory(id);
-        if (!crossMemory.allocate(512))
+        if (crossMemory.allocate(512) != QSharedMemory::SharedMemoryError::NoError)
             expectResponse = false;
 
         // Write out the segment
@@ -524,7 +524,7 @@ int CmdLineTool::appendNote(StartupConfig config) {
 
         // Setup cross memory for response
         CrossMemoryMapper crossMemory(id);
-        if (!crossMemory.allocate(512))
+        if (crossMemory.allocate(512) != QSharedMemory::SharedMemoryError::NoError)
             expectResponse = false;
 
         // Write out the segment
@@ -643,10 +643,12 @@ int CmdLineTool::readNote(StartupConfig config) {
         NUuid uuid;
         config.extractText->returnUuid = uuid.create();
         CrossMemoryMapper sharedMemory(config.extractText->returnUuid);
-        if (!sharedMemory.allocate(500*1024))
+        if (sharedMemory.allocate(500 * 1024) != QSharedMemory::SharedMemoryError::NoError)
             return 16;
+
         sharedMemory.clearMemory();
         global.sharedMemory->write("READ_NOTE:" + config.extractText->wrap());
+
         int maxWait = 5;
         bool expectResponse = true;
         int cnt = 0;

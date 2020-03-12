@@ -218,17 +218,20 @@ int main(int argc, char *argv[]) {
     // with any other instance that may be running.  If another instance
     // is found we need to either show that one or kill this one.
     bool memInitNeeded = true;
-    if (!sharedMemory->allocate(512 * 1024)) {
+    int sharedMemSize = 512 * 1024;
+    if (sharedMemory->allocate(sharedMemSize) != QSharedMemory::SharedMemoryError::NoError) {
         // failed to create new memory segment (#1)
 
         // Attach to it and detach.  This is done in case it crashed.
         sharedMemory->attach();
         sharedMemory->detach();
 
-        if (!sharedMemory->allocate(512 * 1024)) {
+        QSharedMemory::SharedMemoryError allocateRetCode = sharedMemory->allocate(sharedMemSize);
+        if (allocateRetCode != QSharedMemory::SharedMemoryError::NoError) {
             // failed to create new memory segment (#2)
-            QLOG_INFO() << "New shared memory segment could not be created.";
-            QLOG_INFO() << "We assume another instance with the same configuration is running, instance key:" << sharedMemory->getKey();
+            QLOG_INFO() << "New shared memory segment could not be created; code=" << allocateRetCode;
+            QLOG_INFO() << "We assume another instance with the same configuration is running, instance key:"
+                        << sharedMemory->getKey();
 
             if (startupConfig.startupNewNote) {
                 QLOG_DEBUG() << "Sending request NEW_NOTE";

@@ -46,20 +46,21 @@ CrossMemoryMapper::~CrossMemoryMapper() {
         sharedMemory->detach();
 }
 
-bool CrossMemoryMapper::allocate(int size) {
+QSharedMemory::SharedMemoryError CrossMemoryMapper::allocate(int size) {
     QLOG_DEBUG() << "Shared memory segment is about to be allocaed; size=" << size;
     if (key == "") {
         QLOG_ERROR() << "Shared memory segment can't be created: no key!";
-        return false;
+        return QSharedMemory::SharedMemoryError::UnknownError;
     }
     if (!sharedMemory->create(size, QSharedMemory::ReadWrite)) {
-        QLOG_WARN() << "Shared memory segment failed to allocate, instance key=" << key << "; error="
-                    << sharedMemory->error();
-        return false;
+        QSharedMemory::SharedMemoryError error = sharedMemory->error();
+        QLOG_WARN() << "Shared memory segment failed to allocate, instance key=" << key << "; error=" << error
+            << ", " << sharedMemory->errorString();
+        return error;
     }
     buffer = (char *) malloc(static_cast<size_t>(getSharedMemorySize()));
     QLOG_INFO() << "Shared memory segment allocated, instance key: " << key;
-    return true;
+    return QSharedMemory::SharedMemoryError::NoError;
 }
 
 
