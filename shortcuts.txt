@@ -114,7 +114,7 @@ Format_List_Numbered          Ctrl+Shift+N      // Numbered list
 Format_Indent_Increase        Ctrl+M            // Increase the indentation // seems Tab doesn't work
 Format_Indent_Decrease        Ctrl+Shift+M      // Decrease the indent      // seems Shift-Tab doesn't work
 Format_Highlight              Ctrl+Shift+H      // Highlight the current text (background color)
-Format_Code_Block                               // Format code block
+Format_Code_Block             Ctrl+Shift+L      // Format code block
 Format_Font_Color             Ctrl+D            // Set font color
 
 Tools_Synchronize             F9                // Synchronize with Evernote

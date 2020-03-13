@@ -23,8 +23,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QWebFrame>
 #include <QIcon>
 #include <QMessageBox>
-#include <tidy/tidy.h>
-#include <tidy/tidybuffio.h>
 #include <iostream>
 #include <QtCore/QStringList>
 #include <QtCore/QString>
@@ -35,6 +33,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/utilities/encrypt.h"
 #include "src/logger/qslog.h"
 #include "src/utilities/NixnoteStringUtils.h"
+
+#ifdef Q_OS_MACOS
+#include <tidy.h>
+#include <tidybuffio.h>
+#else
+#include <tidy/tidy.h>
+#include <tidy/tidybuffio.h>
+#endif
 
 #define ENML_MODULE_LOGPREFIX "enml-cleanup: "
 

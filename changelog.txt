@@ -1,3 +1,8 @@
+NixNote (2.1.6-rc2) stable; urgency=low
+  * Updated russian translation (thanks to Александр, ra3ggi@gmail.com)
+  * Removed default text for "insert code block" and added keyboard shortcut Ctrl+Shift+L
+ -- Robert Spiegel <nightingale7@gmail.com>  Wed, 16 Oct 2019 09:15:00 +0200
+
 NixNote (2.1.5) stable; urgency=low
   * Updated qevercloud (Evernote API) to latest development version (v.4.1.0) - Evernote API 1.29
   * Set Evernote request timeout to 30 seconds, added Evernote network request logging (in DEBUG mode)
