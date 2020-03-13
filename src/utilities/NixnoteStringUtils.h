@@ -62,6 +62,15 @@ public:
      * @return note link
      */
     static QString createNoteLink(bool createInAppLink, QString server, QString userId, QString shardId, QString noteGuid);
+
+    /**
+     * Extract note GUID from "In App Note Link" or "Note Link".
+     *
+     * @param noteUrl Evernote note link (either in-app or external, both work)
+     *
+     * @return note GUID
+     */
+    static QString extractNoteGuid(QString noteUrl); 
 };
 
 #endif // NIXNOTE_STRING_UTILS_H

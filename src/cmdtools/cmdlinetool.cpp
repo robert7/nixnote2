@@ -823,10 +823,16 @@ int CmdLineTool::signalGui(StartupConfig config) {
         global.sharedMemory->write(QString("SIGNAL_GUI: NEW_EXTERNAL_NOTE"));
     if (config.signalGui->openNote)
         global.sharedMemory->write("SIGNAL_GUI: OPEN_NOTE " + QVariant(config.signalGui->lid).toString());
+    if (config.signalGui->openNoteUrl)
+        global.sharedMemory->write("SIGNAL_GUI: OPEN_NOTE_URL " + QVariant(config.signalGui->url).toString());
     if (config.signalGui->openExternalNote)
         global.sharedMemory->write("SIGNAL_GUI: OPEN_EXTERNAL_NOTE " + QVariant(config.signalGui->lid).toString());
+    if (config.signalGui->openExternalNoteUrl)
+        global.sharedMemory->write("SIGNAL_GUI: OPEN_EXTERNAL_NOTE_URL " + QVariant(config.signalGui->url).toString());
     if (config.signalGui->openNoteNewTab)
         global.sharedMemory->write("SIGNAL_GUI: OPEN_NOTE_NEW_TAB " + QVariant(config.signalGui->lid).toString());
+    if (config.signalGui->openNoteNewTabUrl)
+        global.sharedMemory->write("SIGNAL_GUI: OPEN_NOTE_NEW_TAB_URL " + QVariant(config.signalGui->url).toString());
     if (config.signalGui->synchronize)
         global.sharedMemory->write(QString("SIGNAL_GUI: SYNCHRONIZE"));
 
