@@ -2609,7 +2609,7 @@ void NixNote::findReplaceAllInNotePressed() {
 
 
 //**************************************************************
-//* This queries she shared memory segment at occasional
+//* This queries the shared memory segment at occasional
 //* intervals.  This is useful for cross-program communication.
 //**************************************************************
 void NixNote::heartbeatTimerTriggered() {
@@ -2750,7 +2750,14 @@ void NixNote::heartbeatTimerTriggered() {
             }
         } else if (cmd.startsWith("OPEN_EXTERNAL_NOTE")) {
             cmd = cmd.mid(18);
-            qint32 lid = cmd.toInt();
+            qint32 lid;
+            if (cmd.startsWith("_URL")) {
+                QString noteUrl = cmd.mid(4);
+                NoteTable ntable(global.db);
+                lid = ntable.getLidFromUrl(noteUrl);
+            } else {
+                lid = cmd.toInt();
+            }
             this->openExternalNote(lid);
             if (tabWindow->lastExternal != nullptr) {
                 tabWindow->lastExternal->activateWindow();
@@ -2760,16 +2767,21 @@ void NixNote::heartbeatTimerTriggered() {
             return;
         } else if (cmd.startsWith("OPEN_NOTE")) {
             bool newTab = false;
-
             this->restoreAndShowMainWindow();
-
             if (cmd.startsWith("OPEN_NOTE_NEW_TAB")) {
                 newTab = true;
-                cmd = cmd.mid(18);
+                cmd = cmd.mid(17);
             } else {
-                cmd = cmd.mid(10);
+                cmd = cmd.mid(9);
             }
-            qint32 lid = cmd.toInt();
+            qint32 lid;
+            if (cmd.startsWith("_URL")) {
+                QString noteUrl = cmd.mid(4);
+                NoteTable ntable(global.db);
+                lid = ntable.getLidFromUrl(noteUrl);
+            } else {
+                lid = cmd.toInt();
+            }
             QList<qint32> lids;
             lids.append(lid);
 

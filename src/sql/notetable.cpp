@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "tagtable.h"
 #include "src/global.h"
 #include "src/utilities/noteindexer.h"
+#include "src/utilities/NixnoteStringUtils.h"
 
 #include <QSqlTableModel>
 #include <QtXml>
@@ -141,6 +142,15 @@ qint32 NoteTable::getLid(string guid) {
     return getLid(s);
 }
 
+
+// Given a note's In-App or External URL, we return the LID
+qint32 NoteTable::getLidFromUrl(QString noteUrl) {
+    QString noteGuid = NixnoteStringUtils::extractNoteGuid(noteUrl);
+    QLOG_DEBUG() << QString("getLidFromUrl: found note GUID=%1 from note url=%2").arg(noteGuid).arg(noteUrl);
+    qint32 lid = getLid(noteGuid);
+    QLOG_DEBUG() << QString("getLidFromUrl: found note lid: %1").arg(lid);
+    return lid;
+}
 
 
 // Add a new note to the database

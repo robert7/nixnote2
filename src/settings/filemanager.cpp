@@ -42,7 +42,9 @@ QString FileManager::getDefaultProgramDirPath() {
     if (appDirPath.endsWith(".app/Contents/MacOS")) {
         // get rid of the MacOS component
         appDirPath.chop(5);
-        return appDirPath + "/Resources/";
+        appDirPath.append("Resources/");
+        QLOG_DEBUG() << "Default program dir path (adjusted for macOS): applicationDirPath=" << appDirPath;
+        return appDirPath ;
     }
 #endif
 

@@ -77,3 +77,11 @@ QString NixnoteStringUtils::createNoteLink(bool createInAppLink, QString server,
     }
 }
 
+QString NixnoteStringUtils::extractNoteGuid(QString noteUrl) {
+    // Remove trailing '/' if it exists
+    if (noteUrl.endsWith('/')) {
+        noteUrl.chop(1);
+    }
+    QStringList splitNoteUrl = noteUrl.split('/');
+    return splitNoteUrl[splitNoteUrl.count()-1];
+}

@@ -1,6 +1,9 @@
-NixNote (2.1.6-rc2) stable; urgency=low
+NixNote (2.1.6-rc3) stable; urgency=low
   * Updated russian translation (thanks to Александр, ra3ggi@gmail.com)
   * Removed default text for "insert code block" and added keyboard shortcut Ctrl+Shift+L
+  * Added new command options for "signalGui" --openNoteUrl,  --openExternalNoteUrl,  --openNoteNewTabUrl
+    thanks to Rodrigo Eliseu, https://github.com/rodelrod
+  * Fixed macOS build
  -- Robert Spiegel <nightingale7@gmail.com>  Wed, 16 Oct 2019 09:15:00 +0200
 
 NixNote (2.1.5) stable; urgency=low

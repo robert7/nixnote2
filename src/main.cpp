@@ -46,8 +46,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "src/application.h"
 
+#ifdef Q_OS_MACOS
+#include <tidy.h>
+#include <tidybuffio.h>
+#else
 #include <tidy/tidy.h>
 #include <tidy/tidybuffio.h>
+#endif
 
 
 NixNote *w;
@@ -213,17 +218,29 @@ int main(int argc, char *argv[]) {
     // with any other instance that may be running.  If another instance
     // is found we need to either show that one or kill this one.
     bool memInitNeeded = true;
-    if (!sharedMemory->allocate(512 * 1024)) {
+    int sharedMemSize = 512 * 1024;
+    QSharedMemory::SharedMemoryError allocateRecCode1 = sharedMemory->allocate(sharedMemSize);
+    if (allocateRecCode1 != QSharedMemory::SharedMemoryError::NoError) {
         // failed to create new memory segment (#1)
+        QLOG_INFO() << "New shared memory segment could not be created; code=" << allocateRecCode1;
 
         // Attach to it and detach.  This is done in case it crashed.
         sharedMemory->attach();
         sharedMemory->detach();
 
-        if (!sharedMemory->allocate(512 * 1024)) {
+        QSharedMemory::SharedMemoryError allocateRetCode = sharedMemory->allocate(sharedMemSize);
+        if (allocateRetCode != QSharedMemory::SharedMemoryError::NoError) {
             // failed to create new memory segment (#2)
-            QLOG_INFO() << "New shared memory segment could not be created.";
-            QLOG_INFO() << "We assume another instance with the same configuration is running, instance key:" << sharedMemory->getKey();
+            QLOG_WARN() << "New shared memory segment could not be created; code=" << allocateRetCode;
+            if (allocateRetCode != QSharedMemory::SharedMemoryError::AlreadyExists) {
+                QLOG_ERROR() << "Fatal error.. exit";
+                exit(1);
+            }
+
+
+
+            QLOG_INFO() << "Another instance with the same configuration seems to be running running, instance key:"
+                        << sharedMemory->getKey();
 
             if (startupConfig.startupNewNote) {
                 QLOG_DEBUG() << "Sending request NEW_NOTE";
@@ -296,7 +313,7 @@ int main(int argc, char *argv[]) {
         signal(SIGHUP, sighup_handler);   // install our handler
 #endif
 
-    QLOG_DEBUG() << "Setting up";
+    QLOG_DEBUG() << "Setting up, guiAvailable=" << guiAvailable;
     w = new NixNote();
     w->setAttribute(Qt::WA_QuitOnClose);
 

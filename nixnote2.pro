@@ -498,7 +498,7 @@ textfiles.files = $$PWD/shortcuts.txt $$PWD/themes.ini $$PWD/LICENSE $$PWD/color
 textfiles.CONFIG = no_check_exist
 
 docs.path = $${PREFIX}/share/doc/$$TARGET
-docs.files = $$PWD/debian/copyright $$PWD/changelog.txt $$PWD/README.md $$PWD/docs/shortcuts-howto.md $$PWD/docs/license.html
+docs.files = $$PWD/debian/copyright $$PWD/changelog.txt $$PWD/README.md $$PWD/docs/license.html
 
 VERSION_FILES = $$PWD/changelog.txt
 fullversion.input = VERSION_FILES
@@ -565,9 +565,7 @@ PRE_TARGETDEPS += $$TRANSLATIONS_OUT
 
 
 mac {
-    # TODO 6.2018 this will need minor adjustments
-
-    ICON = images/NixNote2.icns
+    ICON = resources/images/NixNote2.icns
 
     # we go for an appbundle that contains all resources (except
     # the shared library dependencies - use macdeployqt for those).
@@ -575,14 +573,19 @@ mac {
     images.files = resources/images
     java.path = Contents/Resources
     java.files = java
+
+    textfiles.path = Contents/Resources
+    docs.path = Contents/Resources/doc
+
     mactranslations.path = Contents/Resources/translations
     mactranslations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
     mactranslations.depends = compiler_langrel_make_all
 
     help.path = Contents/Resources
     help.files = help
-    QMAKE_BUNDLE_DATA += images java mactranslations help
-    INSTALLS = binary
+
+    QMAKE_BUNDLE_DATA += images java mactranslations help textfiles docs
+    #INSTALLS = binary
 } else {
     translations.path = $${PREFIX}/share/$$TARGET
     translations.files = $$TRANSLATION_TARGET_DIR
