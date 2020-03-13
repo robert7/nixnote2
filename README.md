@@ -1,7 +1,7 @@
 # NixNote v2.1
 ## Introduction
 
-Nixnote is Evernote desktop client for Linux.
+Nixnote is Evernote desktop client for Linux and macOS.
 
 * [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
 * [Features](https://github.com/robert7/nixnote2/wiki/Features)
@@ -140,23 +140,19 @@ Preparation steps
 If it doesn't work: use docker build - or compare with docker recipe, what is different - e.g. missing dependency package.
 
 ### macOS
-
-Disclaimer: macOS build was added from [RJVB/nixnote2](https://github.com/RJVB/nixnote2). 
-I can't currently test if it works. It is quite probable, that it will need minor adjustments mainly
-in path handling. Pull request is welcome.
+Build from source. Basically same as for linux:
 
 ```bash
-mkdir build
-cd build
-qmake ../nixnote2/NixNote2.pro
-make
+./development/build-with-qmake.sh
 ```
+`build-with-qmake.sh` is just kind of convenience script. You can also build without it like:
+`qmake CONFIG+=debug PREFIX=appdir/usr`, then `make && make install`.
 
-Upon successful completion you will have the NixNote2.app bundle in the build directory.
+Upon successful completion you will have the NixNote2.app bundle in the build directory (e.g. qmake-build-debug/NixNote2.app).
 
-Here, qmake is the one from Qt5. You will need to have Qt5 installed (qtbase, qtdeclarative and qtwebkit),
-as well as pkgconfig, poppler-qt5, hunspell and curl; dependencies can come from MacPorts, Fink or HomeBrew (I use MacPorts).
+Dependencies can come from MacPorts, Fink or HomeBrew (I use MacPorts).
 It should be possible to use official Qt5 packages too but I haven't tested that.
+Tested with following macPorts packages: qt5, qt5-qtwebkit, poppler-qt5, hunspell, boost, tidy.
 
 The resulting application still depends MacPorts (or Fink or HomeBrew). To turn this into a standalone app bundle that can be
 deployed anywhere:
@@ -169,7 +165,7 @@ deployed anywhere:
 As far as I can tell this will find and copy all required dependencies into the app bundle and modify them so they
 can be loaded from inside that bundle (wherever it ends up).
 
-### Windows
+### Windows (legacy)
 Should work on Windows, but minor tweaks will be needed to make it run.
 I currently have no time for it. Pull request is welcome. No sure its worth the effort, as there is
 quite decent official Evernote client for Windows.
