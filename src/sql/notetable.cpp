@@ -146,9 +146,9 @@ qint32 NoteTable::getLid(string guid) {
 // Given a note's In-App or External URL, we return the LID
 qint32 NoteTable::getLidFromUrl(QString noteUrl) {
     QString noteGuid = NixnoteStringUtils::extractNoteGuid(noteUrl);
-    QLOG_DEBUG() << QString("Found note GUID: %1").arg(noteGuid);
+    QLOG_DEBUG() << QString("getLidFromUrl: found note GUID=%1 from note url=%2").arg(noteGuid).arg(noteUrl);
     qint32 lid = getLid(noteGuid);
-    QLOG_DEBUG() << QString("Found note lid: %1").arg(lid);
+    QLOG_DEBUG() << QString("getLidFromUrl: found note lid: %1").arg(lid);
     return lid;
 }
 

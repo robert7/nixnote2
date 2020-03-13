@@ -558,6 +558,7 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             if (parm.startsWith("--url=", Qt::CaseSensitive)) {
                 parm = parm.mid(6);
                 signalGui->url = parm;
+                QLOG_DEBUG() << "got url from params: " << parm;
             }
             if (parm.startsWith("--show", Qt::CaseSensitive))
                 signalGui->show = true;
