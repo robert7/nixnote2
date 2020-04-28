@@ -452,7 +452,7 @@ gcc {
     CONFIG += $$COMPILER_CONFIG
 }
 
-linux:QMAKE_CXXFLAGS += -std=c++11 -g -O2  -Wformat -Werror=format-security
+QMAKE_CXXFLAGS += -std=c++11 -g -O2  -Wformat -Werror=format-security
 linux:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
 
 g++4 {
@@ -505,8 +505,14 @@ fullversion.input = VERSION_FILES
 fullversion.output  = $${DESTDIR}/version/build-version.txt
 fullversion.commands = ./development/create-build-version.sh $${DESTDIR}
 fullversion.CONFIG += no_link no_check_exist
-QMAKE_EXTRA_COMPILERS += fullversion
-PRE_TARGETDEPS += $$DESTDIR/version/build-version.txt
+
+fullversion2.input = VERSION_FILES
+fullversion2.output  = $${DESTDIR}/version/version.txt
+fullversion2.commands = ./development/create-build-version.sh $${DESTDIR}
+fullversion2.CONFIG += no_link no_check_exist
+
+QMAKE_EXTRA_COMPILERS += fullversion fullversion2
+PRE_TARGETDEPS += $$DESTDIR/version/build-version.txt $$DESTDIR/version/version.txt
 
 man.path = $${PREFIX}/share/man/man1
 man.files = docs/nixnote2.1
