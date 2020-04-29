@@ -100,7 +100,20 @@ void ReplyFetcher::onError(QNetworkReply::NetworkError error)
     QLOG_WARN() << "QEverCloud.http.ReplyFetcher.onError: " << m_reply->errorString();
 
     Q_UNUSED(error)
-    setError(m_reply->errorString());
+
+    // OLD
+    //setError(m_reply->errorString());
+
+    // patch from https://github.com/d1vanov/QEverCloud/commit/012425c98e52406fc5f3aa69750eba84b931a5a3
+    auto errorText = m_reply->errorString();
+    // Workaround for Evernote server problems
+    if ( (error == QNetworkReply::UnknownContentError) &&
+         errorText.endsWith(QStringLiteral("server replied: OK")) )
+    {
+        // ignore this, it's actually ok
+        return;
+    }
+    setError(errorText);
 }
 
 void ReplyFetcher::onSslErrors(QList<QSslError> errors)
