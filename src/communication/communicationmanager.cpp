@@ -160,13 +160,14 @@ bool CommunicationManager::getUserInfo(User &user) {
     QNetworkAccessManager::NetworkAccessibility accessibility = p->networkAccessible();
     // unfortunately it doesn't really seem to check the network availability
     qint64 time1 = QDateTime::currentMSecsSinceEpoch();
-    QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo; networkAccessible=" << accessibility << ", timestamp=" << time1;
+    QLOG_DEBUG() << "CommunicationManager.getUserInfo(): networkAccessible=" << accessibility << ", timestamp=" << time1;
 
-
+    QLOG_DEBUG() << "CommunicationManager.getUserInfo(): new UserStore(); host=" << evernoteHost << "; token=" << authToken;
     userStore = new UserStore(evernoteHost, authToken);
 
     bool res = true;
     try {
+        QLOG_DEBUG() << "CommunicationManager.getUserInfo(): userStore.getUser()";
         User u = userStore->getUser();
         user = u;
     } catch (ThriftException &e) {

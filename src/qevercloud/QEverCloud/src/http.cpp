@@ -82,6 +82,7 @@ void ReplyFetcher::checkForTimeout()
 
 void ReplyFetcher::onFinished()
 {
+    QLOG_DEBUG() << "QEverCloud.http.ReplyFetcher.onFinished m_success=" << m_success;
     m_ticker->stop();
 
     if (!m_success) {
@@ -90,6 +91,8 @@ void ReplyFetcher::onFinished()
 
     m_receivedData = m_reply->readAll();
     m_httpStatusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    QLOG_DEBUG() << "QEverCloud.http.ReplyFetcher.onFinished m_httpStatusCode=" << m_httpStatusCode
+                 << " datalen=" << m_receivedData.size();
 
     QObject::disconnect(m_reply.data());
     emit replyFetched(this);
@@ -97,20 +100,19 @@ void ReplyFetcher::onFinished()
 
 void ReplyFetcher::onError(QNetworkReply::NetworkError error)
 {
-    QLOG_WARN() << "QEverCloud.http.ReplyFetcher.onError: " << m_reply->errorString();
-
-    Q_UNUSED(error)
-
-    // OLD
-    //setError(m_reply->errorString());
-
-    // patch from https://github.com/d1vanov/QEverCloud/commit/012425c98e52406fc5f3aa69750eba84b931a5a3
     auto errorText = m_reply->errorString();
+    QLOG_WARN() << "QEverCloud.http.ReplyFetcher.onError: code=" << error
+                << " (" << ((int) error) << ") "
+                << ", text=" << errorText
+                << ", m_success=" << m_success;
+
+    // applied patch from https://github.com/d1vanov/QEverCloud/commit/012425c98e52406fc5f3aa69750eba84b931a5a3
     // Workaround for Evernote server problems
-    if ( (error == QNetworkReply::UnknownContentError) &&
-         errorText.endsWith(QStringLiteral("server replied: OK")) )
-    {
+    if ((error == QNetworkReply::UnknownContentError) &&
+        errorText.endsWith(QStringLiteral("server replied: OK"))) {
         // ignore this, it's actually ok
+        QLOG_WARN() << "QEverCloud.http.ReplyFetcher.onError: error is ignored "
+                    << "(it's actually ok)";
         return;
     }
     setError(errorText);
@@ -149,26 +151,36 @@ QByteArray simpleDownload(QNetworkAccessManager* nam, QNetworkRequest request,
 
     qint64 time1 = QDateTime::currentMSecsSinceEpoch();
     QString url = request.url().toString();
-    QLOG_DEBUG() << "QEverCloud.http.simpleDownload starting loop, url=" << url;
+    QLOG_DEBUG() << "QEverCloud.http.simpleDownload: sending http request url=" << url << ", postData=" << postData;
     loop.exec(QEventLoop::ExcludeUserInputEvents);
 
     fetcherLauncher->deleteLater();
 
     qint64 time2 = QDateTime::currentMSecsSinceEpoch();
-    if (httpStatusCode) {
-        *httpStatusCode = fetcher->httpStatusCode();
-        QLOG_DEBUG() << "QEverCloud.http.simpleDownload, url=" << url << ", http code " << *httpStatusCode
-                     << ", " << (time2 - time1) << " ms";
-    }
+    int httpCodeLocal = fetcher->httpStatusCode();
+    bool isError = fetcher->isError();
+    // if (!isError && (httpCodeLocal != 200)) {
+    //     QLOG_WARN() << "QEverCloud.http.simpleDownload: setting fake http code 200";
+    //     httpCodeLocal = 200;
+    // }
+    *httpStatusCode = httpCodeLocal;
 
-    if (fetcher->isError()) {
+    QByteArray receivedData = fetcher->receivedData();
+
+
+    QLOG_DEBUG() << "QEverCloud.http.simpleDownload: got reply for url=" << url << ", http code " << httpCodeLocal
+                 << ", isError=" << isError
+                 << ", " << (time2 - time1) << " ms";
+    QLOG_DEBUG() << "QEverCloud.http.simpleDownload: got reply for url=" << url << ", data=" << receivedData;
+
+    if (isError) {
         QString errorText = fetcher->errorText();
-        QLOG_WARN() << "QEverCloud.http.simpleDownload error " << errorText;
+        QLOG_WARN() << "QEverCloud.http.simpleDownload: reply for url=" << url
+                    << " is error: " << errorText << " => EverCloudException " << errorText;
         fetcher->deleteLater();
         throw EverCloudException(errorText);
     }
 
-    QByteArray receivedData = fetcher->receivedData();
     fetcher->deleteLater();
     return receivedData;
 }
@@ -191,10 +203,13 @@ QNetworkRequest createEvernoteRequest(QString url)
 
 QByteArray askEvernote(QString url, QByteArray postData)
 {
+    QLOG_DEBUG() << "QEverCloud.http.askEvernote: sending http request url=" << url << ", postData=" << postData;
     int httpStatusCode = 0;
     QByteArray reply = simpleDownload(evernoteNetworkAccessManager(), createEvernoteRequest(url), postData, &httpStatusCode);
 
     if (httpStatusCode != 200) {
+        QLOG_WARN() << "QEverCloud.askEvernote: http code=" << httpStatusCode << " => EverCloudException";
+
         throw EverCloudException(QStringLiteral("HTTP Status Code = %1").arg(httpStatusCode));
     }
 
