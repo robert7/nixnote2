@@ -86,6 +86,7 @@ private:
     void checkForInkNotes(QList<Resource> &resources, QString shard, QString authToken);      // Check if a resource list has any ink notes
 
     QString authToken;                        // Authorization token.
+    QString shardId;
     bool init();                              // Init function.  Run after the thread has started & after first call.
     QNetworkAccessManager *networkAccessManager;              // Network connection to download inknotes
     void handleEDAMSystemException(EDAMSystemException e, QString additionalInfo = "");

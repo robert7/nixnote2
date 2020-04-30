@@ -99,6 +99,8 @@ bool CommunicationManager::enConnect() {
     QString data = global.accountsManager->getOAuthToken();
     tokenizer.tokenize(data);
     authToken = tokenizer.oauth_token;
+    shardId = tokenizer.edam_shard;
+
     bool b = init();
 
     QLOG_DEBUG() << "enConnect: " << b;
@@ -124,12 +126,14 @@ bool CommunicationManager::initNoteStore() {
     using namespace qevercloud;
     QLOG_DEBUG() << "initNoteStore()";
 
-    User user;
-    if (!getUserInfo(user)) {
-        QLOG_DEBUG() << "initNoteStore: fail";
-        return false;
-    }
-    noteStorePath = "/edam/note/" + user.shardId;
+    // EXPERIMENTAL !! disable UserStore.getUser() call
+    // User user;
+    // if (!getUserInfo(user)) { //@@
+    //     QLOG_DEBUG() << "initNoteStore: fail";
+    //     return false;
+    // }
+
+    noteStorePath = "/edam/note/" + shardId;
 
     QString noteStoreUrl = QString("https://") + evernoteHost + noteStorePath;
     myNoteStore = new NoteStore(noteStoreUrl, authToken, this);
@@ -141,11 +145,11 @@ bool CommunicationManager::initNoteStore() {
 // Disconnect from Evernote's servers (for private notebooks)
 void CommunicationManager::enDisconnect() {
     //noteStore->disconnect();
-    userStore->disconnect();
-    if (linkedNoteStore != nullptr)
-        linkedNoteStore->disconnect();
-    if (myNoteStore != nullptr)
-        myNoteStore->disconnect();
+    //userStore->disconnect();
+    // if (linkedNoteStore != nullptr)
+    //     linkedNoteStore->disconnect();
+    // if (myNoteStore != nullptr)
+    //     myNoteStore->disconnect();
 }
 
 

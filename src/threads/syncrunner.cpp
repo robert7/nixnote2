@@ -108,15 +108,7 @@ void SyncRunner::evernoteSync() {
         return;
     }
 
-    User user;
     UserTable userTable(db);
-    if (!comm->getUserInfo(user)) {
-        this->communicationErrorHandler();
-        error = true;
-        return;
-    }
-    userTable.updateUser(user);
-
     SyncState syncState;
     if (!comm->getSyncState("", syncState)) {
         this->communicationErrorHandler();
@@ -139,6 +131,19 @@ void SyncRunner::evernoteSync() {
         fullSync = true;
     }
 
+    // EXPERIMENTAL disable UserStore.getUser() for incremental sync
+    if (fullSync) {
+        User user;
+        if (!comm->getUserInfo(user)) { // get user info BEFORE SYNC
+            this->communicationErrorHandler();
+            error = true;
+            return;
+        }
+        userTable.updateUser(user); // update user info in DB
+    }
+
+
+
     emit setMessage(tr("Beginning sync"), defaultMsgTimeout);
 
     // If there are remote changes
@@ -154,12 +159,15 @@ void SyncRunner::evernoteSync() {
         }
     }
 
-    if (!comm->getUserInfo(user)) {
-        this->communicationErrorHandler();
-        error = true;
-        return;
-    }
-    userTable.updateUser(user);
+    // EXPERIMENTAL disable UserStore.getUser()
+    // no idea why it was before called twice
+    //
+    // if (!comm->getUserInfo(user)) {
+    //     this->communicationErrorHandler();
+    //     error = true;
+    //     return;
+    // }
+    // userTable.updateUser(user);
 
     if (!global.disableUploads && !error) {
         qint32 searchUsn = uploadSavedSearches();
