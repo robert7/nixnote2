@@ -168,7 +168,6 @@ SOURCES += \
     src/models/notemodel.cpp \
     src/models/ntreemodel.cpp \
     src/oauth/oauthtokenizer.cpp \
-    src/oauth/oauthwindow.cpp \
     src/hunspell/spellchecker.cpp \
     src/qevercloud/QEverCloud/src/AsyncResult.cpp \
     src/qevercloud/QEverCloud/src/EventLoopFinisher.cpp \
@@ -364,7 +363,6 @@ HEADERS  += \
     src/models/notemodel.h \
     src/models/ntreemodel.h \
     src/oauth/oauthtokenizer.h \
-    src/oauth/oauthwindow.h \
     src/hunspell/spellchecker.h \
     src/qevercloud/QEverCloud/headers/AsyncResult.h \
     src/qevercloud/QEverCloud/headers/EventLoopFinisher.h \
@@ -568,6 +566,8 @@ langrel.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += langrel
 PRE_TARGETDEPS += $$TRANSLATIONS_OUT
 
+translations.files = $$TRANSLATION_TARGET_DIR
+translations.CONFIG = no_check_exist
 
 
 mac {
@@ -579,23 +579,19 @@ mac {
     images.files = resources/images
     java.path = Contents/Resources
     java.files = java
-
     textfiles.path = Contents/Resources
+    translations.path = Contents/Resources/translations
+    translations.files = $$TRANSLATIONS_OUT
     docs.path = Contents/Resources/doc
 
-    mactranslations.path = Contents/Resources/translations
-    mactranslations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
-    mactranslations.depends = compiler_langrel_make_all
 
     help.path = Contents/Resources
     help.files = help
 
-    QMAKE_BUNDLE_DATA += images java mactranslations help textfiles docs
+    QMAKE_BUNDLE_DATA += images java translations help textfiles docs
     #INSTALLS = binary
 } else {
     translations.path = $${PREFIX}/share/$$TARGET
-    translations.files = $$TRANSLATION_TARGET_DIR
-    translations.CONFIG = no_check_exist
 
     INSTALLS = binary desktop images java help textfiles docs man translations icons
 }
