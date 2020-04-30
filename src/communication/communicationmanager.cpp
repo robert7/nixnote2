@@ -61,8 +61,6 @@ extern Global global;
 CommunicationManager::CommunicationManager(DatabaseConnection *db) {
     this->db = db;
     evernoteHost = global.server;
-    //userStorePath = "/edam/user";
-    //clientName = NN_APP_CLIENT_NAME;
     inkNoteList = new QList<QPair<QString, QImage *> *>();
     thumbnailList = new QList<QPair<QString, QImage *> *>();
     postData = new QUrl();
@@ -74,7 +72,6 @@ CommunicationManager::CommunicationManager(DatabaseConnection *db) {
     minutesToNextSync = 0;
     if (networkAccessManager == nullptr) {
         networkAccessManager = new QNetworkAccessManager(this);
-        //        connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(inkNoteFinished(QNetworkReply*)));
     }
 }
 
@@ -102,7 +99,6 @@ bool CommunicationManager::enConnect() {
     QString data = global.accountsManager->getOAuthToken();
     tokenizer.tokenize(data);
     authToken = tokenizer.oauth_token;
-    //    authToken = global.accountsManager->getOAuthToken();
     bool b = init();
 
     QLOG_DEBUG() << "enConnect: " << b;

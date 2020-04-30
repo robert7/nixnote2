@@ -159,10 +159,6 @@ QByteArray simpleDownload(QNetworkAccessManager* nam, QNetworkRequest request,
     qint64 time2 = QDateTime::currentMSecsSinceEpoch();
     int httpCodeLocal = fetcher->httpStatusCode();
     bool isError = fetcher->isError();
-    // if (!isError && (httpCodeLocal != 200)) {
-    //     QLOG_WARN() << "QEverCloud.http.simpleDownload: setting fake http code 200";
-    //     httpCodeLocal = 200;
-    // }
     *httpStatusCode = httpCodeLocal;
 
     QByteArray receivedData = fetcher->receivedData();

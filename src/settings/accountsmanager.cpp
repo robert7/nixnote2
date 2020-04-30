@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "accountsmanager.h"
 #include "src/global.h"
+#include "src/communication/communicationmanager.h"
 
 extern Global global;
 
@@ -116,7 +117,7 @@ QStringList AccountsManager::nameList() {
 QString AccountsManager::getOAuthToken() {
     QDomElement element = currentNode.toElement();
     QDomNode consumerNode = element.firstChildElement("consumerKey");
-    if (consumerNode.toElement().text() != "baumgarr-3523")   // Current EDAM_CONSUMER_KEY
+    if (consumerNode.toElement().text() != EDAM_CONSUMER_KEY)   // Current EDAM_CONSUMER_KEY
         return "";
     QDomNode tokenNode = element.firstChildElement("oauth-token");
     return tokenNode.toElement().text();
@@ -205,7 +206,7 @@ int AccountsManager::addId(int id, QString name, QString oauth, QString server) 
 
     if (oauth.trimmed() != "") {
         QDomElement consumerKeyElement = doc.createElement("consumerKey");
-        QDomText consumerKeyText = doc.createTextNode("baumgarr-3523");   // current EDAM_CONSUMER_KEY = "baumgarr-3523"
+        QDomText consumerKeyText = doc.createTextNode(EDAM_CONSUMER_KEY);   // current EDAM_CONSUMER_KEY = "baumgarr-3523"
         consumerKeyElement.appendChild(consumerKeyText);
         account.appendChild(consumerKeyElement);
 

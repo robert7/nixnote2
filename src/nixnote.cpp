@@ -1509,8 +1509,8 @@ void NixNote::synchronize() {
     }
 
     if (!global.accountsManager->oauthTokenFound()) {
-        QString consumerKey = "baumgarr-3523";
-        QString consumerSecret = "8d5ee175f8a5d3ec";
+        QString consumerKey = EDAM_CONSUMER_KEY;
+        QString consumerSecret = EDAM_CONSUMER_SECRET;
         EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
         d.setWindowTitle(tr("Log in to Evernote") + " (" + global.server + ")");
         if (d.exec() != QDialog::Accepted) {
@@ -2426,8 +2426,8 @@ void NixNote::viewNoteHistory() {
     }
 
     if (!global.accountsManager->oauthTokenFound()) {
-        QString consumerKey = "baumgarr-3523";
-        QString consumerSecret = "8d5ee175f8a5d3ec";
+        QString consumerKey = EDAM_CONSUMER_KEY;
+        QString consumerSecret = EDAM_CONSUMER_SECRET;
         EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
         d.setWindowTitle(tr("Log in to Evernote"));
         if (d.exec() != QDialog::Accepted) {
