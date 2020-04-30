@@ -1512,7 +1512,7 @@ void NixNote::synchronize() {
         QString consumerKey = "baumgarr-3523";
         QString consumerSecret = "8d5ee175f8a5d3ec";
         EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
-        d.setWindowTitle(tr("Log in to Evernote"));
+        d.setWindowTitle(tr("Log in to Evernote") + " (" + global.server + ")");
         if (d.exec() != QDialog::Accepted) {
             QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
             return;
