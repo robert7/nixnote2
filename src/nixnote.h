@@ -49,7 +49,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/gui/ntrashtree.h"
 #include "src/dialog/accountdialog.h"
 #include "src/threads/counterrunner.h"
-//#include "src/oauth/oauthwindow.h"
 #include "src/html/thumbnailer.h"
 #include "src/reminders/remindermanager.h"
 
@@ -185,6 +184,7 @@ private:
     TrayMenu *createTrayContexMenu();
     void restoreAndShowMainWindow();
     void configurePdfPrinter(QPrinter &printer, QString &file) const;
+    bool checkAuthAndReauthorize();
 
 public:
     NixNote(QWidget *parent = 0);  // Constructor

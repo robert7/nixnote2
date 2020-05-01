@@ -1508,23 +1508,8 @@ void NixNote::synchronize() {
         tabWindow->currentBrowser()->noteTitle.checkNoteTitleChange();
     }
 
-    if (!global.accountsManager->oauthTokenFound()) {
-        QString consumerKey = "baumgarr-3523";
-        QString consumerSecret = "8d5ee175f8a5d3ec";
-        EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
-        d.setWindowTitle(tr("Log in to Evernote"));
-        if (d.exec() != QDialog::Accepted) {
-            QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
-            return;
-        }
-        QString token = QString("oauth_token=") + d.oauthResult().authenticationToken +
-                        QString("&oauth_token_secret=&edam_shard=") + d.oauthResult().shardId +
-                        QString("&edam_userId=") + QString::number(d.oauthResult().userId) +
-                        QString("&edam_expires=") + QString::number(d.oauthResult().expires) +
-                        QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
-                        QString("&edam_webApiUrlPrefix=") + d.oauthResult().webApiUrlPrefix;
-
-        global.accountsManager->setOAuthToken(token);
+    if (!this->checkAuthAndReauthorize()) {
+        return;
     }
 
     QLOG_DEBUG() << "Preparing sync";
@@ -1541,6 +1526,38 @@ void NixNote::synchronize() {
     tabWindow->saveAllNotes();
     syncButtonTimer.start(3);
     emit syncRequested();
+}
+
+/**
+ * Check if token is available & reauthorize if not.
+ * Save new token.
+ */
+bool NixNote::checkAuthAndReauthorize() {
+    if (!global.accountsManager->oauthTokenFound()) {
+        QLOG_INFO() << "Authorization token not found => reauthorize";
+
+        QString consumerKey = EDAM_CONSUMER_KEY;
+        QString consumerSecret = EDAM_CONSUMER_SECRET;
+        EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
+        d.setWindowTitle(tr("Log in to Evernote") + " (" + global.server + ")");
+        if (d.exec() != QDialog::Accepted) {
+            QLOG_INFO() << "Reauthorization failed";
+            QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
+            return false;
+        }
+        const QString &oauthToken = d.oauthResult().authenticationToken;
+        QString token = QString("oauth_token=") + oauthToken +
+                        QString("&oauth_token_secret=&edam_shard=") + d.oauthResult().shardId +
+                        QString("&edam_userId=") + QString::number(d.oauthResult().userId) +
+                        QString("&edam_expires=") + QString::number(d.oauthResult().expires) +
+                        QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
+                        QString("&edam_webApiUrlPrefix=") + d.oauthResult().webApiUrlPrefix;
+
+        QLOG_INFO() << "Reauthorization OK";
+        global.accountsManager->setOAuthToken(token);
+        syncRunner.setUpdateUserDataOnNextSync(true);
+    }
+    return true;
 }
 
 
@@ -2425,23 +2442,8 @@ void NixNote::viewNoteHistory() {
         return;
     }
 
-    if (!global.accountsManager->oauthTokenFound()) {
-        QString consumerKey = "baumgarr-3523";
-        QString consumerSecret = "8d5ee175f8a5d3ec";
-        EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
-        d.setWindowTitle(tr("Log in to Evernote"));
-        if (d.exec() != QDialog::Accepted) {
-            QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
-            return;
-        }
-        QString token = QString("oauth_token=") + d.oauthResult().authenticationToken +
-                        QString("&oauth_token_secret=&edam_shard=") + d.oauthResult().shardId +
-                        QString("&edam_userId=") + QString::number(d.oauthResult().userId) +
-                        QString("&edam_expires=") + QString::number(d.oauthResult().expires) +
-                        QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
-                        QString("&edam_webApiUrlPrefix=") + d.oauthResult().webApiUrlPrefix;
-
-        global.accountsManager->setOAuthToken(token);
+    if (!this->checkAuthAndReauthorize()) {
+        return;
     }
 
     UserTable userTable(global.db);

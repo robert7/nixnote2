@@ -27,20 +27,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //***************************************************************************
 
 #include "src/qevercloud/QEverCloud/headers/QEverCloud.h"
-
 #include "src/global.h"
-
 #include <QString>
 #include "communicationerror.h"
-
 #include <inttypes.h>
 #include <iostream>
-
 // Windows Check
 #ifndef _WIN32
 #include <netinet/in.h>
 #endif
-
 #include <stdint.h>
 #include <QObject>
 #include <QNetworkAccessManager>
@@ -57,8 +52,8 @@ using namespace std;
 
 
 //* OAuth key & secret
-#define EDAM_CONSUMER_KEY = "baumgarr-3523"
-#define EDAM_CONSUMER_SECRET = "8d5ee175f8a5d3ec"
+#define EDAM_CONSUMER_KEY     "baumgarr-3523"
+#define EDAM_CONSUMER_SECRET  "8d5ee175f8a5d3ec"
 
 #define SYNC_CHUNK_NOTEBOOKS            0x0001
 #define SYNC_CHUNK_TAGS                 0x0002
@@ -91,6 +86,7 @@ private:
     void checkForInkNotes(QList<Resource> &resources, QString shard, QString authToken);      // Check if a resource list has any ink notes
 
     QString authToken;                        // Authorization token.
+    QString shardId;
     bool init();                              // Init function.  Run after the thread has started & after first call.
     QNetworkAccessManager *networkAccessManager;              // Network connection to download inknotes
     void handleEDAMSystemException(EDAMSystemException e, QString additionalInfo = "");

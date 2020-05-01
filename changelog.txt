@@ -1,10 +1,14 @@
-NixNote (2.1.6-rc3) stable; urgency=low
+NixNote (2.1.6-rc6) stable; urgency=low
   * Updated russian translation (thanks to Александр, ra3ggi@gmail.com)
   * Removed default text for "insert code block" and added keyboard shortcut Ctrl+Shift+L
   * Added new command options for "signalGui" --openNoteUrl,  --openExternalNoteUrl,  --openNoteNewTabUrl
     thanks to Rodrigo Eliseu, https://github.com/rodelrod
   * Fixed macOS build
- -- Robert Spiegel <nightingale7@gmail.com>  Wed, 16 Oct 2019 09:15:00 +0200
+  * Improved http request logging (in debug level)
+  * Experimental change to fix the 429 error in UserStore.getUser - eliminated most calls to UserStore.getUser
+  * Improved handling of authorization tokens; improved logging
+  * Further improvements in sync and handling of dser data
+ -- Robert Spiegel <nightingale7@gmail.com>  Fri, 01 May 2020 12:26:32 +0200
 
 NixNote (2.1.5) stable; urgency=low
   * Updated qevercloud (Evernote API) to latest development version (v.4.1.0) - Evernote API 1.29

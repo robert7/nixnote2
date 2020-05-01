@@ -61,8 +61,6 @@ extern Global global;
 CommunicationManager::CommunicationManager(DatabaseConnection *db) {
     this->db = db;
     evernoteHost = global.server;
-    //userStorePath = "/edam/user";
-    //clientName = NN_APP_CLIENT_NAME;
     inkNoteList = new QList<QPair<QString, QImage *> *>();
     thumbnailList = new QList<QPair<QString, QImage *> *>();
     postData = new QUrl();
@@ -74,7 +72,6 @@ CommunicationManager::CommunicationManager(DatabaseConnection *db) {
     minutesToNextSync = 0;
     if (networkAccessManager == nullptr) {
         networkAccessManager = new QNetworkAccessManager(this);
-        //        connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(inkNoteFinished(QNetworkReply*)));
     }
 }
 
@@ -102,7 +99,8 @@ bool CommunicationManager::enConnect() {
     QString data = global.accountsManager->getOAuthToken();
     tokenizer.tokenize(data);
     authToken = tokenizer.oauth_token;
-    //    authToken = global.accountsManager->getOAuthToken();
+    shardId = tokenizer.edam_shard;
+
     bool b = init();
 
     QLOG_DEBUG() << "enConnect: " << b;
@@ -128,12 +126,14 @@ bool CommunicationManager::initNoteStore() {
     using namespace qevercloud;
     QLOG_DEBUG() << "initNoteStore()";
 
-    User user;
-    if (!getUserInfo(user)) {
-        QLOG_DEBUG() << "initNoteStore: fail";
-        return false;
-    }
-    noteStorePath = "/edam/note/" + user.shardId;
+    // EXPERIMENTAL !! disable UserStore.getUser() call
+    // User user;
+    // if (!getUserInfo(user)) { //@@
+    //     QLOG_DEBUG() << "initNoteStore: fail";
+    //     return false;
+    // }
+
+    noteStorePath = "/edam/note/" + shardId;
 
     QString noteStoreUrl = QString("https://") + evernoteHost + noteStorePath;
     myNoteStore = new NoteStore(noteStoreUrl, authToken, this);
@@ -145,11 +145,11 @@ bool CommunicationManager::initNoteStore() {
 // Disconnect from Evernote's servers (for private notebooks)
 void CommunicationManager::enDisconnect() {
     //noteStore->disconnect();
-    userStore->disconnect();
-    if (linkedNoteStore != nullptr)
-        linkedNoteStore->disconnect();
-    if (myNoteStore != nullptr)
-        myNoteStore->disconnect();
+    //userStore->disconnect();
+    // if (linkedNoteStore != nullptr)
+    //     linkedNoteStore->disconnect();
+    // if (myNoteStore != nullptr)
+    //     myNoteStore->disconnect();
 }
 
 
@@ -160,13 +160,15 @@ bool CommunicationManager::getUserInfo(User &user) {
     QNetworkAccessManager::NetworkAccessibility accessibility = p->networkAccessible();
     // unfortunately it doesn't really seem to check the network availability
     qint64 time1 = QDateTime::currentMSecsSinceEpoch();
-    QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo; networkAccessible=" << accessibility << ", timestamp=" << time1;
+    QLOG_DEBUG() << "CommunicationManager.getUserInfo(): networkAccessible=" << accessibility << ", timestamp=" << time1;
 
-
+    QLOG_DEBUG() << "CommunicationManager.getUserInfo(): new UserStore(); host=" << evernoteHost;
+    QLOG_TRACE() << "token=" << authToken;
     userStore = new UserStore(evernoteHost, authToken);
 
     bool res = true;
     try {
+        QLOG_DEBUG() << "CommunicationManager.getUserInfo(): userStore.getUser()";
         User u = userStore->getUser();
         user = u;
     } catch (ThriftException &e) {

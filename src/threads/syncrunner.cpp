@@ -43,6 +43,7 @@ SyncRunner::SyncRunner() {
     apiRateLimitExceeded = false;
     minutesToNextSync = 0;
     error = false;
+    updateUserDataOnNextSync = false;
 }
 
 SyncRunner::~SyncRunner() {
@@ -100,6 +101,19 @@ void SyncRunner::synchronize() {
     global.connected = false;
 }
 
+void SyncRunner::requestAndStoreUserData() {
+    UserTable userTable(db);
+    QLOG_INFO() << "Requesting user data UserStore.getInfo";
+    User user;
+    if (!comm->getUserInfo(user)) { // get user info BEFORE SYNC
+        this->communicationErrorHandler();
+        error = true;
+        return;
+    }
+    QLOG_INFO() << "About to store user data";
+    userTable.updateUser(user); // update user info in DB
+    QLOG_INFO() << "User data updated";
+}
 
 void SyncRunner::evernoteSync() {
     QLOG_TRACE() << "Sync thread:" << QThread::currentThreadId();
@@ -107,15 +121,6 @@ void SyncRunner::evernoteSync() {
         QLOG_DEBUG() << "synchronize: not connected";
         return;
     }
-
-    User user;
-    UserTable userTable(db);
-    if (!comm->getUserInfo(user)) {
-        this->communicationErrorHandler();
-        error = true;
-        return;
-    }
-    userTable.updateUser(user);
 
     SyncState syncState;
     if (!comm->getSyncState("", syncState)) {
@@ -126,6 +131,7 @@ void SyncRunner::evernoteSync() {
 
     fullSync = false;
 
+    UserTable userTable(db);
     qlonglong lastSyncDate = userTable.getLastSyncDate();
     updateSequenceNumber = userTable.getLastSyncNumber();
 
@@ -138,6 +144,14 @@ void SyncRunner::evernoteSync() {
     if (updateSequenceNumber == 0) {
         fullSync = true;
     }
+
+    // EXPERIMENTAL disable UserStore.getUser() for incremental sync
+    if (fullSync || updateUserDataOnNextSync) {
+        this->requestAndStoreUserData();
+        updateUserDataOnNextSync = false;
+    }
+
+
 
     emit setMessage(tr("Beginning sync"), defaultMsgTimeout);
 
@@ -153,13 +167,6 @@ void SyncRunner::evernoteSync() {
             error = true;
         }
     }
-
-    if (!comm->getUserInfo(user)) {
-        this->communicationErrorHandler();
-        error = true;
-        return;
-    }
-    userTable.updateUser(user);
 
     if (!global.disableUploads && !error) {
         qint32 searchUsn = uploadSavedSearches();
@@ -1228,5 +1235,10 @@ void SyncRunner::communicationErrorHandler() {
     }
     // should be already displayed by "error" itself
     //emit(setMessage(comm->error.getMessage(), 0));
+}
+
+void SyncRunner::setUpdateUserDataOnNextSync(bool updateUserDataOnNextSync) {
+    QLOG_INFO() << "Setting updateUserDataOnNextSync to " << updateUserDataOnNextSync;
+    SyncRunner::updateUserDataOnNextSync = updateUserDataOnNextSync;
 }
 

@@ -168,7 +168,6 @@ SOURCES += \
     src/models/notemodel.cpp \
     src/models/ntreemodel.cpp \
     src/oauth/oauthtokenizer.cpp \
-    src/oauth/oauthwindow.cpp \
     src/hunspell/spellchecker.cpp \
     src/qevercloud/QEverCloud/src/AsyncResult.cpp \
     src/qevercloud/QEverCloud/src/EventLoopFinisher.cpp \
@@ -364,7 +363,6 @@ HEADERS  += \
     src/models/notemodel.h \
     src/models/ntreemodel.h \
     src/oauth/oauthtokenizer.h \
-    src/oauth/oauthwindow.h \
     src/hunspell/spellchecker.h \
     src/qevercloud/QEverCloud/headers/AsyncResult.h \
     src/qevercloud/QEverCloud/headers/EventLoopFinisher.h \
@@ -452,7 +450,7 @@ gcc {
     CONFIG += $$COMPILER_CONFIG
 }
 
-linux:QMAKE_CXXFLAGS += -std=c++11 -g -O2  -Wformat -Werror=format-security
+QMAKE_CXXFLAGS += -std=c++11 -g -O2  -Wformat -Werror=format-security
 linux:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
 
 g++4 {
@@ -505,8 +503,14 @@ fullversion.input = VERSION_FILES
 fullversion.output  = $${DESTDIR}/version/build-version.txt
 fullversion.commands = ./development/create-build-version.sh $${DESTDIR}
 fullversion.CONFIG += no_link no_check_exist
-QMAKE_EXTRA_COMPILERS += fullversion
-PRE_TARGETDEPS += $$DESTDIR/version/build-version.txt
+
+fullversion2.input = VERSION_FILES
+fullversion2.output  = $${DESTDIR}/version/version.txt
+fullversion2.commands = ./development/create-build-version.sh $${DESTDIR}
+fullversion2.CONFIG += no_link no_check_exist
+
+QMAKE_EXTRA_COMPILERS += fullversion fullversion2
+PRE_TARGETDEPS += $$DESTDIR/version/build-version.txt $$DESTDIR/version/version.txt
 
 man.path = $${PREFIX}/share/man/man1
 man.files = docs/nixnote2.1
@@ -562,6 +566,8 @@ langrel.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += langrel
 PRE_TARGETDEPS += $$TRANSLATIONS_OUT
 
+translations.files = $$TRANSLATION_TARGET_DIR
+translations.CONFIG = no_check_exist
 
 
 mac {
@@ -573,23 +579,19 @@ mac {
     images.files = resources/images
     java.path = Contents/Resources
     java.files = java
-
     textfiles.path = Contents/Resources
+    translations.path = Contents/Resources/translations
+    translations.files = $$TRANSLATIONS_OUT
     docs.path = Contents/Resources/doc
 
-    mactranslations.path = Contents/Resources/translations
-    mactranslations.files = $$files($$TRANSLATION_TARGET_DIR/*.qm)
-    mactranslations.depends = compiler_langrel_make_all
 
     help.path = Contents/Resources
     help.files = help
 
-    QMAKE_BUNDLE_DATA += images java mactranslations help textfiles docs
+    QMAKE_BUNDLE_DATA += images java translations help textfiles docs
     #INSTALLS = binary
 } else {
     translations.path = $${PREFIX}/share/$$TARGET
-    translations.files = $$TRANSLATION_TARGET_DIR
-    translations.CONFIG = no_check_exist
 
     INSTALLS = binary desktop images java help textfiles docs man translations icons
 }

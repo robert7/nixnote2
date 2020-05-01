@@ -1,0 +1,63 @@
+diff --git a/src/global.cpp b/src/global.cpp
+index 046ac04e..98275d83 100644
+--- a/src/global.cpp
++++ b/src/global.cpp
+@@ -142,6 +142,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
+     connected = false;
+ 
+     server = accountsManager->getServer();
++    server.replace("www.evernote.com","localhost:8080");
+ 
+     settings->beginGroup(INI_GROUP_DEBUGGING);
+     disableUploads = settings->value("disableUploads", false).toBool();
+diff --git a/src/qevercloud/QEverCloud/src/http.cpp b/src/qevercloud/QEverCloud/src/http.cpp
+index d4125d00..0b420f96 100644
+--- a/src/qevercloud/QEverCloud/src/http.cpp
++++ b/src/qevercloud/QEverCloud/src/http.cpp
+@@ -203,6 +203,11 @@ QNetworkRequest createEvernoteRequest(QString url)
+ 
+ QByteArray askEvernote(QString url, QByteArray postData)
+ {
++    url.replace("https://www.evernote.com","http://localhost:8080");
++    url.replace("https:///","http://localhost:8080/");
++    url.replace("http:///","http://localhost:8080/");
++    url.replace("https://","http://");
++
+     QLOG_DEBUG() << "QEverCloud.http.askEvernote: sending http request url=" << url << ", postData=" << postData;
+     int httpStatusCode = 0;
+     QByteArray reply = simpleDownload(evernoteNetworkAccessManager(), createEvernoteRequest(url), postData, &httpStatusCode);
+diff --git a/src/qevercloud/QEverCloud/src/oauth.cpp b/src/qevercloud/QEverCloud/src/oauth.cpp
+index c24fde40..aab1918e 100644
+--- a/src/qevercloud/QEverCloud/src/oauth.cpp
++++ b/src/qevercloud/QEverCloud/src/oauth.cpp
+@@ -138,7 +138,7 @@ void EvernoteOAuthWebView::authenticate(QString host, QString consumerKey, QStri
+ 
+     qint64 timestamp = QDateTime::currentMSecsSinceEpoch()/1000;
+     quint64 nonce = nonceGenerator()();
+-    d->m_oauthUrlBase = QStringLiteral("https://%1/oauth?oauth_consumer_key=%2&oauth_signature=%3&oauth_signature_method=PLAINTEXT&oauth_timestamp=%4&oauth_nonce=%5")
++    d->m_oauthUrlBase = QStringLiteral("http://%1/oauth?oauth_consumer_key=%2&oauth_signature=%3&oauth_signature_method=PLAINTEXT&oauth_timestamp=%4&oauth_nonce=%5")
+             .arg(host, consumerKey, consumerSecret).arg(timestamp).arg(nonce);
+ 
+     // step 1: acquire temporary token
+@@ -200,7 +200,7 @@ void EvernoteOAuthWebViewPrivate::temporaryFinished(QObject * rf)
+         // step 2: directing a user to the login page
+         QObject::connect(this, QEC_SIGNAL(EvernoteOAuthWebViewPrivate,urlChanged,QUrl),
+                          this, QEC_SLOT(EvernoteOAuthWebViewPrivate,onUrlChanged,QUrl));
+-        QUrl loginUrl(QStringLiteral("https://%1//OAuth.action?%2").arg(m_host, token));
++        QUrl loginUrl(QStringLiteral("http://%1//OAuth.action?%2").arg(m_host, token));
+         setUrl(loginUrl);
+     }
+ 
+diff --git a/src/qevercloud/QEverCloud/src/services_nongenerated.cpp b/src/qevercloud/QEverCloud/src/services_nongenerated.cpp
+index 79c0b192..ded69957 100644
+--- a/src/qevercloud/QEverCloud/src/services_nongenerated.cpp
++++ b/src/qevercloud/QEverCloud/src/services_nongenerated.cpp
+@@ -23,7 +23,7 @@ UserStore::UserStore(QString host, QString authenticationToken, QObject * parent
+     QObject(parent)
+ {
+     QUrl url;
+-    url.setScheme(QStringLiteral("https"));
++    url.setScheme(QStringLiteral("http"));
+     url.setHost(host);
+     url.setPath(QStringLiteral("/edam/user"));
+     m_url = url.toString(QUrl::StripTrailingSlash);
