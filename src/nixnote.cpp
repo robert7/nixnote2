@@ -1542,12 +1542,13 @@ bool NixNote::checkAuthAndReauthorize() {
             QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
             return false;
         }
-        QString token = this->QString("oauth_token=") + d.oauthResult().authenticationToken +
-                        this->QString("&oauth_token_secret=&edam_shard=") + d.oauthResult().shardId +
-                        this->QString("&edam_userId=") + QString::number(d.oauthResult().userId) +
-                        this->QString("&edam_expires=") + QString::number(d.oauthResult().expires) +
-                        this->QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
-                        this->QString("&edam_webApiUrlPrefix=") + d.oauthResult().webApiUrlPrefix;
+        const QString &oauthToken = d.oauthResult().authenticationToken;
+        QString token = QString("oauth_token=") + oauthToken +
+                        QString("&oauth_token_secret=&edam_shard=") + d.oauthResult().shardId +
+                        QString("&edam_userId=") + QString::number(d.oauthResult().userId) +
+                        QString("&edam_expires=") + QString::number(d.oauthResult().expires) +
+                        QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
+                        QString("&edam_webApiUrlPrefix=") + d.oauthResult().webApiUrlPrefix;
 
         global.accountsManager->setOAuthToken(token);
     }
