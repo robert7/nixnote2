@@ -1534,11 +1534,14 @@ void NixNote::synchronize() {
  */
 bool NixNote::checkAuthAndReauthorize() {
     if (!global.accountsManager->oauthTokenFound()) {
+        QLOG_INFO() << "Authorization token not found => reauthorize";
+
         QString consumerKey = EDAM_CONSUMER_KEY;
         QString consumerSecret = EDAM_CONSUMER_SECRET;
         EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
         d.setWindowTitle(tr("Log in to Evernote") + " (" + global.server + ")");
         if (d.exec() != QDialog::Accepted) {
+            QLOG_INFO() << "Reauthorization failed";
             QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
             return false;
         }
@@ -1550,7 +1553,9 @@ bool NixNote::checkAuthAndReauthorize() {
                         QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
                         QString("&edam_webApiUrlPrefix=") + d.oauthResult().webApiUrlPrefix;
 
+        QLOG_INFO() << "Reauthorization OK";
         global.accountsManager->setOAuthToken(token);
+        syncRunner.setUpdateUserDataOnNextSync(true);
     }
     return true;
 }

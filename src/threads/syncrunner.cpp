@@ -43,6 +43,7 @@ SyncRunner::SyncRunner() {
     apiRateLimitExceeded = false;
     minutesToNextSync = 0;
     error = false;
+    updateUserDataOnNextSync = false;
 }
 
 SyncRunner::~SyncRunner() {
@@ -100,6 +101,19 @@ void SyncRunner::synchronize() {
     global.connected = false;
 }
 
+void SyncRunner::requestAndStoreUserData() {
+    UserTable userTable(db);
+    QLOG_INFO() << "Requesting user data UserStore.getInfo";
+    User user;
+    if (!comm->getUserInfo(user)) { // get user info BEFORE SYNC
+        this->communicationErrorHandler();
+        error = true;
+        return;
+    }
+    QLOG_INFO() << "About to store user data";
+    userTable.updateUser(user); // update user info in DB
+    QLOG_INFO() << "User data updated";
+}
 
 void SyncRunner::evernoteSync() {
     QLOG_TRACE() << "Sync thread:" << QThread::currentThreadId();
@@ -132,14 +146,9 @@ void SyncRunner::evernoteSync() {
     }
 
     // EXPERIMENTAL disable UserStore.getUser() for incremental sync
-    if (fullSync) {
-        User user;
-        if (!comm->getUserInfo(user)) { // get user info BEFORE SYNC
-            this->communicationErrorHandler();
-            error = true;
-            return;
-        }
-        userTable.updateUser(user); // update user info in DB
+    if (fullSync || updateUserDataOnNextSync) {
+        this->requestAndStoreUserData();
+        updateUserDataOnNextSync = false;
     }
 
 
@@ -1226,5 +1235,10 @@ void SyncRunner::communicationErrorHandler() {
     }
     // should be already displayed by "error" itself
     //emit(setMessage(comm->error.getMessage(), 0));
+}
+
+void SyncRunner::setUpdateUserDataOnNextSync(bool updateUserDataOnNextSync) {
+    QLOG_INFO() << "Setting updateUserDataOnNextSync to " << updateUserDataOnNextSync;
+    SyncRunner::updateUserDataOnNextSync = updateUserDataOnNextSync;
 }
 
