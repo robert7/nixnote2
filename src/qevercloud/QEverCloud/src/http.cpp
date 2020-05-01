@@ -101,7 +101,7 @@ void ReplyFetcher::onFinished()
 void ReplyFetcher::onError(QNetworkReply::NetworkError error)
 {
     auto errorText = m_reply->errorString();
-    QLOG_WARN() << "QEverCloud.http.ReplyFetcher.onError: code=" << error
+    QLOG_DEBUG() << "QEverCloud.http.ReplyFetcher.onError: code=" << error
                 << " (" << ((int) error) << ") "
                 << ", text=" << errorText
                 << ", m_success=" << m_success;
