@@ -184,6 +184,7 @@ private:
     TrayMenu *createTrayContexMenu();
     void restoreAndShowMainWindow();
     void configurePdfPrinter(QPrinter &printer, QString &file) const;
+    bool checkAuthAndReauthorize();
 
 public:
     NixNote(QWidget *parent = 0);  // Constructor

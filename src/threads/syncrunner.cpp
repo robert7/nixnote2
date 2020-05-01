@@ -108,7 +108,6 @@ void SyncRunner::evernoteSync() {
         return;
     }
 
-    UserTable userTable(db);
     SyncState syncState;
     if (!comm->getSyncState("", syncState)) {
         this->communicationErrorHandler();
@@ -118,6 +117,7 @@ void SyncRunner::evernoteSync() {
 
     fullSync = false;
 
+    UserTable userTable(db);
     qlonglong lastSyncDate = userTable.getLastSyncDate();
     updateSequenceNumber = userTable.getLastSyncNumber();
 
@@ -158,16 +158,6 @@ void SyncRunner::evernoteSync() {
             error = true;
         }
     }
-
-    // EXPERIMENTAL disable UserStore.getUser()
-    // no idea why it was before called twice
-    //
-    // if (!comm->getUserInfo(user)) {
-    //     this->communicationErrorHandler();
-    //     error = true;
-    //     return;
-    // }
-    // userTable.updateUser(user);
 
     if (!global.disableUploads && !error) {
         qint32 searchUsn = uploadSavedSearches();

@@ -1508,23 +1508,8 @@ void NixNote::synchronize() {
         tabWindow->currentBrowser()->noteTitle.checkNoteTitleChange();
     }
 
-    if (!global.accountsManager->oauthTokenFound()) {
-        QString consumerKey = EDAM_CONSUMER_KEY;
-        QString consumerSecret = EDAM_CONSUMER_SECRET;
-        EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
-        d.setWindowTitle(tr("Log in to Evernote") + " (" + global.server + ")");
-        if (d.exec() != QDialog::Accepted) {
-            QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
-            return;
-        }
-        QString token = QString("oauth_token=") + d.oauthResult().authenticationToken +
-                        QString("&oauth_token_secret=&edam_shard=") + d.oauthResult().shardId +
-                        QString("&edam_userId=") + QString::number(d.oauthResult().userId) +
-                        QString("&edam_expires=") + QString::number(d.oauthResult().expires) +
-                        QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
-                        QString("&edam_webApiUrlPrefix=") + d.oauthResult().webApiUrlPrefix;
-
-        global.accountsManager->setOAuthToken(token);
+    if (!this->checkAuthAndReauthorize()) {
+        return;
     }
 
     QLOG_DEBUG() << "Preparing sync";
@@ -1541,6 +1526,32 @@ void NixNote::synchronize() {
     tabWindow->saveAllNotes();
     syncButtonTimer.start(3);
     emit syncRequested();
+}
+
+/**
+ * Check if token is available & reauthorize if not.
+ * Save new token.
+ */
+bool NixNote::checkAuthAndReauthorize() {
+    if (!global.accountsManager->oauthTokenFound()) {
+        QString consumerKey = EDAM_CONSUMER_KEY;
+        QString consumerSecret = EDAM_CONSUMER_SECRET;
+        EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
+        d.setWindowTitle(tr("Log in to Evernote") + " (" + global.server + ")");
+        if (d.exec() != QDialog::Accepted) {
+            QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
+            return false;
+        }
+        QString token = this->QString("oauth_token=") + d.oauthResult().authenticationToken +
+                        this->QString("&oauth_token_secret=&edam_shard=") + d.oauthResult().shardId +
+                        this->QString("&edam_userId=") + QString::number(d.oauthResult().userId) +
+                        this->QString("&edam_expires=") + QString::number(d.oauthResult().expires) +
+                        this->QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
+                        this->QString("&edam_webApiUrlPrefix=") + d.oauthResult().webApiUrlPrefix;
+
+        global.accountsManager->setOAuthToken(token);
+    }
+    return true;
 }
 
 
@@ -2425,23 +2436,8 @@ void NixNote::viewNoteHistory() {
         return;
     }
 
-    if (!global.accountsManager->oauthTokenFound()) {
-        QString consumerKey = EDAM_CONSUMER_KEY;
-        QString consumerSecret = EDAM_CONSUMER_SECRET;
-        EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
-        d.setWindowTitle(tr("Log in to Evernote"));
-        if (d.exec() != QDialog::Accepted) {
-            QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
-            return;
-        }
-        QString token = QString("oauth_token=") + d.oauthResult().authenticationToken +
-                        QString("&oauth_token_secret=&edam_shard=") + d.oauthResult().shardId +
-                        QString("&edam_userId=") + QString::number(d.oauthResult().userId) +
-                        QString("&edam_expires=") + QString::number(d.oauthResult().expires) +
-                        QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
-                        QString("&edam_webApiUrlPrefix=") + d.oauthResult().webApiUrlPrefix;
-
-        global.accountsManager->setOAuthToken(token);
+    if (!this->checkAuthAndReauthorize()) {
+        return;
     }
 
     UserTable userTable(global.db);
