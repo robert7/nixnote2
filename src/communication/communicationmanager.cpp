@@ -162,7 +162,8 @@ bool CommunicationManager::getUserInfo(User &user) {
     qint64 time1 = QDateTime::currentMSecsSinceEpoch();
     QLOG_DEBUG() << "CommunicationManager.getUserInfo(): networkAccessible=" << accessibility << ", timestamp=" << time1;
 
-    QLOG_DEBUG() << "CommunicationManager.getUserInfo(): new UserStore(); host=" << evernoteHost << "; token=" << authToken;
+    QLOG_DEBUG() << "CommunicationManager.getUserInfo(): new UserStore(); host=" << evernoteHost;
+    QLOG_TRACE() << "token=" << authToken;
     userStore = new UserStore(evernoteHost, authToken);
 
     bool res = true;

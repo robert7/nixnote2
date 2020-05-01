@@ -129,6 +129,9 @@ QString AccountsManager::getOAuthToken() {
 //* account.
 //********************************************
 void AccountsManager::setOAuthToken(QString token) {
+    QLOG_WARN() << "Setting oauth token " << (token.isEmpty() ? "BLANK" : "NEW VALUE");
+    QLOG_TRACE() << "token=" << token;
+
     QString server = this->getServer();
     QString name = this->getName();
 
