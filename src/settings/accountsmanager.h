@@ -54,7 +54,7 @@ public:
     QString getOAuthToken();                                 // Get the oauth token for the current account
     void setOAuthToken(QString token);                       // Set the oauth token for the current account
     void setOAuthToken(int id, QString token);               // set oauth token for a specific account
-    void setName(QString name, int id=0);                    // Set the name of a specificaccount
+    void setName(QString name, int id=0);                    // Set the name of a specific account
     QString getServer();                                     // Get the URL of the server for the current account
     QString getName();                                       // Get the name of the current account in use
     bool removeId(int id);                                   // Delete an account

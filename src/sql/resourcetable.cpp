@@ -1134,7 +1134,7 @@ ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32, Res
 
 // Get all resources for a note
 void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool fullLoad, bool withBinary) {
-    QLOG_DEBUG() << "getAllResources noteLid=" << noteLid;
+    QLOG_DEBUG() << "getAllResources noteLid=" << noteLid << ", fullLoad=" << fullLoad << ", withBinary=" << withBinary;
 
 
     //NoteTable ntable(db);
@@ -1212,4 +1212,5 @@ void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool 
         }
         list.append(*i.value());
     }
+    QLOG_DEBUG() << "getAllResources: done";
 }

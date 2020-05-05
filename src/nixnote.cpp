@@ -1508,23 +1508,8 @@ void NixNote::synchronize() {
         tabWindow->currentBrowser()->noteTitle.checkNoteTitleChange();
     }
 
-    if (!global.accountsManager->oauthTokenFound()) {
-        QString consumerKey = "baumgarr-3523";
-        QString consumerSecret = "8d5ee175f8a5d3ec";
-        EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
-        d.setWindowTitle(tr("Log in to Evernote"));
-        if (d.exec() != QDialog::Accepted) {
-            QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
-            return;
-        }
-        QString token = QString("oauth_token=") + d.oauthResult().authenticationToken +
-                        QString("&oauth_token_secret=&edam_shard=") + d.oauthResult().shardId +
-                        QString("&edam_userId=") + QString::number(d.oauthResult().userId) +
-                        QString("&edam_expires=") + QString::number(d.oauthResult().expires) +
-                        QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
-                        QString("&edam_webApiUrlPrefix=") + d.oauthResult().webApiUrlPrefix;
-
-        global.accountsManager->setOAuthToken(token);
+    if (!this->checkAuthAndReauthorize()) {
+        return;
     }
 
     QLOG_DEBUG() << "Preparing sync";
@@ -1541,6 +1526,38 @@ void NixNote::synchronize() {
     tabWindow->saveAllNotes();
     syncButtonTimer.start(3);
     emit syncRequested();
+}
+
+/**
+ * Check if token is available & reauthorize if not.
+ * Save new token.
+ */
+bool NixNote::checkAuthAndReauthorize() {
+    if (!global.accountsManager->oauthTokenFound()) {
+        QLOG_INFO() << "Authorization token not found => reauthorize";
+
+        QString consumerKey = EDAM_CONSUMER_KEY;
+        QString consumerSecret = EDAM_CONSUMER_SECRET;
+        EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
+        d.setWindowTitle(tr("Log in to Evernote") + " (" + global.server + ")");
+        if (d.exec() != QDialog::Accepted) {
+            QLOG_INFO() << "Reauthorization failed";
+            QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
+            return false;
+        }
+        const QString &oauthToken = d.oauthResult().authenticationToken;
+        QString token = QString("oauth_token=") + oauthToken +
+                        QString("&oauth_token_secret=&edam_shard=") + d.oauthResult().shardId +
+                        QString("&edam_userId=") + QString::number(d.oauthResult().userId) +
+                        QString("&edam_expires=") + QString::number(d.oauthResult().expires) +
+                        QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
+                        QString("&edam_webApiUrlPrefix=") + d.oauthResult().webApiUrlPrefix;
+
+        QLOG_INFO() << "Reauthorization OK";
+        global.accountsManager->setOAuthToken(token);
+        syncRunner.setUpdateUserDataOnNextSync(true);
+    }
+    return true;
 }
 
 
@@ -2425,23 +2442,8 @@ void NixNote::viewNoteHistory() {
         return;
     }
 
-    if (!global.accountsManager->oauthTokenFound()) {
-        QString consumerKey = "baumgarr-3523";
-        QString consumerSecret = "8d5ee175f8a5d3ec";
-        EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
-        d.setWindowTitle(tr("Log in to Evernote"));
-        if (d.exec() != QDialog::Accepted) {
-            QMessageBox::critical(0, tr(NN_APP_DISPLAY_NAME_GUI), "Login failed.\n" + d.oauthError());
-            return;
-        }
-        QString token = QString("oauth_token=") + d.oauthResult().authenticationToken +
-                        QString("&oauth_token_secret=&edam_shard=") + d.oauthResult().shardId +
-                        QString("&edam_userId=") + QString::number(d.oauthResult().userId) +
-                        QString("&edam_expires=") + QString::number(d.oauthResult().expires) +
-                        QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
-                        QString("&edam_webApiUrlPrefix=") + d.oauthResult().webApiUrlPrefix;
-
-        global.accountsManager->setOAuthToken(token);
+    if (!this->checkAuthAndReauthorize()) {
+        return;
     }
 
     UserTable userTable(global.db);
@@ -2609,7 +2611,7 @@ void NixNote::findReplaceAllInNotePressed() {
 
 
 //**************************************************************
-//* This queries she shared memory segment at occasional
+//* This queries the shared memory segment at occasional
 //* intervals.  This is useful for cross-program communication.
 //**************************************************************
 void NixNote::heartbeatTimerTriggered() {
@@ -2750,7 +2752,14 @@ void NixNote::heartbeatTimerTriggered() {
             }
         } else if (cmd.startsWith("OPEN_EXTERNAL_NOTE")) {
             cmd = cmd.mid(18);
-            qint32 lid = cmd.toInt();
+            qint32 lid;
+            if (cmd.startsWith("_URL")) {
+                QString noteUrl = cmd.mid(4);
+                NoteTable ntable(global.db);
+                lid = ntable.getLidFromUrl(noteUrl);
+            } else {
+                lid = cmd.toInt();
+            }
             this->openExternalNote(lid);
             if (tabWindow->lastExternal != nullptr) {
                 tabWindow->lastExternal->activateWindow();
@@ -2760,16 +2769,21 @@ void NixNote::heartbeatTimerTriggered() {
             return;
         } else if (cmd.startsWith("OPEN_NOTE")) {
             bool newTab = false;
-
             this->restoreAndShowMainWindow();
-
             if (cmd.startsWith("OPEN_NOTE_NEW_TAB")) {
                 newTab = true;
-                cmd = cmd.mid(18);
+                cmd = cmd.mid(17);
             } else {
-                cmd = cmd.mid(10);
+                cmd = cmd.mid(9);
             }
-            qint32 lid = cmd.toInt();
+            qint32 lid;
+            if (cmd.startsWith("_URL")) {
+                QString noteUrl = cmd.mid(4);
+                NoteTable ntable(global.db);
+                lid = ntable.getLidFromUrl(noteUrl);
+            } else {
+                lid = cmd.toInt();
+            }
             QList<qint32> lids;
             lids.append(lid);
 

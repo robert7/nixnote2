@@ -44,6 +44,11 @@ class SyncRunner : public QObject
 private:
     bool idle;
     bool initialized;
+    bool updateUserDataOnNextSync;
+public:
+    void setUpdateUserDataOnNextSync(bool updateUserDataOnNextSync);
+
+private:
     int defaultMsgTimeout;
     long evernoteUpdateCount;
     DatabaseConnection *db;
@@ -72,6 +77,7 @@ private:
     QHash<QString, QString> changedTags;
 
     void evernoteSync();
+    void requestAndStoreUserData();
     bool syncRemoteToLocal(qint32 highSequence);
     void syncRemoteExpungedNotes(QList<Guid> guids);
     void syncRemoteExpungedNotebooks(QList<Guid> guids);

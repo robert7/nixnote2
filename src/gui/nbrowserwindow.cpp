@@ -1253,8 +1253,9 @@ void NBrowserWindow::alignCenterButtonPressed() {
 void NBrowserWindow::formatCodeButtonPressed() {
 
     QString text = editor->selectedText();
-    if (text.trimmed() == "")
-        text = tr("Insert your code here.");
+    // default (now removed)
+    // if (text.trimmed() == "")
+    //     text = ""tr("Insert your code here.")"";
     QString buffer;
     //    buffer.append("<pre style=\"font-family: Monaco, Menlo, Consolas, 'Courier New', monospace; font-size: 0.9em; border-radius: 4px; letter-spacing: 0.015em; padding: 1em; border: 1px solid #cccccc; background-color: #f8f8f8; overflow-x: auto;\">");
     buffer.append(
@@ -1266,7 +1267,6 @@ void NBrowserWindow::formatCodeButtonPressed() {
 
     QKeyEvent *left = new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier);
     QCoreApplication::postEvent(editor->editorPage, left);
-
 }
 
 // The sync button was pressed

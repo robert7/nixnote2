@@ -42,7 +42,7 @@ public:
     void setKey(QString &key);
     const QString &getKey() const;
 
-    bool allocate(int size);
+    QSharedMemory::SharedMemoryError allocate(int size);
     bool detach();
     bool attach();
     void clearMemory();
