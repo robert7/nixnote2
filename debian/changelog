@@ -7,7 +7,7 @@ NixNote (2.1.6) stable; urgency=low
   * Improved http request logging (in debug level)
   * Experimental change to fix the 429 error in UserStore.getUser - eliminated most calls to UserStore.getUser
   * Improved handling of authorization tokens; improved logging
-  * Further improvements in sync and handling of dser data
+  * Further improvements in sync and handling of user data
  -- Robert Spiegel <nightingale7@gmail.com>  Tue, 05 May 2020 10:14:47 +0200
 
 NixNote (2.1.5) stable; urgency=low

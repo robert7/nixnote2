@@ -84,7 +84,7 @@ using open source licence from [JetBrains](https://www.jetbrains.com/?from=nixno
 This should work out of the box, no fiddling with any dependencies
 is needed. The created binary image should work on all ~recent distributions (at least
 in theory).
-Basic docker familiarity with docker is helpful.
+Basic familiarity with docker is helpful.
 
 More info in: [DOCKER README](docs/DOCKER-README.md)   
 
