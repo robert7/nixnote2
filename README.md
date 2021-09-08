@@ -10,6 +10,13 @@ Nixnote is Evernote desktop client for Linux and macOS.
 
 Travis CI [![Build Status](https://travis-ci.com/robert7/nixnote2.svg?branch=master)](https://travis-ci.com/robert7/nixnote2)
 
+## Project Status
+Unfortunately, I as a "maintainer" don't have time for the project anymore.
+
+Anyone who is interested, can fork & continue…
+
+So far I know Nixnote works quite fine for many people... in case there would be some breaks in Evernote API, I'm willing to investigate and fix if I can. Otherwise, I do some "must have" maintenance.
+
 ## Packages
 ### Debian, Ubuntu and derivatives official repositories
 In case you distribution is based on **Debian 10 (Buster) or Ubuntu 19.04 (Disco) or later distribution 
