@@ -173,6 +173,80 @@ As far as I can tell this will find and copy all required dependencies into the 
 can be loaded from inside that bundle (wherever it ends up).
 
 ### Windows (legacy)
+UPDATE:
+
+Build with MinGW32(MinGW-w64 and MSVC should work too):
+
+download development dependencies:
+
+[poppler mingw32](https://sourceforge.net/projects/poppler-qt5-mingw32/)
+
+[tidy](https://github.com/htacg/tidy-html5/)
+
+[Qt](https://download.qt.io/)
+
+If your Qt version is 5.5 or higher, you need to download QtWebKit separately, because it is deprecated.
+
+[QtWebKit](https://github.com/qtwebkit/qtwebkit/releases/download/qtwebkit-tp5/qtwebkit-tp5-qt58-mingw530-x86.zip)
+
+You need to build tidy-html5 by yourself to get the dll files, its README file may help. And if your qt version is 5.5 or higher, you need to copy the files under QtWebKit include folder to /your_path_to_qt/[version]/mingw[version]/include. Then, create folders as winlib/includes in this repository folder and copy the files under poppler and tidy include folders to winlib/includes. The structure is:
+
+```bash
+nixnote_repo
+|
+`--winlib
+   |
+   includes
+   |
+   `--poppler
+   |  |
+   |  `--qt5
+   |  |  |
+   |  |  `...
+   |  `--cpp
+   |     |
+   |     `...
+   `--tidy
+      |
+      `--tidyplatform.h
+      |
+      `--tidyenum.h
+      |
+      ...
+```
+
+Then,
+```bash
+/your_path_to_qt/[version]/mingw[version]/bin/qmake.exe CONFIG+=debug[/release] nixnote2.pro
+/your_path_to_qt/Tools/mingw[version]/bin/mingw32-make.exe -f Makefile.Release
+(If error occurs when executing the command of strip, you can ignore it.)
+```
+
+Finally, you will get qmake-build-build[/release]/nixnote2.exe. Before running it, you need to copy the files and folders about configuration and dll to the folder in which nixnote2.exe is located. These files and folders are:
+
+folders: translations, version, images, java(from the repository folder)
+
+configuration files: theme.ini, colors.txt, shortcuts.txt(from the repository folder)
+
+dll files:
+```bash
+freetype6.dll            libssp-0.dll              Qt5Network.dll
+icudt57.dll              libstdc++-6.dll           Qt5OpenGL.dll
+icuin57.dll              libtidy.dll               Qt5Positioning.dll
+icuuc57.dll              libwinpthread-1.dll       Qt5PrintSupport.dll
+libgcc_s_dw2-1.dll       libxml2-2.dll             Qt5Qml.dll
+liblcms2-2.dll           libxslt-1.dll             Qt5Sensors.dll
+libpng16.dll             openjpeg.dll              Qt5Sql.dll
+libpoppler.dll           Qt5Core.dll               Qt5Widgets.dll
+libpoppler-qt5.dll       Qt5Gui.dll                Qt5Xml.dll
+libQt5WebKit.dll         Qt5Multimedia.dll         zlib1.dll
+libQt5WebKitWidgets.dll  Qt5MultimediaWidgets.dll
+
+(from /your_path_to_qt/Tools/mingw[version]/bin, /your_path_to_qt/[version]/mingw[version]/bin, tidy folder, poppler folder)
+```
+
+Original:
+
 Should work on Windows, but minor tweaks will be needed to make it run.
 I currently have no time for it. Pull request is welcome. No sure its worth the effort, as there is
 quite decent official Evernote client for Windows.

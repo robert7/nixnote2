@@ -10,6 +10,7 @@ unix:!mac:LIBS += -lpthread -g -rdynamic
 win32:INCLUDEPATH += "$$PWD/winlib/includes/poppler/qt5"
 win32:INCLUDEPATH += "$$PWD/winlib/includes"
 win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
+win32:LIBS += -L"$$PWD/winlib" -ltidy
 win32:RC_ICONS += "$$PWD/resources/images/windowIcon.ico"
 
 INCLUDEPATH += "$$PWD/src/qevercloud/QEverCloud/headers"
@@ -463,6 +464,7 @@ g++4 {
 
 win32:QMAKE_CXXFLAGS +=-g -O2 --param=ssp-buffer-size=4 -Wformat -Werror=format-security
 win32:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions
+win32:QMAKE_LFLAGS += -fstack-protector-strong
 win32:DEFINES += SMTP_BUILD
 
 isEmpty(PREFIX) {

@@ -133,7 +133,7 @@ void FileWatcher::saveFile(QString filename) {
 #ifndef _WIN32
     na.sourceURL = "file://" + filename;
 #else
-    na.sourceURL = "file:///"+file;
+    na.sourceURL = "file:///" + filename;
 #endif  // end Windows check
     na.subjectDate = newNote.created;
     newNote.attributes = na;

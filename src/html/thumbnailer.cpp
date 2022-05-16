@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QWebFrame>
 #include <QtSql>
 #include <QTextDocument>
+#include <QPainter>
 #include "src/global.h"
 #include "src/sql/notetable.h"
 
