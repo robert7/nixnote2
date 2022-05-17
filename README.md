@@ -1,7 +1,7 @@
 # NixNote v2.1
 ## Introduction
 
-Nixnote is Evernote desktop client for Linux and macOS.
+Nixnote is Evernote desktop client for Linux (can be also build on macOS and Windows).
 
 * [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
 * [Features](https://github.com/robert7/nixnote2/wiki/Features)
