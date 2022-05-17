@@ -172,9 +172,7 @@ deployed anywhere:
 As far as I can tell this will find and copy all required dependencies into the app bundle and modify them so they
 can be loaded from inside that bundle (wherever it ends up).
 
-### Windows (legacy)
-UPDATE:
-
+### Windows
 Build with MinGW32(MinGW-w64 and MSVC should work too):
 
 download development dependencies:
@@ -244,12 +242,6 @@ libQt5WebKitWidgets.dll  Qt5MultimediaWidgets.dll
 
 (from /your_path_to_qt/Tools/mingw[version]/bin, /your_path_to_qt/[version]/mingw[version]/bin, tidy folder, poppler folder)
 ```
-
-Original:
-
-Should work on Windows, but minor tweaks will be needed to make it run.
-I currently have no time for it. Pull request is welcome. No sure its worth the effort, as there is
-quite decent official Evernote client for Windows.
 
 ## Donations
 If you would like to support the project, you can send me some little amount via paypal: https://paypal.me/nixnote2
