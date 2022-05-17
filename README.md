@@ -172,7 +172,9 @@ deployed anywhere:
 As far as I can tell this will find and copy all required dependencies into the app bundle and modify them so they
 can be loaded from inside that bundle (wherever it ends up).
 
-### Windows (legacy)
+### Windows
+=> updates present on [develop branch](https://github.com/robert7/nixnote2/tree/develop)
+
 Should work on Windows, but minor tweaks will be needed to make it run.
 I currently have no time for it. Pull request is welcome. No sure its worth the effort, as there is
 quite decent official Evernote client for Windows.
