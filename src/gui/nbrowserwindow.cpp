@@ -304,9 +304,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     saveTimer.setInterval(global.autoSaveInterval);
     saveTimer.start();
 
-#ifndef _WIN32
     spellChecker = nullptr;
-#endif
 
     QString css = global.getThemeCss("browserWindowCss");
     if (css != "") {
@@ -3651,7 +3649,6 @@ void NBrowserWindow::sendUrlUpdateSignal() {
 
 
 void NBrowserWindow::spellCheckPressed() {
-#ifndef _WIN32
     QLOG_DEBUG() << SPELLCHECKER_DLG ": Starting spellcheck";
 
     // Check if we have a plugin for Hunspell loaded. This could have been done at startup, but if this is
@@ -3768,7 +3765,6 @@ void NBrowserWindow::spellCheckPressed() {
     editor->keyPressEvent(&key2);
 
     global.setMessage(tr("Spell check completed"));
-#endif
 }
 
 
@@ -4003,14 +3999,12 @@ void NBrowserWindow::setEditorStyle() {
 
 
 void NBrowserWindow::createSpellChecker() {
-#ifndef _WIN32
     QLOG_DEBUG() << SPELLCHECKER_MODULE
                     ": about to create spell checker";
     // if interface doesn't exist, create it
     if (!spellChecker) {
         spellChecker = new SpellChecker();
     }
-#endif
 }
 
 /**
@@ -4018,7 +4012,6 @@ void NBrowserWindow::createSpellChecker() {
  * @return current locale if OK
  */
 QString NBrowserWindow::initializeSpellCheckerInitial() {
-#ifndef _WIN32
     // if interface exists, then try to init with "current" locale
     if (spellChecker) {
         QString locale = getSpellCheckerLocaleFromSettings();
@@ -4057,12 +4050,10 @@ QString NBrowserWindow::initializeSpellCheckerInitial() {
     }
     QLOG_ERROR() << SPELLCHECKER_MODULE
                     ": failed init";
-#endif
     return QString();
 }
 
 bool NBrowserWindow::initializeSpellCheckerWithLocale(QString locale) {
-#ifndef _WIN32
     QString userDictionaryPath(global.fileManager.getSpellDirPathUser());
 
     QLOG_INFO() << SPELLCHECKER_MODULE
@@ -4081,13 +4072,9 @@ bool NBrowserWindow::initializeSpellCheckerWithLocale(QString locale) {
                         ": initialization FAILED for locale: " << locale;
     }
     return result;
-#else
-    return false;
-#endif
 }
 
 QString NBrowserWindow::getSpellCheckerLocaleFromSettings() {
-#ifndef _WIN32
     global.settings->beginGroup(INI_GROUP_LOCALE);
     QString locale = global.settings->value(INI_VALUE_SPELLCHECK_LOCALE).toString();
     if (locale.isEmpty()) {
@@ -4104,30 +4091,23 @@ QString NBrowserWindow::getSpellCheckerLocaleFromSettings() {
     QLOG_DEBUG() << SPELLCHECKER_MODULE
                     ": got settings spell check locale=" << locale;
     return locale;
-#else
-    return QString();
-#endif
 }
 
 void NBrowserWindow::saveSpellCheckerLocaleToSettings(QString locale) {
-#ifndef _WIN32
     QLOG_DEBUG() << SPELLCHECKER_MODULE
                     ": save settings spell check locale=" << locale;
     global.settings->beginGroup(INI_GROUP_LOCALE);
     global.settings->setValue(INI_VALUE_SPELLCHECK_LOCALE, locale);
     global.settings->endGroup();
-#endif
 }
 
 
 void NBrowserWindow::spellCheckAddWordToUserDictionary(QString currentWord) {
-#ifndef _WIN32
     if (!spellChecker) {
         // invalid state
         return;
     }
     spellChecker->addWord(currentWord);
-#endif
 }
 
 

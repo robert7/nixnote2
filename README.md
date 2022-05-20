@@ -175,13 +175,15 @@ can be loaded from inside that bundle (wherever it ends up).
 ### Windows (legacy)
 UPDATE:
 
-Build with MinGW32(MinGW-w64 and MSVC should work too):
+Build with MinGW32 shipped with Qt(MinGW-w64 and MSVC should work too):
 
 download development dependencies:
 
-[poppler mingw32](https://sourceforge.net/projects/poppler-qt5-mingw32/)
+[poppler](https://sourceforge.net/projects/poppler-qt5-mingw32/)
 
 [tidy](https://github.com/htacg/tidy-html5/)
+
+[hunspell](https://github.com/hunspell/hunspell/)
 
 [Qt](https://download.qt.io/)
 
@@ -189,7 +191,13 @@ If your Qt version is 5.5 or higher, you need to download QtWebKit separately, b
 
 [QtWebKit](https://github.com/qtwebkit/qtwebkit/releases/download/qtwebkit-tp5/qtwebkit-tp5-qt58-mingw530-x86.zip)
 
-You need to build tidy-html5 by yourself to get the dll files, its README file may help. And if your qt version is 5.5 or higher, you need to copy the files under QtWebKit include folder to /your_path_to_qt/[version]/mingw[version]/include. Then, create folders as winlib/includes in this repository folder and copy the files under poppler and tidy include folders to winlib/includes. The structure is:
+You need to build tidy-html5 by yourself to get the dll files, its README file may help. The poppler link points to the binary files, of an old version, if you want to use the latest version, you can download the code [here](https://github.com/freedesktop/poppler). About hunspell, as its README instructs us to use MSYS2, which may be in x64, so you had better pay attention to the host type when executing its configure script. To get compatible libraries, you have to set the gcc and g++ commands as the one you used previously for tidy(by alias or export command) and execute the configure script under MSYS2 like this:
+```bash
+./configure --build=i686-pc-mingw32 --host=i686-pc-mingw32 --target=i686-pc-mingw32
+```
+And then, execute 'make', you will get the dll file.
+
+If your qt version is 5.5 or higher, you need to copy the files under QtWebKit include folder to /your_path_to_qt/[version]/mingw[version]/include. Then, create folders as winlib/includes in this repository folder and copy the files under poppler, tidy and hunspell include folders to winlib/includes. The structure is:
 
 ```bash
 nixnote_repo
@@ -207,10 +215,16 @@ nixnote_repo
    |     |
    |     `...
    `--tidy
+   |  |
+   |  `--tidyplatform.h
+   |  |
+   |  `--tidyenum.h
+   |  |
+   |  ...
+   |
+   `--hunspell
       |
-      `--tidyplatform.h
-      |
-      `--tidyenum.h
+      `--affentry.hxx
       |
       ...
 ```
@@ -228,6 +242,8 @@ folders: translations, version, images, java(from the repository folder)
 
 configuration files: theme.ini, colors.txt, shortcuts.txt(from the repository folder)
 
+dict files(for spell check, optional): you may want to download them [here](https://github.com/wooorm/dictionaries)
+
 dll files:
 ```bash
 freetype6.dll            libssp-0.dll              Qt5Network.dll
@@ -240,9 +256,9 @@ libpng16.dll             openjpeg.dll              Qt5Sql.dll
 libpoppler.dll           Qt5Core.dll               Qt5Widgets.dll
 libpoppler-qt5.dll       Qt5Gui.dll                Qt5Xml.dll
 libQt5WebKit.dll         Qt5Multimedia.dll         zlib1.dll
-libQt5WebKitWidgets.dll  Qt5MultimediaWidgets.dll
+libQt5WebKitWidgets.dll  Qt5MultimediaWidgets.dll  libhunspell.dll
 
-(from /your_path_to_qt/Tools/mingw[version]/bin, /your_path_to_qt/[version]/mingw[version]/bin, tidy folder, poppler folder)
+(from /your_path_to_qt/Tools/mingw[version]/bin, /your_path_to_qt/[version]/mingw[version]/bin, tidy folder, poppler folder, and hunspell folder)
 ```
 
 Original:
