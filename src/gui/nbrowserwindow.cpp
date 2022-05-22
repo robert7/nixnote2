@@ -976,7 +976,7 @@ void NBrowserWindow::pasteButtonPressed() {
 
     // note: pasted text - is text only version without html tags
     bool hasHtml = mime->hasHtml();
-    const QString mimeContentAsText = mime->text().trimmed();
+    const QString mimeContentAsText = mime->text();
     bool isEvernoteInAppLink = mimeContentAsText.startsWith("evernote:///view/");
     bool processAsHtml = hasHtml && (!isEvernoteInAppLink);
     QString textToPaste = processAsHtml ? mime->html() : mimeContentAsText;
