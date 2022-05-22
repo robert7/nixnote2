@@ -239,9 +239,12 @@ And also copy the dll files libtidy.dll, libpoppler.dll, libpoppler-qt5.dll, lib
 Then, build the application.
 
 ```bash
+qmake.exe -set HUNSPELL_VERSION 1.7-0(you can change the version as needed)
 qmake.exe CONFIG+=debug[/release] nixnote2.pro
+qmake.exe -unset HUNSPELL_VERSION
 mingw32-make.exe -f Makefile.Release
-(If error occurs when executing the command of strip, you can ignore it.)
+(As qmake.exe do not add the version of hunspell in the generated makefiles, so we have to set/unset it by hand.
+If error occurs when executing the command of strip, you can ignore it.)
 ```
 
 Finally, you will get qmake-build-build[/release]/nixnote2.exe. Run deploy-on-windows.sh under the development folder to finish the deploy, and copy the nixnote2.exe to the deploy folder. If you need spell check, you have to download the dictionary files and copy the .aff and .dic file to the deploy folder, you may want to download them [here](https://github.com/wooorm/dictionaries).
