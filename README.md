@@ -199,11 +199,13 @@ You need to build tidy-html5 by yourself to get the dll files, its README file m
 
 About hunspell, as its README instructs us to use MSYS2 and Cygwin, which may be in x64, so you had better pay attention to the host type when executing its configure script. To get compatible libraries, you have to set gcc and g++ as the one you used previously for tidy(by alias or export command) and run the configure script like this:
 ```bash
-./configure --build=i686-pc-mingw32 --host=i686-pc-mingw32 --target=i686-pc-mingw32
+MSYS2/Cygwin # autoreconf -vfi
+MSYS2/Cygwin # ./configure --build=i686-pc-mingw32 --host=i686-pc-mingw32 --target=i686-pc-mingw32
+MSYS2/Cygwin # mingw32-make.exe
 ```
-And then, execute 'mingw32-make.exe', and you will get the dll file.
+Then you will get the hunspell dll file.
 
-If your qt version is 5.5 or higher, you need to copy the files under QtWebKit include folder to /your_path_to_qt/[version]/mingw[version]/include. Then, create folders as winlib/includes in this repository folder and copy the files under poppler, tidy and hunspell include folders to winlib/includes. The structure is:
+If your qt version is 5.6 or higher, you need to copy the files under QtWebKit include folder to /your_path_to_qt/[version]/mingw[version]/include. Then, create folders as winlib/includes in this repository folder and copy the files under poppler, tidy and hunspell include folders to winlib/includes. The structure is:
 
 ```bash
 nixnote_repo
