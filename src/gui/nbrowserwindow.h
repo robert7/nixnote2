@@ -101,10 +101,8 @@ private:
     QTimer saveTimer;
     QString attachFilePath;  // Save path of last selected attachment.
 
-#ifndef _WIN32
     // object of interface
     SpellChecker *spellChecker;
-#endif
 
     void createSpellChecker();
     bool initializeSpellCheckerWithLocale(QString local);

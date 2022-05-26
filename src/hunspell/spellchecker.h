@@ -28,8 +28,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLibraryInfo>
 #endif
 
-// Windows Check
-#ifndef _WIN32
 class Hunspell;
 
 class SpellChecker : public QObject
@@ -71,6 +69,11 @@ public:
         dictPath.append("/usr/lib/openoffice.org2.1/share/dict/ooo");
         dictPath.append("/opt/openoffice.org2.0/share/dict/ooo/");
         dictPath.append("/usr/lib/openoffice.org2.0/share/dict/ooo/");
+#if defined(_WIN32)
+        // choose the folder in which the binary program is located
+        // as the dictionary path on Windows
+        dictPath.append("./");
+#endif
         return dictPath;
     }
 
@@ -81,7 +84,6 @@ public slots:
 
 };
 
-#endif // end of windows check
 
 // just some name for logs
 #define SPELLCHECKER_MODULE "Spellchecker"

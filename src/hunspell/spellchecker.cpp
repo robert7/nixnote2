@@ -17,7 +17,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-#ifndef _WIN32
 
 #include "spellchecker.h"
 #include <QFile>
@@ -26,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTextStream>
 #include <hunspell.hxx>
 #include "src/logger/qslog.h"
+
 
 
 
@@ -183,4 +183,3 @@ QStringList SpellChecker::availableSpellLocales() {
     return values;
 }
 
-#endif

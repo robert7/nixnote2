@@ -9,8 +9,10 @@ unix:!mac:LIBS += -lpthread -g -rdynamic
 
 win32:INCLUDEPATH += "$$PWD/winlib/includes/poppler/qt5"
 win32:INCLUDEPATH += "$$PWD/winlib/includes"
+win32:INCLUDEPATH += "$$PWD/winlib/includes/hunspell"
 win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
 win32:LIBS += -L"$$PWD/winlib" -ltidy
+win32:LIBS += -L"$$PWD/winlib" -lhunspell-$$[HUNSPELL_VERSION]
 win32:RC_ICONS += "$$PWD/resources/images/windowIcon.ico"
 
 INCLUDEPATH += "$$PWD/src/qevercloud/QEverCloud/headers"
