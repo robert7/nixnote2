@@ -155,7 +155,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
 
     // Setup the sync thread
     QLOG_DEBUG() << "Setting up counter thread";
-    connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
+    connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()), Qt::QueuedConnection);
 
 
     // set Evernote http timeout to 4 minutes
@@ -169,8 +169,8 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
 
     // Setup the counter thread
     QLOG_DEBUG() << "Setting up sync thread";
-    connect(this, SIGNAL(syncRequested()), &syncRunner, SLOT(synchronize()));
-    connect(&syncRunner, SIGNAL(setMessage(QString, int)), this, SLOT(setMessage(QString, int)));
+    connect(this, SIGNAL(syncRequested()), &syncRunner, SLOT(synchronize()), Qt::QueuedConnection);
+    connect(&syncRunner, SIGNAL(setMessage(QString, int)), this, SLOT(setMessage(QString, int)), Qt::QueuedConnection);
 
     QLOG_DEBUG() << "Setting up GUI";
     global.filterPosition = 0;
@@ -603,15 +603,15 @@ void NixNote::setupGui() {
     setSyncTimer();
     connect(&syncTimer, SIGNAL(timeout()), this, SLOT(syncTimerExpired()));
     connect(&syncButtonTimer, SIGNAL(timeout()), this, SLOT(updateSyncButton()));
-    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(syncButtonReset()));
+    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(syncButtonReset()), Qt::QueuedConnection);
 
     QLOG_DEBUG() << "Setting up more connections for tab windows & threads";
-    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(notifySyncComplete()));
+    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(notifySyncComplete()), Qt::QueuedConnection);
 
     // connect so we refresh the note list and counts whenever a note has changed
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), noteTableView, SLOT(refreshData()));
-    connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countNotebooks()));
-    connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countTags()));
+    connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countNotebooks()), Qt::QueuedConnection);
+    connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countTags()), Qt::QueuedConnection);
     connect(tabWindow, SIGNAL(noteTagsUpdated(QString, qint32, QStringList)), noteTableView,
             SLOT(noteTagsUpdated(QString, qint32, QStringList)));
     connect(tabWindow, SIGNAL(noteNotebookUpdated(QString, qint32, QString)), noteTableView,
@@ -623,7 +623,7 @@ void NixNote::setupGui() {
 
     // connect so we refresh the tag tree when a new tag is added
     connect(tabWindow, SIGNAL(tagCreated(qint32)), tagTreeView, SLOT(addNewTag(qint32)));
-    connect(tabWindow, SIGNAL(tagCreated(qint32)), &counterRunner, SLOT(countTags()));
+    connect(tabWindow, SIGNAL(tagCreated(qint32)), &counterRunner, SLOT(countTags()), Qt::QueuedConnection);
 
     connect(tabWindow, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(tabWindow->tabBar, SIGNAL(currentChanged(int)), this, SLOT(checkReadOnlyNotebook()));
@@ -865,8 +865,8 @@ void NixNote::setupGui() {
     // startup the index timer (if needed)
     if (global.enableIndexing) {
         indexTimer.setInterval(global.minimumThumbnailInterval);
-        connect(&indexTimer, SIGNAL(timeout()), &indexRunner, SLOT(index()));
-        connect(&indexRunner, SIGNAL(indexDone(bool)), this, SLOT(indexFinished(bool)));
+        connect(&indexTimer, SIGNAL(timeout()), &indexRunner, SLOT(index()), Qt::QueuedConnection);
+        connect(&indexRunner, SIGNAL(indexDone(bool)), this, SLOT(indexFinished(bool)), Qt::QueuedConnection);
         indexTimer.start();
     }
 }
@@ -935,9 +935,9 @@ void NixNote::syncThreadStarted() {
 }
 
 void NixNote::indexThreadStarted() {
-    indexRunner.moveToThread(&indexThread);
     indexRunner.initialize();
     global.indexRunner = &indexRunner;
+    indexRunner.moveToThread(&indexThread);
 }
 
 
@@ -966,8 +966,8 @@ void NixNote::setupNoteList() {
     connect(noteTableView, SIGNAL(newNote()), this, SLOT(newNote()));
     connect(noteTableView, SIGNAL(notesDeleted(QList<qint32>, bool)), this, SLOT(notesDeleted(QList<qint32>)));
     connect(noteTableView, SIGNAL(notesRestored(QList<qint32>)), this, SLOT(notesRestored(QList<qint32>)));
-    connect(&syncRunner, SIGNAL(syncComplete()), noteTableView, SLOT(refreshData()));
-    connect(&syncRunner, SIGNAL(noteSynchronized(qint32, bool)), this, SLOT(noteSynchronized(qint32, bool)));
+    connect(&syncRunner, SIGNAL(syncComplete()), noteTableView, SLOT(refreshData()), Qt::QueuedConnection);
+    connect(&syncRunner, SIGNAL(noteSynchronized(qint32, bool)), this, SLOT(noteSynchronized(qint32, bool)), Qt::QueuedConnection);
 
     QLOG_TRACE() << "Leaving NixNote.setupNoteList()";
 }
@@ -992,8 +992,8 @@ void NixNote::setupSearchTree() {
 
     searchTreeView = new NSearchView(leftPanel);
     leftPanel->addSearchView(searchTreeView);
-    connect(&syncRunner, SIGNAL(searchUpdated(qint32, QString)), searchTreeView, SLOT(searchUpdated(qint32, QString)));
-    connect(&syncRunner, SIGNAL(searchExpunged(qint32)), searchTreeView, SLOT(searchExpunged(qint32)));
+    connect(&syncRunner, SIGNAL(searchUpdated(qint32, QString)), searchTreeView, SLOT(searchUpdated(qint32, QString)), Qt::QueuedConnection);
+    connect(&syncRunner, SIGNAL(searchExpunged(qint32)), searchTreeView, SLOT(searchExpunged(qint32)), Qt::QueuedConnection);
     //connect(&syncRunner, SIGNAL(syncComplete()),searchTreeView, SLOT(re);
     QLOG_TRACE() << "Exiting NixNote.setupSearchTree()";
 }
@@ -1013,17 +1013,17 @@ void NixNote::setupTagTree() {
     tagTreeView = new NTagView(leftPanel);
     leftPanel->addTagView(tagTreeView);
     connect(&syncRunner, SIGNAL(tagUpdated(qint32, QString, QString, qint32)), tagTreeView,
-            SLOT(tagUpdated(qint32, QString, QString, qint32)));
-    connect(&syncRunner, SIGNAL(tagExpunged(qint32)), tagTreeView, SLOT(tagExpunged(qint32)));
-    connect(&syncRunner, SIGNAL(syncComplete()), tagTreeView, SLOT(rebuildTree()));
+            SLOT(tagUpdated(qint32, QString, QString, qint32)), Qt::QueuedConnection);
+    connect(&syncRunner, SIGNAL(tagExpunged(qint32)), tagTreeView, SLOT(tagExpunged(qint32)), Qt::QueuedConnection);
+    connect(&syncRunner, SIGNAL(syncComplete()), tagTreeView, SLOT(rebuildTree()), Qt::QueuedConnection);
     connect(&counterRunner, SIGNAL(tagTotals(qint32, qint32, qint32)), tagTreeView,
-            SLOT(updateTotals(qint32, qint32, qint32)));
-    connect(&counterRunner, SIGNAL(tagCountComplete()), tagTreeView, SLOT(hideUnassignedTags()));
+            SLOT(updateTotals(qint32, qint32, qint32)), Qt::QueuedConnection);
+    connect(&counterRunner, SIGNAL(tagCountComplete()), tagTreeView, SLOT(hideUnassignedTags()), Qt::QueuedConnection);
     connect(notebookTreeView, SIGNAL(notebookSelectionChanged(qint32)), tagTreeView,
             SLOT(notebookSelectionChanged(qint32)));
     connect(tagTreeView, SIGNAL(updateNoteList(qint32, int, QVariant)), noteTableView,
             SLOT(refreshCell(qint32, int, QVariant)));
-    connect(tagTreeView, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
+    connect(tagTreeView, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()), Qt::QueuedConnection);
     QLOG_TRACE() << "Exiting NixNote.setupTagTree()";
 }
 
@@ -1059,7 +1059,7 @@ void NixNote::setupTrashTree() {
     trashTree = new NTrashTree(leftPanel);
     leftPanel->addTrashTree(trashTree);
     QLOG_TRACE() << "Exiting NixNote.setupTrashTree()";
-    connect(&counterRunner, SIGNAL(trashTotals(qint32)), trashTree, SLOT(updateTotals(qint32)));
+    connect(&counterRunner, SIGNAL(trashTotals(qint32)), trashTree, SLOT(updateTotals(qint32)), Qt::QueuedConnection);
 }
 
 
@@ -1072,14 +1072,14 @@ void NixNote::setupFavoritesTree() {
     leftPanel->addFavoritesView(favoritesTreeView);
 
 //    connect(&syncRunner, SIGNAL(notebookUpdated(qint32, QString,QString, bool, bool)),notebookTreeView, SLOT(notebookUpdated(qint32, QString, QString, bool, bool)));
-    connect(&syncRunner, SIGNAL(notebookExpunged(qint32)), favoritesTreeView, SLOT(itemExpunged(qint32)));
-    connect(&syncRunner, SIGNAL(tagExpunged(qint32)), favoritesTreeView, SLOT(itemExpunged(qint32)));
+    connect(&syncRunner, SIGNAL(notebookExpunged(qint32)), favoritesTreeView, SLOT(itemExpunged(qint32)), Qt::QueuedConnection);
+    connect(&syncRunner, SIGNAL(tagExpunged(qint32)), favoritesTreeView, SLOT(itemExpunged(qint32)), Qt::QueuedConnection);
 //    connect(&syncRunner, SIGNAL(noteUpdated(qint32)), notebookTreeView, SLOT(itemExpunged(qint32)));
     connect(&counterRunner, SIGNAL(notebookTotals(qint32, qint32, qint32)), favoritesTreeView,
-            SLOT(updateTotals(qint32, qint32, qint32)));
+            SLOT(updateTotals(qint32, qint32, qint32)), Qt::QueuedConnection);
     connect(&counterRunner, SIGNAL(tagTotals(qint32, qint32, qint32)), favoritesTreeView,
-            SLOT(updateTotals(qint32, qint32, qint32)));
-    connect(favoritesTreeView, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
+            SLOT(updateTotals(qint32, qint32, qint32)), Qt::QueuedConnection);
+    connect(favoritesTreeView, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()), Qt::QueuedConnection);
 
     leftSeparator1 = new QLabel();
     leftSeparator1->setTextFormat(Qt::RichText);
@@ -1098,14 +1098,14 @@ void NixNote::setupSynchronizedNotebookTree() {
     notebookTreeView = new NNotebookView(leftPanel);
     leftPanel->addNotebookView(notebookTreeView);
     connect(&syncRunner, SIGNAL(notebookUpdated(qint32, QString, QString, bool, bool)), notebookTreeView,
-            SLOT(notebookUpdated(qint32, QString, QString, bool, bool)));
-    connect(&syncRunner, SIGNAL(syncComplete()), notebookTreeView, SLOT(rebuildTree()));
-    connect(&syncRunner, SIGNAL(notebookExpunged(qint32)), notebookTreeView, SLOT(notebookExpunged(qint32)));
+            SLOT(notebookUpdated(qint32, QString, QString, bool, bool)), Qt::QueuedConnection);
+    connect(&syncRunner, SIGNAL(syncComplete()), notebookTreeView, SLOT(rebuildTree()), Qt::QueuedConnection);
+    connect(&syncRunner, SIGNAL(notebookExpunged(qint32)), notebookTreeView, SLOT(notebookExpunged(qint32)), Qt::QueuedConnection);
     connect(&counterRunner, SIGNAL(notebookTotals(qint32, qint32, qint32)), notebookTreeView,
-            SLOT(updateTotals(qint32, qint32, qint32)));
+            SLOT(updateTotals(qint32, qint32, qint32)), Qt::QueuedConnection);
     connect(notebookTreeView, SIGNAL(updateNoteList(qint32, int, QVariant)), noteTableView,
             SLOT(refreshCell(qint32, int, QVariant)));
-    connect(notebookTreeView, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
+    connect(notebookTreeView, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()), Qt::QueuedConnection);
     QLOG_TRACE() << "Exiting NixNote.setupSynchronizedNotebookTree()";
 }
 
@@ -1122,9 +1122,9 @@ void NixNote::setupTabWindow() {
     rightPanelSplitter->addWidget(tabPanel);
 
     NBrowserWindow *newBrowser = new NBrowserWindow(this);
-    connect(&syncRunner, SIGNAL(syncComplete()), &newBrowser->notebookMenu, SLOT(reloadData()));
-    connect(&syncRunner, SIGNAL(syncComplete()), &newBrowser->tagEditor, SLOT(reloadTags()));
-    connect(&syncRunner, SIGNAL(noteUpdated(qint32)), newBrowser, SLOT(noteSyncUpdate(qint32)));
+    connect(&syncRunner, SIGNAL(syncComplete()), &newBrowser->notebookMenu, SLOT(reloadData()), Qt::QueuedConnection);
+    connect(&syncRunner, SIGNAL(syncComplete()), &newBrowser->tagEditor, SLOT(reloadTags()), Qt::QueuedConnection);
+    connect(&syncRunner, SIGNAL(noteUpdated(qint32)), newBrowser, SLOT(noteSyncUpdate(qint32)), Qt::QueuedConnection);
     tabWindow->addBrowser(newBrowser, "");
     rightPanelSplitter->setStretchFactor(1, 10);
 
@@ -1324,7 +1324,7 @@ void NixNote::closeEvent(QCloseEvent *event) {
         finalSync = true;
         syncRunner.finalSync = true;
         hide();
-        connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(close()));
+        connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(close()), Qt::QueuedConnection);
         synchronize();
         event->ignore();
         QLOG_DEBUG() << "closeEvent: ignore";
