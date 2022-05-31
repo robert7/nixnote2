@@ -1,13 +1,14 @@
 # NixNote v2.1
 ## Introduction
 
-Nixnote is Evernote desktop client for Linux and macOS.
+Nixnote is Evernote desktop client for Linux (can be also build on macOS and Windows).
 
 * [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
 * [Features](https://github.com/robert7/nixnote2/wiki/Features)
 * [CHANGELOG](https://github.com/robert7/nixnote2/blob/master/debian/changelog)
 * [Contributing](CONTRIBUTING.md)
 * [Releases](https://github.com/robert7/nixnote2/releases)
+
 
 Travis CI [![Build Status](https://travis-ci.com/robert7/nixnote2.svg?branch=master)](https://app.travis-ci.com/github/robert7/nixnote2)
 
@@ -174,11 +175,80 @@ As far as I can tell this will find and copy all required dependencies into the 
 can be loaded from inside that bundle (wherever it ends up).
 
 ### Windows
-=> updates present on [develop branch](https://github.com/robert7/nixnote2/tree/develop)
+Build with MinGW32(MinGW-w64 and MSVC should work too):
 
-Should work on Windows, but minor tweaks will be needed to make it run.
-I currently have no time for it. Pull request is welcome. No sure its worth the effort, as there is
-quite decent official Evernote client for Windows.
+Unlike Unix-like systems, Windows is not shipped with a bash environment, so you need to have one.
+
+Download development dependencies:
+
+[poppler](https://sourceforge.net/projects/poppler-qt5-mingw32/)
+
+[tidy](https://github.com/htacg/tidy-html5/)
+
+[hunspell](https://github.com/hunspell/hunspell/)
+
+[Qt](https://download.qt.io/)(with MinGW32)
+
+(Advice: You may want to add the path to qmake.exe and ming32-make.exe to the PATH environment, so that you do not have to type the full path when building the application and libraries later. You can do this by hand or running qtenv2.bat.)
+
+If your Qt version is 5.5 or higher, you need to download QtWebKit separately, because it is deprecated.
+
+[QtWebKit](https://github.com/qtwebkit/qtwebkit/releases/download/qtwebkit-tp5/qtwebkit-tp5-qt58-mingw530-x86.zip)
+
+You need to build tidy-html5 by yourself to get the dll files, its README file may help. The poppler link points to the binary files, of an old version. If you want to use the latest version, you can download the code [here](https://github.com/freedesktop/poppler) and build it.
+
+About hunspell, as its README instructs us to use MSYS2 and Cygwin, which may be in x64, so you had better pay attention to the host type when executing its configure script. To get compatible libraries, you have to set gcc and g++ as the one you used previously for tidy(by alias or export command) and run the configure script like this:
+```bash
+./configure --build=i686-pc-mingw32 --host=i686-pc-mingw32 --target=i686-pc-mingw32
+```
+And then, execute 'mingw32-make.exe', and you will get the dll file.
+
+If your qt version is 5.5 or higher, you need to copy the files under QtWebKit include folder to /your_path_to_qt/[version]/mingw[version]/include. Then, create folders as winlib/includes in this repository folder and copy the files under poppler, tidy and hunspell include folders to winlib/includes. The structure is:
+
+```bash
+nixnote_repo
+|
+`--winlib
+   |
+   includes
+   |
+   `--poppler
+   |  |
+   |  `--qt5
+   |  |  |
+   |  |  `...
+   |  `--cpp
+   |     |
+   |     `...
+   `--tidy
+   |  |
+   |  `--tidyplatform.h
+   |  |
+   |  `--tidyenum.h
+   |  |
+   |  ...
+   |
+   `--hunspell
+      |
+      `--affentry.hxx
+      |
+      ...
+```
+And also copy the dll files libtidy.dll, libpoppler.dll, libpoppler-qt5.dll, libhunspell-1.7-0.dll to winlib.
+
+Then, build the application.
+
+```bash
+qmake.exe -set HUNSPELL_VERSION 1.7-0(you can change the version as needed)
+qmake.exe CONFIG+=debug[/release] nixnote2.pro
+qmake.exe -unset HUNSPELL_VERSION
+mingw32-make.exe -f Makefile.Release
+(As qmake.exe do not add the version of hunspell in the generated makefiles, so we have to set/unset it by hand.
+If error occurs when executing the command of strip, you can ignore it.)
+```
+
+Finally, you will get qmake-build-build[/release]/nixnote2.exe. Run deploy-on-windows.sh under the development folder to finish the deploy, and copy the nixnote2.exe to the deploy folder. If you need spell check, you have to download the dictionary files and copy the .aff and .dic file to the deploy folder, you may want to download them [here](https://github.com/wooorm/dictionaries).
+
 
 ## Donations
 If you would like to support the project, you can send me some little amount via paypal: https://paypal.me/nixnote2

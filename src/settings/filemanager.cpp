@@ -49,6 +49,9 @@ QString FileManager::getDefaultProgramDirPath() {
 #endif
 
     QString path = QCoreApplication::applicationDirPath();
+#ifdef _WIN32
+    return path;
+#endif
     QLOG_DEBUG() << "Default program dir path: applicationDirPath=" << path;
     // note: for AppImage this returns something like "/tmp/.mount_nixnotHzLe8g/usr/bin"
 
@@ -75,6 +78,9 @@ QString FileManager::getDefaultProgramDirPath() {
 QString FileManager::getLibraryDirPath() {
     QString path = QCoreApplication::applicationDirPath();
     QLOG_DEBUG() << "Default program dir path: applicationDirPath=" << path;
+#ifdef _WIN32
+    return path;
+#endif
     // note: for AppImage this returns something like "/tmp/.mount_nixnotHzLe8g/usr/bin"
 
     if (path.endsWith("/bin")) {

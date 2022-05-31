@@ -221,6 +221,7 @@ signals:
     void setMessage(QString msg);
     void requestNoteContentUpdate(qint32, QString, bool);
 
+
 public slots:
     void saveNoteContent();
     void changeExpandState(int value);

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QIcon>
 #include <QList>
 #include <iostream>
+#include <QPainter>
 #include "noteformatter.h"
 #include "src/sql/resourcetable.h"
 #include "src/sql/notebooktable.h"
