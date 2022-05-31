@@ -524,5 +524,5 @@ void IndexRunner::flushCache() {
 
 void IndexRunner::busy(bool value, bool finished) {
     iAmBusy=value;
-    emit(this->indexDone(finished));
+    emit(indexDone(finished));
 }
