@@ -21,5 +21,6 @@ sudo apt-get -y install git-core qt5-default build-essential \
 
 # now build with e.g.
 # ./development/build-with-qmake.sh debug noclean /usr/lib/nixnote2/tidy
-# then binary: ./qmake-build-debug/nixnote2
-# run with: ./appdir/usr/appdir/nixnote2
+# then binary is in: ./qmake-build-debug/nixnote2
+# cd appdir
+# ./usr/appdir/nixnote2
