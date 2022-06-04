@@ -250,7 +250,7 @@ If error occurs when executing the command of strip, you can ignore it.)
 ```
 
 Finally, you will get qmake-build-build[/release]/nixnote2.exe. Run deploy-on-windows.sh under the development folder to finish the deploy, and copy the nixnote2.exe to the deploy folder. If you need spell check, you have to download the dictionary files and copy the .aff and .dic file to the deploy folder, you may want to download them [here](https://github.com/wooorm/dictionaries).
-```
+
 
 ## Donations
 If you would like to support the project, you can send me some little amount via paypal: https://paypal.me/nixnote2
