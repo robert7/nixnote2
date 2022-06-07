@@ -246,8 +246,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     hammer = new Thumbnailer(global.db);
     lid = -1;
-    thumbnailer = nullptr;
-
 
     //Setup shortcuts for context menu
     removeFormattingShortcut = new QShortcut(this);
@@ -533,6 +531,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     dateEditor.setNote(lid, n);
     QWebSettings::setMaximumPagesInCache(0);
     QWebSettings::setObjectCacheCapacities(0, 0, 0);
+
     QLOG_DEBUG() << "Setting editor contents";
 
     //**** BEGINNING CALL TO PRE-LOAD EXIT
@@ -630,8 +629,8 @@ void NBrowserWindow::setContent(qint32 lid) {
     }
 
     QLOG_DEBUG() << "Checking thumbnail, lid=" << this->lid;
-    if (hammer->idle && noteTable.isThumbnailNeeded(this->lid)) {
-        hammer->render(this->lid);
+    if (!global.disableThumbnails && !noteTable.thumbnailExists(this->lid)) {
+        hammer->capturePage(this->lid, this->editor->page());
     }
     this->setEditorStyle();
 
@@ -865,12 +864,11 @@ void NBrowserWindow::saveNoteContent() {
                 emit requestNoteContentUpdate(lid, formatter.getContent(), true);
         editor->isDirty = false;
 
-        if (thumbnailer == nullptr)
-            thumbnailer = new Thumbnailer(global.db);
-
-        QLOG_DEBUG() << "Beginning thumbnail";
-        thumbnailer->render(lid);
-        QLOG_DEBUG() << "Thumbnail completed";
+        if (!global.disableThumbnails) {
+            QLOG_DEBUG() << "Beginning thumbnail";
+            hammer->capturePage(this->lid, this->editor->page());
+            QLOG_DEBUG() << "Thumbnail completed";
+        }
 
         NoteCache *cache = global.cache[lid];
         if (cache != nullptr) {
