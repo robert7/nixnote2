@@ -289,6 +289,7 @@ void NTableViewHeader::sizeChecked(bool checked) {
 void NTableViewHeader::thumbnailChecked(bool checked) {
     emit (setColumnVisible(NOTE_TABLE_THUMBNAIL_POSITION, checked));
     checkActions();
+    global.disableThumbnails = !checked;
 }
 void NTableViewHeader::relevanceChecked(bool checked) {
     emit (setColumnVisible(NOTE_TABLE_SEARCH_RELEVANCE_POSITION, checked));

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-usage="$0 [path_to_deploy]"
+usage="$0 [folder_to_deploy]"
 
 if [[ -z $1 ]];
 then echo $usage
@@ -8,6 +8,11 @@ then echo $usage
 fi
 
 deploy_folder=$1
+
+if [[ ! -e $deploy_folder ]]; then
+    echo "The folder to deploy is not found. Exiting."
+    exit 1
+fi
 
 IFS=':'
 read -a paths <<< $PATH
@@ -49,3 +54,30 @@ done
 
 cp -r -n ../translations ../resources/images ../java ../themes.ini ../colors.txt ../shortcuts.txt $deploy_folder
 
+
+choice=1
+if [ -f "../qmake-build-release/nixnote2.exe" ] && [ -f "../qmake-build-debug/nixnote2.exe" ];
+then
+    echo "Found two executables, please choose one. 1. ../qmake-build-release/nixnote2.exe; 2. ../qmake-build-build/nixnote2.exe [1]/2?:"
+    read choice
+    if [[ $choice == 1 ]]; then
+        cp ../qmake-build-release/nixnote2.exe $deploy_folder 
+    elif [[ $choice == 2 ]]; then
+        cp ../qmake-build-debug/nixnote2.exe $deploy_folder 
+    else
+        echo "Unknown input. Deploy release version as default."
+        cp ../qmake-build-release/nixnote2.exe $deploy_folder 
+    fi
+    echo "Deployment finished."
+    exit 0
+fi
+
+if [ -f "../qmake-build-release/nixnote2.exe" ]; then
+    cp ../qmake-build-release/nixnote2.exe $deploy_folder 
+fi
+
+if [ -f "../qmake-build-debug/nixnote2.exe" ]; then
+    cp ../qmake-build-debug/nixnote2.exe $deploy_folder 
+fi
+
+echo "Deployment finished."

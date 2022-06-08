@@ -65,6 +65,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/filters/filterengine.h"
 #include "src/global.h"
 #include "src/html/enmlformatter.h"
+#include "src/html/noteformatter.h"
 #include "src/dialog/databasestatus.h"
 #include "src/dialog/adduseraccountdialog.h"
 #include "src/dialog/accountmaintenancedialog.h"
@@ -188,8 +189,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     connect(searchText, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
 
-    hammer = new Thumbnailer(global.db);
-    hammer->startTimer();
     finalSync = false;
 
 

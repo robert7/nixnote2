@@ -140,6 +140,7 @@ public:
     qint32 getNextThumbnailNeeded();                         // get any note that needs a thumbnail
     void getAllReminders(QList< QPair<qint32, qlonglong>* > *reminders);  // Get all notes with un-completed reminders
     qint32 getThumbnailsNeededCount();                       // Get a count of all notes in need of a thumbnail
+    bool thumbnailExists(qint32 lid);
     void getAll(QList<qint32> &lids);                        // Get all note lids
     void getAllPinned(QList<QPair<qint32, QString> > &lids); // Get all notes that are pinned
     void getRecentlyUpdated(QList< QPair< qint32, QString > > &lids);    // Get any notes recently updated (used for the icon in the toolbar).

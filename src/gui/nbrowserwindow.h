@@ -96,7 +96,6 @@ private:
     qint32 createResource(Resource &r, int sequence, QByteArray data, QString mime, bool attachment, QString filename);
     PluginFactory *factory;
     Thumbnailer *hammer;
-    Thumbnailer *thumbnailer;
     QTimer focusTimer;
     QTimer saveTimer;
     QString attachFilePath;  // Save path of last selected attachment.
