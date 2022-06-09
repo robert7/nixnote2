@@ -2106,7 +2106,7 @@ void NixNote::restoreAndNewNote() {
 
 #define NEW_NOTE_ENML "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" \
                       "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">" \
-                      "<en-note ><br/><br/><br/></en-note>"
+                      "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"></en-note>"
 
 /**
  * Create a new note
