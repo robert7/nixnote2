@@ -1378,8 +1378,14 @@ void NBrowserWindow::fontSizeSelected(int index) {
         return;
 
     QString text = editor->selectedHtml();
-    if (text.trimmed() == "")
-        return;
+    if (text.trimmed() == "") {
+        // Add an invisible charactor in order to set the cursor position
+        // to the innerhtml part of the <span> tags added below. If not,
+        // the text typed in after font size changed will be added beyond
+        // the <span> tags scope. This restricton is brought by
+        // document.execCommand called below.
+        text = "&zwnj;";
+    }
 
     // Go througth the selected HTML and strip out all of the existing font-sizes.
     // This allows for the font size to be changed multiple times.  Without this the inner most font
@@ -1410,12 +1416,21 @@ void NBrowserWindow::fontSizeSelected(int index) {
     QString font = buttonBar->fontNames->itemText(idx);
 
     QString newText =
-            "<span style=\"font-size: " + QString::number(size) + "pt; font-family:" + font + ";\">" + text + "</span>";
+            "<span style=\"font-size:" + QString::number(size) + "pt;font-family:" + font + ";\">" + text + "</span>";
     QString script = QString("document.execCommand('insertHtml', false, '" + newText + "');");
     editor->page()->mainFrame()->evaluateJavaScript(script);
 
     editor->setFocus();
     microFocusChanged();
+
+    if (text == "&zwnj;") {
+        // Simulate a backspace press down event to delete
+        // the invisible charactor inserted above.
+        QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress,
+                Qt::Key_Backspace, Qt::NoModifier, "");
+        QApplication::sendEvent(editor, key_press);
+        delete key_press;
+    }
 }
 
 
