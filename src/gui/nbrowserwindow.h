@@ -130,6 +130,10 @@ private:
     QString tableStyle;
     QPoint scrollPoint;
 
+    // To record the simulated backspace button events in the undoStack.
+    QVector<int> autoBackspaceIndices;
+
+
     void exitPoint(ExitPoint *exit);
 
     // get note title from the title UI field - and do some fixup (like discard line feeds)
@@ -363,7 +367,7 @@ private slots:
     void saveTimeCheck();
     void browserThreadStarted();
     void repositionAfterSourceEdit(bool);
-
+    void correctFontTagAttr();
 };
 
 
