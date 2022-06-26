@@ -314,6 +314,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
         this->setStyleSheet(css);
     }
 
+    changeDisplayFontName(global.defaultFont);
 }
 
 
@@ -1470,6 +1471,7 @@ void NBrowserWindow::fontSizeSelected(int index) {
 
     editor->setFocus();
     microFocusChanged();
+    buttonBar->fontSizes->setCurrentText(QString::number(size));
 }
 
 
