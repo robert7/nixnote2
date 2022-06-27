@@ -1406,30 +1406,6 @@ void NBrowserWindow::fontSizeSelected(int index) {
         text = "&zwnj;";
     }
 
-    // Go througth the selected HTML and strip out all of the existing font-sizes.
-    // This allows for the font size to be changed multiple times.  Without this the inner most font
-    // size would always win.
-    //for (int i = text.indexOf("<"); i >= 0; i = text.indexOf("<", i + 1)) {
-    //    QString text1 = "";
-    //    QString text2 = "";
-    //    text1 = text.mid(0, i);
-    //    QString interior = text.mid(i);
-    //    if (!interior.startsWith("</")) {
-    //        int endPos = text.indexOf(">", i);
-    //        if (endPos > 0) {
-    //            interior = text.mid(i, endPos - i);
-    //            text2 = text.mid(endPos);
-    //        }
-    //        // Now that we have a substring, look for the font-size
-    //        if (interior.contains("font-size:")) {
-    //            interior = interior.mid(0, interior.indexOf("font-size:")) +
-    //                       //QString::number(size)+
-    //                       interior.mid(interior.indexOf("pt;") + 3);
-    //            text = text1 + interior + text2;
-    //        }
-    //    }
-    //}
-
     // Start building a new font span.
     int idx = buttonBar->fontNames->currentIndex();
     QString font = buttonBar->fontNames->itemText(idx);

@@ -77,8 +77,7 @@ NTableView::NTableView(QWidget *parent) :
 
     //refreshData();
     setModel(proxy);
-    // disable user sorting
-    //this->setSortingEnabled(false);
+
     global.settings->beginGroup("SaveState");
     Qt::SortOrder order = Qt::SortOrder(global.settings->value("sortOrder", 0).toInt());
     int col = global.settings->value("sortColumn", NOTE_TABLE_DATE_CREATED_POSITION).toInt();
