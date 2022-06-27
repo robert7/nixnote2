@@ -110,6 +110,7 @@ private:
     void saveSpellCheckerLocaleToSettings(QString locale);
     void spellCheckAddWordToUserDictionary(QString currentWord);
 
+    void modifyFontTagAttr(int size);
 
     // Shortcuts for context menu
     QShortcut *attachFileShortcut;

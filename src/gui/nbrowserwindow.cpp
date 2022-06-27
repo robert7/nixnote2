@@ -1434,15 +1434,7 @@ void NBrowserWindow::fontSizeSelected(int index) {
         // document.execCommand fontSize will generate font tag with size attribute set,
         // which may make the following font setting out of order. So replace it with
         // css style here.
-        QString js = QString("var nodes = document.getElementsByTagName(\"font\");") +
-                     QString("for (var i = 0; i < nodes.length; i++) {") +
-                     QString("    if (nodes[i].attributes[\"size\"] != null) {") +
-                     QString("        nodes[i].removeAttribute(\"size\");") +
-                     QString("        nodes[i].setAttribute(\"style\", \"font-size:" + QString::number(size) + "pt;\");") +
-                     QString("    }") +
-                     QString("}");
-                     
-        editor->page()->mainFrame()->evaluateJavaScript(js);
+        modifyFontTagAttr(size);
     }
 
     editor->setFocus();
@@ -2075,6 +2067,18 @@ void NBrowserWindow::microFocusChanged() {
 }
 
 
+void NBrowserWindow::modifyFontTagAttr(int size) {
+    QString js = QString("var nodes = document.getElementsByTagName(\"font\");") +
+                 QString("for (var i = 0; i < nodes.length; i++) {") +
+             QString("    if (nodes[i].attributes[\"size\"] != null) {") +
+             QString("        nodes[i].removeAttribute(\"size\");") +
+             QString("        nodes[i].setAttribute(\"style\", \"font-size:" + QString::number(size) + "pt;\");") +
+             QString("    }") +
+             QString("}");
+
+    editor->page()->mainFrame()->evaluateJavaScript(js);
+}
+
 // When a font size is selected, and the page content is empty, any keyboard input
 // will make font tag generated with size attribute set, which may make the following
 // font size setting out of order. So have to replace it with css style. Called only when the content is null.
@@ -2085,15 +2089,10 @@ void NBrowserWindow::correctFontTagAttr() {
     }
 
     int size = buttonBar->fontSizes->currentText().toInt();
-    QString js = QString("var nodes = document.getElementsByTagName(\"font\");") +
-                 QString("for (var i = 0; i < nodes.length; i++) {") +
-             QString("    if (nodes[i].attributes[\"size\"] != null) {") +
-             QString("        nodes[i].removeAttribute(\"size\");") +
-             QString("        nodes[i].setAttribute(\"style\", \"font-size:" + QString::number(size) + "pt;\");") +
-             QString("    }") +
-             QString("}");
+    if (size <= 0)
+        return;
 
-    editor->page()->mainFrame()->evaluateJavaScript(js);
+    modifyFontTagAttr(size);
 }
 
 void NBrowserWindow::printNodeName(QString v) {
