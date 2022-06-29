@@ -718,6 +718,12 @@ void NTableView::deleteSelectedNotes() {
     }
     //transaction.exec("commit");
     sql.finish();
+
+    // Unpin the note being deleted, so that the table view
+    // will not display a pinned note even after it
+    // has been deleted.
+    unpinNote();
+
     emit(notesDeleted(lids, expunged));
 }
 
