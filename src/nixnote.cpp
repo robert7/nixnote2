@@ -93,6 +93,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/qevercloud/QEverCloud/headers/QEverCloud.h"
 #include "src/qevercloud/QEverCloud/headers/QEverCloudOAuth.h"
 
+
 using namespace qevercloud;
 
 // Windows Check
@@ -1698,8 +1699,13 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
         global.cache.remove(keys[i]);
     }
 
+    // The filter() function can work without being passed parameters, but
+    // it is best to allocate a QList<qint32> object for filter() here
+    // in case that filter() returns result via it in the future.
     FilterEngine filterEngine;
-    filterEngine.filter();
+    QList<qint32> *results = new QList<qint32>();
+    filterEngine.filter(NULL, results);
+    delete results;
 
     QLOG_DEBUG() << "Refreshing data";
     noteTableView->refreshData();
