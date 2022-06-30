@@ -223,7 +223,7 @@ QString FileManager::toPlatformPathSeparator(QString relativePath) const {
 /*************************************************/
 QString FileManager::slashTerminatePath(QString path) {
     if (!path.endsWith(QDir::separator())) {
-        return path + QDir::separator();
+        return path + QDir::fromNativeSeparators(QDir::separator());
     }
 
     return path;
