@@ -77,8 +77,15 @@ NTableView::NTableView(QWidget *parent) :
 
     //refreshData();
     setModel(proxy);
-    // disable user sorting
-    this->setSortingEnabled(false);
+
+    global.settings->beginGroup("SaveState");
+    Qt::SortOrder order = Qt::SortOrder(global.settings->value("sortOrder", 0).toInt());
+    int col = global.settings->value("sortColumn", NOTE_TABLE_DATE_CREATED_POSITION).toInt();
+    global.settings->endGroup();
+    this->setSortingEnabled(true);
+    proxy->setFilterKeyColumn(NOTE_TABLE_LID_POSITION);
+    sortByColumn(col, order);
+    noteModel->sort(col,order);
 
     // Set the date delegates
     QLOG_TRACE() << "Setting up table delegates";
@@ -711,6 +718,12 @@ void NTableView::deleteSelectedNotes() {
     }
     //transaction.exec("commit");
     sql.finish();
+
+    // Unpin the note being deleted, so that the table view
+    // will not display a pinned note even after it
+    // has been deleted.
+    unpinNote();
+
     emit(notesDeleted(lids, expunged));
 }
 

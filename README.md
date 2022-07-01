@@ -253,7 +253,18 @@ mingw32-make.exe
 strip.exe qmake-build-debug/[release]/nixnote2.exe
 ```
 
-Finally, you will get qmake-build-debug[/release]/nixnote2.exe. Run deploy-on-windows.sh located in the development folder with a destination folder to deploy as the parameter. If you need spell check, you have to download the dictionary files and copy the .aff and .dic file to the deployment folder. You may want to download them [here](https://github.com/wooorm/dictionaries).
+Finally, you will get qmake-build-debug[/release]/nixnote2.exe.
+
+#### Deployment:
+
+First, copy the nixnote2.exe to the deployment_folder, then execute the following commands:
+
+```bash
+windeployqt.exe --compiler-runtime --libdir [deployment_folder] [deployment_folder]
+bash /development/deploy-on-windows.sh [deployment_folder]
+```
+
+If you need spell check, you have to download the dictionary files and copy the .aff and .dic file to the deployment folder. You may want to download them [here](https://github.com/wooorm/dictionaries).
 
 
 ## Donations

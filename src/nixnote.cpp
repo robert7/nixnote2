@@ -93,6 +93,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/qevercloud/QEverCloud/headers/QEverCloud.h"
 #include "src/qevercloud/QEverCloud/headers/QEverCloudOAuth.h"
 
+
 using namespace qevercloud;
 
 // Windows Check
@@ -1698,8 +1699,13 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
         global.cache.remove(keys[i]);
     }
 
+    // The filter() function can work without being passed parameters, but
+    // it is best to allocate a QList<qint32> object for filter() here
+    // in case that filter() returns result via it in the future.
     FilterEngine filterEngine;
-    filterEngine.filter();
+    QList<qint32> *results = new QList<qint32>();
+    filterEngine.filter(NULL, results);
+    delete results;
 
     QLOG_DEBUG() << "Refreshing data";
     noteTableView->refreshData();
@@ -2106,7 +2112,7 @@ void NixNote::restoreAndNewNote() {
 
 #define NEW_NOTE_ENML "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" \
                       "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">" \
-                      "<en-note ><br/><br/><br/></en-note>"
+                      "<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"></en-note>"
 
 /**
  * Create a new note
@@ -3272,6 +3278,10 @@ void NixNote::deleteCurrentNote() {
     QList<qint32> lids;
     lids.append(lid);
     emit(notesDeleted(lids));
+    // Unpin the note being deleted, so that the table view
+    // will not display a pinned note even after it
+    // has been deleted.
+    unpinCurrentNote();
 }
 
 
