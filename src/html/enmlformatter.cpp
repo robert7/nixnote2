@@ -581,7 +581,8 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         QString type = e.attribute("type");
         QString hash = e.attribute("hash");
         QLOG_DEBUG() << "Processing tag 'img', type=" << type << ", hash=" << hash;
-        if ((lid <= 0) || (hash.isEmpty())) {
+
+        if ((lid <= 0 || hash.isEmpty()) && !e.attribute("src").startsWith("http")) {
             QLOG_WARN() << ENML_MODULE_LOGPREFIX "deleting invalid 'img' tag";
             e.removeFromDocument();
             return;
@@ -599,10 +600,14 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 
         resources.append(lid);
         removeInvalidAttributes(e);
+        // 2022/07/04: commented out the code that comments out
+        // the img element, in order that when copying content
+        // from web browser, the images in the content can stay,
+        // instead of being removed by tidy.
         // temp hack for tidy call
-        const QString xml = e.toOuterXml().replace("<img", HTML_COMMENT_START "<en-media").append("</en-media>" HTML_COMMENT_END);
-        e.setOuterXml(xml);
-        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed img node to: " << xml;
+        //const QString xml = e.toOuterXml().replace("<img", HTML_COMMENT_START "<en-media").append("</en-media>" HTML_COMMENT_END);
+        //e.setOuterXml(xml);
+        //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed img node to: " << xml;
     }
 }
 
@@ -656,6 +661,7 @@ void EnmlFormatter::fixANode(QWebElement &e) {
 //   tabindex
 //
 bool EnmlFormatter::isAttributeValid(QString attribute) {
+
     bool isInvalid =
             attribute.startsWith("on")
             || (attribute == "id")
@@ -666,7 +672,9 @@ bool EnmlFormatter::isAttributeValid(QString attribute) {
             || (attribute == "tabindex")
             // These are things that are NixNote specific
             || (attribute == "en-tag")
-            || (attribute == "src")
+            // 2022/07/04: To keep images pasted from web browser,
+            // I defined src as a valid attribute here temporarily.
+            //|| (attribute == "src")
             || (attribute == "en-new")
             || (attribute == "guid")
             || (attribute == "lid")
