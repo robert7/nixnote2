@@ -245,7 +245,11 @@ And also copy the dll files libtidy.dll, libpoppler.dll, libpoppler-qt5.dll, lib
 
 #### Build the application:
 
+(This part can be going under any bash environment, not definitely MSYS or Cygwin.)
+
 ```bash
+git clone nixnote2
+cd nixnote2
 qmake.exe -set HUNSPELL_VERSION 1.7-0(you can change the version as needed)
 qmake.exe CONFIG+=debug[/release] nixnote2.pro
 qmake.exe -unset HUNSPELL_VERSION
@@ -261,7 +265,7 @@ First, copy the nixnote2.exe to the deployment_folder, then execute the followin
 
 ```bash
 windeployqt.exe --compiler-runtime --libdir [deployment_folder] [deployment_folder]
-bash /development/deploy-on-windows.sh [deployment_folder]
+bash development/deploy-on-windows.sh [deployment_folder]
 ```
 
 If you need spell check, you have to download the dictionary files and copy the .aff and .dic file to the deployment folder. You may want to download them [here](https://github.com/wooorm/dictionaries).
