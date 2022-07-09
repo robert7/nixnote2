@@ -238,8 +238,10 @@ QByteArray EnmlFormatter::getContentBytes() const {
 void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
     QLOG_DEBUG_FILE("fmt-pre-tidy.html", getContent());
 
-    TidyBuffer output = {nullptr};
-    TidyBuffer errbuf = {nullptr};
+    TidyBuffer output;
+    memset(&output, 0, sizeof(output));
+    TidyBuffer errbuf;
+    memset(&errbuf, 0, sizeof(errbuf));
     int rc = -1;
 
     //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "tidy1";
@@ -312,17 +314,20 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
     // delete content in both cases
     content.clear();
 
+    //http://tidy.sourceforge.net/libintro.html
+    //0 == Success Good to go.
+    //1 == Warnings, No Errors Check error buffer or track error messages for details.
+    //2 == Errors and Warnings
+    //<0 == Severe error
     if (rc >= 0) {
-        if (rc > 0) {
+        // results
+        content.append((char *) output.bp, output.size);
+        if (rc == 1 || rc == 2) {
             QString tidyErrors((char *) errbuf.bp);
             tidyErrors.replace("\n", "; ");
             QLOG_INFO() << ENML_MODULE_LOGPREFIX "tidy DONE: diagnostics: " << tidyErrors;
         }
-        // results
-        content.append((char *) output.bp);
-
-        //content = content.replace("</body>", "<br/>tidy ok</body>");
-    } else {
+    } else { // rc < 0
         formattingError = true;
         QLOG_ERROR() << ENML_MODULE_LOGPREFIX "tidy FAILED: severe error occurred, code=" << rc;
     }
@@ -370,7 +375,6 @@ void EnmlFormatter::rebuildNoteEnml() {
 
     removeHtmlCommentsInclContent();
 
-
     tidyHtml(HtmlCleanupMode::Tidy);
     if (isFormattingError()) {
         QLOG_ERROR() << ENML_MODULE_LOGPREFIX "got no output from tidy - cleanup failed";
@@ -408,7 +412,6 @@ void EnmlFormatter::rebuildNoteEnml() {
     // TEMP hack - rerun tidy - to fix XML after manual fixup
     tidyHtml(HtmlCleanupMode::Tidy);
 
-
     /// TEMPORARY POST TIDY HACK - this is how it shouldn't be done
     /// TEMPORARY POST TIDY HACK
     content.replace(HTML_COMMENT_START, "");
@@ -433,7 +436,6 @@ void EnmlFormatter::rebuildNoteEnml() {
         content = b.replace("<body", "<en-note");
         content = b.replace("</body>", "</en-note>");
     }
-
 
     QLOG_DEBUG_FILE("fmt-enml-final.xml", getContent());
     qint64 timeEnd = QDateTime::currentMSecsSinceEpoch();
@@ -600,14 +602,24 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 
         resources.append(lid);
         removeInvalidAttributes(e);
-        // 2022/07/04: commented out the code that comments out
-        // the img element, in order that when copying content
-        // from web browser, the images in the content can stay,
-        // instead of being removed by tidy.
+
         // temp hack for tidy call
-        //const QString xml = e.toOuterXml().replace("<img", HTML_COMMENT_START "<en-media").append("</en-media>" HTML_COMMENT_END);
-        //e.setOuterXml(xml);
-        //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed img node to: " << xml;
+        // Replace the img nodes displaying local images with en-media node,
+        // and leave the ones displaying web images alone.
+        // If replacing the latter with img nodes,
+        // the img node will not be rebuilt correctly.
+        // QWebView always adds </img> and </en-media> automatically,
+        // which should be removed.
+        // <img> is permitted according to evernote developer document,
+        // https://dev.evernote.com/doc/articles/enml.php.
+        const QString xml = e.toOuterXml().
+            replace("<img", HTML_COMMENT_START "<en-media").
+            append(HTML_COMMENT_END).
+            replace("<en-media src", "<img src").
+            replace("</img>", "").
+            replace("</en-media>", "");
+        e.setOuterXml(xml);
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed img node to: " << xml;
     }
 }
 
@@ -672,9 +684,7 @@ bool EnmlFormatter::isAttributeValid(QString attribute) {
             || (attribute == "tabindex")
             // These are things that are NixNote specific
             || (attribute == "en-tag")
-            // 2022/07/04: To keep images pasted from web browser,
-            // I defined src as a valid attribute here temporarily.
-            //|| (attribute == "src")
+            || (attribute == "src")
             || (attribute == "en-new")
             || (attribute == "guid")
             || (attribute == "lid")
@@ -841,6 +851,9 @@ void EnmlFormatter::removeInvalidAttributes(QWebElement &e) {
     for (int i = 0; i < attributes.size(); i++) {
         QString a = attributes[i];
         if (!isAttributeValid(a)) {
+            if (a == "src" && e.attribute("src").startsWith("http")) {
+                continue;
+            }
             QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "removeInvalidAttributes - tag " << e.tagName().toLower()
                         << " removing  invalid attribute " << a;
             e.removeAttribute(a);
