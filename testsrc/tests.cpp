@@ -182,7 +182,7 @@ void Tests::enmlNixnoteImageTest() {
         QString src(
                 R"R(<img src="file:///home/robert7/.nixnote/db-2/dba/45875.png" type="image/png" hash="8926e14a9c5e1b6314f28ca950543f3e" oncontextmenu="window.browser.imageContextMenu('45875', '45875.png');" en-tag="en-media" style="cursor: default;" lid="45875">)R");
         QString result(
-                R"R(<en-media type="image/png" hash="8926e14a9c5e1b6314f28ca950543f3e"></en-media>)R");
+                R"R(<en-media type="image/png" hash="8926e14a9c5e1b6314f28ca950543f3e">)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45875")));
     }
 }
