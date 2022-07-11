@@ -607,13 +607,13 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 
         // temp hack for tidy call
         // Replace the img nodes displaying local images with en-media node,
-        // and leave the ones displaying web images alone.
-        // If replacing the latter with img nodes,
-        // the img node will not be rebuilt correctly.
-        // QWebView always adds </img> and </en-media> automatically,
-        // which should be removed.
-        // <img> is permitted according to evernote developer document,
+        // and leave the ones displaying web images alone, because the latter ones
+        // are not real media objects, and their contents will not be save locally
+        // and have a hash, which is needed when rebuilding the html.
+        // <img> is permitted according to evernote developer document:
         // https://dev.evernote.com/doc/articles/enml.php.
+        // QWebView always adds </img> and </en-media> automatically,
+        // which should be processed later.
         const QString xml = e.toOuterXml().
             replace("<img", HTML_COMMENT_START "<en-media").
             append("</en-media>" HTML_COMMENT_END).
