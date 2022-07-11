@@ -437,6 +437,8 @@ void EnmlFormatter::rebuildNoteEnml() {
         content = b.replace("</body>", "</en-note>");
     }
 
+    postXmlFix();
+
     QLOG_DEBUG_FILE("fmt-enml-final.xml", getContent());
     qint64 timeEnd = QDateTime::currentMSecsSinceEpoch();
     QLOG_INFO() << ENML_MODULE_LOGPREFIX "===== finished rebuilding note ENML in " << (timeEnd - timeStart) << " ms";
@@ -614,10 +616,8 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         // https://dev.evernote.com/doc/articles/enml.php.
         const QString xml = e.toOuterXml().
             replace("<img", HTML_COMMENT_START "<en-media").
-            append(HTML_COMMENT_END).
-            replace("<en-media src", "<img src").
-            replace("</img>", "").
-            replace("</en-media>", "");
+            append("</en-media>" HTML_COMMENT_END).
+            replace("<en-media src", "<img src");
         e.setOuterXml(xml);
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed img node to: " << xml;
     }
@@ -937,4 +937,18 @@ bool EnmlFormatter::isFormattingError() const {
 void EnmlFormatter::setContent(QString &contentStr) {
     this->content.clear();
     this->content.append(contentStr.toUtf8());
+}
+
+
+void EnmlFormatter::postXmlFix() {
+    // Fix the <br> tags
+    content = content.replace("<br clear=\"none\">", "<br>");
+    content = content.replace("<br><br/>", "<br>");
+    content = content.replace("<br />", "<br>");
+
+    // Fix the <en-media> tags
+    content.replace("></en-media>", "/>");
+
+    // Remove Windows pattern newline character
+    content.replace("\r", "");
 }
