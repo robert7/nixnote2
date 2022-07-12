@@ -8,6 +8,10 @@ PKGCONFIG += tidy
 # -g flag needed for linker - https://stackoverflow.com/questions/5244509/no-debugging-symbols-found-when-using-gdb
 LIBS += -g
 
+win32:PKGCONFIG = ""
+win32:LIBS += -L"../winlib" -ltidy
+win32:INCLUDEPATH += "../winlib/includes"
+win32:QMAKE_LFLAGS += -fstack-protector-strong
 
 TARGET = tests
 TEMPLATE = app

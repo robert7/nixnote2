@@ -182,7 +182,7 @@ void Tests::enmlNixnoteImageTest() {
         QString src(
                 R"R(<img src="file:///home/robert7/.nixnote/db-2/dba/45875.png" type="image/png" hash="8926e14a9c5e1b6314f28ca950543f3e" oncontextmenu="window.browser.imageContextMenu('45875', '45875.png');" en-tag="en-media" style="cursor: default;" lid="45875">)R");
         QString result(
-                R"R(<en-media type="image/png" hash="8926e14a9c5e1b6314f28ca950543f3e"></en-media>)R");
+                R"R(<en-media type="image/png" hash="8926e14a9c5e1b6314f28ca950543f3e"/>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45875")));
     }
 }
@@ -192,7 +192,7 @@ void Tests::enmlNixnoteLinkTest() {
         QString src(
                 R"R(<a type="application/pdf" hash="3a3fe16e6e4216802f41c40a3af59856" href="nnres:/home/robert7/.nixnote/db-2/dba/45877.pdf" oncontextmenu="window.browserWindow.resourceContextMenu('/home/robert7/.nixnote/tmp-2/45877------.pdf');" en-tag="en-media" lid="45877" title="nnres:/home/robert7/.nixnote/db-2/dba/45877.pdf">)R");
         QString result(
-                R"R(<en-media type="application/pdf" hash="3a3fe16e6e4216802f41c40a3af59856"></en-media>)R");
+                R"R(<en-media type="application/pdf" hash="3a3fe16e6e4216802f41c40a3af59856"/>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45877")));
     }
 
@@ -201,7 +201,7 @@ void Tests::enmlNixnoteLinkTest() {
         QString src(
                 R"R(<a en-tag="en-media" lid="45878" type="application/vnd.oasis.opendocument.spreadsheet" hash="2bb10cc981690fc6b87e50b825667bbb" href="nnres:/home/robert7/.nixnote/db-2/dba/45878.ods" oncontextmenu="window.browserWindow.resourceContextMenu(&amp;apos/home/robert7/.nixnote/db-2/dba/45878.ods&amp;apos);"><img en-tag="temporary" title="qs-qs.ods" src="file:///&lt;img en-tag=" temporary"=""></a><br><a type="application/zip" hash="eb57834ba58527ea4d4422f7fbf4498c" href="nnres:/home/robert7/.nixnote/db-2/dba/45880.zip" oncontextmenu="window.browserWindow.resourceContextMenu('/home/robert7/.nixnote/tmp-2/45880------.zip');" en-tag="en-media" lid="45880" title="nnres:/home/robert7/.nixnote/db-2/dba/45880.zip"><img src="file:////home/robert7/.nixnote/tmp-2/45880_icon.png" title="shortcuts.zip" en-tag="temporary"></a>)R");
         QString result(
-                R"R(<en-media type="application/vnd.oasis.opendocument.spreadsheet" hash="2bb10cc981690fc6b87e50b825667bbb"></en-media><br /><en-media type="application/zip" hash="eb57834ba58527ea4d4422f7fbf4498c"></en-media>)R");
+                R"R(<en-media type="application/vnd.oasis.opendocument.spreadsheet" hash="2bb10cc981690fc6b87e50b825667bbb"/><br><en-media type="application/zip" hash="eb57834ba58527ea4d4422f7fbf4498c"/>)R");
 
         const QString r1 = formatToEnml(src);
         const QString r2 = addEnmlEnvelope(result, QStringLiteral("45878,45880"));
@@ -213,7 +213,7 @@ void Tests::enmlNixnoteLinkTest() {
         QString src(
                 R"R(<a type="application/zip" hash="eb57834ba58527ea4d4422f7fbf4498c" href="nnres:/home/robert7/.nixnote/db-2/dba/45880.zip" oncontextmenu="window.browserWindow.resourceContextMenu('/home/robert7/.nixnote/tmp-2/45880------.zip');" en-tag="en-media" lid="45880" title="nnres:/home/robert7/.nixnote/db-2/dba/45880.zip"><img src="file:////home/robert7/.nixnote/tmp-2/45880_icon.png" title="shortcuts.zip" en-tag="temporary"></a>)R");
         QString result(
-                R"R(<en-media type="application/zip" hash="eb57834ba58527ea4d4422f7fbf4498c"></en-media>)R");
+                R"R(<en-media type="application/zip" hash="eb57834ba58527ea4d4422f7fbf4498c"/>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45880")));
     }
 
@@ -243,7 +243,7 @@ void Tests::enmlNixnoteLinkTest() {
         result.append(R"R("href=")R");
         result.append(resourceUrl);
         result.append(
-                R"R("><en-media type="image/gif" hash="69cb83339ee2fb3f008492f82f98cbbc"></en-media></a><br />)R");
+                R"R("><en-media type="image/gif" hash="69cb83339ee2fb3f008492f82f98cbbc"/></a><br>)R");
         const QString r1 = formatToEnml(src);
         const QString r2 = addEnmlEnvelope(result, "45913");
         QCOMPAREX(r1, r2); // note: use string, not expressions
@@ -267,7 +267,7 @@ void Tests::enmlNixnoteObjectTest() {
         QString src(
                 R"R(<div><object style="width:100%; height: 600px" hash="817602cc08f9237ed641ed1703784eca" type="application/pdf" lid="45883"></object><br></div>)R");
         QString result(
-                R"R(<div><en-media type="application/pdf" hash="817602cc08f9237ed641ed1703784eca"></en-media><br /></div>)R");
+                R"R(<div><en-media type="application/pdf" hash="817602cc08f9237ed641ed1703784eca"/><br></div>)R");
         QCOMPARE(formatToEnml(src), addEnmlEnvelope(result, QStringLiteral("45883")));
     }
 }
@@ -301,7 +301,7 @@ void Tests::enmlNixnoteTableTest() {
             R"R(<div><table border="1" width="100%" class="abcd"> <tbody> <tr> <td><br> aa  aaa</td> </tr></tbody></table></div>)R"
     );
     QString result(
-            R"R(<div><table border="1" width="100%"><tbody><tr><td><br />aa aaa</td></tr></tbody></table></div>)R");
+            R"R(<div><table border="1" width="100%"><tbody><tr><td><br>aa aaa</td></tr></tbody></table></div>)R");
     QCOMPARE(formatToEnml(src), addEnmlEnvelope(result));
 }
 

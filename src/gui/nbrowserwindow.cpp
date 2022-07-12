@@ -987,6 +987,27 @@ void NBrowserWindow::pasteButtonPressed() {
         return;
     }
 
+    if (mime->hasUrls()) {
+        QList<QUrl> urls = mime->urls();
+        for (int i=0; i<urls.size(); i++) {
+            QLOG_DEBUG() << urls[i].toString();
+            if (urls[i].toString().startsWith("file://")) {
+// Windows Check
+#ifndef _WIN32
+                QString fileName = urls[i].toString().mid(7);
+#else
+                QString fileName = urls[i].toString().mid(8);
+#endif  // End windows check
+                attachFileSelected(fileName);
+                this->editor->triggerPageAction(QWebPage::InsertParagraphSeparator);
+            }
+        }
+
+        this->editor->setFocus();
+        microFocusChanged();
+        return;
+    }
+
     if (!mime->hasText()) {
         QLOG_DEBUG() << "pasteButtonPressed: no text; nothing to do";
         return;

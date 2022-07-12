@@ -239,17 +239,23 @@ void NTagView::mousePressEvent(QMouseEvent *event)
 
 // Load up the data from the database
 void NTagView::loadData() {
-
     // Empty out the old data store
     QList<qint32> keys = dataStore.keys();
     for (int i=0; i<keys.size(); i++) {
         if (dataStore.contains(keys[i])) {
             NTagViewItem *ptr = dataStore.take(keys[i]);
             dataStore.remove(keys[i]);
-            if (ptr->parent() != nullptr)
-                ptr->parent()->removeChild(ptr);
-            ptr->setHidden(true);
-           // delete ptr;  << We can leak memory, but otherwise it sometimes gets confused and causes crashes
+            if (ptr != nullptr) {
+                if (ptr->parent() != nullptr) {
+                    ptr->parent()->removeChild(ptr);
+                }
+
+                ptr->setHidden(true);
+            }
+
+            delete ptr;  //<< We can leak memory, but otherwise it sometimes gets confused and causes crashes
+            // This delete clause seems not to cause memory leak,
+            // so I enabled it, but keep the orignal comment meanwhile.
         }
     }
 

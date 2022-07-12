@@ -67,6 +67,7 @@ private:
     void fixObjectNode(QWebElement &e);
     void removeInvalidUnicode();
     //QByteArray fixEncryptionTags(QByteArray newContent);
+    void postXmlFix();
 
     QStringList coreattrs;
     QStringList i18n;
