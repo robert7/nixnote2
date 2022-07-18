@@ -1,6 +1,6 @@
 #!/bin/bash
 
-usage="$0 [path_to_deploy]"
+usage="$0 [folder_to_deploy]"
 
 if [[ -z $1 ]];
 then echo $usage
@@ -8,6 +8,11 @@ then echo $usage
 fi
 
 deploy_folder=$1
+
+if [[ ! -e $deploy_folder ]]; then
+    echo "The folder to deploy is not found. Exiting."
+    exit 1
+fi
 
 IFS=':'
 read -a paths <<< $PATH
@@ -49,3 +54,4 @@ done
 
 cp -r -n ../translations ../resources/images ../java ../themes.ini ../colors.txt ../shortcuts.txt $deploy_folder
 
+echo "Deployment finished."

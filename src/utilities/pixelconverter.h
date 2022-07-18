@@ -28,7 +28,7 @@ private:
     QHash<int,int> pointArray;
 public:
     PixelConverter();
-    int getPoints(int px);
+    int getPoints(float px);
 };
 
 #endif // PIXELCONVERTER_H

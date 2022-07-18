@@ -240,11 +240,13 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
 
 
 void FilterEngine::filterAttributes(FilterCriteria *criteria) {
-    if (!criteria->isSet() || !criteria->isAttributeSet())
+    if (!criteria->isSet() || !criteria->isAttributeSet()) {
         return;
+    }
     QLOG_TRACE_IN();
 
     int attribute = criteria->getAttribute()->data(0,Qt::UserRole).toInt();
+
     NSqlQuery sql(global.db);
     QDateTime dt;
     dt.setDate(QDate().currentDate());
@@ -256,45 +258,45 @@ void FilterEngine::filterAttributes(FilterCriteria *criteria) {
     switch (attribute)
     {
     case CREATED_SINCE_TODAY:
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case CREATED_SINCE_YESTERDAY:
         dt = dt.addDays(-1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case CREATED_SINCE_THIS_WEEK:
         dt = dt.addDays(-1*dow);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case CREATED_SINCE_LAST_WEEK:
         dt = dt.addDays(-1*dow-7);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case CREATED_SINCE_THIS_MONTH:
         dt = dt.addDays(-1*dom+1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case CREATED_SINCE_LAST_MONTH:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case CREATED_SINCE_THIS_YEAR:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
@@ -302,50 +304,50 @@ void FilterEngine::filterAttributes(FilterCriteria *criteria) {
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
         dt = dt.addYears(-1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case CREATED_BEFORE_TODAY:
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case CREATED_BEFORE_YESTERDAY:
         dt = dt.addDays(-1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case CREATED_BEFORE_THIS_WEEK:
         dt = dt.addDays(-1*dow);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case CREATED_BEFORE_LAST_WEEK:
         dt = dt.addDays(-1*dow-7);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case CREATED_BEFORE_THIS_MONTH:
         dt = dt.addDays(-1*dom+1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case CREATED_BEFORE_LAST_MONTH:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case CREATED_BEFORE_THIS_YEAR:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
@@ -353,50 +355,50 @@ void FilterEngine::filterAttributes(FilterCriteria *criteria) {
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
         dt = dt.addYears(-1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_SINCE_TODAY:
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_SINCE_YESTERDAY:
         dt = dt.addDays(-1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_SINCE_THIS_WEEK:
         dt = dt.addDays(-1*dow);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_SINCE_LAST_WEEK:
         dt = dt.addDays(-1*dow-7);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_SINCE_THIS_MONTH:
         dt = dt.addDays(-1*dom+1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_SINCE_LAST_MONTH:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_SINCE_THIS_YEAR:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
@@ -404,50 +406,50 @@ void FilterEngine::filterAttributes(FilterCriteria *criteria) {
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
         dt = dt.addYears(-1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_BEFORE_TODAY:
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_BEFORE_YESTERDAY:
         dt = dt.addDays(-1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_BEFORE_THIS_WEEK:
         dt = dt.addDays(-1*dow);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_BEFORE_LAST_WEEK:
         dt = dt.addDays(-1*dow-7);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_BEFORE_THIS_MONTH:
         dt = dt.addDays(-1*dom+1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_BEFORE_LAST_MONTH:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
     case MODIFIED_BEFORE_THIS_YEAR:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
@@ -455,7 +457,7 @@ void FilterEngine::filterAttributes(FilterCriteria *criteria) {
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
         dt = dt.addYears(-1);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
         break;
@@ -1594,27 +1596,27 @@ void FilterEngine::filterSearchStringDateAll(QString string) {
     int key=0;
 
     if (string.startsWith("created:", Qt::CaseInsensitive)) {
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>=((:data/1000)))");
         key = NOTE_CREATED_DATE;
     }
     else if (string.startsWith("updated:", Qt::CaseInsensitive)) {
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>=((:data/1000)))");
         key = NOTE_UPDATED_DATE;
     }
     else if (string.startsWith("subjectdate:", Qt::CaseInsensitive)) {
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>=((:data/1000)))");
         key = NOTE_ATTRIBUTE_SUBJECT_DATE;
     }
     else if (string.startsWith("-created:", Qt::CaseInsensitive)) {
-        sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and (data/1000)<=((:data/1000)))");
         key = NOTE_CREATED_DATE;
     }
     else if (string.startsWith("-updated:", Qt::CaseInsensitive)) {
-        sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and (data/1000)<=((:data/1000)))");
         key = NOTE_UPDATED_DATE;
     }
     else if (string.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
-        sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and (data/1000)<=((:data/1000)))");
         key = NOTE_ATTRIBUTE_SUBJECT_DATE;
     }
 
@@ -2201,27 +2203,27 @@ void FilterEngine::filterSearchStringDateAny(QString string) {
     int key=0;
 
     if (string.startsWith("created:", Qt::CaseInsensitive)) {
-        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000))");
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and (data/1000)>=((:data/1000))");
         key = NOTE_CREATED_DATE;
     }
     else if (string.startsWith("updated:", Qt::CaseInsensitive)) {
-        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000))");
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and (data/1000)>=((:data/1000))");
         key = NOTE_UPDATED_DATE;
     }
     else if (string.startsWith("subjectdate:", Qt::CaseInsensitive)) {
-        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000))");
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and (data/1000)>=((:data/1000))");
         key = NOTE_ATTRIBUTE_SUBJECT_DATE;
     }
     else if (string.startsWith("-created:", Qt::CaseInsensitive)) {
-        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000))");
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and (data/1000)<=((:data/1000))");
         key = NOTE_CREATED_DATE;
     }
     else if (string.startsWith("-updated:", Qt::CaseInsensitive)) {
-        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000))");
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and (data/1000)<=((:data/1000))");
         key = NOTE_UPDATED_DATE;
     }
     else if (string.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
-        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000))");
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and (data/1000)<=((:data/1000))");
         key = NOTE_ATTRIBUTE_SUBJECT_DATE;
     }
 
@@ -2511,9 +2513,9 @@ void FilterEngine::filterSearchStringReminderTimeAll(QString string) {
     int key= NOTE_ATTRIBUTE_REMINDER_TIME;
 
     if (string.startsWith("-", Qt::CaseInsensitive)) {
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
     } else {
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>=((:data/1000)))");
     }
 
     sql.bindValue(":key", key);
@@ -2534,9 +2536,9 @@ void FilterEngine::filterSearchStringReminderTimeAny(QString string) {
     int key = NOTE_ATTRIBUTE_REMINDER_TIME;
 
     if (string.startsWith("-reminderDoneTime:", Qt::CaseInsensitive)) {
-        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000))");
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and (data/1000)<((:data/1000))");
     } else {
-        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000))");
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and (data/1000)>=((:data/1000))");
     }
     sql.bindValue(":key", key);
     sql.bindValue(":data", dt.toMSecsSinceEpoch());
@@ -2556,9 +2558,9 @@ void FilterEngine::filterSearchStringReminderDoneTimeAll(QString string) {
     int key = NOTE_ATTRIBUTE_REMINDER_DONE_TIME;
 
     if (string.startsWith("-", Qt::CaseInsensitive)) {
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)<((:data/1000)))");
     } else {
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and (data/1000)>=((:data/1000)))");
     }
 
     sql.bindValue(":key", key);
@@ -2579,9 +2581,9 @@ void FilterEngine::filterSearchStringReminderDoneTimeAny(QString string) {
     int key = NOTE_ATTRIBUTE_REMINDER_DONE_TIME;
 
     if (string.startsWith("-reminderDoneTime:", Qt::CaseInsensitive)) {
-        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000))");
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and (data/1000)<((:data/1000))");
     } else {
-        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000))");
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and (data/1000)>=((:data/1000))");
     }
     sql.bindValue(":key", key);
     sql.bindValue(":data", dt.toMSecsSinceEpoch());

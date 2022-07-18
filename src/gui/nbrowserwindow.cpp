@@ -87,6 +87,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #endif
 
 
+#include <QUndoStack>
+#include <QVector>
+
+
 extern Global
         global;
 
@@ -226,6 +230,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     connect(editor, SIGNAL(htmlEditAlert()), this, SLOT(noteContentEdited()));
     connect(editor->page(), SIGNAL(linkClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
     connect(editor->page(), SIGNAL(microFocusChanged()), this, SLOT(microFocusChanged()));
+    connect(editor->page(), SIGNAL(contentsChanged()), this, SLOT(correctFontTagAttr()));
 
     editor->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
     connect(editor->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(exposeToJavascript()));
@@ -246,8 +251,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     hammer = new Thumbnailer(global.db);
     lid = -1;
-    thumbnailer = nullptr;
-
 
     //Setup shortcuts for context menu
     removeFormattingShortcut = new QShortcut(this);
@@ -310,6 +313,8 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     if (css != "") {
         this->setStyleSheet(css);
     }
+
+    changeDisplayFontName(global.defaultFont);
 }
 
 
@@ -533,6 +538,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     dateEditor.setNote(lid, n);
     QWebSettings::setMaximumPagesInCache(0);
     QWebSettings::setObjectCacheCapacities(0, 0, 0);
+
     QLOG_DEBUG() << "Setting editor contents";
 
     //**** BEGINNING CALL TO PRE-LOAD EXIT
@@ -630,8 +636,8 @@ void NBrowserWindow::setContent(qint32 lid) {
     }
 
     QLOG_DEBUG() << "Checking thumbnail, lid=" << this->lid;
-    if (hammer->idle && noteTable.isThumbnailNeeded(this->lid)) {
-        hammer->render(this->lid);
+    if (!global.disableThumbnails && !noteTable.thumbnailExists(this->lid)) {
+        hammer->capturePage(this->lid, this->editor->page());
     }
     this->setEditorStyle();
 
@@ -865,12 +871,11 @@ void NBrowserWindow::saveNoteContent() {
                 emit requestNoteContentUpdate(lid, formatter.getContent(), true);
         editor->isDirty = false;
 
-        if (thumbnailer == nullptr)
-            thumbnailer = new Thumbnailer(global.db);
-
-        QLOG_DEBUG() << "Beginning thumbnail";
-        thumbnailer->render(lid);
-        QLOG_DEBUG() << "Thumbnail completed";
+        if (!global.disableThumbnails) {
+            QLOG_DEBUG() << "Beginning thumbnail";
+            hammer->capturePage(this->lid, this->editor->page());
+            QLOG_DEBUG() << "Thumbnail completed";
+        }
 
         NoteCache *cache = global.cache[lid];
         if (cache != nullptr) {
@@ -889,6 +894,12 @@ void NBrowserWindow::saveNoteContent() {
 
 // The undo edit button was pressed
 void NBrowserWindow::undoButtonPressed() {
+    QUndoStack *stack = this->editor->page()->undoStack();
+    int index = stack->index();
+    if (autoBackspaceIndices.indexOf(index) != -1) {
+        // Called an additional undo in order that the the users do not have to press another undo button to remove the 0-width character "&zwnj;" added before.
+        this->editor->triggerPageAction(QWebPage::Undo);
+    }
     this->editor->triggerPageAction(QWebPage::Undo);
     this->editor->setFocus();
     microFocusChanged();
@@ -897,6 +908,13 @@ void NBrowserWindow::undoButtonPressed() {
 
 // The redo edit button was pressed
 void NBrowserWindow::redoButtonPressed() {
+    QUndoStack *stack = this->editor->page()->undoStack();
+    int index = stack->index();
+    // The font size changing operation index stored in autoBackspaceIndices is 2 ahead of backspace button event, so here add index to 2.
+    if (autoBackspaceIndices.indexOf(index + 2) != -1) {
+        // Called an additional redo in order that the the users do not have to press another redo button to restore the removed text content.
+        this->editor->triggerPageAction(QWebPage::Redo);
+    }
     this->editor->triggerPageAction(QWebPage::Redo);
     this->editor->setFocus();
     microFocusChanged();
@@ -976,7 +994,7 @@ void NBrowserWindow::pasteButtonPressed() {
 
     // note: pasted text - is text only version without html tags
     bool hasHtml = mime->hasHtml();
-    const QString mimeContentAsText = mime->text().trimmed();
+    const QString mimeContentAsText = mime->text();
     bool isEvernoteInAppLink = mimeContentAsText.startsWith("evernote:///view/");
     bool processAsHtml = hasHtml && (!isEvernoteInAppLink);
     QString textToPaste = processAsHtml ? mime->html() : mimeContentAsText;
@@ -1380,44 +1398,48 @@ void NBrowserWindow::fontSizeSelected(int index) {
         return;
 
     QString text = editor->selectedHtml();
-    if (text.trimmed() == "")
-        return;
-
-    // Go througth the selected HTML and strip out all of the existing font-sizes.
-    // This allows for the font size to be changed multiple times.  Without this the inner most font
-    // size would always win.
-    for (int i = text.indexOf("<"); i >= 0; i = text.indexOf("<", i + 1)) {
-        QString text1 = "";
-        QString text2 = "";
-        text1 = text.mid(0, i);
-        QString interior = text.mid(i);
-        if (!interior.startsWith("</")) {
-            int endPos = text.indexOf(">", i);
-            if (endPos > 0) {
-                interior = text.mid(i, endPos - i);
-                text2 = text.mid(endPos);
-            }
-            // Now that we have a substring, look for the font-size
-            if (interior.contains("font-size:")) {
-                interior = interior.mid(0, interior.indexOf("font-size:")) +
-                           //QString::number(size)+
-                           interior.mid(interior.indexOf("pt;") + 3);
-                text = text1 + interior + text2;
-            }
-        }
+    if (text.trimmed() == "") {
+        // Add an invisible charactor in order to set the cursor position
+        // to the innerhtml part of the <span> tags added below. If not,
+        // the text typed in after font size changed will be added beyond
+        // the <span> tags scope.
+        text = "&zwnj;";
     }
 
     // Start building a new font span.
     int idx = buttonBar->fontNames->currentIndex();
     QString font = buttonBar->fontNames->itemText(idx);
 
-    QString newText =
-            "<span style=\"font-size: " + QString::number(size) + "pt; font-family:" + font + ";\">" + text + "</span>";
-    QString script = QString("document.execCommand('insertHtml', false, '" + newText + "');");
-    editor->page()->mainFrame()->evaluateJavaScript(script);
+    if (text == "&zwnj;") {
+        QString newText = "<span style=\"font-size:" + QString::number(size) +"pt;font-family:" + font + ";\">" + text + "</span>";
+        QString script2 = QString("document.execCommand('insertHtml', false, '" + newText + "');");
+        editor->page()->mainFrame()->evaluateJavaScript(script2);
+
+        // Simulate a backspace press down event to delete
+        // the invisible charactor inserted above.
+        QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress,
+                Qt::Key_Backspace, Qt::NoModifier, "");
+        QApplication::sendEvent(editor, key_press);
+        delete key_press;
+
+        QUndoStack *stack = this->editor->page()->undoStack();
+        int index = stack->index();
+        autoBackspaceIndices.append(index);
+
+    } else {
+    
+        QString script = QString("document.execCommand('fontSize', false, 5);");
+        editor->page()->mainFrame()->evaluateJavaScript(script);
+
+        // document.execCommand fontSize will generate font tag with size attribute set,
+        // which may make the following font setting out of order. So replace it with
+        // css style here.
+        modifyFontTagAttr(size);
+    }
 
     editor->setFocus();
     microFocusChanged();
+    buttonBar->fontSizes->setCurrentText(QString::number(size));
 }
 
 
@@ -2044,6 +2066,35 @@ void NBrowserWindow::microFocusChanged() {
     saveTimer.start();
 }
 
+
+void NBrowserWindow::modifyFontTagAttr(int size) {
+    QString js = QString("var nodes = document.getElementsByTagName(\"font\");") +
+                 QString("for (var i = 0; i < nodes.length; i++) {") +
+             QString("    if (nodes[i].attributes[\"size\"] != null) {") +
+             QString("        nodes[i].removeAttribute(\"size\");") +
+             QString("        nodes[i].setAttribute(\"style\", \"font-size:" + QString::number(size) + "pt;\");") +
+             QString("    }") +
+             QString("}");
+
+    editor->page()->mainFrame()->evaluateJavaScript(js);
+}
+
+// When a font size is selected, and the page content is empty, any keyboard input
+// will make font tag generated with size attribute set, which may make the following
+// font size setting out of order. So have to replace it with css style. Called only when the content is null.
+void NBrowserWindow::correctFontTagAttr() {
+    // Only modify the attribute when no content selected, so that the note content is null belongs to this case.
+    if (this->editor->selectedHtml() != "") {
+        return;
+    }
+
+    int size = buttonBar->fontSizes->currentText().toInt();
+    if (size <= 0)
+        return;
+
+    modifyFontTagAttr(size);
+}
+
 void NBrowserWindow::printNodeName(QString v) {
     QLOG_DEBUG() << v;
 }
@@ -2333,6 +2384,8 @@ void NBrowserWindow::clear() {
 //    editor->page()->setContentEditable(false);
 
     dateEditor.clear();
+
+    autoBackspaceIndices.clear();
 }
 
 
@@ -3829,18 +3882,18 @@ void NBrowserWindow::noteContentEdited() {
 
 
 void NBrowserWindow::changeDisplayFontSize(QString size) {
-    bool convert = true;
+    bool convert = false;
     if (size.endsWith("px", Qt::CaseInsensitive))
         convert = true;
     size.chop(2);  // Remove px from the end
-    int converted = size.toInt();
+    float converted = size.toFloat();
     if (convert) {
         PixelConverter c;
         converted = c.getPoints(converted);
-        size = QString::number(converted);
+        size = QString::number(int(converted));
     }
     int idx = buttonBar->fontSizes->findData(size, Qt::UserRole);
-    if (idx > 0) {
+    if (idx >= 0) {
         buttonBar->fontSizes->blockSignals(true);
         buttonBar->fontSizes->setCurrentIndex(idx);
         buttonBar->fontSizes->blockSignals(false);

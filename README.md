@@ -175,11 +175,14 @@ As far as I can tell this will find and copy all required dependencies into the 
 can be loaded from inside that bundle (wherever it ends up).
 
 ### Windows
-Build with MinGW32(MinGW-w64 and MSVC should work too):
+Build with MinGW32 for a 32-bit Nixnote2 (if you want a 64-bit one, you need to use MinGW-w64 or MSVC):
 
-Unlike Unix-like systems, Windows is not shipped with a bash environment, so you need to have one.
+Unlike Unix-like systems, Windows is not shipped with a bash environment, so you need to install one first.
 
-Download development dependencies:
+#### Download development dependencies:
+
+##### Download the third-party libraries:
+If you want to download binary third-party library files, you can get them from [winlib](https://github.com/boo-yee/winlib). Inside it, Hunspell and tidy are built with MinGW 32 5.3.0, and poppler is downloaded from sourceforge as binary. If you want to build by yourself, you can download them from the following links:
 
 [poppler](https://sourceforge.net/projects/poppler-qt5-mingw32/)
 
@@ -187,23 +190,27 @@ Download development dependencies:
 
 [hunspell](https://github.com/hunspell/hunspell/)
 
+##### Download Qt:
 [Qt](https://download.qt.io/)(with MinGW32)
 
-(Advice: You may want to add the path to qmake.exe and ming32-make.exe to the PATH environment, so that you do not have to type the full path when building the application and libraries later. You can do this by hand or running qtenv2.bat.)
-
-If your Qt version is 5.5 or higher, you need to download QtWebKit separately, because it is deprecated.
+If your Qt version is 5.6 or higher, you need to download QtWebKit separately and copy the files under QtWebKit include folder to /your_path_to_qt/[version]/mingw[version]/include.
 
 [QtWebKit](https://github.com/qtwebkit/qtwebkit/releases/download/qtwebkit-tp5/qtwebkit-tp5-qt58-mingw530-x86.zip)
 
-You need to build tidy-html5 by yourself to get the dll files, its README file may help. The poppler link points to the binary files, of an old version. If you want to use the latest version, you can download the code [here](https://github.com/freedesktop/poppler) and build it.
+(Advice: You may want to add the path to qmake.exe and ming32-make.exe to the PATH environment, so that you do not have to type the full path when building the application and libraries later. You can do this by hand or running qtenv2.bat.)
 
-About hunspell, as its README instructs us to use MSYS2 and Cygwin, which may be in x64, so you had better pay attention to the host type when executing its configure script. To get compatible libraries, you have to set gcc and g++ as the one you used previously for tidy(by alias or export command) and run the configure script like this:
+#### Build third-party libraries:
+If you need to build tidy-html5 by yourself, its README file may help. The poppler link points to the binary files, you can use it directly.
+
+About hunspell, as its README instructs us to use MSYS2 and Cygwin, which may be in x64, so to get compatible libraries, you have to set gcc and g++ as the one you used previously for tidy under MSYS2 or Cygwin(by alias or export command) and build like this:
 ```bash
-./configure --build=i686-pc-mingw32 --host=i686-pc-mingw32 --target=i686-pc-mingw32
+MSYS2/Cygwin # autoreconf -vfi
+MSYS2/Cygwin # ./configure --build=i686-pc-mingw32 --host=i686-pc-mingw32 --target=i686-pc-mingw32
+MSYS2/Cygwin # mingw32-make.exe
 ```
-And then, execute 'mingw32-make.exe', and you will get the dll file.
+Then you will get the hunspell dll file.
 
-If your qt version is 5.5 or higher, you need to copy the files under QtWebKit include folder to /your_path_to_qt/[version]/mingw[version]/include. Then, create folders as winlib/includes in this repository folder and copy the files under poppler, tidy and hunspell include folders to winlib/includes. The structure is:
+Then, create folders as winlib/includes in this repository folder and copy the files under poppler, tidy and hunspell include folders to winlib/includes. The structure is:
 
 ```bash
 nixnote_repo
@@ -236,18 +243,28 @@ nixnote_repo
 ```
 And also copy the dll files libtidy.dll, libpoppler.dll, libpoppler-qt5.dll, libhunspell-1.7-0.dll to winlib.
 
-Then, build the application.
+#### Build the application:
 
 ```bash
 qmake.exe -set HUNSPELL_VERSION 1.7-0(you can change the version as needed)
 qmake.exe CONFIG+=debug[/release] nixnote2.pro
 qmake.exe -unset HUNSPELL_VERSION
-mingw32-make.exe -f Makefile.Release
-(As qmake.exe do not add the version of hunspell in the generated makefiles, so we have to set/unset it by hand.
-If error occurs when executing the command of strip, you can ignore it.)
+mingw32-make.exe
+strip.exe qmake-build-debug/[release]/nixnote2.exe
 ```
 
-Finally, you will get qmake-build-build[/release]/nixnote2.exe. Run deploy-on-windows.sh under the development folder to finish the deploy, and copy the nixnote2.exe to the deploy folder. If you need spell check, you have to download the dictionary files and copy the .aff and .dic file to the deploy folder, you may want to download them [here](https://github.com/wooorm/dictionaries).
+Finally, you will get qmake-build-debug[/release]/nixnote2.exe.
+
+#### Deployment:
+
+First, copy the nixnote2.exe to the deployment_folder, then execute the following commands:
+
+```bash
+windeployqt.exe --compiler-runtime --libdir [deployment_folder] [deployment_folder]
+bash /development/deploy-on-windows.sh [deployment_folder]
+```
+
+If you need spell check, you have to download the dictionary files and copy the .aff and .dic file to the deployment folder. You may want to download them [here](https://github.com/wooorm/dictionaries).
 
 
 ## Donations

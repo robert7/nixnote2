@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QObject>
 #include <QSqlDatabase>
 
-#include "noteformatter.h"
 #include "src/sql/databaseconnection.h"
 
 
@@ -37,34 +36,13 @@ using namespace std;
 
 class Thumbnailer : public QObject
 {
-    Q_OBJECT
-
 private:
     DatabaseConnection *db;
-    QTimer timer;
-    int minTime;
-    int maxTime;
-
 
 public:
-    QWebPage *page;
     Thumbnailer(DatabaseConnection *db);
     ~Thumbnailer();
-    void render(qint32 lid);
-    qint32 lid;
-    bool idle;
-    void capturePage(QWebPage *page);
-    void startTimer();
-
-
-signals:
-
-private slots:
-
-public slots:
-    void pageReady(bool ok);
-    void generateNextThumbnail();
-
+    void capturePage(qint32 lid, QWebPage *page);
 };
 
 #endif // THUMBNAILER_H

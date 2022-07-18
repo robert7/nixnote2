@@ -96,7 +96,6 @@ private:
     qint32 createResource(Resource &r, int sequence, QByteArray data, QString mime, bool attachment, QString filename);
     PluginFactory *factory;
     Thumbnailer *hammer;
-    Thumbnailer *thumbnailer;
     QTimer focusTimer;
     QTimer saveTimer;
     QString attachFilePath;  // Save path of last selected attachment.
@@ -111,6 +110,7 @@ private:
     void saveSpellCheckerLocaleToSettings(QString locale);
     void spellCheckAddWordToUserDictionary(QString currentWord);
 
+    void modifyFontTagAttr(int size);
 
     // Shortcuts for context menu
     QShortcut *attachFileShortcut;
@@ -130,6 +130,10 @@ private:
     QString tableCellStyle;
     QString tableStyle;
     QPoint scrollPoint;
+
+    // To record the simulated backspace button events in the undoStack.
+    QVector<int> autoBackspaceIndices;
+
 
     void exitPoint(ExitPoint *exit);
 
@@ -364,7 +368,7 @@ private slots:
     void saveTimeCheck();
     void browserThreadStarted();
     void repositionAfterSourceEdit(bool);
-
+    void correctFontTagAttr();
 };
 
 

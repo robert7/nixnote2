@@ -2374,21 +2374,35 @@ qint32 NoteTable::getNextThumbnailNeeded() {
 
 
 qint32 NoteTable::getThumbnailsNeededCount() {
-    qint32 retval = 0;
-    NSqlQuery query(db);
-    db->lockForRead();
-    query.prepare("select count(lid)from datastore where data=1 and key=:key;");
-    query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
-    query.exec();
-    if (query.next()) {
-        retval = query.value(0).toInt();
-    }
-    query.finish();
-    db->unlock();
-    return retval;
+    //qint32 retval = 0;
+    //NSqlQuery query(db);
+    //db->lockForRead();
+    //query.prepare("select count(lid)from datastore where data=1 and key=:key;");
+    //query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
+    //query.exec();
+    //if (query.next()) {
+    //    retval = query.value(0).toInt();
+    //}
+    //query.finish();
+    //db->unlock();
+    //return retval;
+
+    QDir pwd = QDir::current();
+    pwd.cd(QDir::toNativeSeparators(global.fileManager.getThumbnailDirPath()));
+    qint32 count =  getCount() - pwd.entryList(QDir::Files).count();
+
+    return count;
 }
 
 
+
+bool NoteTable::thumbnailExists(qint32 lid) {
+    QFile f;
+    f.setFileName(
+            QDir::toNativeSeparators(global.fileManager.getThumbnailDirPath()) +
+            QString::number(lid) + ".png");
+    return f.exists();
+}
 
 void NoteTable::setReminderCompleted(qint32 lid, bool completed) {
     NSqlQuery query(db);

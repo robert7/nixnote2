@@ -53,10 +53,10 @@ PixelConverter::PixelConverter()
 }
 
 
-int PixelConverter::getPoints(int px) {
+int PixelConverter::getPoints(float px) {
     if (px <=0)
         return -1;
-    if (pointArray.contains(px))
-        return pointArray[px];
-    return px*3/4;
+    //if (pointArray.contains(int(px + 0.5)))
+    //    return pointArray[int(px + 0.5)];
+    return int(px*3.0f/4.0f + 0.5);
 }
