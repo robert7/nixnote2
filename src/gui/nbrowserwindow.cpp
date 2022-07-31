@@ -406,7 +406,7 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->spellCheckButtonAction, SIGNAL(triggered()), this, SLOT(spellCheckPressed()));
     connect(buttonBar->spellCheckButtonShortcut, SIGNAL(activated()), this, SLOT(spellCheckPressed()));
 
-    connect(buttonBar->fontSizes, SIGNAL(currentIndexChanged(int)), this, SLOT(fontSizeSelected(int)));
+    connect(buttonBar->fontSizes, SIGNAL(activated(int)), this, SLOT(fontSizeSelected(int)));
     connect(buttonBar->fontNames, SIGNAL(currentIndexChanged(int)), this, SLOT(fontNameSelected(int)));
 
     connect(buttonBar->fontColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontColorClicked()));
@@ -1414,6 +1414,10 @@ void NBrowserWindow::todoButtonPressed() {
 // The font size button was pressed
 void NBrowserWindow::fontSizeSelected(int index) {
     int size = buttonBar->fontSizes->itemData(index).toInt();
+
+    if (this->editor->selectedText() == "" && buttonBar->fontSizes->currentText() == QString(size)) {
+        return;
+    }
 
     if (size <= 0)
         return;
