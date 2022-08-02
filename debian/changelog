@@ -1,4 +1,5 @@
 NixNote (2.1.7) stable; urgency=low
+  * Fixed: Nixnote2 exits when network gets disconnected - issue #189
   * Fixed: Import all notes, tag issue - issue #153
   * Fixed: Local images cannot be pasted, web image's html element cannot be saved
   * Fixed: Search by date attributes not working with PPA builds - issue #149
