@@ -2021,7 +2021,7 @@ void NixNote::notifySyncComplete() {
                  << ", popupOnSyncError=" << popupOnSyncError
                  << ", syncNotifications=" << syncNotifications;
 
-    if (haveSyncError && popupOnSyncError) {
+    if (haveSyncError && popupOnSyncError && !this->isHidden()) {
         QMessageBox::critical(this, tr("Sync Error"), tr("Sync error. See message log for details"));
         return;
     }
