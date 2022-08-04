@@ -941,11 +941,6 @@ void EnmlFormatter::setContent(QString &contentStr) {
 
 
 void EnmlFormatter::postXmlFix() {
-    // Fix the <br> tags
-    content = content.replace("<br clear=\"none\">", "<br>");
-    content = content.replace("<br><br/>", "<br>");
-    content = content.replace("<br />", "<br>");
-
     // Fix the <en-media> tags
     content.replace("></en-media>", "/>");
 
