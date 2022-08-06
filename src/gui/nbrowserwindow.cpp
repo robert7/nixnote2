@@ -1065,13 +1065,17 @@ void NBrowserWindow::pasteButtonPressed() {
                 bool goodrc = false;
                 NoteTable ntable(global.db);
                 goodrc = ntable.get(n, guid, false, false);
-                if (!goodrc)
+                if (!goodrc) {
                     goodrc = ntable.get(n, locguid, false, false);
+                }
 
                 // If we have a good return, then we can paste the link, otherwise we fall out
                 // to a normal paste.
                 if (goodrc) {
-                    url = url + QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(urlList[i], n.title, n.title);
+                    url = url + QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(
+                            urlList[i],
+                            n.title.ref().toHtmlEscaped().replace("'", "&apos;"),
+                            n.title.ref().toHtmlEscaped().replace("'", "&apos;"));
                     QLOG_DEBUG() << "HTML to insert:" << url;
                     if (i + 1 < urlList.size()) {
                         url = url + " <br> ";
