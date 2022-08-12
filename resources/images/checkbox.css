@@ -1,0 +1,12 @@
+img.todo-icon {
+    vertical-align: text-bottom !important;
+    cursor: pointer;
+    padding-right: 5px;
+
+    user-drag: none;
+    -webkit-user-drag: none;
+}
+
+font > img.todo-icon {
+    vertical-align: baseline !important;
+}

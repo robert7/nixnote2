@@ -147,7 +147,7 @@ private:
 
     QUndoCommand *newAutoExecCommand();
     void clearAutoExecCommands();
-
+    void todoSetAllChecked(bool allSelected);
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
@@ -272,6 +272,8 @@ public slots:
     void bulletListButtonPressed();
     void numberListButtonPressed();
     void todoButtonPressed();
+    void todoSelectAll();
+    void todoUnselectAll();
     void fontSizeSelected(int index);
     void fontNameSelected(int index);
     void fontColorClicked();

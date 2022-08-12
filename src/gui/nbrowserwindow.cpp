@@ -240,6 +240,9 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     factory = new PluginFactory(this);
     editor->page()->setPluginFactory(factory);
 
+    editor->page()->settings()->setUserStyleSheetUrl(
+            QUrl::fromLocalFile(QDir::toNativeSeparators(global.fileManager.getImageDirPath("") + QString("/checkbox.css"))));
+
     buttonBar->getButtonbarState();
 
     printPage = new QTextEdit();
@@ -1397,26 +1400,64 @@ void NBrowserWindow::contentChanged() {
 void NBrowserWindow::todoButtonPressed() {
     QString script_start = "document.execCommand('insertHtml', false, '";
     QString script_end = "');";
-    QString todo =
-            "<input TYPE=\"CHECKBOX\" " +
-            QString("onMouseOver=\"style.cursor=\\'hand\\'\" ") +
-            QString(
-                    "onClick=\"if(!checked) removeAttribute(\\'checked\\'); else setAttribute(\\'checked\\', \\'checked\\'); editorWindow.editAlert();\" />");
+
+    QString selectedHtml = editor->selectedHtml();
+    int length = selectedHtml.length();
+    selectedHtml.replace(global.getCheckboxElement(true, false), "");
+    selectedHtml.replace(global.getCheckboxElement(false, false), "");
+    if (selectedHtml.length() < length) {
+        editor->page()->mainFrame()->evaluateJavaScript(script_start +
+                selectedHtml + script_end);
+        return;
+    }
 
     QString selectedText = editor->selectedText().trimmed();
     QRegExp regex("\\r?\\n");
     QStringList items = selectedText.split(regex);
-    if (items.size() == 0)
-        items.append(" ");
-    QString newLineChar = "<div><br><div>";
+
+    // Add a font element to set vertical-align:middle attribute
+    // in the css file for the text in the todo item.
+    QString font = buttonBar->fontNames->currentText();
+    QString fontSize = buttonBar->fontSizes->currentText();
+    QString fontElement = QString("<font style=\"font-size:") +
+        fontSize + "pt;\"" + QString(" face=\"") + font + QString(";\">");
+
+    QString html = "";
     for (int i = 0; i < items.size(); i++) {
-        if (i == items.size() - 1)
-            newLineChar = "";
-        editor->page()->mainFrame()->evaluateJavaScript(
-                script_start + todo + items[i] + newLineChar + script_end);
+        html += "<div>" + global.getCheckboxElement(false, true) +items[i] + "</div>";
     }
+
+    editor->page()->mainFrame()->evaluateJavaScript(script_start + html + script_end);
     editor->setFocus();
     microFocusChanged();
+}
+
+void NBrowserWindow::todoSelectAll() {
+    this->todoSetAllChecked(true);
+}
+
+void NBrowserWindow::todoUnselectAll() {
+    this->todoSetAllChecked(false);
+}
+
+void NBrowserWindow::todoSetAllChecked(bool allSelected) {
+    QString script_start = "document.execCommand('insertHtml', false, '";
+    QString script_end = "');";
+
+    QString html = editor->selectedHtml();
+    if (allSelected) {
+        html.replace(global.getCheckboxElement(false, false),
+                global.getCheckboxElement(true, true));
+        html.replace(global.getCheckboxElement(true, false),
+                global.getCheckboxElement(true, true));
+    } else {
+        html.replace(global.getCheckboxElement(true, false),
+                global.getCheckboxElement(false, true));
+        html.replace(global.getCheckboxElement(false, false),
+                global.getCheckboxElement(false, true));
+    }
+
+    editor->page()->mainFrame()->evaluateJavaScript(script_start + html + script_end);
 }
 
 
@@ -2126,6 +2167,7 @@ void NBrowserWindow::correctFontTagAttr() {
     modifyFontTagAttr(size);
 }
 
+
 void NBrowserWindow::printNodeName(QString v) {
     QLOG_DEBUG() << v;
 }
@@ -2384,7 +2426,6 @@ void NBrowserWindow::toggleSource() {
 
 // Clear out the window's contents
 void NBrowserWindow::clear() {
-
     sourceEdit->blockSignals(true);
     editor->blockSignals(true);
     sourceEdit->setPlainText("");

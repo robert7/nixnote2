@@ -122,10 +122,24 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addMenu(colorMenu);
     contextMenu->addSeparator();
 
+    QMenu *todoMenu = new QMenu(tr("To-do"), this);
+    todoMenu->setFont(global.getGuiFont(font()));
+    contextMenu->addMenu(todoMenu);
     todoAction = new QAction(tr("To-do"), this);
-    contextMenu->addAction(todoAction);
     global.setupShortcut(todoAction, "Edit_Insert_Todo");
+    todoMenu->addAction(todoAction);
     connect(todoAction, SIGNAL(triggered()), parent, SLOT(todoButtonPressed()));
+    todoMenu->addSeparator();
+
+    todoSelectAllAction = new QAction(tr("Select All"), this);
+    todoMenu->addAction(todoSelectAllAction);
+    connect(todoSelectAllAction, SIGNAL(triggered()),
+            parent, SLOT(todoSelectAll()));
+
+    todoUnselectAllAction = new QAction(tr("Unselect All"), this);
+    todoMenu->addAction(todoUnselectAllAction);
+    connect(todoUnselectAllAction, SIGNAL(triggered()),
+            parent, SLOT(todoUnselectAll()));
 
     contextMenu->addSeparator();
 
