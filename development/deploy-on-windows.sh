@@ -52,6 +52,6 @@ for lib in ${third_party_libs[@]};do
     cp -n '../winlib/'$lib $deploy_folder
 done
 
-cp -r -n ../translations ../resources/images ../java ../themes.ini ../colors.txt ../shortcuts.txt $deploy_folder
+cp -r -n ../translations ../resources/images ../java ../themes.ini ../colors.txt ../shortcuts.txt ../help $deploy_folder
 
 echo "Deployment finished."
