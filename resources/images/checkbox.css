@@ -7,6 +7,6 @@ img.todo-icon {
     -webkit-user-drag: none;
 }
 
-font > img.todo-icon {
+font > img.todo-icon, span > img.todo-icon {
     vertical-align: baseline !important;
 }
