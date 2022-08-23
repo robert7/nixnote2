@@ -573,10 +573,19 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
                             + "\">" + encrypted + "</en-crypt>" HTML_COMMENT_END;
         e.setOuterXml(xml);
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "processing tag 'img', type=en-crypt' - fixed img node to " << xml;
-    } else if (enType == "temporary") { ;
+    } else if (enType == "temporary") {
         // Temporary image.  If so, remove it
         e.removeFromDocument();
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "processing tag 'img', type=temporary' - fixed temporary img node by deleting it";
+    } else if (enType == "icon") {
+        QString xml = HTML_COMMENT_START "<en-todo";
+
+        if (e.attribute("src").endsWith("_checked.png")) {
+            xml += " checked=\"true\"";
+        }
+        xml += "/>" HTML_COMMENT_END;
+        e.setOuterXml(xml);
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed img node to: " << xml;
     } else {
         // If we've gotten this far, we have an en-media tag
 
@@ -941,11 +950,6 @@ void EnmlFormatter::setContent(QString &contentStr) {
 
 
 void EnmlFormatter::postXmlFix() {
-    // Fix the <br> tags
-    content = content.replace("<br clear=\"none\">", "<br>");
-    content = content.replace("<br><br/>", "<br>");
-    content = content.replace("<br />", "<br>");
-
     // Fix the <en-media> tags
     content.replace("></en-media>", "/>");
 

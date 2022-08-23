@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTimer>
 #include <QPrinter>
 #include <QThread>
+#include <QUndoCommand>
 
 #include "src/gui/nwebview.h"
 
@@ -62,6 +63,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/gui/findreplace.h"
 #include "src/threads/browserrunner.h"
 #include "src/html/enmlformatter.h"
+
 
 class ToolbarWidgetAction;
 
@@ -131,9 +133,8 @@ private:
     QString tableStyle;
     QPoint scrollPoint;
 
-    // To record the simulated backspace button events in the undoStack.
-    QVector<int> autoBackspaceIndices;
-
+    // To mark the simulated backspace button events in the undoStack.
+    QVector<QUndoCommand *> autoExecCommands;
 
     void exitPoint(ExitPoint *exit);
 
@@ -144,6 +145,9 @@ private:
     void htmlCleanup(HtmlCleanupMode mode);
     void insertDateTimeUsingFormat(const QString &format) const;
 
+    QUndoCommand *newAutoExecCommand();
+    void clearAutoExecCommands();
+    void todoSetAllChecked(bool allSelected);
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
@@ -268,6 +272,8 @@ public slots:
     void bulletListButtonPressed();
     void numberListButtonPressed();
     void todoButtonPressed();
+    void todoSelectAll();
+    void todoUnselectAll();
     void fontSizeSelected(int index);
     void fontNameSelected(int index);
     void fontColorClicked();
@@ -351,6 +357,7 @@ public slots:
     void findReplaceInNotePressed();
 
     void htmlSimplify();
+
 
 
 private slots:

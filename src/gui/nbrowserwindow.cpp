@@ -240,6 +240,9 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     factory = new PluginFactory(this);
     editor->page()->setPluginFactory(factory);
 
+    editor->page()->settings()->setUserStyleSheetUrl(
+            QUrl::fromLocalFile(QDir::toNativeSeparators(global.fileManager.getImageDirPath("") + QString("/checkbox.css"))));
+
     buttonBar->getButtonbarState();
 
     printPage = new QTextEdit();
@@ -894,13 +897,16 @@ void NBrowserWindow::saveNoteContent() {
 
 // The undo edit button was pressed
 void NBrowserWindow::undoButtonPressed() {
+    this->editor->triggerPageAction(QWebPage::Undo);
+
     QUndoStack *stack = this->editor->page()->undoStack();
-    int index = stack->index();
-    if (autoBackspaceIndices.indexOf(index) != -1) {
-        // Called an additional undo in order that the the users do not have to press another undo button to remove the 0-width character "&zwnj;" added before.
+    if (stack->count() >= 1 && stack->text(stack->index() - 1) == "AUTO_EXEC") {
+        // jump over the AUTO_EXEC QUndoCommand
+        this->editor->triggerPageAction(QWebPage::Undo);
+        // undo the inserting of 0 width character
         this->editor->triggerPageAction(QWebPage::Undo);
     }
-    this->editor->triggerPageAction(QWebPage::Undo);
+
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -908,14 +914,16 @@ void NBrowserWindow::undoButtonPressed() {
 
 // The redo edit button was pressed
 void NBrowserWindow::redoButtonPressed() {
+    this->editor->triggerPageAction(QWebPage::Redo);
+
     QUndoStack *stack = this->editor->page()->undoStack();
-    int index = stack->index();
-    // The font size changing operation index stored in autoBackspaceIndices is 2 ahead of backspace button event, so here add index to 2.
-    if (autoBackspaceIndices.indexOf(index + 2) != -1) {
-        // Called an additional redo in order that the the users do not have to press another redo button to restore the removed text content.
+    if (stack->text(stack->index()) == "AUTO_EXEC") {
+        // jump over the AUTO_EXEC QUndoCommand
+        this->editor->triggerPageAction(QWebPage::Redo);
+        // redo the simulated backspace
         this->editor->triggerPageAction(QWebPage::Redo);
     }
-    this->editor->triggerPageAction(QWebPage::Redo);
+
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -1060,13 +1068,17 @@ void NBrowserWindow::pasteButtonPressed() {
                 bool goodrc = false;
                 NoteTable ntable(global.db);
                 goodrc = ntable.get(n, guid, false, false);
-                if (!goodrc)
+                if (!goodrc) {
                     goodrc = ntable.get(n, locguid, false, false);
+                }
 
                 // If we have a good return, then we can paste the link, otherwise we fall out
                 // to a normal paste.
                 if (goodrc) {
-                    url = url + QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(urlList[i], n.title, n.title);
+                    url = url + QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(
+                            urlList[i],
+                            n.title.ref().toHtmlEscaped().replace("'", "&apos;"),
+                            n.title.ref().toHtmlEscaped().replace("'", "&apos;"));
                     QLOG_DEBUG() << "HTML to insert:" << url;
                     if (i + 1 < urlList.size()) {
                         url = url + " <br> ";
@@ -1388,26 +1400,64 @@ void NBrowserWindow::contentChanged() {
 void NBrowserWindow::todoButtonPressed() {
     QString script_start = "document.execCommand('insertHtml', false, '";
     QString script_end = "');";
-    QString todo =
-            "<input TYPE=\"CHECKBOX\" " +
-            QString("onMouseOver=\"style.cursor=\\'hand\\'\" ") +
-            QString(
-                    "onClick=\"if(!checked) removeAttribute(\\'checked\\'); else setAttribute(\\'checked\\', \\'checked\\'); editorWindow.editAlert();\" />");
+
+    QString selectedHtml = editor->selectedHtml();
+    int length = selectedHtml.length();
+    selectedHtml.replace(global.getCheckboxElement(true, false), "");
+    selectedHtml.replace(global.getCheckboxElement(false, false), "");
+    if (selectedHtml.length() < length) {
+        editor->page()->mainFrame()->evaluateJavaScript(script_start +
+                selectedHtml + script_end);
+        return;
+    }
 
     QString selectedText = editor->selectedText().trimmed();
     QRegExp regex("\\r?\\n");
     QStringList items = selectedText.split(regex);
-    if (items.size() == 0)
-        items.append(" ");
-    QString newLineChar = "<div><br><div>";
+
+    // Add a font element to set vertical-align:middle attribute
+    // in the css file for the text in the todo item.
+    QString font = buttonBar->fontNames->currentText();
+    QString fontSize = buttonBar->fontSizes->currentText();
+    QString fontElement = QString("<font style=\"font-size:") +
+        fontSize + "pt;\"" + QString(" face=\"") + font + QString(";\">");
+
+    QString html = "";
     for (int i = 0; i < items.size(); i++) {
-        if (i == items.size() - 1)
-            newLineChar = "";
-        editor->page()->mainFrame()->evaluateJavaScript(
-                script_start + todo + items[i] + newLineChar + script_end);
+        html += "<div>" + global.getCheckboxElement(false, true) +items[i] + "</div>";
     }
+
+    editor->page()->mainFrame()->evaluateJavaScript(script_start + html + script_end);
     editor->setFocus();
     microFocusChanged();
+}
+
+void NBrowserWindow::todoSelectAll() {
+    this->todoSetAllChecked(true);
+}
+
+void NBrowserWindow::todoUnselectAll() {
+    this->todoSetAllChecked(false);
+}
+
+void NBrowserWindow::todoSetAllChecked(bool allSelected) {
+    QString script_start = "document.execCommand('insertHtml', false, '";
+    QString script_end = "');";
+
+    QString html = editor->selectedHtml();
+    if (allSelected) {
+        html.replace(global.getCheckboxElement(false, false),
+                global.getCheckboxElement(true, true));
+        html.replace(global.getCheckboxElement(true, false),
+                global.getCheckboxElement(true, true));
+    } else {
+        html.replace(global.getCheckboxElement(true, false),
+                global.getCheckboxElement(false, true));
+        html.replace(global.getCheckboxElement(false, false),
+                global.getCheckboxElement(false, true));
+    }
+
+    editor->page()->mainFrame()->evaluateJavaScript(script_start + html + script_end);
 }
 
 
@@ -1440,19 +1490,16 @@ void NBrowserWindow::fontSizeSelected(int index) {
         QString script2 = QString("document.execCommand('insertHtml', false, '" + newText + "');");
         editor->page()->mainFrame()->evaluateJavaScript(script2);
 
+        QUndoStack *stack = this->editor->page()->undoStack();
+        stack->push(newAutoExecCommand());
+
         // Simulate a backspace press down event to delete
         // the invisible charactor inserted above.
         QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress,
                 Qt::Key_Backspace, Qt::NoModifier, "");
         QApplication::sendEvent(editor, key_press);
         delete key_press;
-
-        QUndoStack *stack = this->editor->page()->undoStack();
-        int index = stack->index();
-        autoBackspaceIndices.append(index);
-
     } else {
-    
         QString script = QString("document.execCommand('fontSize', false, 5);");
         editor->page()->mainFrame()->evaluateJavaScript(script);
 
@@ -2120,6 +2167,7 @@ void NBrowserWindow::correctFontTagAttr() {
     modifyFontTagAttr(size);
 }
 
+
 void NBrowserWindow::printNodeName(QString v) {
     QLOG_DEBUG() << v;
 }
@@ -2378,7 +2426,6 @@ void NBrowserWindow::toggleSource() {
 
 // Clear out the window's contents
 void NBrowserWindow::clear() {
-
     sourceEdit->blockSignals(true);
     editor->blockSignals(true);
     sourceEdit->setPlainText("");
@@ -2410,7 +2457,7 @@ void NBrowserWindow::clear() {
 
     dateEditor.clear();
 
-    autoBackspaceIndices.clear();
+    clearAutoExecCommands();
 }
 
 
@@ -4406,4 +4453,20 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
     setDirty(this->lid, editor->isDirty, false);
 
     QLOG_TRACE_OUT();
+}
+
+
+QUndoCommand* NBrowserWindow::newAutoExecCommand() {
+    QUndoCommand *cmd = new QUndoCommand();
+    cmd->setText("AUTO_EXEC");
+    autoExecCommands.append(cmd);
+    return cmd;
+}
+
+
+void NBrowserWindow::clearAutoExecCommands() {
+    for (int i = 0; i < autoExecCommands.length(); i++) {
+        delete autoExecCommands[i];
+    }
+    autoExecCommands.clear();
 }

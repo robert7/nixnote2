@@ -781,20 +781,17 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString fileExt) {
 // Modify the en-to tag into an input field
 void NoteFormatter::modifyTodoTags(QWebElement &todo) {
     QLOG_TRACE_IN();
-    todo.setAttribute("type", "checkbox");
 
     // Checks the en-to tag wheter or not the todo-item is checked or not
     // and sets up the HTML to keep storing the information in value
     QString checked = todo.attribute("checked");
-    if (checked.toLower() == "true")
-        todo.setAttribute("checked", "checked");
-    else
-        todo.removeAttribute("checked");
+    bool isChecked = false;
+    if (checked.toLower() == "true") {
+        isChecked = true;
+    }
 
-    todo.setAttribute("onClick",
-                      "if(!checked) removeAttribute('checked'); else setAttribute('checked', 'checked'); editorWindow.editAlert();");
-    todo.setAttribute("style", "cursor: hand;");
-    todo.setOuterXml(todo.toOuterXml().replace("en-todo", "input"));
+    QString xml = global.getCheckboxElement(isChecked, false);
+    todo.setOuterXml(xml + todo.toInnerXml());
     QLOG_TRACE_OUT();
 }
 

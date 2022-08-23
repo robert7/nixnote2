@@ -1,4 +1,6 @@
 NixNote (2.1.7) stable; urgency=low
+  * Fixed: To-do Formatting is not in parity with Official Client - issue #131
+  * Fixed: In-App Note links don't work when there is an apostrophe in the title - issue #168
   * Fixed: Nixnote2 exits when network gets disconnected - issue #189
   * Fixed: Import all notes, tag issue - issue #153
   * Fixed: Local images cannot be pasted, web image's html element cannot be saved
