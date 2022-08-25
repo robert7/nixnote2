@@ -4258,11 +4258,7 @@ void NBrowserWindow::findShortcut() {
 //* in a note.
 //*******************************************
 void NBrowserWindow::findNextShortcut() {
-    findReplace->showFind();
-    QString find = findReplace->findLine->text();
-    if (find != "")
-        editor->page()->findText(find,
-                                 findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+    this->findNextInNote();
 }
 
 
@@ -4271,12 +4267,7 @@ void NBrowserWindow::findNextShortcut() {
 //* text in a note.
 //*******************************************
 void NBrowserWindow::findPrevShortcut() {
-    findReplace->showFind();
-    QString find = findReplace->findLine->text();
-    if (find != "")
-        editor->page()->findText(find,
-                                 findReplace->getCaseSensitive() | QWebPage::FindBackward |
-                                 QWebPage::FindWrapsAroundDocument);
+    this->findPrevInNote();
 }
 
 
@@ -4337,6 +4328,14 @@ void NBrowserWindow::findNextInNote() {
     if (find != "")
         editor->page()->findText(find,
                                  findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+    // The background color of the occurances
+    // when finding text under Windows is
+    // light gray, not recognizable enough,
+    // for better experience, add a background
+    // color for them here.
+#ifdef _WIN32
+    editor->page()->findText(find, QWebPage::HighlightAllOccurrences);
+#endif
 }
 
 
@@ -4352,6 +4351,9 @@ void NBrowserWindow::findPrevInNote() {
                                  findReplace->getCaseSensitive() | QWebPage::FindBackward |
                                  QWebPage::FindWrapsAroundDocument);
 
+#ifdef _WIN32
+    editor->page()->findText(find, QWebPage::HighlightAllOccurrences);
+#endif
 }
 
 
