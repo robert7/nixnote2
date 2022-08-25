@@ -1415,16 +1415,10 @@ void NBrowserWindow::todoButtonPressed() {
     QRegExp regex("\\r?\\n");
     QStringList items = selectedText.split(regex);
 
-    // Add a font element to set vertical-align:middle attribute
-    // in the css file for the text in the todo item.
-    QString font = buttonBar->fontNames->currentText();
-    QString fontSize = buttonBar->fontSizes->currentText();
-    QString fontElement = QString("<font style=\"font-size:") +
-        fontSize + "pt;\"" + QString(" face=\"") + font + QString(";\">");
-
     QString html = "";
     for (int i = 0; i < items.size(); i++) {
-        html += "<div>" + global.getCheckboxElement(false, true) +items[i] + "</div>";
+        html += "<div>" + global.getCheckboxElement(false, true) + items[i] +
+            "</div>";
     }
 
     editor->page()->mainFrame()->evaluateJavaScript(script_start + html + script_end);
