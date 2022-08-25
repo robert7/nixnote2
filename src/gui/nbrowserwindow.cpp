@@ -1464,28 +1464,26 @@ void NBrowserWindow::todoSetAllChecked(bool allSelected) {
 // The font size button was pressed
 void NBrowserWindow::fontSizeSelected(int index) {
     int size = buttonBar->fontSizes->itemData(index).toInt();
-
-    if (this->editor->selectedText() == "" && buttonBar->fontSizes->currentText() == QString(size)) {
-        return;
-    }
-
     if (size <= 0)
         return;
 
-    QString text = editor->selectedHtml();
-    if (text.trimmed() == "") {
-        // Add an invisible charactor in order to set the cursor position
-        // to the innerhtml part of the <span> tags added below. If not,
-        // the text typed in after font size changed will be added beyond
-        // the <span> tags scope.
-        text = "&zwnj;";
+    if (this->editor->selectedText() == "" &&
+            buttonBar->fontSizes->currentText() == QString(size)) {
+        return;
     }
 
     // Start building a new font span.
     int idx = buttonBar->fontNames->currentIndex();
     QString font = buttonBar->fontNames->itemText(idx);
 
-    if (text == "&zwnj;") {
+    QString text = editor->selectedHtml();
+    if (text.trimmed() == "") {
+        // Add an invisible charactor in order to focus on the innerhtml
+        // part of the <span> tags added below. If not, the text typed
+        // in after font size changed will be added beyond the <span>
+        // tags scope.
+        text = "&zwnj;";
+
         QString newText = "<span style=\"font-size:" + QString::number(size) +"pt;font-family:" + font + ";\">" + text + "</span>";
         QString script2 = QString("document.execCommand('insertHtml', false, '" + newText + "');");
         editor->page()->mainFrame()->evaluateJavaScript(script2);
@@ -1503,9 +1501,9 @@ void NBrowserWindow::fontSizeSelected(int index) {
         QString script = QString("document.execCommand('fontSize', false, 5);");
         editor->page()->mainFrame()->evaluateJavaScript(script);
 
-        // document.execCommand fontSize will generate font tag with size attribute set,
-        // which may make the following font setting out of order. So replace it with
-        // css style here.
+        // document.execCommand fontSize will generate font tag with 'size'
+        // attribute set, which now and then makes the following font size
+        // setting in trouble. So replace it with 'font-size' here.
         modifyFontTagAttr(size);
     }
 
