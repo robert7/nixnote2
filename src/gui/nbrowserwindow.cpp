@@ -556,6 +556,14 @@ void NBrowserWindow::setContent(qint32 lid) {
     //**** END OF CALL TO PRE-LOAD EXIT
 
     editor->setContent(content);
+
+    // Qt Webview memory leaks solution:
+    // https://forum.qt.io/topic/10832/memory-size-increases-per-page-load/4
+    QWebElement body = editor->page()->mainFrame()->findFirstElement("body");
+    body.setAttribute("onunload", "_function() {}");
+    QWebSettings::clearMemoryCaches();
+    editor->history()->clear();
+
     // is this an ink note?
     if (inkNote)
         editor->page()->setContentEditable(false);
