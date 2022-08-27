@@ -318,6 +318,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     }
 
     changeDisplayFontName(global.defaultFont);
+    changeDisplayFontSize(QString::number(global.defaultFontSize) + "pt");
 }
 
 
