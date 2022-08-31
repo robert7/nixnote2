@@ -613,11 +613,20 @@ void NTableView::mouseReleaseEvent(QMouseEvent *e) {
 // Listen for up & down arrows
 void NTableView::keyPressEvent(QKeyEvent *event) {
     QTableView::keyPressEvent(event);
-    if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down ||
-        event->key() == Qt::Key_PageUp || event->key() == Qt::Key_PageDown)
+    if (event->key() == Qt::Key_PageUp || event->key() == Qt::Key_PageDown)
         this->openSelectedLids(false);
-
 }
+
+void NTableView::keyReleaseEvent(QKeyEvent *event) {
+    if (event->isAutoRepeat()) {
+        return;
+    }
+    QTableView::keyReleaseEvent(event);
+    if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down) {
+        this->openSelectedLids(false);
+    }
+}
+
 
 
 // Open a selected note.  This is not done via the context menu.
