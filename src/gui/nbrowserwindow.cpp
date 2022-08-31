@@ -240,9 +240,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     factory = new PluginFactory(this);
     editor->page()->setPluginFactory(factory);
 
-    editor->page()->settings()->setUserStyleSheetUrl(
-            QUrl::fromLocalFile(QDir::toNativeSeparators(global.fileManager.getImageDirPath("") + QString("/checkbox.css"))));
-
     buttonBar->getButtonbarState();
 
     printPage = new QTextEdit();
@@ -4110,6 +4107,17 @@ QString base64_encode(QString string) {
 // Set the editor background & font color
 void NBrowserWindow::setEditorStyle() {
     QString css = global.getEditorCss();
+
+    QString path = global.fileManager.getImageDirPath("") +
+        QString("checkbox.css");
+    path.replace("file:///", "").replace("file://", "");
+    QFile f(QDir::toNativeSeparators(path));
+    f.open(QFile::ReadOnly);
+    QTextStream in(&f);
+    QString checkbox = in.readAll();
+    f.close();
+    css += checkbox;
+
     if (css.isEmpty()) {
         return;
     }
