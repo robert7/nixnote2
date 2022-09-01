@@ -499,10 +499,11 @@ void NWebView::setDefaultTitle() {
 
 void NWebView::downloadRequested(QNetworkRequest req) {
     QString urlString = req.url().toString();
+
     if (urlString == "")  {
-        downloadImageAction()->trigger();
         return;
     }
+
     if (urlString.startsWith("nnres:")) {
         int pos = urlString.indexOf(global.attachmentNameDelimeter);
         QString extension = "";
@@ -555,7 +556,7 @@ void NWebView::downloadRequested(QNetworkRequest req) {
             return;
         }
     }
-    if (urlString.startsWith("file:////")) {
+    if (urlString.startsWith("file:///")) {
         if (!req.url().isValid())
             return;
         urlString = urlString.mid(8);
