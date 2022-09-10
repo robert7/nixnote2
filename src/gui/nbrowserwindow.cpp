@@ -240,9 +240,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     factory = new PluginFactory(this);
     editor->page()->setPluginFactory(factory);
 
-    editor->page()->settings()->setUserStyleSheetUrl(
-            QUrl::fromLocalFile(QDir::toNativeSeparators(global.fileManager.getImageDirPath("") + QString("/checkbox.css"))));
-
     buttonBar->getButtonbarState();
 
     printPage = new QTextEdit();
@@ -318,6 +315,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     }
 
     changeDisplayFontName(global.defaultFont);
+    changeDisplayFontSize(QString::number(global.defaultFontSize) + "pt");
 }
 
 
@@ -556,6 +554,14 @@ void NBrowserWindow::setContent(qint32 lid) {
     //**** END OF CALL TO PRE-LOAD EXIT
 
     editor->setContent(content);
+
+    // Qt Webview memory leaks solution:
+    // https://forum.qt.io/topic/10832/memory-size-increases-per-page-load/4
+    QWebElement body = editor->page()->mainFrame()->findFirstElement("body");
+    body.setAttribute("onunload", "_function() {}");
+    QWebSettings::clearMemoryCaches();
+    editor->history()->clear();
+
     // is this an ink note?
     if (inkNote)
         editor->page()->setContentEditable(false);
@@ -1415,16 +1421,10 @@ void NBrowserWindow::todoButtonPressed() {
     QRegExp regex("\\r?\\n");
     QStringList items = selectedText.split(regex);
 
-    // Add a font element to set vertical-align:middle attribute
-    // in the css file for the text in the todo item.
-    QString font = buttonBar->fontNames->currentText();
-    QString fontSize = buttonBar->fontSizes->currentText();
-    QString fontElement = QString("<font style=\"font-size:") +
-        fontSize + "pt;\"" + QString(" face=\"") + font + QString(";\">");
-
     QString html = "";
     for (int i = 0; i < items.size(); i++) {
-        html += "<div>" + global.getCheckboxElement(false, true) +items[i] + "</div>";
+        html += "<div>" + global.getCheckboxElement(false, true) + items[i] +
+            "</div>";
     }
 
     editor->page()->mainFrame()->evaluateJavaScript(script_start + html + script_end);
@@ -1464,28 +1464,26 @@ void NBrowserWindow::todoSetAllChecked(bool allSelected) {
 // The font size button was pressed
 void NBrowserWindow::fontSizeSelected(int index) {
     int size = buttonBar->fontSizes->itemData(index).toInt();
-
-    if (this->editor->selectedText() == "" && buttonBar->fontSizes->currentText() == QString(size)) {
-        return;
-    }
-
     if (size <= 0)
         return;
 
-    QString text = editor->selectedHtml();
-    if (text.trimmed() == "") {
-        // Add an invisible charactor in order to set the cursor position
-        // to the innerhtml part of the <span> tags added below. If not,
-        // the text typed in after font size changed will be added beyond
-        // the <span> tags scope.
-        text = "&zwnj;";
+    if (this->editor->selectedText() == "" &&
+            buttonBar->fontSizes->currentText() == QString(size)) {
+        return;
     }
 
     // Start building a new font span.
     int idx = buttonBar->fontNames->currentIndex();
     QString font = buttonBar->fontNames->itemText(idx);
 
-    if (text == "&zwnj;") {
+    QString text = editor->selectedHtml();
+    if (text.trimmed() == "") {
+        // Add an invisible charactor in order to focus on the innerhtml
+        // part of the <span> tags added below. If not, the text typed
+        // in after font size changed will be added beyond the <span>
+        // tags scope.
+        text = "&zwnj;";
+
         QString newText = "<span style=\"font-size:" + QString::number(size) +"pt;font-family:" + font + ";\">" + text + "</span>";
         QString script2 = QString("document.execCommand('insertHtml', false, '" + newText + "');");
         editor->page()->mainFrame()->evaluateJavaScript(script2);
@@ -1503,9 +1501,9 @@ void NBrowserWindow::fontSizeSelected(int index) {
         QString script = QString("document.execCommand('fontSize', false, 5);");
         editor->page()->mainFrame()->evaluateJavaScript(script);
 
-        // document.execCommand fontSize will generate font tag with size attribute set,
-        // which may make the following font setting out of order. So replace it with
-        // css style here.
+        // document.execCommand fontSize will generate font tag with 'size'
+        // attribute set, which now and then makes the following font size
+        // setting in trouble. So replace it with 'font-size' here.
         modifyFontTagAttr(size);
     }
 
@@ -4109,6 +4107,17 @@ QString base64_encode(QString string) {
 // Set the editor background & font color
 void NBrowserWindow::setEditorStyle() {
     QString css = global.getEditorCss();
+
+    QString path = global.fileManager.getImageDirPath("") +
+        QString("checkbox.css");
+    path.replace("file:///", "").replace("file://", "");
+    QFile f(QDir::toNativeSeparators(path));
+    f.open(QFile::ReadOnly);
+    QTextStream in(&f);
+    QString checkbox = in.readAll();
+    f.close();
+    css += checkbox;
+
     if (css.isEmpty()) {
         return;
     }
@@ -4258,11 +4267,7 @@ void NBrowserWindow::findShortcut() {
 //* in a note.
 //*******************************************
 void NBrowserWindow::findNextShortcut() {
-    findReplace->showFind();
-    QString find = findReplace->findLine->text();
-    if (find != "")
-        editor->page()->findText(find,
-                                 findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+    this->findNextInNote();
 }
 
 
@@ -4271,12 +4276,7 @@ void NBrowserWindow::findNextShortcut() {
 //* text in a note.
 //*******************************************
 void NBrowserWindow::findPrevShortcut() {
-    findReplace->showFind();
-    QString find = findReplace->findLine->text();
-    if (find != "")
-        editor->page()->findText(find,
-                                 findReplace->getCaseSensitive() | QWebPage::FindBackward |
-                                 QWebPage::FindWrapsAroundDocument);
+    this->findPrevInNote();
 }
 
 
@@ -4337,6 +4337,14 @@ void NBrowserWindow::findNextInNote() {
     if (find != "")
         editor->page()->findText(find,
                                  findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+    // The background color of the occurances
+    // when finding text under Windows is
+    // light gray, not recognizable enough,
+    // for better experience, add a background
+    // color for them here.
+#ifdef _WIN32
+    editor->page()->findText(find, QWebPage::HighlightAllOccurrences);
+#endif
 }
 
 
@@ -4352,6 +4360,9 @@ void NBrowserWindow::findPrevInNote() {
                                  findReplace->getCaseSensitive() | QWebPage::FindBackward |
                                  QWebPage::FindWrapsAroundDocument);
 
+#ifdef _WIN32
+    editor->page()->findText(find, QWebPage::HighlightAllOccurrences);
+#endif
 }
 
 

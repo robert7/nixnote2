@@ -1,5 +1,5 @@
 img.todo-icon {
-    vertical-align: text-bottom !important;
+    vertical-align: baseline !important;
     cursor: pointer;
     padding-right: 5px;
 
@@ -7,6 +7,4 @@ img.todo-icon {
     -webkit-user-drag: none;
 }
 
-font > img.todo-icon, span > img.todo-icon {
-    vertical-align: baseline !important;
-}
+

@@ -62,6 +62,7 @@ public:
     void openSelectedLids(bool newWindow);
     void refreshSelection();
     void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
 
     QMenu *contextMenu;
     QMenu *colorMenu;
