@@ -208,6 +208,7 @@ void showAnnouncementMessage();
 private slots:
     void onNetworkManagerFinished(QNetworkReply *reply);
     void onExportAsPdfReady(bool);
+    void clearSplashScreen();
 
 public slots:
     void quitNixNote();

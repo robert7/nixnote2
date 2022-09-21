@@ -113,12 +113,12 @@ NixNote *NixNote::singleton;
 //* everything else.
 //*************************************************
 NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
-    splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImage"));
     global.settings->beginGroup(INI_GROUP_APPEARANCE);
     if (global.settings->value("showSplashScreen", false).toBool()) {
+        splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImage"));
         splashScreen->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::SplashScreen | Qt::FramelessWindowHint);
         splashScreen->show();
-        QTimer::singleShot(2500, splashScreen, SLOT(close()));
+        QTimer::singleShot(2500, this, SLOT(clearSplashScreen()));
     }
     global.settings->endGroup();
     QString css = global.getThemeCss("mainWindowCss");
@@ -250,7 +250,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
 
 // Destructor to call when all done
 NixNote::~NixNote() {
-    delete splashScreen;
     syncThread.quit();
     indexThread.quit();
     counterThread.quit();
@@ -275,6 +274,12 @@ NixNote::~NixNote() {
 //    delete rightPanelSplitter;
 //    delete leftPanelSplitter;
 //    delete leftPanel;
+}
+
+
+void NixNote::clearSplashScreen() {
+    splashScreen->close();
+    delete splashScreen;
 }
 
 
