@@ -137,7 +137,7 @@ private:
     QTimer syncButtonTimer;
     QTimer syncTimer;
     QList<QPixmap> syncIcons;
-    unsigned int synchronizeIconAngle;
+    unsigned int synchronizeIconIndex;
 
     // Timer to check shared memory for other instance commands
     QTimer heartbeatTimer;

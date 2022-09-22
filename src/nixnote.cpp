@@ -1529,7 +1529,7 @@ void NixNote::synchronize() {
 
     this->saveContents();
     tabWindow->saveAllNotes();
-    syncButtonTimer.start(3);
+    syncButtonTimer.start(36);
     emit syncRequested();
 }
 
@@ -1606,31 +1606,37 @@ void NixNote::syncButtonReset() {
 //* Evernote and are transmitting & receiving info
 //*****************************************************
 void NixNote::updateSyncButton() {
-
+    const int N_ICONS = 30;
     if (syncIcons.size() == 0) {
         double angle = 0.0;
-        synchronizeIconAngle = 0;
+        synchronizeIconIndex = 0;
         QPixmap pix(":synchronizeIcon");
         syncIcons.push_back(pix);
-        for (qint32 i = 0; i <= 360; i++) {
+
+        QPainter p;
+        p.setBackgroundMode(Qt::OpaqueMode);
+        QSize size = pix.size();
+
+        for (qint32 i = 1; i < N_ICONS; ++i) {
             QPixmap rotatedPix(pix.size());
-            QPainter p(&rotatedPix);
             rotatedPix.fill(toolBar->palette().color(QPalette::Background));
-            QSize size = pix.size();
+
+            p.begin(&rotatedPix);
             p.translate(size.width() / 2, size.height() / 2);
-            angle = angle + 1.0;
+            angle = angle + 360.0f/N_ICONS;
             p.rotate(angle);
-            p.setBackgroundMode(Qt::OpaqueMode);
             p.translate(-size.width() / 2, -size.height() / 2);
+
             p.drawPixmap(0, 0, pix);
             p.end();
+
             syncIcons.push_back(rotatedPix);
         }
     }
-    synchronizeIconAngle++;
-    if (synchronizeIconAngle > 359)
-        synchronizeIconAngle = 0;
-    syncButton->setIcon(syncIcons[synchronizeIconAngle]);
+    synchronizeIconIndex++;
+    if (synchronizeIconIndex == N_ICONS)
+        synchronizeIconIndex = 0;
+    syncButton->setIcon(syncIcons[synchronizeIconIndex]);
 }
 
 
