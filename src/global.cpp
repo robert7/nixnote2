@@ -1026,8 +1026,7 @@ QStringList Global::getThemeNames() {
     //if (!nonAsciiSortBug)
     //    qSort(values.begin(), values.end(), caseInsensitiveLessThan);
     if (values.size() == 0) {
-        QLOG_FATAL() << "No themes found";
-        exit(16);
+        values.append("Default");
     }
 
     return values;
