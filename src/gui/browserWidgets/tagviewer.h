@@ -36,6 +36,7 @@ private:
 
 public:
     explicit TagViewer(QWidget *parent = 0);
+    ~TagViewer();
     void resize();
     
 signals:

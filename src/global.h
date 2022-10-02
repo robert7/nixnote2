@@ -195,6 +195,9 @@ private:
 
     QString getCheckboxImageUrl(bool checked) const;
 
+    QHash<QString, QIcon *> qIconList;
+    QHash<QString, QPixmap *> qPixmapList;
+
 public:
     const QString &getDateFormat() const;
     const QString &getTimeFormat() const;
@@ -399,10 +402,10 @@ public:
     QString getDateTimeEditorInactiveStyle();
 
     QString getEditorCss();
-    QPixmap getPixmapResource(QHash<QString, QString> &resourceList, QString key);   // Get a pixmap from the user's (or default) theme
-    QPixmap getPixmapResource(QString key);                   // Get a pixmap from the user's (or default) theme
-    QIcon getIconResource(QHash<QString, QString> &resourceList, QString key);       // Get an icon from the user's (or default) theme
-    QIcon getIconResource(QString key);                       // Get an icon from the user's (or default) theme
+    const QPixmap* getPixmapResource(const QHash<QString, QString> &resourceList, const QString &key);   // Get a pixmap from the user's (or default) theme
+    const QPixmap& getPixmapResource(const QString &key);                   // Get a pixmap from the user's (or default) theme
+    const QIcon* getIconResource(const QHash<QString, QString> &resourceList, const QString &key);       // Get an icon from the user's (or default) theme
+    const QIcon& getIconResource(const QString &key);                       // Get an icon from the user's (or default) theme
     void loadTheme(QHash<QString, QString> &resourceList, QHash<QString, QString> &colorList, QString themeName);   // Load an icon theme into the resourceList
     void loadThemeFile(QFile &file, QString themeName);       // Load a given theme's values from a a file.
     void loadThemeFile(QHash<QString, QString> &resourceList, QHash<QString, QString> &colorList, QFile &file, QString themeName);    // Load a given theme's values from a file
@@ -479,6 +482,8 @@ public:
     void setSortOrder(const QString &sortOrder);
 
     QString getCheckboxElement(bool checked, bool escapeTwice) const;
+
+    void clearResourceList();
 
 signals:
     // global can send signal about updating status bar

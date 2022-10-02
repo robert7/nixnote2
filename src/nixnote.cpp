@@ -3442,6 +3442,8 @@ void NixNote::reloadIcons() {
     favoritesTreeView->reloadIcons();
     tabWindow->reloadIcons();
 
+    global.clearResourceList();
+
     tabWindow->changeEditorStyle();
 
     QString themeInformation = global.getResourceFileName(global.resourceList, ":themeInformation");
