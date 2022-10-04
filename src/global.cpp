@@ -739,10 +739,19 @@ QFont Global::getGuiFont(QFont f) {
 
 
 // Get a QIcon of in an icon theme
-QIcon Global::getIconResource(QHash<QString, QString> &resourceList, QString key) {
-    if (resourceList.contains(key) && resourceList[key].trimmed() != "")
-        return QIcon(resourceList[key]);
-    return QIcon(key);
+const QIcon* Global::getIconResource(const QHash<QString, QString> &resourceList,
+        const QString &key) {
+    if (qIconList.contains(key)) {
+        return qIconList[key];
+    }
+
+    if (resourceList.contains(key) && resourceList[key].trimmed() != "") {
+        qIconList[key] = new QIcon(resourceList[key]);
+        return qIconList[key];
+    }
+
+    qIconList[key] = new QIcon(key);
+    return qIconList[key];
 }
 
 
@@ -897,22 +906,31 @@ QString Global::getEditorCss() {
 }
 
 // Get a QIcon in an icon theme
-QIcon Global::getIconResource(QString key) {
-    return this->getIconResource(resourceList, key);
+const QIcon& Global::getIconResource(const QString &key) {
+    return *(this->getIconResource(resourceList, key));
 }
 
 
 // Get a QPixmap from an icon theme
-QPixmap Global::getPixmapResource(QString key) {
-    return this->getPixmapResource(resourceList, key);
+const QPixmap& Global::getPixmapResource(const QString &key) {
+    return *(this->getPixmapResource(resourceList, key));
 }
 
 
 // Get a QPixmap from an icon theme
-QPixmap Global::getPixmapResource(QHash<QString, QString> &resourceList, QString key) {
-    if (resourceList.contains(key) && resourceList[key] != "")
-        return QPixmap(resourceList[key]);
-    return QPixmap(key);
+const QPixmap* Global::getPixmapResource(const QHash<QString, QString> &resourceList,
+        const QString &key) {
+    if (qPixmapList.contains(key)) {
+        return qPixmapList[key];
+    }
+
+    if (resourceList.contains(key) && resourceList[key] != "") {
+        qPixmapList[key] = new QPixmap(resourceList[key]);
+        return qPixmapList[key];
+    }
+
+    qPixmapList[key] = new QPixmap(key);
+    return qPixmapList[key];
 }
 
 // renamed on 20.6.2018 because of structure changes prevent loading of legacy user themes (they need minor fixes)
@@ -923,8 +941,7 @@ QPixmap Global::getPixmapResource(QHash<QString, QString> &resourceList, QString
 void Global::loadTheme(QHash<QString, QString> &resourceList, QHash<QString, QString> &colorList, QString theme) {
     QLOG_DEBUG() << "Loading theme " << theme;
 
-    resourceList.clear();
-    colorList.clear();
+    clearResourceList();
     if (theme.trimmed() == "") {
         return;
     }
@@ -1026,8 +1043,7 @@ QStringList Global::getThemeNames() {
     //if (!nonAsciiSortBug)
     //    qSort(values.begin(), values.end(), caseInsensitiveLessThan);
     if (values.size() == 0) {
-        QLOG_FATAL() << "No themes found";
-        exit(16);
+        values.append("Default");
     }
 
     return values;
@@ -1561,4 +1577,21 @@ QString Global::getCheckboxElement(bool checked, bool escapeTwice) const {
         (escapeTwice ? QString("\\\'") : QString("\'")) + defaultUrl +
         (escapeTwice ? QString("\\\':\\\'") : QString("\':\'")) + checkedUrl +
         (escapeTwice ? QString("\\\';\">") : QString("\';\">"));
+}
+
+
+void Global::clearResourceList() {
+    resourceList.clear();
+    colorList.clear();
+
+    for(QHash<QString, QIcon *>::iterator iter = qIconList.begin();
+            iter != qIconList.end(); ++iter) {
+        delete iter.value();
+    }
+    for(QHash<QString, QPixmap *>::iterator iter = qPixmapList.begin();
+            iter != qPixmapList.end(); ++iter) {
+        delete iter.value();
+    }
+    qIconList.clear();
+    qPixmapList.clear();
 }
