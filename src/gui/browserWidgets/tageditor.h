@@ -26,14 +26,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "tagviewer.h"
 #include <QHBoxLayout>
 #include "src/gui/flowlayout.h"
+#include <QVector>
 
-#define MAX_TAGS 100
 
 class TagEditor : public QWidget
 {
     Q_OBJECT
 public:
     explicit TagEditor(QWidget *parent = 0);
+    ~TagEditor();
     void addTag(QString text);
     void setTags(QStringList names);
     void getTags(QStringList &names);
@@ -49,7 +50,7 @@ private:
     qint32 currentLid;
     qint32 account;
     QLabel tagIcon;
-    TagViewer tags[MAX_TAGS];
+    QVector<TagViewer *> tags;
     FlowLayout *layout;
     QStringList tagNames;
     void emptyTags();
