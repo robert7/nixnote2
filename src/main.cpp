@@ -67,22 +67,26 @@ extern Global global;
 //*********************************************************************
 //* Segmentation fault.  This is triggered to print a stack trace.
 //*********************************************************************
+void fault_handler(int sig) {
 // Windows Check
 #ifndef _WIN32
-
-void fault_handler(int sig) {
     void *array[30];
     size_t size;
 
     // get void*'s for all entries on the stack
     size = backtrace(array, 30);
+#endif // End Windows check
 
     // print out all the frames to stderr
     fprintf(stderr, "Error: signal %d:\n", sig);
+// Windows Check
+#ifndef _WIN32
     backtrace_symbols_fd(array, size, 2);
+#endif // End Windows check
     if (w != NULL) {
         fprintf(stderr, "Forcing save\n");
         w->saveState();
+        w->saveOnExit();
     }
     exit(1);
 }
@@ -94,11 +98,15 @@ void sighup_handler(int sig) {
     if (w != NULL) {
         fprintf(stderr, "Forcing save\n");
         w->saveState();
+        w->saveOnExit();
     }
 }
 
 
-#endif // End Windows check
+void sigint_handler(int sig) {
+    sighup_handler(sig);
+    exit(1);
+}
 
 
 //using namespace cv;
@@ -121,10 +129,7 @@ int main(int argc, char *argv[]) {
         QsLogging::DestinationFactory::MakeDebugOutputDestination());
     logger.addDestination(debugDestination.get());
 
-// Windows Check
-#ifndef _WIN32
     signal(SIGSEGV, fault_handler);   // install our handler
-#endif
 
     // Begin setting up the environment
     StartupConfig startupConfig;
@@ -309,9 +314,11 @@ int main(int argc, char *argv[]) {
     global.fileManager.setupFileAttachmentLogging();
 
 #ifndef _WIN32
-    if (global.getInterceptSigHup())
+    if (global.getInterceptSigHup()) {
         signal(SIGHUP, sighup_handler);   // install our handler
+    }
 #endif
+    signal(SIGINT, sigint_handler);
 
     QLOG_DEBUG() << "Setting up, guiAvailable=" << guiAvailable;
     w = new NixNote();

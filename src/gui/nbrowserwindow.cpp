@@ -822,7 +822,7 @@ void NBrowserWindow::noteContentUpdated() {
 
 // Save the note's content
 void NBrowserWindow::saveNoteContent() {
-    microFocusChanged();
+    //microFocusChanged();
 
     if (this->editor->isDirty) {
         QLOG_DEBUG() << "saveNoteContent() dirty=true";
@@ -2080,47 +2080,44 @@ void NBrowserWindow::microFocusChanged() {
     else
         editor->encryptAction->setEnabled(false);
 
-
     //     +QString("            window.browserWindow.printNodeName(workingNode.firstChild.nodeValue);")
     QString js = QString("function getCursorPos() {")
-                 + QString("var cursorPos;")
-                 + QString("var insideUrl=false;")
-                 + QString("if (window.getSelection) {")
-                 + QString("   var selObj = window.getSelection();")
-                 + QString("   var selRange = selObj.getRangeAt(0);")
-                 + QString("   var workingNode = window.getSelection().anchorNode.parentNode;")
-                 //+QString("    window.browserWindow.printNodeName(workingNode.nodeName);")
-                 + QString("   while(workingNode != null) { ")
-                 //+QString("      window.browserWindow.printNodeName(workingNode.nodeName);")
-                 + QString("      if (workingNode.nodeName=='TABLE') {")
-                 + QString(
-            "          if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea();")
-                 + QString("      }")
-                 + QString("      if (workingNode.nodeName=='PRE') window.browserWindow.setInsidePre();")
-                 + QString("      if (workingNode.nodeName=='B') window.browserWindow.boldActive();")
-                 + QString("      if (workingNode.nodeName=='I') window.browserWindow.italicsActive();")
-                 + QString("      if (workingNode.nodeName=='U') window.browserWindow.underlineActive();")
-                 + QString("      if (workingNode.nodeName=='UL') window.browserWindow.setInsideList();")
-                 + QString("      if (workingNode.nodeName=='OL') window.browserWindow.setInsideList();")
-                 + QString("      if (workingNode.nodeName=='LI') window.browserWindow.setInsideList();")
-                 + QString("      if (workingNode.nodeName=='TBODY') window.browserWindow.setInsideTable();")
-                 + QString("      if (workingNode.nodeName=='A') {")
-                 + QString("           insideUrl = true;")
-                 + QString("           for(var x = 0; x < workingNode.attributes.length; x++ ) {")
-                 + QString("              if (workingNode.attributes[x].nodeName.toLowerCase() == 'href')")
-                 + QString("                  window.browserWindow.setInsideLink(workingNode.attributes[x].nodeValue);")
-                 + QString("           }")
-                 + QString("      }")
-                 + QString("      if (workingNode.nodeName=='SPAN') {")
-                 + QString(
-            "         if (workingNode.getAttribute('style') == 'text-decoration: underline;') window.browserWindow.underlineActive();")
-                 + QString("      }")
-                 + QString("      workingNode = workingNode.parentNode;")
-                 + QString("   }")
-                 + QString("}")
-                 + QString("}  getCursorPos();");
-    editor->page()->mainFrame()->evaluateJavaScript(js);
+               + QString("    var cursorPos;")
+               + QString("    var insideUrl=false;")
+               + QString("    if (window.getSelection) {")
+               + QString("        var selObj = window.getSelection();")
+               + QString("        var selRange = selObj.getRangeAt(0);")
+               + QString("        var workingNode = window.getSelection().anchorNode.parentNode;")
+               //+QString("    window.browserWindow.printNodeName(workingNode.nodeName);")
+               + QString("        while(workingNode != null) { ")
+               //+QString("      window.browserWindow.printNodeName(workingNode.nodeName);")
+               + QString("            if (workingNode.nodeName=='TABLE') {")
+               + QString("                if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea();")
+               + QString("            }")
+               + QString("            if (workingNode.nodeName=='PRE') window.browserWindow.setInsidePre();")
+               + QString("            if (workingNode.nodeName=='B') window.browserWindow.boldActive();")
+               + QString("            if (workingNode.nodeName=='I') window.browserWindow.italicsActive();")
+               + QString("            if (workingNode.nodeName=='U') window.browserWindow.underlineActive();")
+               + QString("            if (workingNode.nodeName=='UL') window.browserWindow.setInsideList();")
+               + QString("            if (workingNode.nodeName=='OL') window.browserWindow.setInsideList();")
+               + QString("            if (workingNode.nodeName=='LI') window.browserWindow.setInsideList();")
+               + QString("            if (workingNode.nodeName=='TBODY') window.browserWindow.setInsideTable();")
+               + QString("            if (workingNode.nodeName=='A') {")
+               + QString("                 insideUrl = true;")
+               + QString("                 for(var x = 0; x < workingNode.attributes.length; x++ ) {")
+               + QString("                    if (workingNode.attributes[x].nodeName.toLowerCase() == 'href')")
+               + QString("                        window.browserWindow.setInsideLink(workingNode.attributes[x].nodeValue);")
+               + QString("                 }")
+               + QString("            }")
+               + QString("            if (workingNode.nodeName=='SPAN') {")
+               + QString("                if (workingNode.getAttribute('style') == 'text-decoration: underline;') window.browserWindow.underlineActive();")
+               + QString("            }")
+               + QString("            workingNode = workingNode.parentNode;")
+               + QString("        }")
+               + QString("    }")
+               + QString("}  getCursorPos();");
 
+    editor->page()->mainFrame()->evaluateJavaScript(js);
 
     QString js2 = QString("function getFontSize() {") +
                   QString("    var node = document.getSelection().anchorNode;") +
