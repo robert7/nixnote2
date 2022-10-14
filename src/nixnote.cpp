@@ -298,7 +298,7 @@ void NixNote::setupGui() {
     //this->setStyleSheet("background-color: white;");
     //statusBar();    setWindowTitle(tr(NN_APP_DISPLAY_NAME_GUI));
     QLOG_DEBUG() << "setupGui: Setting up window icon";
-    const auto wIcon = QIcon(global.getIconResource(":windowIcon"));
+    const auto wIcon = global.getIconResource(":windowIcon");
     if (!wIcon.isNull()) {
         setWindowIcon(wIcon);
     }
