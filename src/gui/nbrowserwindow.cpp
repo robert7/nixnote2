@@ -60,7 +60,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMenu>
 #include <QFileIconProvider>
 #include <QFontDatabase>
-#include <QSplitter>
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -110,9 +109,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
 
     //    this->setStyleSheet("margins:0px;");
-    QHBoxLayout *line1Layout = new QHBoxLayout();
-    QVBoxLayout *layout = new QVBoxLayout();   // Note content layout
-
+    line1Layout = new QHBoxLayout();
 
     // Setup the alarm button & display
     alarmText.setStyleSheet("QPushButton {background-color: transparent; border-radius: 0px;}");
@@ -123,7 +120,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     // Setup line #1 of the window.  The text & notebook
     connect(&alarmText, SIGNAL(clicked()), this, SLOT(alarmCompleted()));
-    layout->addLayout(line1Layout);
+    layout.addLayout(line1Layout);
     line1Layout->addWidget(&noteTitle, 20);
     line1Layout->addWidget(&alarmText);
     line1Layout->addWidget(&alarmButton);
@@ -132,44 +129,35 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
 
     // Add the second layout display
-    layout->addLayout(&line2Layout);
+    layout.addLayout(&line2Layout);
     line2Layout.addWidget(&urlEditor, 1);
     line2Layout.addWidget(&tagEditor, 3);
 
     // Add the third layout display
-    layout->addLayout(&line3Layout);
+    layout.addLayout(&line3Layout);
     line3Layout.addWidget(&dateEditor);
 
 
     editor = new NWebView(this);
     editor->setTitleEditor(&noteTitle);
     setupToolBar();
-    layout->addWidget(buttonBar);
+    layout.addWidget(buttonBar);
 
-    // setup the source editor
-    sourceEdit = new QTextEdit(this);
-    sourceEdit->setVisible(false);
-    sourceEdit->setTabChangesFocus(true);
-
-
-    QFont font;
-    font.setFamily("Courier");
-    font.setFixedPitch(true);
-    global.getGuiFont(font);
-    sourceEdit->setFont(global.getGuiFont(font));
-    sourceEditorTimer = new QTimer();
-    connect(sourceEditorTimer, SIGNAL(timeout()), this, SLOT(setSource()));
+    sourceEdit = nullptr;
+    hammer = nullptr;
+    spellChecker = nullptr;
+    printPreviewPage = nullptr;
+    printPage = nullptr;
 
     // add the actual note editor & source view
-    QSplitter *editorSplitter = new QSplitter(Qt::Vertical, this);
+    editorSplitter = new QSplitter(Qt::Vertical, this);
     editorSplitter->addWidget(editor);
-    editorSplitter->addWidget(sourceEdit);
-    layout->addWidget(editorSplitter);
-    setLayout(layout);
-    layout->setMargin(0);
+    layout.addWidget(editorSplitter);
+    setLayout(&layout);
+    layout.setMargin(0);
 
     findReplace = new FindReplace();
-    layout->addWidget(findReplace);
+    layout.addWidget(findReplace);
     findReplace->setVisible(false);
 
     connect(findReplace->nextButton, SIGNAL(clicked()), this, SLOT(findNextInNote()));
@@ -226,7 +214,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     connect(&tagEditor, SIGNAL(tagsUpdated()), this, SLOT(sendTagUpdateSignal()));
     connect(&tagEditor, SIGNAL(newTagCreated(qint32)), this, SLOT(newTagAdded(qint32)));
     connect(editor, SIGNAL(noteChanged()), this, SLOT(noteContentUpdated()));
-    connect(sourceEdit, SIGNAL(textChanged()), this, SLOT(noteSourceUpdated()));
     connect(editor, SIGNAL(htmlEditAlert()), this, SLOT(noteContentEdited()));
     connect(editor->page(), SIGNAL(linkClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
     connect(editor->page(), SIGNAL(microFocusChanged()), this, SLOT(microFocusChanged()));
@@ -241,13 +228,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     editor->page()->setPluginFactory(factory);
 
     buttonBar->getButtonbarState();
-
-    //printPage = new QTextEdit();
-    //printPage->setVisible(false);
-    //connect(printPage, SIGNAL(loadFinished(bool)), this, SLOT(printReady(bool)));
-
-    //printPreviewPage = new QTextEdit();
-    //printPreviewPage->setVisible(false);
 
     printPreviewPage = nullptr;
     printPage = nullptr;
@@ -328,6 +308,47 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 NBrowserWindow::~NBrowserWindow() {
     browserThread->quit();
     while (!browserRunner->isIdle);
+
+    delete browserThread;
+    delete browserRunner;
+    delete editor;
+
+    delete editorSplitter;
+    delete findReplace;
+    delete factory;
+    delete buttonBar;
+    delete line1Layout;
+
+    delete focusNoteShortcut;
+    delete focusTitleShortcut;
+    delete insertDatetimeShortcut;
+    delete insertDateShortcut;
+    delete insertTimeShortcut;
+    delete fontColorShortcut;
+    delete fontHighlightShortcut;
+    delete copyNoteUrlShortcut;
+    delete removeFormattingShortcut;
+    delete insertHtmlEntitiesShortcut;
+    delete encryptTextShortcut;
+    delete insertHyperlinkShortcut;
+    delete insertQuicklinkShortcut;
+    delete removeHyperlinkShortcut;
+    delete attachFileShortcut;
+    delete insertLatexShortcut;
+
+    if (hammer != nullptr) {
+        delete hammer;
+    }
+
+    if (spellChecker != nullptr) {
+        delete spellChecker;
+    }
+    if (printPreviewPage != nullptr) {
+        delete printPreviewPage;
+    }
+    if (printPage != nullptr) {
+        delete printPage;
+    }
 }
 
 
@@ -2405,18 +2426,33 @@ void NBrowserWindow::linkClicked(const QUrl url) {
 
 // show/hide view source window
 void NBrowserWindow::showSource(bool value) {
-    setSource();
+    if (value) {
+        setSource();
+    }
     sourceEdit->setVisible(value);
-    sourceEditorTimer->setInterval(1000);
-    if (!value)
-        sourceEditorTimer->stop();
-    else
-        sourceEditorTimer->start();
 }
 
 
 // Toggle the show source button
 void NBrowserWindow::toggleSource() {
+    if (sourceEdit == nullptr) {
+        // setup the source editor
+        sourceEdit = new QTextEdit(this);
+        sourceEdit->setVisible(false);
+        sourceEdit->setTabChangesFocus(true);
+
+        QFont font;
+        font.setFamily("Courier");
+        font.setFixedPitch(true);
+        global.getGuiFont(font);
+        sourceEdit->setFont(global.getGuiFont(font));
+
+        editorSplitter->addWidget(sourceEdit);
+
+        connect(sourceEdit, SIGNAL(textChanged()), this, SLOT(noteSourceUpdated()));
+        connect(editor->page(), SIGNAL(contentsChanged()), this, SLOT(setSource()));
+    }
+
     if (sourceEdit->isVisible())
         showSource(false);
     else
@@ -2426,15 +2462,17 @@ void NBrowserWindow::toggleSource() {
 
 // Clear out the window's contents
 void NBrowserWindow::clear() {
-    sourceEdit->blockSignals(true);
+    if (sourceEdit != nullptr) {
+        sourceEdit->blockSignals(true);
+        sourceEdit->setPlainText("");
+        sourceEdit->setReadOnly(true);
+        sourceEdit->blockSignals(false);
+    }
     editor->blockSignals(true);
-    sourceEdit->setPlainText("");
     editor->setContent("<html><body></body></html>");
-    sourceEdit->setReadOnly(true);
     editor->page()->setContentEditable(false);
     lid = -1;
     editor->blockSignals(false);
-    sourceEdit->blockSignals(false);
 
     noteTitle.blockSignals(true);
     noteTitle.setTitle(-1, "", "");
@@ -2463,7 +2501,7 @@ void NBrowserWindow::clear() {
 
 // Set the source for the "show source" button
 void NBrowserWindow::setSource() {
-    if (sourceEdit->hasFocus())
+    if (sourceEdit == nullptr || sourceEdit->hasFocus())
         return;
 
     QString text = editor->editorPage->mainFrame()->toHtml();

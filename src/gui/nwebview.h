@@ -44,9 +44,13 @@ class NWebView : public QWebView
 private:
     QAction *setupColorMenuOption(QString color);
     QSignalMapper *backgroundColorMapper;
+    QMenu *todoMenu;
+    QMenu *colorMenu;
+    QAction *backgroundColor;
 
 public:
     explicit NWebView(NBrowserWindow *parent = 0);
+    ~NWebView();
     NBrowserWindow *parent;
     NTitleEditor *titleEditor;
     QString pasteSequence;

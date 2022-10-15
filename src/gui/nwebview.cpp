@@ -94,7 +94,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addSeparator();
 
     // change background color of WHOLE note (this is different from changing font/text background color)
-    QMenu *colorMenu = new QMenu(tr("Note Background Color"), this);
+    colorMenu = new QMenu(tr("Note Background Color"), this);
     colorMenu->setFont(global.getGuiFont(font()));
     // Build the background color menu
     backgroundColorMapper = new QSignalMapper(this);
@@ -122,7 +122,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addMenu(colorMenu);
     contextMenu->addSeparator();
 
-    QMenu *todoMenu = new QMenu(tr("To-do"), this);
+    todoMenu = new QMenu(tr("To-do"), this);
     todoMenu->setFont(global.getGuiFont(font()));
     contextMenu->addMenu(todoMenu);
     todoAction = new QAction(tr("To-do"), this);
@@ -284,6 +284,48 @@ NWebView::NWebView(NBrowserWindow *parent) :
     QString css = global.getThemeCss("noteContentsCss");
     if (css!="")
         this->setStyleSheet(css);
+
+    backgroundColor = nullptr;
+}
+
+
+NWebView::~NWebView() {
+    delete editorPage;
+    delete contextMenu;
+    delete backgroundColorMapper;
+    delete tableMenu;
+    delete imageMenu;
+
+    delete openAction;
+    delete cutAction;
+    delete copyAction;
+    delete pasteAction;
+    delete pasteWithoutFormatAction;
+    delete copyInAppNoteLinkAction;
+    delete htmlSimplifyAction;
+    delete fontColorAction;
+
+    delete fontBackgroundColorAction;
+    delete todoAction;
+    delete todoSelectAllAction;
+    delete todoUnselectAllAction;
+    delete insertHtmlEntitiesAction;
+    delete encryptAction;
+    delete insertDateTimeAction;
+    delete insertLinkAction;
+
+    delete insertQuickLinkAction;
+    delete removeLinkAction;
+    delete attachFileAction;
+    delete insertLatexAction;
+    delete insertTableAction;
+    delete insertTableRowAction;
+    delete insertTableColumnAction;
+    delete deleteTableRowAction;
+    delete deleteTableColumnAction;
+    delete tablePropertiesAction;
+    delete rotateImageLeftAction;
+    delete rotateImageRightAction;
 }
 
 
@@ -297,7 +339,9 @@ QAction *NWebView::downloadImageAction() {
 }
 
 QAction* NWebView::setupColorMenuOption(QString color) {
-    QAction *backgroundColor = new QAction(color, this);
+    if (backgroundColor != nullptr) {
+        backgroundColor = new QAction(color, this);
+    }
     color = color.replace(" ", "");
     //connect(backgroundColor, SIGNAL(triggered()), this, SLOT()
     return backgroundColor;
