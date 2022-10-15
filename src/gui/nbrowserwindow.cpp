@@ -242,14 +242,19 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     buttonBar->getButtonbarState();
 
-    printPage = new QTextEdit();
-    printPage->setVisible(false);
+    //printPage = new QTextEdit();
+    //printPage->setVisible(false);
     //connect(printPage, SIGNAL(loadFinished(bool)), this, SLOT(printReady(bool)));
 
-    printPreviewPage = new QTextEdit();
-    printPreviewPage->setVisible(false);
+    //printPreviewPage = new QTextEdit();
+    //printPreviewPage->setVisible(false);
 
-    hammer = new Thumbnailer(global.db);
+    printPreviewPage = nullptr;
+    printPage = nullptr;
+
+    if (!global.disableThumbnails) {
+        hammer = new Thumbnailer(global.db);
+    }
     lid = -1;
 
     //Setup shortcuts for context menu
@@ -3078,6 +3083,10 @@ QString NBrowserWindow::stripContentsForPrint() {
 // in much the same way as printNote().  It removes all the
 // <object> tags & replaces them with <img>.
 void NBrowserWindow::printPreviewNote() {
+    if (printPreviewPage == nullptr) {
+        printPreviewPage = new QTextEdit();
+        printPreviewPage->setVisible(false);
+    }
     QString contents = stripContentsForPrint();
 
     // Load the print page.  When it is ready the printReady() slot will
@@ -3101,6 +3110,10 @@ void NBrowserWindow::printPreviewReady(QPrinter *printer) {
 // note and replaces the <object> tags with <img> tags.  The plugin
 // object should be creating temporary images for the print.
 void NBrowserWindow::printNote() {
+    if (printPage == nullptr) {
+        printPage = new QTextEdit();
+        printPage->setVisible(false);
+    }
     QString contents = stripContentsForPrint();
 
     // Load the print page.  When it is ready the printReady() slot will
