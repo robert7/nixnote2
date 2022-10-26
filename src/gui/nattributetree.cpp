@@ -42,8 +42,8 @@ NAttributeTree::NAttributeTree(QWidget *parent) :
 
     // Build the root item
     root = new QTreeWidgetItem(this);
-    QIcon icon(":attributes.png");
-    root->setIcon(0,icon);
+    //QIcon icon(":attributes.png");
+    //root->setIcon(0,icon);
     root->setData(0, Qt::UserRole, "root");
     root->setData(0, Qt::DisplayRole, tr("Attributes"));
     QFont font = root->font(0);
