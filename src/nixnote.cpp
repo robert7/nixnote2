@@ -1189,6 +1189,15 @@ void NixNote::saveOnExit() {
     QLOG_DEBUG() << "saveOnExit: Shutting down threads";
     indexRunner.keepRunning = false;
     counterRunner.keepRunning = false;
+
+    QLOG_DEBUG() << "saveOnExit: Closing threads";
+    indexThread.quit();
+    counterThread.quit();
+
+    if (!global.getSaveUiState()) {
+        return;
+    }
+
     QCoreApplication::processEvents();
 
     QLOG_DEBUG() << "Saving window states";
@@ -1301,9 +1310,6 @@ void NixNote::saveOnExit() {
     saveNoteColumnPositions();
     noteTableView->saveColumnsVisible();
 
-    QLOG_DEBUG() << "saveOnExit: Closing threads";
-    indexThread.quit();
-    counterThread.quit();
 
     QLOG_DEBUG() << "Exiting saveOnExit()";
 }

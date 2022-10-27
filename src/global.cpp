@@ -1397,6 +1397,20 @@ void Global::setMultiThreadSave(bool value) {
 }
 
 
+bool Global::getSaveUiState() {
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
+    bool value = global.settings->value("saveUiState", true).toBool();
+    global.settings->endGroup();
+    return value;
+}
+
+void Global::setSaveUiState(bool value) {
+    global.settings->beginGroup(INI_GROUP_APPEARANCE);
+    global.settings->setValue("saveUiState", value);
+    global.settings->endGroup();
+}
+
+
 QString Global::formatShortcutKeyString(QString shortcutKeyString) {
     return shortcutKeyString.toUpper()
         .replace("SPACE", "Space")

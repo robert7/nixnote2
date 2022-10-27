@@ -438,6 +438,10 @@ public:
     bool getMultiThreadSave();
     bool multiThreadSaveEnabled;
 
+    bool getSaveUiState();
+    void setSaveUiState(bool value);
+
+
     ExitManager *exitManager;                                  // Utility to manage exit points.
     QString getProgramDataDir() { return fileManager.getProgramDataDir(); }
 

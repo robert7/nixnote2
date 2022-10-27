@@ -57,6 +57,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     autosetUserid->setChecked(global.autosetUsername());
     fontPreviewInDialog  = new QCheckBox(tr("Preview fonts in editor dialog*"));
     fontPreviewInDialog->setChecked(global.previewFontsInDialog());
+    saveUiState = new QCheckBox(tr("Save the state of the UI when exiting"), this);
+    saveUiState->setChecked(global.getSaveUiState());
 
     trayMiddleClickAction = new QComboBox();
     trayMiddleClickAction->addItem(tr("Do nothing"), TRAY_ACTION_NOTHING);
@@ -125,6 +127,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(alternateNoteListColors,row++,1);
     mainLayout->addWidget(autosetUserid, row,0);
     mainLayout->addWidget(fontPreviewInDialog, row++, 1);
+    mainLayout->addWidget(saveUiState, row++, 0);
 
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
@@ -251,6 +254,8 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("showNoteListGrid", showNoteListGrid->isChecked());
     global.settings->setValue("alternateNoteListColors", alternateNoteListColors->isChecked());
     global.pdfPreview = showPDFs->isChecked();
+    global.setSaveUiState(saveUiState->isChecked());
+
     if (minimizeToTray!= nullptr)
         global.settings->setValue("minimizeToTray", minimizeToTray->isChecked());
     else
