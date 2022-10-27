@@ -1572,7 +1572,7 @@ QString Global::getCheckboxImageUrl(bool checked) const {
     QString filePath = global.fileManager.getImageDirPath("").append(fileName);
 
     QString prefix = QString("file://");
-#ifdef WIN32
+#ifdef _WIN32
     prefix.append("/");
 #endif
     return prefix + filePath;

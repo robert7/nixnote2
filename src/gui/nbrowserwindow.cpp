@@ -4156,19 +4156,18 @@ QString base64_encode(QString string) {
 void NBrowserWindow::setEditorStyle() {
     QString css = global.getEditorCss();
 
-    QString path = global.fileManager.getImageDirPath("") +
-        QString("checkbox.css");
-    path.replace("file:///", "").replace("file://", "");
-    QFile f(QDir::toNativeSeparators(path));
-    f.open(QFile::ReadOnly);
-    QTextStream in(&f);
-    QString checkbox = in.readAll();
-    f.close();
+    QString checkbox =
+        QString("img.todo-icon {") +
+        QString("    vertical-align: baseline !important;") +
+        QString("    cursor: pointer;") +
+        QString("    padding-right: 5px;") +
+        QString("\n") +
+        QString("    user-drag: none;") +
+        QString("    -webkit-user-drag: none;") +
+        QString("}");
+
     css += checkbox;
 
-    if (css.isEmpty()) {
-        return;
-    }
     QString url = QString("data:text/css;charset=utf-8;base64,").append(base64_encode(css));
     // http://doc.qt.io/archives/qt-5.5/qwebsettings.html#setUserStyleSheetUrl
     // hack to pass inline css to avoid putting it in file
