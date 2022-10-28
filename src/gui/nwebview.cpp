@@ -631,3 +631,15 @@ void NWebView::dropEvent(QDropEvent *e) {
         parent->handleUrls(mime);
         parent->contentChanged();
 }
+
+
+void NWebView::setContent(const QByteArray &data) {
+    // Qt Webview memory leaks solution:
+    // https://forum.qt.io/topic/10832/memory-size-increases-per-page-load/4
+    QByteArray content = data;
+    content.replace("<body", "<body onunload=_function() {} ");
+    QWebView::setContent(content);
+
+    QWebSettings::clearMemoryCaches();
+    this->history()->clear();
+}

@@ -102,6 +102,7 @@ public:
     void keyPressEvent(QKeyEvent *);
     void downloadAttachment(QNetworkRequest *req);
     void focusLostNotify(QString text);
+    void setContent(const QByteArray &data);
 
 signals:
     void noteChanged();
