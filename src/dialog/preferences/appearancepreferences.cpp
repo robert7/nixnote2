@@ -254,7 +254,7 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("showNoteListGrid", showNoteListGrid->isChecked());
     global.settings->setValue("alternateNoteListColors", alternateNoteListColors->isChecked());
     global.pdfPreview = showPDFs->isChecked();
-    global.setSaveUiState(saveUiState->isChecked());
+    global.settings->setValue("saveUiState", saveUiState->isChecked());
 
     if (minimizeToTray!= nullptr)
         global.settings->setValue("minimizeToTray", minimizeToTray->isChecked());
