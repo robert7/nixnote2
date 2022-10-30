@@ -1,4 +1,11 @@
 NixNote (2.1.7) stable; urgency=low
+  * Add an option: the user can choose to save the ui changes or not when Nixnote exits.
+  * Save the note content when Nixnote receives signal interruption.
+  * Allocate the tageditor's tags dynamically.
+  * Add a default theme named with 'Default' when no theme is found in the THEME_FILE.
+  * RAM usage optimizations.
+  * Fix file downloading under Windows.
+  * Make the editor not render the note content when Key_Up or Key_Down is kept being pressed.
   * Made the font size in the setting dialog consistent with the one in the editor button bar.
   * Made the Windows editon's results of find more recognizable.
   * Limited the max length of the recently updated menu of the tray.
