@@ -1,4 +1,5 @@
 NixNote (2.1.7) stable; urgency=low
+  * Export the stack attribute when exporting the notes.
   * Add an option: the user can choose to save the ui changes or not when Nixnote exits.
   * Save the note content when Nixnote receives signal interruption.
   * Allocate the tageditor's tags dynamically.
