@@ -137,32 +137,15 @@ int CmdLineTool::run(StartupConfig &config) {
 }
 
 
-
 // Email a note via the command line.
 int CmdLineTool::emailNote(StartupConfig config) {
-    // Look to see if another NixNote is running.  If so, then we
-    // expect a response if the note was delete.  Otherwise, we
-    // do it ourself.
-    bool useCrossMemory = true;
-    global.sharedMemory->unlock();
-    global.sharedMemory->detach();
-    if (!global.sharedMemory->attach()) {
-        useCrossMemory = false;
-    }
-    if (useCrossMemory) {
-        global.sharedMemory->write("EMAIL_NOTE:" + config.email->wrap());
-    } else {
-        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
-        return config.email->sendEmail();
-    }
-    return 0;
+    global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
+    return config.email->sendEmail();
 }
 
 
 // Delete a note via the command line
 int CmdLineTool::deleteNote(StartupConfig config) {
-    bool useCrossMemory = true;
-
     if (config.delNote->verifyDelete) {
         std::string verify;
         std::cout << QString(tr("Type DELETE to verify: ")).toStdString();
@@ -172,77 +155,25 @@ int CmdLineTool::deleteNote(StartupConfig config) {
             return 16;
     }
 
-    // Look to see if another NixNote is running.  If so, then we
-    // expect a response if the note was delete.  Otherwise, we
-    // do it ourself.
-    global.sharedMemory->unlock();
-    global.sharedMemory->detach();
-    if (!global.sharedMemory->attach()) {
-        useCrossMemory = false;
-    }
-    if (useCrossMemory) {
-        global.sharedMemory->write("DELETE_NOTE:" + QString::number(config.delNote->lid));
-    } else {
-        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
-        NoteTable noteTable(global.db);
-        noteTable.deleteNote(config.delNote->lid,true);
-    }
+    global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
+    NoteTable noteTable(global.db);
+    noteTable.deleteNote(config.delNote->lid,true);
     return 0;
 }
 
 
 // Query notes via the command line
 int CmdLineTool::queryNotes(StartupConfig config) {
-    bool expectResponse = true;
-
-    // Look to see if another NixNote is running.  If so, then we
-    // expect a response of the LID created.  First we detach it so
-    // we are not talking to ourselves.
-    global.sharedMemory->unlock();
-    global.sharedMemory->detach();
-    if (!global.sharedMemory->attach()) {
-        expectResponse = false;
-    }
-    if (expectResponse) {
-        NUuid uuid;
-        config.queryNotes->returnUuid = uuid.create();
-        QString queryString = config.queryNotes->wrap();
-        global.sharedMemory->write("CMDLINE_QUERY:" + queryString);
-
-        int cnt = 0;
-        int maxWait=10;
-        QString tmpFile = global.fileManager.getTmpDirPath()+config.queryNotes->returnUuid+".txt";
-        QFile responseFile(tmpFile);
-        while (!responseFile.exists() && cnt<maxWait) {
-            sleep(1);
-            cnt++;
-        }
-        bool goodResponse = false;
-        if (responseFile.exists()) {
-            if (responseFile.open(QIODevice::ReadOnly)) {
-               QTextStream in(&responseFile);
-               while (!in.atEnd()) {
-                  QString line = in.readLine();
-                  std::cout << line.toStdString() << std::endl;
-               }
-               responseFile.close();
-               goodResponse = true;
-            }
-        }
-        if (!goodResponse)
-            std::cout << QString(tr("No response received from NixNote.")).toStdString() << std::endl;
-    } else {
-        // The other NixNote isn't found, so we do the query ourself
-        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
-        FilterCriteria *filter = new FilterCriteria();
-        global.filterCriteria.append(filter);
-        global.filterPosition = 0;
-        FilterEngine engine;
-        filter->setSearchString(config.queryNotes->query);
-        QList<qint32> lids;
-        engine.filter(filter, &lids);
-        config.queryNotes->write(lids, "");
-    }
+    // The other NixNote isn't found, so we do the query ourself
+    global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
+    FilterCriteria *filter = new FilterCriteria();
+    global.filterCriteria.append(filter);
+    global.filterPosition = 0;
+    FilterEngine engine;
+    filter->setSearchString(config.queryNotes->query);
+    QList<qint32> lids;
+    engine.filter(filter, &lids);
+    config.queryNotes->write(lids, "");
     return 0;
 }
 
@@ -286,185 +217,139 @@ int CmdLineTool::addNote(StartupConfig config) {
     formatter.rebuildNoteEnml();
     config.newNote->content = formatter.getContent();
 
-    bool expectResponse = true;
+   // Another NN isn't found, so we do this ourself
+    global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
+    NUuid uuid;
+    Note newNote;
+    newNote.content = config.newNote->content;
+    newNote.active = true;
+    newNote.created = QDateTime::currentMSecsSinceEpoch();
+    newNote.guid = uuid.create();
+    if (config.newNote->title != "")
+        newNote.title = config.newNote->title;
+    else
+        newNote.title = tr("Untitled Note");
 
-    // Look to see if another NixNote is running.  If so, then we
-    // expect a response of the LID created.  First we detach it so
-    // we are not talking to ourselves.
-    global.sharedMemory->unlock();
-    global.sharedMemory->detach();
-    if (!global.sharedMemory->attach()) {
-        expectResponse = false;
-    } else {
-        global.sharedMemory->detach();
-    }
-    if (expectResponse) {
-        NUuid uuid;
-        QString id = uuid.create();
+    // Process tags
+    newNote.tagGuids = QList<Guid>();
+    newNote.tagNames=QStringList();
+    for (int i=0; i<config.newNote->tags.size(); i++) {
+        QString tagName = config.newNote->tags[i];
+        TagTable tagTable(global.db);
+        qint32 tagLid = tagTable.findByName(tagName, 0);
+        QString tagGuid;
 
-        // Setup cross memory for response
-        CrossMemoryMapper crossMemory(id);
-        if (crossMemory.allocate(512) != QSharedMemory::SharedMemoryError::NoError)
-            expectResponse = false;
-
-        // Write out the segment
-        config.newNote->write(id);
-        // Start checking for the response
-        int cnt = 0;
-        qint32 newLid = -1;
-        int maxWait = 5;
-        while (expectResponse && cnt<maxWait) {
-            QByteArray data = crossMemory.read();
-            if (!data.startsWith('\0')) {
-                expectResponse = false;
-                newLid = data.toInt();
-            } else {
-                sleep(1);
-            }
-            cnt++;
-        }
-        if (newLid > 0) {
-            std::cout << newLid << QString(tr(" has been created.\n")).toStdString();
-            return newLid;
+        // Do we need to add the tag?
+        if (tagLid == 0) {
+            Tag tag;
+            tag.name = tagName;
+            NUuid uuid;
+            tagGuid = uuid.create();
+            tag.guid = tagGuid;
+            tagTable.add(0, tag, true, 0);
         } else {
-            std::cout << QString(tr("No response from NixNote.  Please verify that the note was created.\n")).toStdString();
+            tagTable.getGuid(tagGuid, tagLid);
         }
-    } else {
-       // Another NN isn't found, so we do this ourself
-        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
-        NUuid uuid;
-        Note newNote;
-        newNote.content = config.newNote->content;
-        newNote.active = true;
-        newNote.created = QDateTime::currentMSecsSinceEpoch();
-        newNote.guid = uuid.create();
-        if (config.newNote->title != "")
-            newNote.title = config.newNote->title;
-        else
-            newNote.title = tr("Untitled Note");
-
-        // Process tags
-        newNote.tagGuids = QList<Guid>();
-        newNote.tagNames=QStringList();
-        for (int i=0; i<config.newNote->tags.size(); i++) {
-            QString tagName = config.newNote->tags[i];
-            TagTable tagTable(global.db);
-            qint32 tagLid = tagTable.findByName(tagName, 0);
-            QString tagGuid;
-
-            // Do we need to add the tag?
-            if (tagLid == 0) {
-                Tag tag;
-                tag.name = tagName;
-                NUuid uuid;
-                tagGuid = uuid.create();
-                tag.guid = tagGuid;
-                tagTable.add(0, tag, true, 0);
-            } else {
-                tagTable.getGuid(tagGuid, tagLid);
-            }
-            newNote.tagNames->append(tagName);
-            newNote.tagNames->append(tagGuid);
-        }
-
-        // Process the notebook
-        if (config.newNote->notebook != "") {
-            QString notebookName = config.newNote->notebook;
-            NotebookTable notebookTable(global.db);
-            qint32 lid = notebookTable.findByName(notebookName);
-            QString notebookGuid;
-
-            // Do we need to add the notebook?
-            if (lid == 0) {
-                Notebook book;
-                book.name = notebookName;
-                NUuid uuid;
-                QString newGuid = uuid.create();
-                book.guid = newGuid;
-                notebookGuid = newGuid;
-                lid = notebookTable.add(0, book, true, false);
-            } else {
-                notebookTable.getGuid(notebookGuid, lid);
-            }
-            newNote.notebookGuid = notebookGuid;
-        } else {
-            NotebookTable notebookTable(global.db);
-            newNote.notebookGuid = notebookTable.getDefaultNotebookGuid();
-        }
-
-        // Do the dates
-        if (config.newNote->created != "") {
-            QString dateString = config.newNote->created;
-            QDateTime date = QDateTime::fromString(dateString.trimmed(), "yyyy-MM-ddTHH:mm:ss.zzzZ");
-            newNote.created = date.toMSecsSinceEpoch();
-        }
-        if (config.newNote->updated != "") {
-            QString dateString = config.newNote->updated;
-            QDateTime date = QDateTime::fromString(dateString, "yyyy-MM-ddTHH:mm:ss.zzzZ");
-            newNote.updated = date.toMSecsSinceEpoch();
-        }
-        if (config.newNote->reminder != "") {
-            QString dateString = config.newNote->reminder;
-            QDateTime date = QDateTime::fromString(dateString, "yyyy-MM-ddTHH:mm:ss.zzzZ");
-            if (date > QDateTime::currentDateTime()) {
-                if (!newNote.attributes.isSet()) {
-                    NoteAttributes na;
-                    newNote.attributes = na;
-                }
-                newNote.attributes->reminderTime = date.toMSecsSinceEpoch();
-            }
-        }
-
-
-        NoteTable noteTable(global.db);
-        qint32 newLid = noteTable.addStub(newNote.guid);
-        // Do the attachments
-        for (int i=0; i<config.newNote->attachments.size(); i++) {
-            QString filename = config.newNote->attachments[i];
-            QFile file(filename);
-            if (file.exists()) {
-
-                file.open(QIODevice::ReadOnly);
-                QByteArray ba = file.readAll();
-                file.close();
-
-                MimeReference mimeRef;
-                QString extension = filename;
-                int endPos = filename.lastIndexOf(".");
-                if (endPos != -1)
-                    extension = extension.mid(endPos);
-                QString mime =  mimeRef.getMimeFromExtension(extension);
-                Resource newRes;
-                bool attachment = true;
-                if (mime == "application/pdf" || mime.startsWith("image/"))
-                    attachment = false;
-                config.newNote->createResource(newRes, 0, ba, mime, attachment, QFileInfo(filename).fileName(), newLid);
-                QByteArray hash;
-                if (newRes.data.isSet()) {
-                    Data d = newRes.data;
-                    if (d.bodyHash.isSet())
-                        hash = d.bodyHash;
-                }
-                if (!newNote.resources.isSet()) {
-                    newNote.resources = QList<Resource>();
-                }
-                QString mediaString = "<en-media hash=\""+hash.toHex()+"\" type=\""+mime+"\"/>";
-                if (newNote.content->contains(config.newNote->attachmentDelimiter)) {
-                     //newNote.content = newNote.content->replace(config.newNote->attachmentDelimiter,mediaString);
-                     newNote.content = newNote.content->replace(newNote.content->indexOf(config.newNote->attachmentDelimiter),
-                                                         config.newNote->attachmentDelimiter.size(), mediaString);
-                } else {
-                    newNote.content = newNote.content->replace("</en-note>","<br>"+mediaString+"</en-note>");
-                }
-                newNote.resources->append(newRes);
-            }
-        }
-        noteTable.expunge(newLid);
-        noteTable.add(newLid,newNote,true);
-        std::cout << newLid << QString(tr(" has been created.\n")).toStdString();
-        return newLid;
+        newNote.tagNames->append(tagName);
+        newNote.tagNames->append(tagGuid);
     }
-    return 0;
+
+    // Process the notebook
+    if (config.newNote->notebook != "") {
+        QString notebookName = config.newNote->notebook;
+        NotebookTable notebookTable(global.db);
+        qint32 lid = notebookTable.findByName(notebookName);
+        QString notebookGuid;
+
+        // Do we need to add the notebook?
+        if (lid == 0) {
+            Notebook book;
+            book.name = notebookName;
+            NUuid uuid;
+            QString newGuid = uuid.create();
+            book.guid = newGuid;
+            notebookGuid = newGuid;
+            lid = notebookTable.add(0, book, true, false);
+        } else {
+            notebookTable.getGuid(notebookGuid, lid);
+        }
+        newNote.notebookGuid = notebookGuid;
+    } else {
+        NotebookTable notebookTable(global.db);
+        newNote.notebookGuid = notebookTable.getDefaultNotebookGuid();
+    }
+
+    // Do the dates
+    if (config.newNote->created != "") {
+        QString dateString = config.newNote->created;
+        QDateTime date = QDateTime::fromString(dateString.trimmed(), "yyyy-MM-ddTHH:mm:ss.zzzZ");
+        newNote.created = date.toMSecsSinceEpoch();
+    }
+    if (config.newNote->updated != "") {
+        QString dateString = config.newNote->updated;
+        QDateTime date = QDateTime::fromString(dateString, "yyyy-MM-ddTHH:mm:ss.zzzZ");
+        newNote.updated = date.toMSecsSinceEpoch();
+    }
+    if (config.newNote->reminder != "") {
+        QString dateString = config.newNote->reminder;
+        QDateTime date = QDateTime::fromString(dateString, "yyyy-MM-ddTHH:mm:ss.zzzZ");
+        if (date > QDateTime::currentDateTime()) {
+            if (!newNote.attributes.isSet()) {
+                NoteAttributes na;
+                newNote.attributes = na;
+            }
+            newNote.attributes->reminderTime = date.toMSecsSinceEpoch();
+        }
+    }
+
+
+    NoteTable noteTable(global.db);
+    qint32 newLid = noteTable.addStub(newNote.guid);
+    // Do the attachments
+    for (int i=0; i<config.newNote->attachments.size(); i++) {
+        QString filename = config.newNote->attachments[i];
+        QFile file(filename);
+        if (file.exists()) {
+
+            file.open(QIODevice::ReadOnly);
+            QByteArray ba = file.readAll();
+            file.close();
+
+            MimeReference mimeRef;
+            QString extension = filename;
+            int endPos = filename.lastIndexOf(".");
+            if (endPos != -1)
+                extension = extension.mid(endPos);
+            QString mime =  mimeRef.getMimeFromExtension(extension);
+            Resource newRes;
+            bool attachment = true;
+            if (mime == "application/pdf" || mime.startsWith("image/"))
+                attachment = false;
+            config.newNote->createResource(newRes, 0, ba, mime, attachment, QFileInfo(filename).fileName(), newLid);
+            QByteArray hash;
+            if (newRes.data.isSet()) {
+                Data d = newRes.data;
+                if (d.bodyHash.isSet())
+                    hash = d.bodyHash;
+            }
+            if (!newNote.resources.isSet()) {
+                newNote.resources = QList<Resource>();
+            }
+            QString mediaString = "<en-media hash=\""+hash.toHex()+"\" type=\""+mime+"\"/>";
+            if (newNote.content->contains(config.newNote->attachmentDelimiter)) {
+                 //newNote.content = newNote.content->replace(config.newNote->attachmentDelimiter,mediaString);
+                 newNote.content = newNote.content->replace(newNote.content->indexOf(config.newNote->attachmentDelimiter),
+                                                     config.newNote->attachmentDelimiter.size(), mediaString);
+            } else {
+                newNote.content = newNote.content->replace("</en-note>","<br>"+mediaString+"</en-note>");
+            }
+            newNote.resources->append(newRes);
+        }
+    }
+    noteTable.expunge(newLid);
+    noteTable.add(newLid,newNote,true);
+    std::cout << newLid << QString(tr(" has been created.\n")).toStdString();
+    return newLid;
 }
 
 
@@ -506,177 +391,89 @@ int CmdLineTool::appendNote(StartupConfig config) {
     formatter.rebuildNoteEnml();
     config.newNote->content = formatter.getContent();
 
-    bool expectResponse = true;
+    // Another NN isn't found, so we do this ourself
+    global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
+    Note newNote;
 
-    // Look to see if another NixNote is running.  If so, then we
-    // expect a response of the LID created.  First we detach it so
-    // we are not talking to ourselves.
-    global.sharedMemory->unlock();
-    global.sharedMemory->detach();
-    if (!global.sharedMemory->attach()) {
-        expectResponse = false;
-    } else {
-        global.sharedMemory->detach();
+    // Fetch the existing note
+    NoteTable noteTable(global.db);
+    if (!noteTable.get(newNote, config.newNote->lid, true, true)) {
+        std::cerr << config.newNote->lid << QString(tr(" was not found.\n")).toStdString();
+        return -1;
     }
-    if (expectResponse) {
-        NUuid uuid;
-        QString id = uuid.create();
 
-        // Setup cross memory for response
-        CrossMemoryMapper crossMemory(id);
-        if (crossMemory.allocate(512) != QSharedMemory::SharedMemoryError::NoError)
-            expectResponse = false;
+    // Append the text to the existing note
+    newNote.content->replace("</en-note>", "<br/>");
 
-        // Write out the segment
-        config.newNote->write(id);
-        // Start checking for the response
-        int cnt = 0;
-        qint32 newLid = -1;
-        int maxWait = 5;
-        while (expectResponse && cnt<maxWait) {
-            QByteArray data = crossMemory.read();
-            if (!data.startsWith('\0')) {
-                expectResponse = false;
-                newLid = data.toInt();
+    // Chop off the beginning of the new text to remove the <en-note stuff
+    int startOfNote = config.newNote->content.indexOf("<en-note");
+    config.newNote->content = config.newNote->content.mid(startOfNote+9);
+
+    // Append the two notes
+    newNote.content = newNote.content + config.newNote->content;
+
+    // Do the attachments
+    for (int i=0; i<config.newNote->attachments.size(); i++) {
+        QString filename = config.newNote->attachments[i];
+        QFile file(filename);
+        if (file.exists()) {
+
+            file.open(QIODevice::ReadOnly);
+            QByteArray ba = file.readAll();
+            file.close();
+
+            MimeReference mimeRef;
+            QString extension = filename;
+            int endPos = filename.lastIndexOf(".");
+            if (endPos != -1)
+                extension = extension.mid(endPos);
+            QString mime =  mimeRef.getMimeFromExtension(extension);
+            Resource newRes;
+            bool attachment = true;
+            if (mime == "application/pdf" || mime.startsWith("image/"))
+                attachment = false;
+            config.newNote->createResource(newRes, 0, ba, mime, attachment, QFileInfo(filename).fileName(), config.newNote->lid);
+            QByteArray hash;
+            if (newRes.data.isSet()) {
+                Data d = newRes.data;
+                if (d.bodyHash.isSet())
+                    hash = d.bodyHash;
+            }
+            if (!newNote.resources.isSet()) {
+                newNote.resources = QList<Resource>();
+            }
+            QString mediaString = "<en-media hash=\""+hash.toHex()+"\" type=\""+mime+"\"/>";
+            if (newNote.content->contains(config.newNote->attachmentDelimiter)) {
+                 //newNote.content = newNote.content->replace(config.newNote->attachmentDelimiter,mediaString);
+                 newNote.content = newNote.content->replace(newNote.content->indexOf(config.newNote->attachmentDelimiter),
+                                                     config.newNote->attachmentDelimiter.size(), mediaString);
             } else {
-                sleep(1);
+                newNote.content = newNote.content->replace("</en-note>","<br>"+mediaString+"</en-note>");
             }
-            cnt++;
+            newNote.resources->append(newRes);
         }
-        if (newLid == -1) {
-            std::cout << newLid << QString(tr(" was not found.")).toStdString();
-        } else {
-            if (newLid > 0) {
-                std::cout << newLid << QString(tr(" has been appended.\n")).toStdString();
-                return newLid;
-            } else {
-                std::cout << QString(tr("No response from NixNote.  Please verify that the note was appended.\n")).toStdString();
-            }
-        }
-    } else {
-       // Another NN isn't found, so we do this ourself
-        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
-        Note newNote;
-
-        // Fetch the existing note
-        NoteTable noteTable(global.db);
-        if (!noteTable.get(newNote, config.newNote->lid, true, true)) {
-            std::cerr << config.newNote->lid << QString(tr(" was not found.\n")).toStdString();
-            return -1;
-        }
-
-        // Append the text to the existing note
-        newNote.content->replace("</en-note>", "<br/>");
-
-        // Chop off the beginning of the new text to remove the <en-note stuff
-        int startOfNote = config.newNote->content.indexOf("<en-note");
-        config.newNote->content = config.newNote->content.mid(startOfNote+9);
-
-        // Append the two notes
-        newNote.content = newNote.content + config.newNote->content;
-
-        // Do the attachments
-        for (int i=0; i<config.newNote->attachments.size(); i++) {
-            QString filename = config.newNote->attachments[i];
-            QFile file(filename);
-            if (file.exists()) {
-
-                file.open(QIODevice::ReadOnly);
-                QByteArray ba = file.readAll();
-                file.close();
-
-                MimeReference mimeRef;
-                QString extension = filename;
-                int endPos = filename.lastIndexOf(".");
-                if (endPos != -1)
-                    extension = extension.mid(endPos);
-                QString mime =  mimeRef.getMimeFromExtension(extension);
-                Resource newRes;
-                bool attachment = true;
-                if (mime == "application/pdf" || mime.startsWith("image/"))
-                    attachment = false;
-                config.newNote->createResource(newRes, 0, ba, mime, attachment, QFileInfo(filename).fileName(), config.newNote->lid);
-                QByteArray hash;
-                if (newRes.data.isSet()) {
-                    Data d = newRes.data;
-                    if (d.bodyHash.isSet())
-                        hash = d.bodyHash;
-                }
-                if (!newNote.resources.isSet()) {
-                    newNote.resources = QList<Resource>();
-                }
-                QString mediaString = "<en-media hash=\""+hash.toHex()+"\" type=\""+mime+"\"/>";
-                if (newNote.content->contains(config.newNote->attachmentDelimiter)) {
-                     //newNote.content = newNote.content->replace(config.newNote->attachmentDelimiter,mediaString);
-                     newNote.content = newNote.content->replace(newNote.content->indexOf(config.newNote->attachmentDelimiter),
-                                                         config.newNote->attachmentDelimiter.size(), mediaString);
-                } else {
-                    newNote.content = newNote.content->replace("</en-note>","<br>"+mediaString+"</en-note>");
-                }
-                newNote.resources->append(newRes);
-            }
-        }
-        noteTable.expunge(config.newNote->lid);
-        noteTable.add(config.newNote->lid,newNote,true);
-        std::cout << config.newNote->lid << QString(tr(" has been appended.\n")).toStdString();
-        return config.newNote->lid;
     }
-    return 0;
+    noteTable.expunge(config.newNote->lid);
+    noteTable.add(config.newNote->lid,newNote,true);
+    std::cout << config.newNote->lid << QString(tr(" has been appended.\n")).toStdString();
+    return config.newNote->lid;
 }
-
 
 
 
 // Read a note via the command line and extract the text
 // contents.
 int CmdLineTool::readNote(StartupConfig config) {
-    bool useCrossMemory = true;
-
-    // Look to see if another NixNote is running.  If so, then we
-    // expect a response.  Otherwise, we do it ourself.
-    global.sharedMemory->unlock();
-    global.sharedMemory->detach();
-    if (!global.sharedMemory->attach()) {
-        useCrossMemory = false;
-    }
-    if (useCrossMemory) {
-        NUuid uuid;
-        config.extractText->returnUuid = uuid.create();
-        CrossMemoryMapper sharedMemory(config.extractText->returnUuid);
-        if (sharedMemory.allocate(500 * 1024) != QSharedMemory::SharedMemoryError::NoError)
-            return 16;
-
-        sharedMemory.clearMemory();
-        global.sharedMemory->write("READ_NOTE:" + config.extractText->wrap());
-
-        int maxWait = 5;
-        bool expectResponse = true;
-        int cnt = 0;
-        while (expectResponse && cnt<maxWait) {
-            QByteArray data = sharedMemory.read();
-            if (!data.startsWith('\0')) {
-                expectResponse = false;
-                config.extractText->unwrap(data);
-            } else {
-                sleep(1);
-            }
-            cnt++;
-        }
-        if (!expectResponse)
-            std::cout << config.extractText->text.toStdString() << endl;
-        else
-            std::cout << tr("No response received from NixNote.").toStdString();
+    global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
+    NoteTable noteTable(global.db);
+    Note n;
+    QString text;
+    if (noteTable.get(n,config.extractText->lid,false,false)) {
+        text = config.extractText->stripTags(n.content);
     } else {
-        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
-        NoteTable noteTable(global.db);
-        Note n;
-        QString text;
-        if (noteTable.get(n,config.extractText->lid,false,false))
-            text = config.extractText->stripTags(n.content);
-        else
-            text = tr("Note not found.");
-        std::cout << text.toStdString() << endl;
+        text = tr("Note not found.");
     }
+    std::cout << text.toStdString() << endl;
     return 0;
 }
 
@@ -712,21 +509,8 @@ int CmdLineTool::importNotes(StartupConfig config) {
 
 // Alter a note's notebook or add/remove tags for a note.
 int CmdLineTool::alterNote(StartupConfig config) {
-    // Look to see if another NixNote is running.  If so, then we
-    // expect a response, otherwise we do it ourself.
-    bool useCrossMemory = true;
-    global.sharedMemory->unlock();
-    global.sharedMemory->detach();
-    if (!global.sharedMemory->attach()) {
-        useCrossMemory = false;
-    }
-    if (useCrossMemory) {
-        global.sharedMemory->write("ALTER_NOTE:" + config.alter->wrap());
-    } else {
-        global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
-        return config.alter->alterNote();
-    }
-    return 0;
+    global.db = new DatabaseConnection(NN_DB_CONNECTION_NAME);  // Startup the database
+    return config.alter->alterNote();
 }
 
 
@@ -800,8 +584,6 @@ int CmdLineTool::sync() {
     std::cout << tr("Sync completed.").toStdString() << std::endl;
     return 0;
 }
-
-
 
 
 int CmdLineTool::signalGui(StartupConfig config) {
