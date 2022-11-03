@@ -223,7 +223,12 @@ int main(int argc, char *argv[]) {
     // with any other instance that may be running.  If another instance
     // is found we need to either show that one or kill this one.
     bool memInitNeeded = true;
-    int sharedMemSize = 512 * 1024;
+    int sharedMemSize;
+    if (global.getListenToCommands()) {
+        sharedMemSize = 1024;
+    } else {
+        sharedMemSize = 1;
+    }
     QSharedMemory::SharedMemoryError allocateRecCode1 = sharedMemory->allocate(sharedMemSize);
     if (allocateRecCode1 != QSharedMemory::SharedMemoryError::NoError) {
         // failed to create new memory segment (#1)
