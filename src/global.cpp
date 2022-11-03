@@ -214,6 +214,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     autoSaveInterval = getAutoSaveInterval() * 1000;
 
     multiThreadSaveEnabled = this->getMultiThreadSave();
+    listenToCommands = this->getListenToCommands();
     exitManager = new ExitManager();
     exitManager->loadExits();
 }
@@ -1394,6 +1395,21 @@ void Global::setMultiThreadSave(bool value) {
     global.settings->setValue("multiThreadSave", value);
     global.settings->endGroup();
     this->multiThreadSaveEnabled = value;
+}
+
+
+bool Global::getListenToCommands() {
+    global.settings->beginGroup(INI_GROUP_DEBUGGING);
+    bool value = global.settings->value("listenToCommands", true).toBool();
+    global.settings->endGroup();
+    return value;
+}
+
+void Global::setListenToCommands(bool value) {
+    global.settings->beginGroup(INI_GROUP_DEBUGGING);
+    global.settings->setValue("listenToCommands", value);
+    global.settings->endGroup();
+    this->listenToCommands = value;
 }
 
 

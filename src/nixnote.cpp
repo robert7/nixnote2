@@ -146,10 +146,12 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     indexThread.start(QThread::LowestPriority);
     this->thread()->setPriority(QThread::HighestPriority);
 
-    heartbeatTimer.setInterval(1000);
-    heartbeatTimer.setSingleShot(false);
-    connect(&heartbeatTimer, SIGNAL(timeout()), this, SLOT(heartbeatTimerTriggered()));
-    heartbeatTimer.start();
+    if (global.getListenToCommands()) {
+        heartbeatTimer.setInterval(1000);
+        heartbeatTimer.setSingleShot(false);
+        connect(&heartbeatTimer, SIGNAL(timeout()), this, SLOT(heartbeatTimerTriggered()));
+        heartbeatTimer.start();
+    }
 
     this->setFont(global.getGuiFont(this->font()));
 

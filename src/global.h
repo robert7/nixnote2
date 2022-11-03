@@ -438,6 +438,10 @@ public:
     bool getMultiThreadSave();
     bool multiThreadSaveEnabled;
 
+    bool getListenToCommands();
+    void setListenToCommands(bool value);
+    bool listenToCommands;
+
     bool getSaveUiState();
     void setSaveUiState(bool value);
 
