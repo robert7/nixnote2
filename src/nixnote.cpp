@@ -3295,10 +3295,6 @@ void NixNote::deleteCurrentNote() {
     QList<qint32> lids;
     lids.append(lid);
     emit(notesDeleted(lids));
-    // Unpin the note being deleted, so that the table view
-    // will not display a pinned note even after it
-    // has been deleted.
-    unpinCurrentNote();
 }
 
 
