@@ -167,7 +167,9 @@ public:
     bool updateNotebookName(qint32 lid, QString name);                   // Update a notebook's name in the user listing
     void updateNotebook(qint32 noteLid, qint32 notebookLid);             // Set the current note's notebook
     void setDirty(qint32 lid, bool dirty, bool setDateUpdated=true);     // Set if a note needs a sync
+    void setDirty(const QList<qint32> &noteLids, bool dirty, bool setDateUpdated=true); // Set if a list of notes need a sync
     void updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDirty=false);    // Update the notebook for a note
+    void updateNotebook(const QList<qint32> &noteLids, qint32 notebookLid, bool setAsDirty=false);
     void updateUrl(qint32 lid, QString text, bool dirty);                // Update a URL for a note
     void updateTitle(qint32 noteLid, QString title, bool setAsDirty);    // Update a title for a note
     void updateDate(qint32 lid, Timestamp ts, qint32 key, bool isDirty); // Update a date for a note
@@ -188,6 +190,7 @@ public:
     void sync(qint32 lid, const Note &note, qint32 account=0);           // Sync a note with a new record
     qint32 add(qint32 lid, const Note &t, bool isDirty, qint32 account=0); // Add a new note
     void setIndexNeeded(qint32 lid, bool indexNeeded);                   // flag if a note needs reindexing
+    void setIndexNeeded(const QList<qint32> &indexNoteLids, bool indexNeeded); // flag if multiple notes need reindexing
     void updateNoteListTags(qint32 noteLid, QString tags);               // Update the tag names in the note list
     void updateNoteListNotebooks(QString guid, QString name);            // Update the notebook name in the note list
     void addToDeleteQueue(qint32 lid, Note n);   // Add to the notes that need to be deleted from Evernote

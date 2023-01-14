@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stdio.h>
 #include <QFileInfo>
 #include <QTextDocument>
+#include <QList>
 
 #include "src/qevercloud/QEverCloud/headers/QEverCloud.h"
 using namespace qevercloud;
@@ -44,7 +45,10 @@ private:
 public:
     NoteIndexer(DatabaseConnection *db);
     void indexNote(qint32 lid);
+    void indexNotes(const QList<qint32> &lids);
     void addTextIndex(qint32 lid, QString content);
+    void addTextIndices(const QList<int> &noteLids,
+            const QStringList &contentList);
     void indexResource(qint32 lid);
     void indexRecognition(qint32 reslid, Resource &r);
     void indexPdf(qint32 reslid);

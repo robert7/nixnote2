@@ -1104,37 +1104,65 @@ qint32 NoteTable::getNotesWithTag(QList<qint32> &retval, QString tag) {
 
 // Set if a note needs to be indexed
 void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
+    QList<qint32> noteLids;
+    noteLids.clear();
+    noteLids.append(lid);
+    setIndexNeeded(noteLids, indexNeeded);
+}
+
+
+// Set if notes need to be indexed
+void NoteTable::setIndexNeeded(const QList<qint32> &indexNoteLids, bool indexNeeded) {
     QLOG_TRACE_IN();
-    if (lid <= 0) {
+    QList<qint32> noteLids;
+    noteLids.clear();
+    for (int i = 0; i < indexNoteLids.size(); ++i) {
+        // If it is already set to this value, then we don't need to
+        // do anything.
+        if (this->isIndexNeeded(indexNoteLids[i]) != indexNeeded) {
+            noteLids.append(indexNoteLids[i]);
+        }
+    }
+
+    if (noteLids.size() == 0) {
         QLOG_TRACE_OUT();
         return;
     }
 
-    // If it is already set to this value, then we don't need to
-    // do anything.
-    if (this->isIndexNeeded(lid) == indexNeeded) {
-        QLOG_TRACE_OUT();
-        return;
+    QString lids = "";
+    for (int i = 0; i < noteLids.size(); ++i) {
+        lids += QString::number(noteLids[i]) + ",";
     }
+    lids.chop(1); // chop the trailing ','
 
     NSqlQuery query(db);
     db->lockForWrite();
-    query.prepare("Delete from DataStore where lid=:lid and key=:key");
-    query.bindValue(":lid", lid);
+
+    query.prepare("Delete from DataStore where lid in (" +
+            lids + ") and key=:key");
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
 
     // We don't really need to do anything after deleting the flag
     if (!indexNeeded) {
+        query.finish();
+        db->unlock();
+
         QLOG_TRACE_OUT();
         return;
     }
 
-    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_INDEX_NEEDED);
-    query.bindValue(":data", indexNeeded);
+    QString values = "";
+    for (int i = 0; i < noteLids.size(); ++i) {
+        values += "(" + QString::number(noteLids[i]) + "," +
+            QString::number(NOTE_INDEX_NEEDED) + "," +
+            QString::number(indexNeeded) + "),";
+    }
+    values.chop(1);
+
+    query.prepare("Insert into DataStore (lid, key, data) values " + values);
     query.exec();
+
     query.finish();
     db->unlock();
 
@@ -1142,11 +1170,10 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     if (!global.enableIndexing) {
         QLOG_TRACE() << "Calling indexNote";
         NoteIndexer indexer(db);
-        indexer.indexNote(lid);
+        indexer.indexNotes(noteLids);
     }
     QLOG_TRACE_OUT();
 }
-
 
 
 // Set if a note needs to be indexed
@@ -1173,39 +1200,61 @@ qint32 NoteTable::getIndexNeeded(QList<qint32> &lids) {
 
 // Update the notebook for a note
 void NoteTable::updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDirty) {
+    QList<qint32> noteLids;
+    noteLids.clear();
+    noteLids.append(noteLid);
+    updateNotebook(noteLids, notebookLid, setAsDirty);
+}
+
+
+// Update the notebook for multiple notes
+void NoteTable::updateNotebook(const QList<qint32> &noteLids,
+        qint32 notebookLid, bool setAsDirty) {
     Notebook book;
     NotebookTable notebookTable(db);
     notebookTable.get(book, notebookLid);
 
-    if (book.guid.isSet()) {
-        NSqlQuery query(db);
-        db->lockForWrite();
-        query.prepare("Update DataStore set data=:notebookLid where lid=:lid and key=:key;");
-        query.bindValue(":notebookLid", notebookLid);
-        query.bindValue(":lid", noteLid);
-        query.bindValue(":key", NOTE_NOTEBOOK_LID);
-        query.exec();
-
-        if (setAsDirty) {
-            setDirty(noteLid, setAsDirty, false);
-        }
-
-        QString bookName = book.name;
-        query.prepare("Update NoteTable set notebook=:name where lid=:lid");
-        query.bindValue(":name", bookName);
-        query.bindValue(":lid", noteLid);
-        query.exec();
-
-        query.prepare("Update NoteTable set notebookLid=:nlid where lid=:lid");
-        query.bindValue(":nlid", notebookLid);
-        query.bindValue(":lid", noteLid);
-        query.exec();
-        query.finish();
-        db->unlock();
+    if (!book.guid.isSet()) {
+        return;
     }
+
+    int n = noteLids.size();
+
+    QString lids = "";
+    for (int i = 0; i < n; ++i) {
+        lids += QString::number(noteLids[i]) + ",";
+    }
+    lids.chop(1); // chop the trailing ','
+
+    NSqlQuery query(db);
+    db->lockForWrite();
+
+    query.prepare("Update DataStore set data=:notebookLid where lid in (" +
+            lids + ") and key=:key;");
+    query.bindValue(":notebookLid", notebookLid);
+    query.bindValue(":key", NOTE_NOTEBOOK_LID);
+    query.exec();
+
+    if (setAsDirty) {
+        setDirty(noteLids, setAsDirty, false);
+    }
+
+    QString bookName = book.name;
+    query.prepare("Update NoteTable set notebook=:name where lid in (" +
+            lids + ")");
+
+    query.bindValue(":name", bookName);
+    query.exec();
+
+    query.prepare("Update NoteTable set notebookLid=:nlid where lid in (" +
+            lids + ")");
+    query.bindValue(":nlid", notebookLid);
+    query.exec();
+
+    query.finish();
+
+    db->unlock();
 }
-
-
 
 
 // Update the URL for a note
@@ -1472,68 +1521,80 @@ QString NoteTable::getNoteListTags(qint32 lid) {
 
 // setDateUpdated: default true
 void NoteTable::setDirty(qint32 lid, bool dirty, bool setDateUpdated) {
-    if (lid <= 0)
-        return;
+    QList<qint32> noteLids;
+    noteLids.clear();
+    noteLids.append(lid);
+    setDirty(noteLids, dirty, setDateUpdated);
+}
 
-    db->lockForWrite();
+
+// Set multiple notes as dirty.
+void NoteTable::setDirty(const QList<qint32> &noteLids, bool dirty,
+        bool setDateUpdated) {
+    QString lids = "";
+    for (int i = 0; i < noteLids.size(); ++i) {
+        lids += QString::number(noteLids[i]) + ",";
+    }
+    if (lids == "") {
+        return;
+    }
+    lids.chop(1);
+
     NSqlQuery query(db);
+    db->lockForWrite();
 
     // If it is setting it as dirty, we need to update the
     // update date &  time.
     if (dirty && setDateUpdated) {
         qint64 dt = QDateTime::currentMSecsSinceEpoch();
-        query.prepare("Delete from DataStore where lid=:lid and key=:key");
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_UPDATED_DATE);
-        query.exec();
 
-        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :value)");
-        query.bindValue(":lid", lid);
+        query.prepare("Update DataStore set data=:value where lid in (" +
+                lids + ") and key=:key");
         query.bindValue(":key", NOTE_UPDATED_DATE);
         query.bindValue(":value", dt);
         query.exec();
 
-        query.prepare("Update NoteTable set dateUpdated=:value where lid=:lid");
-        query.bindValue(":lid", lid);
+        query.prepare("Update NoteTable set dateUpdated=:value where lid in (" +
+                lids + ")");
         query.bindValue(":value", dt);
         query.exec();
-    }
-
-    // If it is already set to the value, then we don't
-    // need to do anything more.
-    if (isDirty(lid) == dirty) {
-        query.finish();
-        db->unlock();
-        return;
     }
 
     // If we got here, then the current dirty state doesn't match
     // what the caller wants.
-    query.prepare("Update NoteTable set isDirty=:isDirty where lid=:lid");
+    // If it is already set to the value, then we don't
+    // need to do anything more.
+    query.prepare("Update NoteTable set isDirty=:isDirty where lid in (" +
+            lids + ") and isDirty!=:isDirty");
     query.bindValue(":isDirty", dirty);
-    query.bindValue(":lid", lid);
     query.exec();
 
-    query.prepare("Delete from DataStore where lid=:lid and key=:key");
-    query.bindValue(":lid", lid);
+    query.prepare("Delete from DataStore where lid in (" +
+            lids + ") and key=:key and data!=:data");
     query.bindValue(":key", NOTE_ISDIRTY);
+    query.bindValue(":data", dirty);
     query.exec();
 
     if (dirty) {
-        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_ISDIRTY);
-        query.bindValue(":data", dirty);
+        QString values = "";
+        for (int i = 0; i < noteLids.size(); ++i) {
+            values += "(" + QString::number(noteLids[i]) + ","
+                + QString::number(NOTE_ISDIRTY) + "," +
+                QString::number(dirty) + "),";
+        }
+        values.chop(1);
+
+        query.prepare("Insert into DataStore (lid, key, data) values " + values);
         query.exec();
-        query.finish();
-        db->unlock();
-        setIndexNeeded(lid, true);
-    } else {
-        query.finish();
-        db->unlock();
+    }
+
+    query.finish();
+    db->unlock();
+
+    if (dirty) {
+        setIndexNeeded(const_cast<QList<qint32> &>(noteLids), true);
     }
 }
-
 
 
 bool NoteTable::isDeleted(qint32 lid) {
