@@ -1663,6 +1663,72 @@ void NoteTable::deleteNote(qint32 lid, bool isDirty=true) {
 }
 
 
+void NoteTable::deleteNotes(const QList<qint32> &lids, bool isDirty=true) {
+    QString slids = "";
+    QList<qint32> noteLids;
+    noteLids.clear();
+    for (int i = 0; i < lids.size(); ++i) {
+        if (lids[i] > 0) {
+            noteLids.append(lids[i]);
+            slids += QString::number(lids[i]) + ",";
+        }
+    }
+    if (noteLids.size() == 0) {
+        return;
+    }
+    slids.chop(1);
+
+    NSqlQuery query(db);
+    db->lockForWrite();
+
+    query.prepare("delete from DataStore where key=:key and lid in (" +
+            slids + ")");
+    query.bindValue(":key", NOTE_ACTIVE);
+    query.exec();
+
+    query.prepare("delete from DataStore where key=:key and lid in (" +
+            slids + ")");
+    query.bindValue(":key", NOTE_DELETED_DATE);
+    query.exec();
+
+    if (isDirty) {
+        query.prepare("delete from DataStore where key=:key and lid in (" + slids + ")");
+        query.bindValue(":key", NOTE_ISDIRTY);
+        query.exec();
+    }
+
+    QString values = "";
+    for (int i = 0; i < noteLids.size(); ++i) {
+        values += "(" + QString::number(noteLids[i]) + ","
+            + QString::number(NOTE_ACTIVE) + "," +
+            QString::number(false) + "),";
+    }
+    values.chop(1);
+
+    query.prepare("Insert into DataStore (lid, key, data) values " + values);
+    query.exec();
+
+    query.prepare("update notetable set dateDeleted=strftime('%s','now') where lid in (" + slids + ")");
+    query.exec();
+
+    if (isDirty) {
+        values = "";
+        for (int i = 0; i < noteLids.size(); ++i) {
+            values += "(" + QString::number(noteLids[i]) + ","
+                + QString::number(NOTE_ISDIRTY) + "," +
+                QString::number(true) + "),";
+        }
+        values.chop(1);
+
+        query.prepare("Insert into DataStore (lid, key, data) values " + values);
+        query.exec();
+    }
+
+    query.finish();
+    db->unlock();
+}
+
+
 
 void NoteTable::restoreNote(qint32 lid, bool isDirty=true) {
     if (lid <=0)
@@ -1731,34 +1797,10 @@ qint32 NoteTable::getAllDeleted(QList<qint32> &lids) {
 
 
 void NoteTable::expunge(qint32 lid) {
-    // Expunge the thumbnail
-    QString thumbnail = global.fileManager.getThumbnailDirPath() + QString::number(lid) + ".png";
-    QFile f(thumbnail);
-    if (f.exists()) {
-        QDir d;
-        d.remove(thumbnail);
-    }
-
-    Note note;
-    this->get(note, lid, true, false);
-    ResourceTable resTable(db);
-    QList<Resource> resources;
-    if (note.resources.isSet())
-        resources = note.resources;
-    for (int i=0; i<resources.size(); i++) {
-        resTable.expunge(resources[i].guid);
-    }
-
-    NSqlQuery query(db);
-    db->lockForWrite();
-    query.prepare("delete from DataStore where lid=:lid");
-    query.bindValue(":lid", lid);
-    query.exec();
-    query.prepare("delete from NoteTable where lid=:lid");
-    query.bindValue(":lid", lid);
-    query.exec();
-    query.finish();
-    db->unlock();
+    QList<qint32> lids;
+    lids.clear();
+    lids.append(lid);
+    expunge(lids);
 }
 
 
@@ -1773,6 +1815,50 @@ void NoteTable::expunge(QString guid) {
     this->expunge(lid);
 }
 
+
+void NoteTable::expunge(const QList<qint32> &lids) {
+    QString slids = "";
+
+    for (int i = 0; i < lids.size(); ++i) {
+        // Expunge the thumbnail
+        QString thumbnail = global.fileManager.getThumbnailDirPath() +
+            QString::number(lids[i]) + ".png";
+        QFile f(thumbnail);
+        if (f.exists()) {
+            QDir d;
+            d.remove(thumbnail);
+        }
+
+        Note note;
+        this->get(note, lids[i], true, false);
+        ResourceTable resTable(db);
+        QList<Resource> resources;
+        if (note.resources.isSet())
+            resources = note.resources;
+
+        QList<qint32> resourceGuids;
+        resourceGuids.clear();
+        for (int i=0; i<resources.size(); i++) {
+            resourceGuids.append(resources[i].guid.ref().toInt());
+        }
+        resTable.expunge(resourceGuids);
+
+        slids += QString::number(lids[i]) + ",";
+    }
+    slids.chop(1);
+
+    NSqlQuery query(db);
+    db->lockForWrite();
+
+    query.prepare("delete from DataStore where lid in (" + slids + ")");
+    query.exec();
+
+    query.prepare("delete from NoteTable where lid in (" + slids + ")");
+    query.exec();
+
+    query.finish();
+    db->unlock();
+}
 
 
 // Add to the deletion queue

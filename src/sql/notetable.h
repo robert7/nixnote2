@@ -178,8 +178,10 @@ public:
     void addTag(qint32 lid, qint32 tag, bool isDirty);                   // Add a tag to a note
     void rebuildNoteListTags(qint32 lid);                                // Update the note's tags in the display table
     void deleteNote(qint32 lid, bool isDirty);                           // mark a note for deletion
+    void deleteNotes(const QList<qint32> &lids, bool isDirty);           // mark a list of notes for deletion
     void restoreNote(qint32 lid, bool isDirty);                          // unmark a note for deletion
     void expunge(qint32 lid);                                            // expunge a note permanently
+    void expunge(const QList<qint32> &lids);                             // expunge multiple notes permanently
     void expunge(QString guid);                                          // expunge a note permanently
     void expunge(string guid);                                           // expunge a note permanently
     void pinNote(string guid, bool value);                               // pin the current note
