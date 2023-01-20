@@ -117,25 +117,53 @@ void NoteIndexer::addTextIndex(int lid, QString content) {
 void NoteIndexer::addTextIndices(const QList<int> &noteLids,
         const QStringList &contentList) {
     QString values = "", lids = "";
+
     for (int i = 0; i < noteLids.size(); ++i) {
-        lids += noteLids[i] + ",";
-        values += "(" + QString::number(noteLids[i]) + "," +
-            QString::number(100) + "," + "text" + "," +
-            global.normalizeTermForSearchAndIndex(contentList[i]) + "),";
+        if (noteLids[i] <= 0) {
+            continue;
+        }
+        lids += ":lid" + QString::number(i) + ",";
+        values += "(:lid" + QString::number(i) + "," +
+            ":weight,:source," +
+            ":content" + QString::number(i) + "),";
     }
-    lids.chop(1);
-    values.chop(1); // chop the trailing ','
+
+    // chop the trailing ','
+    if (lids != "") {
+        lids.chop(1);
+    }
+
+    if (values != "") {
+        values.chop(1);
+    }
 
     // Delete any old content
     NSqlQuery sql(db);
     sql.prepare("Delete from SearchIndex where lid in (" +
             lids + ") and source=:source");
+    for (int i = 0; i < noteLids.size(); ++i) {
+        if (noteLids[i] > 0) {
+            sql.bindValue(":lid" + QString::number(i), noteLids[i]);
+        }
+    }
     sql.bindValue(":source", "text");
     sql.exec();
 
     // Add the new content.  it is basically a text version of the note with a weight of 100.
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values "
             + values);
+    sql.bindValue(":weight", 100);
+    sql.bindValue(":source", "text");
+    for (int i = 0; i < noteLids.size(); ++i) {
+        if (noteLids[i] <= 0) {
+            continue;
+        }
+        sql.bindValue(":lid" + QString::number(i),
+                noteLids[i]);
+        sql.bindValue(":content" + QString::number(i),
+                global.normalizeTermForSearchAndIndex(contentList[0]));
+    }
+
     sql.exec();
 
     sql.prepare("Delete from DataStore where lid in (" + lids + ") and key=:key");
