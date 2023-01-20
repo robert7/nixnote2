@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtSql>
 #include <QString>
 #include "src/sql/databaseconnection.h"
+#include "src/sql/nsqlquery.h"
 
 #include "src/qevercloud/QEverCloud/headers/QEverCloud.h"
 using namespace qevercloud;
@@ -93,6 +94,10 @@ class NoteTable
 {
 
 private:
+    QString joinLids(const QList<qint32> &noteLids);
+    QString joinValues(const QList<qint32> &noteLids, int key, bool value);
+    void bindLids(NSqlQuery &sql, const QList<qint32> &noteLids);
+
     DatabaseConnection *db;
 
 public:
@@ -178,7 +183,7 @@ public:
     void addTag(qint32 lid, qint32 tag, bool isDirty);                   // Add a tag to a note
     void rebuildNoteListTags(qint32 lid);                                // Update the note's tags in the display table
     void deleteNote(qint32 lid, bool isDirty);                           // mark a note for deletion
-    void deleteNotes(const QList<qint32> &lids, bool isDirty);           // mark a list of notes for deletion
+    void deleteNotes(const QList<qint32> &noteLids, bool isDirty);           // mark a list of notes for deletion
     void restoreNote(qint32 lid, bool isDirty);                          // unmark a note for deletion
     void expunge(qint32 lid);                                            // expunge a note permanently
     void expunge(const QList<qint32> &lids);                             // expunge multiple notes permanently

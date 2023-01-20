@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "configstore.h"
 #include "notebooktable.h"
 #include "linkednotebooktable.h"
-#include "src/sql/nsqlquery.h"
 #include "tagtable.h"
 #include "src/global.h"
 #include "src/utilities/noteindexer.h"
@@ -1114,6 +1113,7 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
 // Set if notes need to be indexed
 void NoteTable::setIndexNeeded(const QList<qint32> &indexNoteLids, bool indexNeeded) {
     QLOG_TRACE_IN();
+
     QList<qint32> noteLids;
     noteLids.clear();
     for (int i = 0; i < indexNoteLids.size(); ++i) {
@@ -1124,22 +1124,18 @@ void NoteTable::setIndexNeeded(const QList<qint32> &indexNoteLids, bool indexNee
         }
     }
 
-    if (noteLids.size() == 0) {
+    QString lids = joinLids(noteLids);
+    if (lids == "") {
         QLOG_TRACE_OUT();
         return;
     }
-
-    QString lids = "";
-    for (int i = 0; i < noteLids.size(); ++i) {
-        lids += QString::number(noteLids[i]) + ",";
-    }
-    lids.chop(1); // chop the trailing ','
 
     NSqlQuery query(db);
     db->lockForWrite();
 
     query.prepare("Delete from DataStore where lid in (" +
             lids + ") and key=:key");
+    bindLids(query, noteLids);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
 
@@ -1152,15 +1148,9 @@ void NoteTable::setIndexNeeded(const QList<qint32> &indexNoteLids, bool indexNee
         return;
     }
 
-    QString values = "";
-    for (int i = 0; i < noteLids.size(); ++i) {
-        values += "(" + QString::number(noteLids[i]) + "," +
-            QString::number(NOTE_INDEX_NEEDED) + "," +
-            QString::number(indexNeeded) + "),";
-    }
-    values.chop(1);
-
+    QString values = joinValues(noteLids, NOTE_INDEX_NEEDED, indexNeeded);
     query.prepare("Insert into DataStore (lid, key, data) values " + values);
+    bindLids(query, noteLids);
     query.exec();
 
     query.finish();
@@ -1218,19 +1208,14 @@ void NoteTable::updateNotebook(const QList<qint32> &noteLids,
         return;
     }
 
-    int n = noteLids.size();
-
-    QString lids = "";
-    for (int i = 0; i < n; ++i) {
-        lids += QString::number(noteLids[i]) + ",";
-    }
-    lids.chop(1); // chop the trailing ','
+    QString lids = joinLids(noteLids);
 
     NSqlQuery query(db);
     db->lockForWrite();
 
     query.prepare("Update DataStore set data=:notebookLid where lid in (" +
             lids + ") and key=:key;");
+    bindLids(query, noteLids);
     query.bindValue(":notebookLid", notebookLid);
     query.bindValue(":key", NOTE_NOTEBOOK_LID);
     query.exec();
@@ -1242,12 +1227,13 @@ void NoteTable::updateNotebook(const QList<qint32> &noteLids,
     QString bookName = book.name;
     query.prepare("Update NoteTable set notebook=:name where lid in (" +
             lids + ")");
-
+    bindLids(query, noteLids);
     query.bindValue(":name", bookName);
     query.exec();
 
     query.prepare("Update NoteTable set notebookLid=:nlid where lid in (" +
             lids + ")");
+    bindLids(query, noteLids);
     query.bindValue(":nlid", notebookLid);
     query.exec();
 
@@ -1531,14 +1517,10 @@ void NoteTable::setDirty(qint32 lid, bool dirty, bool setDateUpdated) {
 // Set multiple notes as dirty.
 void NoteTable::setDirty(const QList<qint32> &noteLids, bool dirty,
         bool setDateUpdated) {
-    QString lids = "";
-    for (int i = 0; i < noteLids.size(); ++i) {
-        lids += QString::number(noteLids[i]) + ",";
-    }
+    QString lids = joinLids(noteLids);
     if (lids == "") {
         return;
     }
-    lids.chop(1);
 
     NSqlQuery query(db);
     db->lockForWrite();
@@ -1550,12 +1532,14 @@ void NoteTable::setDirty(const QList<qint32> &noteLids, bool dirty,
 
         query.prepare("Update DataStore set data=:value where lid in (" +
                 lids + ") and key=:key");
+        bindLids(query, noteLids);
         query.bindValue(":key", NOTE_UPDATED_DATE);
         query.bindValue(":value", dt);
         query.exec();
 
         query.prepare("Update NoteTable set dateUpdated=:value where lid in (" +
                 lids + ")");
+        bindLids(query, noteLids);
         query.bindValue(":value", dt);
         query.exec();
     }
@@ -1566,25 +1550,21 @@ void NoteTable::setDirty(const QList<qint32> &noteLids, bool dirty,
     // need to do anything more.
     query.prepare("Update NoteTable set isDirty=:isDirty where lid in (" +
             lids + ") and isDirty!=:isDirty");
+    bindLids(query, noteLids);
     query.bindValue(":isDirty", dirty);
     query.exec();
 
     query.prepare("Delete from DataStore where lid in (" +
             lids + ") and key=:key and data!=:data");
+    bindLids(query, noteLids);
     query.bindValue(":key", NOTE_ISDIRTY);
     query.bindValue(":data", dirty);
     query.exec();
 
     if (dirty) {
-        QString values = "";
-        for (int i = 0; i < noteLids.size(); ++i) {
-            values += "(" + QString::number(noteLids[i]) + ","
-                + QString::number(NOTE_ISDIRTY) + "," +
-                QString::number(dirty) + "),";
-        }
-        values.chop(1);
-
+        QString values = joinValues(noteLids, NOTE_ISDIRTY, dirty);
         query.prepare("Insert into DataStore (lid, key, data) values " + values);
+        bindLids(query, noteLids);
         query.exec();
     }
 
@@ -1592,7 +1572,7 @@ void NoteTable::setDirty(const QList<qint32> &noteLids, bool dirty,
     db->unlock();
 
     if (dirty) {
-        setIndexNeeded(const_cast<QList<qint32> &>(noteLids), true);
+        setIndexNeeded(noteLids, true);
     }
 }
 
@@ -1663,64 +1643,48 @@ void NoteTable::deleteNote(qint32 lid, bool isDirty=true) {
 }
 
 
-void NoteTable::deleteNotes(const QList<qint32> &lids, bool isDirty=true) {
-    QString slids = "";
-    QList<qint32> noteLids;
-    noteLids.clear();
-    for (int i = 0; i < lids.size(); ++i) {
-        if (lids[i] > 0) {
-            noteLids.append(lids[i]);
-            slids += QString::number(lids[i]) + ",";
-        }
-    }
-    if (noteLids.size() == 0) {
+void NoteTable::deleteNotes(const QList<qint32> &noteLids, bool isDirty=true) {
+    QString slids = joinLids(noteLids);
+    if (slids == "") {
         return;
     }
-    slids.chop(1);
 
     NSqlQuery query(db);
     db->lockForWrite();
 
     query.prepare("delete from DataStore where key=:key and lid in (" +
             slids + ")");
+    bindLids(query, noteLids);
     query.bindValue(":key", NOTE_ACTIVE);
     query.exec();
 
     query.prepare("delete from DataStore where key=:key and lid in (" +
             slids + ")");
+    bindLids(query, noteLids);
     query.bindValue(":key", NOTE_DELETED_DATE);
     query.exec();
 
     if (isDirty) {
         query.prepare("delete from DataStore where key=:key and lid in (" + slids + ")");
+        bindLids(query, noteLids);
         query.bindValue(":key", NOTE_ISDIRTY);
         query.exec();
     }
 
-    QString values = "";
-    for (int i = 0; i < noteLids.size(); ++i) {
-        values += "(" + QString::number(noteLids[i]) + ","
-            + QString::number(NOTE_ACTIVE) + "," +
-            QString::number(false) + "),";
-    }
-    values.chop(1);
+    QString values = joinValues(noteLids, NOTE_ACTIVE, false);
 
     query.prepare("Insert into DataStore (lid, key, data) values " + values);
+    bindLids(query, noteLids);
     query.exec();
 
     query.prepare("update notetable set dateDeleted=strftime('%s','now') where lid in (" + slids + ")");
+    bindLids(query, noteLids);
     query.exec();
 
     if (isDirty) {
-        values = "";
-        for (int i = 0; i < noteLids.size(); ++i) {
-            values += "(" + QString::number(noteLids[i]) + ","
-                + QString::number(NOTE_ISDIRTY) + "," +
-                QString::number(true) + "),";
-        }
-        values.chop(1);
-
+        values = joinValues(noteLids, NOTE_ISDIRTY, true);
         query.prepare("Insert into DataStore (lid, key, data) values " + values);
+        bindLids(query, noteLids);
         query.exec();
     }
 
@@ -1817,7 +1781,10 @@ void NoteTable::expunge(QString guid) {
 
 
 void NoteTable::expunge(const QList<qint32> &lids) {
-    QString slids = "";
+    QString slids = joinLids(lids);
+    if (slids == "") {
+        return;
+    }
 
     for (int i = 0; i < lids.size(); ++i) {
         // Expunge the thumbnail
@@ -1842,18 +1809,17 @@ void NoteTable::expunge(const QList<qint32> &lids) {
             resourceGuids.append(resources[i].guid.ref().toInt());
         }
         resTable.expunge(resourceGuids);
-
-        slids += QString::number(lids[i]) + ",";
     }
-    slids.chop(1);
 
     NSqlQuery query(db);
     db->lockForWrite();
 
     query.prepare("delete from DataStore where lid in (" + slids + ")");
+    bindLids(query, lids);
     query.exec();
 
     query.prepare("delete from NoteTable where lid in (" + slids + ")");
+    bindLids(query, lids);
     query.exec();
 
     query.finish();
@@ -2821,4 +2787,48 @@ qlonglong NoteTable::getSize(qint32 lid) {
         returnValue = returnValue+query.value(0).toLongLong();
     }
     return returnValue;
+}
+
+
+QString NoteTable::joinLids(const QList<qint32> &noteLids) {
+    QString lids = "";
+
+    for (int i = 0; i < noteLids.size(); ++i) {
+        if (noteLids[i] > 0) {
+            lids += ":lid" + QString::number(i) + ",";
+        }
+    }
+    if (lids != "") {
+        lids.chop(1); // chop the trailing ','
+    }
+
+    return lids;
+}
+
+
+QString NoteTable::joinValues(const QList<qint32> &noteLids,
+        int key, bool value) {
+    QString values = "";
+    for (int i = 0; i < noteLids.size(); ++i) {
+        if (noteLids[i] > 0) {
+            values += "(:lid" + QString::number(i) + "," +
+                QString::number(key) + "," +
+                QString::number(value) + "),";
+        }
+    }
+    if (values != "") {
+        values.chop(1); // chop the trailing ','
+    }
+
+    return values;
+}
+
+
+void NoteTable::bindLids(NSqlQuery &sql, const QList<qint32> &noteLids) {
+    for (int i = 0; i < noteLids.size(); ++i) {
+        if (noteLids[i] > 0) {
+            sql.bindValue(":lid" + QString::number(i),
+                    noteLids[i]);
+        }
+    }
 }
