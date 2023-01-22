@@ -1693,53 +1693,51 @@ void NoteTable::deleteNotes(const QList<qint32> &noteLids, bool isDirty=true) {
 }
 
 
-
 void NoteTable::restoreNote(qint32 lid, bool isDirty=true) {
-    if (lid <=0)
-        return;
-
-    NSqlQuery query(db);
-    db->lockForWrite();
-    query.prepare("delete from DataStore where key=:key and lid=:lid");
-    query.bindValue(":key", NOTE_ACTIVE);
-    query.bindValue(":lid", lid);
-    query.exec();
-
-    query.prepare("delete from DataStore where key=:key and lid=:lid");
-    query.bindValue(":key", NOTE_DELETED_DATE);
-    query.bindValue(":lid", lid);
-    query.exec();
-
-    if (isDirty) {
-        query.prepare("delete from DataStore where key=:key and lid=:lid");
-        query.bindValue(":key", NOTE_ISDIRTY);
-        query.bindValue(":lid", lid);
-        query.exec();
-    }
-
-    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_ACTIVE);
-    query.bindValue(":data", true);
-    query.exec();
-
-    query.prepare("update notetable set dateDeleted=0 where lid=:lid");
-    query.bindValue(":lid", lid);
-    query.exec();
-
-    if (isDirty) {
-        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_ISDIRTY);
-        query.bindValue(":data", true);
-        query.exec();
-
-    }
-    query.finish();
-    db->unlock();
+    QList<qint32> lids;
+    lids.clear();
+    lids.append(lid);
+    restoreNotes(lids, isDirty);
 }
 
 
+void NoteTable::restoreNotes(const QList<qint32> &lids, bool isDirty=true) {
+    QString slids = joinLids(lids);
+    if (slids == "") {
+        return;
+    }
+
+    NSqlQuery query(db);
+    db->lockForWrite();
+
+    query.prepare("Update DataStore set data=:data where key=:key and lid in (" + slids + ")");
+    query.bindValue(":data", true);
+    query.bindValue(":key", NOTE_ACTIVE);
+    bindLids(query, lids);
+    query.exec();
+
+    query.prepare("delete from DataStore where key=:key and lid in (" +
+            slids + ")");
+    query.bindValue(":key", NOTE_DELETED_DATE);
+    bindLids(query, lids);
+    query.exec();
+
+    if (isDirty) {
+        query.prepare("Update DataStore set data=:data where key=:key and lid in (" + slids + ")");
+        query.bindValue(":key", NOTE_ISDIRTY);
+        query.bindValue(":data", true);
+        bindLids(query, lids);
+        query.exec();
+    }
+
+    query.prepare("Update notetable set dateDeleted=0 where lid in (" +
+            slids + ")");
+    bindLids(query, lids);
+    query.exec();
+
+    query.finish();
+    db->unlock();
+}
 
 
 qint32 NoteTable::getAllDeleted(QList<qint32> &lids) {

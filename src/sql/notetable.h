@@ -185,6 +185,7 @@ public:
     void deleteNote(qint32 lid, bool isDirty);                           // mark a note for deletion
     void deleteNotes(const QList<qint32> &noteLids, bool isDirty);           // mark a list of notes for deletion
     void restoreNote(qint32 lid, bool isDirty);                          // unmark a note for deletion
+    void restoreNotes(const QList<qint32> &lids, bool isDirty);                        // unmark multiple notes for deletion
     void expunge(qint32 lid);                                            // expunge a note permanently
     void expunge(const QList<qint32> &lids);                             // expunge multiple notes permanently
     void expunge(QString guid);                                          // expunge a note permanently

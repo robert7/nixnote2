@@ -225,8 +225,9 @@ void NTrashTree::restoreAll() {
     NoteTable ntable(global.db);
     QList<qint32> lids;
     ntable.getAllDeleted(lids);
+    ntable.restoreNotes(lids, true);
+
     for (int i=0; i<lids.size(); i++) {
-        ntable.restoreNote(lids[i], true);
         delete global.cache[lids[i]];
         global.cache.remove(lids[i]);
     }

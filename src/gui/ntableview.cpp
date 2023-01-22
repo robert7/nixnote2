@@ -672,13 +672,12 @@ void NTableView::restoreSelectedNotes() {
     NSqlQuery sql(global.db);
     //transaction.exec("begin");
     sql.prepare("Delete from filter where lid=:lid");
+    sql.exec();
+    sql.finish();
+    ntable.restoreNotes(lids, true);
     for (int i = 0; i < lids.size(); i++) {
-        ntable.restoreNote(lids[i], true);
-        sql.bindValue(":lid", lids[i]);
-        sql.exec();
         global.cache.remove(lids[i]);
     }
-    sql.finish();
 
     emit(notesRestored(lids));
 }
