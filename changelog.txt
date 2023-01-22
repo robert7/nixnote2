@@ -1,4 +1,7 @@
 NixNote (2.1.7) stable; urgency=low
+  * Optimise the time complexity of batch operations, including moving, deleting, and restoring.
+  * Add an option: the user can choose to make Nixnote listen to the commands from command line or not.
+  * Decouple the functions of CmdLineTool(except signalGui()) from shared memory.
   * Export the stack attribute when exporting the notes.
   * Add an option: the user can choose to save the ui changes or not when Nixnote exits.
   * Save the note content when Nixnote receives signal interruption.
@@ -9,7 +12,7 @@ NixNote (2.1.7) stable; urgency=low
   * Make the editor not render the note content when Key_Up or Key_Down is kept being pressed.
   * Made the font size in the setting dialog consistent with the one in the editor button bar.
   * Made the Windows editon's results of find more recognizable.
-  * Limited the max length of the recently updated menu of the tray.
+  * Limited the max length of the recently updated menu and favourite menu of the tray.
   * Fixed memory leaks caused by Qt Webview.
   * Fixed: To-do Formatting is not in parity with Official Client - issue #131
   * Fixed: In-App Note links don't work when there is an apostrophe in the title - issue #168
