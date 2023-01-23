@@ -923,15 +923,6 @@ void NBrowserWindow::saveNoteContent() {
 // The undo edit button was pressed
 void NBrowserWindow::undoButtonPressed() {
     this->editor->triggerPageAction(QWebPage::Undo);
-
-    QUndoStack *stack = this->editor->page()->undoStack();
-    if (stack->count() >= 1 && stack->text(stack->index() - 1) == "AUTO_EXEC") {
-        // jump over the AUTO_EXEC QUndoCommand
-        this->editor->triggerPageAction(QWebPage::Undo);
-        // undo the inserting of 0 width character
-        this->editor->triggerPageAction(QWebPage::Undo);
-    }
-
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -940,15 +931,6 @@ void NBrowserWindow::undoButtonPressed() {
 // The redo edit button was pressed
 void NBrowserWindow::redoButtonPressed() {
     this->editor->triggerPageAction(QWebPage::Redo);
-
-    QUndoStack *stack = this->editor->page()->undoStack();
-    if (stack->text(stack->index()) == "AUTO_EXEC") {
-        // jump over the AUTO_EXEC QUndoCommand
-        this->editor->triggerPageAction(QWebPage::Redo);
-        // redo the simulated backspace
-        this->editor->triggerPageAction(QWebPage::Redo);
-    }
-
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -1497,25 +1479,29 @@ void NBrowserWindow::fontSizeSelected(int index) {
 
     QString text = editor->selectedHtml();
     if (text.trimmed() == "") {
+        QUndoStack *stack = this->editor->page()->undoStack();
+
+        // Simulate a backspace press down event to delete
+        // the invisible charactor inserted above.
+        QKeyEvent *backspacePressed = new QKeyEvent(QKeyEvent::KeyPress,
+                Qt::Key_Backspace, Qt::NoModifier, "");
+
+        stack->beginMacro("SetFontSize");
+
         // Add an invisible charactor in order to focus on the innerhtml
         // part of the <span> tags added below. If not, the text typed
         // in after font size changed will be added beyond the <span>
         // tags scope.
         text = "&zwnj;";
-
-        QString newText = "<span style=\"font-size:" + QString::number(size) +"pt;font-family:" + font + ";\">" + text + "</span>";
+        QString newText = "<span style=\"font-size:" + QString::number(size) + "pt;font-family:" + font + ";\">" + text + "</span>";
         QString script2 = QString("document.execCommand('insertHtml', false, '" + newText + "');");
         editor->page()->mainFrame()->evaluateJavaScript(script2);
 
-        QUndoStack *stack = this->editor->page()->undoStack();
-        stack->push(newAutoExecCommand());
+        QApplication::sendEvent(editor, backspacePressed);
 
-        // Simulate a backspace press down event to delete
-        // the invisible charactor inserted above.
-        QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress,
-                Qt::Key_Backspace, Qt::NoModifier, "");
-        QApplication::sendEvent(editor, key_press);
-        delete key_press;
+        stack->endMacro();
+
+        delete backspacePressed;
     } else {
         QString script = QString("document.execCommand('fontSize', false, 5);");
         editor->page()->mainFrame()->evaluateJavaScript(script);
@@ -2487,8 +2473,6 @@ void NBrowserWindow::clear() {
 //    editor->page()->setContentEditable(false);
 
     dateEditor.clear();
-
-    clearAutoExecCommands();
 }
 
 
@@ -4506,18 +4490,3 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
     QLOG_TRACE_OUT();
 }
 
-
-QUndoCommand* NBrowserWindow::newAutoExecCommand() {
-    QUndoCommand *cmd = new QUndoCommand();
-    cmd->setText("AUTO_EXEC");
-    autoExecCommands.append(cmd);
-    return cmd;
-}
-
-
-void NBrowserWindow::clearAutoExecCommands() {
-    for (int i = 0; i < autoExecCommands.length(); i++) {
-        delete autoExecCommands[i];
-    }
-    autoExecCommands.clear();
-}

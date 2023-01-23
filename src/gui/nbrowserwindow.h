@@ -138,9 +138,6 @@ private:
     QSplitter *editorSplitter;
     QHBoxLayout *line1Layout;
 
-    // To mark the simulated backspace button events in the undoStack.
-    QVector<QUndoCommand *> autoExecCommands;
-
     void exitPoint(ExitPoint *exit);
 
     // get note title from the title UI field - and do some fixup (like discard line feeds)
@@ -150,8 +147,6 @@ private:
     void htmlCleanup(HtmlCleanupMode mode);
     void insertDateTimeUsingFormat(const QString &format) const;
 
-    QUndoCommand *newAutoExecCommand();
-    void clearAutoExecCommands();
     void todoSetAllChecked(bool allSelected);
 
 public:
