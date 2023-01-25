@@ -253,11 +253,10 @@ void NTrashTree::expungeAll() {
     NoteTable ntable(global.db);
     QList<qint32> lids;
     ntable.getAllDeleted(lids);
+    ntable.expunge(lids);
     for (int i=0; i<lids.size(); i++) {
-
         Note n;
         ntable.get(n,lids[i],false,false);
-        ntable.expunge(lids[i]);
         delete global.cache[lids[i]];
         global.cache.remove(lids[i]);
 
