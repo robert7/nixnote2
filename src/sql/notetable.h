@@ -95,7 +95,8 @@ class NoteTable
 
 private:
     QString joinLids(const QList<qint32> &noteLids);
-    QString joinValues(const QList<qint32> &noteLids, int key, bool value);
+    QString joinValues(const QList<qint32> &noteLids,
+            int key, const QVariant &value);
     void bindLids(NSqlQuery &sql, const QList<qint32> &noteLids);
 
     DatabaseConnection *db;

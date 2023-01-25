@@ -162,42 +162,38 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     qint32 lid = l;
     qint32 notebookLid = account;
 
-    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     if (lid <= 0) {
         lid = cs.incrementLidCounter();
     }
+
+    QString values = "";
+    QList<qint32> lids;
+    lids.clear();
+    lids.append(lid);
+
+    QList<QVariant> valueList;
+    valueList.clear();
 
     QLOG_DEBUG() << "Adding note; lid=" << lid << ", title=" << (t.title.isSet() ? t.title : "title is empty");
     if (t.guid.isSet()) {
         QString guid = t.guid;
         QLOG_DEBUG() << "Adding note; guid=" << guid;
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_GUID);
-        query.bindValue(":data", guid);
-        query.exec();
+        values += joinValues(lids, NOTE_GUID, ":guid") + ",";
+        valueList.append(guid);
     }
 
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_INDEX_NEEDED);
-    query.bindValue(":data", true);
-    query.exec();
-
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
-    query.bindValue(":data", true);
-    query.exec();
+    if (!global.disableThumbnails) {
+        values += joinValues(lids, NOTE_THUMBNAIL_NEEDED, ":note_thumbnail_needed") + ",";
+        valueList.append(true);
+    }
 
     if (t.title.isSet()) {
-        query.bindValue(":lid", lid);
         QString title = t.title;
-        query.bindValue(":key", NOTE_TITLE);
-        query.bindValue(":data", title);
-        query.exec();
+        values += joinValues(lids, NOTE_TITLE, ":title") + ",";
+        valueList.append(title);
     }
 
     if (t.content.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_CONTENT);
         QByteArray b;
         QString content = t.content;
 #if QT_VERSION < 0x050000
@@ -206,80 +202,60 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         b.append(content);
 #endif
 
-
         QLOG_DEBUG_FILE("incoming.enml", content);
 
-
-        query.bindValue(":data", b);
-        query.exec();
+        values += joinValues(lids, NOTE_CONTENT, ":note_content") + ",";
+        valueList.append(b);
     }
 
     if (t.contentHash.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_CONTENT_HASH);
         QByteArray contentHash = t.contentHash;
-        query.bindValue(":data", contentHash);
-        query.exec();
+        values += joinValues(lids, NOTE_CONTENT_HASH, ":note_content_hash") + ",";
+        valueList.append(contentHash);
     }
 
     if (t.contentLength.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_CONTENT_LENGTH);
         qint32 len = t.contentLength;
-        query.bindValue(":data", len);
-        query.exec();
+        values += joinValues(lids, NOTE_CONTENT_LENGTH, ":note_content_length") + ",";
+        valueList.append(len);
     }
 
     if (t.updateSequenceNum.isSet()) {
-        query.bindValue(":lid", lid);
         qint32 usn = t.updateSequenceNum;
-        query.bindValue(":key", NOTE_UPDATE_SEQUENCE_NUMBER);
-        query.bindValue(":data", usn);
-        query.exec();
+        values += joinValues(lids, NOTE_UPDATE_SEQUENCE_NUMBER, ":note_update_sequence_number") + ",";
+        valueList.append(usn);
     }
 
     if (isDirty) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_ISDIRTY);
-        query.bindValue(":data", isDirty);
-        query.exec();
+        values += joinValues(lids, NOTE_ISDIRTY, ":is_dirty") + ",";
+        valueList.append(isDirty);
     }
 
     if (t.created.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_CREATED_DATE);
         qlonglong date = t.created;
-        query.bindValue(":data",date);
-        query.exec();
+        values += joinValues(lids, NOTE_CREATED_DATE, ":created_date") + ",";
+        valueList.append(date);
     }
 
     if (t.updated.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_UPDATED_DATE);
         qlonglong date = t.updated;
-        query.bindValue(":data", date);
-        query.exec();
+        values += joinValues(lids, NOTE_UPDATED_DATE, ":updated_date") + ",";
+        valueList.append(date);
     }
 
     if (t.deleted.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_DELETED_DATE);
         qlonglong date = t.deleted;
-        query.bindValue(":data", date);
-        query.exec();
+        values += joinValues(lids, NOTE_DELETED_DATE, ":deleted_date") + ",";
+        valueList.append(date);
     }
 
     if (t.active.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_ACTIVE);
         bool active = t.active;
-        query.bindValue(":data", active);
-        query.exec();
+        values += joinValues(lids, NOTE_ACTIVE, ":note_ative") + ",";
+        valueList.append(active);
     }
 
     if (t.notebookGuid.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_NOTEBOOK_LID);
         NotebookTable notebookTable(db);
         LinkedNotebookTable linkedTable(db);
         if (account > 0)
@@ -300,8 +276,8 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
             notebook.name = "<Missing Notebook>";
             notebookTable.add(notebookLid, notebook, false, false);
         }
-        query.bindValue(":data", notebookLid);
-        query.exec();
+        values += joinValues(lids, NOTE_NOTEBOOK_LID, ":note_notebook_lid") + ",";
+        valueList.append(notebookLid);
     }
 
     QList<QString> tagGuids;
@@ -319,10 +295,8 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
             tagTable.add(tagLid, newTag, false, 0);
         }
 
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_TAG_LID);
-        query.bindValue(":data", tagLid);
-        query.exec();
+        values += joinValues(lids, NOTE_TAG_LID, ":note_tag_lid") + ",";
+        valueList.append(tagLid);
     }
 
     QList<Resource> resources;
@@ -349,10 +323,9 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         if (r.mime.isSet()) {
             QString mime = r.mime;
             if (!mime.startsWith("image/") && mime != "vnd.evernote.ink") {
-                query.bindValue(":lid", lid);
-                query.bindValue(":key", NOTE_HAS_ATTACHMENT);
-                query.bindValue(":data", true);
-                query.exec();
+                values += joinValues(lids, NOTE_HAS_ATTACHMENT, ":note_has_attachment") + ",";
+                valueList.append(true);
+                break;
             }
         }
     }
@@ -360,102 +333,74 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     if (t.attributes.isSet()) {
         NoteAttributes na = t.attributes;
         if (na.subjectDate.isSet()) {
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_SUBJECT_DATE);
             qlonglong ts = na.subjectDate;
-            query.bindValue(":data",ts);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_SUBJECT_DATE, ":subject_date") + ",";
+            valueList.append(ts);
         }
         if (na.latitude.isSet()) {
             double lat = na.latitude;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_LATITUDE);
-            query.bindValue(":data", lat);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_LATITUDE, ":lat") + ",";
+            valueList.append(lat);
         }
         if (na.longitude.isSet()) {
             double lon = na.longitude;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_LONGITUDE);
-            query.bindValue(":data", lon);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_LONGITUDE, ":lon") + ",";
+            valueList.append(lon);
         }
         if (na.altitude.isSet()) {
             double alt = na.altitude;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_ALTITUDE);
-            query.bindValue(":data", alt);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_ALTITUDE, ":alt") + ",";
+            valueList.append(alt);
         }
         if (na.author.isSet()) {
             QString author = na.author;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);
-            query.bindValue(":data", author);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_AUTHOR, ":author") + ",";
+            valueList.append(author);
         }
         if (na.source.isSet()) {
             QString source = na.source;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
-            query.bindValue(":data", source);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_SOURCE, ":source") + ",";
+            valueList.append(source);
         }
         if (na.sourceURL.isSet()) {
             QString sourceURL = na.sourceURL;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_URL);
-            query.bindValue(":data", sourceURL);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_SOURCE_URL, ":sourceURL") + ",";
+            valueList.append(sourceURL);
         }
         if (na.sourceApplication.isSet()) {
             QString sourceApplication = na.sourceApplication;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_APPLICATION);
-            query.bindValue(":data", sourceApplication);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_SOURCE_APPLICATION, ":sourceApplication") + ",";
+            valueList.append(sourceApplication);
         }
         if (na.shareDate.isSet()) {
             double date = na.shareDate;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_SHARE_DATE);
-            query.bindValue(":data",date);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_SHARE_DATE, ":share_date") + ",";
+            valueList.append(date);
         }
         if (na.placeName.isSet()) {
             QString placename = na.placeName;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_PLACE_NAME);
-            query.bindValue(":data", placename);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_PLACE_NAME, ":placename") + ",";
+            valueList.append(placename);
         }
         if (na.contentClass.isSet()) {
             QString cc = na.contentClass;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_CONTENT_CLASS);
-            query.bindValue(":data", cc);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_CONTENT_CLASS, ":content_class") + ",";
+            valueList.append(cc);
         }
         if (na.reminderTime.isSet()) {
             double rt = na.reminderTime;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
-            query.bindValue(":data",rt);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_REMINDER_TIME, ":reminder_time") + ",";
+            valueList.append(rt);
         }
         if (na.reminderDoneTime.isSet()) {
             double rt = na.reminderDoneTime;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
-            query.bindValue(":data", rt);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_REMINDER_DONE_TIME, ":reminder_done_time") + ",";
+            valueList.append(rt);
         }
         if (na.reminderOrder.isSet()) {
             bool rt = na.reminderOrder;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_ORDER);
-            query.bindValue(":data", rt);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_REMINDER_ORDER, ":reminder_order") + ",";
+            valueList.append(rt);
         }
     }
 
@@ -468,24 +413,18 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         content = "";
 
     if (content.contains("<en-crypt")) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_HAS_ENCRYPT);
-        query.bindValue(":data", true);
-        query.exec();
+        values += joinValues(lids, NOTE_HAS_ENCRYPT, ":has_encrypt") + ",";
+        valueList.append(true);
     }
 
     if (content.contains("<en-todo")) {
         if (content.contains("<en-todo checked=\"true\"")) {
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_HAS_TODO_COMPLETED);
-            query.bindValue(":data", true);
-            query.exec();
+            values += joinValues(lids, NOTE_HAS_TODO_COMPLETED, ":note_has_todo_completed") + ",";
+            valueList.append(true);
         }
         if (content.contains("<en-todo checked=\"false\"") || content.contains("<en-todo/>")) {
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_HAS_TODO_UNCOMPLETED);
-            query.bindValue(":data", true);
-            query.exec();
+            values += joinValues(lids, NOTE_HAS_TODO_UNCOMPLETED, ":note_has_todo_uncompleted") + ",";
+            valueList.append(true);
         }
     }
     query.finish();
@@ -495,14 +434,24 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
 
     // Experimental index helper
     if (global.enableIndexing) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_INDEX_NEEDED);
-        query.bindValue(":data", true);
-        query.exec();
+        values += joinValues(lids, NOTE_INDEX_NEEDED, ":note_index_needed") + ",";
+        valueList.append(true);
     } else {
         NoteIndexer indexer(db);
         indexer.indexNote(lid);
     }
+    if (values != "") {
+        values.chop(1);
+    }
+
+    QString sql = "Insert into DataStore (lid, key, data) values " + values;
+    query.prepare(sql);
+    bindLids(query, lids);
+    for (int i = 0; i < valueList.size(); ++i) {
+        query.bindValue(i*2 + 1, valueList[i]);
+    }
+    query.exec();
+
     return lid;
 }
 
@@ -2805,15 +2754,25 @@ QString NoteTable::joinLids(const QList<qint32> &noteLids) {
 
 
 QString NoteTable::joinValues(const QList<qint32> &noteLids,
-        int key, bool value) {
+        int key, const QVariant &value) {
     QString values = "";
     for (int i = 0; i < noteLids.size(); ++i) {
-        if (noteLids[i] > 0) {
-            values += "(:lid" + QString::number(i) + "," +
-                QString::number(key) + "," +
-                QString::number(value) + "),";
+        if (noteLids[i] <= 0) {
+            continue;
+        }
+        values += "(:lid" + QString::number(i) + "," +
+            QString::number(key) + ",";
+
+        if (value.type() == QVariant::Bool ||
+                value.type() == QVariant::Int) {
+            values += QString::number(value.toInt()) + "),";
+        } else if (value.type() == QVariant::LongLong) {
+            values += QString::number(value.toLongLong()) + "),";
+        } else {
+            values += value.toString() + "),";
         }
     }
+
     if (values != "") {
         values.chop(1); // chop the trailing ','
     }
