@@ -175,21 +175,22 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     valueList.clear();
 
     QLOG_DEBUG() << "Adding note; lid=" << lid << ", title=" << (t.title.isSet() ? t.title : "title is empty");
+    int lidSeqNum = 0;
     if (t.guid.isSet()) {
         QString guid = t.guid;
         QLOG_DEBUG() << "Adding note; guid=" << guid;
-        values += joinValues(lids, NOTE_GUID, ":guid") + ",";
+        values += joinValues(lids, NOTE_GUID, ":guid", lidSeqNum++) + ",";
         valueList.append(guid);
     }
 
     if (!global.disableThumbnails) {
-        values += joinValues(lids, NOTE_THUMBNAIL_NEEDED, ":note_thumbnail_needed") + ",";
+        values += joinValues(lids, NOTE_THUMBNAIL_NEEDED, ":note_thumbnail_needed", lidSeqNum++) + ",";
         valueList.append(true);
     }
 
     if (t.title.isSet()) {
         QString title = t.title;
-        values += joinValues(lids, NOTE_TITLE, ":title") + ",";
+        values += joinValues(lids, NOTE_TITLE, ":title", lidSeqNum++) + ",";
         valueList.append(title);
     }
 
@@ -204,54 +205,54 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
 
         QLOG_DEBUG_FILE("incoming.enml", content);
 
-        values += joinValues(lids, NOTE_CONTENT, ":note_content") + ",";
+        values += joinValues(lids, NOTE_CONTENT, ":note_content", lidSeqNum++) + ",";
         valueList.append(b);
     }
 
     if (t.contentHash.isSet()) {
         QByteArray contentHash = t.contentHash;
-        values += joinValues(lids, NOTE_CONTENT_HASH, ":note_content_hash") + ",";
+        values += joinValues(lids, NOTE_CONTENT_HASH, ":note_content_hash", lidSeqNum++) + ",";
         valueList.append(contentHash);
     }
 
     if (t.contentLength.isSet()) {
         qint32 len = t.contentLength;
-        values += joinValues(lids, NOTE_CONTENT_LENGTH, ":note_content_length") + ",";
+        values += joinValues(lids, NOTE_CONTENT_LENGTH, ":note_content_length", lidSeqNum++) + ",";
         valueList.append(len);
     }
 
     if (t.updateSequenceNum.isSet()) {
         qint32 usn = t.updateSequenceNum;
-        values += joinValues(lids, NOTE_UPDATE_SEQUENCE_NUMBER, ":note_update_sequence_number") + ",";
+        values += joinValues(lids, NOTE_UPDATE_SEQUENCE_NUMBER, ":note_update_sequence_number", lidSeqNum++) + ",";
         valueList.append(usn);
     }
 
     if (isDirty) {
-        values += joinValues(lids, NOTE_ISDIRTY, ":is_dirty") + ",";
+        values += joinValues(lids, NOTE_ISDIRTY, ":is_dirty", lidSeqNum++) + ",";
         valueList.append(isDirty);
     }
 
     if (t.created.isSet()) {
         qlonglong date = t.created;
-        values += joinValues(lids, NOTE_CREATED_DATE, ":created_date") + ",";
+        values += joinValues(lids, NOTE_CREATED_DATE, ":created_date", lidSeqNum++) + ",";
         valueList.append(date);
     }
 
     if (t.updated.isSet()) {
         qlonglong date = t.updated;
-        values += joinValues(lids, NOTE_UPDATED_DATE, ":updated_date") + ",";
+        values += joinValues(lids, NOTE_UPDATED_DATE, ":updated_date", lidSeqNum++) + ",";
         valueList.append(date);
     }
 
     if (t.deleted.isSet()) {
         qlonglong date = t.deleted;
-        values += joinValues(lids, NOTE_DELETED_DATE, ":deleted_date") + ",";
+        values += joinValues(lids, NOTE_DELETED_DATE, ":deleted_date", lidSeqNum++) + ",";
         valueList.append(date);
     }
 
     if (t.active.isSet()) {
         bool active = t.active;
-        values += joinValues(lids, NOTE_ACTIVE, ":note_ative") + ",";
+        values += joinValues(lids, NOTE_ACTIVE, ":note_ative", lidSeqNum++) + ",";
         valueList.append(active);
     }
 
@@ -276,7 +277,7 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
             notebook.name = "<Missing Notebook>";
             notebookTable.add(notebookLid, notebook, false, false);
         }
-        values += joinValues(lids, NOTE_NOTEBOOK_LID, ":note_notebook_lid") + ",";
+        values += joinValues(lids, NOTE_NOTEBOOK_LID, ":note_notebook_lid", lidSeqNum++) + ",";
         valueList.append(notebookLid);
     }
 
@@ -295,7 +296,7 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
             tagTable.add(tagLid, newTag, false, 0);
         }
 
-        values += joinValues(lids, NOTE_TAG_LID, ":note_tag_lid") + ",";
+        values += joinValues(lids, NOTE_TAG_LID, ":note_tag_lid", lidSeqNum++) + ",";
         valueList.append(tagLid);
     }
 
@@ -323,7 +324,7 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         if (r.mime.isSet()) {
             QString mime = r.mime;
             if (!mime.startsWith("image/") && mime != "vnd.evernote.ink") {
-                values += joinValues(lids, NOTE_HAS_ATTACHMENT, ":note_has_attachment") + ",";
+                values += joinValues(lids, NOTE_HAS_ATTACHMENT, ":note_has_attachment", lidSeqNum++) + ",";
                 valueList.append(true);
                 break;
             }
@@ -334,72 +335,72 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         NoteAttributes na = t.attributes;
         if (na.subjectDate.isSet()) {
             qlonglong ts = na.subjectDate;
-            values += joinValues(lids, NOTE_ATTRIBUTE_SUBJECT_DATE, ":subject_date") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_SUBJECT_DATE, ":subject_date", lidSeqNum++) + ",";
             valueList.append(ts);
         }
         if (na.latitude.isSet()) {
             double lat = na.latitude;
-            values += joinValues(lids, NOTE_ATTRIBUTE_LATITUDE, ":lat") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_LATITUDE, ":lat", lidSeqNum++) + ",";
             valueList.append(lat);
         }
         if (na.longitude.isSet()) {
             double lon = na.longitude;
-            values += joinValues(lids, NOTE_ATTRIBUTE_LONGITUDE, ":lon") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_LONGITUDE, ":lon", lidSeqNum++) + ",";
             valueList.append(lon);
         }
         if (na.altitude.isSet()) {
             double alt = na.altitude;
-            values += joinValues(lids, NOTE_ATTRIBUTE_ALTITUDE, ":alt") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_ALTITUDE, ":alt", lidSeqNum++) + ",";
             valueList.append(alt);
         }
         if (na.author.isSet()) {
             QString author = na.author;
-            values += joinValues(lids, NOTE_ATTRIBUTE_AUTHOR, ":author") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_AUTHOR, ":author", lidSeqNum++) + ",";
             valueList.append(author);
         }
         if (na.source.isSet()) {
             QString source = na.source;
-            values += joinValues(lids, NOTE_ATTRIBUTE_SOURCE, ":source") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_SOURCE, ":source", lidSeqNum++) + ",";
             valueList.append(source);
         }
         if (na.sourceURL.isSet()) {
             QString sourceURL = na.sourceURL;
-            values += joinValues(lids, NOTE_ATTRIBUTE_SOURCE_URL, ":sourceURL") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_SOURCE_URL, ":sourceURL", lidSeqNum++) + ",";
             valueList.append(sourceURL);
         }
         if (na.sourceApplication.isSet()) {
             QString sourceApplication = na.sourceApplication;
-            values += joinValues(lids, NOTE_ATTRIBUTE_SOURCE_APPLICATION, ":sourceApplication") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_SOURCE_APPLICATION, ":sourceApplication", lidSeqNum++) + ",";
             valueList.append(sourceApplication);
         }
         if (na.shareDate.isSet()) {
             double date = na.shareDate;
-            values += joinValues(lids, NOTE_ATTRIBUTE_SHARE_DATE, ":share_date") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_SHARE_DATE, ":share_date", lidSeqNum++) + ",";
             valueList.append(date);
         }
         if (na.placeName.isSet()) {
             QString placename = na.placeName;
-            values += joinValues(lids, NOTE_ATTRIBUTE_PLACE_NAME, ":placename") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_PLACE_NAME, ":placename", lidSeqNum++) + ",";
             valueList.append(placename);
         }
         if (na.contentClass.isSet()) {
             QString cc = na.contentClass;
-            values += joinValues(lids, NOTE_ATTRIBUTE_CONTENT_CLASS, ":content_class") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_CONTENT_CLASS, ":content_class", lidSeqNum++) + ",";
             valueList.append(cc);
         }
         if (na.reminderTime.isSet()) {
             double rt = na.reminderTime;
-            values += joinValues(lids, NOTE_ATTRIBUTE_REMINDER_TIME, ":reminder_time") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_REMINDER_TIME, ":reminder_time", lidSeqNum++) + ",";
             valueList.append(rt);
         }
         if (na.reminderDoneTime.isSet()) {
             double rt = na.reminderDoneTime;
-            values += joinValues(lids, NOTE_ATTRIBUTE_REMINDER_DONE_TIME, ":reminder_done_time") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_REMINDER_DONE_TIME, ":reminder_done_time", lidSeqNum++) + ",";
             valueList.append(rt);
         }
         if (na.reminderOrder.isSet()) {
             bool rt = na.reminderOrder;
-            values += joinValues(lids, NOTE_ATTRIBUTE_REMINDER_ORDER, ":reminder_order") + ",";
+            values += joinValues(lids, NOTE_ATTRIBUTE_REMINDER_ORDER, ":reminder_order", lidSeqNum++) + ",";
             valueList.append(rt);
         }
     }
@@ -413,17 +414,17 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         content = "";
 
     if (content.contains("<en-crypt")) {
-        values += joinValues(lids, NOTE_HAS_ENCRYPT, ":has_encrypt") + ",";
+        values += joinValues(lids, NOTE_HAS_ENCRYPT, ":has_encrypt", lidSeqNum++) + ",";
         valueList.append(true);
     }
 
     if (content.contains("<en-todo")) {
         if (content.contains("<en-todo checked=\"true\"")) {
-            values += joinValues(lids, NOTE_HAS_TODO_COMPLETED, ":note_has_todo_completed") + ",";
+            values += joinValues(lids, NOTE_HAS_TODO_COMPLETED, ":note_has_todo_completed", lidSeqNum++) + ",";
             valueList.append(true);
         }
         if (content.contains("<en-todo checked=\"false\"") || content.contains("<en-todo/>")) {
-            values += joinValues(lids, NOTE_HAS_TODO_UNCOMPLETED, ":note_has_todo_uncompleted") + ",";
+            values += joinValues(lids, NOTE_HAS_TODO_UNCOMPLETED, ":note_has_todo_uncompleted", lidSeqNum++) + ",";
             valueList.append(true);
         }
     }
@@ -434,7 +435,7 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
 
     // Experimental index helper
     if (global.enableIndexing) {
-        values += joinValues(lids, NOTE_INDEX_NEEDED, ":note_index_needed") + ",";
+        values += joinValues(lids, NOTE_INDEX_NEEDED, ":note_index_needed", lidSeqNum++) + ",";
         valueList.append(true);
     } else {
         NoteIndexer indexer(db);
@@ -446,9 +447,26 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
 
     QString sql = "Insert into DataStore (lid, key, data) values " + values;
     query.prepare(sql);
+    // Some versions of QSqlQuery don't allow binding all the keys with
+    // one same name appearing in the query string with one same value
+    // through one call of bindValue(), so for compatibilty, we have
+    // to append a sequence number to the key name to differentiate
+    // them. And correspondingly we have to append the same lid
+    // muliple times, so that we can use bindLids() function to bind
+    // them.
+    for (int i = 0; i < lidSeqNum - 1; ++i) {
+        lids.append(lid);
+    }
     bindLids(query, lids);
     for (int i = 0; i < valueList.size(); ++i) {
-        query.bindValue(i*2 + 1, valueList[i]);
+        if (valueList[i].type() == QVariant::Bool ||
+            valueList[i].type() == QVariant::Int) {
+            query.bindValue(i*2 + 1, valueList[i].toInt());
+        } else if (valueList[i].type() == QVariant::LongLong) {
+            query.bindValue(i*2 + 1, valueList[i].toLongLong());
+        } else {
+            query.bindValue(i*2 + 1, valueList[i].toString());
+        }
     }
     query.exec();
 
@@ -2745,15 +2763,21 @@ QString NoteTable::joinLids(const QList<qint32> &noteLids) {
 }
 
 
+
 QString NoteTable::joinValues(const QList<qint32> &noteLids,
-        int key, const QVariant &value) {
+        int key, const QVariant &value, int lidSeqNum/* =-1 */) {
     QString values = "";
     for (int i = 0; i < noteLids.size(); ++i) {
         if (noteLids[i] <= 0) {
             continue;
         }
-        values += "(:lid" + QString::number(i) + "," +
-            QString::number(key) + ",";
+        if (lidSeqNum == -1) {
+            values += "(:lid" + QString::number(i) + "," +
+                QString::number(key) + ",";
+        } else {
+            values += "(:lid" + QString::number(lidSeqNum) + "," +
+                QString::number(key) + ",";
+        }
 
         if (value.type() == QVariant::Bool ||
                 value.type() == QVariant::Int) {
@@ -2771,6 +2795,7 @@ QString NoteTable::joinValues(const QList<qint32> &noteLids,
 
     return values;
 }
+
 
 
 void NoteTable::bindLids(NSqlQuery &sql, const QList<qint32> &noteLids) {
