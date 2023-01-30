@@ -1,4 +1,5 @@
 NixNote (2.1.7) stable; urgency=low
+  * Keep A node(link in HTML) without href attribute when saving the note if its inner text is not empty.
   * Optimise the time complexity of batch operations, including moving, deleting, and restoring.
   * Add an option: the user can choose to make Nixnote listen to the commands from command line or not.
   * Decouple the functions of CmdLineTool(except signalGui()) from shared memory.

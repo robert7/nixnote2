@@ -1,15 +1,16 @@
 NixNote (2.1.7) stable; urgency=low
-  * Optimise the time complexity of batch operations, including moving, deleting, and restoring.
-  * Add an option: the user can choose to make Nixnote listen to the commands from command line or not.
-  * Decouple the functions of CmdLineTool(except signalGui()) from shared memory.
-  * Export the stack attribute when exporting the notes.
-  * Add an option: the user can choose to save the ui changes or not when Nixnote exits.
-  * Save the note content when Nixnote receives signal interruption.
-  * Allocate the tageditor's tags dynamically.
-  * Add a default theme named with 'Default' when no theme is found in the THEME_FILE.
+  * Keep A node(link in HTML) without href attribute when saving the note if its inner text is not empty.
+  * Optimised the time complexity of batch operations, including moving, deleting, and restoring.
+  * Added an option: the user can choose to make Nixnote listen to the commands from command line or not.
+  * Decoupled the functions of CmdLineTool(except signalGui()) from shared memory.
+  * Exported the stack attribute when exporting the notes.
+  * Added an option: the user can choose to save the ui changes or not when Nixnote exits.
+  * Saved the note content when Nixnote receives signal interruption.
+  * Allocated the tageditor's tags dynamically.
+  * Added a default theme named with 'Default' when no theme is found in the THEME_FILE.
   * RAM usage optimizations.
-  * Fix file downloading under Windows.
-  * Make the editor not render the note content when Key_Up or Key_Down is kept being pressed.
+  * Fixed file downloading under Windows.
+  * Made the editor not render the note content when Key_Up or Key_Down is kept being pressed.
   * Made the font size in the setting dialog consistent with the one in the editor button bar.
   * Made the Windows editon's results of find more recognizable.
   * Limited the max length of the recently updated menu and favourite menu of the tray.
