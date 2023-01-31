@@ -63,7 +63,7 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     multiThreadSave->setChecked(global.getMultiThreadSave());
     mainLayout->addWidget(multiThreadSave, row++, 1);
 
-    listenToCommands = new QCheckBox(tr("Listen to commands from command line.*"));
+    listenToCommands = new QCheckBox(tr("Listen to commands from command line (requires restart)."));
     listenToCommands->setChecked(global.getListenToCommands());
     mainLayout->addWidget(listenToCommands, row++, 1);
 
