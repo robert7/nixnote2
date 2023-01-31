@@ -1,11 +1,14 @@
 NixNote (2.1.7) stable; urgency=low
   * Keep A node(link in HTML) without href attribute when saving the note if its inner text is not empty.
+  * Optimised the sql statements of note creating and updating.
   * Optimised the time complexity of batch operations, including moving, deleting, and restoring.
   * Added an option: the user can choose to make Nixnote listen to the commands from command line or not.
+    When it is enabled, the shared memory size will be set to 1024 bytes(it was 512KiB previously);
+    when disabled, the size will be set to 1 byte.
   * Decoupled the functions of CmdLineTool(except signalGui()) from shared memory.
   * Exported the stack attribute when exporting the notes.
-  * Added an option: the user can choose to save the ui changes or not when Nixnote exits.
-  * Saved the note content when Nixnote receives signal interruption.
+  * Added an option: the user can choose to save the ui state changes or not when Nixnote exits.
+  * Saved the note content when Nixnote receives specific signal interruptions.
   * Allocated the tageditor's tags dynamically.
   * Added a default theme named with 'Default' when no theme is found in the THEME_FILE.
   * RAM usage optimizations.
@@ -22,9 +25,9 @@ NixNote (2.1.7) stable; urgency=low
   * Fixed: Local images cannot be pasted, web image's html element cannot be saved
   * Fixed: Search by date attributes not working with PPA builds - issue #149
   * Fixed: Editor fonts and sorting notes - issue #156
-  * Fixed: Nixnote often crashes
+  * Fixed: Nixnote often crashes.
   * Fixed: Can't search / replace with as replacement. - issue #180
-  * Enabled the spell check code for Windows edition
+  * Enabled the spell check code for Windows edition.
   * Fixed Windows build (thanks to https://github.com/boo-yee)
  -- Robert Spiegel <nightingale7@gmail.com>  Tue, 17 May 2022 10:00:00 +0200
 
