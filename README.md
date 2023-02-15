@@ -182,7 +182,7 @@ Unlike Unix-like systems, Windows is not shipped with a bash environment, so you
 #### Download development dependencies:
 
 ##### Download the third-party libraries:
-If you want to download binary third-party library files, you can get them from [winlib](https://github.com/boo-yee/winlib). Inside it, Hunspell and tidy are built with MinGW 32 5.3.0, and poppler is downloaded from sourceforge as binary. If you want to build by yourself, you can download them from the following links:
+If you want to download binary third-party library files compatible with Qt 5.5.0, you can get them from [winlib](https://github.com/boo-yee/winlib). Inside it, Hunspell and tidy are built with MinGW 32 4.9.2(shipped with Qt 5.5.0), and poppler is downloaded from sourceforge as binary. If you want to build by yourself, you can download them from the following links:
 
 [poppler](https://sourceforge.net/projects/poppler-qt5-mingw32/)
 
@@ -193,9 +193,9 @@ If you want to download binary third-party library files, you can get them from 
 ##### Download Qt:
 [Qt](https://download.qt.io/)(with MinGW32)
 
-If your Qt version is 5.6 or higher, you need to download QtWebKit separately and copy the files under QtWebKit include folder to /your_path_to_qt/[version]/mingw[version]/include.
+Qt 5.5.0 is enough. But if you want to build with a newer version, you need to download QtWebKit separately and copy the files under QtWebKit include folder to /your_path_to_qt/[version]/mingw[version]/include.
 
-[QtWebKit](https://github.com/qtwebkit/qtwebkit/releases/download/qtwebkit-tp5/qtwebkit-tp5-qt58-mingw530-x86.zip)
+[QtWebKit](https://github.com/qtwebkit/qtwebkit/releases)
 
 (Advice: You may want to add the path to qmake.exe and ming32-make.exe to the PATH environment, so that you do not have to type the full path when building the application and libraries later. You can do this by hand or running qtenv2.bat.)
 
@@ -213,7 +213,7 @@ Then you will get the hunspell dll file.
 Then, create folders as winlib/includes in this repository folder and copy the files under poppler, tidy and hunspell include folders to winlib/includes. The structure is:
 
 ```bash
-nixnote_repo
+nixnote2
 |
 `--winlib
    |
