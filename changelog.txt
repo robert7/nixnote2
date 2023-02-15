@@ -1,5 +1,5 @@
 NixNote (2.1.7) stable; urgency=low
-  * Keep A node(link in HTML) without href attribute when saving the note if its inner text is not empty.
+  * Made tidy keep A nodes(link in HTML) without href attribute when saving the note if its inner text is not empty.
   * Optimised the sql statements of note creating and updating.
   * Optimised the time complexity of batch operations, including moving, deleting, and restoring.
   * Added an option: the user can choose to make Nixnote listen to the commands from command line or not.
@@ -10,7 +10,7 @@ NixNote (2.1.7) stable; urgency=low
   * Added an option: the user can choose to save the ui state changes or not when Nixnote exits.
   * Saved the note content when Nixnote receives specific signal interruptions.
   * Allocated the tageditor's tags dynamically.
-  * Added a default theme named with 'Default' when no theme is found in the THEME_FILE.
+  * Added a default theme named with 'Default' when no theme is found in themes.ini.
   * RAM usage optimizations.
   * Fixed file downloading under Windows.
   * Made the editor not render the note content when Key_Up or Key_Down is kept being pressed.
