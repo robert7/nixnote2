@@ -3,10 +3,10 @@ NixNote (2.1.7) stable; urgency=low
   * Optimised the sql statements of note creating and updating.
   * Optimised the time complexity of batch operations, including moving, deleting, and restoring.
   * Added an option: the user can choose to make Nixnote listen to the commands from command line or not.
-    When it is enabled, the shared memory size will be set to 1024 bytes(it was 512KiB previously);
+    When it is enabled, the shared memory size will be set to 512 KiB;
     when disabled, the size will be set to 1 byte.
   * Decoupled the functions of CmdLineTool(except signalGui()) from shared memory.
-  * Exported the stack attribute when exporting the notes.
+  * Made Nixnote export the stack attribute when exporting notes.
   * Added an option: the user can choose to save the ui state changes or not when Nixnote exits.
   * Saved the note content when Nixnote receives specific signal interruptions.
   * Allocated the tageditor's tags dynamically.

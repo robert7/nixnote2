@@ -193,8 +193,6 @@ private:
 
     QString sortOrder;
 
-    QString getCheckboxImageUrl(bool checked) const;
-
     QHash<QString, QIcon *> qIconList;
     QHash<QString, QPixmap *> qPixmapList;
 
@@ -488,8 +486,6 @@ public:
 
     const QString getSortOrder() const;
     void setSortOrder(const QString &sortOrder);
-
-    QString getCheckboxElement(bool checked, bool escapeTwice) const;
 
     void clearResourceList();
 

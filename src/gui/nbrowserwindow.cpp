@@ -1410,8 +1410,8 @@ void NBrowserWindow::todoButtonPressed() {
 
     QString selectedHtml = editor->selectedHtml();
     int length = selectedHtml.length();
-    selectedHtml.replace(global.getCheckboxElement(true, false), "");
-    selectedHtml.replace(global.getCheckboxElement(false, false), "");
+    selectedHtml.replace(NixnoteStringUtils::getCheckboxElement(true, false), "");
+    selectedHtml.replace(NixnoteStringUtils::getCheckboxElement(false, false), "");
     if (selectedHtml.length() < length) {
         editor->page()->mainFrame()->evaluateJavaScript(script_start +
                 selectedHtml + script_end);
@@ -1424,7 +1424,7 @@ void NBrowserWindow::todoButtonPressed() {
 
     QString html = "";
     for (int i = 0; i < items.size(); i++) {
-        html += "<div>" + global.getCheckboxElement(false, true) + items[i] +
+        html += "<div>" + NixnoteStringUtils::getCheckboxElement(false, true) + items[i] +
             "</div>";
     }
 
@@ -1447,15 +1447,15 @@ void NBrowserWindow::todoSetAllChecked(bool allSelected) {
 
     QString html = editor->selectedHtml();
     if (allSelected) {
-        html.replace(global.getCheckboxElement(false, false),
-                global.getCheckboxElement(true, true));
-        html.replace(global.getCheckboxElement(true, false),
-                global.getCheckboxElement(true, true));
+        html.replace(NixnoteStringUtils::getCheckboxElement(false, false),
+                NixnoteStringUtils::getCheckboxElement(true, true));
+        html.replace(NixnoteStringUtils::getCheckboxElement(true, false),
+                NixnoteStringUtils::getCheckboxElement(true, true));
     } else {
-        html.replace(global.getCheckboxElement(true, false),
-                global.getCheckboxElement(false, true));
-        html.replace(global.getCheckboxElement(false, false),
-                global.getCheckboxElement(false, true));
+        html.replace(NixnoteStringUtils::getCheckboxElement(true, false),
+                NixnoteStringUtils::getCheckboxElement(false, true));
+        html.replace(NixnoteStringUtils::getCheckboxElement(false, false),
+                NixnoteStringUtils::getCheckboxElement(false, true));
     }
 
     editor->page()->mainFrame()->evaluateJavaScript(script_start + html + script_end);

@@ -790,7 +790,7 @@ void NoteFormatter::modifyTodoTags(QWebElement &todo) {
         isChecked = true;
     }
 
-    QString xml = global.getCheckboxElement(isChecked, false);
+    QString xml = NixnoteStringUtils::getCheckboxElement(isChecked, false);
     todo.setOuterXml(xml + todo.toInnerXml());
     QLOG_TRACE_OUT();
 }
