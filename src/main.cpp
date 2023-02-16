@@ -225,7 +225,7 @@ int main(int argc, char *argv[]) {
     bool memInitNeeded = true;
     int sharedMemSize;
     if (global.getListenToCommands()) {
-        sharedMemSize = 512*1024;
+        sharedMemSize = 128;
     } else {
         sharedMemSize = 1;
     }
