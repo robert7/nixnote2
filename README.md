@@ -71,7 +71,7 @@ layman -o https://raw.githubusercontent.com/bbugyi200/portage-overlay/master/rep
 emerge nixnote:2
 ```
 
-Another option: [AppImage ebuild in Guru](https://github.com/gentoo/guru/tree/master/gui-apps/nixnote-bin), with only single dependency: fuse.
+Another option: [AppImage ebuild in Guru](https://github.com/gentoo/guru/tree/dev/app-office/nixnote-bin), with only single dependency: fuse.
 
 [overlay]: https://github.com/bbugyi200/portage-overlay/blob/master/app-misc/nixnote/nixnote-9999.ebuild
 
