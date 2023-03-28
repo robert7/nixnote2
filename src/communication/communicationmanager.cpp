@@ -644,8 +644,8 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook &boo
             delete linkedNoteStore;
 
         // Connect to the proper shard
-        linkedNoteStore = new NoteStore(book.noteStoreUrl, authToken);
-        linkedAuthToken = "<Public Notebook>";
+        linkedNoteStore = newNoteStore(book.noteStoreUrl, newRequestContext(authToken, requestTimeout));
+        linkedAuthToken = authToken;
         noteStore = linkedNoteStore;
 
         // Now, authenticate to the book.  Books
