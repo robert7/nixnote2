@@ -182,8 +182,10 @@ void DebugTool::dumpNotebook(Notebook n) {
         BusinessNotebook b = n.businessNotebook;
         dumpField(b.notebookDescription, "notebookDescription");
         dumpField(b.recommended, "recommended");
-        int i = b.privilege;
-        QLOG_DEBUG() << "privilege:" << i;
+        if (b.privilege.isSet()) {
+            int i = static_cast<int>(b.privilege.ref());
+            QLOG_DEBUG() << "privilege:" << i;
+        }
     } else {
         QLOG_DEBUG() << "businessnotebooek data not found.";
     }

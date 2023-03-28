@@ -184,7 +184,7 @@ void ExportData::writeNotebooks() {
                 if (book.businessNotebook.value().notebookDescription.isSet())
                     createNode("NotebookDescription", book.businessNotebook.value().notebookDescription);
                 if (book.businessNotebook.value().privilege.isSet())
-                    createNode("NotebookDescription", book.businessNotebook.value().privilege);
+                    createNode("NotebookDescription", static_cast<int>(book.businessNotebook.value().privilege.ref()));
                 if (book.businessNotebook.value().recommended.isSet())
                     createNode("NotebookDescription", book.businessNotebook.value().recommended);
                 writer->writeEndElement();
@@ -199,7 +199,7 @@ void ExportData::writeNotebooks() {
                 if (book.publishing.value().ascending.isSet())
                     createNode("Ascending", book.publishing.value().ascending);
                 if (book.publishing.value().order.isSet())
-                    createNode("Uri", QString::number(book.publishing.value().order));
+                    createNode("Uri", QString::number(static_cast<int>(book.publishing.value().order.ref())));
                 writer->writeEndElement();
             }
 
@@ -233,7 +233,7 @@ void ExportData::writeUser(User user) {
     if (user.timezone.isSet())
         createNode("Timezone", user.timezone);
     if (user.privilege.isSet())
-        createNode("Privilege", user.privilege);
+        createNode("Privilege", static_cast<int>(user.privilege.ref()));
     if (user.created.isSet())
         createTimestampNode("Created", user.created);
     if (user.updated.isSet())
@@ -304,7 +304,7 @@ void ExportData::writeUser(User user) {
         if (user.attributes.value().useEmailAutoFiling.isSet())
             createNode("UseEmailAutoFiling", user.attributes.value().useEmailAutoFiling);
         if (user.attributes.value().reminderEmailConfig.isSet())
-            createNode("ReminderEmailConfig", user.attributes.value().reminderEmailConfig);
+            createNode("ReminderEmailConfig", static_cast<int>(user.attributes.value().reminderEmailConfig.ref()));
         writer->writeEndElement();
     }
 
@@ -331,7 +331,7 @@ void ExportData::writeUser(User user) {
         if (user.businessUserInfo.value().email.isSet())
             createNode("Email", user.businessUserInfo.value().email);
         if (user.businessUserInfo.value().role.isSet())
-            createNode("Role", user.businessUserInfo.value().role);
+            createNode("Role", static_cast<int>(user.businessUserInfo.value().role.ref()));
         writer->writeEndElement();
 
     }
@@ -381,7 +381,7 @@ void ExportData::writeSavedSearches() {
         if (s.query.isSet())
             createNode("Query", s.query);
         if (s.format.isSet())
-            createNode("Format", s.format);
+            createNode("Format", static_cast<int>(s.format.ref()));
         if (s.updateSequenceNum.isSet())
             createNode("UpdateSequenceNumber", s.updateSequenceNum);
         if (s.scope.isSet()) {
@@ -477,7 +477,7 @@ void ExportData::writeSharedNotebooks() {
             if (s.notebookModifiable.isSet())
                 createNode("NotebookModifiable", s.notebookModifiable);
             if (s.privilege.isSet())
-                createNode("Privilege", s.privilege);
+                createNode("Privilege", static_cast<int>(s.privilege.ref()));
             if (s.recipientSettings.isSet()) {
                 writer->writeStartElement("RecipientSettings");
                 if (s.recipientSettings.value().reminderNotifyEmail.isSet())

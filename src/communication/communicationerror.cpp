@@ -90,7 +90,7 @@ void CommunicationError::resetTo(
 
 
 QString CommunicationError::edamErrorCodeToString(int code) {
-    switch (code) {
+    switch (static_cast<qevercloud::EDAMErrorCode>(code)) {
         case qevercloud::EDAMErrorCode::UNKNOWN:
             return "UNKNOWN";
         case qevercloud::EDAMErrorCode::BAD_DATA_FORMAT:

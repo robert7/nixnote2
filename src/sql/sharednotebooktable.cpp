@@ -133,7 +133,7 @@ qint32 SharedNotebookTable::add(qint32 l, const SharedNotebook &t, bool isDirty)
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", SHAREDNOTEBOOK_PRIVILEGE);
-        qint32 priv = t.privilege;
+        qint32 priv = static_cast<int>(t.privilege.ref());
         query.bindValue(":data", priv);
         query.exec();
     }
@@ -247,15 +247,15 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid, QString user
         case (SHAREDNOTEBOOK_PRIVILEGE): {
             int priv = query.value(1).toInt();
             notebook.privilege = SharedNotebookPrivilegeLevel::READ_NOTEBOOK;
-            if (priv == SharedNotebookPrivilegeLevel::FULL_ACCESS)
+            if (priv == static_cast<int>(SharedNotebookPrivilegeLevel::FULL_ACCESS))
                 notebook.privilege = SharedNotebookPrivilegeLevel::FULL_ACCESS;
-            if (priv == SharedNotebookPrivilegeLevel::BUSINESS_FULL_ACCESS)
+            if (priv == static_cast<int>(SharedNotebookPrivilegeLevel::BUSINESS_FULL_ACCESS))
                 notebook.privilege = SharedNotebookPrivilegeLevel::BUSINESS_FULL_ACCESS;
-            if (priv == SharedNotebookPrivilegeLevel::GROUP)
+            if (priv == static_cast<int>(SharedNotebookPrivilegeLevel::GROUP))
                 notebook.privilege = SharedNotebookPrivilegeLevel::GROUP;
-            if (priv == SharedNotebookPrivilegeLevel::MODIFY_NOTEBOOK_PLUS_ACTIVITY)
+            if (priv == static_cast<int>(SharedNotebookPrivilegeLevel::MODIFY_NOTEBOOK_PLUS_ACTIVITY))
                 notebook.privilege = SharedNotebookPrivilegeLevel::MODIFY_NOTEBOOK_PLUS_ACTIVITY;
-            if (priv == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)
+            if (priv == static_cast<int>(SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY))
                 notebook.privilege = SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY;
             returnVal = true;
             break;
