@@ -1,0 +1,41 @@
+FROM ubuntu:focal
+
+ARG wdir="/opt"
+WORKDIR $wdir
+
+ARG make_core=4
+ENV PATH="${wdir}/linuxdeploy:${wdir}/linuxdeploy-plugin-qt:${wdir}/appimagetool:${PATH}"
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y software-properties-common
+RUN add-apt-repository ppa:nixnote/nixnote2-stable -y && apt-get update -qq
+RUN apt-get update && apt-get install -y git-core qt5-default build-essential ccache p7zip-full libssl1.1 libcrypt1 libnss3 \
+                              wget curl make pkg-config \
+                              qtwebengine5-dev qtwebengine5-dev-tools \
+                              libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev libcurl4-openssl-dev \
+                              libpoppler-qt5-dev libqt5webkit5-dev qt5-qmake qttools5-dev-tools libhunspell-dev nixnote2-tidy
+
+# install linuxdeploy
+RUN wget -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" && \
+        chmod a+x ./linuxdeploy-x86_64.AppImage && \
+        ./linuxdeploy-x86_64.AppImage --appimage-extract && \
+        mv squashfs-root linuxdeploy && \
+        mv linuxdeploy/AppRun linuxdeploy/linuxdeploy
+
+# install linuxdeploy-plugin-qt
+RUN wget -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage" && \
+        chmod a+x ./linuxdeploy-plugin-qt-x86_64.AppImage && \
+        ./linuxdeploy-plugin-qt-x86_64.AppImage --appimage-extract && \
+        mv squashfs-root linuxdeploy-plugin-qt && \
+        mv linuxdeploy-plugin-qt/AppRun linuxdeploy-plugin-qt/linuxdeploy-plugin-qt
+
+# install appimagetool
+RUN wget -nv "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" && \
+        chmod a+x appimagetool-x86_64.AppImage && \
+        ./appimagetool-x86_64.AppImage --appimage-extract && \
+        mv squashfs-root appimagetool && \
+        mv appimagetool/AppRun appimagetool/appimagetool
+
+RUN cd $wdir && git clone "https://github.com/robert7/nixnote2.git" && cd nixnote2 && git checkout master
+
+CMD /bin/bash
