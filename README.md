@@ -65,13 +65,15 @@ AUR package [nixnote2-git](https://aur.archlinux.org/packages/nixnote2-git/)
 builds the latest [stable release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#stable-releases).
 
 #### Gentoo Linux
-NixNote is available via a custom portage overlay (that lives [here][overlay]). It can be installed by running the following commands:
+NixNote is available via a custom portage [overlay]. It can be installed by running the following commands:
 ``` bash
 layman -o https://raw.githubusercontent.com/bbugyi200/portage-overlay/master/repository.xml -f -a bbugyi200
 emerge nixnote:2
 ```
 
-[overlay]: https://github.com/bbugyi200/portage-overlay
+Another option: [AppImage ebuild in Guru](https://github.com/gentoo/guru/tree/master/app-office/nixnote-bin), with only single dependency: fuse.
+
+[overlay]: https://github.com/bbugyi200/portage-overlay/blob/master/app-misc/nixnote/nixnote-9999.ebuild
 
 #### Fedora
 https://copr.fedorainfracloud.org/coprs/nunodias/nixnote2/
