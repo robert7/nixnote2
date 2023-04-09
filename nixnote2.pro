@@ -43,21 +43,35 @@ OBJECTS_DIR = $${DESTDIR}
 MOC_DIR = $${DESTDIR}
 
 oauth_webengine {
+    oauth_webkit {
+        error("oauth_webengine and oauth_webkit are mutually exclusive!")
+    }
+
     win32-g++ {
         error("Cannot use QtWebEngine with MinGW build")
-    } else {
-        message("Using QtWebEngine for OAuth")
-        QT += webengine webenginewidgets
-        QEVERCLOUD_USE_QT_WEB_ENGINE = 1
-        DEFINES += QEVERCLOUD_USE_QT_WEB_ENGINE=1
     }
+
+    message("Using QtWebEngine for OAuth")
+    QT += webengine webenginewidgets
+    QEVERCLOUD_USE_QT_WEB_ENGINE = 1
+    QEVERCLOUD_USE_SYSTEM_BROWSER = 0
+    DEFINES += QEVERCLOUD_USE_QT_WEB_ENGINE=1
+    DEFINES += QEVERCLOUD_USE_SYSTEM_BROWSER=0
 } else {
-    message("Using QtWebKit for OAuth")
-    !win32-g++ {
-        warning("Consider adding CONFIG+=oauth_webengine to qmake invocation to use QtWebEngine for OAuth; QtWebKit has known problems with it, OAuth may not work!")
+    oauth_webkit {
+        message("Using QtWebKit for OAuth")
+        warning("QtWebKit has known problems with OAuth, it might not work well!")
+        QEVERCLOUD_USE_QT_WEB_ENGINE = 0
+        QEVERCLOUD_USE_SYSTEM_BROWSER = 0
+        DEFINES += QEVERCLOUD_USE_QT_WEB_ENGINE=0
+        DEFINES += QEVERCLOUD_USE_SYSTEM_BROWSER=0
+    } else {
+        message("Using system browser for OAuth")
+        QEVERCLOUD_USE_QT_WEB_ENGINE = 0
+        QEVERCLOUD_USE_SYSTEM_BROWSER = 1
+        DEFINES += QEVERCLOUD_USE_QT_WEB_ENGINE=0
+        DEFINES += QEVERCLOUD_USE_SYSTEM_BROWSER=1
     }
-    QEVERCLOUD_USE_QT_WEB_ENGINE = 0
-    DEFINES += QEVERCLOUD_USE_QT_WEB_ENGINE=0
 }
 
 qevercloud_version_info.input = src/qevercloud/QEverCloud/headers/VersionInfo.h.in
@@ -213,12 +227,14 @@ SOURCES += \
     src/qevercloud/QEverCloud/src/HttpUtils.cpp \
     src/qevercloud/QEverCloud/src/InkNoteImageDownloader.cpp \
     src/qevercloud/QEverCloud/src/Log.cpp \
-    src/qevercloud/QEverCloud/src/NetworkCookieJar.cpp \
-    src/qevercloud/QEverCloud/src/OAuth.cpp \
     src/qevercloud/QEverCloud/src/Printable.cpp \
     src/qevercloud/QEverCloud/src/RequestContext.cpp \
     src/qevercloud/QEverCloud/src/Thumbnail.cpp \
     src/qevercloud/QEverCloud/src/VersionInfo.cpp \
+    src/qevercloud/QEverCloud/src/oauth/AbstractOAuthEngine.cpp \
+    src/qevercloud/QEverCloud/src/oauth/NonceGenerator.cpp \
+    src/qevercloud/QEverCloud/src/oauth/OAuth.cpp \
+    src/qevercloud/QEverCloud/src/oauth/Utils.cpp \
     src/reminders/reminderevent.cpp \
     src/reminders/remindermanager.cpp \
     src/settings/accountsmanager.cpp \
@@ -269,6 +285,20 @@ SOURCES += \
     src/xml/xmlhighlighter.cpp \
     src/quentier/utility/StringUtils.cpp \
     src/quentier/utility/StringUtils_p.cpp
+
+oauth_webengine {
+    SOURCES += \
+        src/qevercloud/QEverCloud/src/oauth/NetworkCookieJar.cpp \
+        src/qevercloud/QEverCloud/src/oauth/OAuthWebEngine.cpp
+} else {
+    oauth_webkit {
+        SOURCES += \
+            src/qevercloud/QEverCloud/src/oauth/OAuthWebKit.cpp
+    } else {
+        SOURCES += \
+            src/qevercloud/QEverCloud/src/oauth/OAuthSystemBrowser.cpp
+    }
+}
 
 HEADERS  += \
     src/application.h \
@@ -427,9 +457,15 @@ HEADERS  += \
     src/qevercloud/QEverCloud/src/generated/Types_io.h \
     src/qevercloud/QEverCloud/src/AsyncResult_p.h \
     src/qevercloud/QEverCloud/src/Http.h \
+    src/qevercloud/QEverCloud/src/HttpRequestData.h \
+    src/qevercloud/QEverCloud/src/HttpRequestParser.h \
+    src/qevercloud/QEverCloud/src/HttpUtils.h \
     src/qevercloud/QEverCloud/src/Impl.h \
-    src/qevercloud/QEverCloud/src/NetworkCookieJar.h \
     src/qevercloud/QEverCloud/src/Thrift.h \
+    src/qevercloud/QEverCloud/src/oauth/AbstractOAuthEngine.h \
+    src/qevercloud/QEverCloud/src/oauth/NetworkCookieJar.h \
+    src/qevercloud/QEverCloud/src/oauth/NonceGenerator.h \
+    src/qevercloud/QEverCloud/src/oauth/Utils.h \
     src/reminders/reminderevent.h \
     src/reminders/remindermanager.h \
     src/settings/accountsmanager.h \
@@ -480,6 +516,19 @@ HEADERS  += \
     src/xml/xmlhighlighter.h \
     src/quentier/utility/StringUtils.h \
     src/quentier/utility/StringUtils_p.h
+
+oauth_webengine {
+    HEADERS += \
+        src/qevercloud/QEverCloud/src/oauth/OAuthWebEngine.h
+} else {
+    oauth_webkit {
+        HEADERS += \
+            src/qevercloud/QEverCloud/src/oauth/OAuthWebKit.h
+    } else {
+        HEADERS += \
+            src/qevercloud/QEverCloud/src/oauth/OAuthSystemBrowser.h
+    }
+}
 
 # http://doc.qt.io/qt-5/qmake-function-reference.html#str-member-arg-start-end
 # $$left(VAR, len)
