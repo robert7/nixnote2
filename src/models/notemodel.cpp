@@ -60,6 +60,7 @@ NoteModel::NoteModel(QObject *parent)
 QString NoteModel::orderByClause() const {
     QString order("order by " + global.getSortOrder());
     QLOG_DEBUG() << "Sort order: " << order;
+
     return order;
 }
 
