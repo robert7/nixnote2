@@ -1,14 +1,12 @@
 NixNote (2.1.7) stable; urgency=low
-  * Made tidy keep A nodes(link in HTML) without href attribute when saving the note if its inner text is not empty.
+  * Made tidy keep A nodes(HTML link element) having no href attribute if its inner text is not empty when saving the note.
   * Optimised the sql statements of note creating and updating.
-  * Optimised the time complexity of batch operations, including moving, deleting, and restoring.
-  * Added an option: the user can choose to make Nixnote listen to the commands from command line or not.
-    When it is enabled, the shared memory size will be set to 128 bytes;
-    when disabled, the size will be set to 1 byte.
+  * Optimised the sql statements of batch operations, including movings, deletings, and restorings.
+  * Added an option to listen to the commands from command line.(When it is enabled, the shared memory size will be set to 128 bytes; when disabled, it will be set to 1 byte.)
   * Decoupled the functions of CmdLineTool(except signalGui()) from shared memory.
   * Made Nixnote export the stack attribute when exporting notes.
-  * Added an option: the user can choose to save the ui state changes or not when Nixnote exits.
-  * Saved the note content when Nixnote receives specific signal interruptions.
+  * Added an option to save the UI state changes when Nixnote exits.
+  * Saved the note content when Nixnote receives specific signal interruptions(SIGINT, SIGHUP).
   * Allocated the tageditor's tags dynamically.
   * Added a default theme named with 'Default' when no theme is found in themes.ini.
   * RAM usage optimizations.
