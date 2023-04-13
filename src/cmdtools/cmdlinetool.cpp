@@ -251,7 +251,7 @@ int CmdLineTool::addNote(StartupConfig config) {
             tagTable.getGuid(tagGuid, tagLid);
         }
         newNote.tagNames->append(tagName);
-        newNote.tagNames->append(tagGuid);
+        newNote.tagGuids->append(tagGuid);
     }
 
     // Process the notebook
