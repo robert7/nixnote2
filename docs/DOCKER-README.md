@@ -20,6 +20,7 @@ Of course supposed you have [docker installed](https://www.google.com/search?q=d
 ```bash
 cd $PROJECTDIR
 # pass branch name as 1st parameter to script (default: master)
-./development/build-with-docker.sh
+# for script to run, you need to configure docker to run witout sudo (or adapt the script)
+./development/build-with-docker.sh develop
 ```
 
