@@ -20,15 +20,6 @@ Of course supposed you have [docker installed](https://www.google.com/search?q=d
 ```bash
 cd $PROJECTDIR
 # pass branch name as 1st parameter to script (default: master)
-./development/build-with-docker-xenial.sh
+./development/build-with-docker.sh
 ```
 
-
-## Ubuntu 14.04 (trusty)
-WORK IN PROGRESS - !! **doesn't work yet** !!
-
-```bash
-cd $PROJECTDIR
-# pass branch name as 1st parameter to script (default: master)
-#./development/build-with-docker-trusty.sh
-```
