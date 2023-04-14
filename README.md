@@ -99,7 +99,8 @@ More info in: [DOCKER README](docs/DOCKER-README.md)
 
 ### Linux - manual build
 * Install development dependencies - look in content of [this docker file](development/docker/Dockerfile.ubuntu_xenial)
-  of [debian/control](https://github.com/robert7/nixnote2/blob/master/debian/control)
+  or [.travis.yml](https://github.com/robert7/nixnote2/blob/master/.travis.yml)
+  or [debian/control](https://github.com/robert7/nixnote2/blob/master/debian/control)
   to see example, what is needed for Ubuntu. If you use another distribution/version,
   you may need adjust packages.
 * Qt: you can either get Qt packages for your distribution or as alternative you can download Qt 5 directly
@@ -122,7 +123,7 @@ the could command could be `./development/build-with-qmake.sh debug noclean /usr
 
 If all got OK, you should have "qmake-build-debug/nixnote2" binary available now
 (and also a deployment copy in appdir). 
-I suggest running from "appdir" (e.g. `./appdir/usr/appdir/nixnote2`).
+I suggest running from "appdir" (e.g. `./appdir/usr/bin/nixnote2`).
 
 
 ```bash
