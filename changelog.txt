@@ -1,5 +1,5 @@
 NixNote (2.1.7) stable; urgency=low
-  * Made tidy keep A nodes(HTML link element) having no href attribute if its inner text is not empty when saving the note.
+  * Added a new dark theme.
   * Optimised the sql statements of note creating and updating.
   * Optimised the sql statements of batch operations, including movings, deletings, and restorings.
   * Added an option to listen to the commands from command line.(When it is enabled, the shared memory size will be set to 128 bytes; when disabled, it will be set to 1 byte.)
