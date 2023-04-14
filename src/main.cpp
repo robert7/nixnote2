@@ -209,10 +209,9 @@ int main(int argc, char *argv[]) {
             sharedMemory->detach();
         }
         if (retval1) {
-            QLOG_ERROR() << "Exit FAILURE: retcode=" << retval1;
-
-        } else {
             QLOG_INFO() << "Exit OK: retcode=" << retval1;
+        } else {
+            QLOG_ERROR() << "Exit FAILURE: retcode=" << retval1;
         }
         delete a;
 

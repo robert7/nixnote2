@@ -296,7 +296,7 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
             tagTable.add(tagLid, newTag, false, 0);
         }
 
-        values += joinValues(lids, NOTE_TAG_LID, ":note_tag_lid", lidSeqNum++) + ",";
+        values += joinValues(lids, NOTE_TAG_LID, ":note_tag_lid" + QString::number(i), lidSeqNum++) + ",";
         valueList.append(tagLid);
     }
 
@@ -428,8 +428,6 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
             valueList.append(true);
         }
     }
-    query.finish();
-    db->unlock();
 
     updateNoteList(lid, t, isDirty, account);
 
@@ -469,7 +467,9 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         }
     }
     query.exec();
+    query.finish();
 
+    db->unlock();
     return lid;
 }
 
