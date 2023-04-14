@@ -659,7 +659,7 @@ void EnmlFormatter::fixANode(QWebElement &e) {
         e.setAttribute("title", attr);
         e.setAttribute("href", attr);
         QLOG_TRACE() << ENML_MODULE_LOGPREFIX "fixed latex a tag to " << e.toOuterXml();
-    } else if (href.isEmpty() && e.toInnerXml() == "") {
+    } else if (href.isEmpty()) {
         QLOG_TRACE() << ENML_MODULE_LOGPREFIX " a tag with empty href => removing";
         e.removeFromDocument();
     } else {
