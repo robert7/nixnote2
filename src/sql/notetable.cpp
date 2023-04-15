@@ -1702,6 +1702,10 @@ void NoteTable::restoreNotes(const QList<qint32> &lids, bool isDirty=true) {
     bindLids(query, lids);
     query.exec();
 
+    query.prepare("Delete from filter where lid in (" + slids + ")");
+    bindLids(query, lids);
+    query.exec();
+
     query.finish();
     db->unlock();
 }
