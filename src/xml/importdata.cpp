@@ -46,10 +46,10 @@ extern Global global;
 //***********************************************************
 ImportData::ImportData(bool full, bool cmdline, QObject *parent) : QObject(parent)
 {
-    importTags = false;
+    importTags = true;
     importNotebooks = false;
     backup = full;
-    createTags = false;
+    createTags = true;
     stopNow = false;
     this->cmdline = cmdline;
 
@@ -300,7 +300,7 @@ void ImportData::processNoteNode() {
         if (name == "titlecolor" && !reader->isEndElement()) {
             meta.setColor(intValue());
         }
-        if (name == "notetags" && (createTags || backup) && !reader->isEndElement()) {
+        if (name == "tag" && (createTags || backup) && !reader->isEndElement()) {
             QStringList names, guids;
             processNoteTagList(guids, names);
             QList<QString> tagGuids;
@@ -309,8 +309,14 @@ void ImportData::processNoteNode() {
                 tagGuids.append(guids[i]);
                 tagNames.append(names[i]);
             }
-            note.tagNames = tagNames;
-            note.tagGuids = tagGuids;
+
+            if (!note.tagNames.isSet()) {
+                note.tagNames = names;
+                note.tagGuids = guids;
+            } else {
+                note.tagNames.ref().append(names);
+                note.tagGuids.ref().append(guids);
+            }
         }
         if (name == "noteattributes" && !reader->isEndElement()) {
             NoteAttributes na;
@@ -543,13 +549,17 @@ void ImportData::processNoteTagList(QStringList &guidList, QStringList &names) {
     while(!atEnd) {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
-            if (name == "guid")
+            if (name == "guid") {
                 guidList.append(textValue());
+            } else if (name == "name") {
+                names.append(textValue());
+            }
         }
         reader->readNext();
         QString endName = reader->name().toString().toLower();
-        if (endName == "notetags" && reader->isEndElement())
+        if (endName == "tag" && reader->isEndElement()) {
             atEnd = true;
+        }
     }
 
     // Now look for any matches with existing ones.  If they don't
@@ -560,7 +570,7 @@ void ImportData::processNoteTagList(QStringList &guidList, QStringList &names) {
         if (lid == 0) {
             Tag newTag;
             newTag.guid = guidList[i];
-            newTag.name = "newtag";
+            newTag.name = names[i];
             tagTable.add(0, newTag, false, 0);
             names.append(newTag.name);
         } else {

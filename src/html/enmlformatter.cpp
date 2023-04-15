@@ -238,8 +238,10 @@ QByteArray EnmlFormatter::getContentBytes() const {
 void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
     QLOG_DEBUG_FILE("fmt-pre-tidy.html", getContent());
 
-    TidyBuffer output = {nullptr};
-    TidyBuffer errbuf = {nullptr};
+    TidyBuffer output;
+    memset(&output, 0, sizeof(output));
+    TidyBuffer errbuf;
+    memset(&errbuf, 0, sizeof(errbuf));
     int rc = -1;
 
     //QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "tidy1";
@@ -312,17 +314,20 @@ void EnmlFormatter::tidyHtml(HtmlCleanupMode mode) {
     // delete content in both cases
     content.clear();
 
+    //http://tidy.sourceforge.net/libintro.html
+    //0 == Success Good to go.
+    //1 == Warnings, No Errors Check error buffer or track error messages for details.
+    //2 == Errors and Warnings
+    //<0 == Severe error
     if (rc >= 0) {
-        if (rc > 0) {
+        // results
+        content.append((char *) output.bp, output.size);
+        if (rc == 1 || rc == 2) {
             QString tidyErrors((char *) errbuf.bp);
             tidyErrors.replace("\n", "; ");
             QLOG_INFO() << ENML_MODULE_LOGPREFIX "tidy DONE: diagnostics: " << tidyErrors;
         }
-        // results
-        content.append((char *) output.bp);
-
-        //content = content.replace("</body>", "<br/>tidy ok</body>");
-    } else {
+    } else { // rc < 0
         formattingError = true;
         QLOG_ERROR() << ENML_MODULE_LOGPREFIX "tidy FAILED: severe error occurred, code=" << rc;
     }
@@ -370,7 +375,6 @@ void EnmlFormatter::rebuildNoteEnml() {
 
     removeHtmlCommentsInclContent();
 
-
     tidyHtml(HtmlCleanupMode::Tidy);
     if (isFormattingError()) {
         QLOG_ERROR() << ENML_MODULE_LOGPREFIX "got no output from tidy - cleanup failed";
@@ -408,7 +412,6 @@ void EnmlFormatter::rebuildNoteEnml() {
     // TEMP hack - rerun tidy - to fix XML after manual fixup
     tidyHtml(HtmlCleanupMode::Tidy);
 
-
     /// TEMPORARY POST TIDY HACK - this is how it shouldn't be done
     /// TEMPORARY POST TIDY HACK
     content.replace(HTML_COMMENT_START, "");
@@ -434,6 +437,7 @@ void EnmlFormatter::rebuildNoteEnml() {
         content = b.replace("</body>", "</en-note>");
     }
 
+    postXmlFix();
 
     QLOG_DEBUG_FILE("fmt-enml-final.xml", getContent());
     qint64 timeEnd = QDateTime::currentMSecsSinceEpoch();
@@ -569,10 +573,19 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
                             + "\">" + encrypted + "</en-crypt>" HTML_COMMENT_END;
         e.setOuterXml(xml);
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "processing tag 'img', type=en-crypt' - fixed img node to " << xml;
-    } else if (enType == "temporary") { ;
+    } else if (enType == "temporary") {
         // Temporary image.  If so, remove it
         e.removeFromDocument();
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "processing tag 'img', type=temporary' - fixed temporary img node by deleting it";
+    } else if (enType == "icon") {
+        QString xml = HTML_COMMENT_START "<en-todo";
+
+        if (e.attribute("src").endsWith("_checked.png")) {
+            xml += " checked=\"true\"";
+        }
+        xml += "/>" HTML_COMMENT_END;
+        e.setOuterXml(xml);
+        QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed img node to: " << xml;
     } else {
         // If we've gotten this far, we have an en-media tag
 
@@ -581,7 +594,8 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         QString type = e.attribute("type");
         QString hash = e.attribute("hash");
         QLOG_DEBUG() << "Processing tag 'img', type=" << type << ", hash=" << hash;
-        if ((lid <= 0) || (hash.isEmpty())) {
+
+        if ((lid <= 0 || hash.isEmpty()) && !e.attribute("src").startsWith("http")) {
             QLOG_WARN() << ENML_MODULE_LOGPREFIX "deleting invalid 'img' tag";
             e.removeFromDocument();
             return;
@@ -599,8 +613,20 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
 
         resources.append(lid);
         removeInvalidAttributes(e);
+
         // temp hack for tidy call
-        const QString xml = e.toOuterXml().replace("<img", HTML_COMMENT_START "<en-media").append("</en-media>" HTML_COMMENT_END);
+        // Replace the img nodes displaying local images with en-media node,
+        // and leave the ones displaying web images alone, because the latter ones
+        // are not real media objects, and their contents will not be save locally
+        // and have a hash, which is needed when rebuilding the html.
+        // <img> is permitted according to evernote developer document:
+        // https://dev.evernote.com/doc/articles/enml.php.
+        // QWebView always adds </img> and </en-media> automatically,
+        // which should be processed later.
+        const QString xml = e.toOuterXml().
+            replace("<img", HTML_COMMENT_START "<en-media").
+            append("</en-media>" HTML_COMMENT_END).
+            replace("<en-media src", "<img src");
         e.setOuterXml(xml);
         QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "fixed img node to: " << xml;
     }
@@ -656,6 +682,7 @@ void EnmlFormatter::fixANode(QWebElement &e) {
 //   tabindex
 //
 bool EnmlFormatter::isAttributeValid(QString attribute) {
+
     bool isInvalid =
             attribute.startsWith("on")
             || (attribute == "id")
@@ -833,6 +860,9 @@ void EnmlFormatter::removeInvalidAttributes(QWebElement &e) {
     for (int i = 0; i < attributes.size(); i++) {
         QString a = attributes[i];
         if (!isAttributeValid(a)) {
+            if (a == "src" && e.attribute("src").startsWith("http")) {
+                continue;
+            }
             QLOG_DEBUG() << ENML_MODULE_LOGPREFIX "removeInvalidAttributes - tag " << e.tagName().toLower()
                         << " removing  invalid attribute " << a;
             e.removeAttribute(a);
@@ -916,4 +946,13 @@ bool EnmlFormatter::isFormattingError() const {
 void EnmlFormatter::setContent(QString &contentStr) {
     this->content.clear();
     this->content.append(contentStr.toUtf8());
+}
+
+
+void EnmlFormatter::postXmlFix() {
+    // Fix the <en-media> tags
+    content.replace("></en-media>", "/>");
+
+    // Remove Windows pattern newline character
+    content.replace("\r", "");
 }

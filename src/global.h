@@ -193,6 +193,8 @@ private:
 
     QString sortOrder;
 
+    QString getCheckboxImageUrl(bool checked) const;
+
 public:
     const QString &getDateFormat() const;
     const QString &getTimeFormat() const;
@@ -475,6 +477,8 @@ public:
 
     const QString getSortOrder() const;
     void setSortOrder(const QString &sortOrder);
+
+    QString getCheckboxElement(bool checked, bool escapeTwice) const;
 
 signals:
     // global can send signal about updating status bar

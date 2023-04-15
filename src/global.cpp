@@ -173,7 +173,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
         // QWebkit DPI is hard coded to 96. Hence, we calculate the correct
         // font size based on desktop logical DPI.
         settings->setFontSize(QWebSettings::DefaultFontSize,
-                              defaultFontSize * (QApplication::desktop()->logicalDpiX() / 96.0)
+                              (4.0/3.0) * defaultFontSize *
+                              (QApplication::desktop()->logicalDpiX() / 96.0)
         );
     }
     if (defaultFont != "" && defaultFontSize <= 0 && this->guiAvailable) {
@@ -1534,4 +1535,30 @@ const QString Global::getSortOrder() const {
 void Global::setSortOrder(const QString &sortOrder) {
     Global::sortOrder = sortOrder;
     saveSettingSortOrder(sortOrder);
+}
+
+QString Global::getCheckboxImageUrl(bool checked) const {
+    QString fileName = checked ? "checkbox_checked.png": "checkbox.png";
+    QString filePath = global.fileManager.getImageDirPath("").append(fileName);
+
+    QString prefix = QString("file://");
+#ifdef WIN32
+    prefix.append("/");
+#endif
+    return prefix + filePath;
+}
+
+QString Global::getCheckboxElement(bool checked, bool escapeTwice) const {
+    QString defaultUrl = getCheckboxImageUrl(false);
+    QString checkedUrl = getCheckboxImageUrl(true);
+    QString url = !checked ? defaultUrl : checkedUrl;
+    return QString("<img class=\"todo-icon\" src=\"") + url +
+        QString("\" type=\"image/png\" en-tag=\"icon\" ") +
+        QString("onclick=\"editorWindow.editAlert(); ") +
+        QString("this.src = this.src.indexOf(") +
+        (escapeTwice ? QString("\\\'") : QString("\'")) + defaultUrl +
+        (escapeTwice ? QString("\\\'") : QString("\'")) + QString(") == -1 ?") +
+        (escapeTwice ? QString("\\\'") : QString("\'")) + defaultUrl +
+        (escapeTwice ? QString("\\\':\\\'") : QString("\':\'")) + checkedUrl +
+        (escapeTwice ? QString("\\\';\">") : QString("\';\">"));
 }

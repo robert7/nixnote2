@@ -102,7 +102,8 @@ More info in: [DOCKER README](docs/DOCKER-README.md)
 
 ### Linux - manual build
 * Install development dependencies - look in content of [this docker file](development/docker/Dockerfile.ubuntu_xenial)
-  of [debian/control](https://github.com/robert7/nixnote2/blob/master/debian/control)
+  or [.travis.yml](https://github.com/robert7/nixnote2/blob/master/.travis.yml)
+  or [debian/control](https://github.com/robert7/nixnote2/blob/master/debian/control)
   to see example, what is needed for Ubuntu. If you use another distribution/version,
   you may need adjust packages.
 * Qt: you can either get Qt packages for your distribution or as alternative you can download Qt 5 directly
@@ -125,7 +126,7 @@ the could command could be `./development/build-with-qmake.sh debug noclean /usr
 
 If all got OK, you should have "qmake-build-debug/nixnote2" binary available now
 (and also a deployment copy in appdir). 
-I suggest running from "appdir" (e.g. `./appdir/usr/appdir/nixnote2`).
+I suggest running from "appdir" (e.g. `./appdir/usr/bin/nixnote2`).
 
 
 ```bash
@@ -248,7 +249,11 @@ And also copy the dll files libtidy.dll, libpoppler.dll, libpoppler-qt5.dll, lib
 
 #### Build the application:
 
+(This part can be going under any bash environment, not definitely MSYS or Cygwin.)
+
 ```bash
+git clone nixnote2
+cd nixnote2
 qmake.exe -set HUNSPELL_VERSION 1.7-0(you can change the version as needed)
 qmake.exe CONFIG+=debug[/release] nixnote2.pro
 qmake.exe -unset HUNSPELL_VERSION
@@ -264,7 +269,7 @@ First, copy the nixnote2.exe to the deployment_folder, then execute the followin
 
 ```bash
 windeployqt.exe --compiler-runtime --libdir [deployment_folder] [deployment_folder]
-bash /development/deploy-on-windows.sh [deployment_folder]
+bash development/deploy-on-windows.sh [deployment_folder]
 ```
 
 If you need spell check, you have to download the dictionary files and copy the .aff and .dic file to the deployment folder. You may want to download them [here](https://github.com/wooorm/dictionaries).

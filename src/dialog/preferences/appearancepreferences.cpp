@@ -297,7 +297,9 @@ void AppearancePreferences::saveValues() {
         // QWebkit DPI is hard coded to 96. Hence, we calculate the correct
         // font size based on desktop logical DPI.
         if (global.defaultFontSize > 0) {
-            settings->setFontSize(QWebSettings::DefaultFontSize, global.defaultFontSize * (QApplication::desktop()->logicalDpiX() / 96.0));
+            settings->setFontSize(QWebSettings::DefaultFontSize,
+                    (4.0/3.0) * global.defaultFontSize *
+                    (QApplication::desktop()->logicalDpiX() / 96.0));
         }
     }
 

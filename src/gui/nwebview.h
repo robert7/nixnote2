@@ -64,6 +64,8 @@ public:
     QAction *insertDateTimeAction;
     QAction *pasteWithoutFormatAction;
     QAction *todoAction;
+    QAction *todoSelectAllAction;
+    QAction *todoUnselectAllAction;
     QAction *encryptAction;
     QAction *downloadAttachmentAction();
     QAction *downloadImageAction();

@@ -1,3 +1,15 @@
+NixNote (2.1.8) stable; urgency=low
+  * Made the font size in the setting dialog consistent with the one in the editor button bar.
+  * Made the Windows editon's results of find more recognizable.
+  * Limited the max length of the recently updated menu of the tray.
+  * Fixed memory leaks caused by Qt Webview.
+  * Fixed: To-do Formatting is not in parity with Official Client - issue #131
+  * Fixed: In-App Note links don't work when there is an apostrophe in the title - issue #168
+  * Fixed: Nixnote2 exits when network gets disconnected - issue #189
+  * Fixed: Import all notes, tag issue - issue #153
+  * Fixed: Local images cannot be pasted, web image's html element cannot be saved
+ -- Robert Spiegel <nightingale7@gmail.com>  Sat, 10 Sep 2022 10:00:00 +0200
+
 NixNote (2.1.7) stable; urgency=low
   * Fixed: Search by date attributes not working with PPA builds - issue #149
   * Fixed: Editor fonts and sorting notes - issue #156
@@ -5,7 +17,7 @@ NixNote (2.1.7) stable; urgency=low
   * Fixed: Can't search / replace with as replacement. - issue #180
   * Enabled the spell check code for Windows edition
   * Fixed Windows build (thanks to https://github.com/boo-yee)
- -- Robert Spiegel <nightingale7@gmail.com>  Tue, 17 May 2022 10:00:00 +0200
+ -- Robert Spiegel <nightingale7@gmail.com>  Tue, 12 Jul 2022 10:00:00 +0200
 
 NixNote (2.1.6) stable; urgency=low
   * Updated russian translation (thanks to Александр, ra3ggi@gmail.com)

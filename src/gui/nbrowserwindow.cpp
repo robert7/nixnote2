@@ -315,6 +315,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     }
 
     changeDisplayFontName(global.defaultFont);
+    changeDisplayFontSize(QString::number(global.defaultFontSize) + "pt");
 }
 
 
@@ -406,7 +407,7 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->spellCheckButtonAction, SIGNAL(triggered()), this, SLOT(spellCheckPressed()));
     connect(buttonBar->spellCheckButtonShortcut, SIGNAL(activated()), this, SLOT(spellCheckPressed()));
 
-    connect(buttonBar->fontSizes, SIGNAL(currentIndexChanged(int)), this, SLOT(fontSizeSelected(int)));
+    connect(buttonBar->fontSizes, SIGNAL(activated(int)), this, SLOT(fontSizeSelected(int)));
     connect(buttonBar->fontNames, SIGNAL(currentIndexChanged(int)), this, SLOT(fontNameSelected(int)));
 
     connect(buttonBar->fontColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontColorClicked()));
@@ -553,6 +554,14 @@ void NBrowserWindow::setContent(qint32 lid) {
     //**** END OF CALL TO PRE-LOAD EXIT
 
     editor->setContent(content);
+
+    // Qt Webview memory leaks solution:
+    // https://forum.qt.io/topic/10832/memory-size-increases-per-page-load/4
+    QWebElement body = editor->page()->mainFrame()->findFirstElement("body");
+    body.setAttribute("onunload", "_function() {}");
+    QWebSettings::clearMemoryCaches();
+    editor->history()->clear();
+
     // is this an ink note?
     if (inkNote)
         editor->page()->setContentEditable(false);
@@ -894,13 +903,16 @@ void NBrowserWindow::saveNoteContent() {
 
 // The undo edit button was pressed
 void NBrowserWindow::undoButtonPressed() {
+    this->editor->triggerPageAction(QWebPage::Undo);
+
     QUndoStack *stack = this->editor->page()->undoStack();
-    int index = stack->index();
-    if (autoBackspaceIndices.indexOf(index) != -1) {
-        // Called an additional undo in order that the the users do not have to press another undo button to remove the 0-width character "&zwnj;" added before.
+    if (stack->count() >= 1 && stack->text(stack->index() - 1) == "AUTO_EXEC") {
+        // jump over the AUTO_EXEC QUndoCommand
+        this->editor->triggerPageAction(QWebPage::Undo);
+        // undo the inserting of 0 width character
         this->editor->triggerPageAction(QWebPage::Undo);
     }
-    this->editor->triggerPageAction(QWebPage::Undo);
+
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -908,14 +920,16 @@ void NBrowserWindow::undoButtonPressed() {
 
 // The redo edit button was pressed
 void NBrowserWindow::redoButtonPressed() {
+    this->editor->triggerPageAction(QWebPage::Redo);
+
     QUndoStack *stack = this->editor->page()->undoStack();
-    int index = stack->index();
-    // The font size changing operation index stored in autoBackspaceIndices is 2 ahead of backspace button event, so here add index to 2.
-    if (autoBackspaceIndices.indexOf(index + 2) != -1) {
-        // Called an additional redo in order that the the users do not have to press another redo button to restore the removed text content.
+    if (stack->text(stack->index()) == "AUTO_EXEC") {
+        // jump over the AUTO_EXEC QUndoCommand
+        this->editor->triggerPageAction(QWebPage::Redo);
+        // redo the simulated backspace
         this->editor->triggerPageAction(QWebPage::Redo);
     }
-    this->editor->triggerPageAction(QWebPage::Redo);
+
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -987,6 +1001,27 @@ void NBrowserWindow::pasteButtonPressed() {
         return;
     }
 
+    if (mime->hasUrls()) {
+        QList<QUrl> urls = mime->urls();
+        for (int i=0; i<urls.size(); i++) {
+            QLOG_DEBUG() << urls[i].toString();
+            if (urls[i].toString().startsWith("file://")) {
+// Windows Check
+#ifndef _WIN32
+                QString fileName = urls[i].toString().mid(7);
+#else
+                QString fileName = urls[i].toString().mid(8);
+#endif  // End windows check
+                attachFileSelected(fileName);
+                this->editor->triggerPageAction(QWebPage::InsertParagraphSeparator);
+            }
+        }
+
+        this->editor->setFocus();
+        microFocusChanged();
+        return;
+    }
+
     if (!mime->hasText()) {
         QLOG_DEBUG() << "pasteButtonPressed: no text; nothing to do";
         return;
@@ -1039,13 +1074,17 @@ void NBrowserWindow::pasteButtonPressed() {
                 bool goodrc = false;
                 NoteTable ntable(global.db);
                 goodrc = ntable.get(n, guid, false, false);
-                if (!goodrc)
+                if (!goodrc) {
                     goodrc = ntable.get(n, locguid, false, false);
+                }
 
                 // If we have a good return, then we can paste the link, otherwise we fall out
                 // to a normal paste.
                 if (goodrc) {
-                    url = url + QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(urlList[i], n.title, n.title);
+                    url = url + QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(
+                            urlList[i],
+                            n.title.ref().toHtmlEscaped().replace("'", "&apos;"),
+                            n.title.ref().toHtmlEscaped().replace("'", "&apos;"));
                     QLOG_DEBUG() << "HTML to insert:" << url;
                     if (i + 1 < urlList.size()) {
                         url = url + " <br> ";
@@ -1367,53 +1406,90 @@ void NBrowserWindow::contentChanged() {
 void NBrowserWindow::todoButtonPressed() {
     QString script_start = "document.execCommand('insertHtml', false, '";
     QString script_end = "');";
-    QString todo =
-            "<input TYPE=\"CHECKBOX\" " +
-            QString("onMouseOver=\"style.cursor=\\'hand\\'\" ") +
-            QString(
-                    "onClick=\"if(!checked) removeAttribute(\\'checked\\'); else setAttribute(\\'checked\\', \\'checked\\'); editorWindow.editAlert();\" />");
+
+    QString selectedHtml = editor->selectedHtml();
+    int length = selectedHtml.length();
+    selectedHtml.replace(global.getCheckboxElement(true, false), "");
+    selectedHtml.replace(global.getCheckboxElement(false, false), "");
+    if (selectedHtml.length() < length) {
+        editor->page()->mainFrame()->evaluateJavaScript(script_start +
+                selectedHtml + script_end);
+        return;
+    }
 
     QString selectedText = editor->selectedText().trimmed();
     QRegExp regex("\\r?\\n");
     QStringList items = selectedText.split(regex);
-    if (items.size() == 0)
-        items.append(" ");
-    QString newLineChar = "<div><br><div>";
+
+    QString html = "";
     for (int i = 0; i < items.size(); i++) {
-        if (i == items.size() - 1)
-            newLineChar = "";
-        editor->page()->mainFrame()->evaluateJavaScript(
-                script_start + todo + items[i] + newLineChar + script_end);
+        html += "<div>" + global.getCheckboxElement(false, true) + items[i] +
+            "</div>";
     }
+
+    editor->page()->mainFrame()->evaluateJavaScript(script_start + html + script_end);
     editor->setFocus();
     microFocusChanged();
+}
+
+void NBrowserWindow::todoSelectAll() {
+    this->todoSetAllChecked(true);
+}
+
+void NBrowserWindow::todoUnselectAll() {
+    this->todoSetAllChecked(false);
+}
+
+void NBrowserWindow::todoSetAllChecked(bool allSelected) {
+    QString script_start = "document.execCommand('insertHtml', false, '";
+    QString script_end = "');";
+
+    QString html = editor->selectedHtml();
+    if (allSelected) {
+        html.replace(global.getCheckboxElement(false, false),
+                global.getCheckboxElement(true, true));
+        html.replace(global.getCheckboxElement(true, false),
+                global.getCheckboxElement(true, true));
+    } else {
+        html.replace(global.getCheckboxElement(true, false),
+                global.getCheckboxElement(false, true));
+        html.replace(global.getCheckboxElement(false, false),
+                global.getCheckboxElement(false, true));
+    }
+
+    editor->page()->mainFrame()->evaluateJavaScript(script_start + html + script_end);
 }
 
 
 // The font size button was pressed
 void NBrowserWindow::fontSizeSelected(int index) {
     int size = buttonBar->fontSizes->itemData(index).toInt();
-
     if (size <= 0)
         return;
 
-    QString text = editor->selectedHtml();
-    if (text.trimmed() == "") {
-        // Add an invisible charactor in order to set the cursor position
-        // to the innerhtml part of the <span> tags added below. If not,
-        // the text typed in after font size changed will be added beyond
-        // the <span> tags scope.
-        text = "&zwnj;";
+    if (this->editor->selectedText() == "" &&
+            buttonBar->fontSizes->currentText() == QString(size)) {
+        return;
     }
 
     // Start building a new font span.
     int idx = buttonBar->fontNames->currentIndex();
     QString font = buttonBar->fontNames->itemText(idx);
 
-    if (text == "&zwnj;") {
+    QString text = editor->selectedHtml();
+    if (text.trimmed() == "") {
+        // Add an invisible charactor in order to focus on the innerhtml
+        // part of the <span> tags added below. If not, the text typed
+        // in after font size changed will be added beyond the <span>
+        // tags scope.
+        text = "&zwnj;";
+
         QString newText = "<span style=\"font-size:" + QString::number(size) +"pt;font-family:" + font + ";\">" + text + "</span>";
         QString script2 = QString("document.execCommand('insertHtml', false, '" + newText + "');");
         editor->page()->mainFrame()->evaluateJavaScript(script2);
+
+        QUndoStack *stack = this->editor->page()->undoStack();
+        stack->push(newAutoExecCommand());
 
         // Simulate a backspace press down event to delete
         // the invisible charactor inserted above.
@@ -1421,19 +1497,13 @@ void NBrowserWindow::fontSizeSelected(int index) {
                 Qt::Key_Backspace, Qt::NoModifier, "");
         QApplication::sendEvent(editor, key_press);
         delete key_press;
-
-        QUndoStack *stack = this->editor->page()->undoStack();
-        int index = stack->index();
-        autoBackspaceIndices.append(index);
-
     } else {
-    
         QString script = QString("document.execCommand('fontSize', false, 5);");
         editor->page()->mainFrame()->evaluateJavaScript(script);
 
-        // document.execCommand fontSize will generate font tag with size attribute set,
-        // which may make the following font setting out of order. So replace it with
-        // css style here.
+        // document.execCommand fontSize will generate font tag with 'size'
+        // attribute set, which now and then makes the following font size
+        // setting in trouble. So replace it with 'font-size' here.
         modifyFontTagAttr(size);
     }
 
@@ -2095,6 +2165,7 @@ void NBrowserWindow::correctFontTagAttr() {
     modifyFontTagAttr(size);
 }
 
+
 void NBrowserWindow::printNodeName(QString v) {
     QLOG_DEBUG() << v;
 }
@@ -2353,7 +2424,6 @@ void NBrowserWindow::toggleSource() {
 
 // Clear out the window's contents
 void NBrowserWindow::clear() {
-
     sourceEdit->blockSignals(true);
     editor->blockSignals(true);
     sourceEdit->setPlainText("");
@@ -2385,7 +2455,7 @@ void NBrowserWindow::clear() {
 
     dateEditor.clear();
 
-    autoBackspaceIndices.clear();
+    clearAutoExecCommands();
 }
 
 
@@ -4037,6 +4107,17 @@ QString base64_encode(QString string) {
 // Set the editor background & font color
 void NBrowserWindow::setEditorStyle() {
     QString css = global.getEditorCss();
+
+    QString path = global.fileManager.getImageDirPath("") +
+        QString("checkbox.css");
+    path.replace("file:///", "").replace("file://", "");
+    QFile f(QDir::toNativeSeparators(path));
+    f.open(QFile::ReadOnly);
+    QTextStream in(&f);
+    QString checkbox = in.readAll();
+    f.close();
+    css += checkbox;
+
     if (css.isEmpty()) {
         return;
     }
@@ -4186,11 +4267,7 @@ void NBrowserWindow::findShortcut() {
 //* in a note.
 //*******************************************
 void NBrowserWindow::findNextShortcut() {
-    findReplace->showFind();
-    QString find = findReplace->findLine->text();
-    if (find != "")
-        editor->page()->findText(find,
-                                 findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+    this->findNextInNote();
 }
 
 
@@ -4199,12 +4276,7 @@ void NBrowserWindow::findNextShortcut() {
 //* text in a note.
 //*******************************************
 void NBrowserWindow::findPrevShortcut() {
-    findReplace->showFind();
-    QString find = findReplace->findLine->text();
-    if (find != "")
-        editor->page()->findText(find,
-                                 findReplace->getCaseSensitive() | QWebPage::FindBackward |
-                                 QWebPage::FindWrapsAroundDocument);
+    this->findPrevInNote();
 }
 
 
@@ -4265,6 +4337,14 @@ void NBrowserWindow::findNextInNote() {
     if (find != "")
         editor->page()->findText(find,
                                  findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+    // The background color of the occurances
+    // when finding text under Windows is
+    // light gray, not recognizable enough,
+    // for better experience, add a background
+    // color for them here.
+#ifdef _WIN32
+    editor->page()->findText(find, QWebPage::HighlightAllOccurrences);
+#endif
 }
 
 
@@ -4280,6 +4360,9 @@ void NBrowserWindow::findPrevInNote() {
                                  findReplace->getCaseSensitive() | QWebPage::FindBackward |
                                  QWebPage::FindWrapsAroundDocument);
 
+#ifdef _WIN32
+    editor->page()->findText(find, QWebPage::HighlightAllOccurrences);
+#endif
 }
 
 
@@ -4381,4 +4464,20 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
     setDirty(this->lid, editor->isDirty, false);
 
     QLOG_TRACE_OUT();
+}
+
+
+QUndoCommand* NBrowserWindow::newAutoExecCommand() {
+    QUndoCommand *cmd = new QUndoCommand();
+    cmd->setText("AUTO_EXEC");
+    autoExecCommands.append(cmd);
+    return cmd;
+}
+
+
+void NBrowserWindow::clearAutoExecCommands() {
+    for (int i = 0; i < autoExecCommands.length(); i++) {
+        delete autoExecCommands[i];
+    }
+    autoExecCommands.clear();
 }

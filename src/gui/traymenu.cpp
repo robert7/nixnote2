@@ -81,6 +81,12 @@ void TrayMenu::buildActionMenu() {
     if (recentlyUpdatedMenu) {
         records.clear();;
         noteTable.getRecentlyUpdated(records);
+        const int MAX_LENGTH = 30;
+        for (int i = 0; i < records.length(); i++) {
+            if (records[i].second.length() > MAX_LENGTH) {
+                records[i].second = records[i].second.left(MAX_LENGTH) + "...";
+            }
+        }
         buildMenu("recentlyUpdatedMenu", recentlyUpdatedMenu, records);
     }
 

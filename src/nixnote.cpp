@@ -1971,11 +1971,10 @@ void NixNote::importNotes(bool fullRestore) {
     // Finish by filtering & displaying the data
     updateSelectionCriteria();
 
-    if (fullRestore || fileNames[0].endsWith(".enex")) {
-        tagTreeView->rebuildTagTreeNeeded = true;
-        tagTreeView->loadData();
-        searchTreeView->loadData();
-    }
+    tagTreeView->rebuildTagTreeNeeded = true;
+    tagTreeView->loadData();
+    searchTreeView->loadData();
+
     notebookTreeView->rebuildNotebookTreeNeeded = true;
     notebookTreeView->loadData();
 
@@ -2022,7 +2021,7 @@ void NixNote::notifySyncComplete() {
                  << ", popupOnSyncError=" << popupOnSyncError
                  << ", syncNotifications=" << syncNotifications;
 
-    if (haveSyncError && popupOnSyncError) {
+    if (haveSyncError && popupOnSyncError && !this->isHidden()) {
         QMessageBox::critical(this, tr("Sync Error"), tr("Sync error. See message log for details"));
         return;
     }

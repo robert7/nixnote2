@@ -830,7 +830,7 @@ void EditorButtonBar::loadFontNames() {
 void EditorButtonBar::loadFontSizeComboBox(QString name) {
     QFontDatabase fdb;
     fontSizes->clear();
-    QList<int> sizes = fdb.smoothSizes(name, "Normal");
+    QList<int> sizes = fdb.pointSizes(name);
     for (int i = 0; i < sizes.size(); i++) {
         fontSizes->addItem(QString::number(sizes[i]), sizes[i]);
     }

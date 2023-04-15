@@ -57,7 +57,11 @@ AboutDialog::AboutDialog(QDialog *parent) :
     }
 
     data.replace("__VERSION__", versionStr);
+#ifndef _WIN32
     data = data.replace("__LOGO__", "file://" + global.fileManager.getImageDirPath("") + "splash_logo.png");
+#else
+    data = data.replace("__LOGO__", "file:///" + global.fileManager.getImageDirPath("") + "splash_logo.png");
+#endif
 
     page->setHtml(data);
 
