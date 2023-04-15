@@ -4,6 +4,7 @@
 Nixnote is Evernote desktop client for Linux (can be also build on macOS and Windows).
 
 * [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
+  * **Important**: if you have problem with Evernote login (white dialog shown after entering password) - see [workaround](https://github.com/robert7/nixnote2/issues/171#issuecomment-1509087526)
 * [Features](https://github.com/robert7/nixnote2/wiki/Features)
 * [CHANGELOG](https://github.com/robert7/nixnote2/blob/master/debian/changelog)
 * [Contributing](CONTRIBUTING.md)
@@ -65,13 +66,15 @@ AUR package [nixnote2-git](https://aur.archlinux.org/packages/nixnote2-git/)
 builds the latest [stable release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#stable-releases).
 
 #### Gentoo Linux
-NixNote is available via a custom portage overlay (that lives [here][overlay]). It can be installed by running the following commands:
+NixNote is available via a custom portage [overlay]. It can be installed by running the following commands:
 ``` bash
 layman -o https://raw.githubusercontent.com/bbugyi200/portage-overlay/master/repository.xml -f -a bbugyi200
 emerge nixnote:2
 ```
 
-[overlay]: https://github.com/bbugyi200/portage-overlay
+Another option: [AppImage ebuild in Guru](https://github.com/gentoo/guru/tree/master/app-office/nixnote-bin), with only single dependency: fuse.
+
+[overlay]: https://github.com/bbugyi200/portage-overlay/blob/master/app-misc/nixnote/nixnote-9999.ebuild
 
 #### Fedora
 https://copr.fedorainfracloud.org/coprs/nunodias/nixnote2/
@@ -99,7 +102,8 @@ More info in: [DOCKER README](docs/DOCKER-README.md)
 
 ### Linux - manual build
 * Install development dependencies - look in content of [this docker file](development/docker/Dockerfile.ubuntu_xenial)
-  of [debian/control](https://github.com/robert7/nixnote2/blob/master/debian/control)
+  or [.travis.yml](https://github.com/robert7/nixnote2/blob/master/.travis.yml)
+  or [debian/control](https://github.com/robert7/nixnote2/blob/master/debian/control)
   to see example, what is needed for Ubuntu. If you use another distribution/version,
   you may need adjust packages.
 * Qt: you can either get Qt packages for your distribution or as alternative you can download Qt 5 directly
@@ -122,7 +126,7 @@ the could command could be `./development/build-with-qmake.sh debug noclean /usr
 
 If all got OK, you should have "qmake-build-debug/nixnote2" binary available now
 (and also a deployment copy in appdir). 
-I suggest running from "appdir" (e.g. `./appdir/usr/appdir/nixnote2`).
+I suggest running from "appdir" (e.g. `./appdir/usr/bin/nixnote2`).
 
 
 ```bash
