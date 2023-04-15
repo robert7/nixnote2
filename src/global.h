@@ -178,6 +178,7 @@ class Global : public QObject {
 
 private:
     void getThemeNamesFromFile(QString fileName, QStringList &values);
+    QString getCheckboxImageUrl(bool checked);
     int accountId;
 
     // Force notes search text to be lower case.  Useful for some non-ASCII languages.
@@ -207,6 +208,7 @@ public:
 
     void setDateFormat(int fmtNo);
     void setTimeFormat(int time);
+    QString getCheckboxElement(bool checked, bool escapeTwice);
 
     Global();           // Generic constructor
     virtual ~Global() {};          // destructor

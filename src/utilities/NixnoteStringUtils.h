@@ -71,11 +71,6 @@ public:
      * @return note GUID
      */
     static QString extractNoteGuid(QString noteUrl); 
-
-    static QString getCheckboxElement(bool checked, bool escapeTwice);
-
-private:
-    static QString getCheckboxImageUrl(bool checked);
 };
 
 #endif // NIXNOTE_STRING_UTILS_H

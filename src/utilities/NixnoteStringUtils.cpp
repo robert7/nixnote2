@@ -89,28 +89,3 @@ QString NixnoteStringUtils::extractNoteGuid(QString noteUrl) {
     return splitNoteUrl[splitNoteUrl.count()-1];
 }
 
-QString NixnoteStringUtils::getCheckboxImageUrl(bool checked) {
-    QString fileName = checked ? "checkbox_checked.png": "checkbox.png";
-    QString filePath = global.fileManager.getImageDirPath("").append(fileName);
-
-    QString prefix = QString("file://");
-#ifdef _WIN32
-    prefix.append("/");
-#endif
-    return prefix + filePath;
-}
-
-QString NixnoteStringUtils::getCheckboxElement(bool checked, bool escapeTwice) {
-    QString defaultUrl = getCheckboxImageUrl(false);
-    QString checkedUrl = getCheckboxImageUrl(true);
-    QString url = !checked ? defaultUrl : checkedUrl;
-    return QString("<img class=\"todo-icon\" src=\"") + url +
-        QString("\" type=\"image/png\" en-tag=\"icon\" ") +
-        QString("onclick=\"editorWindow.editAlert(); ") +
-        QString("this.src = this.src.indexOf(") +
-        (escapeTwice ? QString("\\\'") : QString("\'")) + defaultUrl +
-        (escapeTwice ? QString("\\\'") : QString("\'")) + QString(") == -1 ?") +
-        (escapeTwice ? QString("\\\'") : QString("\'")) + defaultUrl +
-        (escapeTwice ? QString("\\\':\\\'") : QString("\':\'")) + checkedUrl +
-        (escapeTwice ? QString("\\\';\">") : QString("\';\">"));
-}
