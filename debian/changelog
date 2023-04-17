@@ -6,8 +6,8 @@ NixNote (2.1.9) stable; urgency=low
   * Decoupled the functions of CmdLineTool(except signalGui()) from shared memory.
   * Made Nixnote export the stack attribute when exporting notes.
   * Added an option to save the UI state changes when Nixnote exits.
-  * Saved the note content when Nixnote receives specific signal interruptions(SIGINT, SIGHUP).
-  * Allocated the tageditor's tags dynamically.
+  * Save the note content when Nixnote receives specific signal interruptions(SIGINT, SIGHUP).
+  * Allocate the tageditor's tags dynamically.
   * Added a default theme named with 'Default' when no theme is found in themes.ini.
   * RAM usage optimizations.
   * Fixed file downloading under Windows.
@@ -23,7 +23,7 @@ NixNote (2.1.8) stable; urgency=low
   * Fixed: In-App Note links don't work when there is an apostrophe in the title - issue #168
   * Fixed: Nixnote2 exits when network gets disconnected - issue #189
   * Fixed: Import all notes, tag issue - issue #153
-  * Fixed: Local images cannot be pasted, web image's html element cannot be saved
+  * Fixed: Local images cannot be pasted, images in notes cannot be saved.
  -- Robert Spiegel <nightingale7@gmail.com>  Sat, 10 Sep 2022 10:00:00 +0200
 
 NixNote (2.1.7) stable; urgency=low
