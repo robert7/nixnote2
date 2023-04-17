@@ -11,7 +11,7 @@ NixNote (2.1.9) stable; urgency=low
   * Added a default theme named with 'Default' when no theme is found in themes.ini.
   * RAM usage optimizations.
   * Fixed file downloading under Windows.
-  * Made the editor not render the note content when Key_Up or Key_Down is kept being pressed.
+  * Made the editor not render the note content when Key_Up or Key_Down keeps being pressed.
  -- Robert Spiegel <nightingale7@gmail.com>  Sat, 15 Apr 2023 12:15:22 +0200
 
 NixNote (2.1.8) stable; urgency=low
