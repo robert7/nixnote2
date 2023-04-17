@@ -60,7 +60,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMenu>
 #include <QFileIconProvider>
 #include <QFontDatabase>
-#include <QSplitter>
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -110,9 +109,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
 
     //    this->setStyleSheet("margins:0px;");
-    QHBoxLayout *line1Layout = new QHBoxLayout();
-    QVBoxLayout *layout = new QVBoxLayout();   // Note content layout
-
+    line1Layout = new QHBoxLayout();
 
     // Setup the alarm button & display
     alarmText.setStyleSheet("QPushButton {background-color: transparent; border-radius: 0px;}");
@@ -123,7 +120,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     // Setup line #1 of the window.  The text & notebook
     connect(&alarmText, SIGNAL(clicked()), this, SLOT(alarmCompleted()));
-    layout->addLayout(line1Layout);
+    layout.addLayout(line1Layout);
     line1Layout->addWidget(&noteTitle, 20);
     line1Layout->addWidget(&alarmText);
     line1Layout->addWidget(&alarmButton);
@@ -132,44 +129,35 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
 
     // Add the second layout display
-    layout->addLayout(&line2Layout);
+    layout.addLayout(&line2Layout);
     line2Layout.addWidget(&urlEditor, 1);
     line2Layout.addWidget(&tagEditor, 3);
 
     // Add the third layout display
-    layout->addLayout(&line3Layout);
+    layout.addLayout(&line3Layout);
     line3Layout.addWidget(&dateEditor);
 
 
     editor = new NWebView(this);
     editor->setTitleEditor(&noteTitle);
     setupToolBar();
-    layout->addWidget(buttonBar);
+    layout.addWidget(buttonBar);
 
-    // setup the source editor
-    sourceEdit = new QTextEdit(this);
-    sourceEdit->setVisible(false);
-    sourceEdit->setTabChangesFocus(true);
-
-
-    QFont font;
-    font.setFamily("Courier");
-    font.setFixedPitch(true);
-    global.getGuiFont(font);
-    sourceEdit->setFont(global.getGuiFont(font));
-    sourceEditorTimer = new QTimer();
-    connect(sourceEditorTimer, SIGNAL(timeout()), this, SLOT(setSource()));
+    sourceEdit = nullptr;
+    hammer = nullptr;
+    spellChecker = nullptr;
+    printPreviewPage = nullptr;
+    printPage = nullptr;
 
     // add the actual note editor & source view
-    QSplitter *editorSplitter = new QSplitter(Qt::Vertical, this);
+    editorSplitter = new QSplitter(Qt::Vertical, this);
     editorSplitter->addWidget(editor);
-    editorSplitter->addWidget(sourceEdit);
-    layout->addWidget(editorSplitter);
-    setLayout(layout);
-    layout->setMargin(0);
+    layout.addWidget(editorSplitter);
+    setLayout(&layout);
+    layout.setMargin(0);
 
     findReplace = new FindReplace();
-    layout->addWidget(findReplace);
+    layout.addWidget(findReplace);
     findReplace->setVisible(false);
 
     connect(findReplace->nextButton, SIGNAL(clicked()), this, SLOT(findNextInNote()));
@@ -226,7 +214,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     connect(&tagEditor, SIGNAL(tagsUpdated()), this, SLOT(sendTagUpdateSignal()));
     connect(&tagEditor, SIGNAL(newTagCreated(qint32)), this, SLOT(newTagAdded(qint32)));
     connect(editor, SIGNAL(noteChanged()), this, SLOT(noteContentUpdated()));
-    connect(sourceEdit, SIGNAL(textChanged()), this, SLOT(noteSourceUpdated()));
     connect(editor, SIGNAL(htmlEditAlert()), this, SLOT(noteContentEdited()));
     connect(editor->page(), SIGNAL(linkClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
     connect(editor->page(), SIGNAL(microFocusChanged()), this, SLOT(microFocusChanged()));
@@ -242,14 +229,12 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     buttonBar->getButtonbarState();
 
-    printPage = new QTextEdit();
-    printPage->setVisible(false);
-    //connect(printPage, SIGNAL(loadFinished(bool)), this, SLOT(printReady(bool)));
+    printPreviewPage = nullptr;
+    printPage = nullptr;
 
-    printPreviewPage = new QTextEdit();
-    printPreviewPage->setVisible(false);
-
-    hammer = new Thumbnailer(global.db);
+    if (!global.disableThumbnails) {
+        hammer = new Thumbnailer(global.db);
+    }
     lid = -1;
 
     //Setup shortcuts for context menu
@@ -323,6 +308,47 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 NBrowserWindow::~NBrowserWindow() {
     browserThread->quit();
     while (!browserRunner->isIdle);
+
+    delete browserThread;
+    delete browserRunner;
+    delete editor;
+
+    delete editorSplitter;
+    delete findReplace;
+    delete factory;
+    delete buttonBar;
+    delete line1Layout;
+
+    delete focusNoteShortcut;
+    delete focusTitleShortcut;
+    delete insertDatetimeShortcut;
+    delete insertDateShortcut;
+    delete insertTimeShortcut;
+    delete fontColorShortcut;
+    delete fontHighlightShortcut;
+    delete copyNoteUrlShortcut;
+    delete removeFormattingShortcut;
+    delete insertHtmlEntitiesShortcut;
+    delete encryptTextShortcut;
+    delete insertHyperlinkShortcut;
+    delete insertQuicklinkShortcut;
+    delete removeHyperlinkShortcut;
+    delete attachFileShortcut;
+    delete insertLatexShortcut;
+
+    if (hammer != nullptr) {
+        delete hammer;
+    }
+
+    if (spellChecker != nullptr) {
+        delete spellChecker;
+    }
+    if (printPreviewPage != nullptr) {
+        delete printPreviewPage;
+    }
+    if (printPage != nullptr) {
+        delete printPage;
+    }
 }
 
 
@@ -554,13 +580,6 @@ void NBrowserWindow::setContent(qint32 lid) {
     //**** END OF CALL TO PRE-LOAD EXIT
 
     editor->setContent(content);
-
-    // Qt Webview memory leaks solution:
-    // https://forum.qt.io/topic/10832/memory-size-increases-per-page-load/4
-    QWebElement body = editor->page()->mainFrame()->findFirstElement("body");
-    body.setAttribute("onunload", "_function() {}");
-    QWebSettings::clearMemoryCaches();
-    editor->history()->clear();
 
     // is this an ink note?
     if (inkNote)
@@ -822,7 +841,7 @@ void NBrowserWindow::noteContentUpdated() {
 
 // Save the note's content
 void NBrowserWindow::saveNoteContent() {
-    microFocusChanged();
+    //microFocusChanged();
 
     if (this->editor->isDirty) {
         QLOG_DEBUG() << "saveNoteContent() dirty=true";
@@ -904,15 +923,6 @@ void NBrowserWindow::saveNoteContent() {
 // The undo edit button was pressed
 void NBrowserWindow::undoButtonPressed() {
     this->editor->triggerPageAction(QWebPage::Undo);
-
-    QUndoStack *stack = this->editor->page()->undoStack();
-    if (stack->count() >= 1 && stack->text(stack->index() - 1) == "AUTO_EXEC") {
-        // jump over the AUTO_EXEC QUndoCommand
-        this->editor->triggerPageAction(QWebPage::Undo);
-        // undo the inserting of 0 width character
-        this->editor->triggerPageAction(QWebPage::Undo);
-    }
-
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -921,15 +931,6 @@ void NBrowserWindow::undoButtonPressed() {
 // The redo edit button was pressed
 void NBrowserWindow::redoButtonPressed() {
     this->editor->triggerPageAction(QWebPage::Redo);
-
-    QUndoStack *stack = this->editor->page()->undoStack();
-    if (stack->text(stack->index()) == "AUTO_EXEC") {
-        // jump over the AUTO_EXEC QUndoCommand
-        this->editor->triggerPageAction(QWebPage::Redo);
-        // redo the simulated backspace
-        this->editor->triggerPageAction(QWebPage::Redo);
-    }
-
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -1478,25 +1479,29 @@ void NBrowserWindow::fontSizeSelected(int index) {
 
     QString text = editor->selectedHtml();
     if (text.trimmed() == "") {
+        QUndoStack *stack = this->editor->page()->undoStack();
+
+        // Simulate a backspace press down event to delete
+        // the invisible charactor inserted above.
+        QKeyEvent *backspacePressed = new QKeyEvent(QKeyEvent::KeyPress,
+                Qt::Key_Backspace, Qt::NoModifier, "");
+
+        stack->beginMacro("SetFontSize");
+
         // Add an invisible charactor in order to focus on the innerhtml
         // part of the <span> tags added below. If not, the text typed
         // in after font size changed will be added beyond the <span>
         // tags scope.
         text = "&zwnj;";
-
-        QString newText = "<span style=\"font-size:" + QString::number(size) +"pt;font-family:" + font + ";\">" + text + "</span>";
+        QString newText = "<span style=\"font-size:" + QString::number(size) + "pt;font-family:" + font + ";\">" + text + "</span>";
         QString script2 = QString("document.execCommand('insertHtml', false, '" + newText + "');");
         editor->page()->mainFrame()->evaluateJavaScript(script2);
 
-        QUndoStack *stack = this->editor->page()->undoStack();
-        stack->push(newAutoExecCommand());
+        QApplication::sendEvent(editor, backspacePressed);
 
-        // Simulate a backspace press down event to delete
-        // the invisible charactor inserted above.
-        QKeyEvent *key_press = new QKeyEvent(QKeyEvent::KeyPress,
-                Qt::Key_Backspace, Qt::NoModifier, "");
-        QApplication::sendEvent(editor, key_press);
-        delete key_press;
+        stack->endMacro();
+
+        delete backspacePressed;
     } else {
         QString script = QString("document.execCommand('fontSize', false, 5);");
         editor->page()->mainFrame()->evaluateJavaScript(script);
@@ -2080,47 +2085,44 @@ void NBrowserWindow::microFocusChanged() {
     else
         editor->encryptAction->setEnabled(false);
 
-
     //     +QString("            window.browserWindow.printNodeName(workingNode.firstChild.nodeValue);")
     QString js = QString("function getCursorPos() {")
-                 + QString("var cursorPos;")
-                 + QString("var insideUrl=false;")
-                 + QString("if (window.getSelection) {")
-                 + QString("   var selObj = window.getSelection();")
-                 + QString("   var selRange = selObj.getRangeAt(0);")
-                 + QString("   var workingNode = window.getSelection().anchorNode.parentNode;")
-                 //+QString("    window.browserWindow.printNodeName(workingNode.nodeName);")
-                 + QString("   while(workingNode != null) { ")
-                 //+QString("      window.browserWindow.printNodeName(workingNode.nodeName);")
-                 + QString("      if (workingNode.nodeName=='TABLE') {")
-                 + QString(
-            "          if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea();")
-                 + QString("      }")
-                 + QString("      if (workingNode.nodeName=='PRE') window.browserWindow.setInsidePre();")
-                 + QString("      if (workingNode.nodeName=='B') window.browserWindow.boldActive();")
-                 + QString("      if (workingNode.nodeName=='I') window.browserWindow.italicsActive();")
-                 + QString("      if (workingNode.nodeName=='U') window.browserWindow.underlineActive();")
-                 + QString("      if (workingNode.nodeName=='UL') window.browserWindow.setInsideList();")
-                 + QString("      if (workingNode.nodeName=='OL') window.browserWindow.setInsideList();")
-                 + QString("      if (workingNode.nodeName=='LI') window.browserWindow.setInsideList();")
-                 + QString("      if (workingNode.nodeName=='TBODY') window.browserWindow.setInsideTable();")
-                 + QString("      if (workingNode.nodeName=='A') {")
-                 + QString("           insideUrl = true;")
-                 + QString("           for(var x = 0; x < workingNode.attributes.length; x++ ) {")
-                 + QString("              if (workingNode.attributes[x].nodeName.toLowerCase() == 'href')")
-                 + QString("                  window.browserWindow.setInsideLink(workingNode.attributes[x].nodeValue);")
-                 + QString("           }")
-                 + QString("      }")
-                 + QString("      if (workingNode.nodeName=='SPAN') {")
-                 + QString(
-            "         if (workingNode.getAttribute('style') == 'text-decoration: underline;') window.browserWindow.underlineActive();")
-                 + QString("      }")
-                 + QString("      workingNode = workingNode.parentNode;")
-                 + QString("   }")
-                 + QString("}")
-                 + QString("}  getCursorPos();");
-    editor->page()->mainFrame()->evaluateJavaScript(js);
+               + QString("    var cursorPos;")
+               + QString("    var insideUrl=false;")
+               + QString("    if (window.getSelection) {")
+               + QString("        var selObj = window.getSelection();")
+               + QString("        var selRange = selObj.getRangeAt(0);")
+               + QString("        var workingNode = window.getSelection().anchorNode.parentNode;")
+               //+QString("    window.browserWindow.printNodeName(workingNode.nodeName);")
+               + QString("        while(workingNode != null) { ")
+               //+QString("      window.browserWindow.printNodeName(workingNode.nodeName);")
+               + QString("            if (workingNode.nodeName=='TABLE') {")
+               + QString("                if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea();")
+               + QString("            }")
+               + QString("            if (workingNode.nodeName=='PRE') window.browserWindow.setInsidePre();")
+               + QString("            if (workingNode.nodeName=='B') window.browserWindow.boldActive();")
+               + QString("            if (workingNode.nodeName=='I') window.browserWindow.italicsActive();")
+               + QString("            if (workingNode.nodeName=='U') window.browserWindow.underlineActive();")
+               + QString("            if (workingNode.nodeName=='UL') window.browserWindow.setInsideList();")
+               + QString("            if (workingNode.nodeName=='OL') window.browserWindow.setInsideList();")
+               + QString("            if (workingNode.nodeName=='LI') window.browserWindow.setInsideList();")
+               + QString("            if (workingNode.nodeName=='TBODY') window.browserWindow.setInsideTable();")
+               + QString("            if (workingNode.nodeName=='A') {")
+               + QString("                 insideUrl = true;")
+               + QString("                 for(var x = 0; x < workingNode.attributes.length; x++ ) {")
+               + QString("                    if (workingNode.attributes[x].nodeName.toLowerCase() == 'href')")
+               + QString("                        window.browserWindow.setInsideLink(workingNode.attributes[x].nodeValue);")
+               + QString("                 }")
+               + QString("            }")
+               + QString("            if (workingNode.nodeName=='SPAN') {")
+               + QString("                if (workingNode.getAttribute('style') == 'text-decoration: underline;') window.browserWindow.underlineActive();")
+               + QString("            }")
+               + QString("            workingNode = workingNode.parentNode;")
+               + QString("        }")
+               + QString("    }")
+               + QString("}  getCursorPos();");
 
+    editor->page()->mainFrame()->evaluateJavaScript(js);
 
     QString js2 = QString("function getFontSize() {") +
                   QString("    var node = document.getSelection().anchorNode;") +
@@ -2403,18 +2405,33 @@ void NBrowserWindow::linkClicked(const QUrl url) {
 
 // show/hide view source window
 void NBrowserWindow::showSource(bool value) {
-    setSource();
+    if (value) {
+        setSource();
+    }
     sourceEdit->setVisible(value);
-    sourceEditorTimer->setInterval(1000);
-    if (!value)
-        sourceEditorTimer->stop();
-    else
-        sourceEditorTimer->start();
 }
 
 
 // Toggle the show source button
 void NBrowserWindow::toggleSource() {
+    if (sourceEdit == nullptr) {
+        // setup the source editor
+        sourceEdit = new QTextEdit(this);
+        sourceEdit->setVisible(false);
+        sourceEdit->setTabChangesFocus(true);
+
+        QFont font;
+        font.setFamily("Courier");
+        font.setFixedPitch(true);
+        global.getGuiFont(font);
+        sourceEdit->setFont(global.getGuiFont(font));
+
+        editorSplitter->addWidget(sourceEdit);
+
+        connect(sourceEdit, SIGNAL(textChanged()), this, SLOT(noteSourceUpdated()));
+        connect(editor->page(), SIGNAL(contentsChanged()), this, SLOT(setSource()));
+    }
+
     if (sourceEdit->isVisible())
         showSource(false);
     else
@@ -2424,15 +2441,17 @@ void NBrowserWindow::toggleSource() {
 
 // Clear out the window's contents
 void NBrowserWindow::clear() {
-    sourceEdit->blockSignals(true);
+    if (sourceEdit != nullptr) {
+        sourceEdit->blockSignals(true);
+        sourceEdit->setPlainText("");
+        sourceEdit->setReadOnly(true);
+        sourceEdit->blockSignals(false);
+    }
     editor->blockSignals(true);
-    sourceEdit->setPlainText("");
     editor->setContent("<html><body></body></html>");
-    sourceEdit->setReadOnly(true);
     editor->page()->setContentEditable(false);
     lid = -1;
     editor->blockSignals(false);
-    sourceEdit->blockSignals(false);
 
     noteTitle.blockSignals(true);
     noteTitle.setTitle(-1, "", "");
@@ -2454,14 +2473,12 @@ void NBrowserWindow::clear() {
 //    editor->page()->setContentEditable(false);
 
     dateEditor.clear();
-
-    clearAutoExecCommands();
 }
 
 
 // Set the source for the "show source" button
 void NBrowserWindow::setSource() {
-    if (sourceEdit->hasFocus())
+    if (sourceEdit == nullptr || sourceEdit->hasFocus())
         return;
 
     QString text = editor->editorPage->mainFrame()->toHtml();
@@ -3081,6 +3098,10 @@ QString NBrowserWindow::stripContentsForPrint() {
 // in much the same way as printNote().  It removes all the
 // <object> tags & replaces them with <img>.
 void NBrowserWindow::printPreviewNote() {
+    if (printPreviewPage == nullptr) {
+        printPreviewPage = new QTextEdit();
+        printPreviewPage->setVisible(false);
+    }
     QString contents = stripContentsForPrint();
 
     // Load the print page.  When it is ready the printReady() slot will
@@ -3104,6 +3125,10 @@ void NBrowserWindow::printPreviewReady(QPrinter *printer) {
 // note and replaces the <object> tags with <img> tags.  The plugin
 // object should be creating temporary images for the print.
 void NBrowserWindow::printNote() {
+    if (printPage == nullptr) {
+        printPage = new QTextEdit();
+        printPage->setVisible(false);
+    }
     QString contents = stripContentsForPrint();
 
     // Load the print page.  When it is ready the printReady() slot will
@@ -4108,19 +4133,18 @@ QString base64_encode(QString string) {
 void NBrowserWindow::setEditorStyle() {
     QString css = global.getEditorCss();
 
-    QString path = global.fileManager.getImageDirPath("") +
-        QString("checkbox.css");
-    path.replace("file:///", "").replace("file://", "");
-    QFile f(QDir::toNativeSeparators(path));
-    f.open(QFile::ReadOnly);
-    QTextStream in(&f);
-    QString checkbox = in.readAll();
-    f.close();
+    QString checkbox =
+        QString("img.todo-icon {") +
+        QString("    vertical-align: baseline !important;") +
+        QString("    cursor: pointer;") +
+        QString("    padding-right: 5px;") +
+        QString("\n") +
+        QString("    user-drag: none;") +
+        QString("    -webkit-user-drag: none;") +
+        QString("}");
+
     css += checkbox;
 
-    if (css.isEmpty()) {
-        return;
-    }
     QString url = QString("data:text/css;charset=utf-8;base64,").append(base64_encode(css));
     // http://doc.qt.io/archives/qt-5.5/qwebsettings.html#setUserStyleSheetUrl
     // hack to pass inline css to avoid putting it in file
@@ -4466,18 +4490,3 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
     QLOG_TRACE_OUT();
 }
 
-
-QUndoCommand* NBrowserWindow::newAutoExecCommand() {
-    QUndoCommand *cmd = new QUndoCommand();
-    cmd->setText("AUTO_EXEC");
-    autoExecCommands.append(cmd);
-    return cmd;
-}
-
-
-void NBrowserWindow::clearAutoExecCommands() {
-    for (int i = 0; i < autoExecCommands.length(); i++) {
-        delete autoExecCommands[i];
-    }
-    autoExecCommands.clear();
-}

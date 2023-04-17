@@ -43,75 +43,133 @@ NoteIndexer::NoteIndexer(DatabaseConnection *db)
 
 
 void NoteIndexer::indexNote(qint32 lid) {
-    NoteTable ntable(db);
-    Note n;
-    ntable.get(n, lid,false,false);
+    QList<qint32> noteLids;
+    noteLids.clear();
+    noteLids.append(lid);
 
-    if (n.title.isSet()) {
-        QLOG_DEBUG() << "Indexing note: " << n.title;
-    }
-
-    QString content = "";
-    if (n.content.isSet())
-        content = n.content;
+    indexNotes(noteLids);
+}
 
 
-    // Start looking through the note
-    qint32 startPos =content.indexOf(QChar('<'));
-    qint32 endPos = content.indexOf(QChar('>'),startPos)+1;
-    content.remove(startPos,endPos-startPos);
+void NoteIndexer::indexNotes(const QList<qint32> &lids) {
+    QStringList contentList;
+    contentList.clear();
+    for (int i = 0; i < lids.size(); ++i) {
+        NoteTable ntable(db);
+        Note n;
+        ntable.get(n, lids[i],false,false);
 
-    // Remove encrypted text
-    while (content.contains("<en-crypt")) {
-        startPos = content.indexOf("<en-crypt");
-        endPos = content.indexOf("</en-crypt>") + 11;
-        content = content.mid(0,startPos)+content.mid(endPos);
-    }
+        if (n.title.isSet()) {
+            QLOG_DEBUG() << "Indexing note: " << n.title;
+        }
 
-    // Remove any XML tags
-    while (content.contains(QChar('<'))) {
-        startPos = content.indexOf(QChar('<'));
-        endPos = content.indexOf(QChar('>'),startPos)+1;
+        QString content = "";
+        if (n.content.isSet())
+            content = n.content;
+
+
+        // Start looking through the note
+        qint32 startPos =content.indexOf(QChar('<'));
+        qint32 endPos = content.indexOf(QChar('>'),startPos)+1;
         content.remove(startPos,endPos-startPos);
-    };
 
-    // Get the content as an HTML doc.
-    QTextDocument textDocument;
-    textDocument.setHtml(content);
-    QString title  = "";
-    if (n.title.isSet())
-        title = n.title;
-    content = textDocument.toPlainText() + " " + title;
-    this->addTextIndex(lid, content);
+        // Remove encrypted text
+        while (content.contains("<en-crypt")) {
+            startPos = content.indexOf("<en-crypt");
+            endPos = content.indexOf("</en-crypt>") + 11;
+            content = content.mid(0,startPos)+content.mid(endPos);
+        }
+
+        // Remove any XML tags
+        while (content.contains(QChar('<'))) {
+            startPos = content.indexOf(QChar('<'));
+            endPos = content.indexOf(QChar('>'),startPos)+1;
+            content.remove(startPos,endPos-startPos);
+        };
+
+        // Get the content as an HTML doc.
+        QTextDocument textDocument;
+        textDocument.setHtml(content);
+        QString title  = "";
+        if (n.title.isSet())
+            title = n.title;
+        content = textDocument.toPlainText() + " " + title;
+        contentList.append(content);
+    }
+
+    this->addTextIndices(lids, contentList);
 }
 
 
 void NoteIndexer::addTextIndex(int lid, QString content) {
+    QList<qint32> noteLids;
+    noteLids.clear();
+    noteLids.append(lid);
+
+    QStringList contentList;
+    contentList.clear();
+    contentList.append(content);
+
+    addTextIndices(noteLids, contentList);
+}
+
+
+void NoteIndexer::addTextIndices(const QList<int> &noteLids,
+        const QStringList &contentList) {
+    QString values = "", lids = "";
+
+    for (int i = 0; i < noteLids.size(); ++i) {
+        if (noteLids[i] <= 0) {
+            continue;
+        }
+        lids += ":lid" + QString::number(i) + ",";
+        values += "(:lid" + QString::number(i) + "," +
+            ":weight,:source," +
+            ":content" + QString::number(i) + "),";
+    }
+
+    // chop the trailing ','
+    if (lids != "") {
+        lids.chop(1);
+    }
+
+    if (values != "") {
+        values.chop(1);
+    }
+
     // Delete any old content
     NSqlQuery sql(db);
-    sql.prepare("Delete from SearchIndex where lid=:lid and source=:source");
-    sql.bindValue(":lid", lid);
+    sql.prepare("Delete from SearchIndex where lid in (" +
+            lids + ") and source=:source");
+    for (int i = 0; i < noteLids.size(); ++i) {
+        if (noteLids[i] > 0) {
+            sql.bindValue(":lid" + QString::number(i), noteLids[i]);
+        }
+    }
     sql.bindValue(":source", "text");
     sql.exec();
 
     // Add the new content.  it is basically a text version of the note with a weight of 100.
-    sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, :source, :content)");
-    sql.bindValue(":lid", lid);
+    sql.prepare("Insert into SearchIndex (lid, weight, source, content) values "
+            + values);
     sql.bindValue(":weight", 100);
     sql.bindValue(":source", "text");
-
-    content = global.normalizeTermForSearchAndIndex(content);
-    sql.bindValue(":content", content);
+    for (int i = 0; i < noteLids.size(); ++i) {
+        if (noteLids[i] <= 0) {
+            continue;
+        }
+        sql.bindValue(":lid" + QString::number(i),
+                noteLids[i]);
+        sql.bindValue(":content" + QString::number(i),
+                global.normalizeTermForSearchAndIndex(contentList[0]));
+    }
 
     sql.exec();
 
-    sql.prepare("Delete from DataStore where lid=:lid and key=:key");
-    sql.bindValue(":lid", lid);
+    sql.prepare("Delete from DataStore where lid in (" + lids + ") and key=:key");
     sql.bindValue(":key", NOTE_INDEX_NEEDED);
     sql.exec();
 }
-
-
 
 
 void NoteIndexer::indexResource(qint32 lid) {

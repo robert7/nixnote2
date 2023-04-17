@@ -42,24 +42,22 @@ TagEditor::TagEditor(QWidget *parent) :
     currentLid = 0;
     newEditorHasFocus = false;
 
-    QPixmap pix = global.getPixmapResource(":tagIcon");
-    tagIcon.setPixmap(pix);
-
-    for (int i=0; i<MAX_TAGS; i++) {
-        tags[i].setVisible(false);
-        layout->addWidget(&tags[i]);
-        connect(&tags[i],SIGNAL(closeClicked(QString)), this, SLOT(removeTag(QString)));
-    }
+    tagIcon.setPixmap(global.getPixmapResource(":tagIcon"));
 
     connect(&newTag, SIGNAL(focussed(bool)), this, SLOT(newTagFocusLost(bool)));
     connect(&newTag, SIGNAL(tabPressed()), this, SLOT(newTagTabPressed()));
     tagNames.clear();
     layout->addWidget(&newTag);
-    //delete pix;
     account = 0;
     hide();
 
     QLOG_TRACE_OUT() << typeid(*this).name();
+}
+
+
+TagEditor::~TagEditor() {
+    delete layout;
+    emptyTags();
 }
 
 
@@ -160,9 +158,17 @@ void TagEditor::loadTags() {
     qSort(tagNames.begin(), tagNames.end(), caseInsensitiveLessThan);
 
     for (qint32 i=0; i<tagNames.size(); i++) {
-        tags[i].setText(tagNames[i]);
-        tags[i].setVisible(true);
-        tags[i].resize();
+        TagViewer *tag = new TagViewer();
+        tag->setText(tagNames[i]);
+        tag->resize();
+        tag->setVisible(false);
+
+        layout->addWidget(tag);
+
+        tag->setVisible(true);
+        connect(tag, SIGNAL(closeClicked(QString)), this, SLOT(removeTag(QString)));
+
+        tags.append(tag);
     }
     layout->invalidate();
     QLOG_TRACE_OUT() << typeid(*this).name();
@@ -239,32 +245,25 @@ void TagEditor::getTags(QStringList &names) {
 //*******************************************************
 void TagEditor::removeTag(QString text) {
     QLOG_TRACE_IN() << typeid(*this).name();
-    bool found = false;
-    qint32 j=-1;
-    for (qint32 i=0; i<tagNames.size(); i++) {
-        if (tags[i].text().toLower() == text.toLower()) {
-            found = true;
-            TagTable tagTable(global.db);
-            QString name = tags[i].text();
-            qint32 lid = tagTable.findByName(name, account);
-            if (lid>0) {
-                NoteTable noteTable(global.db);
-                noteTable.removeTag(currentLid, lid, true);
-            }
-            j = i;
-        }
-        if (found && i<tagNames.size()-1) {
-            tags[i].setText(tags[i+1].text());
-            tags[i].setMinimumWidth(tags[i+1].minimumWidth());
-        }
+    qint32 j = -1;
 
+    for (qint32 i=0; i<tagNames.size(); i++) {
+        if (tags[i]->text().toLower() == text.toLower()) {
+            j = i;
+            break;
+        }
     }
 
-    // If we found a match we need to chop off the end
-    if (j>=0) {
-        tags[tagNames.size()-1].clear();
-        tags[tagNames.size()-1].setVisible(false);
-        tags[tagNames.size()-1].setMinimumWidth(0);
+    if (j != -1) {
+        TagTable tagTable(global.db);
+        QString name = tags[j]->text();
+        qint32 lid = tagTable.findByName(name, account);
+        if (lid > 0) {
+            NoteTable noteTable(global.db);
+            noteTable.removeTag(currentLid, lid, true);
+        }
+        delete tags[j];
+        tags.removeAt(j);
         tagNames.removeAt(j);
     }
 
@@ -296,8 +295,8 @@ void TagEditor::hideEvent(QHideEvent* event) {
     Q_UNUSED(event);  // suppress unused
     tagIcon.hide();
     newTag.hide();
-    for (qint32 i=0; i<MAX_TAGS; i++) {
-        tags[i].hide();
+    for (qint32 i=0; i<tags.size(); i++) {
+        tags[i]->hide();
     }
     QLOG_TRACE_OUT() << typeid(*this).name();
 }
@@ -313,7 +312,7 @@ void TagEditor::showEvent(QShowEvent* event) {
     tagIcon.show();
     newTag.show();
     for (qint32 i=0; i<tagNames.size(); i++)
-        tags[i].show();
+        tags[i]->show();
     QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
@@ -324,11 +323,10 @@ void TagEditor::showEvent(QShowEvent* event) {
 //*******************************************************
 void TagEditor::emptyTags() {
     QLOG_TRACE_IN() << typeid(*this).name();
-    for (qint32 i=MAX_TAGS-1; i>=0; i--) {
-        tags[i].clear();
-        tags[i].setMinimumWidth(0);
-        tags[i].setVisible(false);
+    for (qint32 i=tags.size()-1; i>=0; i--) {
+        delete tags[i];
     }
+    tags.clear();
     QLOG_TRACE_OUT() << typeid(*this).name();
 }
 

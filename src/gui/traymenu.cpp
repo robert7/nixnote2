@@ -78,10 +78,10 @@ void TrayMenu::buildActionMenu() {
         buildMenu("pinnedMenu", pinnedMenu, records);
     }
 
+    const int MAX_LENGTH = 30;
     if (recentlyUpdatedMenu) {
-        records.clear();;
+        records.clear();
         noteTable.getRecentlyUpdated(records);
-        const int MAX_LENGTH = 30;
         for (int i = 0; i < records.length(); i++) {
             if (records[i].second.length() > MAX_LENGTH) {
                 records[i].second = records[i].second.left(MAX_LENGTH) + "...";
@@ -101,7 +101,11 @@ void TrayMenu::buildActionMenu() {
             if (record.type == FavoritesRecord::Note) {
                 QPair<qint32, QString> pair;
                 pair.first = record.target.toInt();
-                pair.second = record.displayName;
+                if (record.displayName.length() > MAX_LENGTH) {
+                    pair.second = record.displayName.left(MAX_LENGTH) + "...";
+                } else {
+                    pair.second = record.displayName;
+                }
                 records.prepend(pair);
             }
         }

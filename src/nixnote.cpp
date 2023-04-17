@@ -113,12 +113,12 @@ NixNote *NixNote::singleton;
 //* everything else.
 //*************************************************
 NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
-    splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImage"));
     global.settings->beginGroup(INI_GROUP_APPEARANCE);
     if (global.settings->value("showSplashScreen", false).toBool()) {
+        splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImage"));
         splashScreen->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::SplashScreen | Qt::FramelessWindowHint);
         splashScreen->show();
-        QTimer::singleShot(2500, splashScreen, SLOT(close()));
+        QTimer::singleShot(2500, this, SLOT(clearSplashScreen()));
     }
     global.settings->endGroup();
     QString css = global.getThemeCss("mainWindowCss");
@@ -146,10 +146,12 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     indexThread.start(QThread::LowestPriority);
     this->thread()->setPriority(QThread::HighestPriority);
 
-    heartbeatTimer.setInterval(1000);
-    heartbeatTimer.setSingleShot(false);
-    connect(&heartbeatTimer, SIGNAL(timeout()), this, SLOT(heartbeatTimerTriggered()));
-    heartbeatTimer.start();
+    if (global.getListenToCommands()) {
+        heartbeatTimer.setInterval(1000);
+        heartbeatTimer.setSingleShot(false);
+        connect(&heartbeatTimer, SIGNAL(timeout()), this, SLOT(heartbeatTimerTriggered()));
+        heartbeatTimer.start();
+    }
 
     this->setFont(global.getGuiFont(this->font()));
 
@@ -250,7 +252,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
 
 // Destructor to call when all done
 NixNote::~NixNote() {
-    delete splashScreen;
     syncThread.quit();
     indexThread.quit();
     counterThread.quit();
@@ -278,6 +279,12 @@ NixNote::~NixNote() {
 }
 
 
+void NixNote::clearSplashScreen() {
+    splashScreen->close();
+    delete splashScreen;
+}
+
+
 //****************************************************************
 //* Public static method to get the singleton instance of NixNote
 //****************************************************************
@@ -293,7 +300,7 @@ void NixNote::setupGui() {
     //this->setStyleSheet("background-color: white;");
     //statusBar();    setWindowTitle(tr(NN_APP_DISPLAY_NAME_GUI));
     QLOG_DEBUG() << "setupGui: Setting up window icon";
-    const auto wIcon = QIcon(global.getIconResource(":windowIcon"));
+    const auto wIcon = global.getIconResource(":windowIcon");
     if (!wIcon.isNull()) {
         setWindowIcon(wIcon);
     }
@@ -1184,6 +1191,11 @@ void NixNote::saveOnExit() {
     QLOG_DEBUG() << "saveOnExit: Shutting down threads";
     indexRunner.keepRunning = false;
     counterRunner.keepRunning = false;
+
+    if (!global.getSaveUiState()) {
+        return;
+    }
+
     QCoreApplication::processEvents();
 
     QLOG_DEBUG() << "Saving window states";
@@ -1524,7 +1536,7 @@ void NixNote::synchronize() {
 
     this->saveContents();
     tabWindow->saveAllNotes();
-    syncButtonTimer.start(3);
+    syncButtonTimer.start(36);
     emit syncRequested();
 }
 
@@ -1601,31 +1613,37 @@ void NixNote::syncButtonReset() {
 //* Evernote and are transmitting & receiving info
 //*****************************************************
 void NixNote::updateSyncButton() {
-
+    const int N_ICONS = 30;
     if (syncIcons.size() == 0) {
         double angle = 0.0;
-        synchronizeIconAngle = 0;
+        synchronizeIconIndex = 0;
         QPixmap pix(":synchronizeIcon");
         syncIcons.push_back(pix);
-        for (qint32 i = 0; i <= 360; i++) {
+
+        QPainter p;
+        p.setBackgroundMode(Qt::OpaqueMode);
+        QSize size = pix.size();
+
+        for (qint32 i = 1; i < N_ICONS; ++i) {
             QPixmap rotatedPix(pix.size());
-            QPainter p(&rotatedPix);
             rotatedPix.fill(toolBar->palette().color(QPalette::Background));
-            QSize size = pix.size();
+
+            p.begin(&rotatedPix);
             p.translate(size.width() / 2, size.height() / 2);
-            angle = angle + 1.0;
+            angle = angle + 360.0f/N_ICONS;
             p.rotate(angle);
-            p.setBackgroundMode(Qt::OpaqueMode);
             p.translate(-size.width() / 2, -size.height() / 2);
+
             p.drawPixmap(0, 0, pix);
             p.end();
+
             syncIcons.push_back(rotatedPix);
         }
     }
-    synchronizeIconAngle++;
-    if (synchronizeIconAngle > 359)
-        synchronizeIconAngle = 0;
-    syncButton->setIcon(syncIcons[synchronizeIconAngle]);
+    synchronizeIconIndex++;
+    if (synchronizeIconIndex == N_ICONS)
+        synchronizeIconIndex = 0;
+    syncButton->setIcon(syncIcons[synchronizeIconIndex]);
 }
 
 
@@ -3277,10 +3295,6 @@ void NixNote::deleteCurrentNote() {
     QList<qint32> lids;
     lids.append(lid);
     emit(notesDeleted(lids));
-    // Unpin the note being deleted, so that the table view
-    // will not display a pinned note even after it
-    // has been deleted.
-    unpinCurrentNote();
 }
 
 
@@ -3430,6 +3444,8 @@ void NixNote::reloadIcons() {
     searchTreeView->reloadIcons();
     favoritesTreeView->reloadIcons();
     tabWindow->reloadIcons();
+
+    global.clearResourceList();
 
     tabWindow->changeEditorStyle();
 

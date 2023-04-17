@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPrinter>
 #include <QThread>
 #include <QUndoCommand>
+#include <QSplitter>
 
 #include "src/gui/nwebview.h"
 
@@ -81,7 +82,6 @@ private:
     QThread *browserThread;
     BrowserRunner *browserRunner;
     void setupToolBar();
-    QTimer *sourceEditorTimer;
     bool insertHyperlink;
     QString currentHyperlink;
     bool insideList;
@@ -133,8 +133,10 @@ private:
     QString tableStyle;
     QPoint scrollPoint;
 
-    // To mark the simulated backspace button events in the undoStack.
-    QVector<QUndoCommand *> autoExecCommands;
+    QTextEdit *sourceEdit;
+    QString sourceEditHeader;
+    QSplitter *editorSplitter;
+    QHBoxLayout *line1Layout;
 
     void exitPoint(ExitPoint *exit);
 
@@ -145,8 +147,6 @@ private:
     void htmlCleanup(HtmlCleanupMode mode);
     void insertDateTimeUsingFormat(const QString &format) const;
 
-    QUndoCommand *newAutoExecCommand();
-    void clearAutoExecCommands();
     void todoSetAllChecked(bool allSelected);
 
 public:
@@ -186,14 +186,12 @@ public:
     bool fastPrint;
 
     //QShortcut *leftJustifyButtonShortcut;
-
+    QVBoxLayout layout;  // Note content layout
     QHBoxLayout line2Layout;
     QHBoxLayout line3Layout;
     qint32 lid;
     void setBackgroundColor(QString);
     void showSource(bool);
-    QTextEdit *sourceEdit;
-    QString sourceEditHeader;
     XmlHighlighter *highlighter;
 
     void tabPressed();

@@ -110,6 +110,7 @@ public:
     qint32 add(qint32 lid, Resource &t, bool isDirty, int noteLid=0);    // Add a new resource
     void setIndexNeeded(qint32 lid, bool indexNeeded);           // flag if a resource needs reindexing
     void expunge(int lid);                                       // erase a resource
+    void expunge(const QList<qint32> &lids);                     // erase a list of resources
     void expunge(QString guid);                                  // erase a resource
     void updateResourceHash(qint32 lid, QByteArray newhash);     // Update a resource's hash value
     qint32 addStub(qint32 resLid, qint32 noteLid);               // Add a basic "stub" record.  Useful when duplicating notes

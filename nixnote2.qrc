@@ -35,7 +35,6 @@
         <file alias="todoIcon">resources/images/todo.png</file>
         <file alias="italicsIcon">resources/images/italic.png</file>
         <file alias="newNoteIcon">resources/images/newNote.png</file>
-        <file alias="trunkIcon">resources/images/trunk.png</file>
         <file alias="usageIcon">resources/images/usage.png</file>
         <file alias="blackDotIcon">resources/images/black_dot.png</file>
         <file alias="notebookSmallIcon">resources/images/notebookSmall.png</file>
