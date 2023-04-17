@@ -173,7 +173,7 @@ bool CommunicationManager::getUserInfo(User &user) {
     QLOG_DEBUG() << "CommunicationManager.getUserInfo(): new UserStore(); host=" << evernoteHost;
     QLOG_TRACE() << "token=" << authToken;
 
-    userStore = newUserStore(evernoteHost, newRequestContext(authToken, requestTimeout));
+    userStore = newUserStore(QString("https://") + evernoteHost + QString("/edam/user"), newRequestContext(authToken, requestTimeout));
 
     bool res = true;
     try {
