@@ -1,4 +1,3 @@
-# NixNote v2.1
 ## Introduction
 
 Nixnote is Evernote desktop client for Linux (can be also build on macOS and Windows).
@@ -23,7 +22,7 @@ So far I know Nixnote works quite fine for many people... in case there would be
 ## Packages
 ### Debian, Ubuntu and derivatives official repositories
 In case you distribution is based on **Debian 10 (Buster) or Ubuntu 19.04 (Disco) or later distribution 
-versions**, you can install Nixnote 2.1 from official repositories using:
+versions**, you can install Nixnote from official repositories using:
 
 ``` bash
 sudo apt update
