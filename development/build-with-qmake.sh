@@ -6,6 +6,7 @@ set -xe
 BUILD_TYPE=${1}
 CLEAN=${2}
 TIDY_LIB_DIR=${3}
+OAUTH_BACKEND=${4}
 CDIR=`pwd`
 
 function error_exit {
@@ -44,6 +45,15 @@ if [ ! -d "${TIDY_LIB_DIR}" ]; then
 fi
 echo "$0: libtidy is expected in: ${TIDY_LIB_DIR}"
 
+if [ -z "${OAUTH_BACKEND}" ] || [ "${OAUTH_BACKEND}" == "browser" ]; then
+   # by default will use system browser for OAuth because it's the simplest and working option
+   OAUTH_CONFIG=""
+elif [ "${OAUTH_BACKEND}" == "webengine" ]; then
+   OAUTH_CONFIG="CONFIG+=oauth_webengine"
+else
+   OAUTH_CONFIG="CONFIG+=oauth_webkit"
+fi
+
 if [ ! -d "${BUILD_DIR}" ]; then
   mkdir ${BUILD_DIR}
 fi
@@ -55,7 +65,6 @@ if [ -d "${APPDIR}" ]; then
   rm -rf ${APPDIR}/* || echo "failed to remove"
   rm *.AppImage 2>/dev/null || echo "failed to remove"
 fi
-
 
 QMAKE_BINARY=qmake
 
@@ -71,10 +80,10 @@ elif [ -d ${TIDY_LIB_DIR}/pkgconfig ] ; then
   export PKG_CONFIG_PATH=${TIDY_LIB_DIR}/pkgconfig
 fi
 
+echo ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} ${OAUTH_CONFIG} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} QMAKE_CXX="ccache g++" || error_exit "$0: qmake"
+${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} ${OAUTH_CONFIG} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} QMAKE_CXX="ccache g++" || error_exit "$0: qmake"
 
-echo ${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "$0: qmake"
-${QMAKE_BINARY} CONFIG+=${BUILD_TYPE} PREFIX=appdir/usr QMAKE_RPATHDIR+=${TIDY_LIB_DIR} || error_exit "$0: qmake"
-
+make clean
 make -j$(nproc) || error_exit "$0: make"
 make -j$(nproc) install || error_exit "$0: make install"
 

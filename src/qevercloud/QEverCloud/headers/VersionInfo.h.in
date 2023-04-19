@@ -1,12 +1,16 @@
 /**
- * Copyright (c) 2017 Dmitry Ivanov
+ * Copyright (c) 2017-2020 Dmitry Ivanov
  *
- * This file is a part of QEverCloud project and is distributed under the terms of MIT license:
- * https://opensource.org/licenses/MIT
+ * This file is a part of QEverCloud project and is distributed under the terms
+ * of MIT license: https://opensource.org/licenses/MIT
  */
 
 #ifndef QEVERCLOUD_VERSION_INFO_H
 #define QEVERCLOUD_VERSION_INFO_H
+
+#include \"Export.h\"
+
+#include <QString>
 
 /**
  * This file contains configuration-specific macro definitions
@@ -16,12 +20,94 @@
 /**
  * This macro tells whether QEverCloud library was built with OAuth support
  */
-@QEVERCLOUD_HAS_OAUTH@
+#define QEVERCLOUD_HAS_OAUTH 1
 
 /**
- * This macro tells whether QEverCloud library uses QtWebEngine backend for OAuth support
- * (if it was built with OAuth support)
+ * This macro tells whether QEverCloud library uses QtWebEngine backend for
+ * OAuth support (if it was built with OAuth support)
  */
-@QEVERCLOUD_USES_QT_WEB_ENGINE@
+#define QEVERCLOUD_USE_QT_WEB_ENGINE $$QEVERCLOUD_USE_QT_WEB_ENGINE
+
+/**
+ * This macro tells whether QEverCloud library uses system browser for OAuth
+ * support (if it was built with OAuth support)
+ */
+#define QEVERCLOUD_USE_SYSTEM_BROWSER $$QEVERCLOUD_USE_SYSTEM_BROWSER
+
+/**
+ * This macro tells whether QEverCloud library was built with use of Q_NAMESPACE
+ * and Q_ENUM_NS
+ */
+#define QEVERCLOUD_USES_Q_NAMESPACE 0
+
+/**
+ * This macro is set to a string holding the information about
+ * the current QEverCloud build
+ */
+#define QEVERCLOUD_BUILD_INFO \"nixnote2 integrated\"
+
+/**
+ * This macro is set to the major version number of QEverCloud
+ */
+#define QEVERCLOUD_VERSION_MAJOR 6
+
+/**
+ * This macro is set to the minor version of QEverCloud
+ */
+#define QEVERCLOUD_VERSION_MINOR 1
+
+/**
+ * This macro is set to the patch version of QEverCloud
+ */
+#define QEVERCLOUD_VERSION_PATCH 0
+
+namespace qevercloud {
+
+/**
+ * @return          Major version of QEverCloud
+ */
+int QEVERCLOUD_EXPORT qevercloudVersionMajor();
+
+/**
+ * @return          Minor version of QEverCloud
+ */
+int QEVERCLOUD_EXPORT qevercloudVersionMinor();
+
+/**
+ * @return          Patch version of QEverCloud
+ */
+int QEVERCLOUD_EXPORT qevercloudVersionPatch();
+
+/**
+ * @return          String containing information about
+ *                  the current QEverCloud build
+ */
+QString QEVERCLOUD_EXPORT qevercloudBuildInfo();
+
+/**
+ * @return          String representing the version of Qt against which
+ *                  QEverCloud was built
+ */
+QString QEVERCLOUD_EXPORT qevercloudBuiltWithQtVersion();
+
+/**
+ * @return          True if QEverCloud was built with OAuth support, false
+ *                  otherwise
+ */
+bool QEVERCLOUD_EXPORT qevercloudHasOAuth();
+
+/**
+ * @return          True if QEverCloud was built with QtWebEngine, false
+ *                  otherwise
+ */
+bool QEVERCLOUD_EXPORT qevercloudUsesQtWebEngine();
+
+/**
+ * @return          True if QEverCloud was built with use of Q_NAMESPACE and
+ *                  Q_ENUM_NS, false otherwise
+ */
+bool QEVERCLOUD_EXPORT qevercloudUsesQNamespace();
+
+} // namespace qevercloud
 
 #endif // QEVERCLOUD_VERSION_INFO_H

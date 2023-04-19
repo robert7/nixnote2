@@ -142,7 +142,7 @@ void UserTable::updateUser(User &user) {
     if (user.privilege.isSet()) {
         query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_PRIVILEGE);
-        int priv = user.privilege;
+        int priv = static_cast<int>(user.privilege.ref());
         query.bindValue(":data", priv);
         query.exec();
     }
@@ -463,13 +463,13 @@ void UserTable::getUser(User &user) {
         if (query.value(0) == USER_PRIVILEGE) {
             int priv = QVariant(query.value(1)).toInt();
             user.privilege = PrivilegeLevel::NORMAL;
-            if (priv == PrivilegeLevel::ADMIN)
+            if (priv == static_cast<int>(PrivilegeLevel::ADMIN))
                 user.privilege = PrivilegeLevel::ADMIN;
-            if (priv == PrivilegeLevel::PREMIUM)
+            if (priv == static_cast<int>(PrivilegeLevel::PREMIUM))
                 user.privilege = PrivilegeLevel::PREMIUM;
-            if (priv == PrivilegeLevel::MANAGER)
+            if (priv == static_cast<int>(PrivilegeLevel::MANAGER))
                 user.privilege = PrivilegeLevel::MANAGER;
-            if (priv == PrivilegeLevel::SUPPORT)
+            if (priv == static_cast<int>(PrivilegeLevel::SUPPORT))
                 user.privilege = PrivilegeLevel::SUPPORT;
         }
         if (query.value(0) == USER_CREATED) {

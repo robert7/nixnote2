@@ -1,10 +1,9 @@
 language: cpp
 compiler: gcc
 sudo: require
-dist: xenial
+dist: focal
 
 before_install:
-  - sudo add-apt-repository ppa:nixnote/nixnote2-stable -y
   - sudo apt-get update -qq
 
 install:
@@ -13,35 +12,44 @@ install:
                             wget curl make pkg-config \
                             libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev libcurl4-openssl-dev \
                             libpoppler-qt5-dev libqt5webkit5-dev qt5-qmake qttools5-dev-tools libqt5sql5-sqlite \
-                            libhunspell-dev \
-                            nixnote2-tidy
+                            libhunspell-dev libtidy-dev libqt5positioning5-plugins
 
 script:
-  - #ls -lR /opt/tidy56
-  - export TIDY_LIB_DIR=/usr/lib/nixnote2/tidy
-  - export PKG_CONFIG_PATH=$TIDY_LIB_DIR/pkgconfig
-  - echo PKG_CONFIG_PATH=$PKG_CONFIG_PATH
-  - echo qmake CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR
+  - echo qmake CONFIG+=release PREFIX=/usr
   - |
-    qmake CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR &&
+    qmake CONFIG+=release PREFIX=/usr &&
       ls -l ./development &&
       make -j$(nproc) &&
       make INSTALL_ROOT=appdir -j$(nproc) install &&
       find appdir/ &&
-    qmake testsrc/tests.pro CONFIG+=release PREFIX=/usr QMAKE_RPATHDIR+=$TIDY_LIB_DIR &&
+    qmake testsrc/tests.pro CONFIG+=release PREFIX=/usr &&
       make &&
       ./qmake-build-release-t/tests -platform offscreen
-  - wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
-  - chmod a+x linuxdeployqt*.AppImage
-  - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
-  - ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop -bundle-non-qt-libs
-  - ./linuxdeployqt*.AppImage --appimage-extract
-  - export PATH=$(readlink -f ./squashfs-root/usr/bin/):$PATH
-  - ./squashfs-root/usr/bin/appimagetool appdir/
-
+  - |
+    wget -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" && \
+      chmod a+x ./linuxdeploy-x86_64.AppImage && \
+      ./linuxdeploy-x86_64.AppImage --appimage-extract && \
+      mv squashfs-root linuxdeploy && \
+      mv linuxdeploy/AppRun linuxdeploy/linuxdeploy
+  - |
+    wget -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage" && \
+      chmod a+x ./linuxdeploy-plugin-qt-x86_64.AppImage && \
+      ./linuxdeploy-plugin-qt-x86_64.AppImage --appimage-extract && \
+      mv squashfs-root linuxdeploy-plugin-qt && \
+        mv linuxdeploy-plugin-qt/AppRun linuxdeploy-plugin-qt/linuxdeploy-plugin-qt
+  - |
+    wget -nv "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" && \
+      chmod a+x appimagetool-x86_64.AppImage && \
+      ./appimagetool-x86_64.AppImage --appimage-extract && \
+      mv squashfs-root appimagetool && \
+      mv appimagetool/AppRun appimagetool/appimagetool
+  - export PATH=linuxdeploy:linuxdeploy-plugin-qt:appimagetool:$PATH
+  - linuxdeploy --desktop-file=./appdir/usr/share/applications/nixnote2.desktop --appdir=appdir --plugin qt
+  - rm -f appdir/usr/lib/libnss3.so
+  - rm -f appdir/usr/lib/libnssutil3.so
+  - appimagetool -n appdir
 
 after_success:
-  - find appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
   - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
   - #wget -c https://raw.githubusercontent.com/robert7/uploadtool/temp/upload.sh
   - |

@@ -91,10 +91,10 @@ private:
     QNetworkAccessManager *networkAccessManager;              // Network connection to download inknotes
     void handleEDAMSystemException(EDAMSystemException e, QString additionalInfo = "");
     void handleEDAMNotFoundException(EDAMNotFoundException e, QString additionalInfo = "");
-    UserStore *userStore;                                     // UserStore class
-    NoteStore *noteStore;                                     // Notestore class
-    NoteStore *linkedNoteStore;                               // Linked notestore class
-    NoteStore *myNoteStore;                                   // local account notestore class
+    IUserStore *userStore;                                     // UserStore class
+    INoteStore *noteStore;                                     // Notestore class
+    INoteStore *linkedNoteStore;                               // Linked notestore class
+    INoteStore *myNoteStore;                                   // local account notestore class
     void processSyncChunk(SyncChunk &chunk, QString token);   // Deal with a sync chunk.
     void dumpNote(const Note &note) const;
     void reportError(const CommunicationError::CommunicationErrorType errorType,
