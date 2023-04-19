@@ -8,12 +8,12 @@ ENV PATH="${wdir}/linuxdeploy:${wdir}/linuxdeploy-plugin-qt:${wdir}/appimagetool
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y software-properties-common
-RUN add-apt-repository ppa:nixnote/nixnote2-stable -y && apt-get update -qq
+#RUN add-apt-repository ppa:nixnote/nixnote2-stable -y && apt-get update -qq
 RUN apt-get update && apt-get install -y git-core qt5-default build-essential ccache p7zip-full libssl1.1 libcrypt1 libnss3 \
                               wget curl make pkg-config \
                               qtwebengine5-dev qtwebengine5-dev-tools \
                               libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev libcurl4-openssl-dev \
-                              libpoppler-qt5-dev libqt5webkit5-dev qt5-qmake qttools5-dev-tools libhunspell-dev nixnote2-tidy
+                              libpoppler-qt5-dev libqt5webkit5-dev qt5-qmake qttools5-dev-tools libhunspell-dev libtidy-dev libqt5positioning5-plugins
 
 # install linuxdeploy
 RUN wget -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" && \
