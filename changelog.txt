@@ -1,3 +1,14 @@
+NixNote (2.1.10) stable; urgency=low
+  * Authentication (Evernote login) now uses system browser which fixes login problems and also enables to use all
+    login variants provided by Evernote (multifactor, login by Google etc.)
+  * AppImage is now built on Ubuntu 20.04 (focal) - i.e. will not run on older distribution that Ubuntu 20.04,
+    should of course run on all newer systems
+  * AppImage is now created by linuxdeploy tool (instead of linuxdeployqt)
+  * Removed the usage of custom built tidy-html5 in favour of the package provided by distribution
+  * Updated Evernote client - QEverCloud version 4.1.0 to 6.2.0
+  * All changes thanks to https://github.com/d1vanov
+ -- Robert Spiegel <nightingale7@gmail.com>  Wed, 19 Apr 2023 19:11:10 +0200
+
 NixNote (2.1.9) stable; urgency=low
   * Added a new dark theme.
   * Optimised the sql statements of note creating and updating.
@@ -12,6 +23,7 @@ NixNote (2.1.9) stable; urgency=low
   * RAM usage optimizations.
   * Fixed file downloading under Windows.
   * Made the editor not render the note content when Key_Up or Key_Down keeps being pressed.
+  * All changes thanks to https://github.com/boo-yee
  -- Robert Spiegel <nightingale7@gmail.com>  Sat, 15 Apr 2023 12:15:22 +0200
 
 NixNote (2.1.8) stable; urgency=low
@@ -24,6 +36,7 @@ NixNote (2.1.8) stable; urgency=low
   * Fixed: Nixnote2 exits when network gets disconnected - issue #189
   * Fixed: Import all notes, tag issue - issue #153
   * Fixed: Local images cannot be pasted, images in notes cannot be saved.
+  * All changes thanks to https://github.com/boo-yee
  -- Robert Spiegel <nightingale7@gmail.com>  Sat, 10 Sep 2022 10:00:00 +0200
 
 NixNote (2.1.7) stable; urgency=low
