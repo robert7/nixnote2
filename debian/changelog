@@ -1,6 +1,6 @@
 NixNote (2.1.10) stable; urgency=low
   * Authentication (Evernote login) now uses system browser which fixes login problems and also enables to use all
-    login variants provided by Evernote (multifactor, login by Google etc.)
+    login options supported by Evernote (multifactor authentication, login by Google etc.)
   * AppImage is now built on Ubuntu 20.04 (focal) - i.e. will not run on older distribution that Ubuntu 20.04,
     should of course run on all newer systems
   * AppImage is now created by linuxdeploy tool (instead of linuxdeployqt)
