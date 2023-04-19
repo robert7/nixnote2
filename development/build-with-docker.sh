@@ -49,7 +49,7 @@ time docker run \
    -v $PROJECTDIR/docker-build-${BUILD_TYPE}:/opt/nixnote2/qmake-build-${BUILD_TYPE} \
    -v $PROJECTDIR/docker-build-${BUILD_TYPE}-t:/opt/nixnote2/qmake-build-${BUILD_TYPE}-t \
    -it ${DOCKERTAG} \
-      /bin/bash -c "cd nixnote2 && git fetch && git checkout --track origin/$PROJECTBRANCH && git reset --hard origin/$PROJECTBRANCH && ./development/build-with-qmake.sh ${BUILD_TYPE} noclean /usr/lib browser && ./development/run-tests.sh ${BUILD_TYPE} noclean /usr/lib/nixnote2/tidy && ./development/create-AppImage-linuxdeploy.sh && mv *.AppImage appdir && chmod -R a+rwx appdir/*.AppImage"
+      /bin/bash -c "cd nixnote2 && git fetch && git checkout --track origin/$PROJECTBRANCH && git reset --hard origin/$PROJECTBRANCH && ./development/build-with-qmake.sh ${BUILD_TYPE} noclean /usr/lib browser && ./development/run-tests.sh ${BUILD_TYPE} noclean /usr/lib && ./development/create-AppImage-linuxdeploy.sh && mv *.AppImage appdir && chmod -R a+rwx appdir/*.AppImage"
 
 ls appdir/*.AppImage
 echo "If all got well then AppImage file in appdir is your binary"
