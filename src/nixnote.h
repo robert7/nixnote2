@@ -137,7 +137,7 @@ private:
     QTimer syncButtonTimer;
     QTimer syncTimer;
     QList<QPixmap> syncIcons;
-    unsigned int synchronizeIconAngle;
+    unsigned int synchronizeIconIndex;
 
     // Timer to check shared memory for other instance commands
     QTimer heartbeatTimer;
@@ -208,6 +208,7 @@ void showAnnouncementMessage();
 private slots:
     void onNetworkManagerFinished(QNetworkReply *reply);
     void onExportAsPdfReady(bool);
+    void clearSplashScreen();
 
 public slots:
     void quitNixNote();

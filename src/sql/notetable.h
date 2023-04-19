@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtSql>
 #include <QString>
 #include "src/sql/databaseconnection.h"
+#include "src/sql/nsqlquery.h"
 
 #include "src/qevercloud/QEverCloud/headers/QEverCloud.h"
 using namespace qevercloud;
@@ -93,6 +94,11 @@ class NoteTable
 {
 
 private:
+    QString joinLids(const QList<qint32> &noteLids);
+    QString joinValues(const QList<qint32> &noteLids,
+            int key, const QVariant &value, int lidSeqNum = -1);
+    void bindLids(NSqlQuery &sql, const QList<qint32> &noteLids);
+
     DatabaseConnection *db;
 
 public:
@@ -167,7 +173,9 @@ public:
     bool updateNotebookName(qint32 lid, QString name);                   // Update a notebook's name in the user listing
     void updateNotebook(qint32 noteLid, qint32 notebookLid);             // Set the current note's notebook
     void setDirty(qint32 lid, bool dirty, bool setDateUpdated=true);     // Set if a note needs a sync
+    void setDirty(const QList<qint32> &noteLids, bool dirty, bool setDateUpdated=true); // Set if a list of notes need a sync
     void updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDirty=false);    // Update the notebook for a note
+    void updateNotebook(const QList<qint32> &noteLids, qint32 notebookLid, bool setAsDirty=false);
     void updateUrl(qint32 lid, QString text, bool dirty);                // Update a URL for a note
     void updateTitle(qint32 noteLid, QString title, bool setAsDirty);    // Update a title for a note
     void updateDate(qint32 lid, Timestamp ts, qint32 key, bool isDirty); // Update a date for a note
@@ -176,8 +184,11 @@ public:
     void addTag(qint32 lid, qint32 tag, bool isDirty);                   // Add a tag to a note
     void rebuildNoteListTags(qint32 lid);                                // Update the note's tags in the display table
     void deleteNote(qint32 lid, bool isDirty);                           // mark a note for deletion
+    void deleteNotes(const QList<qint32> &noteLids, bool isDirty);           // mark a list of notes for deletion
     void restoreNote(qint32 lid, bool isDirty);                          // unmark a note for deletion
+    void restoreNotes(const QList<qint32> &lids, bool isDirty);                        // unmark multiple notes for deletion
     void expunge(qint32 lid);                                            // expunge a note permanently
+    void expunge(const QList<qint32> &lids);                             // expunge multiple notes permanently
     void expunge(QString guid);                                          // expunge a note permanently
     void expunge(string guid);                                           // expunge a note permanently
     void pinNote(string guid, bool value);                               // pin the current note
@@ -188,6 +199,7 @@ public:
     void sync(qint32 lid, const Note &note, qint32 account=0);           // Sync a note with a new record
     qint32 add(qint32 lid, const Note &t, bool isDirty, qint32 account=0); // Add a new note
     void setIndexNeeded(qint32 lid, bool indexNeeded);                   // flag if a note needs reindexing
+    void setIndexNeeded(const QList<qint32> &indexNoteLids, bool indexNeeded); // flag if multiple notes need reindexing
     void updateNoteListTags(qint32 noteLid, QString tags);               // Update the tag names in the note list
     void updateNoteListNotebooks(QString guid, QString name);            // Update the notebook name in the note list
     void addToDeleteQueue(qint32 lid, Note n);   // Add to the notes that need to be deleted from Evernote

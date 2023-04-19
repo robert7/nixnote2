@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "NixnoteStringUtils.h"
 
+
 NixnoteStringUtils::NixnoteStringUtils() {
 
 }
@@ -85,3 +86,4 @@ QString NixnoteStringUtils::extractNoteGuid(QString noteUrl) {
     QStringList splitNoteUrl = noteUrl.split('/');
     return splitNoteUrl[splitNoteUrl.count()-1];
 }
+

@@ -671,14 +671,10 @@ void NTableView::restoreSelectedNotes() {
     NoteTable ntable(global.db);
     NSqlQuery sql(global.db);
     //transaction.exec("begin");
-    sql.prepare("Delete from filter where lid=:lid");
+    ntable.restoreNotes(lids, true);
     for (int i = 0; i < lids.size(); i++) {
-        ntable.restoreNote(lids[i], true);
-        sql.bindValue(":lid", lids[i]);
-        sql.exec();
         global.cache.remove(lids[i]);
     }
-    sql.finish();
 
     emit(notesRestored(lids));
 }
@@ -715,23 +711,26 @@ void NTableView::deleteSelectedNotes() {
 
     NoteTable ntable(global.db);
     NSqlQuery sql(global.db);
-    sql.prepare("Delete from filter where lid=:lid");
+
+    QString slids = "";
     for (int i = 0; i < lids.size(); i++) {
-        ntable.deleteNote(lids[i], true);
-        if (expunged)
-            ntable.expunge(lids[i]);
-        sql.bindValue(":lid", lids[i]);
-        sql.exec();
+        slids += QString::number(lids[i]) + ",";
+    }
+    slids.chop(1);
+
+    sql.prepare("Delete from filter where lid in (" + slids + ")");
+    sql.exec();
+    sql.finish();
+
+    ntable.deleteNotes(lids, true);
+    if (expunged)
+        ntable.expunge(lids);
+
+    for (int i = 0; i < lids.size(); i++) {
         delete global.cache[lids[i]];
         global.cache.remove(lids[i]);
     }
     //transaction.exec("commit");
-    sql.finish();
-
-    // Unpin the note being deleted, so that the table view
-    // will not display a pinned note even after it
-    // has been deleted.
-    unpinNote();
 
     emit(notesDeleted(lids, expunged));
 }
