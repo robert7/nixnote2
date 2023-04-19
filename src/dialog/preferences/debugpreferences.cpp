@@ -55,13 +55,20 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     interceptSigHup = new QCheckBox(tr("Intercept Unix SIGHUP (requires restart)."));
     interceptSigHup->setChecked(global.getInterceptSigHup());
     mainLayout->addWidget(interceptSigHup, row++, 1);
+#else
+    interceptSigHup = nullptr;
 #endif
 
     multiThreadSave = new QCheckBox(tr("Use multiple threads to save note contents (experimental)."));
     multiThreadSave->setChecked(global.getMultiThreadSave());
     mainLayout->addWidget(multiThreadSave, row++, 1);
 
-    mainLayout->addWidget(new QLabel(tr("Auto-Save Interval (in seconds).")), row, 0);
+    listenToCommands = new QCheckBox(tr("Listen to commands from command line (requires restart)."));
+    listenToCommands->setChecked(global.getListenToCommands());
+    mainLayout->addWidget(listenToCommands, row++, 1);
+
+    autoSaveIntervalLabel = new QLabel(tr("Auto-Save Interval (in seconds)."));
+    mainLayout->addWidget(autoSaveIntervalLabel, row, 0);
     autoSaveInterval = new QSpinBox();
     autoSaveInterval->setMinimum(5);
     autoSaveInterval->setMaximum(300);
@@ -77,6 +84,18 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
 
 DebugPreferences::~DebugPreferences() {
     delete mainLayout;
+    delete disableUploads;
+    delete disableImageHighlight;
+    delete showLidColumn;
+    delete nonAsciiSortBug;
+    delete forceUTF8;
+    if (interceptSigHup != nullptr) {
+        delete interceptSigHup;
+    }
+    delete multiThreadSave;
+    delete listenToCommands;
+    delete autoSaveIntervalLabel;
+    delete autoSaveInterval;
 }
 
 
@@ -92,6 +111,7 @@ void DebugPreferences::saveValues() {
     if (disableUploads->isChecked() || disableUploads->isChecked() != global.disableUploads)
         global.settings->setValue("disableUploads", disableUploads->isChecked());
 
+    global.settings->setValue("listenToCommands", listenToCommands->isChecked());
     global.settings->endGroup();
     global.setAutoSaveInterval(autoSaveInterval->value());
     global.disableUploads = disableUploads->isChecked();

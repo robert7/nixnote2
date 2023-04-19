@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "configstore.h"
 #include "notebooktable.h"
 #include "linkednotebooktable.h"
-#include "src/sql/nsqlquery.h"
 #include "tagtable.h"
 #include "src/global.h"
 #include "src/utilities/noteindexer.h"
@@ -163,42 +162,39 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     qint32 lid = l;
     qint32 notebookLid = account;
 
-    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     if (lid <= 0) {
         lid = cs.incrementLidCounter();
     }
 
+    QString values = "";
+    QList<qint32> lids;
+    lids.clear();
+    lids.append(lid);
+
+    QList<QVariant> valueList;
+    valueList.clear();
+
     QLOG_DEBUG() << "Adding note; lid=" << lid << ", title=" << (t.title.isSet() ? t.title : "title is empty");
+    int lidSeqNum = 0;
     if (t.guid.isSet()) {
         QString guid = t.guid;
         QLOG_DEBUG() << "Adding note; guid=" << guid;
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_GUID);
-        query.bindValue(":data", guid);
-        query.exec();
+        values += joinValues(lids, NOTE_GUID, ":guid", lidSeqNum++) + ",";
+        valueList.append(guid);
     }
 
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_INDEX_NEEDED);
-    query.bindValue(":data", true);
-    query.exec();
-
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
-    query.bindValue(":data", true);
-    query.exec();
+    if (!global.disableThumbnails) {
+        values += joinValues(lids, NOTE_THUMBNAIL_NEEDED, ":note_thumbnail_needed", lidSeqNum++) + ",";
+        valueList.append(true);
+    }
 
     if (t.title.isSet()) {
-        query.bindValue(":lid", lid);
         QString title = t.title;
-        query.bindValue(":key", NOTE_TITLE);
-        query.bindValue(":data", title);
-        query.exec();
+        values += joinValues(lids, NOTE_TITLE, ":title", lidSeqNum++) + ",";
+        valueList.append(title);
     }
 
     if (t.content.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_CONTENT);
         QByteArray b;
         QString content = t.content;
 #if QT_VERSION < 0x050000
@@ -207,80 +203,60 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         b.append(content);
 #endif
 
-
         QLOG_DEBUG_FILE("incoming.enml", content);
 
-
-        query.bindValue(":data", b);
-        query.exec();
+        values += joinValues(lids, NOTE_CONTENT, ":note_content", lidSeqNum++) + ",";
+        valueList.append(b);
     }
 
     if (t.contentHash.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_CONTENT_HASH);
         QByteArray contentHash = t.contentHash;
-        query.bindValue(":data", contentHash);
-        query.exec();
+        values += joinValues(lids, NOTE_CONTENT_HASH, ":note_content_hash", lidSeqNum++) + ",";
+        valueList.append(contentHash);
     }
 
     if (t.contentLength.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_CONTENT_LENGTH);
         qint32 len = t.contentLength;
-        query.bindValue(":data", len);
-        query.exec();
+        values += joinValues(lids, NOTE_CONTENT_LENGTH, ":note_content_length", lidSeqNum++) + ",";
+        valueList.append(len);
     }
 
     if (t.updateSequenceNum.isSet()) {
-        query.bindValue(":lid", lid);
         qint32 usn = t.updateSequenceNum;
-        query.bindValue(":key", NOTE_UPDATE_SEQUENCE_NUMBER);
-        query.bindValue(":data", usn);
-        query.exec();
+        values += joinValues(lids, NOTE_UPDATE_SEQUENCE_NUMBER, ":note_update_sequence_number", lidSeqNum++) + ",";
+        valueList.append(usn);
     }
 
     if (isDirty) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_ISDIRTY);
-        query.bindValue(":data", isDirty);
-        query.exec();
+        values += joinValues(lids, NOTE_ISDIRTY, ":is_dirty", lidSeqNum++) + ",";
+        valueList.append(isDirty);
     }
 
     if (t.created.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_CREATED_DATE);
         qlonglong date = t.created;
-        query.bindValue(":data",date);
-        query.exec();
+        values += joinValues(lids, NOTE_CREATED_DATE, ":created_date", lidSeqNum++) + ",";
+        valueList.append(date);
     }
 
     if (t.updated.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_UPDATED_DATE);
         qlonglong date = t.updated;
-        query.bindValue(":data", date);
-        query.exec();
+        values += joinValues(lids, NOTE_UPDATED_DATE, ":updated_date", lidSeqNum++) + ",";
+        valueList.append(date);
     }
 
     if (t.deleted.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_DELETED_DATE);
         qlonglong date = t.deleted;
-        query.bindValue(":data", date);
-        query.exec();
+        values += joinValues(lids, NOTE_DELETED_DATE, ":deleted_date", lidSeqNum++) + ",";
+        valueList.append(date);
     }
 
     if (t.active.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_ACTIVE);
         bool active = t.active;
-        query.bindValue(":data", active);
-        query.exec();
+        values += joinValues(lids, NOTE_ACTIVE, ":note_ative", lidSeqNum++) + ",";
+        valueList.append(active);
     }
 
     if (t.notebookGuid.isSet()) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_NOTEBOOK_LID);
         NotebookTable notebookTable(db);
         LinkedNotebookTable linkedTable(db);
         if (account > 0)
@@ -301,8 +277,8 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
             notebook.name = "<Missing Notebook>";
             notebookTable.add(notebookLid, notebook, false, false);
         }
-        query.bindValue(":data", notebookLid);
-        query.exec();
+        values += joinValues(lids, NOTE_NOTEBOOK_LID, ":note_notebook_lid", lidSeqNum++) + ",";
+        valueList.append(notebookLid);
     }
 
     QList<QString> tagGuids;
@@ -320,10 +296,8 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
             tagTable.add(tagLid, newTag, false, 0);
         }
 
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_TAG_LID);
-        query.bindValue(":data", tagLid);
-        query.exec();
+        values += joinValues(lids, NOTE_TAG_LID, ":note_tag_lid" + QString::number(i), lidSeqNum++) + ",";
+        valueList.append(tagLid);
     }
 
     QList<Resource> resources;
@@ -350,10 +324,9 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         if (r.mime.isSet()) {
             QString mime = r.mime;
             if (!mime.startsWith("image/") && mime != "vnd.evernote.ink") {
-                query.bindValue(":lid", lid);
-                query.bindValue(":key", NOTE_HAS_ATTACHMENT);
-                query.bindValue(":data", true);
-                query.exec();
+                values += joinValues(lids, NOTE_HAS_ATTACHMENT, ":note_has_attachment", lidSeqNum++) + ",";
+                valueList.append(true);
+                break;
             }
         }
     }
@@ -361,102 +334,74 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     if (t.attributes.isSet()) {
         NoteAttributes na = t.attributes;
         if (na.subjectDate.isSet()) {
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_SUBJECT_DATE);
             qlonglong ts = na.subjectDate;
-            query.bindValue(":data",ts);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_SUBJECT_DATE, ":subject_date", lidSeqNum++) + ",";
+            valueList.append(ts);
         }
         if (na.latitude.isSet()) {
             double lat = na.latitude;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_LATITUDE);
-            query.bindValue(":data", lat);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_LATITUDE, ":lat", lidSeqNum++) + ",";
+            valueList.append(lat);
         }
         if (na.longitude.isSet()) {
             double lon = na.longitude;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_LONGITUDE);
-            query.bindValue(":data", lon);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_LONGITUDE, ":lon", lidSeqNum++) + ",";
+            valueList.append(lon);
         }
         if (na.altitude.isSet()) {
             double alt = na.altitude;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_ALTITUDE);
-            query.bindValue(":data", alt);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_ALTITUDE, ":alt", lidSeqNum++) + ",";
+            valueList.append(alt);
         }
         if (na.author.isSet()) {
             QString author = na.author;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);
-            query.bindValue(":data", author);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_AUTHOR, ":author", lidSeqNum++) + ",";
+            valueList.append(author);
         }
         if (na.source.isSet()) {
             QString source = na.source;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
-            query.bindValue(":data", source);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_SOURCE, ":source", lidSeqNum++) + ",";
+            valueList.append(source);
         }
         if (na.sourceURL.isSet()) {
             QString sourceURL = na.sourceURL;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_URL);
-            query.bindValue(":data", sourceURL);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_SOURCE_URL, ":sourceURL", lidSeqNum++) + ",";
+            valueList.append(sourceURL);
         }
         if (na.sourceApplication.isSet()) {
             QString sourceApplication = na.sourceApplication;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_APPLICATION);
-            query.bindValue(":data", sourceApplication);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_SOURCE_APPLICATION, ":sourceApplication", lidSeqNum++) + ",";
+            valueList.append(sourceApplication);
         }
         if (na.shareDate.isSet()) {
             double date = na.shareDate;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_SHARE_DATE);
-            query.bindValue(":data",date);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_SHARE_DATE, ":share_date", lidSeqNum++) + ",";
+            valueList.append(date);
         }
         if (na.placeName.isSet()) {
             QString placename = na.placeName;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_PLACE_NAME);
-            query.bindValue(":data", placename);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_PLACE_NAME, ":placename", lidSeqNum++) + ",";
+            valueList.append(placename);
         }
         if (na.contentClass.isSet()) {
             QString cc = na.contentClass;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_CONTENT_CLASS);
-            query.bindValue(":data", cc);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_CONTENT_CLASS, ":content_class", lidSeqNum++) + ",";
+            valueList.append(cc);
         }
         if (na.reminderTime.isSet()) {
             double rt = na.reminderTime;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
-            query.bindValue(":data",rt);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_REMINDER_TIME, ":reminder_time", lidSeqNum++) + ",";
+            valueList.append(rt);
         }
         if (na.reminderDoneTime.isSet()) {
             double rt = na.reminderDoneTime;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
-            query.bindValue(":data", rt);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_REMINDER_DONE_TIME, ":reminder_done_time", lidSeqNum++) + ",";
+            valueList.append(rt);
         }
         if (na.reminderOrder.isSet()) {
             bool rt = na.reminderOrder;
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_ORDER);
-            query.bindValue(":data", rt);
-            query.exec();
+            values += joinValues(lids, NOTE_ATTRIBUTE_REMINDER_ORDER, ":reminder_order", lidSeqNum++) + ",";
+            valueList.append(rt);
         }
     }
 
@@ -469,41 +414,62 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         content = "";
 
     if (content.contains("<en-crypt")) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_HAS_ENCRYPT);
-        query.bindValue(":data", true);
-        query.exec();
+        values += joinValues(lids, NOTE_HAS_ENCRYPT, ":has_encrypt", lidSeqNum++) + ",";
+        valueList.append(true);
     }
 
     if (content.contains("<en-todo")) {
         if (content.contains("<en-todo checked=\"true\"")) {
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_HAS_TODO_COMPLETED);
-            query.bindValue(":data", true);
-            query.exec();
+            values += joinValues(lids, NOTE_HAS_TODO_COMPLETED, ":note_has_todo_completed", lidSeqNum++) + ",";
+            valueList.append(true);
         }
         if (content.contains("<en-todo checked=\"false\"") || content.contains("<en-todo/>")) {
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_HAS_TODO_UNCOMPLETED);
-            query.bindValue(":data", true);
-            query.exec();
+            values += joinValues(lids, NOTE_HAS_TODO_UNCOMPLETED, ":note_has_todo_uncompleted", lidSeqNum++) + ",";
+            valueList.append(true);
         }
     }
-    query.finish();
-    db->unlock();
 
     updateNoteList(lid, t, isDirty, account);
 
     // Experimental index helper
     if (global.enableIndexing) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_INDEX_NEEDED);
-        query.bindValue(":data", true);
-        query.exec();
+        values += joinValues(lids, NOTE_INDEX_NEEDED, ":note_index_needed", lidSeqNum++) + ",";
+        valueList.append(true);
     } else {
         NoteIndexer indexer(db);
         indexer.indexNote(lid);
     }
+    if (values != "") {
+        values.chop(1);
+    }
+
+    QString sql = "Insert into DataStore (lid, key, data) values " + values;
+    query.prepare(sql);
+    // Some versions of QSqlQuery don't allow binding all the keys with
+    // one same name appearing in the query string with one same value
+    // through one call of bindValue(), so for compatibilty, we have
+    // to append a sequence number to the key name to differentiate
+    // them. And correspondingly we have to append the same lid
+    // muliple times, so that we can use bindLids() function to bind
+    // them.
+    for (int i = 0; i < lidSeqNum - 1; ++i) {
+        lids.append(lid);
+    }
+    bindLids(query, lids);
+    for (int i = 0; i < valueList.size(); ++i) {
+        if (valueList[i].type() == QVariant::Bool ||
+            valueList[i].type() == QVariant::Int) {
+            query.bindValue(i*2 + 1, valueList[i].toInt());
+        } else if (valueList[i].type() == QVariant::LongLong) {
+            query.bindValue(i*2 + 1, valueList[i].toLongLong());
+        } else {
+            query.bindValue(i*2 + 1, valueList[i].toString());
+        }
+    }
+    query.exec();
+    query.finish();
+
+    db->unlock();
     return lid;
 }
 
@@ -1104,37 +1070,56 @@ qint32 NoteTable::getNotesWithTag(QList<qint32> &retval, QString tag) {
 
 // Set if a note needs to be indexed
 void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
+    QList<qint32> noteLids;
+    noteLids.clear();
+    noteLids.append(lid);
+    setIndexNeeded(noteLids, indexNeeded);
+}
+
+
+// Set if notes need to be indexed
+void NoteTable::setIndexNeeded(const QList<qint32> &indexNoteLids, bool indexNeeded) {
     QLOG_TRACE_IN();
-    if (lid <= 0) {
-        QLOG_TRACE_OUT();
-        return;
+
+    QList<qint32> noteLids;
+    noteLids.clear();
+    for (int i = 0; i < indexNoteLids.size(); ++i) {
+        // If it is already set to this value, then we don't need to
+        // do anything.
+        if (this->isIndexNeeded(indexNoteLids[i]) != indexNeeded) {
+            noteLids.append(indexNoteLids[i]);
+        }
     }
 
-    // If it is already set to this value, then we don't need to
-    // do anything.
-    if (this->isIndexNeeded(lid) == indexNeeded) {
+    QString lids = joinLids(noteLids);
+    if (lids == "") {
         QLOG_TRACE_OUT();
         return;
     }
 
     NSqlQuery query(db);
     db->lockForWrite();
-    query.prepare("Delete from DataStore where lid=:lid and key=:key");
-    query.bindValue(":lid", lid);
+
+    query.prepare("Delete from DataStore where lid in (" +
+            lids + ") and key=:key");
+    bindLids(query, noteLids);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
 
     // We don't really need to do anything after deleting the flag
     if (!indexNeeded) {
+        query.finish();
+        db->unlock();
+
         QLOG_TRACE_OUT();
         return;
     }
 
-    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_INDEX_NEEDED);
-    query.bindValue(":data", indexNeeded);
+    QString values = joinValues(noteLids, NOTE_INDEX_NEEDED, indexNeeded);
+    query.prepare("Insert into DataStore (lid, key, data) values " + values);
+    bindLids(query, noteLids);
     query.exec();
+
     query.finish();
     db->unlock();
 
@@ -1142,11 +1127,10 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     if (!global.enableIndexing) {
         QLOG_TRACE() << "Calling indexNote";
         NoteIndexer indexer(db);
-        indexer.indexNote(lid);
+        indexer.indexNotes(noteLids);
     }
     QLOG_TRACE_OUT();
 }
-
 
 
 // Set if a note needs to be indexed
@@ -1173,39 +1157,57 @@ qint32 NoteTable::getIndexNeeded(QList<qint32> &lids) {
 
 // Update the notebook for a note
 void NoteTable::updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDirty) {
+    QList<qint32> noteLids;
+    noteLids.clear();
+    noteLids.append(noteLid);
+    updateNotebook(noteLids, notebookLid, setAsDirty);
+}
+
+
+// Update the notebook for multiple notes
+void NoteTable::updateNotebook(const QList<qint32> &noteLids,
+        qint32 notebookLid, bool setAsDirty) {
     Notebook book;
     NotebookTable notebookTable(db);
     notebookTable.get(book, notebookLid);
 
-    if (book.guid.isSet()) {
-        NSqlQuery query(db);
-        db->lockForWrite();
-        query.prepare("Update DataStore set data=:notebookLid where lid=:lid and key=:key;");
-        query.bindValue(":notebookLid", notebookLid);
-        query.bindValue(":lid", noteLid);
-        query.bindValue(":key", NOTE_NOTEBOOK_LID);
-        query.exec();
-
-        if (setAsDirty) {
-            setDirty(noteLid, setAsDirty, false);
-        }
-
-        QString bookName = book.name;
-        query.prepare("Update NoteTable set notebook=:name where lid=:lid");
-        query.bindValue(":name", bookName);
-        query.bindValue(":lid", noteLid);
-        query.exec();
-
-        query.prepare("Update NoteTable set notebookLid=:nlid where lid=:lid");
-        query.bindValue(":nlid", notebookLid);
-        query.bindValue(":lid", noteLid);
-        query.exec();
-        query.finish();
-        db->unlock();
+    if (!book.guid.isSet()) {
+        return;
     }
+
+    QString lids = joinLids(noteLids);
+
+    NSqlQuery query(db);
+    db->lockForWrite();
+
+    query.prepare("Update DataStore set data=:notebookLid where lid in (" +
+            lids + ") and key=:key;");
+    bindLids(query, noteLids);
+    query.bindValue(":notebookLid", notebookLid);
+    query.bindValue(":key", NOTE_NOTEBOOK_LID);
+    query.exec();
+
+    if (setAsDirty) {
+        setDirty(noteLids, setAsDirty, false);
+    }
+
+    QString bookName = book.name;
+    query.prepare("Update NoteTable set notebook=:name where lid in (" +
+            lids + ")");
+    bindLids(query, noteLids);
+    query.bindValue(":name", bookName);
+    query.exec();
+
+    query.prepare("Update NoteTable set notebookLid=:nlid where lid in (" +
+            lids + ")");
+    bindLids(query, noteLids);
+    query.bindValue(":nlid", notebookLid);
+    query.exec();
+
+    query.finish();
+
+    db->unlock();
 }
-
-
 
 
 // Update the URL for a note
@@ -1472,68 +1474,74 @@ QString NoteTable::getNoteListTags(qint32 lid) {
 
 // setDateUpdated: default true
 void NoteTable::setDirty(qint32 lid, bool dirty, bool setDateUpdated) {
-    if (lid <= 0)
-        return;
+    QList<qint32> noteLids;
+    noteLids.clear();
+    noteLids.append(lid);
+    setDirty(noteLids, dirty, setDateUpdated);
+}
 
-    db->lockForWrite();
+
+// Set multiple notes as dirty.
+void NoteTable::setDirty(const QList<qint32> &noteLids, bool dirty,
+        bool setDateUpdated) {
+    QString lids = joinLids(noteLids);
+    if (lids == "") {
+        return;
+    }
+
     NSqlQuery query(db);
+    db->lockForWrite();
 
     // If it is setting it as dirty, we need to update the
     // update date &  time.
     if (dirty && setDateUpdated) {
         qint64 dt = QDateTime::currentMSecsSinceEpoch();
-        query.prepare("Delete from DataStore where lid=:lid and key=:key");
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_UPDATED_DATE);
-        query.exec();
 
-        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :value)");
-        query.bindValue(":lid", lid);
+        query.prepare("Update DataStore set data=:value where lid in (" +
+                lids + ") and key=:key");
+        bindLids(query, noteLids);
         query.bindValue(":key", NOTE_UPDATED_DATE);
         query.bindValue(":value", dt);
         query.exec();
 
-        query.prepare("Update NoteTable set dateUpdated=:value where lid=:lid");
-        query.bindValue(":lid", lid);
+        query.prepare("Update NoteTable set dateUpdated=:value where lid in (" +
+                lids + ")");
+        bindLids(query, noteLids);
         query.bindValue(":value", dt);
         query.exec();
-    }
-
-    // If it is already set to the value, then we don't
-    // need to do anything more.
-    if (isDirty(lid) == dirty) {
-        query.finish();
-        db->unlock();
-        return;
     }
 
     // If we got here, then the current dirty state doesn't match
     // what the caller wants.
-    query.prepare("Update NoteTable set isDirty=:isDirty where lid=:lid");
+    // If it is already set to the value, then we don't
+    // need to do anything more.
+    query.prepare("Update NoteTable set isDirty=:isDirty where lid in (" +
+            lids + ") and isDirty!=:isDirty");
+    bindLids(query, noteLids);
     query.bindValue(":isDirty", dirty);
-    query.bindValue(":lid", lid);
     query.exec();
 
-    query.prepare("Delete from DataStore where lid=:lid and key=:key");
-    query.bindValue(":lid", lid);
+    query.prepare("Delete from DataStore where lid in (" +
+            lids + ") and key=:key and data!=:data");
+    bindLids(query, noteLids);
     query.bindValue(":key", NOTE_ISDIRTY);
+    query.bindValue(":data", dirty);
     query.exec();
 
     if (dirty) {
-        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_ISDIRTY);
-        query.bindValue(":data", dirty);
+        QString values = joinValues(noteLids, NOTE_ISDIRTY, dirty);
+        query.prepare("Insert into DataStore (lid, key, data) values " + values);
+        bindLids(query, noteLids);
         query.exec();
-        query.finish();
-        db->unlock();
-        setIndexNeeded(lid, true);
-    } else {
-        query.finish();
-        db->unlock();
+    }
+
+    query.finish();
+    db->unlock();
+
+    if (dirty) {
+        setIndexNeeded(noteLids, true);
     }
 }
-
 
 
 bool NoteTable::isDeleted(qint32 lid) {
@@ -1602,53 +1610,105 @@ void NoteTable::deleteNote(qint32 lid, bool isDirty=true) {
 }
 
 
-
-void NoteTable::restoreNote(qint32 lid, bool isDirty=true) {
-    if (lid <=0)
+void NoteTable::deleteNotes(const QList<qint32> &noteLids, bool isDirty=true) {
+    QString slids = joinLids(noteLids);
+    if (slids == "") {
         return;
+    }
 
     NSqlQuery query(db);
     db->lockForWrite();
-    query.prepare("delete from DataStore where key=:key and lid=:lid");
+
+    query.prepare("delete from DataStore where key=:key and lid in (" +
+            slids + ")");
+    bindLids(query, noteLids);
     query.bindValue(":key", NOTE_ACTIVE);
-    query.bindValue(":lid", lid);
     query.exec();
 
-    query.prepare("delete from DataStore where key=:key and lid=:lid");
+    query.prepare("delete from DataStore where key=:key and lid in (" +
+            slids + ")");
+    bindLids(query, noteLids);
     query.bindValue(":key", NOTE_DELETED_DATE);
-    query.bindValue(":lid", lid);
     query.exec();
 
     if (isDirty) {
-        query.prepare("delete from DataStore where key=:key and lid=:lid");
+        query.prepare("delete from DataStore where key=:key and lid in (" + slids + ")");
+        bindLids(query, noteLids);
         query.bindValue(":key", NOTE_ISDIRTY);
-        query.bindValue(":lid", lid);
         query.exec();
     }
 
-    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_ACTIVE);
-    query.bindValue(":data", true);
+    QString values = joinValues(noteLids, NOTE_ACTIVE, false);
+
+    query.prepare("Insert into DataStore (lid, key, data) values " + values);
+    bindLids(query, noteLids);
     query.exec();
 
-    query.prepare("update notetable set dateDeleted=0 where lid=:lid");
-    query.bindValue(":lid", lid);
+    query.prepare("update notetable set dateDeleted=strftime('%s','now') where lid in (" + slids + ")");
+    bindLids(query, noteLids);
     query.exec();
 
     if (isDirty) {
-        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_ISDIRTY);
-        query.bindValue(":data", true);
+        values = joinValues(noteLids, NOTE_ISDIRTY, true);
+        query.prepare("Insert into DataStore (lid, key, data) values " + values);
+        bindLids(query, noteLids);
         query.exec();
-
     }
+
     query.finish();
     db->unlock();
 }
 
 
+void NoteTable::restoreNote(qint32 lid, bool isDirty=true) {
+    QList<qint32> lids;
+    lids.clear();
+    lids.append(lid);
+    restoreNotes(lids, isDirty);
+}
+
+
+void NoteTable::restoreNotes(const QList<qint32> &lids, bool isDirty=true) {
+    QString slids = joinLids(lids);
+    if (slids == "") {
+        return;
+    }
+
+    NSqlQuery query(db);
+    db->lockForWrite();
+
+    query.prepare("Update DataStore set data=:data where key=:key and lid in (" + slids + ")");
+    query.bindValue(":data", true);
+    query.bindValue(":key", NOTE_ACTIVE);
+    bindLids(query, lids);
+    query.exec();
+
+    query.prepare("delete from DataStore where key=:key and lid in (" +
+            slids + ")");
+    query.bindValue(":key", NOTE_DELETED_DATE);
+    bindLids(query, lids);
+    query.exec();
+
+    if (isDirty) {
+        query.prepare("Update DataStore set data=:data where key=:key and lid in (" + slids + ")");
+        query.bindValue(":key", NOTE_ISDIRTY);
+        query.bindValue(":data", true);
+        bindLids(query, lids);
+        query.exec();
+    }
+
+    query.prepare("Update notetable set dateDeleted=0 where lid in (" +
+            slids + ")");
+    bindLids(query, lids);
+    query.exec();
+
+    query.prepare("Delete from filter where lid in (" + slids + ")");
+    bindLids(query, lids);
+    query.exec();
+
+    query.finish();
+    db->unlock();
+}
 
 
 qint32 NoteTable::getAllDeleted(QList<qint32> &lids) {
@@ -1670,34 +1730,10 @@ qint32 NoteTable::getAllDeleted(QList<qint32> &lids) {
 
 
 void NoteTable::expunge(qint32 lid) {
-    // Expunge the thumbnail
-    QString thumbnail = global.fileManager.getThumbnailDirPath() + QString::number(lid) + ".png";
-    QFile f(thumbnail);
-    if (f.exists()) {
-        QDir d;
-        d.remove(thumbnail);
-    }
-
-    Note note;
-    this->get(note, lid, true, false);
-    ResourceTable resTable(db);
-    QList<Resource> resources;
-    if (note.resources.isSet())
-        resources = note.resources;
-    for (int i=0; i<resources.size(); i++) {
-        resTable.expunge(resources[i].guid);
-    }
-
-    NSqlQuery query(db);
-    db->lockForWrite();
-    query.prepare("delete from DataStore where lid=:lid");
-    query.bindValue(":lid", lid);
-    query.exec();
-    query.prepare("delete from NoteTable where lid=:lid");
-    query.bindValue(":lid", lid);
-    query.exec();
-    query.finish();
-    db->unlock();
+    QList<qint32> lids;
+    lids.clear();
+    lids.append(lid);
+    expunge(lids);
 }
 
 
@@ -1712,6 +1748,52 @@ void NoteTable::expunge(QString guid) {
     this->expunge(lid);
 }
 
+
+void NoteTable::expunge(const QList<qint32> &lids) {
+    QString slids = joinLids(lids);
+    if (slids == "") {
+        return;
+    }
+
+    for (int i = 0; i < lids.size(); ++i) {
+        // Expunge the thumbnail
+        QString thumbnail = global.fileManager.getThumbnailDirPath() +
+            QString::number(lids[i]) + ".png";
+        QFile f(thumbnail);
+        if (f.exists()) {
+            QDir d;
+            d.remove(thumbnail);
+        }
+
+        Note note;
+        this->get(note, lids[i], true, false);
+        ResourceTable resTable(db);
+        QList<Resource> resources;
+        if (note.resources.isSet())
+            resources = note.resources;
+
+        QList<qint32> resourceGuids;
+        resourceGuids.clear();
+        for (int i=0; i<resources.size(); i++) {
+            resourceGuids.append(resources[i].guid.ref().toInt());
+        }
+        resTable.expunge(resourceGuids);
+    }
+
+    NSqlQuery query(db);
+    db->lockForWrite();
+
+    query.prepare("delete from DataStore where lid in (" + slids + ")");
+    bindLids(query, lids);
+    query.exec();
+
+    query.prepare("delete from NoteTable where lid in (" + slids + ")");
+    bindLids(query, lids);
+    query.exec();
+
+    query.finish();
+    db->unlock();
+}
 
 
 // Add to the deletion queue
@@ -1837,99 +1919,91 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     query.bindValue(":key", NOTE_CONTENT);
     query.exec();
 
-    // Update the note size
-    query.prepare("Delete from datastore where lid=:lid and key=:key");
+    // Delete values from the table of datastore, to prepare to insert later.
+    query.prepare("Delete from datastore where lid=:lid and \
+            (key=:content_length or key=:has_todo_completed or \
+            key=:has_todo_uncompleted or key=:has_encrypt or \
+            key=:note_index_needed)");
     query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_CONTENT_LENGTH);
+    query.bindValue(":content_length", NOTE_CONTENT_LENGTH);
+    query.bindValue(":has_todo_completed", NOTE_HAS_TODO_COMPLETED);
+    query.bindValue(":has_todo_uncompleted", NOTE_HAS_TODO_UNCOMPLETED);
+    query.bindValue(":has_encrypt", NOTE_HAS_ENCRYPT);
+    query.bindValue(":note_index_needed", NOTE_INDEX_NEEDED);
     query.exec();
-    query.prepare("Insert into datastore (lid, key, data) values (:lid, :key, :content)");
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_CONTENT_LENGTH);
-    query.bindValue(":content", content.length());
-    query.exec();
 
-    // Make sure we don't have a todo
-    NSqlQuery query2(db);
-    query2.prepare("Update NoteTable set hasTodo=0 where lid=:lid");
-    query2.bindValue(":lid", lid);
-    query2.exec();
-    query2.prepare("delete from datastore where lid=:lid and (key=:key1 or key=:key2)");
-    query2.bindValue(":lid", lid);
-    query2.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
-    query2.bindValue(":key2", NOTE_HAS_TODO_UNCOMPLETED);
-    query2.exec();
+    // Insert values into the table of datastore.
+    QString sql = "Insert into datastore (lid, key, data) values ";
+    // 'values' is the value part in string in the sql statement.
+    QString values = "(:lid, :key_content_length, :value_content_length),";
 
-    query2.prepare("Update NoteTable set hasEncryption=0 where lid=:lid");
-    query2.bindValue(":lid", lid);
-    query2.exec();
-    query2.prepare("delete from datastore where lid=:lid and key=:key");
-    query2.bindValue(":lid", lid);
-    query2.bindValue(":key", NOTE_HAS_ENCRYPT);
-    query2.exec();
-
+    // 'valueList' contains all the real parameters of
+    // the sql statement, including the keys used in
+    // DataStore and values correspoding to them.
+    QList<QVariant> valueList;
+    valueList.clear();
 
     if (content.contains("<en-todo")) {
         QLOG_DEBUG() << content;
-        query.prepare("insert into datastore (lid, key, data) values (:lid, :key, 1)");
         // If we have a todo that is checked, then it is completed.
-
         if (content.contains("<en-todo checked=\"true\"")) {
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_HAS_TODO_COMPLETED);
-            query.exec();
+            values += "(:lid, :key_has_todo_completed, :value_has_todo_completed),";
+            valueList.append(NOTE_HAS_TODO_COMPLETED);
+            valueList.append(true);
         }
 
         // If we have a todo that is not checked, but still have a todo, then it must be uncoompleted.
         if (content.contains("<en-todo checked=\"false\"") || content.contains("<en-todo/>")) {
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_HAS_TODO_UNCOMPLETED);
-            query.exec();
+            values += "(:lid, :key_has_todo_uncompleted, :value_has_todo_uncompleted),";
+            valueList.append(NOTE_HAS_TODO_UNCOMPLETED);
+            valueList.append(true);
         }
-        NSqlQuery query2(db);
-        query2.prepare("Update NoteTable set hasTodo=:value where lid=:lid");
-        query2.bindValue(":lid", lid);
-        query2.bindValue(":value", 1);
-        query2.exec();
     }
 
     if (content.contains("<en-crypt")) {
-        query.prepare("insert into datastore (lid, key, data) values (:lid, :key, 1)");
-        if (content.contains("<en-todo checked=\"true\"")) {
-            query.bindValue(":lid", lid);
-            query.bindValue(":key", NOTE_HAS_TODO_COMPLETED);
-            query.exec();
-        }
-        NSqlQuery query2(db);
-        query2.prepare("Update NoteTable set hasEncryption=:value where lid=:lid");
-        query2.bindValue(":lid", lid);
-        query2.bindValue(":value", 1);
-        query2.exec();
+        values += "(:lid, :key_has_encrypt, :value_has_encrypt),";
+        valueList.append(NOTE_HAS_ENCRYPT);
+        valueList.append(true);
     }
 
-    query.prepare("update datastore set data=1 where lid=:lid and key=:key");
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_INDEX_NEEDED);
-    query.exec();
-    query.finish();
     if (global.enableIndexing) {
-        query.prepare("insert into datastore (lid, key, data) values (:lid, :key, 1)");
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_INDEX_NEEDED);
-        query.bindValue(":data", true);
-        query.exec();
+        values += "(:lid, :key_note_index_needed, :value_note_index_needed),";
+        valueList.append(NOTE_INDEX_NEEDED);
+        valueList.append(true);
     } else {
         NoteIndexer indexer(db);
         indexer.indexNote(lid);
     }
 
-    qlonglong totalsize = this->getSize(lid);
-    NSqlQuery query3(db);
-    query3.prepare("Update notetable set size=:size where lid=:lid");
-    query3.bindValue(":size", totalsize);
-    query3.bindValue(":lid", lid);
-    query3.exec();
+    values.chop(1);
+    sql += values;
+    query.prepare(sql);
+    query.bindValue(":lid", lid);
+    query.bindValue(":key_content_length", NOTE_CONTENT_LENGTH);
+    query.bindValue(":value_content_length", content.length());
+    for (int i = 0, j = 0; i < valueList.size(); i += 2, j += 1) {
+        // Bind the DataStore key with a real parameter.
+        query.bindValue(3 + j*3 + 1, valueList[i]);
+        // Bind the DataStore value with a real parameter.
+        query.bindValue(3 + j*3 + 2, valueList[i+1]);
+    }
+    query.exec();
 
+    // Update the table of NoteTable.
+    sql = QString("Update NoteTable set hasTodo=:has_todo, ") +
+        QString("hasEncryption=:has_encryption, ") +
+        QString("size=:size where lid=:lid;");
+    query.prepare(sql);
+    query.bindValue(":lid", lid);
+    query.bindValue(":has_todo", content.contains("<en-todo"));
+    query.bindValue(":has_encryption", content.contains("<en-crypt"));
+    qlonglong totalsize = this->getSize(lid);
+    query.bindValue(":size", totalsize);
+    query.exec();
+
+    query.finish();
     db->unlock();
+
     setDirty(lid, isDirty);
 }
 
@@ -2674,4 +2748,65 @@ qlonglong NoteTable::getSize(qint32 lid) {
         returnValue = returnValue+query.value(0).toLongLong();
     }
     return returnValue;
+}
+
+
+QString NoteTable::joinLids(const QList<qint32> &noteLids) {
+    QString lids = "";
+
+    for (int i = 0; i < noteLids.size(); ++i) {
+        if (noteLids[i] > 0) {
+            lids += ":lid" + QString::number(i) + ",";
+        }
+    }
+    if (lids != "") {
+        lids.chop(1); // chop the trailing ','
+    }
+
+    return lids;
+}
+
+
+
+QString NoteTable::joinValues(const QList<qint32> &noteLids,
+        int key, const QVariant &value, int lidSeqNum/* =-1 */) {
+    QString values = "";
+    for (int i = 0; i < noteLids.size(); ++i) {
+        if (noteLids[i] <= 0) {
+            continue;
+        }
+        if (lidSeqNum == -1) {
+            values += "(:lid" + QString::number(i) + "," +
+                QString::number(key) + ",";
+        } else {
+            values += "(:lid" + QString::number(lidSeqNum) + "," +
+                QString::number(key) + ",";
+        }
+
+        if (value.type() == QVariant::Bool ||
+                value.type() == QVariant::Int) {
+            values += QString::number(value.toInt()) + "),";
+        } else if (value.type() == QVariant::LongLong) {
+            values += QString::number(value.toLongLong()) + "),";
+        } else {
+            values += value.toString() + "),";
+        }
+    }
+
+    if (values != "") {
+        values.chop(1); // chop the trailing ','
+    }
+
+    return values;
+}
+
+
+
+void NoteTable::bindLids(NSqlQuery &sql, const QList<qint32> &noteLids) {
+    for (int i = 0; i < noteLids.size(); ++i) {
+        if (noteLids[i] > 0) {
+            sql.bindValue(":lid" + QString::number(i),
+                    noteLids[i]);
+        }
+    }
 }

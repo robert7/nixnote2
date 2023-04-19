@@ -44,9 +44,13 @@ class NWebView : public QWebView
 private:
     QAction *setupColorMenuOption(QString color);
     QSignalMapper *backgroundColorMapper;
+    QMenu *todoMenu;
+    QMenu *colorMenu;
+    QAction *backgroundColor;
 
 public:
     explicit NWebView(NBrowserWindow *parent = 0);
+    ~NWebView();
     NBrowserWindow *parent;
     NTitleEditor *titleEditor;
     QString pasteSequence;
@@ -98,6 +102,7 @@ public:
     void keyPressEvent(QKeyEvent *);
     void downloadAttachment(QNetworkRequest *req);
     void focusLostNotify(QString text);
+    void setContent(const QByteArray &data);
 
 signals:
     void noteChanged();

@@ -34,11 +34,11 @@ void ReminderOrderDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     if(value != "0")
     {
         painter->save();
-        QPixmap dot = global.getPixmapResource(":blackDotIcon");
+        const QPixmap &dot = global.getPixmapResource(":blackDotIcon");
         int centerDot = dot.width()/2;
         int len = (option.rect.right() - option.rect.left())/2;
         len = len-centerDot;
-        painter->drawPixmap(option.rect.x()+len,option.rect.y()+2,dot);
+        painter->drawPixmap(option.rect.x()+len,option.rect.y()+2, dot);
         painter->restore();
     }
 

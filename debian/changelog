@@ -1,20 +1,39 @@
-NixNote (2.1.7) stable; urgency=low
+NixNote (2.1.9) stable; urgency=low
+  * Added a new dark theme.
+  * Optimised the sql statements of note creating and updating.
+  * Optimised the sql statements of batch operations, including movings, deletings, and restorings.
+  * Added an option to listen to the commands from command line.(When it is enabled, the shared memory size will be set to 128 bytes; when disabled, it will be set to 1 byte.)
+  * Decoupled the functions of CmdLineTool(except signalGui()) from shared memory.
+  * Made Nixnote export the stack attribute when exporting notes.
+  * Added an option to save the UI state changes when Nixnote exits.
+  * Save the note content when Nixnote receives specific signal interruptions(SIGINT, SIGHUP).
+  * Allocate the tageditor's tags dynamically.
+  * Added a default theme named with 'Default' when no theme is found in themes.ini.
+  * RAM usage optimizations.
+  * Fixed file downloading under Windows.
+  * Made the editor not render the note content when Key_Up or Key_Down keeps being pressed.
+ -- Robert Spiegel <nightingale7@gmail.com>  Sat, 15 Apr 2023 12:15:22 +0200
+
+NixNote (2.1.8) stable; urgency=low
   * Made the font size in the setting dialog consistent with the one in the editor button bar.
   * Made the Windows editon's results of find more recognizable.
-  * Limited the max length of the recently updated menu of the tray.
+  * Limited the max length of the recently updated menu and favourite menu of the tray.
   * Fixed memory leaks caused by Qt Webview.
   * Fixed: To-do Formatting is not in parity with Official Client - issue #131
   * Fixed: In-App Note links don't work when there is an apostrophe in the title - issue #168
   * Fixed: Nixnote2 exits when network gets disconnected - issue #189
   * Fixed: Import all notes, tag issue - issue #153
-  * Fixed: Local images cannot be pasted, web image's html element cannot be saved
+  * Fixed: Local images cannot be pasted, images in notes cannot be saved.
+ -- Robert Spiegel <nightingale7@gmail.com>  Sat, 10 Sep 2022 10:00:00 +0200
+
+NixNote (2.1.7) stable; urgency=low
   * Fixed: Search by date attributes not working with PPA builds - issue #149
   * Fixed: Editor fonts and sorting notes - issue #156
-  * Fixed: Nixnote often crashes
+  * Fixed: Nixnote often crashes.
   * Fixed: Can't search / replace with as replacement. - issue #180
-  * Enabled the spell check code for Windows edition
+  * Enabled the spell check code for Windows edition.
   * Fixed Windows build (thanks to https://github.com/boo-yee)
- -- Robert Spiegel <nightingale7@gmail.com>  Tue, 17 May 2022 10:00:00 +0200
+ -- Robert Spiegel <nightingale7@gmail.com>  Tue, 12 Jul 2022 10:00:00 +0200
 
 NixNote (2.1.6) stable; urgency=low
   * Updated russian translation (thanks to Александр, ra3ggi@gmail.com)

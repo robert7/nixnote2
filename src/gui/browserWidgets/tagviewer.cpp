@@ -27,9 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 TagViewer::TagViewer(QWidget *parent) :
-    QLabel(parent)
-{
-
+    QLabel(parent) {
     clearButton = new QToolButton(this);
     clearButton->setIcon(global.getIconResource(":filecloseIcon"));
     clearButton->setStyleSheet("QToolButton { border: none; padding: 0px; }");
@@ -46,8 +44,12 @@ TagViewer::TagViewer(QWidget *parent) :
 }
 
 
-void TagViewer::resizeEvent(QResizeEvent *)
-{
+TagViewer::~TagViewer() {
+    delete clearButton;
+}
+
+
+void TagViewer::resizeEvent(QResizeEvent *) {
     resize();
 }
 

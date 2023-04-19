@@ -62,6 +62,7 @@ public:
     explicit AppearancePreferences(QWidget *parent = 0);
     void saveValues();
     QCheckBox *showTrayIcon;
+    QCheckBox *saveUiState;
     QCheckBox *showPDFs;
     QCheckBox *showSplashScreen;
     QCheckBox *showMissedReminders;

@@ -965,15 +965,16 @@ bool NNotebookView::dropMimeData(QTreeWidgetItem *parent, int index, const QMime
 
         // The string has a long list of note lids.  We parse them out & update the note
         QStringList stringLids = data.split(" ");
+        QList<qint32> noteLids;
+        noteLids.clear();
+        NoteTable noteTable(global.db);
         for (int i=0; i<stringLids.size(); i++) {
             if (stringLids[i].trimmed() != "") {
                 qint32 noteLid = stringLids.at(i).toInt();
                 if (noteLid > 0) {
-                    NoteTable noteTable(global.db);
                     qint32 currentNotebook = noteTable.getNotebookLid(noteLid);
                     if (currentNotebook != bookLid) {
-                        noteTable.updateNotebook(noteLid, bookLid, true);
-                        emit(updateNoteList(noteLid, NOTE_TABLE_NOTEBOOK_POSITION, notebook.name.value()));
+                        noteLids.append(noteLid);
 //                        qint64 dt = QDateTime::currentMSecsSinceEpoch();
 //                        noteTable.updateDate(noteLid,  dt, NOTE_UPDATED_DATE, true);
 //                        emit(updateNoteList(noteLid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
@@ -981,12 +982,15 @@ bool NNotebookView::dropMimeData(QTreeWidgetItem *parent, int index, const QMime
                 }
             }
         }
+
+        noteTable.updateNotebook(noteLids, bookLid, true);
+        emit(updateNoteList(noteLids[0], NOTE_TABLE_NOTEBOOK_POSITION,
+                    notebook.name.value()));
         if (stringLids.size() > 0) {
             emit(updateCounts());
         }
         return true;
     }
-
 
     return false;
 }

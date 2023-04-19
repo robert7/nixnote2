@@ -86,23 +86,5 @@ void ExtractNoteText::unwrap(QString data) {
 
 
 QString ExtractNoteText::stripTags(QString content) {
-
-    // Start looking through the note
-    qint32 startPos =content.indexOf(QChar('<'));
-    qint32 endPos = content.indexOf(QChar('>'),startPos)+1;
-    content.remove(startPos,endPos-startPos);
-
-    // Remove encrypted text
-    while (content.contains("<en-crypt")) {
-        startPos = content.indexOf("<en-crypt");
-        endPos = content.indexOf("</en-crypt>") + 11;
-        content = content.mid(0,startPos)+content.mid(endPos);
-    }
-
-    // Get the content as an HTML doc.  This will strip any
-    // remaining tags out, but will also return it as a formatted
-    // string that preserves things like a newline.
-    QTextDocument textDocument;
-    textDocument.setHtml(content);
-    return textDocument.toPlainText();
+    return content.remove(QRegExp("<[^>]*>"));
 }

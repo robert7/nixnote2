@@ -177,6 +177,9 @@ void ExportData::writeNotebooks() {
                 createTimestampNode("ServiceUpdated", book.serviceUpdated);
             if (book.updateSequenceNum.isSet())
                 createNode("UpdateSequenceNumber", book.updateSequenceNum);
+            if (book.stack.isSet())
+                createNode("Stack", book.stack);
+
             createNode("Dirty",dirtyLids.contains(lids[i]));
 
             if (book.businessNotebook.isSet()) {

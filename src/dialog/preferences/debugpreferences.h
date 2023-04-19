@@ -40,7 +40,9 @@ private:
     QCheckBox *forceUTF8;
     QCheckBox *interceptSigHup;
     QCheckBox *multiThreadSave;
+    QLabel *autoSaveIntervalLabel;
     QSpinBox *autoSaveInterval;
+    QCheckBox *listenToCommands;
 
 public:
     explicit DebugPreferences(QWidget *parent = 0);
