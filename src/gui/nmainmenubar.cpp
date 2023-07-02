@@ -645,6 +645,7 @@ void NMainMenuBar::onSortMenuTriggered() {
     QString data = pAction->data().toString();
     QLOG_DEBUG() << "sort action data= " << data;
     global.setSortOrder(data);
+    parent->resetNoteTableSortColumn();
 
     // refresh result set
     parent->updateSelectionCriteria(false);
