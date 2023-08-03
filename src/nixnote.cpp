@@ -3727,3 +3727,15 @@ void NixNote::showAnnouncementMessage() {
     //         "\n\n"
     //         "Sorry for additional inconvenience..");
 }
+
+
+void NixNote::resetNoteTableSortColumn() {
+    // Sort the notetableview by a non-existing column, to reset the sort column.
+    // This function is only called after the sort menu's item is clicked.
+    // Without calling this function, the sort will not work, because the
+    // notetableview is set to sortable(setSortingEnabled(true)), and within
+    // setSortingEnabled(), a normal sortBycolumn() is called, which will lock
+    // the items order.
+    int sortColumn = noteTableView->horizontalHeader()->count();
+    noteTableView->sortByColumn(sortColumn);
+}
