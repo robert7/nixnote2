@@ -204,7 +204,7 @@ public:
     LineEdit *searchText;
     NTabWidget *tabWindow;
     void showAnnouncementMessage();
-    void resetNoteTableSortColumn();
+    void unsortNoteTable();
 
 private slots:
     void onNetworkManagerFinished(QNetworkReply *reply);

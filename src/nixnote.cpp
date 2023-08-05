@@ -243,6 +243,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
 
 // Destructor to call when all done
 NixNote::~NixNote() {
+    QLOG_DEBUG() << "~NixNote: Closing threads";
     syncThread.quit();
     indexThread.quit();
     counterThread.quit();
@@ -1298,10 +1299,6 @@ void NixNote::saveOnExit() {
     saveNoteColumnWidths();
     saveNoteColumnPositions();
     noteTableView->saveColumnsVisible();
-
-    QLOG_DEBUG() << "saveOnExit: Closing threads";
-    indexThread.quit();
-    counterThread.quit();
 
     QLOG_DEBUG() << "Exiting saveOnExit()";
 }
@@ -3732,13 +3729,8 @@ void NixNote::showAnnouncementMessage() {
 }
 
 
-void NixNote::resetNoteTableSortColumn() {
-    // Sort the notetableview by a non-existing column, to reset the sort column.
-    // This function is only called after the sort menu's item is clicked.
-    // Without calling this function, the sort will not work, because the
-    // notetableview is set to sortable(setSortingEnabled(true)), and within
-    // setSortingEnabled(), a normal sortBycolumn() is called, which will lock
-    // the items order.
+void NixNote::unsortNoteTable() {
+    // Sort the notetableview by a non-existing column
     int sortColumn = noteTableView->horizontalHeader()->count();
     noteTableView->sortByColumn(sortColumn);
 }

@@ -308,6 +308,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 NBrowserWindow::~NBrowserWindow() {
     browserThread->quit();
     while (!browserRunner->isIdle);
+    while (!browserThread->isFinished());
 
     delete browserThread;
     delete browserRunner;
