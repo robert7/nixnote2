@@ -4,7 +4,6 @@
 Nixnote is Evernote desktop client for Linux (can be also build on macOS and Windows).
 
 * [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
-  * **Important**: if you have problem with Evernote login (white dialog shown after entering password) - see [workaround](https://github.com/robert7/nixnote2/issues/171#issuecomment-1509087526)
 * [Features](https://github.com/robert7/nixnote2/wiki/Features)
 * [CHANGELOG](https://github.com/robert7/nixnote2/blob/master/debian/changelog)
 * [Contributing](CONTRIBUTING.md)
