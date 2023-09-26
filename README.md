@@ -100,7 +100,7 @@ Basic familiarity with docker is helpful.
 More info in: [DOCKER README](docs/DOCKER-README.md)   
 
 ### Linux - manual build
-* Install development dependencies - look in content of [this docker file](development/docker/Dockerfile.ubuntu_xenial)
+* Install development dependencies - look in content of [this docker file](development/docker/Dockerfile.ubuntu_focal)
   or [.travis.yml](https://github.com/robert7/nixnote2/blob/master/.travis.yml)
   or [debian/control](https://github.com/robert7/nixnote2/blob/master/debian/control)
   to see example, what is needed for Ubuntu. If you use another distribution/version,
