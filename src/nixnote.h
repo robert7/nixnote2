@@ -203,7 +203,8 @@ public:
     bool event(QEvent *event);
     LineEdit *searchText;
     NTabWidget *tabWindow;
-void showAnnouncementMessage();
+    void showAnnouncementMessage();
+    void unsortNoteTable();
 
 private slots:
     void onNetworkManagerFinished(QNetworkReply *reply);

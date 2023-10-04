@@ -1,4 +1,5 @@
 QT += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
+
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 unix {
     CONFIG += link_pkgconfig
@@ -16,6 +17,7 @@ win32:LIBS += -L"$$PWD/winlib" -lhunspell-$$[HUNSPELL_VERSION]
 win32:RC_ICONS += "$$PWD/resources/images/windowIcon.ico"
 
 INCLUDEPATH += "$$PWD/src/qevercloud/QEverCloud/headers"
+INCLUDEPATH += "$$OUT_PWD"
 
 mac {
     TARGET = NixNote2
@@ -39,6 +41,42 @@ CONFIG(debug, debug|release) {
 }
 OBJECTS_DIR = $${DESTDIR}
 MOC_DIR = $${DESTDIR}
+
+oauth_webengine {
+    oauth_webkit {
+        error("oauth_webengine and oauth_webkit are mutually exclusive!")
+    }
+
+    win32-g++ {
+        error("Cannot use QtWebEngine with MinGW build")
+    }
+
+    message("Using QtWebEngine for OAuth")
+    QT += webengine webenginewidgets
+    QEVERCLOUD_USE_QT_WEB_ENGINE = 1
+    QEVERCLOUD_USE_SYSTEM_BROWSER = 0
+    DEFINES += QEVERCLOUD_USE_QT_WEB_ENGINE=1
+    DEFINES += QEVERCLOUD_USE_SYSTEM_BROWSER=0
+} else {
+    oauth_webkit {
+        message("Using QtWebKit for OAuth")
+        warning("QtWebKit has known problems with OAuth, it might not work well!")
+        QEVERCLOUD_USE_QT_WEB_ENGINE = 0
+        QEVERCLOUD_USE_SYSTEM_BROWSER = 0
+        DEFINES += QEVERCLOUD_USE_QT_WEB_ENGINE=0
+        DEFINES += QEVERCLOUD_USE_SYSTEM_BROWSER=0
+    } else {
+        message("Using system browser for OAuth")
+        QEVERCLOUD_USE_QT_WEB_ENGINE = 0
+        QEVERCLOUD_USE_SYSTEM_BROWSER = 1
+        DEFINES += QEVERCLOUD_USE_QT_WEB_ENGINE=0
+        DEFINES += QEVERCLOUD_USE_SYSTEM_BROWSER=1
+    }
+}
+
+qevercloud_version_info.input = src/qevercloud/QEverCloud/headers/VersionInfo.h.in
+qevercloud_version_info.output = $$OUT_PWD/VersionInfo.h
+QMAKE_SUBSTITUTES += qevercloud_version_info
 
 SOURCES += \
     src/application.cpp \
@@ -173,17 +211,30 @@ SOURCES += \
     src/oauth/oauthtokenizer.cpp \
     src/hunspell/spellchecker.cpp \
     src/qevercloud/QEverCloud/src/AsyncResult.cpp \
+    src/qevercloud/QEverCloud/src/AsyncResult_p.cpp \
+    src/qevercloud/QEverCloud/src/DurableService.cpp \
     src/qevercloud/QEverCloud/src/EventLoopFinisher.cpp \
     src/qevercloud/QEverCloud/src/EverCloudException.cpp \
-    src/qevercloud/QEverCloud/src/exceptions.cpp \
-    src/qevercloud/QEverCloud/src/generated/constants.cpp \
-    src/qevercloud/QEverCloud/src/generated/services.cpp \
-    src/qevercloud/QEverCloud/src/generated/types.cpp \
-    src/qevercloud/QEverCloud/src/globals.cpp \
-    src/qevercloud/QEverCloud/src/http.cpp \
-    src/qevercloud/QEverCloud/src/oauth.cpp \
-    src/qevercloud/QEverCloud/src/services_nongenerated.cpp \
-    src/qevercloud/QEverCloud/src/thumbnail.cpp \
+    src/qevercloud/QEverCloud/src/Exceptions.cpp \
+    src/qevercloud/QEverCloud/src/generated/Constants.cpp \
+    src/qevercloud/QEverCloud/src/generated/EDAMErrorCode.cpp \
+    src/qevercloud/QEverCloud/src/generated/Servers.cpp \
+    src/qevercloud/QEverCloud/src/generated/Services.cpp \
+    src/qevercloud/QEverCloud/src/generated/Types.cpp \
+    src/qevercloud/QEverCloud/src/Globals.cpp \
+    src/qevercloud/QEverCloud/src/Http.cpp \
+    src/qevercloud/QEverCloud/src/HttpRequestParser.cpp \
+    src/qevercloud/QEverCloud/src/HttpUtils.cpp \
+    src/qevercloud/QEverCloud/src/InkNoteImageDownloader.cpp \
+    src/qevercloud/QEverCloud/src/Log.cpp \
+    src/qevercloud/QEverCloud/src/Printable.cpp \
+    src/qevercloud/QEverCloud/src/RequestContext.cpp \
+    src/qevercloud/QEverCloud/src/Thumbnail.cpp \
+    src/qevercloud/QEverCloud/src/VersionInfo.cpp \
+    src/qevercloud/QEverCloud/src/oauth/AbstractOAuthEngine.cpp \
+    src/qevercloud/QEverCloud/src/oauth/NonceGenerator.cpp \
+    src/qevercloud/QEverCloud/src/oauth/OAuth.cpp \
+    src/qevercloud/QEverCloud/src/oauth/Utils.cpp \
     src/reminders/reminderevent.cpp \
     src/reminders/remindermanager.cpp \
     src/settings/accountsmanager.cpp \
@@ -234,6 +285,20 @@ SOURCES += \
     src/xml/xmlhighlighter.cpp \
     src/quentier/utility/StringUtils.cpp \
     src/quentier/utility/StringUtils_p.cpp
+
+oauth_webengine {
+    SOURCES += \
+        src/qevercloud/QEverCloud/src/oauth/NetworkCookieJar.cpp \
+        src/qevercloud/QEverCloud/src/oauth/OAuthWebEngine.cpp
+} else {
+    oauth_webkit {
+        SOURCES += \
+            src/qevercloud/QEverCloud/src/oauth/OAuthWebKit.cpp
+    } else {
+        SOURCES += \
+            src/qevercloud/QEverCloud/src/oauth/OAuthSystemBrowser.cpp
+    }
+}
 
 HEADERS  += \
     src/application.h \
@@ -368,25 +433,39 @@ HEADERS  += \
     src/oauth/oauthtokenizer.h \
     src/hunspell/spellchecker.h \
     src/qevercloud/QEverCloud/headers/AsyncResult.h \
+    src/qevercloud/QEverCloud/headers/DurableService.h \
     src/qevercloud/QEverCloud/headers/EventLoopFinisher.h \
     src/qevercloud/QEverCloud/headers/EverCloudException.h \
-    src/qevercloud/QEverCloud/headers/exceptions.h \
-    src/qevercloud/QEverCloud/headers/export.h \
-    src/qevercloud/QEverCloud/headers/generated/constants.h \
+    src/qevercloud/QEverCloud/headers/Exceptions.h \
+    src/qevercloud/QEverCloud/headers/Export.h \
+    src/qevercloud/QEverCloud/headers/generated/Constants.h \
     src/qevercloud/QEverCloud/headers/generated/EDAMErrorCode.h \
-    src/qevercloud/QEverCloud/headers/generated/services.h \
-    src/qevercloud/QEverCloud/headers/generated/types.h \
-    src/qevercloud/QEverCloud/headers/globals.h \
-    src/qevercloud/QEverCloud/headers/oauth.h \
+    src/qevercloud/QEverCloud/headers/generated/Servers.h \
+    src/qevercloud/QEverCloud/headers/generated/Services.h \
+    src/qevercloud/QEverCloud/headers/generated/Types.h \
+    src/qevercloud/QEverCloud/headers/Globals.h \
+    src/qevercloud/QEverCloud/headers/Helpers.h \
+    src/qevercloud/QEverCloud/headers/InkNoteImageDownloader.h \
+    src/qevercloud/QEverCloud/headers/Log.h \
+    src/qevercloud/QEverCloud/headers/OAuth.h \
     src/qevercloud/QEverCloud/headers/Optional.h \
+    src/qevercloud/QEverCloud/headers/Printable.h \
     src/qevercloud/QEverCloud/headers/QEverCloud.h \
     src/qevercloud/QEverCloud/headers/QEverCloudOAuth.h \
-    src/qevercloud/QEverCloud/headers/qt4helpers.h \
-    src/qevercloud/QEverCloud/headers/thumbnail.h \
-    src/qevercloud/QEverCloud/src/generated/types_impl.h \
-    src/qevercloud/QEverCloud/src/http.h \
-    src/qevercloud/QEverCloud/src/impl.h \
-    src/qevercloud/QEverCloud/src/thrift.h \
+    src/qevercloud/QEverCloud/headers/RequestContext.h \
+    src/qevercloud/QEverCloud/headers/Thumbnail.h \
+    src/qevercloud/QEverCloud/src/generated/Types_io.h \
+    src/qevercloud/QEverCloud/src/AsyncResult_p.h \
+    src/qevercloud/QEverCloud/src/Http.h \
+    src/qevercloud/QEverCloud/src/HttpRequestData.h \
+    src/qevercloud/QEverCloud/src/HttpRequestParser.h \
+    src/qevercloud/QEverCloud/src/HttpUtils.h \
+    src/qevercloud/QEverCloud/src/Impl.h \
+    src/qevercloud/QEverCloud/src/Thrift.h \
+    src/qevercloud/QEverCloud/src/oauth/AbstractOAuthEngine.h \
+    src/qevercloud/QEverCloud/src/oauth/NetworkCookieJar.h \
+    src/qevercloud/QEverCloud/src/oauth/NonceGenerator.h \
+    src/qevercloud/QEverCloud/src/oauth/Utils.h \
     src/reminders/reminderevent.h \
     src/reminders/remindermanager.h \
     src/settings/accountsmanager.h \
@@ -438,6 +517,19 @@ HEADERS  += \
     src/quentier/utility/StringUtils.h \
     src/quentier/utility/StringUtils_p.h
 
+oauth_webengine {
+    HEADERS += \
+        src/qevercloud/QEverCloud/src/oauth/OAuthWebEngine.h
+} else {
+    oauth_webkit {
+        HEADERS += \
+            src/qevercloud/QEverCloud/src/oauth/OAuthWebKit.h
+    } else {
+        HEADERS += \
+            src/qevercloud/QEverCloud/src/oauth/OAuthSystemBrowser.h
+    }
+}
+
 # http://doc.qt.io/qt-5/qmake-function-reference.html#str-member-arg-start-end
 # $$left(VAR, len)
 #left = $$str_member(VAR, 0, $$num_add($$len, -1))
@@ -453,7 +545,7 @@ gcc {
     CONFIG += $$COMPILER_CONFIG
 }
 
-QMAKE_CXXFLAGS += -std=c++11 -g -O2  -Wformat -Werror=format-security
+QMAKE_CXXFLAGS += -std=c++14 -g -O2  -Wformat -Werror=format-security
 linux:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
 
 g++4 {

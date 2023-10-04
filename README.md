@@ -4,7 +4,6 @@
 Nixnote is Evernote desktop client for Linux (can be also build on macOS and Windows).
 
 * [Getting started](https://github.com/robert7/nixnote2/wiki/Getting-started)
-  * **Important**: if you have problem with Evernote login (white dialog shown after entering password) - see [workaround](https://github.com/robert7/nixnote2/issues/171#issuecomment-1509087526)
 * [Features](https://github.com/robert7/nixnote2/wiki/Features)
 * [CHANGELOG](https://github.com/robert7/nixnote2/blob/master/debian/changelog)
 * [Contributing](CONTRIBUTING.md)
@@ -101,7 +100,7 @@ Basic familiarity with docker is helpful.
 More info in: [DOCKER README](docs/DOCKER-README.md)   
 
 ### Linux - manual build
-* Install development dependencies - look in content of [this docker file](development/docker/Dockerfile.ubuntu_xenial)
+* Install development dependencies - look in content of [this docker file](development/docker/Dockerfile.ubuntu_focal)
   or [.travis.yml](https://github.com/robert7/nixnote2/blob/master/.travis.yml)
   or [debian/control](https://github.com/robert7/nixnote2/blob/master/debian/control)
   to see example, what is needed for Ubuntu. If you use another distribution/version,

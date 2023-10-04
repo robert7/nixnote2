@@ -1,15 +1,16 @@
 /**
  * Original work: Copyright (c) 2014 Sergey Skoblikov
- * Modified work: Copyright (c) 2015-2016 Dmitry Ivanov
+ * Modified work: Copyright (c) 2015-2019 Dmitry Ivanov
  *
- * This file is a part of QEverCloud project and is distributed under the terms of MIT license:
- * https://opensource.org/licenses/MIT
+ * This file is a part of QEverCloud project and is distributed under the terms
+ * of MIT license: https://opensource.org/licenses/MIT
  */
 
 #ifndef QEVERCLOUD_OPTIONAL_H
 #define QEVERCLOUD_OPTIONAL_H
 
 #include "EverCloudException.h"
+
 #include <algorithm>
 
 namespace qevercloud {
@@ -17,20 +18,25 @@ namespace qevercloud {
 /**
  * Supports optional values.
  *
- * Most of the fields in the Evernote API structs are optional. But C++ does not support this notion directly.
+ * Most of the fields in the Evernote API structs are optional. But C++ does not
+ * support this notion directly.
  *
- * To implement the concept of optional values conventional Thrift C++ wrapper uses a special field of a struct type
- * where each field is of type bool with the same name as a field in the struct. This bool flag indicated was
- * the field with the same name in the outer struct assigned or not.
+ * To implement the concept of optional values conventional Thrift C++ wrapper
+ * uses a special field of a struct type where each field is of type bool with
+ * the same name as a field in the struct. This bool flag indicated was the field
+ * with the same name in the outer struct assigned or not.
  *
- * While this method have its advantages (obviousness and simplicity) I found it very inconvenient to work with.
- * You have to check by hand that both values (value itself and its __isset flag) are in sync.
- * There is no checks whatsoever against an error and such an error is too easy to make.
+ * While this method have its advantages (obviousness and simplicity) I found
+ * it very inconvenient to work with. You have to check by hand that both values
+ * (value itself and its __isset flag) are in sync. There is no checks whatsoever
+ * against an error and such an error is too easy to make.
  *
- * So for my library I created a special class that supports the optional value notion explicitly.
- * Basically Optional class just holds a bool value that tracks the fact that a value was assigned. But this tracking
- * is done automatically and attempts to use unissigned values throw exceptions. In this way errors are much harder to
- * make and it's harder for them to slip through testing unnoticed too.
+ * So for my library I created a special class that supports the optional value
+ * notion explicitly. Basically Optional class just holds a bool value that
+ * tracks the fact that a value was assigned. But this tracking is done
+ * automatically and attempts to use unassigned values throw exceptions. In this
+ * way errors are much harder to make and it's harder for them to slip through
+ * testing unnoticed too.
  *
  */
 template<typename T>
@@ -54,7 +60,8 @@ public:
     {}
 
     /**
-     * Template copy constructor. Allows to be initialized with Optional of any compatible type.
+     * Template copy constructor. Allows to be initialized with Optional of any
+     * compatible type.
      */
     template<typename X>
     Optional(const Optional<X> & o) :
@@ -129,7 +136,8 @@ public:
     operator const T&() const
     {
         if (!m_isSet) {
-            throw EverCloudException("qevercloud::Optional: nonexistent value access");
+            throw EverCloudException(
+                "qevercloud::Optional: nonexistent value access");
         }
 
         return m_value;
@@ -143,7 +151,8 @@ public:
     operator T&()
     {
         if (!m_isSet) {
-            throw EverCloudException("qevercloud::Optional: nonexistent value access");
+            throw EverCloudException(
+                "qevercloud::Optional: nonexistent value access");
         }
 
         return m_value;
@@ -158,7 +167,8 @@ public:
     const T & ref() const
     {
         if (!m_isSet) {
-            throw EverCloudException("qevercloud::Optional: nonexistent value access");
+            throw EverCloudException(
+                "qevercloud::Optional: nonexistent value access");
         }
 
         return m_value;
@@ -167,7 +177,8 @@ public:
     /**
      * Returs reference to the holded value.
      *
-     * There are contexts in C++ where impicit type conversions can't help. For example:
+     * There are contexts in C++ where impicit type conversions can't help.
+     * For example:
      *
      * @code
       Optional<QStringList> l;
@@ -183,7 +194,8 @@ public:
      *
      * ... but this is indeed ugly as hell.
      *
-     * So I implemented ref() function that returns a reference to the holded value.
+     * So I implemented ref() function that returns a reference to the holded
+     * value.
      * @code
       Optional<QStringList> l;
       for(auto s : l.ref()); // not ideal but OK
@@ -192,7 +204,8 @@ public:
     T & ref()
     {
         if (!m_isSet) {
-            throw EverCloudException("qevercloud::Optional: nonexistent value access");
+            throw EverCloudException(
+                "qevercloud::Optional: nonexistent value access");
         }
 
         return m_value;
@@ -257,11 +270,13 @@ public:
     }
 
     /**
-     * Two syntatic constructs come to mind to use for implementation of access to a struct's/class's field directly from Optional.
+     * Two syntatic constructs come to mind to use for implementation of access
+     * to a struct's/class's field directly from Optional.
      *
      * One is the dereference operator.
      * This is what boost::optional uses. While it's conceptually nice
-     * I found it to be not a very convenient way to refer to structs, especially nested ones.
+     * I found it to be not a very convenient way to refer to structs,
+     * especially nested ones.
      * So I overloaded the operator-> and use smart pointer semantics.
      *
      * @code
@@ -275,19 +290,24 @@ public:
 
       @endcode
      *
-     * I admit, boost::optional is much more elegant overall. It uses pointer semantics quite clearly and
-     * in an instantly understandable way. It's universal (* works for any type and not just structs). There is
-     * no need for implicit type concersions and so there is no subtleties because of it. And so on.
+     * I admit, boost::optional is much more elegant overall. It uses pointer
+     * semantics quite clearly and in an instantly understandable way. It's
+     * universal (works for any type and not just structs). There is no need for
+     * implicit type concersions and so there is no subtleties because of it.
+     * And so on.
      *
-     * But then referring to struct fields is a chore. And this is the most common use case of Optionals in QEverCloud.
+     * But then referring to struct fields is a chore. And this is the most
+     * common use case of Optionals in QEverCloud.
      *
-     * So I decided to use non-obvious-on-the-first-sight semantics for my Optional. IMO it's much more convenient when gotten used to.
+     * So I decided to use non-obvious-on-the-first-sight semantics for my
+     * Optional. IMO it's much more convenient when gotten used to.
      *
      */
     T * operator->()
     {
         if (!m_isSet) {
-            throw EverCloudException("qevercloud::Optional: nonexistent value access");
+            throw EverCloudException(
+                "qevercloud::Optional: nonexistent value access");
         }
 
         return &m_value;
@@ -299,14 +319,16 @@ public:
     const T * operator->() const
     {
         if (!m_isSet) {
-            throw EverCloudException("qevercloud::Optional: nonexistent value access");
+            throw EverCloudException(
+                "qevercloud::Optional: nonexistent value access");
         }
 
         return &m_value;
     }
 
     /**
-     * The function is sometimes useful to simplify checking for the value being set.
+     * The function is sometimes useful to simplify checking for the value being
+     * set.
      * @param defaultValue
      * The value to return if Optional is not set.
      * @return Optional value if set and defaultValue otherwise.
@@ -319,15 +341,38 @@ public:
     /**
      * Two optionals are equal if they are both not set or have
      * equal values.
-     *
-     * I do not define `operator==` due to not easily resolvable conflicts with `operator T&`.
-     *
-     * Note that `optional == other_optional` may throw but `optional.isEqual(other_optional)` will not.
      */
     bool isEqual(const Optional<T> & other) const
     {
-        if(m_isSet != other.m_isSet) return false;
+        if (m_isSet != other.m_isSet) {
+            return false;
+        }
+
         return !m_isSet || (m_value == other.m_value);
+    }
+
+    bool operator==(const Optional<T> & other) const
+    {
+        return isEqual(other);
+    }
+
+    bool operator!=(const Optional<T> & other) const
+    {
+        return !operator==(other);
+    }
+
+    bool operator==(const T & other) const
+    {
+        if (!m_isSet) {
+            return false;
+        }
+
+        return m_value == other;
+    }
+
+    bool operator!=(const T & other) const
+    {
+        return !operator==(other);
     }
 
     template<typename X> friend class Optional;
@@ -339,8 +384,6 @@ public:
         swap(first.m_value, second.m_value);
     }
 
-// Visual C++ does not to generate implicit move constructors so this stuff doesn't work with even recent MSVC compilers
-#if defined(Q_COMPILER_RVALUE_REFS) && !defined(_MSC_VER)
     Optional(Optional && other)
     {
         swap(*this, other);
@@ -366,7 +409,6 @@ public:
         swap(m_value, other);
         return *this;
     }
-#endif
 
 private:
     bool m_isSet;

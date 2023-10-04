@@ -162,15 +162,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
     connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
 
 
-    // set Evernote http timeout to 4 minutes
-    // actually it is nor exactly connection timeout nor request timeout - it seems to be time between http reads
-    // where if nothing happens, timeout is reached
-    // but actually the excat definition should not matter much in real use cases
-    // timeout is is set to big enought value to work well even for full sync and slower connections
-    // but will eventually timeout, if the network is unstable
-    // see https://github.com/d1vanov/QEverCloud/issues/22#issuecomment-525745982
-    setConnectionTimeout(4 * 60 * 1000);
-
     // Setup the counter thread
     QLOG_DEBUG() << "Setting up sync thread";
     connect(this, SIGNAL(syncRequested()), &syncRunner, SLOT(synchronize()));
@@ -252,6 +243,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent) {
 
 // Destructor to call when all done
 NixNote::~NixNote() {
+    QLOG_DEBUG() << "~NixNote: Closing threads";
     syncThread.quit();
     indexThread.quit();
     counterThread.quit();
@@ -1307,10 +1299,6 @@ void NixNote::saveOnExit() {
     saveNoteColumnWidths();
     saveNoteColumnPositions();
     noteTableView->saveColumnsVisible();
-
-    QLOG_DEBUG() << "saveOnExit: Closing threads";
-    indexThread.quit();
-    counterThread.quit();
 
     QLOG_DEBUG() << "Exiting saveOnExit()";
 }
@@ -3738,4 +3726,11 @@ void NixNote::showAnnouncementMessage() {
     //         "msg text"
     //         "\n\n"
     //         "Sorry for additional inconvenience..");
+}
+
+
+void NixNote::unsortNoteTable() {
+    // Sort the notetableview by a non-existing column
+    int sortColumn = noteTableView->horizontalHeader()->count();
+    noteTableView->sortByColumn(sortColumn);
 }

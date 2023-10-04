@@ -1,25 +1,34 @@
 /**
- * Copyright (c) 2016 Dmitry Ivanov
+ * Copyright (c) 2016-2020 Dmitry Ivanov
  *
- * This file is a part of QEverCloud project and is distributed under the terms of MIT license:
+ * This file is a part of QEverCloud project and is distributed under the terms
+ * of MIT license:
  * https://opensource.org/licenses/MIT
  */
 
+#include "Http.h"
+
+#include <Globals.h>
+#include <Helpers.h>
 #include <InkNoteImageDownloader.h>
-#include <qt4helpers.h>
-#include "http.h"
-#include <QSize>
+#include <Log.h>
+
+#include <QBuffer>
 #include <QImage>
 #include <QPainter>
-#include <QBuffer>
+#include <QSize>
+
+#include <memory>
+#include <utility>
 
 namespace qevercloud {
 
 class InkNoteImageDownloaderPrivate
 {
 public:
-    QPair<QNetworkRequest, QByteArray> createPostRequest(const QString & urlPart,
-                                                         const int sliceNumber, const bool isPublic = false);
+    std::pair<QNetworkRequest, QByteArray> createPostRequest(
+        const QString & urlPart, const int sliceNumber,
+        const bool isPublic = false);
 
     QString m_host;
     QString m_shardId;
@@ -32,8 +41,9 @@ InkNoteImageDownloader::InkNoteImageDownloader() :
     d_ptr(new InkNoteImageDownloaderPrivate)
 {}
 
-InkNoteImageDownloader::InkNoteImageDownloader(QString host, QString shardId, QString authenticationToken,
-                                               int width, int height) :
+InkNoteImageDownloader::InkNoteImageDownloader(
+        QString host, QString shardId, QString authenticationToken,
+        int width, int height) :
     d_ptr(new InkNoteImageDownloaderPrivate)
 {
     d_ptr->m_host = host;
@@ -60,7 +70,8 @@ InkNoteImageDownloader & InkNoteImageDownloader::setShardId(QString shardId)
     return *this;
 }
 
-InkNoteImageDownloader & InkNoteImageDownloader::setAuthenticationToken(QString authenticationToken)
+InkNoteImageDownloader & InkNoteImageDownloader::setAuthenticationToken(
+    QString authenticationToken)
 {
     d_ptr->m_authenticationToken = authenticationToken;
     return *this;
@@ -78,8 +89,12 @@ InkNoteImageDownloader & InkNoteImageDownloader::setHeight(int height)
     return *this;
 }
 
-QByteArray InkNoteImageDownloader::download(Guid guid, bool isPublic)
+QByteArray InkNoteImageDownloader::download(
+    Guid guid, const bool isPublic, const qint64 timeoutMsec)
 {
+    QEC_DEBUG("ink_note_image", "Downloading ink note image: guid = " << guid
+        << (isPublic ? "public" : "non-public"));
+
     Q_D(InkNoteImageDownloader);
 
     QSize size(d_ptr->m_width, d_ptr->m_height);
@@ -93,20 +108,38 @@ QByteArray InkNoteImageDownloader::download(Guid guid, bool isPublic)
     while(true)
     {
         int httpStatusCode = 0;
-        QPair<QNetworkRequest, QByteArray> postRequest = d->createPostRequest(urlPart, sliceCounter, isPublic);
+        auto postRequest = d->createPostRequest(urlPart, sliceCounter, isPublic);
 
-        QByteArray reply = simpleDownload(evernoteNetworkAccessManager(), postRequest.first,
-                                          postRequest.second, &httpStatusCode);
+        QEC_DEBUG("ink_note_image", "Sending download request to url: "
+            << postRequest.first.url());
+
+        QByteArray reply = simpleDownload(
+            postRequest.first,
+            timeoutMsec,
+            postRequest.second,
+            &httpStatusCode);
+
         if (httpStatusCode != 200) {
-            throw EverCloudException(QStringLiteral("HTTP Status Code = %1").arg(httpStatusCode));
+            QEC_WARNING("ink_note_image", "Failed to download slice "
+                << sliceCounter << " for guid " << guid
+                << ": http status code = " << httpStatusCode);
+
+            throw EverCloudException(
+                QStringLiteral("HTTP Status Code = %1").arg(httpStatusCode));
         }
 
         QImage replyImagePart;
         Q_UNUSED(replyImagePart.loadFromData(reply, "PNG"))
         if (replyImagePart.isNull())
         {
-            if (Q_UNLIKELY(inkNoteImage.isNull())) {
-                throw EverCloudException(QStringLiteral("Ink note's image part is null before even starting to assemble"));
+            if (Q_UNLIKELY(inkNoteImage.isNull()))
+            {
+                QEC_WARNING("ink_note_image", "Failed to read downloaded data "
+                    << "as a png image");
+
+                throw EverCloudException(
+                    QStringLiteral("Ink note's image part is null before even "
+                                   "starting to assemble"));
             }
 
             break;
@@ -116,7 +149,12 @@ QByteArray InkNoteImageDownloader::download(Guid guid, bool isPublic)
             inkNoteImage = inkNoteImage.convertToFormat(replyImagePart.format());
         }
 
-        QRect painterCurrentRect(0, painterPosition, replyImagePart.width(), replyImagePart.height());
+        QRect painterCurrentRect(
+            0,
+            painterPosition,
+            replyImagePart.width(),
+            replyImagePart.height());
+
         painterPosition += replyImagePart.height();
 
         QPainter painter(&inkNoteImage);
@@ -126,6 +164,8 @@ QByteArray InkNoteImageDownloader::download(Guid guid, bool isPublic)
         if (painterPosition >= size.height()) {
             break;
         }
+
+        ++sliceCounter;
     }
 
     if (inkNoteImage.isNull()) {
@@ -136,23 +176,29 @@ QByteArray InkNoteImageDownloader::download(Guid guid, bool isPublic)
     QBuffer buffer(&imageData);
     Q_UNUSED(buffer.open(QIODevice::WriteOnly))
     inkNoteImage.save(&buffer, "PNG");
+
+    QEC_DEBUG("ink_note_image", "Finished download for guid " << guid);
     return imageData;
 }
 
-QPair<QNetworkRequest, QByteArray> InkNoteImageDownloaderPrivate::createPostRequest(const QString & urlPart,
-                                                                                    const int sliceNumber,
-                                                                                    const bool isPublic)
+std::pair<QNetworkRequest, QByteArray>
+InkNoteImageDownloaderPrivate::createPostRequest(
+    const QString & urlPart, const int sliceNumber, const bool isPublic)
 {
     QNetworkRequest request;
     request.setUrl(QUrl(urlPart + QString::number(sliceNumber)));
-    request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/x-www-form-urlencoded"));
+    request.setHeader(
+        QNetworkRequest::ContentTypeHeader,
+        QStringLiteral("application/x-www-form-urlencoded"));
 
-    QByteArray postData = ""; // not QByteArray()! or else ReplyFetcher will not work.
+    // not QByteArray()! or else ReplyFetcher will not work.
+    QByteArray postData = "";
     if (!isPublic) {
-        postData = QByteArray("auth=")+ QUrl::toPercentEncoding(m_authenticationToken);
+        postData = QByteArray("auth=") +
+            QUrl::toPercentEncoding(m_authenticationToken);
     }
 
-    return qMakePair(request, postData);
+    return std::make_pair(request, postData);
 }
 
 } // namespace qevercloud

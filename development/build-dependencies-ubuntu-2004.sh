@@ -1,5 +1,8 @@
 #!/bin/bash
 
+## 2023.04: this file is not updated see docker/Dockerfile.ubuntu_focal
+
+
 # preparation
 # sudo apt update
 # sudo apt upgrade
