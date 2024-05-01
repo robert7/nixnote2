@@ -265,7 +265,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
     comm->loadTagGuidMap();
     more = true;
-    chunkSize = 50;
+    chunkSize = 200;
     updateSequenceNumber = startingSequenceNumber;
     UserTable userTable(db);
 
