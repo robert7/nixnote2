@@ -1037,25 +1037,25 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
     if (chunk.notes.isSet())
         chunk.notes = notes;
 
-    QList<Resource> resourceData;
-    QLOG_DEBUG() << "All notes retrieved.  Getting resources";
-    QList<Resource> resources;
-    if (chunk.resources.isSet())
-        resources = chunk.resources;
-    for (int i = 0; i < resources.size(); i++) {
-        QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << resources[i].guid;
-        Resource r;
-        r = noteStore->getResource(resources[i].guid, true, true, true, true, requestContext);
-        QLOG_TRACE() << "Resource retrieved";
-        resourceData.append(r);
-    }
-    if (chunk.resources.isSet())
-        chunk.resources = resourceData;
-    QLOG_DEBUG() << "Getting ink notes";
-    if (resources.size() > 0) {
-        QLOG_TRACE() << "Checking for ink notes";
-        checkForInkNotes(resources, "", token);
-    }
+//    QList<Resource> resourceData;
+//    QLOG_DEBUG() << "All notes retrieved.  Getting resources";
+//    QList<Resource> resources;
+//    if (chunk.resources.isSet())
+//        resources = chunk.resources;
+//    for (int i = 0; i < resources.size(); i++) {
+//        QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << resources[i].guid;
+//        Resource r;
+//        r = noteStore->getResource(resources[i].guid, true, true, true, true, requestContext);
+//        QLOG_TRACE() << "Resource retrieved";
+//        resourceData.append(r);
+//    }
+//    if (chunk.resources.isSet())
+//        chunk.resources = resourceData;
+//    QLOG_DEBUG() << "Getting ink notes";
+//    if (resources.size() > 0) {
+//        QLOG_TRACE() << "Checking for ink notes";
+//        checkForInkNotes(resources, "", token);
+//    }
 }
 
 
