@@ -10,7 +10,7 @@ Nixnote is Evernote desktop client for Linux (can be also build on macOS and Win
 * [Releases](https://github.com/robert7/nixnote2/releases)
 
 
-Travis CI [![Build Status](https://api.travis-ci.com/robert7/nixnote2.svg?token=tz6w9yijrnjt6zGzyeEq&branch=master)](https://app.travis-ci.com/github/robert7/nixnote2)
+Travis CI [![Build Status](https://api.travis-ci.com/robert7/nixnote2.svg?token=tz6w9yijrnjt6zGzyeEq&branch=develop)](https://app.travis-ci.com/github/robert7/nixnote2)
 
 ## Project Status
 Unfortunately, I as a "maintainer" don't have time for the project anymore.
@@ -55,6 +55,9 @@ More information can be found on [NixNote AppImage wiki page](https://github.com
 Two builds are available:
 * [Stable build](https://github.com/robert7/nixnote2/releases/tag/continuous) - it reflects the latest [stable release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#stable-releases) - tip of the `master` branch - same as the PPA or AUR version.
 * [Development build](https://github.com/robert7/nixnote2/releases/tag/continuous-develop) - it reflects the latest [development release](https://github.com/robert7/nixnote2/wiki/Releases---versions%2C-build-pipeline%2C-branches%2C-tags#development-releases) - tip of the `develop` branch..
+
+### Windows
+Windows binaries can be found at a fork https://github.com/boo-yee/nixnote2 under [Releases](https://github.com/boo-yee/nixnote2/releases).
 
 ### Other
 I can't provide support for packaging for other distributions that Ubuntu PPA and the AppImage
