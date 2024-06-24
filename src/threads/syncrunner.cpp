@@ -85,7 +85,6 @@ void SyncRunner::synchronize() {
 
     if (!comm->enConnect()) {
         QLOG_DEBUG() << "synchronize: connect failed";
-
         this->communicationErrorHandler();
         error = true;
         emit syncComplete();
@@ -265,7 +264,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
     comm->loadTagGuidMap();
     more = true;
-    chunkSize = 200;
+    chunkSize = 50;
     updateSequenceNumber = startingSequenceNumber;
     UserTable userTable(db);
 
@@ -278,6 +277,9 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;
             this->communicationErrorHandler();
+            if (comm->getLastErrorType() == CommunicationError::StdException) {
+                emit syncComplete();
+            }
             QLOG_TRACE_OUT();
             return false;
         }

@@ -54,6 +54,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/utilities/debugtool.h"
 
 
+
 extern Global global;
 
 // set Evernote http timeout to 4 minutes
@@ -307,6 +308,9 @@ CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, i
         return false;
     } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
+        return false;
+    } catch (std::exception &e) { // connection closed by the server
+        reportError(CommunicationError::StdException, 16, e.what());
         return false;
     }
     return true;
