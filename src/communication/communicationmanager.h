@@ -122,6 +122,7 @@ public:
     bool authenticateToLinkedNotebookShard(LinkedNotebook &book);    // Authenticate to a linked notebook account owner shard
     bool getUserInfo(User &user);                              // Get user information
     bool getNote(Note &n, QString guid, bool wthResource, bool withRecognition, bool withResource);
+    Note downloadNote(const Note &n);
     QList< QPair<QString, QImage*>* > *inkNoteList;            // List to store inknotes downloaded from account.
     QList< QPair<QString, QImage*>* > *thumbnailList;          // List to store thumbnails from account (not used)
     QHash<QString,QString> *tagGuidMap;                        // Temporary hashmap used to store tags.  Keeps from repetitive DB lookups filling in tag names

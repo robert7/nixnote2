@@ -51,7 +51,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <curl/easy.h>
 #endif // End windows check
 
+#include <qtconcurrentmap.h>
+
 #include "src/utilities/debugtool.h"
+
 
 
 extern Global global;
@@ -307,6 +310,9 @@ CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, i
         return false;
     } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
+        return false;
+    } catch (std::exception &e) { // connection closed by the server
+        reportError(CommunicationError::StdException, 16, e.what());
         return false;
     }
     return true;
@@ -777,6 +783,13 @@ bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, 
 }
 
 
+Note CommunicationManager::downloadNote(const Note &n) {
+    QLOG_DEBUG() << "downloadNote guid=" << n.guid;
+    Note tmp = n;
+    this->getNote(tmp, n.guid, true, true, true);
+    return tmp;
+}
+
 // Get a prior version of a notebook
 bool CommunicationManager::getNote(Note &note, QString guid, bool withResource, bool withResourceRecognition,
                                    bool withResourceAlternateData) {
@@ -1005,12 +1018,30 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
     if (chunk.notes.isSet())
         notes = chunk.notes;
     auto requestContext = newRequestContext(token, requestTimeout);
+
+    QList<Note> downloadedNotes;
+    downloadedNotes.clear();
+
+    const int THREAD_NUMBER = 5;
+    for (int i = 0; i < notes.size(); i += THREAD_NUMBER) {
+        QList<Note> tmpNotes;
+        tmpNotes.clear();
+        for (int j = i; j < i + THREAD_NUMBER && j < notes.size(); j++) {
+            tmpNotes.append(notes[j]);
+            QLOG_TRACE() << "Fetching chunk item: " << j << ": " << notes[j].title;
+        }
+        downloadedNotes.append(QtConcurrent::blockingMapped<QList<Note> >(tmpNotes,
+                    std::bind(&CommunicationManager::downloadNote, this, std::placeholders::_1)));
+        QLOG_TRACE() << "A set of notes Retrieved";
+    }
+
     for (int i = 0; i < notes.size(); i++) {
-        QLOG_TRACE() << "Fetching chunk item: " << i << ": " << notes[i].title;
+        //QLOG_TRACE() << "Fetching chunk item: " << i << ": " << notes[i].title;
         Note n = notes[i];
         noteList.insert(n.guid, "");
-        n = noteStore->getNote(notes[i].guid, true, true, true, true, requestContext);
-        QLOG_TRACE() << "Note Retrieved";
+        //n = noteStore->getNote(notes[i].guid, true, true, true, true, requestContext);
+        n = downloadedNotes[i];
+        //QLOG_TRACE() << "Note Retrieved";
 
         // Load up the tag names because Evernote doesn't give them.
         QList<QString> tagNames;

@@ -44,6 +44,7 @@ SyncRunner::SyncRunner() {
     minutesToNextSync = 0;
     error = false;
     updateUserDataOnNextSync = false;
+    connectionClosed = false;
 }
 
 SyncRunner::~SyncRunner() {
@@ -59,6 +60,7 @@ void SyncRunner::synchronize() {
         consumerKey = "";
         secret = "";
         apiRateLimitExceeded = false;
+        connectionClosed = false;
 
         // Setup the user agent
         userAgent = NN_APP_CLIENT_NAME;
@@ -85,7 +87,6 @@ void SyncRunner::synchronize() {
 
     if (!comm->enConnect()) {
         QLOG_DEBUG() << "synchronize: connect failed";
-
         this->communicationErrorHandler();
         error = true;
         emit syncComplete();
@@ -265,7 +266,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
     comm->loadTagGuidMap();
     more = true;
-    chunkSize = 200;
+    chunkSize = 50;
     updateSequenceNumber = startingSequenceNumber;
     UserTable userTable(db);
 
@@ -278,6 +279,9 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;
             this->communicationErrorHandler();
+            if (comm->getLastErrorType() == CommunicationError::StdException) {
+                emit syncComplete();
+            }
             QLOG_TRACE_OUT();
             return false;
         }
@@ -1220,7 +1224,9 @@ qint32 SyncRunner::uploadPersonalNotes() {
 void SyncRunner::communicationErrorHandler() {
     CommunicationError::CommunicationErrorType type = comm->getLastErrorType();
 
-    if (type == CommunicationError::None) {
+    if (type == CommunicationError::None ||
+            type == CommunicationError::StdException) {
+        connectionClosed = true;
         return;
     }
 
