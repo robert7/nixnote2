@@ -47,6 +47,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     enableSyncNotifications = new QCheckBox(tr("Enable sync notifications"), this);
     showGoodSyncMessagesInTray = new QCheckBox(tr("Show successful syncs"), this);
     apiRateRestart = new QCheckBox(tr("Restart sync on API limit (experimental)"), this);
+    connectionClosedRestart = new QCheckBox(tr("Restart sync on connection closed (experimental)"), this);
 
     enableProxy = new QCheckBox(tr("Enable Proxy*"), this);
     enableSocks5 = new QCheckBox(tr("Enable Socks5"),this);
@@ -81,6 +82,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     mainLayout->addWidget(syncAutomatically,3,0);
     mainLayout->addWidget(syncInterval, 3,1);
     mainLayout->addWidget(apiRateRestart, 4,0);
+    mainLayout->addWidget(connectionClosedRestart, 4,1);
 
     mainLayout->addWidget(enableProxy,5,0);
     mainLayout->addWidget(enableSocks5,5,1);
@@ -105,6 +107,8 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     enableSyncNotifications->setChecked(global.settings->value("enableNotification", true).toBool());
     showGoodSyncMessagesInTray->setChecked(global.showGoodSyncMessagesInTray);
     apiRateRestart->setChecked(global.settings->value("apiRateLimitAutoRestart", true).toBool());
+    connectionClosedRestart->setChecked(global.settings->value("connectionClosedAutoRestart", false).toBool());
+
     global.settings->endGroup();
     global.showGoodSyncMessagesInTray = showGoodSyncMessagesInTray->isChecked();
 
@@ -159,6 +163,7 @@ void SyncPreferences::saveValues() {
     global.settings->setValue("syncInterval", getSyncInterval());
     global.settings->setValue("showGoodSyncMessagesInTray", showGoodSyncMessagesInTray ->isChecked());
     global.settings->setValue("apiRateLimitAutoRestart", apiRateRestart ->isChecked());
+    global.settings->setValue("connectionClosedAutoRestart", connectionClosedRestart->isChecked());
     global.settings->endGroup();
 
     global.showGoodSyncMessagesInTray = showGoodSyncMessagesInTray->isChecked();

@@ -1584,15 +1584,33 @@ void NixNote::syncButtonReset() {
     syncButtonTimer.stop();
     syncButton->setIcon(syncIcons[0]);
 
+    global.settings->beginGroup(INI_GROUP_SYNC);
+    bool apiRateLimitAutoRestart =
+        global.settings->value("apiRateLimitAutoRestart", false).toBool();
+    bool connectionClosedAutoRestart =
+        global.settings->value("connectionClosedAutoRestart", false).toBool();
+    global.settings->endGroup();
+
     // If we had an API rate limit exceeded, restart at the top of the hour.
-    if (syncRunner.apiRateLimitExceeded) {
-        global.settings->beginGroup(INI_GROUP_SYNC);
-        bool restart = global.settings->value("apiRateLimitAutoRestart", false).toBool();
-        global.settings->endGroup();
-        if (restart) {
-            QTimer::singleShot(60 * 1000 * (syncRunner.minutesToNextSync + 1), this, SLOT(synchronize()));
-        }
+    if (apiRateLimitAutoRestart && syncRunner.apiRateLimitExceeded) {
+        QTimer::singleShot(60 * 1000 * (syncRunner.minutesToNextSync + 1),
+                this, SLOT(synchronize()));
+        return;
     }
+
+    if (connectionClosedAutoRestart && syncRunner.connectionClosed) {
+        synchronize();
+    }
+
+//// If we had an API rate limit exceeded, restart at the top of the hour.
+//    if (syncRunner.apiRateLimitExceeded) {
+//        global.settings->beginGroup(INI_GROUP_SYNC);
+//        bool restart = global.settings->value("apiRateLimitAutoRestart", false).toBool();
+//        global.settings->endGroup();
+//        if (restart) {
+//            QTimer::singleShot(60 * 1000 * (syncRunner.minutesToNextSync + 1), this, SLOT(synchronize()));
+//        }
+//    }
 }
 
 

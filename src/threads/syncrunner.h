@@ -115,6 +115,7 @@ public:
 
     bool apiRateLimitExceeded;
     qint32 minutesToNextSync;                    // After "API rate limit exceeded" how long should we wait to attempt sync notes (continue syncing large lists of notes - for example when user setup nixnote for first time)
+    bool connectionClosed;
 
 
 signals:

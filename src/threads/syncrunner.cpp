@@ -44,6 +44,7 @@ SyncRunner::SyncRunner() {
     minutesToNextSync = 0;
     error = false;
     updateUserDataOnNextSync = false;
+    connectionClosed = false;
 }
 
 SyncRunner::~SyncRunner() {
@@ -59,6 +60,7 @@ void SyncRunner::synchronize() {
         consumerKey = "";
         secret = "";
         apiRateLimitExceeded = false;
+        connectionClosed = false;
 
         // Setup the user agent
         userAgent = NN_APP_CLIENT_NAME;
@@ -1222,7 +1224,9 @@ qint32 SyncRunner::uploadPersonalNotes() {
 void SyncRunner::communicationErrorHandler() {
     CommunicationError::CommunicationErrorType type = comm->getLastErrorType();
 
-    if (type == CommunicationError::None) {
+    if (type == CommunicationError::None ||
+            type == CommunicationError::StdException) {
+        connectionClosed = true;
         return;
     }
 
