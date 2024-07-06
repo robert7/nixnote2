@@ -37,6 +37,7 @@ private:
     QCheckBox *syncAutomatically;
     QCheckBox *syncOnShutdown;
     QCheckBox *apiRateRestart;
+    QCheckBox *connectionClosedRestart;
     QCheckBox *popupOnSyncError;
 
     QCheckBox *enableProxy;
