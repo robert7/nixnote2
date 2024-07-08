@@ -1,5 +1,5 @@
 NixNote (2.1.11) stable; urgency=low
-  * Improve sync login (rate limit handling)
+  * Improved synchronisation logic (rate limit handling)
  -- Robert Spiegel <nightingale7@gmail.com>  Wed, 8 Jul 2024 12:00:00 +0200
 
 NixNote (2.1.10) stable; urgency=low
