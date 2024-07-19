@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get -y install git-core qt5-default build-essential \
+                                wget curl make pkg-config \
+                                libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev libcurl4-openssl-dev \
+                                libpoppler-qt5-dev libqt5webkit5-dev qt5-qmake qttools5-dev-tools libqt5sql5-sqlite \
+                                libhunspell-dev libtidy-dev libqt5positioning5-plugins
+
+    - name: Build project
+      run: |
+        ls -la /usr/include/x86_64-linux-gnu/qt5/QtQml
+        qmake CONFIG+=release PREFIX=/usr &&
+        ls -l ./development &&
+        make -j2 || { echo 'Build failed'; exit 1; } &&
+        make INSTALL_ROOT=appdir -j2 install || { echo 'Install failed'; exit 1; } &&
+        find appdir/ &&
+        qmake testsrc/tests.pro CONFIG+=release PREFIX=/usr &&
+        make || { echo 'Test build failed'; exit 1; } &&
+        ./qmake-build-release-t/tests -platform offscreen
+
+    - name: Install linuxdeploy
+      run: |
+        wget -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" &&
+        chmod a+x ./linuxdeploy-x86_64.AppImage &&
+        ./linuxdeploy-x86_64.AppImage --appimage-extract &&
+        mv squashfs-root linuxdeploy &&
+        mv linuxdeploy/AppRun linuxdeploy/linuxdeploy
+
+    - name: Install linuxdeploy-plugin-qt
+      run: |
+        wget -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage" &&
+        chmod a+x ./linuxdeploy-plugin-qt-x86_64.AppImage &&
+        ./linuxdeploy-plugin-qt-x86_64.AppImage --appimage-extract &&
+        mv squashfs-root linuxdeploy-plugin-qt &&
+        mv linuxdeploy-plugin-qt/AppRun linuxdeploy-plugin-qt/linuxdeploy-plugin-qt
+
+    - name: Install appimagetool
+      run: |
+        wget -nv "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" &&
+        chmod a+x appimagetool-x86_64.AppImage &&
+        ./appimagetool-x86_64.AppImage --appimage-extract &&
+        mv squashfs-root appimagetool &&
+        mv appimagetool/AppRun appimagetool/appimagetool
+
+    - name: Build AppImage
+      run: |
+        export PATH=linuxdeploy:linuxdeploy-plugin-qt:appimagetool:$PATH
+        linuxdeploy --desktop-file=./appdir/usr/share/applications/nixnote2.desktop --appdir=appdir --plugin qt
+        rm -f appdir/usr/lib/libnss3.so
+        rm -f appdir/usr/lib/libnssutil3.so
+        appimagetool -n appdir
+
+    - name: Upload AppImage
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+        if [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+          export UPLOADTOOL_SUFFIX=develop
+        fi
+        RELEASE_NOTES=$(cat ./development/release-notes/release-${{ github.ref_name }}.md)
+        export VERSION=$(cat appdir/usr/share/nixnote2/version.txt)
+        export UPLOADTOOL_BODY="$RELEASE_NOTES - Version: **${VERSION}** - [GitHub Actions build log](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})."
+        bash upload.sh NixNote*.AppImage || exit 1

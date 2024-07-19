@@ -9,8 +9,7 @@ Nixnote is Evernote desktop client for Linux (can be also build on macOS and Win
 * [Contributing](CONTRIBUTING.md)
 * [Releases](https://github.com/robert7/nixnote2/releases)
 
-
-Travis CI [![Build Status](https://api.travis-ci.com/robert7/nixnote2.svg?token=tz6w9yijrnjt6zGzyeEq&branch=develop)](https://app.travis-ci.com/github/robert7/nixnote2)
+![Github Actions](https://github.com/robert7/nixnote2/actions/workflows/cicd.yaml/badge.svg)
 
 ## Project Status
 Unfortunately, I as a "maintainer" don't have time for the project anymore.
