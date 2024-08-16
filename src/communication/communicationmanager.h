@@ -40,6 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QSqlDatabase>
+#include <QMutex>
 
 #include "src/qevercloud/QEverCloud/headers/QEverCloud.h"
 using namespace qevercloud;
@@ -103,6 +104,8 @@ private:
                      const QString &internalMessage = QString());
 
     CommunicationError error;
+    EverCloudException *threadException;
+    QMutex mutex;
 
 public:
 
