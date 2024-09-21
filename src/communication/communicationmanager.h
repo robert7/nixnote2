@@ -104,7 +104,7 @@ private:
                      const QString &internalMessage = QString());
 
     CommunicationError error;
-    EverCloudException *threadException;
+    bool hasException;
     QMutex mutex;
 
 public:

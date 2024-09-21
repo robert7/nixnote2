@@ -85,7 +85,7 @@ CommunicationManager::CommunicationManager(DatabaseConnection *db) {
     if (networkAccessManager == nullptr) {
         networkAccessManager = new QNetworkAccessManager(this);
     }
-    threadException = nullptr;
+    hasException = false;
 }
 
 
@@ -301,7 +301,8 @@ CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, i
     try {
         chunk = myNoteStore->getFilteredSyncChunk(start, chunkSize, filter, newRequestContext(token, requestTimeout));
         processSyncChunk(chunk, token);
-        if (threadException != nullptr) {
+        if (hasException) {
+            hasException = false;
             return false;
         }
     } catch (ThriftException &e) {
@@ -558,9 +559,13 @@ void CommunicationManager::reportError(
     backtrace_symbols_fd(array, size, 2);
 #endif // End windows check
 
+    QMutexLocker locker(&mutex);
+
     error.resetTo(errorType, code, message, internalMessage);
 
     global.setMessage(tr("Error in sync: ") + error.getMessage(), 0);
+
+    hasException = true;
 }
 
 void CommunicationManager::resetError() {
@@ -712,7 +717,8 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
     try {
         chunk = linkedNoteStore->getLinkedNotebookSyncChunk(book, start, chunkSize, fullSync, newRequestContext(authToken, requestTimeout));
         processSyncChunk(chunk, linkedAuthToken);
-        if (threadException != nullptr) {
+        if (hasException) {
+            hasException = false;
             return false;
         }
     } catch (ThriftException &e) {
@@ -790,18 +796,21 @@ bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, 
     }
 }
 
-
 Note CommunicationManager::downloadNote(const Note &n) {
     QLOG_DEBUG() << "downloadNote guid=" << n.guid;
     Note tmp = n;
     try {
         this->getNote(tmp, n.guid, true, true, true);
-    } catch (const EverCloudException &e) {
-        QMutexLocker locker(&mutex);
-        if (threadException == nullptr) {
-            threadException = new EverCloudException(e);
-            reportError(CommunicationError::StdException, 16, e.what());
-        }
+    } catch (ThriftException &e) {
+        reportError(CommunicationError::ThriftException, static_cast<int>(e.type()), e.what());
+    } catch (EDAMUserException &e) {
+        reportError(CommunicationError::EDAMUserException, static_cast<int>(e.errorCode), e.what());
+    } catch (EDAMSystemException &e) {
+        handleEDAMSystemException(e);
+    } catch (EDAMNotFoundException &e) {
+        handleEDAMNotFoundException(e);
+    } catch (std::exception &e) { // connection closed by the server
+        reportError(CommunicationError::StdException, 16, e.what());
     }
     return tmp;
 }
@@ -1048,7 +1057,7 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
         }
         downloadedNotes.append(QtConcurrent::blockingMapped<QList<Note> >(tmpNotes,
                     std::bind(&CommunicationManager::downloadNote, this, std::placeholders::_1)));
-        if (threadException != nullptr) {
+        if (hasException) {
             return;
         }
         QLOG_TRACE() << "A set of notes Retrieved";
