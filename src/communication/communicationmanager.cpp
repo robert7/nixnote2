@@ -1047,7 +1047,10 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
     QList<Note> downloadedNotes;
     downloadedNotes.clear();
 
-    const int THREAD_NUMBER = 5;
+    global.settings->beginGroup(INI_GROUP_SYNC);
+    const int THREAD_NUMBER = global.settings->value("threadNumber").toInt();
+    global.settings->endGroup();
+
     for (int i = 0; i < notes.size(); i += THREAD_NUMBER) {
         QList<Note> tmpNotes;
         tmpNotes.clear();
