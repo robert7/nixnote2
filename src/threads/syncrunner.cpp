@@ -36,6 +36,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/sql/nsqlquery.h"
 #include "encrypt.h"
 
+#define CRYPT_KEY "6aabbb3efbd1ff6d606061684e9749cd476763a8"
+
 extern Global global;
 
 SyncRunner::SyncRunner() {
@@ -584,6 +586,32 @@ void SyncRunner::syncRemoteNotes(QList<Note> notes, qint32 account) {
 
     for (int i = 0; i < notes.size() && keepRunning; i++) {
         Note t = notes[i];
+
+        QLOG_DEBUG() << t.content;
+
+        //notes[i].content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'><en-note style=\n\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">\nxxxxx</en-note>";
+
+        // decrypt =============================================
+        int crypt_s = t.content->indexOf("||crypt||");
+        if (crypt_s!=-1) {
+            int crypt_e = t.content->indexOf("</en-note>");
+            QString cryptq = t.content->mid(crypt_s + 9, crypt_e - crypt_s - 9);
+            cryptq.remove(QChar('\n'));
+
+            QLOG_DEBUG() << cryptq;
+
+            string crypt = cryptq.toStdString();
+            string crypt_key = CRYPT_KEY;
+            string msg = decrypt(crypt, crypt_key);
+
+            notes[i].content = QString::fromUtf8(msg.c_str());
+
+            t = notes[i];
+
+            QLOG_DEBUG() << t.content;
+        }
+        // ======================================================
+
         qint32 lid = noteTable.getLid(t.guid);
         if (lid > 0) {
             // Find out if it is a conflicting change
@@ -1185,16 +1213,12 @@ qint32 SyncRunner::uploadPersonalNotes() {
         Note note;
         noteTable.get(note, validLids[i], true, true);
 
-        //note.content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'><en-note style=\n\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">\nxxxxx</en-note>";
-
         // encrypt content  ============================
         QLOG_DEBUG() << note.content;
 
         string msg = note.content->toStdString();
-        string key = "thisisakey";
-        string crypt = encrypt(msg, key);
-
-        //QLOG_DEBUG() << crypt;
+        string crypt_key = CRYPT_KEY;
+        string crypt = encrypt(msg, crypt_key);
 
         note.content = QString::fromUtf8(crypt.c_str());
 

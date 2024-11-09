@@ -7,7 +7,7 @@
 
 using namespace std;
 
-std::string AVAILABLE_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ";
+std::string AVAILABLE_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 int index(char c) {
 	for(int ii = 0; ii < AVAILABLE_CHARS.size(); ii++) {

@@ -1,7 +1,6 @@
 #include "vigenere.h"
 #include <iostream>
 #include <string>
-#include <fstream>
 #include <vector>
 
 
@@ -10,10 +9,6 @@ class Base64
 public:
   static std::string encode(const std::vector<char>& data);
   static std::vector<char> decode(const std::string& data);
-  static std::string encodeFromFile(const std::string& inFileName);
-  static void decodeToFile(
-    const std::string& outFileName, const std::string& encodedString
-  );
 };
 
 
@@ -117,44 +112,8 @@ std::vector<char> Base64::decode(const std::string& data)
   return(ret);
 }
 
-//
-//----< create encoded string from binary file contents >------------
 
-std::string Base64::encodeFromFile(const std::string& inFileName)
-{
-  std::ifstream in;
-  in.open(inFileName.c_str(),std::ios::binary);
-  if(!in.good())
-  {
-    throw std::invalid_argument(std::string("can't open file ") + inFileName);
-  }
-  std::vector<char> fBytes;
-  while(in.good())
-    fBytes.push_back(in.get());
-  fBytes.pop_back();
-  in.close();
-
-  return Base64::encode(fBytes);
-}
-//----< create new binary file from encoded string >-----------------
-
-void Base64::decodeToFile(
-    const std::string& outFileName, const std::string& encodedString
-  )
-{
-  std::ofstream out;
-  out.open(outFileName.c_str(),std::ios::binary);
-  if(!out.good())
-  {
-    throw std::invalid_argument(std::string("can't open file ") + outFileName);
-  }
-  std::vector<char> fdecodedBytes = Base64::decode(encodedString);
-
-  for(unsigned int i=0; i<fdecodedBytes.size(); ++i)
-    out.put(fdecodedBytes[i]);
-  out.close();
-}
-
+// encrypt
 
 std::string encrypt(std::string& msg, std::string& key)
 {
