@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include <QTimer>
+#include <stdio.h>
 
 #include "syncrunner.h"
 #include "src/global.h"
@@ -587,9 +588,7 @@ void SyncRunner::syncRemoteNotes(QList<Note> notes, qint32 account) {
     for (int i = 0; i < notes.size() && keepRunning; i++) {
         Note t = notes[i];
 
-        QLOG_DEBUG() << t.content;
-
-        //notes[i].content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'><en-note style=\n\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">\nxxxxx</en-note>";
+        //QLOG_DEBUG() << t.content;
 
         // decrypt =============================================
         int crypt_s = t.content->indexOf("||crypt||");
@@ -598,7 +597,7 @@ void SyncRunner::syncRemoteNotes(QList<Note> notes, qint32 account) {
             QString cryptq = t.content->mid(crypt_s + 9, crypt_e - crypt_s - 9);
             cryptq.remove(QChar('\n'));
 
-            QLOG_DEBUG() << cryptq;
+            //QLOG_DEBUG() << cryptq;
 
             string crypt = cryptq.toStdString();
             string crypt_key = CRYPT_KEY;
@@ -608,7 +607,7 @@ void SyncRunner::syncRemoteNotes(QList<Note> notes, qint32 account) {
 
             t = notes[i];
 
-            QLOG_DEBUG() << t.content;
+            //QLOG_DEBUG() << t.content;
         }
         // ======================================================
 
@@ -1214,22 +1213,26 @@ qint32 SyncRunner::uploadPersonalNotes() {
         noteTable.get(note, validLids[i], true, true);
 
         // encrypt content  ============================
-        QLOG_DEBUG() << note.content;
+        //QLOG_DEBUG() << note.content;
 
-        string msg = note.content->toStdString();
-        string crypt_key = CRYPT_KEY;
-        string crypt = encrypt(msg, crypt_key);
+        int crypt_tag = note.content->indexOf("{{encrypt}}");
 
-        note.content = QString::fromUtf8(crypt.c_str());
+        if (crypt_tag != -1){
+            string msg = note.content->toStdString();
+            string crypt_key = CRYPT_KEY;
+            string crypt = encrypt(msg, crypt_key);
 
-        note.content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"\
-            "<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>"\
-            "<en-note style=\n\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">\n"\
-            "||crypt||" +
-            note.content +
-            "</en-note>";
+            note.content = QString::fromUtf8(crypt.c_str());
 
-        QLOG_DEBUG() << note.content;
+            note.content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"\
+                "<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>"\
+                "<en-note style=\n\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">\n"\
+                "||crypt||" +
+                note.content +
+                "</en-note>";
+
+            //QLOG_DEBUG() << note.content;
+        }
         ////============================================
 
         qint32 oldUsn = 0;
