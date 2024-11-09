@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "src/communication/communicationmanager.h"
 #include "src/communication/communicationerror.h"
 #include "src/sql/nsqlquery.h"
+#include "encrypt.h"
 
 extern Global global;
 
@@ -1183,6 +1184,29 @@ qint32 SyncRunner::uploadPersonalNotes() {
     for (int i = 0; i < validLids.size(); i++) {
         Note note;
         noteTable.get(note, validLids[i], true, true);
+
+        //note.content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'><en-note style=\n\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">\nxxxxx</en-note>";
+
+        // encrypt content  ============================
+        QLOG_DEBUG() << note.content;
+
+        string msg = note.content->toStdString();
+        string key = "thisisakey";
+        string crypt = encrypt(msg, key);
+
+        //QLOG_DEBUG() << crypt;
+
+        note.content = QString::fromUtf8(crypt.c_str());
+
+        note.content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"\
+            "<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>"\
+            "<en-note style=\n\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">\n"\
+            "||crypt||" +
+            note.content +
+            "</en-note>";
+
+        QLOG_DEBUG() << note.content;
+        ////============================================
 
         qint32 oldUsn = 0;
         if (note.updateSequenceNum.isSet())

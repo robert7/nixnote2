@@ -51,7 +51,7 @@ bool NoteSortFilterProxyModel::filterAcceptsRow(qint32 source_row, const QModelI
 // obsolete/unused
 
 bool NoteSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const {
-    QLOG_DEBUG() << "lessThan";
+    //QLOG_DEBUG() << "lessThan";
     QVariant leftData = this->sourceModel()->data(left);
     QVariant rightData = this->sourceModel()->data(right);
 
