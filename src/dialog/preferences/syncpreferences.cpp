@@ -48,6 +48,10 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     showGoodSyncMessagesInTray = new QCheckBox(tr("Show successful syncs"), this);
     apiRateRestart = new QCheckBox(tr("Restart sync on API limit (experimental)"), this);
     connectionClosedRestart = new QCheckBox(tr("Restart sync on connection closed (experimental)"), this);
+    QLabel *threadNumberLabel = new QLabel(tr("The number of downloading threads(1~50)"), this);
+    threadNumber = new QSpinBox(this);
+    threadNumber->setMinimum(1);
+    threadNumber->setMaximum(50);
 
     enableProxy = new QCheckBox(tr("Enable Proxy*"), this);
     enableSocks5 = new QCheckBox(tr("Enable Socks5"),this);
@@ -95,6 +99,8 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     mainLayout->addWidget(passwordLabel,9,0);
     mainLayout->addWidget(password,9,1);
     mainLayout->addWidget(restartLabel,10,0);
+    mainLayout->addWidget(threadNumberLabel, 11,0);
+    mainLayout->addWidget(threadNumber, 11,1);
     mainLayout->setAlignment(Qt::AlignTop);
 
     global.settings->beginGroup(INI_GROUP_SYNC);
@@ -108,6 +114,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     showGoodSyncMessagesInTray->setChecked(global.showGoodSyncMessagesInTray);
     apiRateRestart->setChecked(global.settings->value("apiRateLimitAutoRestart", true).toBool());
     connectionClosedRestart->setChecked(global.settings->value("connectionClosedAutoRestart", false).toBool());
+    threadNumber->setValue(global.settings->value("threadNumber", 5).toInt());
 
     global.settings->endGroup();
     global.showGoodSyncMessagesInTray = showGoodSyncMessagesInTray->isChecked();
@@ -164,6 +171,7 @@ void SyncPreferences::saveValues() {
     global.settings->setValue("showGoodSyncMessagesInTray", showGoodSyncMessagesInTray ->isChecked());
     global.settings->setValue("apiRateLimitAutoRestart", apiRateRestart ->isChecked());
     global.settings->setValue("connectionClosedAutoRestart", connectionClosedRestart->isChecked());
+    global.settings->setValue("threadNumber", threadNumber->value());
     global.settings->endGroup();
 
     global.showGoodSyncMessagesInTray = showGoodSyncMessagesInTray->isChecked();

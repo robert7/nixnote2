@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLabel>
 #include <QComboBox>
 #include <QLineEdit>
+#include <QSpinBox>
 
 class SyncPreferences : public QWidget
 {
@@ -46,6 +47,8 @@ private:
     QLineEdit *password;
     QLineEdit *port;
     QLineEdit *host;
+
+    QSpinBox *threadNumber;
 
     int getSyncInterval();
 
