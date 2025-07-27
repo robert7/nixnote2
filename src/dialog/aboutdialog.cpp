@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "aboutdialog.h"
-#include <QWebView>
+#include <QWebEngineView>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
@@ -30,7 +30,7 @@ AboutDialog::AboutDialog(QDialog *parent) :
     QDialog(parent) {
     QVBoxLayout *mainLayout = new QVBoxLayout();
     this->setLayout(mainLayout);
-    QWebView *page = new QWebView();
+    QWebEngineView *page = new QWebEngineView();
     QPushButton *okButton = new QPushButton();
     okButton->setText(tr("OK"));
     mainLayout->addWidget(page);

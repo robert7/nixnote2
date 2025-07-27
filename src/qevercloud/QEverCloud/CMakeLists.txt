@@ -89,8 +89,6 @@ set(${PROJECT_NAME}_TR_SOURCES
     ${SOURCES}
     src/oauth/OAuthWebEngine.h
     src/oauth/OAuthWebEngine.cpp
-    src/oauth/OAuthWebKit.h
-    src/oauth/OAuthWebKit.cpp
     src/oauth/OAuthSystemBrowser.h
     src/oauth/OAuthSystemBrowser.cpp
     src/oauth/OAuth.cpp)
@@ -103,18 +101,12 @@ if(BUILD_WITH_OAUTH_SUPPORT)
     list(APPEND SOURCES
       src/oauth/NetworkCookieJar.cpp
       src/oauth/OAuthWebEngine.cpp)
-  elseif(QEVERCLOUD_USE_SYSTEM_BROWSER)
+  else()
     list(APPEND PRIVATE_HEADERS
       src/oauth/OAuthSystemBrowser.h)
 
     list(APPEND SOURCES
       src/oauth/OAuthSystemBrowser.cpp)
-  else()
-    list(APPEND PRIVATE_HEADERS
-      src/oauth/OAuthWebKit.h)
-
-    list(APPEND SOURCES
-      src/oauth/OAuthWebKit.cpp)
   endif()
 
   list(APPEND SOURCES
@@ -140,7 +132,7 @@ else()
 endif()
 
 if(QEVERCLOUD_USE_QT_WEB_ENGINE EQUAL QEVERCLOUD_USE_SYSTEM_BROWSER)
-  message(FATAL_ERROR "QEverCloud can be built either with QtWebKit or QtWebEngine or system browser backend for OAuth")
+  message(FATAL_ERROR "QEverCloud can be built either with QtWebEngine or system browser backend for OAuth")
 endif()
 
 if(QEVERCLOUD_USE_QT_WEB_ENGINE)

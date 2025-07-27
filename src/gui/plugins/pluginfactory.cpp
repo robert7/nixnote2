@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 PluginFactory::PluginFactory(QObject *parent) :
     QWebPluginFactory(parent)
 {
-    manager = new QNetworkAccessManager(this);
 }
 
 QList<QWebPluginFactory::Plugin> PluginFactory::plugins() const

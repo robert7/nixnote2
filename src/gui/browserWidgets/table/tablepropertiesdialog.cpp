@@ -105,7 +105,7 @@ TablePropertiesDialog::TablePropertiesDialog(QString tableCss, QString cellCss, 
     tabs->addTab(tablePanel, tr("Table Properties"));
     tabs->addTab(cellPanel,tr("Cell Properties"));
 
-    preview = new QWebView();
+    preview = new QWebEngineView();
     mainLayout->addWidget(preview);
 
     mainLayout->addLayout(buttonLayout);

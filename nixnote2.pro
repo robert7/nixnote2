@@ -1,4 +1,4 @@
-QT += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml concurrent
+QT += core gui widgets printsupport webkit webenginewidgets sql network xml dbus qml concurrent
 
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 unix {

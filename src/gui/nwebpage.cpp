@@ -19,26 +19,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "nwebpage.h"
 #include <QDebug>
-#include <QWebFrame>
 #include "src/global.h"
 
 //*******************************************************
-//* This class inherits everything from QWebPage.  It
+//* This class inherits everything from QWebEnginePage.  It
 //* handles some of the special things we need in
-//* QWebPage to be able to edit notes.
+//* QWebEnginePage to be able to edit notes.
 //*******************************************************
 
 extern Global global;
 
 NWebPage::NWebPage(QWidget *parent) :
-    QWebPage(parent)
+    QWebEnginePage(parent)
 {
     connect(this,SIGNAL(contentsChanged()), this, SLOT(editAlert()));
-    mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAsNeeded);
+    setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAsNeeded);
 }
 
 
-// This class overrides the one provided by QWebPage.  This shows us
+// This class overrides the one provided by QWebEnginePage.  This shows us
 // any javascript console messages that are produced.
 void NWebPage::javaScriptConsoleMessage(QString message, int lineNumber, QString sourceID) {
    QLOG_DEBUG() << "Javascript message: " << "Line: " << lineNumber << " Source: " << sourceID <<

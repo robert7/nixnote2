@@ -146,12 +146,12 @@ void FindReplace::textChanged() {
 
 
 
-QWebPage::FindFlags FindReplace::getCaseSensitive() {
-    QWebPage::FindFlags ff;
-    ff = QWebPage::HighlightAllOccurrences;
+QWebEnginePage::FindFlags FindReplace::getCaseSensitive() {
+    QWebEnginePage::FindFlags ff;
+    ff = QWebEnginePage::HighlightAllOccurrences;
     ff = 0;
     if (caseSensitive->isChecked())
-        ff = ff | QWebPage::FindCaseSensitively;
+        ff = ff | QWebEnginePage::FindCaseSensitively;
 
     return ff;
 }

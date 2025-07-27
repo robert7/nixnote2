@@ -82,7 +82,7 @@ class NixNote : public QMainWindow
 private:
     static NixNote *singleton;  // static pointer to singleton instance of this class
     QTranslator *nixnoteTranslator;
-    QWebView *pdfExportWindow;
+    QWebEngineView *pdfExportWindow;
     DatabaseConnection *db;  // The database connection
     NTableView *noteTableView;
     NSearchView *searchTreeView;

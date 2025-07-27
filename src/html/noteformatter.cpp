@@ -108,7 +108,7 @@ void NoteFormatter::setNoteHistory(bool value) {
 
 
 QString NoteFormatter::enmlToNoteHTML(QString enml) {
-    QWebPage page;
+    QWebEnginePage page;
     QEventLoop loop;
     QLOG_TRACE() << "Before preHTMLFormat";
     QString html = "<body></body>";
@@ -122,13 +122,13 @@ QString NoteFormatter::enmlToNoteHTML(QString enml) {
     QByteArray htmlPage;
     htmlPage.append(html);
     QLOG_TRACE() << "About to set content";
-    page.mainFrame()->setContent(htmlPage);
+    page->setContent(htmlPage);
     QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
 
     QLOG_TRACE() << "Starting to modify tags";
     modifyTags(page);
     QLOG_TRACE() << "Done modifying tags";
-    html = page.mainFrame()->toHtml();
+    html = page->toHtml();
 
     return html;
 }
@@ -235,13 +235,13 @@ QString NoteFormatter::preHtmlFormat(QString note) {
   them into HTML tags.  Things like en-media & en-crypt have no
   HTML values, so we turn them into HTML.
   */
-void NoteFormatter::modifyTags(QWebPage &doc) {
+void NoteFormatter::modifyTags(QWebEnginePage &doc) {
     QLOG_TRACE_IN();
     tempFiles.clear();
 
     // Modify en-media tags
     QLOG_TRACE() << "Searching for all en-media tags;";
-    QWebElementCollection anchors = doc.mainFrame()->findAllElements("en-media");
+    QWebElementCollection anchors = doc->findAllElements("en-media");
     QLOG_TRACE() << "Search complete: " << anchors.toList().size();
             foreach(QWebElement
                             enmedia, anchors) {
@@ -262,14 +262,14 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
         }
 
     // Modify todo tags
-    anchors = doc.mainFrame()->findAllElements("en-todo");
+    anchors = doc->findAllElements("en-todo");
     qint32 enTodoCount = anchors.count();
     for (qint32 i = enTodoCount - 1; i >= 0; i--) {
         QWebElement enmedia = anchors.at(i);
         modifyTodoTags(enmedia);
     }
 
-    anchors = doc.mainFrame()->findAllElements("en-crypt");
+    anchors = doc->findAllElements("en-crypt");
     qint32 enCryptLen = anchors.count();
     for (qint32 i = enCryptLen - 1; i >= 0; i--) {
         QWebElement enmedia = anchors.at(i);
@@ -313,7 +313,7 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
 
 
     // Modify link tags
-    anchors = doc.mainFrame()->findAllElements("a");
+    anchors = doc->findAllElements("a");
     enCryptLen = anchors.count();
     for (qint32 i = 0; i < anchors.count(); i++) {
         QWebElement element = anchors.at(i);

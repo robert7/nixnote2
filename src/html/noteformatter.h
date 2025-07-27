@@ -20,9 +20,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef NOTEFORMATTER_H
 #define NOTEFORMATTER_H
 
-#include <QtWebKit>
-#include <QWebPage>
-#include <QWebFrame>
+#include <QtWebEngine>
+#include <QWebEnginePage>
 #include <QObject>
 #include <QTemporaryFile>
 #include <QThread>
@@ -61,7 +60,7 @@ private:
 
     void modifyTodoTags(QWebElement &todo);
 
-    void modifyTags(QWebPage &doc);
+    void modifyTags(QWebEnginePage &doc);
 
     QString findIcon(qint32 lid, Resource r, QString fileExt);
 

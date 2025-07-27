@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef NWEBVIEW_H
 #define NWEBVIEW_H
 
-#include <QWebView>
+#include <QWebEngineView>
 #include "src/gui/nwebpage.h"
 #include <QShortcut>
 #include <QMenu>
@@ -38,7 +38,7 @@ class NBrowserWindow;
 //* useful to allow us to setup things that are
 //* needed to view & edit notes.
 //****************************************************
-class NWebView : public QWebView
+class NWebView : public QWebEngineView
 {
     Q_OBJECT
 private:

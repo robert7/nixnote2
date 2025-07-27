@@ -1,5 +1,8 @@
 # Changelog
 
+## 6.2.0.ah
+  * Remove Qt5WebKit use
+
 ## 6.2.0
   * Fix OAuth with Qt5WebKit with a hack
   * Implement OAuth via system browser so that neither Qt5WebKir nor Qt5WebEngine could be required

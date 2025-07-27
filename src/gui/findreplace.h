@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPushButton>
 #include <QCheckBox>
 #include <QHBoxLayout>
-#include <QWebPage>
+#include <QWebEnginePage>
 
 class FindReplace : public QWidget
 {
@@ -44,7 +44,7 @@ public:
     QPushButton *replaceAllButton;
     QLineEdit *replaceLine;
     QCheckBox *caseSensitive;
-    QWebPage::FindFlags getCaseSensitive();
+    QWebEnginePage::FindFlags getCaseSensitive();
     
 signals:
     

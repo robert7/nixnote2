@@ -58,15 +58,13 @@ QEverCloud depends on the following Qt components:
  * Qt5Core
  * Qt5Widgets
  * Qt5Network
- * (Optional) Qt5WebKit an Qt5WebKitWidgets
  * (Optional) Qt5WebEngine and Qt5WebEngineWidgets
 
-The dependencies on Qt5WebKit or Qt5WebEngine are only actual if the library is built with OAuth support. But even then there is an option to build the library with OAuth support but without the dependency on either of these components. More on this below.
+The dependencies on Qt5WebEngine are only actual if the library is built with OAuth support. But even then there is an option to build the library with OAuth support but without the dependency on either of these components. More on this below.
 
 By default the library is built with OAuth support and uses Qt5WebEngine for it. The following cmake parameters are available to alter this behaviour:
  * `-DBUILD_WITH_OAUTH_SUPPORT=NO` would disable building with OAuth support entirely.
- * `-DUSE_QT5_WEBKIT=ON` would build the library with OAuth using Qt5WebKit for web page rendering.
- * `-DQEVERCLOUD_USE_SYSTEM_BROWSER=ON` would build the library with OAuth not using either Qt5WebKit or Qt5WebEngine but instead delegating some portion of OAuth procedure to the system browser.
+ * `-DQEVERCLOUD_USE_SYSTEM_BROWSER=ON` would build the library with OAuth not using either Qt5WebEngine but instead delegating some portion of OAuth procedure to the system browser.
 
 If Qt5's Qt5Test module is found during the pre-build configuration step, the unit tests are enabled and can be run with `make test` and more verbose `make check` commands.
 

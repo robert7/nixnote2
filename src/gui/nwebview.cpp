@@ -21,9 +21,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "nwebview.h"
 #include "nwebpage.h"
 #include "src/global.h"
-#include <QWebFrame>
 #include <QMessageBox>
-#include <QtWebKit>
+#include <QtWebEngine>
 #include <QFileDialog>
 #include "src/settings/colorsettings.h"
 
@@ -36,15 +35,15 @@ extern Global global;
 
 
 //****************************************************
-//* This inherits everything from QWebView.  It is
+//* This inherits everything from QWebEngineView.  It is
 //* useful to allow us to setup things that are
 //* needed to view & edit notes.
 //****************************************************
 
 // Override the constructor so we always use a NWebPage
-// rather than a QWebPage
+// rather than a QWebEnginePage
 NWebView::NWebView(NBrowserWindow *parent) :
-    QWebView(parent)
+    QWebEngineView(parent)
 {
     this->parent = parent;
     editorPage = new NWebPage(this);
@@ -252,7 +251,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     connect(editorPage, SIGNAL(downloadRequested(QNetworkRequest)), this, SLOT(downloadRequested(QNetworkRequest)));
 
     connect(editorPage, SIGNAL(contentsChanged()), this, SLOT(editAlert()));
-    editorPage->setContentEditable(true);
+    editorPage->runJavaScript("document.documentElement.contentEditable = true");
 
     // Set some of the menus as disabled until a user selects an image or attachment
     downloadAttachmentAction()->setEnabled(false);
@@ -261,9 +260,9 @@ NWebView::NWebView(NBrowserWindow *parent) :
     openAction->setEnabled(false);
     downloadImageAction()->setEnabled(false);
 
-    connect(this->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(exposeToJavascript()));
+    connect(this->page(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(exposeToJavascript()));
 
-    //    this->setStyleSheet("QWebView,html,body { background-color : red; foreground-color : white; }");
+    //    this->setStyleSheet("QWebEngineView,html,body { background-color : red; foreground-color : white; }");
     // ////////////////
     //    QString qss = global.fileManager.getQssDirPathUser("");
     //    if (qss == "")
@@ -330,12 +329,12 @@ NWebView::~NWebView() {
 
 
 QAction *NWebView::downloadAttachmentAction() {
-    return pageAction(QWebPage::DownloadLinkToDisk);
+    return pageAction(QWebEnginePage::DownloadLinkToDisk);
 }
 
 
 QAction *NWebView::downloadImageAction() {
-    return pageAction(QWebPage::DownloadImageToDisk);
+    return pageAction(QWebEnginePage::DownloadImageToDisk);
 }
 
 QAction* NWebView::setupColorMenuOption(QString color) {
@@ -349,7 +348,7 @@ QAction* NWebView::setupColorMenuOption(QString color) {
 
 
 void NWebView::focusOutEvent(QFocusEvent *e) {
-    QWebView::focusOutEvent(e);
+    QWebEngineView::focusOutEvent(e);
     titleEditor->checkNoteTitleChange();
 }
 
@@ -369,7 +368,7 @@ void NWebView::editAlert() {
 
 
 void NWebView::exposeToJavascript() {
-    page()->mainFrame()->addToJavaScriptWindowObject("editorWindow", this);
+    page()->addToJavaScriptWindowObject("editorWindow", this);
 }
 
 
@@ -464,7 +463,7 @@ bool NWebView::event(QEvent *event)
     if (event->type() == QEvent::MouseButtonDblClick) {
         QLOG_DEBUG() << "NWebView::event: DOUBLE CLICK!!!";
     }
-    return QWebView::event(event);
+    return QWebEngineView::event(event);
 }
 
 
@@ -473,12 +472,12 @@ void NWebView::keyPressEvent(QKeyEvent *e) {
     // This is done because if we set the content as editable, the scroll keys are
     // ignored by wbkit.
     if (e->key() == Qt::Key_PageUp || e->key() == Qt::Key_PageDown) {
-        int bottom = this->page()->mainFrame()->geometry().bottom();
-        int top = this->page()->mainFrame()->geometry().top();
+        int bottom = this->page()->geometry().bottom();
+        int top = this->page()->geometry().top();
         int scrollValue = top-bottom;
         if (e->key() == Qt::Key_PageDown)
             scrollValue = -1*scrollValue;
-        page()->mainFrame()->scroll(0,scrollValue);
+        page()->scroll(0,scrollValue);
     }
 
     // Exit presentation mode
@@ -508,7 +507,7 @@ void NWebView::keyPressEvent(QKeyEvent *e) {
         return;
     }
 
-    QWebView::keyPressEvent(e);
+    QWebEngineView::keyPressEvent(e);
 }
 
 
@@ -537,7 +536,7 @@ void NWebView::setTitleEditor(NTitleEditor *editor) {
 
 
 void NWebView::setDefaultTitle() {
-    QString body = this->page()->mainFrame()->toPlainText();
+    QString body = this->page()->toPlainText();
     titleEditor->setTitleFromContent(body);
 }
 
@@ -638,7 +637,7 @@ void NWebView::setContent(const QByteArray &data) {
     // https://forum.qt.io/topic/10832/memory-size-increases-per-page-load/4
     QByteArray content = data;
     content.replace("<body", "<body onunload=_function() {} ");
-    QWebView::setContent(content);
+    QWebEngineView::setContent(content);
 
     QWebSettings::clearMemoryCaches();
     this->history()->clear();
