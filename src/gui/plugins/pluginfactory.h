@@ -21,17 +21,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define POPPLERFACTORY_H
 
 #include <QWebPluginFactory>
-#include <QNetworkAccessManager>
 #if QT_VERSION < 0x050000
 #include <poppler-qt4.h>
 #else
 #include <poppler-qt5.h>
 #endif
 #include "src/gui/plugins/popplerviewer.h"
-#include <QWebPage>
+#include <QWebEnginePage>
 
-class QNetworkAccessManager;
-class QNetworkReply;
 
 class PluginFactory : public QWebPluginFactory
 {
@@ -44,8 +41,7 @@ public:
     QList<QWebPluginFactory::Plugin> plugins() const;
 
 private:
-    QNetworkAccessManager *manager;
-    QWebPage *editor;
+    QWebEnginePage *editor;
     
 signals:
     

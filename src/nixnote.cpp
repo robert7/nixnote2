@@ -3643,7 +3643,7 @@ void NixNote::onExportAsPdf() {
     noteTableView->getSelectedLids(lids);
 
     if (pdfExportWindow == nullptr) {
-        pdfExportWindow = new QWebView();
+        pdfExportWindow = new QWebEngineView();
         connect(pdfExportWindow, SIGNAL(loadFinished(bool)), this, SLOT(onExportAsPdfReady(bool)));
     }
 

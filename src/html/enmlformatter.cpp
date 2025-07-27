@@ -19,8 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 #include <QFileIconProvider>
-#include <QWebPage>
-#include <QWebFrame>
+#include <QWebEnginePage>
 #include <QIcon>
 #include <QMessageBox>
 #include <iostream>
@@ -395,13 +394,13 @@ void EnmlFormatter::rebuildNoteEnml() {
     QLOG_DEBUG_FILE("fmt-pre-dt-check.html", getContent());
     QLOG_DEBUG() << ENML_MODULE_LOGPREFIX " rebuildNoteEnml guiAvailable=" << guiAvailable;
     if (guiAvailable) {
-        QWebPage page;
+        QWebEnginePage page;
         QEventLoop loop;
-        page.mainFrame()->setContent(getContentBytes());
+        page->setContent(getContentBytes());
         QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
         loop.exit();
 
-        QWebElement bodyElement = page.mainFrame()->documentElement().findFirst("body");
+        QWebElement bodyElement = page->documentElement().findFirst("body");
         removeInvalidAttributes(bodyElement);
         recursiveTreeCleanup(bodyElement, 0);
         QString xml = bodyElement.toOuterXml();

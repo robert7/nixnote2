@@ -35,48 +35,27 @@ if(BUILD_TRANSLATIONS)
 endif()
 
 if(BUILD_WITH_OAUTH_SUPPORT AND NOT QEVERCLOUD_USE_SYSTEM_BROWSER)
-  if(USE_QT5_WEBKIT OR Qt5Core_VERSION VERSION_LESS "5.6.0")
-    include(QEverCloudFindQt5DependenciesWebKit)
-  else()
-    include(QEverCloudFindQt5DependenciesWebEngineCore)
-    set(QEVERCLOUD_USE_QT_WEB_ENGINE TRUE)
-  endif()
+  include(QEverCloudFindQt5DependenciesWebEngineCore)
+  set(QEVERCLOUD_USE_QT_WEB_ENGINE TRUE)
 
   if(QEVERCLOUD_USE_QT_WEB_ENGINE)
     add_definitions(-DQEVERCLOUD_USE_QT_WEB_ENGINE)
   endif()
 
-  if(USE_QT5_WEBKIT)
-    list(APPEND QT_INCLUDES
-      ${QT_INCLUDES}
-      ${Qt5WebKit_INCLUDE_DIRS}
-      ${Qt5WebKitWidgets_INCLUDE_DIRS})
+  list(APPEND QT_INCLUDES
+    ${QT_INCLUDES}
+    ${Qt5WebEngineCore_INCLUDE_DIRS}
+    ${Qt5WebEngineWidgets_INCLUDE_DIRS})
 
-    list(APPEND QT_LIBRARIES
-      ${QT_LIBRARIES}
-      ${Qt5WebKit_LIBRARIES}
-      ${Qt5WebKitWidgets_LIBRARIES})
+  list(APPEND QT_LIBRARIES
+    ${QT_LIBRARIES}
+    ${Qt5WebEngineCore_LIBRARIES}
+    ${Qt5WebEngineWidgets_LIBRARIES})
 
-    list(APPEND QT_DEFINITIONS
-      ${QT_DEFINITIONS}
-      ${Qt5WebKit_DEFINITIONS}
-      ${Qt5WebKitWidgets_DEFINITIONS})
-  else()
-    list(APPEND QT_INCLUDES
-      ${QT_INCLUDES}
-      ${Qt5WebEngineCore_INCLUDE_DIRS}
-      ${Qt5WebEngineWidgets_INCLUDE_DIRS})
-
-    list(APPEND QT_LIBRARIES
-      ${QT_LIBRARIES}
-      ${Qt5WebEngineCore_LIBRARIES}
-      ${Qt5WebEngineWidgets_LIBRARIES})
-
-    list(APPEND QT_DEFINITIONS
-      ${QT_DEFINITIONS}
-      ${Qt5WebEngineCore_DEFINITIONS}
-      ${Qt5WebEngineWidgets_DEFINITIONS})
-  endif()
+  list(APPEND QT_DEFINITIONS
+    ${QT_DEFINITIONS}
+    ${Qt5WebEngineCore_DEFINITIONS}
+    ${Qt5WebEngineWidgets_DEFINITIONS})
 endif()
 
 list(REMOVE_DUPLICATES QT_INCLUDES)

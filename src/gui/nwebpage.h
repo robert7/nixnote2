@@ -20,15 +20,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef NWEBPAGE_H
 #define NWEBPAGE_H
 
-#include <QWebPage>
+#include <QWebEnginePage>
 
 
 //*******************************************************
-//* This class inherits everything from QWebPage.  It
+//* This class inherits everything from QWebEnginePage.  It
 //* handles some of the special things we need in
-//* QWebPage to be able to edit notes.
+//* QWebEnginePage to be able to edit notes.
 //*******************************************************
-class NWebPage : public QWebPage
+class NWebPage : public QWebEnginePage
 {
     Q_OBJECT
 public:

@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef THUMBNAILER_H
 #define THUMBNAILER_H
 
-#include <QtWebKit>
+#include <QtWebEngine>
 #include <QObject>
 #include <QSqlDatabase>
 
@@ -42,7 +42,7 @@ private:
 public:
     Thumbnailer(DatabaseConnection *db);
     ~Thumbnailer();
-    void capturePage(qint32 lid, QWebPage *page);
+    void capturePage(qint32 lid, QWebEnginePage *page);
 };
 
 #endif // THUMBNAILER_H

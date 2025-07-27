@@ -13,10 +13,8 @@
 
 #if QEVERCLOUD_USE_QT_WEB_ENGINE
 #include "OAuthWebEngine.h"
-#elif QEVERCLOUD_USE_SYSTEM_BROWSER
-#include "OAuthSystemBrowser.h"
 #else
-#include "OAuthWebKit.h"
+#include "OAuthSystemBrowser.h"
 #endif
 
 #include <QVBoxLayout>

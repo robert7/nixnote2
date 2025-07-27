@@ -18,9 +18,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "thumbnailer.h"
-#include <QtWebKit>
-#include <QWebPage>
-#include <QWebFrame>
+#include <QtWebEngine>
+#include <QWebEnginePage>
 #include <QtSql>
 #include <QTextDocument>
 #include <QPainter>
@@ -39,23 +38,23 @@ Thumbnailer::~Thumbnailer() {
 }
 
 
-void Thumbnailer::capturePage(qint32 lid, QWebPage *page) {
-    qreal zoomFactor = page->mainFrame()->zoomFactor();
+void Thumbnailer::capturePage(qint32 lid, QWebEnginePage *page) {
+    qreal zoomFactor = page->zoomFactor();
     QSize viewportSize = page->viewportSize();
 
-    page->mainFrame()->setZoomFactor(3);
+    page->setZoomFactor(3);
     page->setViewportSize(QSize(300,300));
 
     QImage pix(QSize(300,300), QImage::Format_ARGB32);
     QPainter painter;
     painter.begin(&pix);
     QRegion region = QRegion(0, 0, 300, 300);
-    page->mainFrame()->render(&painter, region);
+    page->render(&painter, region);
     painter.end();
     QString filename = global.fileManager.getThumbnailDirPath() + QString::number(lid) +".png";
     pix.save(filename);
 
-    page->mainFrame()->setZoomFactor(zoomFactor);
+    page->setZoomFactor(zoomFactor);
     page->setViewportSize(viewportSize);
 
     NoteTable ntable(db);

@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QWebView>
+#include <QWebEngineView>
 #include <QComboBox>
 #include <QSpinBox>
 #include <QLabel>
@@ -111,7 +111,7 @@ private:
     QPushButton *okButton;                        // Dialog box OK button
     QPushButton *cancelButton;                    // Dialog box cancel button
     QTabWidget  *tabs;                            // Tab widget holding table & cell options
-    QWebView *preview;                            // HTML page showing the user's selected values
+    QWebEngineView *preview;                      // HTML page showing the user's selected values
 
     QLabel *paddingLabel;                         // Label used to show cell padding selection
     QHBoxLayout *borderSizeLayout;                // layout used for the border size selection

@@ -20,9 +20,8 @@
 #ifndef NOTEFORMATTERBASE_H
 #define NOTEFORMATTERBASE_H
 
-#include <QtWebKit>
-#include <QWebPage>
-#include <QWebFrame>
+#include <QtWebEngine>
+#include <QWebEnginePage>
 #include <QObject>
 #include <QTemporaryFile>
 #include <QThread>
