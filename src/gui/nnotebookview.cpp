@@ -147,8 +147,10 @@ NNotebookView::NNotebookView(QWidget *parent) :
     this->setFrameShape(QFrame::NoFrame);
 
 
-    expandedImage = new QImage(":expandedIcon");
-    collapsedImage = new QImage(":collapsedIcon");
+    expandedImage = new QImage(global.resourceList[":expandedIcon"] != "" ?
+            global.resourceList[":expandedIcon"] : ":expandedIcon");
+    collapsedImage = new QImage(global.resourceList[":collapsedIcon"] != "" ?
+            global.resourceList[":collapsedIcon"] : ":collapsedIcon");
 
     this->setProperty("animated", false);
 
