@@ -77,8 +77,10 @@ FavoritesView::FavoritesView(QWidget *parent) :
 
     root->setRootColor(false);
 
-    expandedImage = new QImage(":expandedIcon");
-    collapsedImage = new QImage(":collapsedIcon");
+    expandedImage = new QImage(global.resourceList[":expandedIcon"] != "" ?
+            global.resourceList[":expandedIcon"] : ":expandedIcon");
+    collapsedImage = new QImage(global.resourceList[":collapsedIcon"] != "" ?
+            global.resourceList[":collapsedIcon"] : ":collapsedIcon");
     this->setAcceptDrops(true);
     this->setItemDelegate(new FavoritesViewDelegate());
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
