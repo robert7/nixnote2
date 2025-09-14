@@ -40,6 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QSqlDatabase>
+#include <QMutex>
 
 #include "src/qevercloud/QEverCloud/headers/QEverCloud.h"
 using namespace qevercloud;
@@ -103,6 +104,8 @@ private:
                      const QString &internalMessage = QString());
 
     CommunicationError error;
+    bool hasException;
+    QMutex mutex;
 
 public:
 
@@ -122,6 +125,7 @@ public:
     bool authenticateToLinkedNotebookShard(LinkedNotebook &book);    // Authenticate to a linked notebook account owner shard
     bool getUserInfo(User &user);                              // Get user information
     bool getNote(Note &n, QString guid, bool wthResource, bool withRecognition, bool withResource);
+    Note downloadNote(const Note &n);
     QList< QPair<QString, QImage*>* > *inkNoteList;            // List to store inknotes downloaded from account.
     QList< QPair<QString, QImage*>* > *thumbnailList;          // List to store thumbnails from account (not used)
     QHash<QString,QString> *tagGuidMap;                        // Temporary hashmap used to store tags.  Keeps from repetitive DB lookups filling in tag names

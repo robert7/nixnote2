@@ -51,7 +51,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <curl/easy.h>
 #endif // End windows check
 
+#include <qtconcurrentmap.h>
+#include <QMutexLocker>
+
 #include "src/utilities/debugtool.h"
+
 
 
 extern Global global;
@@ -81,6 +85,7 @@ CommunicationManager::CommunicationManager(DatabaseConnection *db) {
     if (networkAccessManager == nullptr) {
         networkAccessManager = new QNetworkAccessManager(this);
     }
+    hasException = false;
 }
 
 
@@ -296,6 +301,10 @@ CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, i
     try {
         chunk = myNoteStore->getFilteredSyncChunk(start, chunkSize, filter, newRequestContext(token, requestTimeout));
         processSyncChunk(chunk, token);
+        if (hasException) {
+            hasException = false;
+            return false;
+        }
     } catch (ThriftException &e) {
         reportError(CommunicationError::ThriftException, static_cast<int>(e.type()), e.what());
         return false;
@@ -307,6 +316,9 @@ CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, i
         return false;
     } catch (EDAMNotFoundException &e) {
         handleEDAMNotFoundException(e);
+        return false;
+    } catch (std::exception &e) { // connection closed by the server
+        reportError(CommunicationError::StdException, 16, e.what());
         return false;
     }
     return true;
@@ -547,9 +559,13 @@ void CommunicationManager::reportError(
     backtrace_symbols_fd(array, size, 2);
 #endif // End windows check
 
+    QMutexLocker locker(&mutex);
+
     error.resetTo(errorType, code, message, internalMessage);
 
     global.setMessage(tr("Error in sync: ") + error.getMessage(), 0);
+
+    hasException = true;
 }
 
 void CommunicationManager::resetError() {
@@ -701,6 +717,10 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
     try {
         chunk = linkedNoteStore->getLinkedNotebookSyncChunk(book, start, chunkSize, fullSync, newRequestContext(authToken, requestTimeout));
         processSyncChunk(chunk, linkedAuthToken);
+        if (hasException) {
+            hasException = false;
+            return false;
+        }
     } catch (ThriftException &e) {
         reportError(CommunicationError::ThriftException, static_cast<int>(e.type()), e.what());
         return false;
@@ -776,6 +796,24 @@ bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, 
     }
 }
 
+Note CommunicationManager::downloadNote(const Note &n) {
+    QLOG_DEBUG() << "downloadNote guid=" << n.guid;
+    Note tmp = n;
+    try {
+        this->getNote(tmp, n.guid, true, true, true);
+    } catch (ThriftException &e) {
+        reportError(CommunicationError::ThriftException, static_cast<int>(e.type()), e.what());
+    } catch (EDAMUserException &e) {
+        reportError(CommunicationError::EDAMUserException, static_cast<int>(e.errorCode), e.what());
+    } catch (EDAMSystemException &e) {
+        handleEDAMSystemException(e);
+    } catch (EDAMNotFoundException &e) {
+        handleEDAMNotFoundException(e);
+    } catch (std::exception &e) { // connection closed by the server
+        reportError(CommunicationError::StdException, 16, e.what());
+    }
+    return tmp;
+}
 
 // Get a prior version of a notebook
 bool CommunicationManager::getNote(Note &note, QString guid, bool withResource, bool withResourceRecognition,
@@ -1005,12 +1043,36 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
     if (chunk.notes.isSet())
         notes = chunk.notes;
     auto requestContext = newRequestContext(token, requestTimeout);
+
+    QList<Note> downloadedNotes;
+    downloadedNotes.clear();
+
+    global.settings->beginGroup(INI_GROUP_SYNC);
+    const int THREAD_NUMBER = global.settings->value("threadNumber", 5).toInt();
+    global.settings->endGroup();
+
+    for (int i = 0; i < notes.size(); i += THREAD_NUMBER) {
+        QList<Note> tmpNotes;
+        tmpNotes.clear();
+        for (int j = i; j < i + THREAD_NUMBER && j < notes.size(); j++) {
+            tmpNotes.append(notes[j]);
+            QLOG_TRACE() << "Fetching chunk item: " << j << ": " << notes[j].title;
+        }
+        downloadedNotes.append(QtConcurrent::blockingMapped<QList<Note> >(tmpNotes,
+                    std::bind(&CommunicationManager::downloadNote, this, std::placeholders::_1)));
+        if (hasException) {
+            return;
+        }
+        QLOG_TRACE() << "A set of notes Retrieved";
+    }
+
     for (int i = 0; i < notes.size(); i++) {
-        QLOG_TRACE() << "Fetching chunk item: " << i << ": " << notes[i].title;
+        //QLOG_TRACE() << "Fetching chunk item: " << i << ": " << notes[i].title;
         Note n = notes[i];
         noteList.insert(n.guid, "");
-        n = noteStore->getNote(notes[i].guid, true, true, true, true, requestContext);
-        QLOG_TRACE() << "Note Retrieved";
+        //n = noteStore->getNote(notes[i].guid, true, true, true, true, requestContext);
+        n = downloadedNotes[i];
+        //QLOG_TRACE() << "Note Retrieved";
 
         // Load up the tag names because Evernote doesn't give them.
         QList<QString> tagNames;
@@ -1037,25 +1099,25 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
     if (chunk.notes.isSet())
         chunk.notes = notes;
 
-    QList<Resource> resourceData;
-    QLOG_DEBUG() << "All notes retrieved.  Getting resources";
-    QList<Resource> resources;
-    if (chunk.resources.isSet())
-        resources = chunk.resources;
-    for (int i = 0; i < resources.size(); i++) {
-        QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << resources[i].guid;
-        Resource r;
-        r = noteStore->getResource(resources[i].guid, true, true, true, true, requestContext);
-        QLOG_TRACE() << "Resource retrieved";
-        resourceData.append(r);
-    }
-    if (chunk.resources.isSet())
-        chunk.resources = resourceData;
-    QLOG_DEBUG() << "Getting ink notes";
-    if (resources.size() > 0) {
-        QLOG_TRACE() << "Checking for ink notes";
-        checkForInkNotes(resources, "", token);
-    }
+//    QList<Resource> resourceData;
+//    QLOG_DEBUG() << "All notes retrieved.  Getting resources";
+//    QList<Resource> resources;
+//    if (chunk.resources.isSet())
+//        resources = chunk.resources;
+//    for (int i = 0; i < resources.size(); i++) {
+//        QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << resources[i].guid;
+//        Resource r;
+//        r = noteStore->getResource(resources[i].guid, true, true, true, true, requestContext);
+//        QLOG_TRACE() << "Resource retrieved";
+//        resourceData.append(r);
+//    }
+//    if (chunk.resources.isSet())
+//        chunk.resources = resourceData;
+//    QLOG_DEBUG() << "Getting ink notes";
+//    if (resources.size() > 0) {
+//        QLOG_TRACE() << "Checking for ink notes";
+//        checkForInkNotes(resources, "", token);
+//    }
 }
 
 

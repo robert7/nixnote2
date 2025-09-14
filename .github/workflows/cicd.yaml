@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Check out repository code
@@ -21,11 +21,13 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update -qq
-        sudo apt-get -y install git-core qt5-default build-essential \
-                                wget curl make pkg-config \
-                                libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev libcurl4-openssl-dev \
-                                libpoppler-qt5-dev libqt5webkit5-dev qt5-qmake qttools5-dev-tools libqt5sql5-sqlite \
-                                libhunspell-dev libtidy-dev libqt5positioning5-plugins
+        sudo apt-get -y install git-core qtbase5-dev qtchooser qt5-qmake qttools5-dev-tools build-essential \
+                       wget curl make pkg-config \
+                       libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev libcurl4-openssl-dev \
+                       libpoppler-qt5-dev libqt5webkit5-dev libqt5sql5-sqlite \
+                       libhunspell-dev libtidy-dev libqt5positioning5-plugins
+
+
 
     - name: Build project
       run: |

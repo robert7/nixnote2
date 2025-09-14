@@ -1,3 +1,7 @@
+NixNote (2.1.11) stable; urgency=low
+  * Improved synchronisation logic (rate limit handling)
+ -- Robert Spiegel <nightingale7@gmail.com>  Wed, 8 Jul 2024 12:00:00 +0200
+
 NixNote (2.1.10) stable; urgency=low
   * Authentication (Evernote login) now uses system browser which fixes login problems and also enables to use all
     login options supported by Evernote (multifactor authentication, login by Google etc.)
