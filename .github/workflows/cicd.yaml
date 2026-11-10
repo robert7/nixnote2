@@ -57,9 +57,19 @@ jobs:
         mv squashfs-root linuxdeploy-plugin-qt &&
         mv linuxdeploy-plugin-qt/AppRun linuxdeploy-plugin-qt/linuxdeploy-plugin-qt
 
-    - name: Install appimagetool
+    # appimagetool and the static type2 runtime are pinned to tagged releases and verified by SHA-256.
+    # The static runtime does not need libfuse2 (libfuse.so.2) on the target system.
+    - name: Install appimagetool and AppImage runtime
+      env:
+        APPIMAGETOOL_VERSION: "1.9.1"
+        APPIMAGETOOL_SHA256: "ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0"
+        RUNTIME_VERSION: "20251108"
+        RUNTIME_SHA256: "2fca8b443c92510f1483a883f60061ad09b46b978b2631c807cd873a47ec260d"
       run: |
-        wget -nv "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" &&
+        wget -nv "https://github.com/AppImage/appimagetool/releases/download/${APPIMAGETOOL_VERSION}/appimagetool-x86_64.AppImage" &&
+        wget -nv "https://github.com/AppImage/type2-runtime/releases/download/${RUNTIME_VERSION}/runtime-x86_64" &&
+        echo "${APPIMAGETOOL_SHA256}  appimagetool-x86_64.AppImage" | sha256sum -c - &&
+        echo "${RUNTIME_SHA256}  runtime-x86_64" | sha256sum -c - &&
         chmod a+x appimagetool-x86_64.AppImage &&
         ./appimagetool-x86_64.AppImage --appimage-extract &&
         mv squashfs-root appimagetool &&
@@ -71,7 +81,7 @@ jobs:
         linuxdeploy --desktop-file=./appdir/usr/share/applications/nixnote2.desktop --appdir=appdir --plugin qt
         rm -f appdir/usr/lib/libnss3.so
         rm -f appdir/usr/lib/libnssutil3.so
-        appimagetool -n appdir
+        ARCH=x86_64 appimagetool -n --runtime-file runtime-x86_64 appdir
 
     - name: Upload AppImage
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
