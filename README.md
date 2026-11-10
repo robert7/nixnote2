@@ -35,13 +35,11 @@ chmod +x NixNote2-x86_64.AppImage
 ./NixNote2-x86_64.AppImage
 ```
 
-The AppImage needs the FUSE 2 library (`libfuse.so.2`), which current distributions no longer install by default:
+The AppImage uses the static AppImage runtime and does not need the FUSE 2 library (`libfuse2`).
+Mounting the image uses `fusermount3` from the `fuse3` package, which is usually installed by default on desktop
+systems (otherwise: `sudo apt install fuse3`). Without FUSE, run `./NixNote2-x86_64.AppImage --appimage-extract-and-run`.
 
-* Ubuntu 24.04 or newer, Debian 13 or newer: `sudo apt install libfuse2t64`
-* Ubuntu 22.04, Debian 12: `sudo apt install libfuse2`
-* Without FUSE: `./NixNote2-x86_64.AppImage --appimage-extract-and-run`
-
-Note: the `fuse` package alone is not enough - it does not provide `libfuse.so.2`; install the library package listed above.
+AppImages of v2.1.10 and older still need `libfuse2t64` (Ubuntu 24.04+, Debian 13+) or `libfuse2` (older releases).
 
 More information can be found on the [NixNote AppImage wiki page](https://github.com/robert7/nixnote2/wiki/HowTo---Run-AppImage).
 

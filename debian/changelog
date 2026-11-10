@@ -1,6 +1,8 @@
 NixNote (2.1.11) stable; urgency=low
   * Improved synchronisation logic (rate limit handling)
- -- Robert Spiegel <nightingale7@gmail.com>  Wed, 8 Jul 2024 12:00:00 +0200
+  * Fixed expand/collapse icons in the tree views (#216)
+  * AppImage is now built with appimagetool and the static AppImage runtime - libfuse2 is no longer required
+ -- Robert Spiegel <nightingale7@gmail.com>  Tue, 10 Nov 2026 12:00:00 +0100
 
 NixNote (2.1.10) stable; urgency=low
   * Authentication (Evernote login) now uses system browser which fixes login problems and also enables to use all
