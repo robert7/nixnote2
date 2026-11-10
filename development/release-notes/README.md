@@ -1,1 +1,1 @@
-Release notes templates for continuous Travis CI builds.
+Release notes templates for continuous GitHub Actions builds.
